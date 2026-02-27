@@ -62,6 +62,7 @@ open class MessageListPage {
         companion object {
             val inputField get() = By.res("Stream_ComposerInputField")
             val sendButton get() = By.res("Stream_ComposerSendButton")
+            val saveButton get() = By.res("Stream_ComposerSaveButton")
             val recordAudioButton get() = By.res("Stream_ComposerAudioRecordingButton")
             val commandsButton get() = By.res("Stream_ComposerCommandsButton")
             val suggestionList get() = By.res("Stream_SuggestionList")
@@ -70,7 +71,7 @@ open class MessageListPage {
             val giphyButton get() = By.res("Stream_SuggestionListGiphyButton")
             val attachmentsButton get() = By.res("Stream_ComposerAttachmentsButton")
             val quotedMessage get() = By.res("Stream_QuotedMessage")
-            val cancelButton get() = By.res("Stream_ComposerCancelButton")
+            val cancelEditButton get() = By.res("Stream_ComposerCancelEditButton")
             val attachmentCancelIcon get() = By.res("Stream_AttachmentCancelIcon")
             val columnWithMultipleFileAttachments get() = By.res("Stream_FileAttachmentPreviewContent")
             val columnWithMultipleMediaAttachments get() = By.res("Stream_MediaAttachmentPreviewContent")

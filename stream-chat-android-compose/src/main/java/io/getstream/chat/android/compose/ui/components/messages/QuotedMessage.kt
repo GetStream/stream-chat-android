@@ -46,7 +46,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
@@ -55,6 +54,7 @@ import io.getstream.chat.android.compose.ui.components.attachments.files.FileIco
 import io.getstream.chat.android.compose.ui.components.attachments.files.FileTypeIcon
 import io.getstream.chat.android.compose.ui.components.common.PlayButton
 import io.getstream.chat.android.compose.ui.components.common.PlayButtonSize
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
@@ -165,7 +165,7 @@ private fun QuotedMessageUserName(
 
     Text(
         text = userName,
-        fontWeight = FontWeight.SemiBold,
+        style = ChatTheme.typography.metadataEmphasis,
         color = color,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
@@ -187,10 +187,12 @@ private fun QuotedMessageText(body: QuotedMessageBody, color: Color) {
         }
 
         Text(
-            modifier = Modifier.testTag("Stream_QuotedMessage"),
+            modifier = Modifier
+                .weight(1f)
+                .testTag("Stream_QuotedMessage"),
             text = body.text,
+            style = ChatTheme.typography.metadataDefault,
             color = color,
-            fontWeight = FontWeight.Normal,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

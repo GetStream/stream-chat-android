@@ -120,8 +120,8 @@ import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndic
 import io.getstream.chat.android.compose.ui.components.common.ContextualMenuItem
 import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
+import io.getstream.chat.android.compose.ui.components.composer.MessageComposerEditIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
-import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
 import io.getstream.chat.android.compose.ui.components.messages.ClusteredMessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent
@@ -154,9 +154,6 @@ import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicke
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordingButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerFooterInThreadMode
-import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerHeaderContent
-import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerLeadingContent
-import io.getstream.chat.android.compose.ui.messages.composer.internal.SendButton
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderTrailingContent
@@ -1462,8 +1459,7 @@ public interface ChatComponentFactory {
 
     /**
      * The default header content of the message composer.
-     * Shown on top of the composer and contains additional info/context, and is shown during editing/replying to a
-     * message, or when there is a link pasted in the composer.
+     * Shown on top of the composer. Can be overridden to add custom content above the input.
      *
      * @param state The current state of the message composer.
      * @param onCancel The action to perform when the cancel button is clicked.
@@ -1475,30 +1471,6 @@ public interface ChatComponentFactory {
         onCancel: () -> Unit,
         onLinkPreviewClick: ((LinkPreview) -> Unit)?,
     ) {
-        Column(modifier = Modifier.animateContentSize()) {
-            DefaultMessageComposerHeaderContent(state, onCancel, onLinkPreviewClick)
-        }
-    }
-
-    /**
-     * The default options header for the message input component. It is based on the currently active
-     * message action - [io.getstream.chat.android.ui.common.state.messages.Reply] or
-     * [io.getstream.chat.android.ui.common.state.messages.Edit].
-     * It shows a heading based on the action and a cancel button to cancel the action.
-     *
-     * Used as part of [MessageComposerHeaderContent].
-     *
-     * @param modifier The modifier to apply to the composable.
-     * @param activeAction The currently active message action.
-     * @param onCancel The action to perform when the cancel button is clicked.
-     */
-    @Composable
-    public fun MessageComposerMessageInputOptions(
-        modifier: Modifier,
-        activeAction: MessageAction,
-        onCancel: () -> Unit,
-    ) {
-        MessageInputOptions(activeAction, onCancel, modifier)
     }
 
     /**
@@ -1520,7 +1492,7 @@ public interface ChatComponentFactory {
         onCancelClick: (() -> Unit)?,
     ) {
         ComposerLinkPreview(
-            modifier = modifier,
+            modifier = modifier.padding(horizontal = StreamTokens.spacingSm),
             linkPreview = linkPreview,
             onContentClick = onContentClick,
             onCancelClick = onCancelClick,
@@ -1686,6 +1658,7 @@ public interface ChatComponentFactory {
      * The default leading content of the message composer, which includes an add attachment button by default.
      *
      * @param state The current state of the message composer.
+     * @param isAttachmentPickerVisible Whether the attachment picker is visible.
      * @param onAttachmentsClick The action to perform when the attachments button is clicked.
      */
     @Composable
@@ -1694,7 +1667,7 @@ public interface ChatComponentFactory {
         isAttachmentPickerVisible: Boolean,
         onAttachmentsClick: () -> Unit,
     ) {
-        DefaultMessageComposerLeadingContent(
+        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerLeadingContent(
             messageInputState = state,
             isAttachmentPickerVisible = isAttachmentPickerVisible,
             onAttachmentsClick = onAttachmentsClick,
@@ -1765,9 +1738,34 @@ public interface ChatComponentFactory {
         onCancelClick: () -> Unit,
     ) {
         MessageComposerQuotedMessage(
-            modifier = modifier,
+            modifier = modifier.padding(horizontal = StreamTokens.spacingSm),
             message = quotedMessage,
             currentUser = state.currentUser,
+            onCancelClick = onCancelClick,
+        )
+    }
+
+    /**
+     * The edit indicator shown inside the composer's header when the user edits a message.
+     * Previews the original message text and attachment type.
+     *
+     * Used as part of [MessageComposerInput].
+     *
+     * @param modifier The modifier to apply to the composable.
+     * @param state The current state of the message composer.
+     * @param editMessage The message being edited.
+     * @param onCancelClick The action to perform when the cancel button is clicked.
+     */
+    @Composable
+    public fun MessageComposerEditIndicator(
+        modifier: Modifier,
+        state: MessageComposerState,
+        editMessage: Message,
+        onCancelClick: () -> Unit,
+    ) {
+        MessageComposerEditIndicator(
+            modifier = modifier.padding(horizontal = StreamTokens.spacingSm),
+            message = editMessage,
             onCancelClick = onCancelClick,
         )
     }
@@ -1874,11 +1872,33 @@ public interface ChatComponentFactory {
     public fun MessageComposerSendButton(
         onClick: () -> Unit,
     ) {
-        SendButton(onClick = onClick)
+        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerSendButton(
+            onClick = onClick,
+        )
     }
 
     /**
-     * The default "Audio record (voice message)" button of the message composer.
+     * The default "Save" button of the message composer, shown when editing a message.
+     * Displays a checkmark icon in a filled circular button.
+     *
+     * Used as part of [MessageComposerTrailingContent].
+     *
+     * @param enabled Whether the save button is enabled. Disabled when the edit content is empty.
+     * @param onClick The action to perform when the button is clicked.
+     */
+    @Composable
+    public fun MessageComposerSaveButton(
+        enabled: Boolean,
+        onClick: () -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerSaveButton(
+            enabled = enabled,
+            onClick = onClick,
+        )
+    }
+
+    /**
+     * The default "Audio recording (voice message)" button of the message composer.
      *
      * Used as part of [MessageComposerTrailingContent].
      *
@@ -1886,7 +1906,7 @@ public interface ChatComponentFactory {
      * @param recordingActions The actions to control the audio recording.
      */
     @Composable
-    public fun MessageComposerAudioRecordButton(
+    public fun MessageComposerAudioRecordingButton(
         state: RecordingState,
         recordingActions: AudioRecordingActions,
     ) {

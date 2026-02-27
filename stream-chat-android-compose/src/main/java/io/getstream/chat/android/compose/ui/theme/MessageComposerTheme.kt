@@ -19,25 +19,19 @@ package io.getstream.chat.android.compose.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDirection
-import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 
 /**
  * Represents the theming for the message composer.
  * @param inputField The theming for the input field in the message composer.
- * @param actionsTheme The theming for the different composer actions.
  */
 public data class MessageComposerTheme(
     val inputField: ComposerInputFieldTheme,
-    val actionsTheme: ComposerActionsTheme,
 ) {
 
     public companion object {
@@ -58,7 +52,6 @@ public data class MessageComposerTheme(
         ): MessageComposerTheme {
             return MessageComposerTheme(
                 inputField = ComposerInputFieldTheme.defaultTheme(typography, colors),
-                actionsTheme = ComposerActionsTheme.defaultTheme(colors),
             )
         }
     }
@@ -125,54 +118,6 @@ public interface MentionStyleFactory {
          */
         public val NoStyle: MentionStyleFactory = object : MentionStyleFactory {
             override fun styleFor(mention: Mention): SpanStyle? = null
-        }
-    }
-}
-
-/**
- * Defines the theming options for the different composer actions.
- *
- * @param attachmentsButton The style for the attachments button.
- * @param sendButton The style for the send button.
- */
-@Immutable
-public data class ComposerActionsTheme(
-    val attachmentsButton: IconContainerStyle,
-    val sendButton: IconContainerStyle,
-) {
-
-    public companion object {
-
-        /**
-         * Builds the default composer actions theme.
-         * @param colors The colors to use for the theming.
-         *
-         * @return A [ComposerActionsTheme] instance holding the default theming.
-         */
-        @Composable
-        public fun defaultTheme(colors: StreamDesign.Colors): ComposerActionsTheme {
-            val attachmentsButton = IconContainerStyle(
-                size = ComponentSize(width = 48.dp, height = 48.dp),
-                padding = ComponentPadding(0.dp),
-                icon = IconStyle(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_add),
-                    tint = colors.textPrimary,
-                    size = ComponentSize(width = 20.dp, height = 20.dp),
-                ),
-            )
-            val sendButton = IconContainerStyle(
-                size = ComponentSize(width = 48.dp, height = 48.dp),
-                padding = ComponentPadding(start = 8.dp, top = 8.dp, end = 8.dp, bottom = 8.dp),
-                icon = IconStyle(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_send),
-                    tint = colors.textPrimary,
-                    size = ComponentSize(width = 20.dp, height = 20.dp),
-                ),
-            )
-            return ComposerActionsTheme(
-                attachmentsButton = attachmentsButton,
-                sendButton = sendButton,
-            )
         }
     }
 }

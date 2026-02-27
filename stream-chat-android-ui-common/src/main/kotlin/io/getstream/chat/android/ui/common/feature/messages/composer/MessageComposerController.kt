@@ -702,14 +702,13 @@ public class MessageComposerController(
         val currentUserId = chatClient.getCurrentUser()?.id
 
         if (isInEditMode && !activeMessage.isModerationError(currentUserId)) {
-            if (activeMessage.text == message.text) {
-                logger.i { "[sendMessage] No changes in the message text, skipping edit." }
+            if (activeMessage.text == message.text && activeMessage.attachments == message.attachments) {
+                logger.i { "[sendMessage] No changes in the message, skipping edit." }
                 clearData()
                 return
             }
-            val editCall = getEditMessageCall(message)
             clearData()
-            editCall.enqueue(callback)
+            enqueueEditMessage(message, callback, resolveAttachments)
             return
         }
 
@@ -731,6 +730,20 @@ public class MessageComposerController(
             }
         } else {
             enqueueSendMessage(preparedMessage, callback)
+        }
+    }
+
+    private fun enqueueEditMessage(
+        message: Message,
+        callback: Call.Callback<Message>,
+        resolveAttachments: (suspend (List<Attachment>) -> List<Attachment>)?,
+    ) {
+        scope.launch {
+            val resolvedMessage = resolveAttachments?.let { resolve ->
+                val resolved = withContext(DispatcherProvider.IO) { resolve(message.attachments) }
+                message.copy(attachments = resolved)
+            } ?: message
+            chatClient.editMessage(channelType, channelId, resolvedMessage).enqueue(callback)
         }
     }
 
@@ -1060,22 +1073,6 @@ public class MessageComposerController(
 
         logger.v { "[handleLinkPreviews] previews: ${previews.map { it.originUrl }}" }
         linkPreviews.value = previews
-    }
-
-    /**
-     * Gets the edit message call using [ChatClient].
-     *
-     * @param message [Message]
-     */
-    private fun getEditMessageCall(message: Message): Call<Message> {
-        return chatClient.partialUpdateMessage(
-            messageId = message.id,
-            set = mapOf(
-                "text" to message.text,
-                "attachments" to message.attachments,
-                "mentioned_users" to message.mentionedUsersIds,
-            ),
-        )
     }
 
     private fun loadLatestMessagesIfNeeded() {
