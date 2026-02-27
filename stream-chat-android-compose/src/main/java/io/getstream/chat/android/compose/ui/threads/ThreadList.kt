@@ -34,7 +34,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -183,6 +187,7 @@ public fun ThreadList(
                     state.threads.isEmpty() -> emptyContent()
                     else -> Threads(
                         threads = state.threads,
+                        isLoading = state.isLoading,
                         isLoadingMore = state.isLoadingMore,
                         modifier = modifier,
                         onLoadMore = onLoadMore,
@@ -199,6 +204,7 @@ public fun ThreadList(
  * Composable representing a non-empty list of threads.
  *
  * @param threads The non-empty [List] of [Thread]s to show.
+ * @param isLoading Indicator if the list is being refreshed (e.g. banner tap).
  * @param isLoadingMore Indicator if there is loading of the next page of threads in progress.
  * @param modifier [Modifier] instance for general styling.
  * @param onLoadMore Action invoked when the current thread page was scrolled to the end, and a next page should be
@@ -210,6 +216,7 @@ public fun ThreadList(
 @Composable
 private fun Threads(
     threads: List<Thread>,
+    isLoading: Boolean,
     isLoadingMore: Boolean,
     modifier: Modifier,
     onLoadMore: () -> Unit,
@@ -217,6 +224,13 @@ private fun Threads(
     loadingMoreContent: @Composable () -> Unit,
 ) {
     val listState = rememberLazyListState()
+    var wasLoading by remember { mutableStateOf(isLoading) }
+    LaunchedEffect(isLoading) {
+        if (wasLoading && !isLoading) {
+            listState.animateScrollToItem(0)
+        }
+        wasLoading = isLoading
+    }
     Box(modifier = modifier) {
         LazyColumn(state = listState) {
             items(
