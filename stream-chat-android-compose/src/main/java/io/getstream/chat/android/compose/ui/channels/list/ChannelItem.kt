@@ -340,7 +340,11 @@ private fun MessageRow(
 
             val messagePreviewFormatter = ChatTheme.messagePreviewFormatter
             val lastMessageText = remember(
-                channelItemState.draftMessage, lastMessage, currentUser, isDirectMessaging, messagePreviewFormatter,
+                channelItemState.draftMessage,
+                lastMessage,
+                currentUser,
+                isDirectMessaging,
+                messagePreviewFormatter,
             ) {
                 channelItemState.draftMessage
                     ?.let { messagePreviewFormatter.formatDraftMessagePreview(it) }
