@@ -22,7 +22,7 @@ import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Filters
-import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.state.utils.Event
 import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.log.taggedLogger
@@ -124,7 +124,7 @@ public class SearchViewModel(
             val currentState = _state.value!!
             val result = searchMessages(
                 query = currentState.query,
-                offset = currentState.results.size,
+                next = currentState.next,
             )
             when (result) {
                 is Result.Success -> handleSearchMessageSuccess(result.value)
@@ -136,12 +136,12 @@ public class SearchViewModel(
     /**
      * Notifies the UI about the search results and enables the pagination.
      */
-    private suspend fun handleSearchMessageSuccess(messages: List<Message>) {
-        logger.d { "Found messages: ${messages.size}" }
+    private suspend fun handleSearchMessageSuccess(searchResult: SearchMessagesResult) {
+        logger.d { "Found messages: ${searchResult.messages.size}" }
         val currentState = _state.value!!
-        val channels = chatClient.repositoryFacade.selectChannels(messages.map { it.cid })
+        val channels = chatClient.repositoryFacade.selectChannels(searchResult.messages.map { it.cid })
         _state.value = currentState.copy(
-            results = currentState.results + messages.map {
+            results = currentState.results + searchResult.messages.map {
                 MessageResult(
                     message = it,
                     channel = channels.firstOrNull { channel -> channel.cid == it.cid },
@@ -149,7 +149,8 @@ public class SearchViewModel(
             },
             isLoading = false,
             isLoadingMore = false,
-            canLoadMore = messages.size == QUERY_LIMIT,
+            canLoadMore = !searchResult.next.isNullOrEmpty(),
+            next = searchResult.next,
         )
     }
 
@@ -161,7 +162,6 @@ public class SearchViewModel(
         _state.value = _state.value!!.copy(
             isLoading = false,
             isLoadingMore = false,
-            canLoadMore = true,
         )
         _errorEvents.value = Event(Unit)
     }
@@ -170,21 +170,19 @@ public class SearchViewModel(
      * Searches messages containing [query] text across channels where the current user is a member.
      *
      * @param query The search query.
-     * @param offset The pagination offset offset.
+     * @param next The cursor for the next page of results.
      */
-    private suspend fun searchMessages(query: String, offset: Int): Result<List<Message>> {
-        logger.d { "Searching for \"$query\" with offset: $offset" }
+    private suspend fun searchMessages(query: String, next: String?): Result<SearchMessagesResult> {
+        logger.d { "Searching for \"$query\" with next: $next" }
         val currentUser = requireNotNull(chatClient.clientState.user.value)
-        // TODO: use the pagination based on "limit" nad "next" params here
         return chatClient
             .searchMessages(
                 channelFilter = Filters.`in`("members", listOf(currentUser.id)),
                 messageFilter = Filters.autocomplete("text", query),
-                offset = offset,
                 limit = QUERY_LIMIT,
+                next = next,
             )
             .await()
-            .map { it.messages }
     }
 
     /**
@@ -195,6 +193,7 @@ public class SearchViewModel(
      * @param canLoadMore If we've reached the end of messages, to stop triggering pagination.
      * @param isLoading If we're currently loading data (initial load).
      * @param isLoadingMore If we're loading more items (pagination).
+     * @param next The cursor for the next page of results.
      */
     public data class State(
         val query: String = "",
@@ -202,6 +201,7 @@ public class SearchViewModel(
         val results: List<MessageResult> = emptyList(),
         val isLoading: Boolean = false,
         val isLoadingMore: Boolean = false,
+        internal val next: String? = null,
     )
 
     private companion object {
