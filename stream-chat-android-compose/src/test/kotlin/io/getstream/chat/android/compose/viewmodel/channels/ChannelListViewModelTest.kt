@@ -30,6 +30,7 @@ import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.OrFilterObject
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.TypingEvent
@@ -462,6 +463,70 @@ internal class ChannelListViewModelTest {
             )
         }
 
+    @Test
+    fun `Given no messageSearchSort When searching messages Should pass null sort to searchMessages`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                    loading = false,
+                )
+                .givenChannelMutes()
+                .givenSearchMessagesResult(SearchMessagesResult())
+                .givenRepositorySelectChannels()
+                .get(this)
+
+            viewModel.setSearchQuery(SearchQuery.Messages("test"))
+            advanceUntilIdle()
+
+            val sortCaptor = argumentCaptor<QuerySorter<Message>>()
+            verify(chatClient).searchMessages(
+                channelFilter = any(),
+                messageFilter = any(),
+                offset = anyOrNull(),
+                limit = anyOrNull(),
+                next = anyOrNull(),
+                sort = sortCaptor.capture(),
+            )
+            assertNull(sortCaptor.firstValue)
+        }
+
+    @Test
+    fun `Given messageSearchSort is set When searching messages Should pass the sort to searchMessages`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val messageSearchSort = QuerySortByField.descByName<Message>("created_at")
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                    loading = false,
+                )
+                .givenChannelMutes()
+                .givenMessageSearchSort(messageSearchSort)
+                .givenSearchMessagesResult(SearchMessagesResult())
+                .givenRepositorySelectChannels()
+                .get(this)
+
+            viewModel.setSearchQuery(SearchQuery.Messages("test"))
+            advanceUntilIdle()
+
+            val sortCaptor = argumentCaptor<QuerySorter<Message>>()
+            verify(chatClient).searchMessages(
+                channelFilter = any(),
+                messageFilter = any(),
+                offset = anyOrNull(),
+                limit = anyOrNull(),
+                next = anyOrNull(),
+                sort = sortCaptor.capture(),
+            )
+            assertEquals(messageSearchSort, sortCaptor.firstValue)
+        }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelClient: ChannelClient = mock(),
@@ -472,6 +537,7 @@ internal class ChannelListViewModelTest {
         private val stateRegistry: StateRegistry = mock()
         private val globalState: GlobalState = mock()
         private val repositoryFacade: RepositoryFacade = mock()
+        private var messageSearchSort: QuerySorter<Message>? = null
 
         init {
             val statePlugin: StatePlugin = mock()
@@ -520,6 +586,10 @@ internal class ChannelListViewModelTest {
             whenever(chatClient.unmuteChannel(any(), any())) doReturn Unit.asCall()
         }
 
+        fun givenMessageSearchSort(sort: QuerySorter<Message>?) = apply {
+            messageSearchSort = sort
+        }
+
         fun givenSearchMessagesResult(result: SearchMessagesResult) = apply {
             whenever(
                 chatClient.searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()),
@@ -556,6 +626,7 @@ internal class ChannelListViewModelTest {
                 initialFilters = initialFilters,
                 isDraftMessageEnabled = false,
                 chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
+                messageSearchSort = messageSearchSort,
                 globalState = MutableStateFlow(globalState),
             )
             testScope.advanceUntilIdle()

@@ -89,6 +89,7 @@ import kotlin.coroutines.cancellation.CancellationException
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
  * @param searchDebounceMs The debounce time for search queries.
  * @param isDraftMessageEnabled If the draft message feature is enabled.
+ * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
  * @param globalState A flow emitting the current [GlobalState].
  */
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -103,6 +104,7 @@ public class ChannelListViewModel(
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
     searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
     private val isDraftMessageEnabled: Boolean = false,
+    private val messageSearchSort: QuerySorter<Message>? = null,
     private val globalState: Flow<GlobalState> = chatClient.globalStateFlow,
 ) : ViewModel() {
 
@@ -369,10 +371,14 @@ public class ChannelListViewModel(
     ): SearchMessageState {
         val limit = channelLimit
         val next = currentState.next
-        logger.v { "[searchMessages] #$src; query: '${currentState.query}', next: $next, limit: $limit" }
+        logger.v {
+            "[searchMessages] #$src; query: '${currentState.query}', sort: $messageSearchSort, next: $next, " +
+                "limit: $limit"
+        }
         val result = chatClient.searchMessages(
             channelFilter = channelFilter,
             messageFilter = Filters.autocomplete("text", currentState.query),
+            sort = messageSearchSort,
             limit = limit,
             next = next,
         ).await()
