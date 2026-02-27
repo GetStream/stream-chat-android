@@ -246,6 +246,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -422,18 +423,13 @@ internal constructor(
         "This method is used to avoid race-condition between plugin initialization and dependency resolution.",
     )
     public fun awaitInitializationState(timeoutMilliseconds: Long): InitializationState? {
-        var initState: InitializationState? = clientState.initializationState.value
-        var spendTime = 0L
-        inheritScope { Job(it) }.launch {
-            initState = withTimeoutOrNull(timeoutMilliseconds) {
-                clientState.initializationState.first { it == InitializationState.COMPLETE }
+        val currentState = clientState.initializationState.value
+        if (currentState != InitializationState.INITIALIZING) return currentState
+        return runBlocking {
+            withTimeoutOrNull(timeoutMilliseconds) {
+                clientState.initializationState.first { it != InitializationState.INITIALIZING }
             }
         }
-        while (initState == InitializationState.INITIALIZING && spendTime < timeoutMilliseconds) {
-            java.lang.Thread.sleep(INITIALIZATION_DELAY)
-            spendTime += INITIALIZATION_DELAY
-        }
-        return initState
     }
 
     /**

@@ -60,8 +60,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -233,6 +236,8 @@ public class ChannelListViewModel(
      * queries and loads new data.
      */
     private val searchMessageState: MutableStateFlow<SearchMessageState?> = MutableStateFlow(null)
+
+    private var previousChannelItems: Map<String, ItemState.ChannelItemState> = emptyMap()
 
     private var lastNextQuery: QueryChannelsRequest? = null
 
@@ -452,7 +457,9 @@ public class ChannelListViewModel(
                             )
                         }
                     }
-                }.collectLatest { newState -> channelsState = newState }
+                }.flowOn(Dispatchers.Default)
+                    .debounce(CHANNEL_LIST_DEBOUNCE_MS)
+                    .collectLatest { newState -> channelsState = newState }
             }
         }
     }.onFailure {
@@ -747,12 +754,16 @@ public class ChannelListViewModel(
     ): List<ItemState.ChannelItemState> {
         val mutedChannelIds = channelMutes.map { channelMute -> channelMute.channel?.cid }.toSet()
         return channels.map {
-            ItemState.ChannelItemState(
+            val newItem = ItemState.ChannelItemState(
                 channel = it,
                 isMuted = it.cid in mutedChannelIds,
                 typingUsers = typingEvents[it.cid]?.users ?: emptyList(),
                 draftMessage = draftMessages[it.cid],
             )
+            val previous = previousChannelItems[newItem.key]
+            if (previous != null && previous == newItem) previous else newItem
+        }.also { items ->
+            previousChannelItems = items.associateBy { it.key }
         }
     }
 
@@ -771,6 +782,12 @@ public class ChannelListViewModel(
          * Minimum length of the search query to start searching for channels.
          */
         private const val MIN_CHANNEL_SEARCH_QUERY_LENGTH = 3
+
+        /**
+         * Debounce for channel list state updates. Collapses rapid WebSocket events
+         * (e.g. 30 user.watching.start events) into fewer UI updates.
+         */
+        private const val CHANNEL_LIST_DEBOUNCE_MS = 100L
     }
 
     private data class SearchMessageState(
