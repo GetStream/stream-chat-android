@@ -135,10 +135,16 @@ internal class DatabaseUserRepository(
     }
 
     private fun cacheUsers(users: Collection<User>) {
-        for (userEntity in users) {
-            userCache.put(userEntity.id, userEntity)
+        var changed = false
+        for (user in users) {
+            if (userCache[user.id] != user) {
+                userCache.put(user.id, user)
+                changed = true
+            }
         }
-        scope.launch { latestUsersFlow.value = userCache.snapshot() }
+        if (changed) {
+            scope.launch { latestUsersFlow.value = userCache.snapshot() }
+        }
     }
 
     private fun User.toEntity(): UserEntity =
