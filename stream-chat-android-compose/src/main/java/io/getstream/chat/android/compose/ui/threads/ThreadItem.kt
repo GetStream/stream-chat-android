@@ -293,7 +293,7 @@ private fun formatMessage(message: Message) =
             }
         }
     } else {
-        ChatTheme.messagePreviewFormatter.formatMessagePreview(message, null)
+        ChatTheme.messagePreviewFormatter.formatMessagePreview(message, null, false)
     }
 
 @Composable

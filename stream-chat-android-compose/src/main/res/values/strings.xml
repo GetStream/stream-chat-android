@@ -25,7 +25,25 @@
     <!-- Channel List -->
     <string name="stream_compose_channel_list_draft">Draft: </string>
     <string name="stream_compose_channel_list_you">You</string>
-    <string name="stream_compose_channel_list_empty_channels">No channels available</string>
+    <string name="stream_compose_channel_list_typing">Typing</string>
+    <string name="stream_compose_channel_list_typing_one">%s is typing</string>
+    <string name="stream_compose_channel_list_typing_two">%1$s and %2$s are typing</string>
+    <plurals name="stream_compose_channel_list_typing_many">
+        <item quantity="one">%d person is typing</item>
+        <item quantity="other">%d people are typing</item>
+    </plurals>
+    <string name="stream_compose_channel_list_empty_channels">No conversations yet</string>
+    <string name="stream_compose_channel_list_start_chat">Start a chat</string>
+
+    <!-- Channel List Swipe Actions -->
+    <string name="stream_compose_swipe_action_pin">Pin</string>
+    <string name="stream_compose_swipe_action_unpin">Unpin</string>
+    <string name="stream_compose_swipe_action_mute">Mute</string>
+    <string name="stream_compose_swipe_action_unmute">Unmute</string>
+    <string name="stream_compose_swipe_action_delete">Delete</string>
+    <string name="stream_compose_swipe_action_more">More</string>
+    <string name="stream_compose_swipe_action_archive">Archive</string>
+    <string name="stream_compose_swipe_action_unarchive">Unarchive</string>
     <string name="stream_compose_channel_list_empty_search_results">No results for \"%1$s\"</string>
 
     <!-- Selected Channel Menu -->
@@ -153,8 +171,28 @@
     <string name="stream_compose_message_composer_show_in_channel">Also send as direct message</string>
     <string name="stream_compose_message_composer_file_not_supported">File type is not supported</string>
 
-    <!-- Audio Recording -->
+    <!-- Message Preview -->
     <string name="stream_compose_audio_recording_preview">Voice message</string>
+    <string name="stream_compose_photo_preview">Photo</string>
+    <string name="stream_compose_video_preview">Video</string>
+    <string name="stream_compose_file_preview">File</string>
+    <string name="stream_compose_link_preview">Link</string>
+    <string name="stream_compose_message_deleted_preview">Message deleted</string>
+    <string name="stream_compose_no_messages_yet">No messages yet</string>
+    <plurals name="stream_compose_photos_preview">
+        <item quantity="one">%d Photo</item>
+        <item quantity="other">%d Photos</item>
+    </plurals>
+    <plurals name="stream_compose_videos_preview">
+        <item quantity="one">%d Video</item>
+        <item quantity="other">%d Videos</item>
+    </plurals>
+    <plurals name="stream_compose_files_preview">
+        <item quantity="one">%d File</item>
+        <item quantity="other">%d Files</item>
+    </plurals>
+
+    <!-- Audio Recording -->
     <string name="stream_compose_audio_recording_start">Record audio message</string>
     <string name="stream_compose_audio_recording_hint">Hold to record. Release to send</string>
     <string name="stream_compose_audio_recording_slide_to_cancel">Slide to cancel</string>
@@ -282,8 +320,8 @@
         <item quantity="other">%d votes</item>
     </plurals>
 
-    <string name="stream_compose_poll_created_preview" translatable="false">📊 Poll created: %s</string>
-    <string name="stream_compose_poll_closed_preview" translatable="false">📊 Poll closed: %s</string>
+    <string name="stream_compose_poll_created_preview">Poll created: %s</string>
+    <string name="stream_compose_poll_closed_preview">Poll closed: %s</string>
 
     <!--  Pinned message list  -->
     <string name="stream_compose_pinned_message_list_empty_title">No pinned messages</string>

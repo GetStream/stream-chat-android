@@ -16,21 +16,25 @@
 
 package io.getstream.chat.android.compose.ui.channels.header
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
@@ -42,6 +46,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -78,7 +84,7 @@ public fun ChannelListHeader(
     connectionState: ConnectionState,
     color: Color = ChatTheme.colors.backgroundElevationElevation1,
     shape: Shape = RectangleShape,
-    elevation: Dp = StreamTokens.elevation3,
+    elevation: Dp = 0.dp,
     onAvatarClick: (User?) -> Unit = {},
     onHeaderActionClick: () -> Unit = {},
     leadingContent: @Composable RowScope.() -> Unit = {
@@ -112,17 +118,24 @@ public fun ChannelListHeader(
         color = color,
         shape = shape,
     ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            leadingContent()
+        Column {
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(StreamTokens.spacingSm),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+            ) {
+                leadingContent()
 
-            centerContent()
+                centerContent()
 
-            trailingContent()
+                trailingContent()
+            }
+            HorizontalDivider(
+                thickness = 1.dp,
+                color = ChatTheme.colors.borderCoreDefault,
+            )
         }
     }
 }
@@ -137,19 +150,25 @@ internal fun DefaultChannelHeaderLeadingContent(
     currentUser: User?,
     onAvatarClick: (User?) -> Unit,
 ) {
-    val size = Modifier.size(40.dp)
-
     if (currentUser != null) {
-        ChatTheme.componentFactory.UserAvatar(
-            modifier = size
-                .clickable { onAvatarClick(currentUser) }
-                .testTag("Stream_UserAvatar"),
-            user = currentUser,
-            showIndicator = false,
-            showBorder = false,
-        )
+        Box(
+            modifier = Modifier
+                .size(AvatarSize.ExtraLarge)
+                .clip(CircleShape)
+                .clickable { onAvatarClick(currentUser) },
+            contentAlignment = Alignment.Center,
+        ) {
+            ChatTheme.componentFactory.UserAvatar(
+                modifier = Modifier
+                    .size(AvatarSize.Large)
+                    .testTag("Stream_UserAvatar"),
+                user = currentUser,
+                showIndicator = false,
+                showBorder = false,
+            )
+        }
     } else {
-        Spacer(modifier = size)
+        Spacer(modifier = Modifier.size(AvatarSize.ExtraLarge))
     }
 }
 
@@ -171,9 +190,9 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
                 modifier = Modifier
                     .weight(1f)
                     .wrapContentWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = StreamTokens.spacingMd),
                 text = title,
-                style = ChatTheme.typography.headingMedium,
+                style = ChatTheme.typography.headingSmall,
                 maxLines = 1,
                 color = ChatTheme.colors.textPrimary,
             )
@@ -185,9 +204,9 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
                 modifier = Modifier
                     .weight(1f)
                     .wrapContentWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = StreamTokens.spacingMd),
                 text = stringResource(R.string.stream_compose_disconnected),
-                style = ChatTheme.typography.headingMedium,
+                style = ChatTheme.typography.headingSmall,
                 maxLines = 1,
                 color = ChatTheme.colors.textPrimary,
             )
@@ -204,20 +223,13 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
 internal fun DefaultChannelListHeaderTrailingContent(
     onHeaderActionClick: () -> Unit,
 ) {
-    Surface(
-        modifier = Modifier.size(40.dp),
+    StreamButton(
         onClick = onHeaderActionClick,
-        color = ChatTheme.colors.accentPrimary,
-        shape = CircleShape,
-        shadowElevation = 4.dp,
     ) {
         Icon(
-            modifier = Modifier
-                .wrapContentSize()
-                .testTag("Stream_CreateChannelIcon"),
-            painter = painterResource(id = R.drawable.stream_compose_ic_new_chat),
+            modifier = Modifier.testTag("Stream_CreateChannelIcon"),
+            painter = painterResource(id = R.drawable.stream_compose_ic_add),
             contentDescription = stringResource(id = R.string.stream_compose_channel_list_header_new_chat),
-            tint = Color.White,
         )
     }
 }

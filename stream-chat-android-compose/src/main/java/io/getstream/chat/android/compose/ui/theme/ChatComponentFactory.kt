@@ -69,7 +69,6 @@ import androidx.core.net.toUri
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.channels.list.ChannelOptionState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
@@ -98,11 +97,14 @@ import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelItemTrai
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelListEmptyContent
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelListLoadingIndicator
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelSearchEmptyContent
+import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelSwipeActions
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelsLoadingMoreIndicator
 import io.getstream.chat.android.compose.ui.channels.list.DefaultSearchResultItemCenterContent
 import io.getstream.chat.android.compose.ui.channels.list.DefaultSearchResultItemLeadingContent
 import io.getstream.chat.android.compose.ui.channels.list.DefaultSearchResultItemTrailingContent
+import io.getstream.chat.android.compose.ui.channels.list.LocalSwipeRevealCoordinator
 import io.getstream.chat.android.compose.ui.channels.list.SearchResultItem
+import io.getstream.chat.android.compose.ui.channels.list.SwipeableChannelItem
 import io.getstream.chat.android.compose.ui.components.DefaultSearchClearButton
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLabel
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLeadingIcon
@@ -380,16 +382,25 @@ public interface ChatComponentFactory {
 
     /**
      * The default empty content of the channel list.
+     *
+     * @param modifier Modifier for styling.
+     * @param onStartChatClick Optional callback for the "Start a chat" button.
      */
     @Composable
-    public fun ChannelListEmptyContent(modifier: Modifier) {
+    public fun ChannelListEmptyContent(
+        modifier: Modifier,
+        onStartChatClick: (() -> Unit)?,
+    ) {
         DefaultChannelListEmptyContent(
             modifier = modifier,
+            onStartChatClick = onStartChatClick,
         )
     }
 
     /**
      * The default channel list item content.
+     * When swipe actions are enabled and a [SwipeRevealCoordinator][LocalSwipeRevealCoordinator]
+     * is provided, wraps the item in [SwipeableChannelItem].
      */
     @Composable
     public fun LazyItemScope.ChannelListItemContent(
@@ -398,13 +409,43 @@ public interface ChatComponentFactory {
         onChannelClick: (Channel) -> Unit,
         onChannelLongClick: (Channel) -> Unit,
     ) {
-        ChannelItem(
-            modifier = Modifier.animateItem(),
-            channelItem = channelItem,
-            currentUser = currentUser,
-            onChannelClick = onChannelClick,
-            onChannelLongClick = onChannelLongClick,
-        )
+        val coordinator = LocalSwipeRevealCoordinator.current
+        val swipeEnabled = ChatTheme.config.channelList.swipeActionsEnabled && coordinator != null
+
+        if (swipeEnabled) {
+            SwipeableChannelItem(
+                modifier = Modifier.animateItem(),
+                channelCid = channelItem.channel.cid,
+                backgroundColor = ChatTheme.colors.backgroundCoreApp,
+                swipeActions = { ChannelSwipeActions(channelItem) },
+            ) {
+                ChannelItem(
+                    channelItem = channelItem,
+                    currentUser = currentUser,
+                    onChannelClick = onChannelClick,
+                    onChannelLongClick = onChannelLongClick,
+                )
+            }
+        } else {
+            ChannelItem(
+                modifier = Modifier.animateItem(),
+                channelItem = channelItem,
+                currentUser = currentUser,
+                onChannelClick = onChannelClick,
+                onChannelLongClick = onChannelLongClick,
+            )
+        }
+    }
+
+    /**
+     * The swipe actions revealed when swiping a channel list item.
+     * Override this to provide custom swipe actions.
+     *
+     * @param channelItem The channel item to build actions for.
+     */
+    @Composable
+    public fun ChannelSwipeActions(channelItem: ItemState.ChannelItemState) {
+        DefaultChannelSwipeActions(channelItem)
     }
 
     /**
@@ -2058,26 +2099,27 @@ public interface ChatComponentFactory {
      *
      * @param modifier The modifier for the menu.
      * @param selectedChannel The selected channel.
-     * @param isMuted Whether the channel is muted.
      * @param currentUser The current user.
-     * @param onChannelOptionClick Callback for when a channel option is clicked.
+     * @param channelActions The list of channel actions to show in the menu.
+     * @param onChannelOptionConfirm Callback for confirming a channel action.
+     * Routes through confirmation dialogs for destructive actions.
      * @param onDismiss Callback for when the menu is dismissed.
      */
     @Composable
     public fun ChannelMenu(
         modifier: Modifier,
         selectedChannel: Channel,
-        isMuted: Boolean,
         currentUser: User?,
-        onChannelOptionClick: (ChannelAction) -> Unit,
+        channelActions: List<ChannelAction>,
+        onChannelOptionConfirm: (ChannelAction) -> Unit,
         onDismiss: () -> Unit,
     ) {
         SelectedChannelMenu(
             modifier = modifier,
             selectedChannel = selectedChannel,
-            isMuted = isMuted,
             currentUser = currentUser,
-            onChannelOptionClick = onChannelOptionClick,
+            channelActions = channelActions,
+            onChannelOptionConfirm = onChannelOptionConfirm,
             onDismiss = onDismiss,
         )
     }
@@ -2103,18 +2145,19 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the center content of the SelectedChannelMenu.
      *
-     * @param onChannelOptionClick Callback for when a channel option is clicked.
-     * @param channelOptions List of channel options.
+     * @param onChannelOptionConfirm Callback for confirming a channel action.
+     * Routes through confirmation dialogs for destructive actions.
+     * @param channelActions List of channel actions.
      */
     @Composable
     public fun ChannelMenuCenterContent(
         modifier: Modifier,
-        onChannelOptionClick: (ChannelAction) -> Unit,
-        channelOptions: List<ChannelOptionState>,
+        onChannelOptionConfirm: (ChannelAction) -> Unit,
+        channelActions: List<ChannelAction>,
     ) {
         ChannelMenuOptions(
-            channelOptions = channelOptions,
-            onChannelOptionClick = onChannelOptionClick,
+            channelActions = channelActions,
+            onChannelOptionConfirm = onChannelOptionConfirm,
             modifier = modifier,
         )
     }
@@ -2122,43 +2165,51 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the options content of the SelectedChannelMenu.
      *
-     * @param onChannelOptionClick Callback for when a channel option is clicked.
-     * @param channelOptions List of channel options.
+     * @param onChannelOptionConfirm Callback for confirming a channel action.
+     * Routes through confirmation dialogs for destructive actions.
+     * @param channelActions List of channel actions.
      */
     @Composable
     public fun ChannelMenuOptions(
         modifier: Modifier,
-        onChannelOptionClick: (ChannelAction) -> Unit,
-        channelOptions: List<ChannelOptionState>,
+        onChannelOptionConfirm: (ChannelAction) -> Unit,
+        channelActions: List<ChannelAction>,
     ) {
         ChannelOptions(
-            options = channelOptions,
-            onChannelOptionClick = onChannelOptionClick,
+            actions = channelActions,
+            onChannelOptionConfirm = onChannelOptionConfirm,
             modifier = modifier,
         )
     }
 
     /**
-     * Factory method for creating the footer content of the SelectedChannelMenu.
+     * Factory method for creating a single channel option item.
      *
-     * @param modifier The modifier for the footer.
+     * @param modifier The modifier for the item.
+     * @param action The channel action to render.
+     * @param onClick Callback for when the item is clicked.
      */
     @Composable
     public fun ChannelOptionsItem(
         modifier: Modifier,
-        option: ChannelOptionState,
+        action: ChannelAction,
         onClick: () -> Unit,
     ) {
+        val titleColor = if (action.isDestructive) {
+            ChatTheme.colors.accentError
+        } else {
+            ChatTheme.colors.textPrimary
+        }
         MenuOptionItem(
-            modifier = modifier,
-            title = option.title,
-            titleColor = option.titleColor,
+            modifier = modifier.padding(horizontal = StreamTokens.spacingMd),
+            title = action.label,
+            titleColor = titleColor,
             leadingIcon = {
-                ChannelOptionsItemLeadingIcon(Modifier, option)
+                ChannelOptionsItemLeadingIcon(Modifier, action)
             },
             onClick = onClick,
-            style = ChatTheme.typography.bodyEmphasis,
-            itemHeight = 56.dp,
+            style = ChatTheme.typography.bodyDefault,
+            itemHeight = 44.dp,
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
         )
@@ -2167,16 +2218,21 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the leading icon of the Channel options menu item.
      *
-     * @param option The channel option state.
+     * @param action The channel action.
      */
     @Composable
-    public fun ChannelOptionsItemLeadingIcon(modifier: Modifier, option: ChannelOptionState) {
+    public fun ChannelOptionsItemLeadingIcon(modifier: Modifier, action: ChannelAction) {
+        val iconColor = if (action.isDestructive) {
+            ChatTheme.colors.accentError
+        } else {
+            ChatTheme.colors.textSecondary
+        }
         Icon(
             modifier = modifier
-                .size(56.dp)
-                .padding(16.dp),
-            painter = option.iconPainter,
-            tint = option.iconColor,
+                .padding(end = StreamTokens.spacingXs) // 8dp gap to text
+                .size(StreamTokens.spacingXl), // 24dp
+            painter = painterResource(id = action.icon),
+            tint = iconColor,
             contentDescription = null,
         )
     }

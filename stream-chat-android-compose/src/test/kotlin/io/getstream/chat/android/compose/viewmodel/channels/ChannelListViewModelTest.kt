@@ -115,8 +115,13 @@ internal class ChannelListViewModelTest {
             .get(this)
 
         viewModel.selectChannel(channel1)
-        viewModel.performChannelAction(DeleteConversation(channel1))
-        viewModel.deleteConversation(channel1)
+        viewModel.executeOrConfirm(
+            DeleteConversation(
+                channel = channel1,
+                label = "Delete",
+                onAction = { viewModel.deleteConversation(channel1) },
+            ),
+        )
 
         viewModel.activeChannelAction `should be equal to` null
         viewModel.selectedChannel.value `should be equal to` null

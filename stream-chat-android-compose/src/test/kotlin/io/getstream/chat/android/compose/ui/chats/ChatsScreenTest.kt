@@ -62,8 +62,7 @@ internal class ChatsScreenTest : MockedChatClientTest {
         }
 
         composeTestRule.onNodeWithText("Stream Chat").assertExists()
-        composeTestRule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate))
-            .assertExists()
+        composeTestRule.onNodeWithTag("Stream_ChannelListLoading").assertExists()
     }
 
     @Test
@@ -76,8 +75,7 @@ internal class ChatsScreenTest : MockedChatClientTest {
         }
 
         composeTestRule.onNodeWithText("Search").assertExists()
-        composeTestRule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate))
-            .assertExists()
+        composeTestRule.onNodeWithTag("Stream_ChannelListLoading").assertExists()
     }
 
     @Test

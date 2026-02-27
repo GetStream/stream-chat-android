@@ -90,6 +90,7 @@ public fun SearchResultItem(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingMd),
         ) {
             leadingContent(searchResultItemState)
             centerContent(searchResultItemState)
@@ -122,12 +123,12 @@ internal fun DefaultSearchResultItemLeadingContent(
                 user = user,
                 modifier = Modifier
                     .padding(
-                        start = StreamTokens.spacingXs,
-                        end = 4.dp,
-                        top = StreamTokens.spacingSm,
-                        bottom = StreamTokens.spacingSm,
+                        start = StreamTokens.spacingMd,
+                        end = 0.dp,
+                        top = StreamTokens.spacingMd,
+                        bottom = StreamTokens.spacingMd,
                     )
-                    .size(40.dp),
+                    .size(48.dp),
                 showIndicator = user.shouldShowOnlineIndicator(
                     userPresence = ChatTheme.userPresence,
                     currentUser = currentUser,
@@ -151,15 +152,19 @@ internal fun RowScope.DefaultSearchResultItemCenterContent(
 ) {
     Column(
         modifier = Modifier
-            .padding(start = 4.dp, end = 4.dp)
+            .padding(
+                start = StreamTokens.spacing2xs,
+                end = StreamTokens.spacing2xs,
+                top = StreamTokens.spacing3xs,
+                bottom = StreamTokens.spacing3xs,
+            )
             .weight(1f)
             .wrapContentHeight(),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
     ) {
         Text(
             text = ChatTheme.searchResultNameFormatter.formatMessageTitle(searchResultItemState, currentUser),
-            style = ChatTheme.typography.bodyEmphasis,
-            fontSize = 16.sp,
+            style = ChatTheme.typography.bodyDefault,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             color = ChatTheme.colors.textPrimary,
@@ -169,10 +174,11 @@ internal fun RowScope.DefaultSearchResultItemCenterContent(
             text = ChatTheme.messagePreviewFormatter.formatMessagePreview(
                 searchResultItemState.message,
                 currentUser,
+                false,
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = ChatTheme.typography.bodyDefault,
+            style = ChatTheme.typography.captionDefault,
             color = ChatTheme.colors.textSecondary,
         )
     }
@@ -190,17 +196,21 @@ internal fun RowScope.DefaultSearchResultItemTrailingContent(
     Column(
         modifier = Modifier
             .padding(
-                start = 4.dp,
-                end = StreamTokens.spacingXs,
-                top = StreamTokens.spacingSm,
-                bottom = StreamTokens.spacingSm,
+                start = StreamTokens.spacing2xs,
+                end = StreamTokens.spacingMd,
+                top = StreamTokens.spacingMd,
+                bottom = StreamTokens.spacingMd,
             )
             .wrapContentHeight()
-            .align(Alignment.Bottom),
+            .align(Alignment.CenterVertically),
         horizontalAlignment = Alignment.End,
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Timestamp(date = searchResultItemState.message.createdAt)
-        }
+        Timestamp(
+            date = searchResultItemState.message.createdAt,
+            textStyle = ChatTheme.typography.captionDefault.copy(
+                color = ChatTheme.colors.textTertiary,
+                lineHeight = 20.sp,
+            ),
+        )
     }
 }

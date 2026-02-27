@@ -16,11 +16,14 @@
 
 package io.getstream.chat.android.compose.ui.util
 
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.material3.Icon
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -52,23 +55,76 @@ public interface MessagePreviewIconFactory {
 internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
 
     companion object {
-        /**
-         * The key for the voice message preview icon.
-         */
         internal const val VOICE_MESSAGE = "voice_message"
+        internal const val PHOTO = "photo"
+        internal const val VIDEO = "video"
+        internal const val FILE = "file"
+        internal const val LINK = "link"
+        internal const val LOCATION = "location"
+        internal const val POLL = "poll"
     }
 
+    @Suppress("LongMethod")
     override fun createPreviewIcons(): Map<String, InlineTextContent> {
+        val placeholder = Placeholder(
+            width = 14.sp,
+            height = 14.sp,
+            placeholderVerticalAlign = PlaceholderVerticalAlign.Center,
+        )
+        val iconModifier = Modifier.size(14.dp)
         return mapOf(
-            VOICE_MESSAGE to InlineTextContent(
-                placeholder = Placeholder(
-                    width = 16.sp,
-                    height = 16.sp,
-                    placeholderVerticalAlign = PlaceholderVerticalAlign.Center,
-                ),
-            ) {
+            VOICE_MESSAGE to InlineTextContent(placeholder) {
                 Icon(
+                    modifier = iconModifier,
                     painter = painterResource(id = R.drawable.stream_compose_ic_mic),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textSecondary,
+                )
+            },
+            PHOTO to InlineTextContent(placeholder) {
+                Icon(
+                    modifier = iconModifier,
+                    painter = painterResource(id = R.drawable.stream_compose_ic_camera),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textSecondary,
+                )
+            },
+            VIDEO to InlineTextContent(placeholder) {
+                Icon(
+                    modifier = iconModifier,
+                    painter = painterResource(id = R.drawable.stream_compose_ic_video),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textSecondary,
+                )
+            },
+            FILE to InlineTextContent(placeholder) {
+                Icon(
+                    modifier = iconModifier,
+                    painter = painterResource(id = R.drawable.stream_compose_ic_file),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textSecondary,
+                )
+            },
+            LINK to InlineTextContent(placeholder) {
+                Icon(
+                    modifier = iconModifier,
+                    painter = painterResource(id = R.drawable.stream_compose_ic_link),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textSecondary,
+                )
+            },
+            LOCATION to InlineTextContent(placeholder) {
+                Icon(
+                    modifier = iconModifier,
+                    painter = painterResource(id = R.drawable.stream_compose_ic_map_pin),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textSecondary,
+                )
+            },
+            POLL to InlineTextContent(placeholder) {
+                Icon(
+                    modifier = iconModifier,
+                    painter = painterResource(id = R.drawable.stream_compose_ic_poll),
                     contentDescription = null,
                     tint = ChatTheme.colors.textSecondary,
                 )

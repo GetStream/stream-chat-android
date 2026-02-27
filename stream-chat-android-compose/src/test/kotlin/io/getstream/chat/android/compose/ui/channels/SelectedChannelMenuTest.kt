@@ -28,6 +28,7 @@ import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewUserData
+import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
 import org.junit.Rule
 import org.junit.Test
 
@@ -39,15 +40,18 @@ internal class SelectedChannelMenuTest : PaparazziComposeTest {
     @Test
     fun `selected channel`() {
         snapshot {
+            val channel = PreviewChannelData.channelWithManyMembers.copy(
+                ownCapabilities = ChannelCapabilities.toSet(),
+            )
             Box(modifier = Modifier.fillMaxSize()) {
                 SelectedChannelMenu(
                     modifier = Modifier.align(Alignment.BottomCenter),
-                    selectedChannel = PreviewChannelData.channelWithManyMembers.copy(
-                        ownCapabilities = ChannelCapabilities.toSet(),
-                    ),
-                    isMuted = false,
+                    selectedChannel = channel,
                     currentUser = PreviewUserData.user1,
-                    onChannelOptionClick = {},
+                    channelActions = listOf(
+                        ViewInfo(channel = channel, label = "Channel Info", onAction = {}),
+                    ),
+                    onChannelOptionConfirm = {},
                     onDismiss = {},
                 )
             }
@@ -57,15 +61,18 @@ internal class SelectedChannelMenuTest : PaparazziComposeTest {
     @Test
     fun `selected channel in dark mode`() {
         snapshot(isInDarkMode = true) {
+            val channel = PreviewChannelData.channelWithManyMembers.copy(
+                ownCapabilities = ChannelCapabilities.toSet(),
+            )
             Box(modifier = Modifier.fillMaxSize()) {
                 SelectedChannelMenu(
                     modifier = Modifier.align(Alignment.BottomCenter),
-                    selectedChannel = PreviewChannelData.channelWithManyMembers.copy(
-                        ownCapabilities = ChannelCapabilities.toSet(),
-                    ),
-                    isMuted = false,
+                    selectedChannel = channel,
                     currentUser = PreviewUserData.user1,
-                    onChannelOptionClick = {},
+                    channelActions = listOf(
+                        ViewInfo(channel = channel, label = "Channel Info", onAction = {}),
+                    ),
+                    onChannelOptionConfirm = {},
                     onDismiss = {},
                 )
             }
