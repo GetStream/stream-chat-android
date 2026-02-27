@@ -240,6 +240,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun TitleRow(
     channelItemState: ItemState.ChannelItemState,
@@ -310,6 +311,7 @@ private fun TitleRow(
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun MessageRow(
     channelItemState: ItemState.ChannelItemState,
