@@ -51,14 +51,6 @@ internal fun MessageComposerInputTrailingContent(
     val attachments = state.attachments
     val isInEditMode = state.action is Edit
 
-    if (coolDownTime > 0 && !isInEditMode) {
-        ChatTheme.componentFactory.MessageComposerCoolDownIndicator(
-            modifier = Modifier.Companion,
-            coolDownTime = coolDownTime,
-        )
-        return
-    }
-
     val canSendMessage = state.canSendMessage()
     val isInputValid = (inputText.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty()
     val isRecording = state.recording !is RecordingState.Idle
@@ -68,6 +60,7 @@ internal fun MessageComposerInputTrailingContent(
     val isRecordingEnabled = isRecordAudioPermissionDeclared && ChatTheme.config.composer.audioRecordingEnabled
 
     val actionButton = when {
+        coolDownTime > 0 -> ActionButton.CoolDown(coolDownTime)
         isInEditMode -> ActionButton.Save(enabled = hasValidContent)
         hasValidContent -> ActionButton.Send
         isRecordingEnabled -> ActionButton.Record
@@ -76,16 +69,21 @@ internal fun MessageComposerInputTrailingContent(
 
     Crossfade(targetState = actionButton) { button ->
         when (button) {
+            is ActionButton.CoolDown -> ChatTheme.componentFactory.MessageComposerCoolDownIndicator(
+                modifier = Modifier.Companion,
+                coolDownTime = button.coolDownTime,
+            )
+
             is ActionButton.Save -> ChatTheme.componentFactory.MessageComposerSaveButton(
                 enabled = button.enabled,
                 onClick = { onSendClick(inputText, attachments) },
             )
 
-            ActionButton.Send -> ChatTheme.componentFactory.MessageComposerSendButton(
+            is ActionButton.Send -> ChatTheme.componentFactory.MessageComposerSendButton(
                 onClick = { onSendClick(inputText, attachments) },
             )
 
-            ActionButton.Record -> ChatTheme.componentFactory.MessageComposerAudioRecordingButton(
+            is ActionButton.Record -> ChatTheme.componentFactory.MessageComposerAudioRecordingButton(
                 state = state.recording,
                 recordingActions = recordingActions,
             )
@@ -96,6 +94,7 @@ internal fun MessageComposerInputTrailingContent(
 }
 
 private sealed interface ActionButton {
+    data class CoolDown(val coolDownTime: Int) : ActionButton
     data class Save(val enabled: Boolean) : ActionButton
     data object Send : ActionButton
     data object Record : ActionButton
