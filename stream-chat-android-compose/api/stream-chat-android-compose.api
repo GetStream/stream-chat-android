@@ -2884,11 +2884,11 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 	public abstract fun SearchResultItemLeadingContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun SearchResultItemTrailingContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun SwipeToReplyContent (Landroidx/compose/foundation/layout/RowScope;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun ThreadListBanner (Lio/getstream/chat/android/compose/ui/threads/ThreadListBannerState;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ThreadListEmptyContent (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ThreadListItem (Lio/getstream/chat/android/models/Thread;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ThreadListLoadingContent (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ThreadListLoadingMoreContent (Landroidx/compose/runtime/Composer;I)V
-	public abstract fun ThreadListUnreadThreadsBanner (ILkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun UserAvatar (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;ZZLandroidx/compose/runtime/Composer;I)V
 	public abstract fun messageListItemModifier (Landroidx/compose/foundation/lazy/LazyItemScope;Landroidx/compose/runtime/Composer;I)Landroidx/compose/ui/Modifier;
 }
@@ -3071,11 +3071,11 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFacto
 	public static fun SearchResultItemLeadingContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
 	public static fun SearchResultItemTrailingContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;Landroidx/compose/runtime/Composer;I)V
 	public static fun SwipeToReplyContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Landroidx/compose/runtime/Composer;I)V
+	public static fun ThreadListBanner (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/threads/ThreadListBannerState;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public static fun ThreadListEmptyContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
 	public static fun ThreadListItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/models/Thread;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
 	public static fun ThreadListLoadingContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
 	public static fun ThreadListLoadingMoreContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/runtime/Composer;I)V
-	public static fun ThreadListUnreadThreadsBanner (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;ILkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public static fun UserAvatar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;ZZLandroidx/compose/runtime/Composer;I)V
 	public static fun messageListItemModifier (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Landroidx/compose/runtime/Composer;I)Landroidx/compose/ui/Modifier;
 }
@@ -3851,6 +3851,23 @@ public final class io/getstream/chat/android/compose/ui/threads/ComposableSingle
 	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
+public final class io/getstream/chat/android/compose/ui/threads/ComposableSingletons$ThreadListBannerKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/threads/ComposableSingletons$ThreadListBannerKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
+	public static field lambda-3 Lkotlin/jvm/functions/Function2;
+	public static field lambda-4 Lkotlin/jvm/functions/Function2;
+	public static field lambda-5 Lkotlin/jvm/functions/Function2;
+	public static field lambda-6 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-3$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-4$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-5$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-6$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class io/getstream/chat/android/compose/ui/threads/ComposableSingletons$ThreadListKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/threads/ComposableSingletons$ThreadListKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
@@ -3883,26 +3900,48 @@ public final class io/getstream/chat/android/compose/ui/threads/ComposableSingle
 	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
-public final class io/getstream/chat/android/compose/ui/threads/ComposableSingletons$UnreadThreadsBannerKt {
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/threads/ComposableSingletons$UnreadThreadsBannerKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function2;
-	public static field lambda-2 Lkotlin/jvm/functions/Function2;
-	public fun <init> ()V
-	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-}
-
 public final class io/getstream/chat/android/compose/ui/threads/ThreadItemKt {
 	public static final fun ThreadItem (Lio/getstream/chat/android/models/Thread;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/threads/ThreadListBannerKt {
+	public static final fun ThreadListBanner (Lio/getstream/chat/android/compose/ui/threads/ThreadListBannerState;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+}
+
+public abstract interface class io/getstream/chat/android/compose/ui/threads/ThreadListBannerState {
+}
+
+public final class io/getstream/chat/android/compose/ui/threads/ThreadListBannerState$Error : io/getstream/chat/android/compose/ui/threads/ThreadListBannerState {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/threads/ThreadListBannerState$Error;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/ui/threads/ThreadListBannerState$Loading : io/getstream/chat/android/compose/ui/threads/ThreadListBannerState {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/threads/ThreadListBannerState$Loading;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/ui/threads/ThreadListBannerState$UnreadThreads : io/getstream/chat/android/compose/ui/threads/ThreadListBannerState {
+	public static final field $stable I
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lio/getstream/chat/android/compose/ui/threads/ThreadListBannerState$UnreadThreads;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/threads/ThreadListBannerState$UnreadThreads;IILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/threads/ThreadListBannerState$UnreadThreads;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCount ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/ui/threads/ThreadListKt {
 	public static final fun ThreadList (Lio/getstream/chat/android/compose/viewmodel/threads/ThreadListViewModel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V
 	public static final fun ThreadList (Lio/getstream/chat/android/ui/common/state/threads/ThreadListState;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V
-}
-
-public final class io/getstream/chat/android/compose/ui/threads/UnreadThreadsBannerKt {
-	public static final fun UnreadThreadsBanner (ILandroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/util/ChannelUtilsKt {

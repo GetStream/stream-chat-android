@@ -16,9 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.threads
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,9 +35,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.valentinilk.shimmer.ShimmerBounds
-import com.valentinilk.shimmer.rememberShimmer
-import com.valentinilk.shimmer.shimmer
+import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -50,18 +46,10 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
  *
  * @param modifier Modifier for styling.
  */
-@Suppress("LongMethod")
 @Composable
 internal fun ThreadListLoadingItem(modifier: Modifier = Modifier) {
-    val shimmer = rememberShimmer(shimmerBounds = ShimmerBounds.View)
-    val baseColor = ChatTheme.colors.backgroundCoreSurface
-    val highlightColor = ChatTheme.colors.skeletonLoadingHighlight
     val borderColor = ChatTheme.colors.borderCoreSubtle
-
-    @Composable
-    fun Modifier.skeleton(): Modifier = background(baseColor)
-        .shimmer(shimmer)
-        .background(highlightColor)
+    val highlightColor = ChatTheme.colors.skeletonLoadingHighlight
 
     Row(
         modifier = modifier
@@ -81,11 +69,11 @@ internal fun ThreadListLoadingItem(modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.Top,
     ) {
         // Avatar
-        Box(
+        ShimmerProgressIndicator(
             modifier = Modifier
                 .size(AvatarSize.ExtraLarge)
-                .clip(CircleShape)
-                .skeleton(),
+                .clip(CircleShape),
+            highlightColor = highlightColor,
         )
 
         // Content
@@ -100,21 +88,19 @@ internal fun ThreadListLoadingItem(modifier: Modifier = Modifier) {
                     .padding(vertical = StreamTokens.spacing2xs),
                 verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
             ) {
-                // Channel / thread title
-                Box(
+                ShimmerProgressIndicator(
                     modifier = Modifier
                         .width(120.dp)
                         .height(StreamTokens.size12)
-                        .clip(RoundedCornerShape(StreamTokens.radiusFull))
-                        .skeleton(),
+                        .clip(RoundedCornerShape(StreamTokens.radiusFull)),
+                    highlightColor = highlightColor,
                 )
-                // Message preview
-                Box(
+                ShimmerProgressIndicator(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(20.dp)
-                        .clip(RoundedCornerShape(StreamTokens.radiusFull))
-                        .skeleton(),
+                        .clip(RoundedCornerShape(StreamTokens.radiusFull)),
+                    highlightColor = highlightColor,
                 )
             }
 
@@ -123,39 +109,35 @@ internal fun ThreadListLoadingItem(modifier: Modifier = Modifier) {
                 horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                // Reply author avatar
-                Box(
+                ShimmerProgressIndicator(
                     modifier = Modifier
                         .size(AvatarSize.Small)
-                        .clip(CircleShape)
-                        .skeleton(),
+                        .clip(CircleShape),
+                    highlightColor = highlightColor,
                 )
-                // Reply author name
-                Box(
+                ShimmerProgressIndicator(
                     modifier = Modifier
                         .width(64.dp)
                         .height(StreamTokens.size12)
-                        .clip(RoundedCornerShape(StreamTokens.radiusFull))
-                        .skeleton(),
+                        .clip(RoundedCornerShape(StreamTokens.radiusFull)),
+                    highlightColor = highlightColor,
                 )
-                // Reply preview text
-                Box(
+                ShimmerProgressIndicator(
                     modifier = Modifier
                         .width(64.dp)
                         .height(StreamTokens.size12)
-                        .clip(RoundedCornerShape(StreamTokens.radiusFull))
-                        .skeleton(),
+                        .clip(RoundedCornerShape(StreamTokens.radiusFull)),
+                    highlightColor = highlightColor,
                 )
             }
         }
 
-        // Timestamp
-        Box(
+        ShimmerProgressIndicator(
             modifier = Modifier
                 .width(48.dp)
                 .height(StreamTokens.size16)
-                .clip(RoundedCornerShape(StreamTokens.radiusFull))
-                .skeleton(),
+                .clip(RoundedCornerShape(StreamTokens.radiusFull)),
+            highlightColor = highlightColor,
         )
     }
 }

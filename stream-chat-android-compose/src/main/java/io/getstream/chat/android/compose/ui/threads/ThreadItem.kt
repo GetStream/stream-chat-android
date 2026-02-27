@@ -84,11 +84,13 @@ public fun ThreadItem(
         modifier = modifier
             .fillMaxWidth()
             .drawBehind {
+                val strokeWidth = 1.dp.toPx()
+                val y = size.height - strokeWidth / 2
                 drawLine(
                     color = borderColor,
-                    start = Offset(0f, size.height),
-                    end = Offset(size.width, size.height),
-                    strokeWidth = 1.dp.toPx(),
+                    start = Offset(0f, y),
+                    end = Offset(size.width, y),
+                    strokeWidth = strokeWidth,
                 )
             }
             .padding(StreamTokens.spacing2xs)
@@ -98,7 +100,7 @@ public fun ThreadItem(
                 indication = ripple(),
                 interactionSource = remember { MutableInteractionSource() },
             )
-            .padding(all = StreamTokens.spacingMd),
+            .padding(all = StreamTokens.spacingSm),
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
         verticalAlignment = Alignment.Top,
     ) {

@@ -20,6 +20,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.valentinilk.shimmer.shimmer
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamShimmerTheme
@@ -28,13 +29,19 @@ import io.getstream.chat.android.compose.ui.theme.StreamShimmerTheme
  * Displays a shimmer progress indicator using [StreamShimmerTheme].
  *
  * @param modifier The modifier to be applied to the component.
+ * @param baseColor The background color shown beneath the shimmer.
+ * @param highlightColor The color revealed by the shimmer animation.
  */
 @Composable
-internal fun ShimmerProgressIndicator(modifier: Modifier = Modifier) {
+internal fun ShimmerProgressIndicator(
+    modifier: Modifier = Modifier,
+    baseColor: Color = ChatTheme.colors.backgroundCoreSurface,
+    highlightColor: Color = ChatTheme.colors.backgroundCoreApp,
+) {
     Box(
         modifier = modifier
-            .background(color = ChatTheme.colors.backgroundCoreSurface)
+            .background(color = baseColor)
             .shimmer()
-            .background(color = ChatTheme.colors.backgroundCoreApp),
+            .background(color = highlightColor),
     )
 }
