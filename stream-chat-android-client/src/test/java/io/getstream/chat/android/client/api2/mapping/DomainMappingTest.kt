@@ -62,6 +62,7 @@ import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
 import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
+import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
@@ -757,7 +758,8 @@ internal class DomainMappingTest {
         val downstreamThreadDto = randomDownstreamThreadDto(
             createdByUserId = user1.id,
             createdBy = user1,
-            threadParticipants = listOf(participant1Dto, participant2Dto),
+            // Intentionally unsorted to validate sortedByLastReply() in mapping.
+            threadParticipants = listOf(participant2Dto, participant1Dto),
             draft = randomDownstreamDraftDto(
                 message = randomDownstreamDraftMessageDto(text = "Draft message"),
                 channelCid = "messaging:123",
@@ -775,7 +777,9 @@ internal class DomainMappingTest {
             createdByUserId = downstreamThreadDto.created_by_user_id,
             createdBy = with(sut) { downstreamThreadDto.created_by?.toDomain() },
             participantCount = downstreamThreadDto.participant_count,
-            threadParticipants = with(sut) { listOf(participant1Dto, participant2Dto).map { it.toDomain() } },
+            threadParticipants = with(sut) {
+                listOf(participant1Dto, participant2Dto).map { it.toDomain() }.sortedByLastReply()
+            },
             lastMessageAt = downstreamThreadDto.last_message_at,
             createdAt = downstreamThreadDto.created_at,
             updatedAt = downstreamThreadDto.updated_at,

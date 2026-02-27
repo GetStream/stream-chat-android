@@ -84,18 +84,14 @@ public fun Thread.upsertReply(reply: Message): Thread {
         it.getCreatedAtOrNull()
     }
     val lastMessageAt = sortedNewReplies.lastOrNull()?.getCreatedAtOrNull()
-    // The new message could be from a new thread participant
-    val threadParticipants = if (isInsert) {
-        upsertThreadParticipantInList(
-            newParticipant = ThreadParticipant(
-                user = reply.user,
-                lastThreadMessageAt = reply.createdAt ?: reply.createdLocallyAt,
-            ),
-            participants = this.threadParticipants,
-        )
-    } else {
-        this.threadParticipants
-    }
+    // Update participant recency on every new reply so avatar stack reflects most active participants.
+    val threadParticipants = upsertThreadParticipantInList(
+        newParticipant = ThreadParticipant(
+            user = reply.user,
+            lastThreadMessageAt = reply.getCreatedAtOrNull(),
+        ),
+        participants = this.threadParticipants,
+    )
     val participantCount = threadParticipants.size
     // Update read counts (+1 for each non-sender of the message)
     val read = if (isInsert) {

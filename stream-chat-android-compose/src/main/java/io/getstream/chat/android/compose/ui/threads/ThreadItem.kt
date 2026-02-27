@@ -151,7 +151,7 @@ internal fun ThreadItemParentMessage(thread: Thread, currentUser: User?) {
     val isOneToOneChannel = thread.channel?.isOneToOne(currentUser) ?: false
     val message = thread.parentMessage
     val formatter = ChatTheme.messagePreviewFormatter
-    val text = remember(message, currentUser) {
+    val text = remember(message, currentUser, isOneToOneChannel, formatter) {
         formatter.formatMessagePreview(message, currentUser, isOneToOneChannel)
     }
     Text(
@@ -211,7 +211,7 @@ internal fun ThreadItemReplyCount(replyCount: Int) {
 internal fun ThreadItemTimestamp(thread: Thread) {
     val updatedAt = thread.updatedAt
     val context = LocalContext.current
-    val timestamp = remember(updatedAt) {
+    val timestamp = remember(updatedAt, context) {
         ThreadTimestampFormatter.format(updatedAt, context)
     }
     Text(

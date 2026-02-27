@@ -189,7 +189,7 @@ public fun ThreadList(
                         threads = state.threads,
                         isLoading = state.isLoading,
                         isLoadingMore = state.isLoadingMore,
-                        modifier = modifier,
+                        modifier = Modifier,
                         onLoadMore = onLoadMore,
                         itemContent = itemContent,
                         loadingMoreContent = loadingMoreContent,

@@ -48,8 +48,14 @@ internal class ThreadExtensionsTests {
         createdAt = now,
         user = user2,
     )
-    private val threadParticipant1 = randomThreadParticipant(user = user1)
-    private val threadParticipant2 = randomThreadParticipant(user = user2)
+    private val threadParticipant1 = randomThreadParticipant(
+        user = user1,
+        lastThreadMessageAt = now,
+    )
+    private val threadParticipant2 = randomThreadParticipant(
+        user = user2,
+        lastThreadMessageAt = Date(now.time - 1_000),
+    )
     private val channelUserRead1 = ChannelUserRead(
         user = user1,
         unreadMessages = 0,
