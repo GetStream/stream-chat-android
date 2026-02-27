@@ -140,7 +140,6 @@ public fun ChannelList(
         }
     },
     channelContent: @Composable LazyItemScope.(ItemState.ChannelItemState) -> Unit = { itemState ->
-        val user by viewModel.user.collectAsState()
         val selectedCid = viewModel.selectedChannel.value?.cid
         val enrichedItemState = if (selectedCid != null && itemState.channel.cid == selectedCid) {
             itemState.copy(isSelected = true)
@@ -150,18 +149,17 @@ public fun ChannelList(
         with(ChatTheme.componentFactory) {
             ChannelListItemContent(
                 channelItem = enrichedItemState,
-                currentUser = user,
+                currentUser = viewModel.user.value,
                 onChannelClick = onChannelClick,
                 onChannelLongClick = onChannelLongClick,
             )
         }
     },
     searchResultContent: @Composable LazyItemScope.(ItemState.SearchResultItemState) -> Unit = { itemState ->
-        val user by viewModel.user.collectAsState()
         with(ChatTheme.componentFactory) {
             SearchResultItemContent(
                 searchResultItem = itemState,
-                currentUser = user,
+                currentUser = viewModel.user.value,
                 onSearchResultClick = onSearchResultClick,
             )
         }
