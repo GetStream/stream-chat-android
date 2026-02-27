@@ -1214,9 +1214,15 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun MessageDeletedContent(
+        message: Message,
+        currentUser: User?,
         modifier: Modifier,
     ) {
-        DefaultMessageDeletedContent(modifier = modifier)
+        DefaultMessageDeletedContent(
+            message = message,
+            currentUser = currentUser,
+            modifier = modifier,
+        )
     }
 
     /**
