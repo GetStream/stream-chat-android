@@ -371,8 +371,10 @@ public class ChannelListViewModel(
     ): SearchMessageState {
         val limit = channelLimit
         val next = currentState.next
-        logger.v { "[searchMessages] #$src; query: '${currentState.query}', sort: $messageSearchSort, next: $next, " +
-            "limit: $limit" }
+        logger.v {
+            "[searchMessages] #$src; query: '${currentState.query}', sort: $messageSearchSort, next: $next, " +
+                "limit: $limit"
+        }
         val result = chatClient.searchMessages(
             channelFilter = channelFilter,
             messageFilter = Filters.autocomplete("text", currentState.query),
