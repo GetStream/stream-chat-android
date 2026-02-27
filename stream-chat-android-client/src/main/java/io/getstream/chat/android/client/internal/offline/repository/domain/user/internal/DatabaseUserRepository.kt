@@ -25,6 +25,8 @@ import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -42,6 +44,9 @@ internal class DatabaseUserRepository(
     private val userCache = LruCache<String, User>(cacheSize)
     private val latestUsersFlow: MutableStateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
     private val dbMutex = Mutex()
+    private val pendingEntities = mutableListOf<UserEntity>()
+    private val pendingMutex = Mutex()
+    private var flushJob: Job? = null
 
     override fun observeLatestUsers(): StateFlow<Map<String, User>> = latestUsersFlow
 
@@ -62,11 +67,29 @@ internal class DatabaseUserRepository(
             .filter { it != userCache[it.id] }
             .map { it.toEntity() }
         cacheUsers(users)
-        scope.launchWithMutex(dbMutex) {
-            logger.v { "[insertUsers] inserting ${usersToInsert.size} entities on DB, updated ${users.size} on cache" }
-            usersToInsert
-                .takeUnless { it.isEmpty() }
-                ?.let { userDao.insertMany(it) }
+        if (usersToInsert.isEmpty()) return
+        pendingMutex.withLock {
+            pendingEntities.addAll(usersToInsert)
+            if (flushJob?.isActive != true) {
+                flushJob = scope.launch {
+                    delay(BATCH_FLUSH_DELAY_MS)
+                    flushPendingUsers()
+                }
+            }
+        }
+    }
+
+    private suspend fun flushPendingUsers() {
+        val snapshot = pendingMutex.withLock {
+            val copy = pendingEntities.toList()
+            pendingEntities.clear()
+            copy
+        }
+        if (snapshot.isEmpty()) return
+        val deduped = snapshot.associateBy { it.id }.values.toList()
+        logger.v { "[insertUsers] batch flushing ${deduped.size} entities to DB (from ${snapshot.size} enqueued)" }
+        dbMutex.withLock {
+            userDao.insertMany(deduped)
         }
     }
 
@@ -162,5 +185,6 @@ internal class DatabaseUserRepository(
 
     companion object {
         private const val ME_ID = "me"
+        private const val BATCH_FLUSH_DELAY_MS = 3_000L
     }
 }
