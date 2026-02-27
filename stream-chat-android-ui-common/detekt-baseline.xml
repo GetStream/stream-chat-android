@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>LargeClass:MessageComposerController.kt$MessageComposerController</ID>
     <ID>LargeClass:MessageListController.kt$MessageListController</ID>
     <ID>LongMethod:MessageListController.kt$MessageListController$@Suppress("MagicNumber") private fun observeMessagesListState()</ID>
     <ID>LongParameterList:MessagePositionHandler.kt$MessagePositionHandler$( previousMessage: Message?, message: Message, nextMessage: Message?, isAfterDateSeparator: Boolean, isBeforeDateSeparator: Boolean, isInThread: Boolean, )</ID>

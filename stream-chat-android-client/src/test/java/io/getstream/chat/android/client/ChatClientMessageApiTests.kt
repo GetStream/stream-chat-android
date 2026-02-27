@@ -18,12 +18,16 @@ package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
+import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.chatclient.BaseChatClientTest
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PendingMessage
@@ -57,6 +61,7 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.io.File
 
 /**
  * Tests for the [ChatClient] message endpoints.
@@ -698,13 +703,16 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val set = emptyMap<String, Any>()
         val unset = emptyList<String>()
         val message = randomMessage()
+        val plugin = mock<Plugin>()
         val sut = Fixture()
+            .givenPlugin(plugin)
             .givenPartialUpdateMessageResult(message.asCall())
             .get()
         // when
         val result = sut.partialUpdateMessage(messageId, set, unset).await()
         // then
         verifySuccess(result, message)
+        verify(plugin).onMessageEditResult(message, result)
     }
 
     @Test
@@ -714,13 +722,100 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val set = emptyMap<String, Any>()
         val unset = emptyList<String>()
         val errorCode = positiveRandomInt()
+        val plugin = mock<Plugin>()
         val sut = Fixture()
+            .givenPlugin(plugin)
             .givenPartialUpdateMessageResult(RetroError<Message>(errorCode).toRetrofitCall())
             .get()
         // when
         val result = sut.partialUpdateMessage(messageId, set, unset).await()
         // then
         verifyNetworkError(result, errorCode)
+        verify(plugin, never()).onMessageEditResult(any(), any())
+    }
+
+    @Test
+    fun editMessageWithoutNewAttachmentsDelegatesToUpdateMessage() = runTest {
+        // given
+        val message = randomMessage()
+        val plugin = mock<Plugin>()
+        val sut = Fixture()
+            .givenPlugin(plugin)
+            .givenUpdateMessageResult(message.asCall())
+            .get()
+        // when
+        val result = sut.editMessage(randomString(), randomString(), message).await()
+        // then
+        verifySuccess(result, message)
+        val inOrder = Mockito.inOrder(plugin)
+        inOrder.verify(plugin).onMessageEditRequest(any())
+        inOrder.verify(plugin).onMessageEditResult(any(), any())
+    }
+
+    @Test
+    fun editMessageWithNewAttachmentsUploadsAndUpdates() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val localFile = File.createTempFile("test", ".jpg")
+        val originalMessage = randomMessage()
+        val messageWithAttachment = originalMessage.copy(
+            attachments = mutableListOf(Attachment(upload = localFile)),
+        )
+        val uploadedMessage = messageWithAttachment.copy(
+            attachments = mutableListOf(
+                Attachment(assetUrl = "https://cdn.stream.io/uploaded.jpg"),
+            ),
+        )
+        val serverMessage = uploadedMessage.copy()
+        val plugin = mock<Plugin>()
+        val channelLogic = mock<ChannelMessagesUpdateLogic>()
+        val channelState = mock<ChannelState>()
+        whenever(channelLogic.channelState()) doReturn channelState
+        whenever(channelState.getMessageById(originalMessage.id)) doReturn originalMessage
+        val sut = Fixture()
+            .givenPlugin(plugin)
+            .givenSendAttachmentsResult(Result.Success(uploadedMessage))
+            .givenUpdateMessageResult(serverMessage.asCall())
+            .get()
+        val logicProvider = mock<ChannelStateLogicProvider>()
+        whenever(logicProvider.channelStateLogic(channelType, channelId)) doReturn channelLogic
+        sut.logicRegistry = logicProvider
+        // when
+        val result = sut.editMessage(channelType, channelId, messageWithAttachment).await()
+        // then
+        verifySuccess(result, serverMessage)
+        verify(attachmentsSender).sendAttachments(any(), eq(channelType), eq(channelId), eq(false))
+        verify(api).updateMessage(any())
+    }
+
+    @Test
+    fun editMessageWithUploadFailureRevertsOriginal() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val localFile = File.createTempFile("test", ".jpg")
+        val originalMessage = randomMessage()
+        val messageWithAttachment = originalMessage.copy(
+            attachments = mutableListOf(Attachment(upload = localFile)),
+        )
+        val channelLogic = mock<ChannelMessagesUpdateLogic>()
+        val channelState = mock<ChannelState>()
+        whenever(channelLogic.channelState()) doReturn channelState
+        whenever(channelState.getMessageById(originalMessage.id)) doReturn originalMessage
+        val uploadFailure = Result.Failure(Error.GenericError("Upload failed"))
+        val sut = Fixture()
+            .givenSendAttachmentsResult(uploadFailure)
+            .get()
+        val logicProvider = mock<ChannelStateLogicProvider>()
+        whenever(logicProvider.channelStateLogic(channelType, channelId)) doReturn channelLogic
+        sut.logicRegistry = logicProvider
+        // when
+        val result = sut.editMessage(channelType, channelId, messageWithAttachment).await()
+        // then
+        assert(result is Result.Failure)
+        verify(api, never()).updateMessage(any())
+        verify(channelLogic).upsertMessage(originalMessage)
     }
 
     @Test

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.interceptor.message.internal
+package io.getstream.chat.android.client.attachment
 
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.extensions.EXTRA_UPLOAD_ID
@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.internal.populateMentions
 import io.getstream.chat.android.client.extensions.uploadId
-import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogic
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.internal.getMessageType
 import io.getstream.chat.android.client.utils.message.ensureId
@@ -33,10 +32,26 @@ import io.getstream.chat.android.models.User
 import java.util.Date
 import java.util.UUID
 
-internal class PrepareMessageLogicImpl(
+/**
+ * Marks each attachment for upload: attachments without a local file are marked
+ * [Attachment.UploadState.Success]; those with a local [Attachment.upload] file are
+ * marked [Attachment.UploadState.Idle] and assigned an [EXTRA_UPLOAD_ID].
+ */
+internal fun List<Attachment>.prepareForUpload(): List<Attachment> = map { attachment ->
+    when (attachment.upload) {
+        null -> attachment.copy(uploadState = Attachment.UploadState.Success)
+        else -> attachment.copy(
+            extraData = attachment.extraData +
+                mapOf(EXTRA_UPLOAD_ID to (attachment.uploadId ?: "upload_id_${UUID.randomUUID()}")),
+            uploadState = Attachment.UploadState.Idle,
+        )
+    }
+}
+
+internal class MessagePreparer(
     private val clientState: ClientState,
     private val channelStateLogicProvider: ChannelStateLogicProvider?,
-) : PrepareMessageLogic {
+) {
 
     /**
      * Prepares the message and its attachments but doesn't upload attachments.
@@ -51,18 +66,10 @@ internal class PrepareMessageLogicImpl(
      * Then this message is inserted in database (Optimistic UI update) and final message is returned.
      */
     @Suppress("ComplexMethod")
-    override fun prepareMessage(message: Message, channelId: String, channelType: String, user: User): Message {
+    fun prepareMessage(message: Message, channelId: String, channelType: String, user: User): Message {
         val channel = channelStateLogicProvider?.channelStateLogic(channelType, channelId)
 
-        val attachments = message.attachments.map {
-            when (it.upload) {
-                null -> it.copy(uploadState = Attachment.UploadState.Success)
-                else -> it.copy(
-                    extraData = it.extraData + mapOf(EXTRA_UPLOAD_ID to (it.uploadId ?: generateUploadId())),
-                    uploadState = Attachment.UploadState.Idle,
-                )
-            }
-        }
+        val attachments = message.attachments.prepareForUpload()
         return message.ensureId().copy(
             user = user,
             attachments = attachments,
@@ -91,9 +98,5 @@ internal class PrepareMessageLogicImpl(
                     channel?.setRepliedMessage(null)
                 }
             }
-    }
-
-    private fun generateUploadId(): String {
-        return "upload_id_${UUID.randomUUID()}"
     }
 }
