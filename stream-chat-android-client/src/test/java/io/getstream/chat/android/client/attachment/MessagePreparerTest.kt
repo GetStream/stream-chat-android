@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.interceptor.message.internal
+package io.getstream.chat.android.client.attachment
 
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
@@ -35,7 +35,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-internal class PrepareMessageLogicImplTest {
+internal class MessagePreparerTest {
 
     private val channelMessagesUpdateLogic: ChannelMessagesUpdateLogic = mock()
 
@@ -43,7 +43,7 @@ internal class PrepareMessageLogicImplTest {
     private val logic: ChannelStateLogicProvider = mock {
         on(it.channelStateLogic(any(), any())) doReturn channelMessagesUpdateLogic
     }
-    private val prepareMessageInterceptorImpl = PrepareMessageLogicImpl(clientState, logic)
+    private val messagePreparer = MessagePreparer(clientState, logic)
 
     @Test
     fun `given a message has attachments, the status should be updated accordingly`() {
@@ -53,7 +53,7 @@ internal class PrepareMessageLogicImplTest {
             syncStatus = SyncStatus.SYNC_NEEDED,
         )
 
-        val preparedMessage = prepareMessageInterceptorImpl.prepareMessage(
+        val preparedMessage = messagePreparer.prepareMessage(
             messageWithAttachments,
             randomString(),
             randomString(),
@@ -77,7 +77,7 @@ internal class PrepareMessageLogicImplTest {
             createdAt = null,
         )
 
-        val preparedMessage = prepareMessageInterceptorImpl.prepareMessage(
+        val preparedMessage = messagePreparer.prepareMessage(
             messageWithAttachments,
             randomString(),
             randomString(),
@@ -103,7 +103,7 @@ internal class PrepareMessageLogicImplTest {
             syncStatus = SyncStatus.SYNC_NEEDED,
         )
 
-        val preparedMessage = prepareMessageInterceptorImpl.prepareMessage(
+        val preparedMessage = messagePreparer.prepareMessage(
             messageWithAttachments,
             randomString(),
             randomString(),
@@ -122,7 +122,7 @@ internal class PrepareMessageLogicImplTest {
             syncStatus = SyncStatus.SYNC_NEEDED,
         )
 
-        val preparedMessage = prepareMessageInterceptorImpl.prepareMessage(
+        val preparedMessage = messagePreparer.prepareMessage(
             messageWithAttachments,
             randomString(),
             randomString(),
@@ -139,7 +139,7 @@ internal class PrepareMessageLogicImplTest {
             id = "",
         )
 
-        val preparedMessage = prepareMessageInterceptorImpl.prepareMessage(
+        val preparedMessage = messagePreparer.prepareMessage(
             messageWithAttachments,
             randomString(),
             randomString(),
@@ -157,16 +157,12 @@ internal class PrepareMessageLogicImplTest {
             attachments = mutableListOf(attachment),
         )
 
-        println("initialAttachments: ${messageWithAttachments.attachments}")
-
-        val result = prepareMessageInterceptorImpl.prepareMessage(
+        val result = messagePreparer.prepareMessage(
             messageWithAttachments,
             randomString(),
             randomString(),
             randomUser(),
         )
-
-        println("resultAttachments: ${result.attachments}")
 
         result.attachments.first().uploadId `should not be equal to` null
     }

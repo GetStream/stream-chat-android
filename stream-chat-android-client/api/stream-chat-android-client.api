@@ -69,6 +69,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun disconnect$default (Lio/getstream/chat/android/client/ChatClient;ZZILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun disconnectSocket ()Lio/getstream/result/call/Call;
 	public final fun dismissChannelNotifications (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun editMessage (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;)Lio/getstream/result/call/Call;
 	public final fun enableSlowMode (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/result/call/Call;
 	public final fun enrichUrl (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun fetchCurrentUser ()Lio/getstream/result/call/Call;
@@ -3061,10 +3062,6 @@ public final class io/getstream/chat/android/client/header/VersionPrefixHeader$U
 
 public abstract interface class io/getstream/chat/android/client/interceptor/SendMessageInterceptor {
 	public abstract fun sendMessage (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;)Lio/getstream/result/Result;
-}
-
-public abstract interface class io/getstream/chat/android/client/interceptor/message/PrepareMessageLogic {
-	public abstract fun prepareMessage (Lio/getstream/chat/android/models/Message;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/models/Message;
 }
 
 public final class io/getstream/chat/android/client/internal/offline/repository/database/converter/internal/QuerySortParser {

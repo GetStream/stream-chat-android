@@ -70,6 +70,8 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.attachment.AttachmentsSender
+import io.getstream.chat.android.client.attachment.MessagePreparer
+import io.getstream.chat.android.client.attachment.prepareForUpload
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.NativeMediaPlayerImpl
 import io.getstream.chat.android.client.audio.StreamAudioPlayer
@@ -103,12 +105,12 @@ import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.extractBaseUrl
+import io.getstream.chat.android.client.extensions.internal.hasPendingAttachments
 import io.getstream.chat.android.client.extensions.internal.isLaterThanDays
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
-import io.getstream.chat.android.client.interceptor.message.internal.PrepareMessageLogicImpl
 import io.getstream.chat.android.client.internal.file.StreamFileManager
 import io.getstream.chat.android.client.internal.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
@@ -2736,7 +2738,7 @@ internal constructor(
         debugger: SendMessageDebugger,
     ): Result<Message> {
         debugger.onInterceptionStart(message)
-        val prepareMessageLogic = PrepareMessageLogicImpl(clientState, logicRegistry)
+        val prepareMessageLogic = MessagePreparer(clientState, logicRegistry)
 
         val preparedMessage = getCurrentUser()?.let { user ->
             prepareMessageLogic.prepareMessage(message, channelId, channelType, user)
@@ -2777,6 +2779,61 @@ internal constructor(
     }
 
     /**
+     * Edits an existing message, uploading any new attachments through the standard
+     * [AttachmentsSender] / [UploadAttachmentsAndroidWorker][io.getstream.chat.android.client.attachment.worker.UploadAttachmentsAndroidWorker]
+     * pipeline before updating the message on the server.
+     *
+     * When the message contains new attachments (i.e. attachments with a local [Attachment.upload]
+     * file), the method will:
+     * 1. Prepare attachments (mark new ones as [Attachment.UploadState.Idle]).
+     * 2. Optimistically upsert the prepared message into channel state so the UI shows upload
+     *    progress.
+     * 3. Delegate upload to [AttachmentsSender] (which enqueues [WorkManager][androidx.work.WorkManager]
+     *    work).
+     * 4. On success, call [updateMessage] which fires the standard edit plugin hooks.
+     * 5. On failure, revert the channel state to the original message.
+     *
+     * If the message has no new attachments, the call delegates directly to [updateMessage].
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param message The edited [Message] with resolved attachment files.
+     *
+     * @return Executable async [Call] responsible for editing the message.
+     */
+    @CheckResult
+    public fun editMessage(
+        channelType: String,
+        channelId: String,
+        message: Message,
+    ): Call<Message> = CoroutineCall(userScope) {
+        val prepared = message.copy(attachments = message.attachments.prepareForUpload())
+        if (!prepared.hasPendingAttachments()) {
+            return@CoroutineCall updateMessage(prepared).await()
+        }
+
+        val channelLogic = logicRegistry?.channelStateLogic(channelType, channelId)
+        val original = channelLogic?.channelState()?.getMessageById(message.id)
+
+        channelLogic?.upsertMessage(prepared)
+
+        val uploadResult = attachmentsSender.sendAttachments(
+            message = prepared,
+            channelType = channelType,
+            channelId = channelId,
+            isRetrying = false,
+        )
+
+        when (uploadResult) {
+            is Result.Success -> updateMessage(uploadResult.value).await()
+            is Result.Failure -> {
+                original?.let(channelLogic::upsertMessage)
+                uploadResult
+            }
+        }
+    }
+
+    /**
      * Partially updates specific [Message] fields retaining the fields which were set previously.
      *
      * @param messageId The message ID.
@@ -2790,12 +2847,18 @@ internal constructor(
         messageId: String,
         set: Map<String, Any> = emptyMap(),
         unset: List<String> = emptyList(),
-    ): Call<Message> {
-        return api.partialUpdateMessage(
-            messageId = messageId,
-            set = set,
-            unset = unset,
-        )
+    ): Call<Message> = api.partialUpdateMessage(
+        messageId = messageId,
+        set = set,
+        unset = unset,
+    ).doOnResult(userScope) { result ->
+        if (result is Result.Success) {
+            val message = result.value
+            plugins.forEach { plugin ->
+                logger.v { "[partialUpdateMessage] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                plugin.onMessageEditResult(message, result)
+            }
+        }
     }
 
     /**
