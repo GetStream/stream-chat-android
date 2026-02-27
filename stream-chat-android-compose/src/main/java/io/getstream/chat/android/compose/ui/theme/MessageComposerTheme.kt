@@ -133,12 +133,10 @@ public interface MentionStyleFactory {
  * Defines the theming options for the different composer actions.
  *
  * @param attachmentsButton The style for the attachments button.
- * @param sendButton The style for the send button.
  */
 @Immutable
 public data class ComposerActionsTheme(
     val attachmentsButton: IconContainerStyle,
-    val sendButton: IconContainerStyle,
 ) {
 
     public companion object {
@@ -160,18 +158,8 @@ public data class ComposerActionsTheme(
                     size = ComponentSize(width = 20.dp, height = 20.dp),
                 ),
             )
-            val sendButton = IconContainerStyle(
-                size = ComponentSize(width = 48.dp, height = 48.dp),
-                padding = ComponentPadding(start = 8.dp, top = 8.dp, end = 8.dp, bottom = 8.dp),
-                icon = IconStyle(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_send),
-                    tint = colors.textPrimary,
-                    size = ComponentSize(width = 20.dp, height = 20.dp),
-                ),
-            )
             return ComposerActionsTheme(
                 attachmentsButton = attachmentsButton,
-                sendButton = sendButton,
             )
         }
     }
