@@ -172,7 +172,7 @@ class ChannelListTests : StreamTestCase() {
 
     @AllureId("5821")
     @Test
-    fun test_channelPreviewShowsDeletedMessage_whenLastMessageIsDeleted() {
+    fun test_channelPreviewShowsPreviousMessage_whenLastMessageIsDeleted() {
         val oldMessage = "Old"
         val newMessage = "New"
 
@@ -190,8 +190,8 @@ class ChannelListTests : StreamTestCase() {
         step("WHEN user goes back to the channel list") {
             userRobot.tapOnBackButton()
         }
-        step("THEN the channel preview shows 'Message deleted'") {
-            userRobot.assertMessageInChannelPreview("Message deleted", fromCurrentUser = false)
+        step("THEN the channel preview shows the previous message") {
+            userRobot.assertMessageInChannelPreview(oldMessage, fromCurrentUser = false)
         }
         step("AND the message timestamp is shown") {
             userRobot.assertMessagePreviewTimestamp(isDisplayed = true)
