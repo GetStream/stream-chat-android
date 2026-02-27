@@ -181,22 +181,9 @@ private class DefaultMessagePreviewFormatter(
                 message.isSystem() -> append(displayedText)
 
                 message.isDeleted() -> {
-                    if (isDirectMessaging && message.user.id == currentUser?.id) {
-                        // DM outgoing deleted: explicit "You:" since delivery icon is absent
-                        val youLabel = context.getString(R.string.stream_compose_channel_list_you)
-                        append("$youLabel: ")
-                        addStyle(
-                            SpanStyle(
-                                fontStyle = senderNameTextStyle.fontStyle,
-                                fontWeight = senderNameTextStyle.fontWeight,
-                                fontFamily = senderNameTextStyle.fontFamily,
-                            ),
-                            start = 0,
-                            end = youLabel.length,
-                        )
-                    } else {
-                        appendSenderName(message, currentUser, senderNameTextStyle, isDirectMessaging)
-                    }
+                    appendSenderName(message, currentUser, senderNameTextStyle, isDirectMessaging)
+                    appendInlineContent(DefaultMessagePreviewIconFactory.DELETED)
+                    append(SPACE)
                     append(context.getString(R.string.stream_compose_message_deleted_preview))
                 }
 

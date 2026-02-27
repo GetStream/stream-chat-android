@@ -17,8 +17,6 @@
 package io.getstream.chat.android.compose.ui.chats
 
 import androidx.annotation.UiThread
-import androidx.compose.ui.semantics.ProgressBarRangeInfo
-import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -87,7 +85,7 @@ internal class ChatsScreenTest : MockedChatClientTest {
             }
         }
 
-        composeTestRule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate))
+        composeTestRule.onNodeWithTag("Stream_ThreadListLoading")
             .assertExists()
     }
 }

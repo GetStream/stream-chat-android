@@ -22,29 +22,35 @@ import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import org.junit.Rule
 import org.junit.Test
 
-internal class UnreadThreadsBannerTest : PaparazziComposeTest {
+internal class ThreadListBannerTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `no unread threads`() {
-        snapshot {
-            UnreadThreadsBanner(unreadThreads = 0)
+    fun `unread threads`() {
+        snapshotWithDarkMode {
+            ThreadListBanner(
+                state = ThreadListBannerState.UnreadThreads(3),
+                onClick = {},
+            )
         }
     }
 
     @Test
-    fun `one unread thread`() {
+    fun `loading state`() {
         snapshotWithDarkMode {
-            UnreadThreadsBanner(unreadThreads = 1)
+            ThreadListBanner(state = ThreadListBannerState.Loading)
         }
     }
 
     @Test
-    fun `multiple unread threads`() {
+    fun `error state`() {
         snapshotWithDarkMode {
-            UnreadThreadsBanner(unreadThreads = 2)
+            ThreadListBanner(
+                state = ThreadListBannerState.Error,
+                onClick = {},
+            )
         }
     }
 }

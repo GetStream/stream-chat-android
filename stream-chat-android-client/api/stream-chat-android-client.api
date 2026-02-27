@@ -918,6 +918,7 @@ public abstract interface class io/getstream/chat/android/client/api/state/Query
 public abstract interface class io/getstream/chat/android/client/api/state/QueryThreadsState {
 	public abstract fun getFilter ()Lio/getstream/chat/android/models/FilterObject;
 	public abstract fun getLoading ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getLoadingError ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getLoadingMore ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getNext ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getSort ()Lio/getstream/chat/android/models/querysort/QuerySorter;

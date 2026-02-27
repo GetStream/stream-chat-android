@@ -17,13 +17,16 @@
 package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
+import java.util.Date
 
 /**
  * Model holding info about a thread participant.
  *
  * @param user The [User] as a thread participant (not always delivered - sometimes it can only hold the [User.id]).
+ * @param lastThreadMessageAt The date of the last message in the thread at the time of participation.
  */
 @Immutable
 public data class ThreadParticipant(
     override val user: User,
+    val lastThreadMessageAt: Date?,
 ) : UserEntity

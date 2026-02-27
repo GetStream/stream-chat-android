@@ -45,7 +45,8 @@ internal object ThreadDtoTestData {
           "thread_participants": [
             {
               "user_id": "user1",
-              "user": ${UserDtoTestData.downstreamJson}
+              "user": ${UserDtoTestData.downstreamJson},
+              "last_thread_message_at": null
             }
           ],
           "title": "Thread Title",
@@ -86,6 +87,7 @@ internal object ThreadDtoTestData {
             DownstreamThreadParticipantDto(
                 user_id = "user1",
                 user = UserDtoTestData.downstreamUser,
+                last_thread_message_at = null,
             ),
         ),
         title = "Thread Title",
@@ -168,7 +170,8 @@ internal object ThreadDtoTestData {
           "thread_participants": [
             {
               "user_id": "user1",
-              "user": ${UserDtoTestData.downstreamJson}
+              "user": ${UserDtoTestData.downstreamJson},
+              "last_thread_message_at": null
             }
           ],
           "last_message_at": "2020-06-10T11:04:31.588Z",
@@ -197,6 +200,7 @@ internal object ThreadDtoTestData {
             DownstreamThreadParticipantDto(
                 user_id = "user1",
                 user = UserDtoTestData.downstreamUser,
+                last_thread_message_at = null,
             ),
         ),
         last_message_at = Date(1591787071588),

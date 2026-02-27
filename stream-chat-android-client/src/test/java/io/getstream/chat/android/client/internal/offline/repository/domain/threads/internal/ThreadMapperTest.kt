@@ -20,7 +20,6 @@ import io.getstream.chat.android.client.internal.offline.randomThreadEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.userread.internal.toEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.userread.internal.toModel
 import io.getstream.chat.android.models.Thread
-import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomThread
@@ -47,11 +46,7 @@ internal class ThreadMapperTest {
             createdBy = user,
             activeParticipantCount = entity.activeParticipantCount,
             participantCount = entity.participantCount,
-            threadParticipants = entity.threadParticipants.map {
-                ThreadParticipant(
-                    user = user,
-                )
-            },
+            threadParticipants = entity.threadParticipants.map { it.toModel { user } },
             lastMessageAt = entity.lastMessageAt,
             createdAt = entity.createdAt,
             updatedAt = entity.updatedAt,
@@ -83,11 +78,7 @@ internal class ThreadMapperTest {
             createdByUserId = thread.createdByUserId,
             activeParticipantCount = thread.activeParticipantCount,
             participantCount = thread.participantCount,
-            threadParticipants = thread.threadParticipants.map {
-                ThreadParticipantEntity(
-                    userId = it.user.id,
-                )
-            },
+            threadParticipants = thread.threadParticipants.map { it.toEntity() },
             lastMessageAt = thread.lastMessageAt,
             createdAt = thread.createdAt,
             updatedAt = thread.updatedAt,

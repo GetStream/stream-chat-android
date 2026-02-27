@@ -187,11 +187,7 @@ import io.getstream.chat.android.compose.ui.threads.DefaultThreadListEmptyConten
 import io.getstream.chat.android.compose.ui.threads.DefaultThreadListLoadingContent
 import io.getstream.chat.android.compose.ui.threads.DefaultThreadListLoadingMoreContent
 import io.getstream.chat.android.compose.ui.threads.ThreadItem
-import io.getstream.chat.android.compose.ui.threads.ThreadItemLatestReplyContent
-import io.getstream.chat.android.compose.ui.threads.ThreadItemReplyToContent
-import io.getstream.chat.android.compose.ui.threads.ThreadItemTitle
-import io.getstream.chat.android.compose.ui.threads.ThreadItemUnreadCountContent
-import io.getstream.chat.android.compose.ui.threads.UnreadThreadsBanner
+import io.getstream.chat.android.compose.ui.threads.ThreadListBannerState
 import io.getstream.chat.android.compose.ui.util.ReactionResolver
 import io.getstream.chat.android.compose.ui.util.StreamSnackbar
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
@@ -2570,20 +2566,19 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default "Unread threads" banner.
-     * Shows the number of unread threads in the "ThreadList".
+     * The default thread list banner.
+     * Shows unread thread count, a loading indicator during refresh, or an error prompt.
      *
-     * @param unreadThreads The number of unread threads.
+     * @param state The current [ThreadListBannerState] to render.
      * @param onClick Action invoked when the user clicks on the banner.
      */
     @Composable
-    public fun ThreadListUnreadThreadsBanner(
-        unreadThreads: Int,
+    public fun ThreadListBanner(
+        state: ThreadListBannerState,
         onClick: () -> Unit,
     ) {
-        UnreadThreadsBanner(
-            unreadThreads = unreadThreads,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+        io.getstream.chat.android.compose.ui.threads.ThreadListBanner(
+            state = state,
             onClick = onClick,
         )
     }
@@ -2604,62 +2599,6 @@ public interface ChatComponentFactory {
         onThreadClick: (Thread) -> Unit,
     ) {
         ThreadItem(thread, currentUser, onThreadClick)
-    }
-
-    /**
-     * Default representation of the thread title.
-     *
-     * Used in the [ThreadListItem] to display the title of the thread.
-     *
-     * @param thread The thread to display.
-     * @param channel The channel the thread belongs to.
-     * @param currentUser The current user.
-     */
-    @Composable
-    public fun ThreadListItemTitle(
-        thread: Thread,
-        channel: Channel,
-        currentUser: User?,
-    ) {
-        ThreadItemTitle(channel, currentUser)
-    }
-
-    /**
-     * Default representation of the parent message preview in a thread.
-     *
-     * Used in the [ThreadListItem] to display the parent message of the thread.
-     *
-     * @param thread The thread to display.
-     */
-    @Composable
-    public fun RowScope.ThreadListItemReplyToContent(thread: Thread) {
-        ThreadItemReplyToContent(thread.parentMessage)
-    }
-
-    /**
-     * Default representation of the unread count badge. Not shown if unreadCount == 0.
-     *
-     * Used in the [ThreadListItem] to display the number of unread replies in the thread.
-     *
-     * @param unreadCount The number of unread thread replies.
-     */
-    @Composable
-    public fun RowScope.ThreadListItemUnreadCountContent(unreadCount: Int) {
-        ThreadItemUnreadCountContent(unreadCount)
-    }
-
-    /**
-     * Default representation of the latest reply content in a thread.
-     * Shows a preview of the last message in the thread.
-     *
-     * Used in the [ThreadListItem] to display the latest reply in the thread.
-     *
-     * @param thread The thread to display.
-     * @param currentUser The currently logged-in user.
-     */
-    @Composable
-    public fun ThreadListItemLatestReplyContent(thread: Thread, currentUser: User?) {
-        ThreadItemLatestReplyContent(thread, currentUser)
     }
 
     /**

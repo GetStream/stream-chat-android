@@ -87,13 +87,13 @@ internal class QueryThreadsLogic(
         if (isNextPageRequest) {
             stateLogic.setLoadingMore(true)
         } else {
+            stateLogic.setLoadingError(false)
             stateLogic.setLoading(true)
-        }
-        if (isForceReload(request)) {
-            stateLogic.clearThreads()
-            stateLogic.clearUnseenThreadIds()
-        } else if (!isNextPageRequest) {
-            queryThreadsOffline(request)
+            if (stateLogic.getUnseenThreadIds().isNotEmpty()) {
+                stateLogic.clearUnseenThreadIds()
+            } else if (stateLogic.getThreads().isEmpty()) {
+                queryThreadsOffline(request)
+            }
         }
     }
 
@@ -124,6 +124,9 @@ internal class QueryThreadsLogic(
             }
 
             is Result.Failure -> {
+                if (!request.isNextPageRequest()) {
+                    stateLogic.setLoadingError(true)
+                }
                 logger.i { "[queryThreadsResult] with request: $request failed." }
             }
         }
@@ -178,9 +181,6 @@ internal class QueryThreadsLogic(
     }
 
     private fun QueryThreadsRequest.isNextPageRequest() = this.next != null
-
-    private fun isForceReload(request: QueryThreadsRequest) =
-        !request.isNextPageRequest() && stateLogic.getUnseenThreadIds().isNotEmpty()
 
     private fun onNewThreadMessageNotification(event: NotificationThreadMessageNewEvent) {
         val newMessageThreadId = event.message.parentId ?: return

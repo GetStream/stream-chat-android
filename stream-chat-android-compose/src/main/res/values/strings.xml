@@ -335,10 +335,21 @@
     <string name="stream_compose_dismiss">Dismiss</string>
 
     <!--  Threads  -->
-    <string name="stream_compose_thread_list_empty_title">No threads here yet…</string>
+    <string name="stream_compose_thread_list_empty_title">Reply to a message to start a thread</string>
     <string name="stream_compose_in">" in "</string>
     <plurals name="stream_compose_thread_list_new_threads">
         <item quantity="one">%d new thread</item>
         <item quantity="other">%d new threads</item>
     </plurals>
+    <string name="stream_compose_thread_list_banner_loading">Loading…</string>
+    <string name="stream_compose_thread_list_banner_error">Couldn\'t load new threads. Tap to retry</string>
+    <plurals name="stream_compose_thread_list_item_reply_count">
+        <item quantity="one">1 reply</item>
+        <item quantity="other">%d replies</item>
+    </plurals>
+    <string name="stream_compose_thread_timestamp_just_now">Just now</string>
+    <string name="stream_compose_thread_timestamp_today">Today at %1$s</string>
+    <string name="stream_compose_thread_timestamp_yesterday">Yesterday at %1$s</string>
+    <string name="stream_compose_thread_timestamp_day_of_week">%1$s at %2$s</string>
+    <string name="stream_compose_thread_timestamp_date">%1$s at %2$s</string>
 </resources>

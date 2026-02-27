@@ -57,9 +57,11 @@ internal fun Message.getSenderDisplayName(
     isDirectMessaging: Boolean = false,
 ): String? =
     when {
-        user.id == currentUser?.id && isDirectMessaging -> null
+        // Always show "You:" prefix for own messages (Direct or Channel)
         user.id == currentUser?.id -> context.getString(R.string.stream_compose_channel_list_you)
+        // Don't show any prefix for other messages in Direct channels
         isDirectMessaging -> null
+        // Show username as prefix for other messages in Group channels
         else -> user.name
     }
 

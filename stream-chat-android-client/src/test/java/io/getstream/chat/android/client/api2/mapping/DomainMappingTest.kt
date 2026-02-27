@@ -47,6 +47,7 @@ import io.getstream.chat.android.client.Mother.randomDownstreamReactionGroupDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReminderDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadInfoDto
+import io.getstream.chat.android.client.Mother.randomDownstreamThreadParticipantDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserBlockDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
 import io.getstream.chat.android.client.Mother.randomDownstreamVoteDto
@@ -60,8 +61,8 @@ import io.getstream.chat.android.client.Mother.randomUnreadChannelDto
 import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
 import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
+import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
@@ -100,7 +101,6 @@ import io.getstream.chat.android.models.ReactionGroup
 import io.getstream.chat.android.models.SearchWarning
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
-import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.UnreadChannel
 import io.getstream.chat.android.models.UnreadChannelByType
 import io.getstream.chat.android.models.UnreadCounts
@@ -120,6 +120,7 @@ import io.getstream.chat.android.randomUser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.util.Date
 
 @Suppress("LargeClass")
 internal class DomainMappingTest {
@@ -744,13 +745,21 @@ internal class DomainMappingTest {
     fun `DownstreamThreadDto is correctly mapped to Thread`() {
         val user1 = randomDownstreamUserDto(id = "user1")
         val user2 = randomDownstreamUserDto(id = "user2")
+        val participant1Dto = randomDownstreamThreadParticipantDto(
+            userId = user1.id,
+            user = user1,
+            lastThreadMessageAt = Date(2000),
+        )
+        val participant2Dto = randomDownstreamThreadParticipantDto(
+            userId = user2.id,
+            user = user2,
+            lastThreadMessageAt = Date(1000),
+        )
         val downstreamThreadDto = randomDownstreamThreadDto(
             createdByUserId = user1.id,
             createdBy = user1,
-            threadParticipants = listOf(
-                DownstreamThreadParticipantDto(user_id = user1.id, user = user1),
-                DownstreamThreadParticipantDto(user_id = user2.id, user = user2),
-            ),
+            // Intentionally unsorted to validate sortedByLastReply() in mapping.
+            threadParticipants = listOf(participant2Dto, participant1Dto),
             draft = randomDownstreamDraftDto(
                 message = randomDownstreamDraftMessageDto(text = "Draft message"),
                 channelCid = "messaging:123",
@@ -768,10 +777,9 @@ internal class DomainMappingTest {
             createdByUserId = downstreamThreadDto.created_by_user_id,
             createdBy = with(sut) { downstreamThreadDto.created_by?.toDomain() },
             participantCount = downstreamThreadDto.participant_count,
-            threadParticipants = listOf(
-                ThreadParticipant(user = with(sut) { user1.toDomain() }),
-                ThreadParticipant(user = with(sut) { user2.toDomain() }),
-            ),
+            threadParticipants = with(sut) {
+                listOf(participant1Dto, participant2Dto).map { it.toDomain() }.sortedByLastReply()
+            },
             lastMessageAt = downstreamThreadDto.last_message_at,
             createdAt = downstreamThreadDto.created_at,
             updatedAt = downstreamThreadDto.updated_at,
