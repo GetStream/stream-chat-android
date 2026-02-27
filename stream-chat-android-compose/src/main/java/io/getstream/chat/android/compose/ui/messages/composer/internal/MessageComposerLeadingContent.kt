@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.messages.composer.internal
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
@@ -29,12 +30,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.padding
-import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canUploadFile
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -59,7 +59,6 @@ internal fun MessageComposerLeadingContent(
     val canUploadFile = messageInputState.canUploadFile()
 
     if (canSendMessage && !isRecording && canUploadFile) {
-        val attachmentsButtonStyle = ChatTheme.messageComposerTheme.actionsTheme.attachmentsButton
         val iconRotation by animateFloatAsState(
             targetValue = if (isAttachmentPickerVisible) OpenAttachmentPickerButtonRotation else 0f,
         )
@@ -79,22 +78,19 @@ internal fun MessageComposerLeadingContent(
                         Modifier
                     },
                 )
-                .size(attachmentsButtonStyle.size)
-                .padding(attachmentsButtonStyle.padding)
+                .size(48.dp)
                 .testTag("Stream_ComposerAttachmentsButton"),
             colors = IconButtonDefaults.filledIconButtonColors(
                 containerColor = ChatTheme.colors.backgroundElevationElevation1,
                 disabledContainerColor = ChatTheme.colors.backgroundElevationElevation1,
-                contentColor = attachmentsButtonStyle.icon.tint,
+                contentColor = ChatTheme.colors.buttonSecondaryText,
                 disabledContentColor = ChatTheme.colors.textDisabled,
             ),
             onClick = onAttachmentsClick,
         ) {
             Icon(
-                modifier = Modifier
-                    .size(attachmentsButtonStyle.icon.size)
-                    .graphicsLayer { rotationZ = iconRotation },
-                painter = attachmentsButtonStyle.icon.painter,
+                modifier = Modifier.graphicsLayer { rotationZ = iconRotation },
+                painter = painterResource(id = R.drawable.stream_compose_ic_add),
                 contentDescription = stringResource(id = R.string.stream_compose_attachments),
             )
         }
