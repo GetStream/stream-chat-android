@@ -38,15 +38,9 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
@@ -54,8 +48,8 @@ import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndic
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.isOneToOne
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewThreadData
@@ -149,11 +143,17 @@ internal fun ThreadItemTitle(
  * Displays a single-line preview of the thread's parent message.
  * Deleted messages are shown in italic using a localised "message deleted" label.
  *
- * @param message The parent [Message] of the thread.
+ * @param thread The [Thread] to render the parent message for.
+ * @param currentUser The currently logged in user.
  */
 @Composable
-internal fun ThreadItemParentMessage(message: Message) {
-    val text = formatMessage(message)
+internal fun ThreadItemParentMessage(thread: Thread, currentUser: User?) {
+    val isOneToOneChannel = thread.channel?.isOneToOne(currentUser) ?: false
+    val message = thread.parentMessage
+    val formatter = ChatTheme.messagePreviewFormatter
+    val text = remember(message, currentUser) {
+        formatter.formatMessagePreview(message, currentUser, isOneToOneChannel)
+    }
     Text(
         modifier = Modifier.fillMaxWidth(),
         text = text,
@@ -161,6 +161,7 @@ internal fun ThreadItemParentMessage(message: Message) {
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         style = ChatTheme.typography.bodyDefault,
+        inlineContent = ChatTheme.messagePreviewIconFactory.createPreviewIcons(),
     )
 }
 
@@ -246,7 +247,7 @@ internal fun ThreadItemContentContainer(
             thread.channel?.let { channel ->
                 ThreadItemTitle(channel, currentUser)
             }
-            ThreadItemParentMessage(thread.parentMessage)
+            ThreadItemParentMessage(thread, currentUser)
         }
         ThreadRepliesFooter(thread)
     }
@@ -261,11 +262,19 @@ internal fun ThreadItemContentContainer(
 @Composable
 internal fun ThreadRepliesFooter(thread: Thread) {
     val latestReply = thread.latestReplies.lastOrNull() ?: return
-    val participants = thread.threadParticipants
-        .map { it.user }
-        .ifEmpty { listOfNotNull(latestReply.user) }
-        .take(MaxParticipantCount)
-        .reversed()
+    // The thread author will always be a thread participant, even if he didn't reply to the thread.
+    // Note: Because we don't get all replies (or participants) in the response, we can not reliably know
+    // whether the thread author has a reply in the thread
+    // Small UI improvement is to ensure we only show the actual replier if we have only one reply.
+    val participants = if (thread.replyCount == 1) {
+        listOf(latestReply.user)
+    } else {
+        thread.threadParticipants
+            .map { it.user }
+            .ifEmpty { listOfNotNull(latestReply.user) }
+            .take(MaxParticipantCount)
+            .reversed()
+    }
     Row(
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
         verticalAlignment = Alignment.CenterVertically,
@@ -283,18 +292,6 @@ private fun unreadCountForUser(thread: Thread, user: User?) =
         .find { it.user.id == user?.id }
         ?.unreadMessages
         ?: 0
-
-@Composable
-private fun formatMessage(message: Message) =
-    if (message.isDeleted()) {
-        buildAnnotatedString {
-            withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
-                append(stringResource(id = R.string.stream_ui_message_list_message_deleted))
-            }
-        }
-    } else {
-        ChatTheme.messagePreviewFormatter.formatMessagePreview(message, null, false)
-    }
 
 @Composable
 @Preview

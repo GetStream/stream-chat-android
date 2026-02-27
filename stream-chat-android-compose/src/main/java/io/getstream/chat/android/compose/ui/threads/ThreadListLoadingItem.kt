@@ -46,6 +46,7 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
  *
  * @param modifier Modifier for styling.
  */
+@Suppress("LongMethod")
 @Composable
 internal fun ThreadListLoadingItem(modifier: Modifier = Modifier) {
     val borderColor = ChatTheme.colors.borderCoreSubtle

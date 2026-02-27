@@ -66,7 +66,6 @@ internal object ThreadTimestampFormatter {
                 context.getString(R.string.stream_compose_thread_timestamp_day_of_week, dayName, time)
             }
             else -> {
-                // TODO: Consider using localized months
                 val dateStr = DateUtils.formatDateTime(
                     context,
                     date.time,
@@ -90,7 +89,6 @@ internal object ThreadTimestampFormatter {
     }
 
     /** Full locale-aware day name (e.g. "Monday", "Montag", "lundi"). */
-    // TODO: Consider using localized days of week
     private fun dayOfWeek(date: Date): String =
         SimpleDateFormat("EEEE", Locale.getDefault()).format(date)
 }
