@@ -183,9 +183,9 @@ public object PreviewThreadData {
         ),
         read = listOf(
             ChannelUserRead(
-                user = participant2,
+                user = participant1,
                 lastReceivedEventDate = Date(),
-                unreadMessages = 2,
+                unreadMessages = 3,
                 lastRead = Date(),
                 lastReadMessageId = null,
             ),
