@@ -25,8 +25,13 @@ import io.getstream.chat.android.compose.ui.channels.list.ChannelItemLastMessage
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemLastMessageSeenStatus
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemLastMessageSentStatus
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemMuted
+import io.getstream.chat.android.compose.ui.channels.list.ChannelItemMutedTrailingBottom
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemNoMessages
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemUnreadMessages
+import io.getstream.chat.android.compose.ui.theme.ChannelListConfig
+import io.getstream.chat.android.compose.ui.theme.ChatConfig
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MuteIndicatorPosition
 import org.junit.Rule
 import org.junit.Test
 
@@ -46,6 +51,21 @@ internal class ChannelItemTest : PaparazziComposeTest {
     fun `muted channel`() {
         snapshotWithDarkMode {
             ChannelItemMuted()
+        }
+    }
+
+    @Test
+    fun `muted channel trailing bottom`() {
+        snapshotWithDarkMode {
+            ChatTheme(
+                config = ChatConfig(
+                    channelList = ChannelListConfig(
+                        muteIndicatorPosition = MuteIndicatorPosition.TrailingBottom,
+                    ),
+                ),
+            ) {
+                ChannelItemMutedTrailingBottom()
+            }
         }
     }
 

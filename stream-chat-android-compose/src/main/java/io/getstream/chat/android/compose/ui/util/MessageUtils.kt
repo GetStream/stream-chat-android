@@ -54,10 +54,13 @@ public fun showOriginalTextAsState(cid: String, messageId: String): State<Boolea
 internal fun Message.getSenderDisplayName(
     context: Context,
     currentUser: User?,
+    isDirectMessaging: Boolean = false,
 ): String? =
-    when (user.id) {
-        currentUser?.id -> context.getString(R.string.stream_compose_channel_list_you)
-        else -> null
+    when {
+        user.id == currentUser?.id && isDirectMessaging -> null
+        user.id == currentUser?.id -> context.getString(R.string.stream_compose_channel_list_you)
+        isDirectMessaging -> null
+        else -> user.name
     }
 
 private val fullSizeAttachmentTypes = setOf(

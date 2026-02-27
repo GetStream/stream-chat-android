@@ -26,6 +26,28 @@ import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMo
 import kotlinx.parcelize.Parcelize
 
 /**
+ * Defines where the mute indicator icon is placed in the channel list item.
+ */
+public enum class MuteIndicatorPosition {
+    /** Icon appears inline after the channel name in the title row. */
+    InlineTitle,
+
+    /** Icon appears at the trailing end of the message/preview row. */
+    TrailingBottom,
+}
+
+/**
+ * Behavioral configuration for the channel list.
+ *
+ * @param muteIndicatorPosition Where the mute icon is placed in the channel list item.
+ * @param swipeActionsEnabled Whether swipe-to-reveal actions are enabled on channel list items.
+ */
+public data class ChannelListConfig(
+    val muteIndicatorPosition: MuteIndicatorPosition = MuteIndicatorPosition.InlineTitle,
+    val swipeActionsEnabled: Boolean = true,
+)
+
+/**
  * Central behavioral configuration for the Chat SDK, accessible through `ChatTheme.config`.
  *
  * Groups all feature-flag and behavioral settings by feature area so integrators have a single
@@ -36,6 +58,7 @@ import kotlinx.parcelize.Parcelize
  * @param messageList Configuration for the message list behavior.
  * @param mediaGallery Configuration for the media gallery preview screen.
  * @param composer Configuration for the message composer behavior.
+ * @param channelList Configuration for the channel list behavior.
  * @param attachmentPicker Configuration for the attachment picker behavior.
  */
 public data class ChatConfig(
@@ -43,6 +66,7 @@ public data class ChatConfig(
     val messageList: MessageListConfig = MessageListConfig(),
     val mediaGallery: MediaGalleryConfig = MediaGalleryConfig(),
     val composer: ComposerConfig = ComposerConfig(),
+    val channelList: ChannelListConfig = ChannelListConfig(),
     val attachmentPicker: AttachmentPickerConfig = AttachmentPickerConfig(),
 )
 

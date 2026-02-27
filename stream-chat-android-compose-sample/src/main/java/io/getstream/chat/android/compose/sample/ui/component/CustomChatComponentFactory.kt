@@ -25,6 +25,8 @@ import io.getstream.chat.android.compose.sample.ui.location.LocationComponentFac
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
+import io.getstream.chat.android.compose.ui.channels.list.LocalSwipeRevealCoordinator
+import io.getstream.chat.android.compose.ui.channels.list.SwipeableChannelItem
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Channel
@@ -42,21 +44,37 @@ class CustomChatComponentFactory(
         onChannelClick: (Channel) -> Unit,
         onChannelLongClick: (Channel) -> Unit,
     ) {
-        ChannelItem(
-            modifier = Modifier
-                .animateItem()
-                .run {
-                    // Highlight the item background color if it is pinned
-                    if (channelItem.channel.isPinned()) {
-                        background(color = ChatTheme.colors.backgroundCoreHighlight)
-                    } else {
-                        this
-                    }
-                },
-            channelItem = channelItem,
-            currentUser = currentUser,
-            onChannelClick = onChannelClick,
-            onChannelLongClick = onChannelLongClick,
-        )
+        val coordinator = LocalSwipeRevealCoordinator.current
+        val swipeEnabled = ChatTheme.config.channelList.swipeActionsEnabled && coordinator != null
+        val pinnedModifier = if (channelItem.channel.isPinned()) {
+            Modifier.background(color = ChatTheme.colors.backgroundCoreHighlight)
+        } else {
+            Modifier
+        }
+
+        if (swipeEnabled) {
+            SwipeableChannelItem(
+                modifier = Modifier.animateItem(),
+                channelCid = channelItem.channel.cid,
+                backgroundColor = ChatTheme.colors.backgroundCoreApp,
+                swipeActions = { ChannelSwipeActions(channelItem) },
+            ) {
+                ChannelItem(
+                    modifier = pinnedModifier,
+                    channelItem = channelItem,
+                    currentUser = currentUser,
+                    onChannelClick = onChannelClick,
+                    onChannelLongClick = onChannelLongClick,
+                )
+            }
+        } else {
+            ChannelItem(
+                modifier = Modifier.animateItem().then(pinnedModifier),
+                channelItem = channelItem,
+                currentUser = currentUser,
+                onChannelClick = onChannelClick,
+                onChannelLongClick = onChannelLongClick,
+            )
+        }
     }
 }
