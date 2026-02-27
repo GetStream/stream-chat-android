@@ -119,7 +119,7 @@ import io.getstream.chat.android.randomUser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.sql.Date
+import java.util.Date
 
 @Suppress("LargeClass")
 internal class DomainMappingTest {
