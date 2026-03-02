@@ -34,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -150,13 +149,6 @@ public fun MessageComposer(
                 leadingContent = {
                     ChatTheme.componentFactory.MessageComposerInputLeadingContent(
                         state = state,
-                    )
-                },
-                centerContent = { modifier ->
-                    ChatTheme.componentFactory.MessageComposerInputCenterContent(
-                        state = state,
-                        onValueChange = onValueChange,
-                        modifier = modifier.focusRequester(inputFocusRequester),
                     )
                 },
                 trailingContent = {
@@ -282,13 +274,6 @@ public fun MessageComposer(
                 leadingContent = {
                     ChatTheme.componentFactory.MessageComposerInputLeadingContent(
                         state = state,
-                    )
-                },
-                centerContent = { modifier ->
-                    ChatTheme.componentFactory.MessageComposerInputCenterContent(
-                        state = state,
-                        onValueChange = onValueChange,
-                        modifier = modifier,
                     )
                 },
                 trailingContent = {

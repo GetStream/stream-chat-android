@@ -70,7 +70,6 @@ import io.getstream.chat.android.ui.common.state.messages.composer.RecordingStat
  * @param onSendClick Handler when the send button is clicked.
  * @param recordingActions The [AudioRecordingActions] to be applied to the input.
  * @param leadingContent The content to be displayed at the start of the input.
- * @param centerContent The content to be displayed in the center of the input (the text field).
  * @param trailingContent The content to be displayed at the end of the input.
  */
 @Composable
@@ -87,13 +86,6 @@ public fun MessageInput(
     leadingContent: @Composable RowScope.() -> Unit = {
         ChatTheme.componentFactory.MessageComposerInputLeadingContent(
             state = messageComposerState,
-        )
-    },
-    centerContent: @Composable (Modifier) -> Unit = { modifier ->
-        ChatTheme.componentFactory.MessageComposerInputCenterContent(
-            state = messageComposerState,
-            onValueChange = onValueChange,
-            modifier = modifier,
         )
     },
     trailingContent: @Composable RowScope.() -> Unit = {
@@ -145,7 +137,11 @@ public fun MessageInput(
             val isRecording = messageComposerState.recording !is RecordingState.Idle
             if (!isRecording) {
                 Column(modifier = Modifier.weight(1f)) {
-                    centerContent(Modifier)
+                    ChatTheme.componentFactory.MessageComposerInputCenterContent(
+                        modifier = Modifier,
+                        state = messageComposerState,
+                        onValueChange = onValueChange,
+                    )
                     ChatTheme.componentFactory.MessageComposerInputCenterBottomContent(
                         modifier = Modifier,
                         state = messageComposerState,
