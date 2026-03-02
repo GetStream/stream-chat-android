@@ -1427,7 +1427,6 @@ public interface ChatComponentFactory {
         mentionPopupContent: @Composable (List<User>) -> Unit,
         commandPopupContent: @Composable (List<Command>) -> Unit,
         input: @Composable RowScope.(MessageComposerState) -> Unit,
-        trailingContent: @Composable (MessageComposerState) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.composer.MessageComposer(
             messageComposerState = messageComposerState,
@@ -1446,7 +1445,6 @@ public interface ChatComponentFactory {
             mentionPopupContent = mentionPopupContent,
             commandPopupContent = commandPopupContent,
             input = input,
-            trailingContent = trailingContent,
         )
     }
 

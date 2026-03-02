@@ -81,8 +81,6 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
- * @param trailingContent Customizable composable that represents the trailing content of the composer, send button
- * by default.
  */
 @Composable
 public fun MessageComposer(
@@ -155,11 +153,6 @@ public fun MessageComposer(
             )
         }
     },
-    trailingContent: @Composable (MessageComposerState) -> Unit = {
-        ChatTheme.componentFactory.MessageComposerTrailingContent(
-            state = it,
-        )
-    },
 ) {
     val messageComposerState by viewModel.messageComposerState.collectAsState()
 
@@ -178,7 +171,6 @@ public fun MessageComposer(
         mentionPopupContent = mentionPopupContent,
         commandPopupContent = commandPopupContent,
         input = input,
-        trailingContent = trailingContent,
         messageComposerState = messageComposerState,
         onCancelAction = onCancelAction,
         onAttachmentsClick = onAttachmentsClick,
@@ -209,8 +201,6 @@ public fun MessageComposer(
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
- * @param trailingContent Customizable composable that represents the trailing content of the composer, send button
- * by default.
  */
 @Composable
 public fun MessageComposer(
@@ -267,11 +257,6 @@ public fun MessageComposer(
             )
         }
     },
-    trailingContent: @Composable (MessageComposerState) -> Unit = {
-        ChatTheme.componentFactory.MessageComposerTrailingContent(
-            state = it,
-        )
-    },
 ) {
     val validationErrors = messageComposerState.validationErrors
     val mentionSuggestions = messageComposerState.mentionSuggestions
@@ -312,7 +297,9 @@ public fun MessageComposer(
 
             input(messageComposerState)
 
-            trailingContent(messageComposerState)
+            ChatTheme.componentFactory.MessageComposerTrailingContent(
+                state = messageComposerState,
+            )
         }
 
         if (snackbarHostState.currentSnackbarData != null) {

@@ -8,7 +8,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -250,7 +249,6 @@ private object MessageComposerCustomizationSnippet {
                         ),
                     )
                 },
-                trailingContent = { Spacer(modifier = Modifier.size(8.dp)) } // remove the outer send button
             )
         }
     }
