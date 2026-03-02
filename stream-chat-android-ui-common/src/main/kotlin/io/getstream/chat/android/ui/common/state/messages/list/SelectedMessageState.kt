@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.common.state.messages.list
 
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 
@@ -23,12 +24,13 @@ import io.getstream.chat.android.models.Message
  * Represents a state when a message or its reactions were selected.
  *
  * @property message The selected message.
- * @property ownCapabilities Set of capabilities the user is given for the current channel.
- * For a full list @see [ChannelCapabilities].
+ * @property channel The channel where the message was selected.
+ * For a full list of capabilities @see [ChannelCapabilities].
  */
 public sealed class SelectedMessageState {
     public abstract val message: Message
-    public abstract val ownCapabilities: Set<String>
+    public abstract val channel: Channel
+    public val ownCapabilities: Set<String> get() = channel.ownCapabilities
 }
 
 /**
@@ -36,7 +38,7 @@ public sealed class SelectedMessageState {
  */
 public data class SelectedMessageOptionsState(
     override val message: Message,
-    override val ownCapabilities: Set<String>,
+    override val channel: Channel,
 ) : SelectedMessageState()
 
 /**
@@ -44,7 +46,7 @@ public data class SelectedMessageOptionsState(
  */
 public data class SelectedMessageReactionsState(
     override val message: Message,
-    override val ownCapabilities: Set<String>,
+    override val channel: Channel,
 ) : SelectedMessageState()
 
 /**
@@ -52,7 +54,7 @@ public data class SelectedMessageReactionsState(
  */
 public data class SelectedMessageReactionsPickerState(
     override val message: Message,
-    override val ownCapabilities: Set<String>,
+    override val channel: Channel,
 ) : SelectedMessageState()
 
 /**
@@ -60,5 +62,5 @@ public data class SelectedMessageReactionsPickerState(
  */
 public data class SelectedMessageFailedModerationState(
     override val message: Message,
-    override val ownCapabilities: Set<String>,
+    override val channel: Channel,
 ) : SelectedMessageState()

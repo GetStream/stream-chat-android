@@ -18,7 +18,9 @@ package io.getstream.chat.android.compose.util.extensions
 
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
 import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
@@ -117,6 +119,18 @@ internal class MessageOptionItemVisibilityTest {
         expectedResult: Boolean,
     ) {
         messageOptionItemVisibility.canPinMessage(message, ownCapabilities) `should be` expectedResult
+    }
+
+    @ParameterizedTest
+    @MethodSource("canMuteUserArguments")
+    fun `Verify canMuteUser() extension function returns proper value`(
+        messageOptionItemVisibility: MessageOptionItemVisibility,
+        currentUser: User?,
+        message: Message,
+        channel: Channel,
+        expectedResult: Boolean,
+    ) {
+        messageOptionItemVisibility.canMuteUser(currentUser, message, channel) `should be` expectedResult
     }
 
     @ParameterizedTest
@@ -281,6 +295,38 @@ internal class MessageOptionItemVisibilityTest {
                 randomMessage(),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.UPDATE_ANY_MESSAGE)),
                 false,
+            ),
+        )
+
+        @JvmStatic
+        fun canMuteUserArguments() = listOf(
+            Arguments.of(
+                MessageOptionItemVisibility(isMuteUserVisible = false),
+                currentUser.takeIf { randomBoolean() },
+                randomMessage(),
+                Channel(config = Config(muteEnabled = true)),
+                false,
+            ),
+            Arguments.of(
+                MessageOptionItemVisibility(),
+                currentUser,
+                randomMessage(user = currentUser),
+                Channel(config = Config(muteEnabled = true)),
+                false,
+            ),
+            Arguments.of(
+                MessageOptionItemVisibility(isMuteUserVisible = true),
+                currentUser.takeIf { randomBoolean() },
+                randomMessage(),
+                Channel(config = Config(muteEnabled = false)),
+                false,
+            ),
+            Arguments.of(
+                MessageOptionItemVisibility(isMuteUserVisible = true),
+                currentUser.takeIf { randomBoolean() },
+                randomMessage(),
+                Channel(config = Config(muteEnabled = true)),
+                true,
             ),
         )
 

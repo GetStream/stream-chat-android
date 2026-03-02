@@ -30,11 +30,13 @@ import io.getstream.chat.android.compose.util.extensions.canDeleteMessage
 import io.getstream.chat.android.compose.util.extensions.canEditMessage
 import io.getstream.chat.android.compose.util.extensions.canFlagMessage
 import io.getstream.chat.android.compose.util.extensions.canMarkAsUnread
+import io.getstream.chat.android.compose.util.extensions.canMuteUser
 import io.getstream.chat.android.compose.util.extensions.canPinMessage
 import io.getstream.chat.android.compose.util.extensions.canReplyToMessage
 import io.getstream.chat.android.compose.util.extensions.canRetryMessage
 import io.getstream.chat.android.compose.util.extensions.canThreadReplyToMessage
 import io.getstream.chat.android.compose.util.extensions.toSet
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
@@ -47,11 +49,13 @@ import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Flag
 import io.getstream.chat.android.ui.common.state.messages.MarkAsUnread
+import io.getstream.chat.android.ui.common.state.messages.MuteUser
 import io.getstream.chat.android.ui.common.state.messages.Pin
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.Resend
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.state.messages.UnblockUser
+import io.getstream.chat.android.ui.common.state.messages.UnmuteUser
 
 /**
  * Displays all [MessageOptionItemState]s.
@@ -83,8 +87,7 @@ public fun MessageOptions(
  * @param selectedMessage Currently selected message, used to callbacks.
  * @param currentUser Current user, used to expose different states for messages.
  * @param isInThread If the message is being displayed in a thread.
- * @param ownCapabilities Set of capabilities the user is given for the current channel.
- * For a full list @see [ChannelCapabilities].
+ * @param channel The channel where the message was sent.
  */
 @Suppress("LongMethod")
 @Composable
@@ -92,12 +95,13 @@ public fun defaultMessageOptionsState(
     selectedMessage: Message,
     currentUser: User?,
     isInThread: Boolean,
-    ownCapabilities: Set<String>,
+    channel: Channel,
 ): List<MessageOptionItemState> {
     if (selectedMessage.id.isEmpty()) {
         return emptyList()
     }
     val selectedMessageUserId = selectedMessage.user.id
+    val ownCapabilities = channel.ownCapabilities
     val visibility = ChatTheme.messageOptionsTheme.optionVisibility
 
     return listOfNotNull(
@@ -182,6 +186,19 @@ public fun defaultMessageOptionsState(
                         R.drawable.stream_compose_ic_pin
                     },
                 ),
+                destructive = false,
+            )
+        } else {
+            null
+        },
+        if (visibility.canMuteUser(currentUser, selectedMessage, channel)) {
+            val isSenderMuted = currentUser?.mutes?.any { it.target?.id == selectedMessageUserId } == true
+            MessageOptionItemState(
+                title = if (isSenderMuted) R.string.stream_compose_unmute_user else R.string.stream_compose_mute_user,
+                iconPainter = painterResource(
+                    if (isSenderMuted) R.drawable.stream_compose_ic_unmute else R.drawable.stream_compose_ic_mute,
+                ),
+                action = if (isSenderMuted) UnmuteUser(selectedMessage) else MuteUser(selectedMessage),
                 destructive = false,
             )
         } else {
@@ -283,7 +300,7 @@ private fun MessageOptionsPreview(
             selectedMessage = selectedMMessage,
             currentUser = currentUser,
             isInThread = false,
-            ownCapabilities = ChannelCapabilities.toSet(),
+            channel = Channel(ownCapabilities = ChannelCapabilities.toSet()),
         )
 
         MessageOptions(options = messageOptionsStateList, onMessageOptionSelected = {})

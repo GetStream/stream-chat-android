@@ -65,12 +65,14 @@ import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MarkAsUnread
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.MuteUser
 import io.getstream.chat.android.ui.common.state.messages.Pin
 import io.getstream.chat.android.ui.common.state.messages.React
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.Resend
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.state.messages.UnblockUser
+import io.getstream.chat.android.ui.common.state.messages.UnmuteUser
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageOption
@@ -2251,6 +2253,11 @@ public class MessageListView : ConstraintLayout {
             }
             is UnblockUser -> {
                 messageUserUnblockHandler.onUserUnblocked(message)
+            }
+            is MuteUser,
+            is UnmuteUser,
+            -> {
+                // Not displayed in the XML UI
             }
         }
     }
