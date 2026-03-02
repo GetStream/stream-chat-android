@@ -1424,7 +1424,6 @@ public interface ChatComponentFactory {
         onCommandSelected: (Command) -> Unit,
         onAlsoSendToChannelSelected: (Boolean) -> Unit,
         recordingActions: AudioRecordingActions,
-        headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit,
         mentionPopupContent: @Composable (List<User>) -> Unit,
         commandPopupContent: @Composable (List<Command>) -> Unit,
         leadingContent: @Composable RowScope.(MessageComposerState) -> Unit,
@@ -1445,7 +1444,6 @@ public interface ChatComponentFactory {
             onCommandSelected = onCommandSelected,
             onAlsoSendToChannelSelected = onAlsoSendToChannelSelected,
             recordingActions = recordingActions,
-            headerContent = headerContent,
             mentionPopupContent = mentionPopupContent,
             commandPopupContent = commandPopupContent,
             leadingContent = leadingContent,
@@ -1455,26 +1453,10 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default header content of the message composer.
-     * Shown on top of the composer. Can be overridden to add custom content above the input.
-     *
-     * @param state The current state of the message composer.
-     * @param onCancel The action to perform when the cancel button is clicked.
-     * @param onLinkPreviewClick The action to perform when the link preview is clicked.
-     */
-    @Composable
-    public fun ColumnScope.MessageComposerHeaderContent(
-        state: MessageComposerState,
-        onCancel: () -> Unit,
-        onLinkPreviewClick: ((LinkPreview) -> Unit)?,
-    ) {
-    }
-
-    /**
      * Shows a preview of the link that the user has entered in the message composer.
      * Shows the link image preview, the title of the link and its description.
      *
-     * Used as part of [MessageComposerHeaderContent].
+     * Used as part of [MessageComposerInput].
      *
      * @param modifier The modifier to apply to the composable.
      * @param linkPreview The link preview to show.
@@ -1649,9 +1631,9 @@ public interface ChatComponentFactory {
      * @param state The current state of the message composer.
      * @param onInputChanged The action to perform when the input is changed.
      * @param onAttachmentRemoved The action to perform when an attachment is removed.
+     * @param onCancel The action to perform when the cancel button is clicked.
      * @param onLinkPreviewClick The action to perform when a link preview is clicked.
      * @param onCancelLinkPreviewClick The action to perform when the link preview cancel button is clicked.
-     * @param label The label of the message composer.
      * @param onSendClick The action to perform when the send button is clicked.
      * @param recordingActions The actions to control the audio recording.
      * @param leadingContent The leading content of the message composer.

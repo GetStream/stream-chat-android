@@ -18,8 +18,6 @@ package io.getstream.chat.android.compose.ui.messages.composer
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -81,7 +79,6 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
  * @param onAlsoSendToChannelSelected Handler when the user checks the also send to channel checkbox.
  * @param recordingActions The actions that can be performed on an audio recording.
- * @param headerContent The content shown at the top of the message composer.
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
  * @param leadingContent The content shown at the start of the message composer.
@@ -108,15 +105,6 @@ public fun MessageComposer(
         viewModel = viewModel,
         sendOnComplete = ChatTheme.config.composer.audioRecordingSendOnComplete,
     ),
-    headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerHeaderContent(
-                state = it,
-                onCancel = onCancelAction,
-                onLinkPreviewClick = onLinkPreviewClick,
-            )
-        }
-    },
     mentionPopupContent: @Composable (List<User>) -> Unit = {
         ChatTheme.componentFactory.MessageComposerMentionsPopupContent(
             mentionSuggestions = it,
@@ -204,7 +192,6 @@ public fun MessageComposer(
         onCommandSelected = onCommandSelected,
         onAlsoSendToChannelSelected = onAlsoSendToChannelSelected,
         recordingActions = recordingActions,
-        headerContent = headerContent,
         mentionPopupContent = mentionPopupContent,
         commandPopupContent = commandPopupContent,
         leadingContent = leadingContent,
@@ -237,7 +224,6 @@ public fun MessageComposer(
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
  * @param onAlsoSendToChannelSelected Handler when the user checks the also send to channel checkbox.
  * @param recordingActions The actions that can be performed on an audio recording.
- * @param headerContent The content shown at the top of the message composer.
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
  * @param leadingContent The content shown at the start of the message composer.
@@ -261,15 +247,6 @@ public fun MessageComposer(
     onCommandSelected: (Command) -> Unit = {},
     onAlsoSendToChannelSelected: (Boolean) -> Unit = {},
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
-    headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerHeaderContent(
-                state = it,
-                onCancel = onCancelAction,
-                onLinkPreviewClick = onLinkPreviewClick,
-            )
-        }
-    },
     mentionPopupContent: @Composable (List<User>) -> Unit = {
         ChatTheme.componentFactory.MessageComposerMentionsPopupContent(
             mentionSuggestions = it,
@@ -344,30 +321,27 @@ public fun MessageComposer(
         modifier = modifier,
         floatingStyleEnabled = ChatTheme.config.composer.floatingStyleEnabled,
     ) {
-        Column(Modifier.padding(vertical = 4.dp)) {
-            headerContent(messageComposerState)
+        Row(
+            modifier = Modifier
+                .padding(vertical = StreamTokens.spacing2xs)
+                .fillMaxWidth()
+                .padding(
+                    start = StreamTokens.spacingMd,
+                    end = StreamTokens.spacingMd,
+                    top = if (ChatTheme.config.composer.floatingStyleEnabled) {
+                        0.dp
+                    } else {
+                        StreamTokens.spacingMd
+                    },
+                    bottom = StreamTokens.spacingMd,
+                ),
+            verticalAlignment = Bottom,
+        ) {
+            leadingContent(messageComposerState)
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = StreamTokens.spacingMd,
-                        end = StreamTokens.spacingMd,
-                        top = if (ChatTheme.config.composer.floatingStyleEnabled) {
-                            0.dp
-                        } else {
-                            StreamTokens.spacingMd
-                        },
-                        bottom = StreamTokens.spacingMd,
-                    ),
-                verticalAlignment = Bottom,
-            ) {
-                leadingContent(messageComposerState)
+            input(messageComposerState)
 
-                input(messageComposerState)
-
-                trailingContent(messageComposerState)
-            }
+            trailingContent(messageComposerState)
         }
 
         if (snackbarHostState.currentSnackbarData != null) {
