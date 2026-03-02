@@ -16,19 +16,28 @@
 
 package io.getstream.chat.android.compose.ui.messages.composer.internal
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -40,30 +49,102 @@ internal fun MessageComposerInputCenterBottomContent(
     onAlsoSendToChannelChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
     Row(
-        modifier = modifier.padding(
-            start = StreamTokens.spacingMd,
-            end = StreamTokens.spacingMd,
-            bottom = StreamTokens.spacingMd,
-        ),
+        modifier = modifier
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = { onAlsoSendToChannelChanged(!alsoSendToChannel) },
+            )
+            .padding(
+                start = StreamTokens.spacingMd,
+                end = StreamTokens.spacingMd,
+                bottom = StreamTokens.spacingMd,
+            ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {
         Checkbox(
-            modifier = Modifier.testTag("Stream_AlsoSendToChannel")
-                .size(20.dp),
             checked = alsoSendToChannel,
             onCheckedChange = onAlsoSendToChannelChanged,
-            colors = CheckboxDefaults.colors(
-                checkedColor = ChatTheme.colors.controlRadioCheckBgSelected,
-                uncheckedColor = Color.Transparent,
-                checkmarkColor = ChatTheme.colors.controlRadioCheckIconSelected,
-            ),
+            interactionSource = interactionSource,
         )
         Text(
             text = stringResource(R.string.stream_compose_message_composer_show_in_channel),
-            color = ChatTheme.colors.textPrimary,
+            color = if (alsoSendToChannel) {
+                ChatTheme.colors.textPrimary
+            } else {
+                ChatTheme.colors.textTertiary
+            },
             style = ChatTheme.typography.metadataDefault,
+        )
+    }
+}
+
+private val CheckboxShape = RoundedCornerShape(StreamTokens.radiusSm)
+
+@Composable
+private fun Checkbox(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    interactionSource: MutableInteractionSource,
+) {
+    Box(
+        modifier = Modifier
+            .testTag("Stream_AlsoSendToChannel")
+            .size(20.dp)
+            .run {
+                if (checked) {
+                    background(
+                        color = ChatTheme.colors.controlRadioCheckBgSelected,
+                        shape = CheckboxShape,
+                    )
+                } else {
+                    border(
+                        width = 1.dp,
+                        color = ChatTheme.colors.controlRadioCheckBorder,
+                        shape = CheckboxShape,
+                    )
+                }
+            }
+            .clickable(
+                interactionSource = interactionSource,
+                indication = ripple(bounded = false),
+                onClick = { onCheckedChange(!checked) },
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        AnimatedContent(checked) { checked ->
+            if (checked) {
+                Icon(
+                    painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.controlRadioCheckIconSelected,
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SelectedPreview() {
+    ChatTheme {
+        MessageComposerInputCenterBottomContent(
+            alsoSendToChannel = true,
+            onAlsoSendToChannelChanged = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun UnselectedPreview() {
+    ChatTheme {
+        MessageComposerInputCenterBottomContent(
+            alsoSendToChannel = false,
+            onAlsoSendToChannelChanged = {},
         )
     }
 }

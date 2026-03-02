@@ -314,6 +314,26 @@ internal fun MessageComposerInputThreadMode() {
 
 @Preview
 @Composable
+private fun MessageComposerInputThreadModeAlsoSendToChannelPreview() {
+    ChatTheme {
+        MessageComposerInputThreadModeAlsoSendToChannel()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputThreadModeAlsoSendToChannel() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            messageMode = MessageMode.MessageThread(
+                parentMessage = PreviewMessageData.message1,
+            ),
+            alsoSendToChannel = true,
+        ),
+    )
+}
+
+@Preview
+@Composable
 private fun MessageComposerInputAttachmentsPreview() {
     ChatTheme {
         MessageComposerInputAttachments()
