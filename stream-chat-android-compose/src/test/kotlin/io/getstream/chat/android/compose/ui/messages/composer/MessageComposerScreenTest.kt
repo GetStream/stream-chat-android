@@ -99,7 +99,7 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
             }
         }
 
-        composeTestRule.onNodeWithText("Also send as direct message").assertExists()
+        composeTestRule.onNodeWithText("Also send in Channel").assertExists()
     }
 
     @Test

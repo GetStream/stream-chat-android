@@ -32,6 +32,7 @@ import io.getstream.chat.android.compose.ui.components.composer.MessageComposerI
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputReply
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputReplyAttachmentsAndLink
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputSlowMode
+import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputThreadMode
 import org.junit.Rule
 import org.junit.Test
 
@@ -65,6 +66,13 @@ internal class MessageComposerInputTest : PaparazziComposeTest {
     fun `slow mode`() {
         snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
             MessageComposerInputSlowMode()
+        }
+    }
+
+    @Test
+    fun `thread mode`() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerInputThreadMode()
         }
     }
 

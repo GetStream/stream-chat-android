@@ -98,6 +98,7 @@ internal fun MessageComposerInputCenterContent(
             Box(
                 modifier = Modifier.padding(
                     start = StreamTokens.spacingMd,
+                    top = StreamTokens.spacingMd,
                     bottom = StreamTokens.spacingMd,
                 ),
                 contentAlignment = Alignment.CenterStart,

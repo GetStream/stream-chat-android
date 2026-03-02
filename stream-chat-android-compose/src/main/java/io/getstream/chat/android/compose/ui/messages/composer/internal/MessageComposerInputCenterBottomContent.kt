@@ -16,52 +16,54 @@
 
 package io.getstream.chat.android.compose.ui.messages.composer.internal
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
 @Composable
-internal fun DefaultMessageComposerFooterInThreadMode(
+internal fun MessageComposerInputCenterBottomContent(
     alsoSendToChannel: Boolean,
     onAlsoSendToChannelChanged: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
+        modifier = modifier.padding(
+            start = StreamTokens.spacingMd,
+            end = StreamTokens.spacingMd,
+            bottom = StreamTokens.spacingMd,
+        ),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {
         Checkbox(
-            modifier = Modifier.testTag("Stream_AlsoSendToChannel"),
+            modifier = Modifier.testTag("Stream_AlsoSendToChannel")
+                .size(20.dp),
             checked = alsoSendToChannel,
             onCheckedChange = onAlsoSendToChannelChanged,
             colors = CheckboxDefaults.colors(
-                ChatTheme.colors.accentPrimary,
-                ChatTheme.colors.textSecondary,
+                checkedColor = ChatTheme.colors.controlRadioCheckBgSelected,
+                uncheckedColor = Color.Transparent,
+                checkmarkColor = ChatTheme.colors.controlRadioCheckIconSelected,
             ),
         )
-
-        Spacer(modifier = Modifier.width(8.dp))
-
         Text(
             text = stringResource(R.string.stream_compose_message_composer_show_in_channel),
-            color = ChatTheme.colors.textSecondary,
-            textAlign = TextAlign.Center,
-            style = ChatTheme.typography.bodyDefault,
+            color = ChatTheme.colors.textPrimary,
+            style = ChatTheme.typography.metadataDefault,
         )
     }
 }

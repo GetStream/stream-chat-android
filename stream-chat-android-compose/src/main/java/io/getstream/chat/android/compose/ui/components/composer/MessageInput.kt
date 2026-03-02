@@ -51,6 +51,7 @@ import io.getstream.chat.android.previewdata.PreviewAttachmentData
 import io.getstream.chat.android.previewdata.PreviewLinkData
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.state.messages.Edit
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
@@ -143,7 +144,14 @@ public fun MessageInput(
 
             val isRecording = messageComposerState.recording !is RecordingState.Idle
             if (!isRecording) {
-                centerContent(Modifier.weight(1f))
+                Column(modifier = Modifier.weight(1f)) {
+                    centerContent(Modifier)
+                    ChatTheme.componentFactory.MessageComposerInputCenterBottomContent(
+                        modifier = Modifier,
+                        state = messageComposerState,
+                        onAlsoSendToChannelChanged = { },
+                    )
+                }
             } else {
                 Spacer(Modifier.weight(1f))
             }
@@ -291,6 +299,25 @@ internal fun MessageComposerInputSlowMode() {
         messageComposerState = PreviewMessageComposerState.copy(
             inputValue = "Slow mode, wait 9s",
             coolDownTime = 9,
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputThreadModePreview() {
+    ChatTheme {
+        MessageComposerInputThreadMode()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputThreadMode() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            messageMode = MessageMode.MessageThread(
+                parentMessage = PreviewMessageData.message1,
+            ),
         ),
     )
 }

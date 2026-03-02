@@ -349,7 +349,6 @@ public fun MessageComposer(
         )
     },
 ) {
-    val activeAction = messageComposerState.action
     val validationErrors = messageComposerState.validationErrors
     val mentionSuggestions = messageComposerState.mentionSuggestions
     val commandSuggestions = messageComposerState.commandSuggestions

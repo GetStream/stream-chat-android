@@ -1808,6 +1808,33 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * The default center bottom content of the message composer input.
+     * Shown at the bottom of the composer input.
+     *
+     * Used as part of [MessageComposerInput].
+     *
+     * @param state The current state of the message composer.
+     * @param onAlsoSendToChannelChanged The action to perform when the "Also send to channel" checkbox is changed.
+     * @param modifier The modifier to apply to the composable.
+     */
+    @Composable
+    public fun MessageComposerInputCenterBottomContent(
+        state: MessageComposerState,
+        onAlsoSendToChannelChanged: (Boolean) -> Unit,
+        modifier: Modifier,
+    ) {
+        val inThreadMode = state.messageMode is MessageMode.MessageThread
+        AnimatedContent(targetState = inThreadMode) { visible ->
+            if (visible) {
+                io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerInputCenterBottomContent(
+                    alsoSendToChannel = state.alsoSendToChannel,
+                    onAlsoSendToChannelChanged = onAlsoSendToChannelChanged,
+                )
+            }
+        }
+    }
+
+    /**
      * The default trailing content of the message composer.
      * Shown at the end of the composer input.
      *
