@@ -24,7 +24,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -70,7 +69,6 @@ import io.getstream.chat.android.ui.common.state.messages.composer.RecordingStat
  * @param onSendClick Handler when the send button is clicked.
  * @param onAlsoSendToChannelChanged Handler when the "Also send to channel" checkbox is changed.
  * @param recordingActions The [AudioRecordingActions] to be applied to the input.
- * @param trailingContent The content to be displayed at the end of the input.
  */
 @Suppress("LongMethod")
 @Composable
@@ -85,13 +83,6 @@ public fun MessageInput(
     onSendClick: (String, List<Attachment>) -> Unit = { _, _ -> },
     onAlsoSendToChannelChanged: (Boolean) -> Unit = {},
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
-    trailingContent: @Composable RowScope.() -> Unit = {
-        ChatTheme.componentFactory.MessageComposerInputTrailingContent(
-            state = messageComposerState,
-            recordingActions = recordingActions,
-            onSendClick = onSendClick,
-        )
-    },
 ) {
     Column(
         modifier = modifier
@@ -151,7 +142,11 @@ public fun MessageInput(
                 Spacer(Modifier.weight(1f))
             }
 
-            trailingContent()
+            ChatTheme.componentFactory.MessageComposerInputTrailingContent(
+                state = messageComposerState,
+                recordingActions = recordingActions,
+                onSendClick = onSendClick,
+            )
         }
     }
 }

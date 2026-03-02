@@ -135,16 +135,6 @@ public fun MessageComposer(
             },
             onAlsoSendToChannelChanged = onAlsoSendToChannelChanged,
             recordingActions = recordingActions,
-            trailingContent = {
-                ChatTheme.componentFactory.MessageComposerInputTrailingContent(
-                    state = state,
-                    recordingActions = recordingActions,
-                    onSendClick = { input, attachments ->
-                        val message = viewModel.buildNewMessage(input, attachments)
-                        onSendMessage(message)
-                    },
-                )
-            },
         )
     },
 ) {
@@ -236,13 +226,6 @@ public fun MessageComposer(
             onSendClick = onSendMessage,
             onAlsoSendToChannelChanged = onAlsoSendToChannelChanged,
             recordingActions = recordingActions,
-            trailingContent = {
-                ChatTheme.componentFactory.MessageComposerInputTrailingContent(
-                    state = state,
-                    recordingActions = recordingActions,
-                    onSendClick = onSendMessage,
-                )
-            },
         )
     },
 ) {

@@ -26,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,7 +48,9 @@ import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicke
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
+import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.LocalComponentFactory
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
@@ -55,6 +58,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.docs.R
 import io.getstream.chat.android.compose.R as ComposeR
 
@@ -130,64 +134,72 @@ private fun CustomMessageComposer(
     composerViewModel: MessageComposerViewModel,
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
 ) {
-    MessageComposer(
-        viewModel = composerViewModel,
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        input = { composerState ->
-            val onSendClick: (String, List<Attachment>) -> Unit = { text, attachments ->
-                composerViewModel.sendMessage(
-                    message = composerViewModel.buildNewMessage(
-                        message = text,
-                        attachments = attachments,
-                    ),
+    CompositionLocalProvider(LocalComponentFactory provides object : ChatComponentFactory {
+        @Composable
+        override fun MessageComposerInputTrailingContent(
+            state: MessageComposerState,
+            recordingActions: AudioRecordingActions,
+            onSendClick: (String, List<Attachment>) -> Unit,
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(
+                    onClick = {
+                        attachmentsPickerViewModel.setPickerVisible(visible = true)
+                    },
+                    content = {
+                        Icon(
+                            imageVector = Icons.Outlined.AddCircle,
+                            contentDescription = null,
+                            tint = Color.DarkGray,
+                        )
+                    },
+                )
+                IconButton(
+                    enabled = state.canSendMessage(),
+                    onClick = { onSendClick(state.inputValue, state.attachments) },
+                    content = {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.Send,
+                            contentDescription = null,
+                            tint = Color.DarkGray,
+                        )
+                    },
                 )
             }
-            MessageInput(
-                messageComposerState = composerState,
-                onValueChange = { composerViewModel.setMessageInput(it) },
-                onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
-                onCancelAction = { composerViewModel.dismissMessageActions() },
-                onSendClick = onSendClick,
-                recordingActions = AudioRecordingActions.defaultActions(
-                    viewModel = composerViewModel,
-                    sendOnComplete = ChatTheme.config.composer.audioRecordingSendOnComplete,
-                ),
-                modifier = Modifier
-                    .padding(horizontal = 10.dp)
-                    .align(Alignment.CenterVertically),
-                trailingContent = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        IconButton(
-                            onClick = {
-                                attachmentsPickerViewModel.setPickerVisible(visible = true)
-                            },
-                            content = {
-                                Icon(
-                                    imageVector = Icons.Outlined.AddCircle,
-                                    contentDescription = null,
-                                    tint = Color.DarkGray,
-                                )
-                            },
-                        )
-                        IconButton(
-                            enabled = composerState.canSendMessage(),
-                            onClick = { onSendClick(composerState.inputValue, composerState.attachments) },
-                            content = {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Outlined.Send,
-                                    contentDescription = null,
-                                    tint = Color.DarkGray,
-                                )
-                            },
-                        )
-                    }
-                },
-            )
-        },
-        onAttachmentsClick = { attachmentsPickerViewModel.setPickerVisible(visible = true) },
-    )
+        }
+    }) {
+        MessageComposer(
+            viewModel = composerViewModel,
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            input = { composerState ->
+                val onSendClick: (String, List<Attachment>) -> Unit = { text, attachments ->
+                    composerViewModel.sendMessage(
+                        message = composerViewModel.buildNewMessage(
+                            message = text,
+                            attachments = attachments,
+                        ),
+                    )
+                }
+                MessageInput(
+                    messageComposerState = composerState,
+                    onValueChange = { composerViewModel.setMessageInput(it) },
+                    onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
+                    onCancelAction = { composerViewModel.dismissMessageActions() },
+                    onSendClick = onSendClick,
+                    recordingActions = AudioRecordingActions.defaultActions(
+                        viewModel = composerViewModel,
+                        sendOnComplete = ChatTheme.config.composer.audioRecordingSendOnComplete,
+                    ),
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp)
+                        .align(Alignment.CenterVertically),
+                )
+            },
+            onAttachmentsClick = { attachmentsPickerViewModel.setPickerVisible(visible = true) },
+        )
+    }
 }
 
 /**
