@@ -76,7 +76,7 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param onCancelLinkPreviewClick Handler when the user taps on the cancel link preview.
  * @param onMentionSelected Handler when the user taps on a mention suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
- * @param onAlsoSendToChannelChanged Handler when the "Also send to channel" checkbox is changed.
+ * @param onAlsoSendToChannelChange Handler when the "Also send to channel" checkbox is changed.
  * @param recordingActions The actions that can be performed on an audio recording.
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
@@ -96,7 +96,7 @@ public fun MessageComposer(
     onCancelLinkPreviewClick: (() -> Unit)? = { viewModel.cancelLinkPreview() },
     onMentionSelected: (User) -> Unit = { viewModel.selectMention(it) },
     onCommandSelected: (Command) -> Unit = { viewModel.selectCommand(it) },
-    onAlsoSendToChannelChanged: (Boolean) -> Unit = viewModel::setAlsoSendToChannel,
+    onAlsoSendToChannelChange: (Boolean) -> Unit = viewModel::setAlsoSendToChannel,
     recordingActions: AudioRecordingActions = AudioRecordingActions.defaultActions(
         viewModel = viewModel,
         sendOnComplete = ChatTheme.config.composer.audioRecordingSendOnComplete,
@@ -133,7 +133,7 @@ public fun MessageComposer(
                 val message = viewModel.buildNewMessage(input, attachments)
                 onSendMessage(message)
             },
-            onAlsoSendToChannelChanged = onAlsoSendToChannelChanged,
+            onAlsoSendToChannelChange = onAlsoSendToChannelChange,
             recordingActions = recordingActions,
         )
     },
@@ -150,7 +150,7 @@ public fun MessageComposer(
         },
         onMentionSelected = onMentionSelected,
         onCommandSelected = onCommandSelected,
-        onAlsoSendToChannelSelected = onAlsoSendToChannelChanged,
+        onAlsoSendToChannelSelected = onAlsoSendToChannelChange,
         recordingActions = recordingActions,
         mentionPopupContent = mentionPopupContent,
         commandPopupContent = commandPopupContent,
@@ -180,7 +180,7 @@ public fun MessageComposer(
  * @param onCancelLinkPreviewClick Handler when the user taps on the cancel link preview.
  * @param onMentionSelected Handler when the user taps on a mention suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
- * @param onAlsoSendToChannelChanged Handler when the "Also send to channel" checkbox is changed.
+ * @param onAlsoSendToChannelChange Handler when the "Also send to channel" checkbox is changed.
  * @param recordingActions The actions that can be performed on an audio recording.
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
@@ -200,7 +200,7 @@ public fun MessageComposer(
     onCancelLinkPreviewClick: (() -> Unit)? = null,
     onMentionSelected: (User) -> Unit = {},
     onCommandSelected: (Command) -> Unit = {},
-    onAlsoSendToChannelChanged: (Boolean) -> Unit = {},
+    onAlsoSendToChannelChange: (Boolean) -> Unit = {},
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
     mentionPopupContent: @Composable (List<User>) -> Unit = {
         ChatTheme.componentFactory.MessageComposerMentionsPopupContent(
@@ -224,7 +224,7 @@ public fun MessageComposer(
             onLinkPreviewClick = onLinkPreviewClick,
             onCancelLinkPreviewClick = onCancelLinkPreviewClick,
             onSendClick = onSendMessage,
-            onAlsoSendToChannelChanged = onAlsoSendToChannelChanged,
+            onAlsoSendToChannelChange = onAlsoSendToChannelChange,
             recordingActions = recordingActions,
         )
     },

@@ -1440,7 +1440,7 @@ public interface ChatComponentFactory {
             onLinkPreviewClick = onLinkPreviewClick,
             onMentionSelected = onMentionSelected,
             onCommandSelected = onCommandSelected,
-            onAlsoSendToChannelChanged = onAlsoSendToChannelSelected,
+            onAlsoSendToChannelChange = onAlsoSendToChannelSelected,
             recordingActions = recordingActions,
             mentionPopupContent = mentionPopupContent,
             commandPopupContent = commandPopupContent,
@@ -1634,7 +1634,7 @@ public interface ChatComponentFactory {
      * @param onLinkPreviewClick The action to perform when a link preview is clicked.
      * @param onCancelLinkPreviewClick The action to perform when the link preview cancel button is clicked.
      * @param onSendClick The action to perform when the send button is clicked.
-     * @param onAlsoSendToChannelChanged The action to perform when the "Also send to channel" checkbox is changed.
+     * @param onAlsoSendToChannelChange The action to perform when the "Also send to channel" checkbox is changed.
      * @param recordingActions The actions to control the audio recording.
      */
     @Composable
@@ -1647,7 +1647,7 @@ public interface ChatComponentFactory {
         onLinkPreviewClick: ((LinkPreview) -> Unit)?,
         onCancelLinkPreviewClick: (() -> Unit)?,
         onSendClick: (String, List<Attachment>) -> Unit,
-        onAlsoSendToChannelChanged: (Boolean) -> Unit,
+        onAlsoSendToChannelChange: (Boolean) -> Unit,
         recordingActions: AudioRecordingActions,
     ) {
         MessageInput(
@@ -1659,7 +1659,7 @@ public interface ChatComponentFactory {
             onLinkPreviewClick = onLinkPreviewClick,
             onCancelLinkPreviewClick = onCancelLinkPreviewClick,
             onSendClick = onSendClick,
-            onAlsoSendToChannelChanged = onAlsoSendToChannelChanged,
+            onAlsoSendToChannelChange = onAlsoSendToChannelChange,
             recordingActions = recordingActions,
         )
     }
@@ -1759,13 +1759,13 @@ public interface ChatComponentFactory {
      * Used as part of [MessageComposerInput].
      *
      * @param state The current state of the message composer.
-     * @param onAlsoSendToChannelChanged The action to perform when the "Also send to channel" checkbox is changed.
+     * @param onAlsoSendToChannelChange The action to perform when the "Also send to channel" checkbox is changed.
      * @param modifier The modifier to apply to the composable.
      */
     @Composable
     public fun MessageComposerInputCenterBottomContent(
         state: MessageComposerState,
-        onAlsoSendToChannelChanged: (Boolean) -> Unit,
+        onAlsoSendToChannelChange: (Boolean) -> Unit,
         modifier: Modifier,
     ) {
         val inThreadMode = state.messageMode is MessageMode.MessageThread
@@ -1773,7 +1773,7 @@ public interface ChatComponentFactory {
             if (visible) {
                 io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerInputCenterBottomContent(
                     alsoSendToChannel = state.alsoSendToChannel,
-                    onAlsoSendToChannelChanged = onAlsoSendToChannelChanged,
+                    onAlsoSendToChannelChange = onAlsoSendToChannelChange,
                 )
             }
         }

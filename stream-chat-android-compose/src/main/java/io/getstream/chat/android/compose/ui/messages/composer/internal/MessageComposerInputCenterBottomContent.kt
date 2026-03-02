@@ -46,7 +46,7 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
 @Composable
 internal fun MessageComposerInputCenterBottomContent(
     alsoSendToChannel: Boolean,
-    onAlsoSendToChannelChanged: (Boolean) -> Unit,
+    onAlsoSendToChannelChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -55,7 +55,7 @@ internal fun MessageComposerInputCenterBottomContent(
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = { onAlsoSendToChannelChanged(!alsoSendToChannel) },
+                onClick = { onAlsoSendToChannelChange(!alsoSendToChannel) },
             )
             .padding(
                 start = StreamTokens.spacingMd,
@@ -67,7 +67,7 @@ internal fun MessageComposerInputCenterBottomContent(
     ) {
         Checkbox(
             checked = alsoSendToChannel,
-            onCheckedChange = onAlsoSendToChannelChanged,
+            onCheckedChange = onAlsoSendToChannelChange,
             interactionSource = interactionSource,
         )
         Text(
@@ -133,7 +133,7 @@ private fun SelectedPreview() {
     ChatTheme {
         MessageComposerInputCenterBottomContent(
             alsoSendToChannel = true,
-            onAlsoSendToChannelChanged = {},
+            onAlsoSendToChannelChange = {},
         )
     }
 }
@@ -144,7 +144,7 @@ private fun UnselectedPreview() {
     ChatTheme {
         MessageComposerInputCenterBottomContent(
             alsoSendToChannel = false,
-            onAlsoSendToChannelChanged = {},
+            onAlsoSendToChannelChange = {},
         )
     }
 }
