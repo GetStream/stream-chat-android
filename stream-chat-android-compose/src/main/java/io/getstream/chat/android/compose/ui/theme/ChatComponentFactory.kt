@@ -17,7 +17,7 @@
 package io.getstream.chat.android.compose.ui.theme
 
 import android.net.Uri
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
