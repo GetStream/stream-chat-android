@@ -1442,7 +1442,7 @@ public interface ChatComponentFactory {
             onLinkPreviewClick = onLinkPreviewClick,
             onMentionSelected = onMentionSelected,
             onCommandSelected = onCommandSelected,
-            onAlsoSendToChannelSelected = onAlsoSendToChannelSelected,
+            onAlsoSendToChannelChanged = onAlsoSendToChannelSelected,
             recordingActions = recordingActions,
             mentionPopupContent = mentionPopupContent,
             commandPopupContent = commandPopupContent,
@@ -1635,6 +1635,7 @@ public interface ChatComponentFactory {
      * @param onLinkPreviewClick The action to perform when a link preview is clicked.
      * @param onCancelLinkPreviewClick The action to perform when the link preview cancel button is clicked.
      * @param onSendClick The action to perform when the send button is clicked.
+     * @param onAlsoSendToChannelChanged The action to perform when the "Also send to channel" checkbox is changed.
      * @param recordingActions The actions to control the audio recording.
      * @param leadingContent The leading content of the message composer.
      * @param trailingContent The trailing content of the message composer.
@@ -1648,6 +1649,7 @@ public interface ChatComponentFactory {
         onLinkPreviewClick: ((LinkPreview) -> Unit)?,
         onCancelLinkPreviewClick: (() -> Unit)?,
         onSendClick: (String, List<Attachment>) -> Unit,
+        onAlsoSendToChannelChanged: (Boolean) -> Unit,
         recordingActions: AudioRecordingActions,
         leadingContent: @Composable RowScope.() -> Unit,
         trailingContent: @Composable RowScope.() -> Unit,
@@ -1661,6 +1663,7 @@ public interface ChatComponentFactory {
             onLinkPreviewClick = onLinkPreviewClick,
             onCancelLinkPreviewClick = onCancelLinkPreviewClick,
             onSendClick = onSendClick,
+            onAlsoSendToChannelChanged = onAlsoSendToChannelChanged,
             recordingActions = recordingActions,
             leadingContent = leadingContent,
             trailingContent = trailingContent,

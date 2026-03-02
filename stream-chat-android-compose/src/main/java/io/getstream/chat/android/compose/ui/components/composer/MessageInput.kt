@@ -68,6 +68,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.RecordingStat
  * @param onLinkPreviewClick Handler when a link preview is clicked.
  * @param onCancelLinkPreviewClick Handler when the cancel link preview button is clicked.
  * @param onSendClick Handler when the send button is clicked.
+ * @param onAlsoSendToChannelChanged Handler when the "Also send to channel" checkbox is changed.
  * @param recordingActions The [AudioRecordingActions] to be applied to the input.
  * @param leadingContent The content to be displayed at the start of the input.
  * @param trailingContent The content to be displayed at the end of the input.
@@ -82,6 +83,7 @@ public fun MessageInput(
     onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onCancelLinkPreviewClick: (() -> Unit)? = null,
     onSendClick: (String, List<Attachment>) -> Unit = { _, _ -> },
+    onAlsoSendToChannelChanged: (Boolean) -> Unit = {},
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
     leadingContent: @Composable RowScope.() -> Unit = {
         ChatTheme.componentFactory.MessageComposerInputLeadingContent(
@@ -145,7 +147,7 @@ public fun MessageInput(
                     ChatTheme.componentFactory.MessageComposerInputCenterBottomContent(
                         modifier = Modifier,
                         state = messageComposerState,
-                        onAlsoSendToChannelChanged = { },
+                        onAlsoSendToChannelChanged = onAlsoSendToChannelChanged,
                     )
                 }
             } else {

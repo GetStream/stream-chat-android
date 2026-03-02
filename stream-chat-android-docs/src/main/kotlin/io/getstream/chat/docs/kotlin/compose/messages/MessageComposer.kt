@@ -121,7 +121,7 @@ private object MessageComposerHandlingActionsSnippet {
                         onCancelAction = viewModel::dismissMessageActions,
                         onMentionSelected = viewModel::selectMention,
                         onCommandSelected = viewModel::selectCommand,
-                        onAlsoSendToChannelSelected = viewModel::setAlsoSendToChannel,
+                        onAlsoSendToChannelChanged = viewModel::setAlsoSendToChannel,
                     )
                 }
             }
