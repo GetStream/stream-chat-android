@@ -661,6 +661,7 @@ public class MessageComposerController(
 
     /**
      * Clears all the data from the input — text, attachments, validation errors, and actions.
+     * In thread mode, [alsoSendToChannel] is preserved until the user toggles it; otherwise it is reset.
      */
     public fun clearData() {
         logger.i { "[clearData]" }
@@ -669,7 +670,9 @@ public class MessageComposerController(
         messageInput.value = MessageInput()
         state.update { it.copy(attachments = emptyList()) }
         validationErrors.value = emptyList()
-        alsoSendToChannel.value = false
+        if (!isInThread) {
+            alsoSendToChannel.value = false
+        }
     }
 
     private suspend fun clearDraftMessage(messageMode: MessageMode) {

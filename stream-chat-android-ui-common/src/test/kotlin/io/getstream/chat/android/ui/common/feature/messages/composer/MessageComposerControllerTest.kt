@@ -467,7 +467,51 @@ internal class MessageComposerControllerTest {
         assertEquals("Thread reply", capturedMessage.text)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `Given thread mode with alsoSendToChannel true When clearData called Then alsoSendToChannel remains true`() =
+        runTest {
+            // Given
+            val parentMessage = randomMessage()
+            val fixture = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState()
+            val controller = fixture.get()
+
+            controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+            controller.setAlsoSendToChannel(true)
+
+            // When
+            controller.clearData()
+            advanceUntilIdle()
+
+            // Then
+            assertTrue(controller.alsoSendToChannel.value)
+        }
+
+    @Test
+    fun `Given normal mode with alsoSendToChannel true When clearData called Then alsoSendToChannel is false`() =
+        runTest {
+            // Given
+            val fixture = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState()
+            val controller = fixture.get()
+            controller.setAlsoSendToChannel(true)
+
+            // When
+            controller.clearData()
+            advanceUntilIdle()
+
+            // Then
+            assertFalse(controller.alsoSendToChannel.value)
+        }
+
     @Test
     fun `Given edit mode with text changes When sendMessage called Then editMessage is invoked`() = runTest {
         // Given
