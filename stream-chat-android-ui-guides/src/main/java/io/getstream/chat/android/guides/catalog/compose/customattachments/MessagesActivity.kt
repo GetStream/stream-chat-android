@@ -28,17 +28,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -51,7 +47,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
-import io.getstream.chat.android.guides.R
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -182,30 +177,16 @@ class MessagesActivity : AppCompatActivity() {
                 .fillMaxWidth()
                 .wrapContentHeight(),
             viewModel = viewModel,
-            leadingContent = {
-                IconButton(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .padding(12.dp),
-                    content = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_calendar),
-                            contentDescription = null,
-                            tint = ChatTheme.colors.textSecondary,
-                        )
-                    },
-                    onClick = {
-                        MaterialDatePicker.Builder
-                            .datePicker()
-                            .build()
-                            .apply {
-                                show(activity.supportFragmentManager, null)
-                                addOnPositiveButtonClickListener {
-                                    onDateSelected(it)
-                                }
-                            }
-                    },
-                )
+            onAttachmentsClick = {
+                MaterialDatePicker.Builder
+                    .datePicker()
+                    .build()
+                    .apply {
+                        show(activity.supportFragmentManager, null)
+                        addOnPositiveButtonClickListener {
+                            onDateSelected(it)
+                        }
+                    }
             },
         )
     }

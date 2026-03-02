@@ -225,7 +225,6 @@ private object MessageComposerCustomizationSnippet {
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 viewModel = composerViewModel,
-                leadingContent = {},
                 input = { inputState ->
                     val onSendClick: (String, List<Attachment>) -> Unit = { text, attachments ->
                         composerViewModel.sendMessage(

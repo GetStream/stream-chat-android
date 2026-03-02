@@ -1426,7 +1426,6 @@ public interface ChatComponentFactory {
         recordingActions: AudioRecordingActions,
         mentionPopupContent: @Composable (List<User>) -> Unit,
         commandPopupContent: @Composable (List<Command>) -> Unit,
-        leadingContent: @Composable RowScope.(MessageComposerState) -> Unit,
         input: @Composable RowScope.(MessageComposerState) -> Unit,
         trailingContent: @Composable (MessageComposerState) -> Unit,
     ) {
@@ -1446,7 +1445,6 @@ public interface ChatComponentFactory {
             recordingActions = recordingActions,
             mentionPopupContent = mentionPopupContent,
             commandPopupContent = commandPopupContent,
-            leadingContent = leadingContent,
             input = input,
             trailingContent = trailingContent,
         )
@@ -1608,12 +1606,14 @@ public interface ChatComponentFactory {
     /**
      * The default leading content of the message composer, which includes an add attachment button by default.
      *
+     * @param modifier The modifier to apply to the composable.
      * @param state The current state of the message composer.
      * @param isAttachmentPickerVisible Whether the attachment picker is visible.
      * @param onAttachmentsClick The action to perform when the attachments button is clicked.
      */
     @Composable
-    public fun RowScope.MessageComposerLeadingContent(
+    public fun MessageComposerLeadingContent(
+        modifier: Modifier,
         state: MessageComposerState,
         isAttachmentPickerVisible: Boolean,
         onAttachmentsClick: () -> Unit,

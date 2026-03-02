@@ -41,6 +41,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.docs.R
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -121,7 +122,7 @@ private object AddingCustomAttachmentsSnippet {
                         },
                     )
                 }
-            ) {
+            ) { _ ->
                 // Message list
             }
         }
@@ -139,31 +140,17 @@ private object AddingCustomAttachmentsSnippet {
                 .fillMaxWidth()
                 .wrapContentHeight(),
             viewModel = viewModel,
-            leadingContent = { // here
-                IconButton(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .padding(12.dp),
-                    content = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_calendar),
-                            contentDescription = null,
-                            tint = ChatTheme.colors.textSecondary
-                        )
-                    },
-                    onClick = {
-                        MaterialDatePicker.Builder
-                            .datePicker()
-                            .build()
-                            .apply {
-                                show(activity.supportFragmentManager, null)
-                                addOnPositiveButtonClickListener {
-                                    onDateSelected(it)
-                                }
-                            }
+            onAttachmentsClick = {
+                MaterialDatePicker.Builder
+                    .datePicker()
+                    .build()
+                    .apply {
+                        show(activity.supportFragmentManager, null)
+                        addOnPositiveButtonClickListener {
+                            onDateSelected(it)
+                        }
                     }
-                )
-            }
+            },
         )
     }
 }
@@ -174,6 +161,28 @@ class CustomComponentFactory : ChatComponentFactory {
         if (state.message.attachments.any { it.type == "date" }) {
             DateAttachmentContent(state, modifier)
         }
+    }
+
+    @Composable
+    override fun MessageComposerLeadingContent(
+        modifier: Modifier,
+        state: MessageComposerState,
+        isAttachmentPickerVisible: Boolean,
+        onAttachmentsClick: () -> Unit,
+    ) {
+        IconButton(
+            modifier = Modifier
+                .size(48.dp)
+                .padding(12.dp),
+            content = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_calendar),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textSecondary
+                )
+            },
+            onClick = onAttachmentsClick,
+        )
     }
 }
 

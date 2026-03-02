@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -41,6 +42,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.guides.R
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 
 /**
  * A custom [ChatComponentFactory] that adds support for date attachments.
@@ -51,6 +53,28 @@ object CustomChatComponentFactory : ChatComponentFactory {
         if (state.message.attachments.any { it.type == "date" }) {
             DateAttachmentContent(state, modifier)
         }
+    }
+
+    @Composable
+    override fun MessageComposerLeadingContent(
+        modifier: Modifier,
+        state: MessageComposerState,
+        isAttachmentPickerVisible: Boolean,
+        onAttachmentsClick: () -> Unit,
+    ) {
+        IconButton(
+            modifier = Modifier
+                .size(48.dp)
+                .padding(12.dp),
+            content = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_calendar),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textSecondary,
+                )
+            },
+            onClick = onAttachmentsClick,
+        )
     }
 }
 

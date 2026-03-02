@@ -80,7 +80,6 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param recordingActions The actions that can be performed on an audio recording.
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
- * @param leadingContent The content shown at the start of the message composer.
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
  * @param trailingContent Customizable composable that represents the trailing content of the composer, send button
  * by default.
@@ -115,15 +114,6 @@ public fun MessageComposer(
             commandSuggestions = it,
             onCommandSelected = onCommandSelected,
         )
-    },
-    leadingContent: @Composable RowScope.(MessageComposerState) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerLeadingContent(
-                state = it,
-                isAttachmentPickerVisible = isAttachmentPickerVisible,
-                onAttachmentsClick = onAttachmentsClick,
-            )
-        }
     },
     input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
         val inputFocusRequester = remember { FocusRequester() }
@@ -187,7 +177,6 @@ public fun MessageComposer(
         recordingActions = recordingActions,
         mentionPopupContent = mentionPopupContent,
         commandPopupContent = commandPopupContent,
-        leadingContent = leadingContent,
         input = input,
         trailingContent = trailingContent,
         messageComposerState = messageComposerState,
@@ -219,7 +208,6 @@ public fun MessageComposer(
  * @param recordingActions The actions that can be performed on an audio recording.
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
- * @param leadingContent The content shown at the start of the message composer.
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
  * @param trailingContent Customizable composable that represents the trailing content of the composer, send button
  * by default.
@@ -251,15 +239,6 @@ public fun MessageComposer(
             commandSuggestions = it,
             onCommandSelected = onCommandSelected,
         )
-    },
-    leadingContent: @Composable RowScope.(MessageComposerState) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerLeadingContent(
-                state = it,
-                isAttachmentPickerVisible = isAttachmentPickerVisible,
-                onAttachmentsClick = onAttachmentsClick,
-            )
-        }
     },
     input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
         with(ChatTheme.componentFactory) {
@@ -324,7 +303,12 @@ public fun MessageComposer(
                 ),
             verticalAlignment = Bottom,
         ) {
-            leadingContent(messageComposerState)
+            ChatTheme.componentFactory.MessageComposerLeadingContent(
+                modifier = Modifier,
+                state = messageComposerState,
+                isAttachmentPickerVisible = isAttachmentPickerVisible,
+                onAttachmentsClick = onAttachmentsClick,
+            )
 
             input(messageComposerState)
 

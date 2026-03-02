@@ -187,7 +187,6 @@ private fun CustomMessageComposer(
             )
         },
         onAttachmentsClick = { attachmentsPickerViewModel.setPickerVisible(visible = true) },
-        leadingContent = {},
     )
 }
 
