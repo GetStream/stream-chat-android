@@ -190,7 +190,7 @@ class ChannelListTests : StreamTestCase() {
         step("WHEN user goes back to the channel list") {
             userRobot.tapOnBackButton()
         }
-        step("THEN the channel preview shows previous message") {
+        step("THEN the channel preview shows the previous message") {
             userRobot.assertMessageInChannelPreview(oldMessage, fromCurrentUser = false)
         }
         step("AND the message timestamp is shown") {

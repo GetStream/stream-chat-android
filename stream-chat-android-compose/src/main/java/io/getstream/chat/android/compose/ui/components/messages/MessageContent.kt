@@ -16,17 +16,22 @@
 
 package io.getstream.chat.android.compose.ui.components.messages
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.attachment.isAudio
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
@@ -42,6 +47,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.attachments.content.FileUploadContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -85,6 +91,8 @@ public fun MessageContent(
     },
     deletedMessageContent: @Composable () -> Unit = {
         ChatTheme.componentFactory.MessageDeletedContent(
+            message = message,
+            currentUser = currentUser,
             modifier = modifier,
         )
     },
@@ -112,25 +120,31 @@ public fun MessageContent(
  *
  * @param modifier Modifier for styling.
  */
-@Suppress("detekt:ForbiddenComment")
 @Composable
 internal fun DefaultMessageDeletedContent(
+    message: Message,
+    currentUser: User?,
     modifier: Modifier,
 ) {
-    Text(
-        modifier = modifier
-            .testTag("Stream_MessageDeleted")
-            .padding(
-                start = 12.dp,
-                end = 12.dp,
-                top = 8.dp,
-                bottom = 8.dp,
-            ),
-        text = stringResource(id = R.string.stream_compose_message_deleted),
-        color = ChatTheme.colors.textSecondary,
-        // TODO: replace with a dedicated italic token once the design system provides one
-        style = ChatTheme.typography.metadataDefault.copy(fontStyle = FontStyle.Italic),
-    )
+    val contentColor = MessageStyling.textColor(outgoing = currentUser?.id == message.user.id)
+    Row(
+        modifier = modifier.padding(MessageStyling.contentPadding),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.stream_compose_ic_block),
+            contentDescription = null,
+            tint = contentColor,
+            modifier = Modifier.size(16.dp),
+        )
+        Text(
+            modifier = Modifier.testTag("Stream_MessageDeleted"),
+            text = stringResource(id = R.string.stream_compose_message_deleted),
+            color = contentColor,
+            style = ChatTheme.typography.bodyDefault,
+        )
+    }
 }
 
 /**

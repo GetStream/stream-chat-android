@@ -27,6 +27,7 @@ import io.getstream.chat.android.compose.state.DateFormatType.DATE
 import io.getstream.chat.android.compose.state.DateFormatType.RELATIVE
 import io.getstream.chat.android.compose.state.DateFormatType.TIME
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import java.util.Date
 
@@ -45,7 +46,10 @@ public fun Timestamp(
     modifier: Modifier = Modifier,
     formatter: DateFormatter = ChatTheme.dateFormatter,
     formatType: DateFormatType = DATE,
-    textStyle: TextStyle = ChatTheme.typography.metadataDefault.copy(ChatTheme.colors.chatTextTimestamp),
+    textStyle: TextStyle = ChatTheme.typography.captionDefault.copy(
+        color = ChatTheme.colors.textTertiary,
+        lineHeight = StreamTokens.lineHeightNormal,
+    ),
 ) {
     val timestamp = if (LocalInspectionMode.current) {
         "13:49"

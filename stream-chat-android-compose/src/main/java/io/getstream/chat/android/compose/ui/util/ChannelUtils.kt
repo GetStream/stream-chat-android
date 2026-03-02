@@ -17,6 +17,11 @@
 package io.getstream.chat.android.compose.ui.util
 
 import android.content.Context
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
+import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.client.utils.message.isRegular
+import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
@@ -33,6 +38,17 @@ import java.util.Date
  * @return Last message from the channel or null if it doesn't exist.
  */
 public fun Channel.getLastMessage(currentUser: User?): Message? = getPreviewMessage(currentUser)
+
+/**
+ * Returns channel's last regular or system message, **including deleted messages**.
+ * Used by the channel list to show "Message deleted" when the last message was deleted.
+ */
+internal fun Channel.getLastMessageIncludingDeleted(currentUser: User?): Message? =
+    messages.asSequence()
+        .filter { it.createdAt != null || it.createdLocallyAt != null }
+        .filter { it.user.id == currentUser?.id || !it.shadowed }
+        .filter { it.isRegular() || it.isSystem() || it.isDeleted() }
+        .maxByOrNull { it.getCreatedAtOrDefault(NEVER) }
 
 /**
  * Filters the read status of each person other than the target user.

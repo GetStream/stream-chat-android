@@ -38,6 +38,7 @@ internal object StreamTokens {
     val radiusFull = CornerSize(percent = 50)
 
     val size12 = 12.dp
+    val size16 = 16.dp
 
     val spacing3xs = 2.dp
     val spacing2xs = 4.dp
