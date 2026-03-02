@@ -121,37 +121,36 @@ public fun MessageComposer(
             }
         }
 
-        with(ChatTheme.componentFactory) {
-            MessageComposerInput(
-                state = state,
-                onInputChanged = onValueChange,
-                onAttachmentRemoved = onAttachmentRemoved,
-                onLinkPreviewClick = onLinkPreviewClick,
-                onCancelLinkPreviewClick = onCancelLinkPreviewClick,
-                onCancel = onCancelAction,
-                onSendClick = { input, attachments ->
-                    val message = viewModel.buildNewMessage(input, attachments)
-                    onSendMessage(message)
-                },
-                onAlsoSendToChannelChanged = onAlsoSendToChannelChanged,
-                recordingActions = recordingActions,
-                leadingContent = {
-                    ChatTheme.componentFactory.MessageComposerInputLeadingContent(
-                        state = state,
-                    )
-                },
-                trailingContent = {
-                    ChatTheme.componentFactory.MessageComposerInputTrailingContent(
-                        state = state,
-                        recordingActions = recordingActions,
-                        onSendClick = { input, attachments ->
-                            val message = viewModel.buildNewMessage(input, attachments)
-                            onSendMessage(message)
-                        },
-                    )
-                },
-            )
-        }
+        ChatTheme.componentFactory.MessageComposerInput(
+            modifier = Modifier.weight(1f),
+            state = state,
+            onInputChanged = onValueChange,
+            onAttachmentRemoved = onAttachmentRemoved,
+            onLinkPreviewClick = onLinkPreviewClick,
+            onCancelLinkPreviewClick = onCancelLinkPreviewClick,
+            onCancel = onCancelAction,
+            onSendClick = { input, attachments ->
+                val message = viewModel.buildNewMessage(input, attachments)
+                onSendMessage(message)
+            },
+            onAlsoSendToChannelChanged = onAlsoSendToChannelChanged,
+            recordingActions = recordingActions,
+            leadingContent = {
+                ChatTheme.componentFactory.MessageComposerInputLeadingContent(
+                    state = state,
+                )
+            },
+            trailingContent = {
+                ChatTheme.componentFactory.MessageComposerInputTrailingContent(
+                    state = state,
+                    recordingActions = recordingActions,
+                    onSendClick = { input, attachments ->
+                        val message = viewModel.buildNewMessage(input, attachments)
+                        onSendMessage(message)
+                    },
+                )
+            },
+        )
     },
 ) {
     val messageComposerState by viewModel.messageComposerState.collectAsState()
@@ -231,31 +230,30 @@ public fun MessageComposer(
         )
     },
     input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
-        with(ChatTheme.componentFactory) {
-            MessageComposerInput(
-                state = state,
-                onInputChanged = onValueChange,
-                onAttachmentRemoved = onAttachmentRemoved,
-                onCancel = onCancelAction,
-                onLinkPreviewClick = onLinkPreviewClick,
-                onCancelLinkPreviewClick = onCancelLinkPreviewClick,
-                onSendClick = onSendMessage,
-                onAlsoSendToChannelChanged = onAlsoSendToChannelChanged,
-                recordingActions = recordingActions,
-                leadingContent = {
-                    ChatTheme.componentFactory.MessageComposerInputLeadingContent(
-                        state = state,
-                    )
-                },
-                trailingContent = {
-                    ChatTheme.componentFactory.MessageComposerInputTrailingContent(
-                        state = state,
-                        recordingActions = recordingActions,
-                        onSendClick = onSendMessage,
-                    )
-                },
-            )
-        }
+        ChatTheme.componentFactory.MessageComposerInput(
+            modifier = Modifier.weight(1f),
+            state = state,
+            onInputChanged = onValueChange,
+            onAttachmentRemoved = onAttachmentRemoved,
+            onCancel = onCancelAction,
+            onLinkPreviewClick = onLinkPreviewClick,
+            onCancelLinkPreviewClick = onCancelLinkPreviewClick,
+            onSendClick = onSendMessage,
+            onAlsoSendToChannelChanged = onAlsoSendToChannelChanged,
+            recordingActions = recordingActions,
+            leadingContent = {
+                ChatTheme.componentFactory.MessageComposerInputLeadingContent(
+                    state = state,
+                )
+            },
+            trailingContent = {
+                ChatTheme.componentFactory.MessageComposerInputTrailingContent(
+                    state = state,
+                    recordingActions = recordingActions,
+                    onSendClick = onSendMessage,
+                )
+            },
+        )
     },
 ) {
     val validationErrors = messageComposerState.validationErrors

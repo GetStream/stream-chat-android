@@ -1626,6 +1626,7 @@ public interface ChatComponentFactory {
     /**
      * The default input of the message composer.
      *
+     * @param modifier The modifier to apply to the composable.
      * @param state The current state of the message composer.
      * @param onInputChanged The action to perform when the input is changed.
      * @param onAttachmentRemoved The action to perform when an attachment is removed.
@@ -1639,7 +1640,8 @@ public interface ChatComponentFactory {
      * @param trailingContent The trailing content of the message composer.
      */
     @Composable
-    public fun RowScope.MessageComposerInput(
+    public fun MessageComposerInput(
+        modifier: Modifier,
         state: MessageComposerState,
         onInputChanged: (String) -> Unit,
         onAttachmentRemoved: (Attachment) -> Unit,
@@ -1653,7 +1655,7 @@ public interface ChatComponentFactory {
         trailingContent: @Composable RowScope.() -> Unit,
     ) {
         MessageInput(
-            modifier = Modifier.weight(1f),
+            modifier = modifier,
             messageComposerState = state,
             onValueChange = onInputChanged,
             onAttachmentRemoved = onAttachmentRemoved,
