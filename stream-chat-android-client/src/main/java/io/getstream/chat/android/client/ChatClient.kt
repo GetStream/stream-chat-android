@@ -2827,7 +2827,14 @@ internal constructor(
         when (uploadResult) {
             is Result.Success -> updateMessage(uploadResult.value).await()
             is Result.Failure -> {
-                original?.let(channelLogic::upsertMessage)
+                if (original != null) {
+                    channelLogic.upsertMessage(original)
+                } else {
+                    logger.w {
+                        "[editMessage] Upload failed and original message is unavailable for rollback " +
+                            "(messageId=${message.id}). Channel state may be stale."
+                    }
+                }
                 uploadResult
             }
         }
