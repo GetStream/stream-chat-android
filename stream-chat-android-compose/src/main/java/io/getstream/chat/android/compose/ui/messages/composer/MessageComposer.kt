@@ -135,11 +135,6 @@ public fun MessageComposer(
             },
             onAlsoSendToChannelChanged = onAlsoSendToChannelChanged,
             recordingActions = recordingActions,
-            leadingContent = {
-                ChatTheme.componentFactory.MessageComposerInputLeadingContent(
-                    state = state,
-                )
-            },
             trailingContent = {
                 ChatTheme.componentFactory.MessageComposerInputTrailingContent(
                     state = state,
@@ -241,11 +236,6 @@ public fun MessageComposer(
             onSendClick = onSendMessage,
             onAlsoSendToChannelChanged = onAlsoSendToChannelChanged,
             recordingActions = recordingActions,
-            leadingContent = {
-                ChatTheme.componentFactory.MessageComposerInputLeadingContent(
-                    state = state,
-                )
-            },
             trailingContent = {
                 ChatTheme.componentFactory.MessageComposerInputTrailingContent(
                     state = state,

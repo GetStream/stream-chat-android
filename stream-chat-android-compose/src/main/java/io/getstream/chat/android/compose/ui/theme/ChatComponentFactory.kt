@@ -1636,7 +1636,6 @@ public interface ChatComponentFactory {
      * @param onSendClick The action to perform when the send button is clicked.
      * @param onAlsoSendToChannelChanged The action to perform when the "Also send to channel" checkbox is changed.
      * @param recordingActions The actions to control the audio recording.
-     * @param leadingContent The leading content of the message composer.
      * @param trailingContent The trailing content of the message composer.
      */
     @Composable
@@ -1651,7 +1650,6 @@ public interface ChatComponentFactory {
         onSendClick: (String, List<Attachment>) -> Unit,
         onAlsoSendToChannelChanged: (Boolean) -> Unit,
         recordingActions: AudioRecordingActions,
-        leadingContent: @Composable RowScope.() -> Unit,
         trailingContent: @Composable RowScope.() -> Unit,
     ) {
         MessageInput(
@@ -1665,7 +1663,6 @@ public interface ChatComponentFactory {
             onSendClick = onSendClick,
             onAlsoSendToChannelChanged = onAlsoSendToChannelChanged,
             recordingActions = recordingActions,
-            leadingContent = leadingContent,
             trailingContent = trailingContent,
         )
     }

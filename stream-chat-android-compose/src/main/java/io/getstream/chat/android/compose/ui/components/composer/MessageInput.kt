@@ -70,9 +70,9 @@ import io.getstream.chat.android.ui.common.state.messages.composer.RecordingStat
  * @param onSendClick Handler when the send button is clicked.
  * @param onAlsoSendToChannelChanged Handler when the "Also send to channel" checkbox is changed.
  * @param recordingActions The [AudioRecordingActions] to be applied to the input.
- * @param leadingContent The content to be displayed at the start of the input.
  * @param trailingContent The content to be displayed at the end of the input.
  */
+@Suppress("LongMethod")
 @Composable
 public fun MessageInput(
     messageComposerState: MessageComposerState,
@@ -85,11 +85,6 @@ public fun MessageInput(
     onSendClick: (String, List<Attachment>) -> Unit = { _, _ -> },
     onAlsoSendToChannelChanged: (Boolean) -> Unit = {},
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
-    leadingContent: @Composable RowScope.() -> Unit = {
-        ChatTheme.componentFactory.MessageComposerInputLeadingContent(
-            state = messageComposerState,
-        )
-    },
     trailingContent: @Composable RowScope.() -> Unit = {
         ChatTheme.componentFactory.MessageComposerInputTrailingContent(
             state = messageComposerState,
@@ -134,7 +129,9 @@ public fun MessageInput(
                 .defaultMinSize(minHeight = 48.dp),
             verticalAlignment = Alignment.Bottom,
         ) {
-            leadingContent()
+            ChatTheme.componentFactory.MessageComposerInputLeadingContent(
+                state = messageComposerState,
+            )
 
             val isRecording = messageComposerState.recording !is RecordingState.Idle
             if (!isRecording) {
