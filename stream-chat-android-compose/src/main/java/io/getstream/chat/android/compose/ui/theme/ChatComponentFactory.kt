@@ -152,7 +152,6 @@ import io.getstream.chat.android.compose.ui.components.suggestions.mentions.Ment
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerActions
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordingButton
-import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerFooterInThreadMode
 import io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerEditIndicator
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderLeadingContent
@@ -1426,7 +1425,6 @@ public interface ChatComponentFactory {
         onAlsoSendToChannelSelected: (Boolean) -> Unit,
         recordingActions: AudioRecordingActions,
         headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit,
-        footerContent: @Composable ColumnScope.(MessageComposerState) -> Unit,
         mentionPopupContent: @Composable (List<User>) -> Unit,
         commandPopupContent: @Composable (List<Command>) -> Unit,
         leadingContent: @Composable RowScope.(MessageComposerState) -> Unit,
@@ -1448,7 +1446,6 @@ public interface ChatComponentFactory {
             onAlsoSendToChannelSelected = onAlsoSendToChannelSelected,
             recordingActions = recordingActions,
             headerContent = headerContent,
-            footerContent = footerContent,
             mentionPopupContent = mentionPopupContent,
             commandPopupContent = commandPopupContent,
             leadingContent = leadingContent,
@@ -1497,34 +1494,6 @@ public interface ChatComponentFactory {
             onContentClick = onContentClick,
             onCancelClick = onCancelClick,
         )
-    }
-
-    /**
-     * The default footer content of the message composer.
-     * When replying to a thread, it provides the checkbox to also send the message to the channel.
-     *
-     * @param state The current state of the message composer.
-     * @param onAlsoSendToChannelSelected The action to perform when the "Also send to channel" checkbox is selected.
-     */
-    @Composable
-    public fun ColumnScope.MessageComposerFooterContent(
-        state: MessageComposerState,
-        onAlsoSendToChannelSelected: (Boolean) -> Unit,
-    ) {
-        Box(modifier = Modifier.animateContentSize()) {
-            when (state.messageMode) {
-                is MessageMode.Normal -> {
-                    // no footer in normal mode
-                }
-
-                is MessageMode.MessageThread -> {
-                    DefaultMessageComposerFooterInThreadMode(
-                        alsoSendToChannel = state.alsoSendToChannel,
-                        onAlsoSendToChannelChanged = onAlsoSendToChannelSelected,
-                    )
-                }
-            }
-        }
     }
 
     /**

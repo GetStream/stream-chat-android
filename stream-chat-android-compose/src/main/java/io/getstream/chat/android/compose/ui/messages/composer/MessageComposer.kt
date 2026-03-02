@@ -82,7 +82,6 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param onAlsoSendToChannelSelected Handler when the user checks the also send to channel checkbox.
  * @param recordingActions The actions that can be performed on an audio recording.
  * @param headerContent The content shown at the top of the message composer.
- * @param footerContent The content shown at the bottom of the message composer.
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
  * @param leadingContent The content shown at the start of the message composer.
@@ -115,14 +114,6 @@ public fun MessageComposer(
                 state = it,
                 onCancel = onCancelAction,
                 onLinkPreviewClick = onLinkPreviewClick,
-            )
-        }
-    },
-    footerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerFooterContent(
-                state = it,
-                onAlsoSendToChannelSelected = onAlsoSendToChannelSelected,
             )
         }
     },
@@ -214,7 +205,6 @@ public fun MessageComposer(
         onAlsoSendToChannelSelected = onAlsoSendToChannelSelected,
         recordingActions = recordingActions,
         headerContent = headerContent,
-        footerContent = footerContent,
         mentionPopupContent = mentionPopupContent,
         commandPopupContent = commandPopupContent,
         leadingContent = leadingContent,
@@ -248,7 +238,6 @@ public fun MessageComposer(
  * @param onAlsoSendToChannelSelected Handler when the user checks the also send to channel checkbox.
  * @param recordingActions The actions that can be performed on an audio recording.
  * @param headerContent The content shown at the top of the message composer.
- * @param footerContent The content shown at the bottom of the message composer.
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
  * @param leadingContent The content shown at the start of the message composer.
@@ -278,14 +267,6 @@ public fun MessageComposer(
                 state = it,
                 onCancel = onCancelAction,
                 onLinkPreviewClick = onLinkPreviewClick,
-            )
-        }
-    },
-    footerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerFooterContent(
-                state = it,
-                onAlsoSendToChannelSelected = onAlsoSendToChannelSelected,
             )
         }
     },
@@ -387,8 +368,6 @@ public fun MessageComposer(
 
                 trailingContent(messageComposerState)
             }
-
-            footerContent(messageComposerState)
         }
 
         if (snackbarHostState.currentSnackbarData != null) {
