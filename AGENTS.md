@@ -24,14 +24,15 @@ This project delivers **Stream Chat Android**, a modular SDK spanning low-level 
 > Modules are published; avoid leaking internal types across boundaries without coordinating version policy and changelog updates.
 
 ## Build, test, and validation
-- Format/licence: `./gradlew spotlessApply`
+- Format/licence: `./gradlew spotlessApply` (auto-fix locally; CI runs `spotlessCheck`)
 - Static analysis: `./gradlew detekt` or module-scoped `:module:detekt`
+- API dump: `./gradlew apiDump` — regenerate public API dumps for any touched modules. Never manually edit `*.api` files.
 - Unit tests: `./gradlew testDebugUnitTest` (or `:module:test` for non-Android modules)
 - UI snapshots: `./gradlew verifyPaparazziDebug` (Compose) / `./gradlew shotVerify` (Views)
 - Instrumented suites: `./gradlew connectedAndroidTest` or targeted `:stream-chat-android-ui-uitests:connectedCheck`
 - Full gate: `./gradlew check`
 
-Prefer module-scoped tasks while iterating; PRs should pass `spotlessCheck`, `detekt`, and relevant unit/UI suites before review.
+Prefer module-scoped tasks while iterating; PRs should pass `spotlessCheck`, `detekt`, `apiCheck`, and relevant unit/UI suites before review.
 
 ## Coding principles
 - **API stability**: Public APIs are validated; favour additive changes and mark deprecations with clear migration paths (`DEPRECATIONS.md`).
@@ -76,7 +77,7 @@ Prefer module-scoped tasks while iterating; PRs should pass `spotlessCheck`, `de
 - [ ] Maintain binary/API compatibility; document any intentional breakage.
 - [ ] Honour offline/state invariants—cover edge cases like retries, reconnections, and message dedupe.
 - [ ] Keep Compose/XML parity when modifying shared UI behaviour.
-- [ ] Run Spotless and Detekt before finishing.
+- [ ] Run Spotless, Detekt, and `apiDump` before finishing.
 - [ ] Add/refresh unit, UI, or snapshot tests for new behaviour.
 - [ ] Update changelog/deprecation docs for user-visible changes.
 - [ ] Scrub logs/configs for secrets before committing.

@@ -469,7 +469,7 @@ internal class MessageComposerControllerTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `Given edit mode with text changes When sendMessage called Then partialUpdateMessage is invoked`() = runTest {
+    fun `Given edit mode with text changes When sendMessage called Then editMessage is invoked`() = runTest {
         // Given
         val currentUser = User("uid1")
         val originalMessage = randomMessage(
@@ -485,7 +485,7 @@ internal class MessageComposerControllerTest {
             .givenClientState(currentUser)
             .givenGlobalState()
             .givenChannelState()
-            .givenPartialUpdateMessage(updatedMessage)
+            .givenEditMessage(updatedMessage)
         val controller = fixture.get()
 
         // Enter edit mode
@@ -499,9 +499,9 @@ internal class MessageComposerControllerTest {
         advanceUntilIdle()
 
         // Then
-        verify(fixture.chatClient).partialUpdateMessage(
-            eq("msg-id"),
-            any(),
+        verify(fixture.chatClient).editMessage(
+            eq("messaging"),
+            eq("123"),
             any(),
         )
         verify(fixture.chatClient, never()).sendMessage(any(), any(), any(), any())
@@ -538,7 +538,7 @@ internal class MessageComposerControllerTest {
         advanceUntilIdle()
 
         // Then - no API calls should be made
-        verify(fixture.chatClient, never()).partialUpdateMessage(any(), any(), any())
+        verify(fixture.chatClient, never()).editMessage(any(), any(), any())
         verify(fixture.chatClient, never()).sendMessage(any(), any(), any(), any())
         // And data should be cleared
         assertEquals("", controller.messageInput.value.text)
@@ -783,8 +783,8 @@ internal class MessageComposerControllerTest {
             whenever(chatClient.markMessageRead(any(), any(), any())) doReturn Unit.asCall()
         }
 
-        fun givenPartialUpdateMessage(message: Message) = apply {
-            whenever(chatClient.partialUpdateMessage(any(), any(), any())) doReturn message.asCall()
+        fun givenEditMessage(message: Message) = apply {
+            whenever(chatClient.editMessage(any(), any(), any())) doReturn message.asCall()
         }
 
         fun givenDeleteMessage(message: Message) = apply {
