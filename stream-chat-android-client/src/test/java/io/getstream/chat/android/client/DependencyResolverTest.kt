@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.scope.ClientTestScope
 import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.setup.state.internal.MutableClientState
+import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.NoOpMessageTransformer
@@ -174,6 +175,7 @@ public class DependencyResolverTest {
             retryPolicy = mock(),
             appSettingsManager = mock(),
             chatSocket = mock(),
+            serverClockOffset = ServerClockOffset(),
             pluginFactories = pluginFactories,
             repositoryFactoryProvider = mock(),
             mutableClientState = mutableClientState,

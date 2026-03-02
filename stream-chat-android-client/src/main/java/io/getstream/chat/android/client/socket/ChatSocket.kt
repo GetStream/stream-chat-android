@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.socket.ChatSocketStateService.State
 import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
@@ -52,6 +53,7 @@ internal open class ChatSocket(
     private val lifecycleObserver: StreamLifecycleObserver,
     private val networkStateProvider: NetworkStateProvider,
     private val clientDebugger: ChatClientDebugger? = null,
+    private val serverClockOffset: ServerClockOffset,
 ) {
     private var streamWebSocket: StreamWebSocket? = null
     private val logger by taggedLogger(TAG)
@@ -61,7 +63,12 @@ internal open class ChatSocket(
     private var socketStateObserverJob: Job? = null
     private val healthMonitor = HealthMonitor(
         userScope = userScope,
-        checkCallback = { (chatSocketStateService.currentState as? State.Connected)?.event?.let(::sendEvent) },
+        checkCallback = {
+            (chatSocketStateService.currentState as? State.Connected)?.event?.let {
+                serverClockOffset.onHealthCheckSent()
+                sendEvent(it)
+            }
+        },
         reconnectCallback = { chatSocketStateService.onWebSocketEventLost() },
     )
     private val lifecycleHandler = object : LifecycleHandler {
@@ -84,6 +91,7 @@ internal open class ChatSocket(
             socketListenerJob?.cancel()
             when (networkStateProvider.isConnected()) {
                 true -> {
+                    serverClockOffset.onConnectionStarted()
                     streamWebSocket = socketFactory.createSocket(connectionConf).apply {
                         socketListenerJob = listen().onEach {
                             when (it) {
@@ -194,8 +202,14 @@ internal open class ChatSocket(
 
     private suspend fun handleEvent(chatEvent: ChatEvent) {
         when (chatEvent) {
-            is ConnectedEvent -> chatSocketStateService.onConnectionEstablished(chatEvent)
-            is HealthEvent -> healthMonitor.ack()
+            is ConnectedEvent -> {
+                serverClockOffset.onConnected(chatEvent.createdAt)
+                chatSocketStateService.onConnectionEstablished(chatEvent)
+            }
+            is HealthEvent -> {
+                serverClockOffset.onHealthCheck(chatEvent.createdAt)
+                healthMonitor.ack()
+            }
             else -> callListeners { listener -> listener.onEvent(chatEvent) }
         }
     }

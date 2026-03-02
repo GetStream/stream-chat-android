@@ -157,6 +157,7 @@ import io.getstream.chat.android.client.user.storage.SharedPreferencesCredential
 import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.TokenUtils
+import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.message.ensureId
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
@@ -286,6 +287,7 @@ internal constructor(
     @InternalStreamChatApi
     public val audioPlayer: AudioPlayer,
     private val now: () -> Date = ::Date,
+    private val serverClockOffset: ServerClockOffset,
     private val repository: ChatClientRepository,
     private val messageReceiptReporter: MessageReceiptReporter,
     internal val messageReceiptManager: MessageReceiptManager,
@@ -2588,15 +2590,16 @@ internal constructor(
 
     /**
      * Ensure the message has a [Message.createdLocallyAt] timestamp.
-     * If not, set it to the max of the channel's [Channel.lastMessageAt] + 1 millisecond and [now].
-     * This ensures that the message appears in the correct order in the channel.
+     * If not, set it to the max of the channel's [Channel.lastMessageAt] + 1 millisecond and the
+     * estimated server time. Using estimated server time (instead of raw local clock) prevents
+     * cross-user ordering issues when the device clock is skewed.
      */
     private suspend fun Message.ensureCreatedLocallyAt(cid: String): Message {
         val lastMessageAt = repositoryFacade.selectChannel(cid = cid)?.lastMessageAt
         val lastMessageAtPlusOneMillisecond = lastMessageAt?.let {
             Date(it.time + 1)
         }
-        val createdLocallyAt = max(lastMessageAtPlusOneMillisecond, now())
+        val createdLocallyAt = max(lastMessageAtPlusOneMillisecond, serverClockOffset.estimatedServerTime())
         return copy(createdLocallyAt = this.createdLocallyAt ?: createdLocallyAt)
     }
 
@@ -5037,6 +5040,8 @@ internal constructor(
                 warmUpReflection()
             }
 
+            val serverClockOffset = ServerClockOffset()
+
             val module =
                 ChatModule(
                     appContext = appContext,
@@ -5055,6 +5060,7 @@ internal constructor(
                     lifecycle = lifecycle,
                     appName = this.appName,
                     appVersion = this.appVersion,
+                    serverClockOffset = serverClockOffset,
                 )
 
             val api = module.api()
@@ -5091,6 +5097,7 @@ internal constructor(
                 retryPolicy = retryPolicy,
                 appSettingsManager = appSettingsManager,
                 chatSocket = module.chatSocket,
+                serverClockOffset = serverClockOffset,
                 pluginFactories = pluginFactories,
                 repositoryFactoryProvider = repositoryFactoryProvider
                     ?: pluginFactories
