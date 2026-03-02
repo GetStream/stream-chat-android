@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.components.composer
+package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
