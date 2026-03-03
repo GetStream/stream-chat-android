@@ -1128,15 +1128,9 @@ public interface ChatComponentFactory {
      * Usually shows pinned indicator and thread labels.
      */
     @Composable
-    public fun ColumnScope.MessageTop(
-        messageItem: MessageItemState,
-        reactionSorting: ReactionSorting,
-        onReactionsClick: (Message) -> Unit,
-    ) {
+    public fun ColumnScope.MessageTop(messageItem: MessageItemState) {
         DefaultMessageTop(
             messageItem = messageItem,
-            reactionSorting = reactionSorting,
-            onReactionsClick = onReactionsClick,
         )
     }
 

@@ -228,11 +228,7 @@ public fun MessageContainer(
                         modifier = Modifier.weight(1f, fill = false),
                         horizontalAlignment = messageAlignment.contentAlignment,
                     ) {
-                        MessageTop(
-                            messageItem = messageItem,
-                            reactionSorting = reactionSorting,
-                            onReactionsClick = onReactionsClick,
-                        )
+                        MessageTop(messageItem = messageItem)
                         MessageContentWithReactions(
                             messageAlignment = messageAlignment,
                             reactions = rememberMessageReactions(message, reactionSorting)?.let { reactions ->
@@ -325,15 +321,9 @@ internal fun RowScope.DefaultMessageAuthor(
  * By default, we show if the message is pinned and thread labels.
  *
  * @param messageItem The message item to show the content for.
- * @param reactionSorting The sorting for the reactions, if we have any.
- * @param onReactionsClick Handler when the user taps on message reactions.
  */
 @Composable
-internal fun DefaultMessageTop(
-    messageItem: MessageItemState,
-    reactionSorting: ReactionSorting,
-    onReactionsClick: (Message) -> Unit = {},
-) {
+internal fun DefaultMessageTop(messageItem: MessageItemState) {
     Column(Modifier.verticalPaddingIfNotEmpty(StreamTokens.spacing2xs)) {
         SavedForLaterAnnotation(messageItem)
         PinnedAnnotation(messageItem)
