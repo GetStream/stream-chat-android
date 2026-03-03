@@ -4397,7 +4397,6 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageC
 	public final fun completeRecording ()V
 	public final fun createPoll (Lio/getstream/chat/android/models/PollConfig;)V
 	public final fun dismissMessageActions ()V
-	public final fun getAlsoSendToChannel ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun getCommandSuggestions ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun getCooldownTimer ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun getInput ()Lkotlinx/coroutines/flow/MutableStateFlow;

@@ -260,9 +260,6 @@ public class MessageComposerController(
     )
     public val input: MutableStateFlow<String> = MutableStateFlow("")
 
-    /** If the message will be shown in the channel after it is sent. */
-    public val alsoSendToChannel: MutableStateFlow<Boolean> = MutableStateFlow(false)
-
     /** Represents the remaining time until the user is allowed to send the next message. */
     public val cooldownTimer: MutableStateFlow<Int> = MutableStateFlow(0)
 
@@ -452,10 +449,6 @@ public class MessageComposerController(
                 fetchDraftMessage(messageMode)
             }.launchIn(scope)
 
-        alsoSendToChannel.onEach { alsoSendToChannel ->
-            state.value = state.value.copy(alsoSendToChannel = alsoSendToChannel)
-        }.launchIn(scope)
-
         ownCapabilities.onEach { ownCapabilities ->
             state.value = state.value.copy(ownCapabilities = ownCapabilities)
         }.launchIn(scope)
@@ -523,7 +516,7 @@ public class MessageComposerController(
                         channelId = channelId,
                         message = it.copy(
                             text = messageText,
-                            showInChannel = alsoSendToChannel.value,
+                            showInChannel = state.value.alsoSendToChannel,
                             replyMessage = (messageActions.value.firstOrNull { it is Reply } as? Reply)?.message,
                         ),
                     ).await()
@@ -563,7 +556,7 @@ public class MessageComposerController(
      * @param alsoSendToChannel If the message will be shown in the channel after it is sent.
      */
     public fun setAlsoSendToChannel(alsoSendToChannel: Boolean) {
-        this.alsoSendToChannel.value = alsoSendToChannel
+        state.update { it.copy(alsoSendToChannel = alsoSendToChannel) }
     }
 
     /**
@@ -671,7 +664,7 @@ public class MessageComposerController(
         state.update { it.copy(attachments = emptyList()) }
         validationErrors.value = emptyList()
         if (!isInThread) {
-            alsoSendToChannel.value = false
+            state.update { it.copy(alsoSendToChannel = false) }
         }
     }
 
@@ -719,7 +712,7 @@ public class MessageComposerController(
             chatClient.deleteMessage(activeMessage.id, true).enqueue()
         }
         val preparedMessage = message.copy(
-            showInChannel = isInThread && alsoSendToChannel.value,
+            showInChannel = isInThread && state.value.alsoSendToChannel,
             skipEnrichUrl = linkPreviews.value.isEmpty(),
         )
         clearData()

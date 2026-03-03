@@ -484,7 +484,7 @@ internal class MessageComposerControllerTest {
             advanceUntilIdle()
 
             // Then
-            assertTrue(controller.alsoSendToChannel.value)
+            assertTrue(controller.state.value.alsoSendToChannel)
         }
 
     @Test
@@ -505,7 +505,7 @@ internal class MessageComposerControllerTest {
             advanceUntilIdle()
 
             // Then
-            assertFalse(controller.alsoSendToChannel.value)
+            assertFalse(controller.state.value.alsoSendToChannel)
         }
 
     @Test

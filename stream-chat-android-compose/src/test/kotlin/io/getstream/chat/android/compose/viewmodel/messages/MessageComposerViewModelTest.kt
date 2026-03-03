@@ -191,7 +191,6 @@ internal class MessageComposerViewModelTest {
 
             val messageComposerState = viewModel.messageComposerState.value
             messageComposerState.alsoSendToChannel `should be equal to` true
-            viewModel.alsoSendToChannel.value `should be equal to` true
         }
 
     @Test
