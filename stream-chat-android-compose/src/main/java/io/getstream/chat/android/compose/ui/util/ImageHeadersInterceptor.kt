@@ -21,23 +21,22 @@ import coil3.network.httpHeaders
 import coil3.request.ImageResult
 import io.getstream.chat.android.ui.common.helper.AsyncImageHeadersProvider
 import io.getstream.chat.android.ui.common.images.internal.toNetworkHeaders
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * A Coil [Interceptor] that injects HTTP headers provided by [AsyncImageHeadersProvider] into
  * each image request. The provider is invoked as part of Coil's background pipeline, so
  * blocking or suspending operations (e.g. fetching an auth token) are safe to perform inside
  * [AsyncImageHeadersProvider.getImageRequestHeaders].
- *
- * Registered automatically by [ChatTheme] when an [AsyncImageHeadersProvider] is supplied.
- * Integrators do not need to register this interceptor manually.
  */
-internal class ImageHeadersInterceptor(
-    private val asyncImageHeadersProvider: AsyncImageHeadersProvider,
-) : Interceptor {
+internal class ImageHeadersInterceptor(private val headersProvider: AsyncImageHeadersProvider) : Interceptor {
 
     override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
         val url = chain.request.data.toString()
-        val headers = asyncImageHeadersProvider.getImageRequestHeaders(url)
+        val headers = withContext(Dispatchers.IO) {
+            headersProvider.getImageRequestHeaders(url)
+        }
         val newRequest = chain.request.newBuilder()
             .httpHeaders(headers.toNetworkHeaders())
             .build()

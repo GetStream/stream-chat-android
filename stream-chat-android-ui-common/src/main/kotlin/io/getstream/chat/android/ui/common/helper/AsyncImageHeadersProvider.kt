@@ -21,8 +21,8 @@ package io.getstream.chat.android.ui.common.helper
  *
  * Unlike [ImageHeadersProvider], this interface is designed for async operations such as
  * reading an auth token from encrypted storage or fetching one from a remote endpoint.
- * Implementations are invoked on a background thread inside Coil's image loading pipeline,
- * so blocking calls are safe.
+ * Implementations are always invoked on [kotlinx.coroutines.Dispatchers.IO], so blocking
+ * calls are safe.
  *
  * Prefer this over [ImageHeadersProvider] when integrating with [ChatTheme].
  *
@@ -33,8 +33,7 @@ public interface AsyncImageHeadersProvider {
     /**
      * Returns a map of headers to be used for the image loading request.
      *
-     * This function is called on a background thread as part of Coil's interceptor chain,
-     * so blocking operations are safe.
+     * Always called on [kotlinx.coroutines.Dispatchers.IO], so blocking operations are safe.
      *
      * @param url The URL of the image to load.
      * @return A map of headers to be used for the image loading request.

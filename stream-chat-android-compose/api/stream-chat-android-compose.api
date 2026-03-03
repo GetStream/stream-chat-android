@@ -4734,10 +4734,15 @@ public final class io/getstream/chat/android/compose/ui/util/StorageHelperWrappe
 public abstract interface class io/getstream/chat/android/compose/ui/util/StreamCoilImageLoaderFactory {
 	public static final field Companion Lio/getstream/chat/android/compose/ui/util/StreamCoilImageLoaderFactory$Companion;
 	public abstract fun imageLoader (Landroid/content/Context;)Lcoil3/ImageLoader;
+	public abstract fun imageLoader (Landroid/content/Context;Ljava/util/List;)Lcoil3/ImageLoader;
 }
 
 public final class io/getstream/chat/android/compose/ui/util/StreamCoilImageLoaderFactory$Companion {
 	public final fun defaultFactory ()Lio/getstream/chat/android/compose/ui/util/StreamCoilImageLoaderFactory;
+}
+
+public final class io/getstream/chat/android/compose/ui/util/StreamCoilImageLoaderFactory$DefaultImpls {
+	public static fun imageLoader (Lio/getstream/chat/android/compose/ui/util/StreamCoilImageLoaderFactory;Landroid/content/Context;Ljava/util/List;)Lcoil3/ImageLoader;
 }
 
 public final class io/getstream/chat/android/compose/ui/util/StreamImageLoaderProvidableCompositionLocal {

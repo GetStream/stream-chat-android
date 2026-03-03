@@ -23,15 +23,12 @@ import coil3.SingletonImageLoader
 import coil3.disk.DiskCache
 import coil3.gif.AnimatedImageDecoder
 import coil3.gif.GifDecoder
+import coil3.intercept.Interceptor
 import coil3.memory.MemoryCache
-import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.allowHardware
 import coil3.request.crossfade
 import coil3.video.VideoFrameDecoder
 import io.getstream.chat.android.client.internal.file.StreamFileManager
-import okhttp3.Dispatcher
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
 import okio.Path.Companion.toOkioPath
 
 private const val DEFAULT_MEMORY_PERCENTAGE = 0.25
@@ -52,6 +49,24 @@ public class StreamImageLoaderFactory(
     private val builder: ImageLoader.Builder.() -> Unit = {},
 ) : SingletonImageLoader.Factory {
 
+    /**
+     * Creates a [StreamImageLoaderFactory] with additional [Interceptor]s prepended to the
+     * component registry, before any decoders and before Coil's built-in [EngineInterceptor].
+     *
+     * This constructor preserves the existing primary constructor signature and is purely additive.
+     *
+     * @param interceptors Coil [Interceptor]s to register ahead of all other components.
+     * @param builder Optional lambda to further customize the [ImageLoader] configuration.
+     */
+    public constructor(
+        interceptors: List<Interceptor>,
+        builder: ImageLoader.Builder.() -> Unit = {},
+    ) : this(builder) {
+        this.interceptors = interceptors
+    }
+
+    private var interceptors: List<Interceptor> = emptyList()
+
     private val fileManager = StreamFileManager()
 
     override fun newImageLoader(context: PlatformContext): ImageLoader {
@@ -59,27 +74,6 @@ public class StreamImageLoaderFactory(
             .memoryCache { MemoryCache.Builder().maxSizePercent(context, DEFAULT_MEMORY_PERCENTAGE).build() }
             .allowHardware(false)
             .crossfade(true)
-            .components {
-                add(
-                    OkHttpNetworkFetcherFactory(
-                        callFactory = {
-                            val cacheControlInterceptor = Interceptor { chain ->
-                                chain.proceed(chain.request())
-                                    .newBuilder()
-                                    .header("Cache-Control", "max-age=3600,public")
-                                    .build()
-                            }
-                            // Don't limit concurrent network requests by host.
-                            val dispatcher = Dispatcher().apply { maxRequestsPerHost = maxRequests }
-
-                            OkHttpClient.Builder()
-                                .dispatcher(dispatcher)
-                                .addNetworkInterceptor(cacheControlInterceptor)
-                                .build()
-                        },
-                    ),
-                )
-            }
             .diskCache {
                 DiskCache.Builder()
                     .directory(fileManager.getImageCache(context).toOkioPath())
@@ -87,6 +81,7 @@ public class StreamImageLoaderFactory(
                     .build()
             }
             .components {
+                interceptors.forEach { add(it) }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     add(AnimatedImageDecoder.Factory(enforceMinimumFrameDelay = true))
                 } else {
