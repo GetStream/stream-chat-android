@@ -29,7 +29,8 @@ import java.util.Date
  * measurement. Under the assumption that clock skew is constant for the
  * duration of a session, the estimate monotonically improves over time.
  *
- * Thread-safe: all mutable state is read/written via [Volatile] fields.
+ * Thread-safe: single-field writes use [Volatile] for visibility; compound
+ * read-modify-write sequences are guarded by [lock] for atomicity.
  *
  * @param localTimeMs Clock source for the local device time (injectable for tests).
  * @param maxRttMs Upper bound on plausible RTT. Samples exceeding this are
@@ -40,6 +41,8 @@ internal class ServerClockOffset(
     private val localTimeMs: () -> Long = { System.currentTimeMillis() },
     private val maxRttMs: Long = DEFAULT_MAX_RTT_MS,
 ) {
+
+    private val lock = Any()
 
     @Volatile
     private var offsetMs: Long = 0L
@@ -82,22 +85,24 @@ internal class ServerClockOffset(
      * check from the previous connection is stale.
      */
     internal fun onConnected(serverTime: Date) {
-        bestRttMs = Long.MAX_VALUE
-        healthCheckSentAtMs = 0L
+        synchronized(lock) {
+            bestRttMs = Long.MAX_VALUE
+            healthCheckSentAtMs = 0L
 
-        val receivedAtMs = localTimeMs()
-        val startedAtMs = connectionStartedAtMs
-        connectionStartedAtMs = 0L
+            val receivedAtMs = localTimeMs()
+            val startedAtMs = connectionStartedAtMs
+            connectionStartedAtMs = 0L
 
-        if (startedAtMs > 0L) {
-            val rtt = receivedAtMs - startedAtMs
-            if (rtt in 1..maxRttMs) {
-                offsetMs = (startedAtMs + receivedAtMs) / 2 - serverTime.time
-                bestRttMs = rtt
-                return
+            if (startedAtMs > 0L) {
+                val rtt = receivedAtMs - startedAtMs
+                if (rtt in 1..maxRttMs) {
+                    offsetMs = (startedAtMs + receivedAtMs) / 2 - serverTime.time
+                    bestRttMs = rtt
+                    return
+                }
             }
+            offsetMs = receivedAtMs - serverTime.time
         }
-        offsetMs = receivedAtMs - serverTime.time
     }
 
     /**
@@ -116,17 +121,19 @@ internal class ServerClockOffset(
      * - RTT is lower than any previous sample (min-RTT selection).
      */
     internal fun onHealthCheck(serverTime: Date) {
-        val sentAtMs = healthCheckSentAtMs
-        if (sentAtMs <= 0L) return
-        healthCheckSentAtMs = 0L
+        synchronized(lock) {
+            val sentAtMs = healthCheckSentAtMs
+            if (sentAtMs <= 0L) return
+            healthCheckSentAtMs = 0L
 
-        val receivedAtMs = localTimeMs()
-        val rtt = receivedAtMs - sentAtMs
-        if (rtt !in 1..maxRttMs) return
+            val receivedAtMs = localTimeMs()
+            val rtt = receivedAtMs - sentAtMs
+            if (rtt !in 1..maxRttMs) return
 
-        if (rtt < bestRttMs) {
-            bestRttMs = rtt
-            offsetMs = (sentAtMs + receivedAtMs) / 2 - serverTime.time
+            if (rtt < bestRttMs) {
+                bestRttMs = rtt
+                offsetMs = (sentAtMs + receivedAtMs) / 2 - serverTime.time
+            }
         }
     }
 

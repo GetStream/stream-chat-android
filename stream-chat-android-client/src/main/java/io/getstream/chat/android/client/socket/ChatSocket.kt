@@ -65,8 +65,9 @@ internal open class ChatSocket(
         userScope = userScope,
         checkCallback = {
             (chatSocketStateService.currentState as? State.Connected)?.event?.let {
-                serverClockOffset.onHealthCheckSent()
-                sendEvent(it)
+                if (sendEvent(it)) {
+                    serverClockOffset.onHealthCheckSent()
+                }
             }
         },
         reconnectCallback = { chatSocketStateService.onWebSocketEventLost() },
