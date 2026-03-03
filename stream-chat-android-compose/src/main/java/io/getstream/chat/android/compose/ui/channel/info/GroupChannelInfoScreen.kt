@@ -16,31 +16,33 @@
 
 package io.getstream.chat.android.compose.ui.channel.info
 
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.KeyboardArrowDown
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,14 +52,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
-import io.getstream.chat.android.compose.ui.components.LoadingIndicator
-import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
@@ -134,9 +135,11 @@ private fun GroupChannelInfoScaffold(
     ) { padding ->
         GroupChannelInfoContent(
             modifier = Modifier.padding(padding),
+            headerState = headerState,
             listState = listState,
             state = infoState,
             currentUser = currentUser,
+            onAddMembersClick = onAddMembersClick,
             onViewAction = onViewAction,
         )
     }
@@ -163,6 +166,7 @@ private fun GroupChannelInfoScreenModal(viewModel: ChannelInfoViewModel) {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun GroupChannelInfoTopBar(
     headerState: ChannelHeaderViewState,
@@ -171,48 +175,43 @@ internal fun GroupChannelInfoTopBar(
     onNavigationIconClick: () -> Unit,
     onAddMembersClick: () -> Unit,
 ) {
-    val elevation by animateDpAsState(
-        targetValue = if (listState.canScrollBackward) {
-            StreamTokens.elevation3
-        } else {
-            1.dp
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = stringResource(R.string.stream_ui_channel_info_group_title),
+                style = ChatTheme.typography.headingMedium,
+                maxLines = 1,
+            )
         },
-    )
-    when (headerState) {
-        is ChannelHeaderViewState.Loading -> LoadingIndicator(
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        is ChannelHeaderViewState.Content -> MessageListHeader(
-            channel = headerState.channel,
-            currentUser = headerState.currentUser,
-            connectionState = headerState.connectionState,
-            elevation = elevation,
-            onBackPressed = onNavigationIconClick,
-            leadingContent = {
-                ChannelInfoNavigationIcon(
-                    onClick = onNavigationIconClick,
+        navigationIcon = {
+            ChannelInfoNavigationIcon(
+                onClick = onNavigationIconClick,
+            )
+        },
+        actions = {
+            if (infoState is ChannelInfoViewState.Content &&
+                infoState.options.contains(ChannelInfoViewState.Content.Option.AddMember)
+            ) {
+                ChatTheme.componentFactory.GroupChannelInfoAddMembersButton(
+                    onClick = onAddMembersClick,
                 )
-            },
-            trailingContent = {
-                if (infoState is ChannelInfoViewState.Content &&
-                    infoState.options.contains(ChannelInfoViewState.Content.Option.AddMember)
-                ) {
-                    ChatTheme.componentFactory.GroupChannelInfoAddMembersButton(
-                        onClick = onAddMembersClick,
-                    )
-                }
-            },
-        )
-    }
+            }
+        },
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = ChatTheme.colors.backgroundElevationElevation1,
+        ),
+    )
 }
 
+@Suppress("LongMethod", "LongParameterList")
 @Composable
 private fun GroupChannelInfoContent(
+    headerState: ChannelHeaderViewState,
     state: ChannelInfoViewState,
     modifier: Modifier,
     currentUser: User?,
     listState: LazyListState,
+    onAddMembersClick: () -> Unit,
     onViewAction: (action: ChannelInfoViewAction) -> Unit,
 ) {
     val isLoading = state is ChannelInfoViewState.Loading
@@ -221,51 +220,192 @@ private fun GroupChannelInfoContent(
         isLoading = isLoading,
     ) {
         val content = state as ChannelInfoViewState.Content
+        val header = headerState as? ChannelHeaderViewState.Content
+        val navigationOptions = content.options.filterNavigation()
+        val actionOptions = content.options.filterActions()
+        val totalMembers = content.members.size + content.members.collapsedCount
+        val showAddButton = content.options.any {
+            it is ChannelInfoViewState.Content.Option.AddMember
+        }
+
         LazyColumn(
-            modifier = Modifier.matchParentSize(),
             state = listState,
+            modifier = Modifier.matchParentSize(),
+            contentPadding = PaddingValues(
+                start = StreamTokens.spacingMd,
+                end = StreamTokens.spacingMd,
+                top = StreamTokens.spacing2xl,
+                bottom = StreamTokens.spacing3xl,
+            ),
+            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingMd),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            items(
-                items = content.members,
-                key = Member::getUserId,
-            ) { member ->
-                val isCurrentUserMember = member.getUserId() == currentUser?.id
-                with(ChatTheme.componentFactory) {
-                    GroupChannelInfoMemberItem(
-                        currentUser = currentUser,
-                        member = member,
-                        isOwner = content.owner.id == member.getUserId(),
-                        onClick = if (isCurrentUserMember) {
-                            null
-                        } else {
-                            { onViewAction(ChannelInfoViewAction.MemberClick(member = member)) }
-                        },
+            // Avatar section
+            if (header != null) {
+                item {
+                    ChatTheme.componentFactory.GroupChannelInfoAvatarContainer(
+                        channel = header.channel,
+                        currentUser = header.currentUser,
+                        members = content.members,
                     )
                 }
             }
-            if (content.members.canExpand && content.members.isCollapsed) {
+
+            // Navigation section
+            if (navigationOptions.isNotEmpty()) {
                 item {
-                    with(ChatTheme.componentFactory) {
-                        GroupChannelInfoExpandMembersItem(
-                            collapsedCount = content.members.collapsedCount,
-                            onClick = { onViewAction(ChannelInfoViewAction.ExpandMembersClick) },
-                        )
+                    ChannelInfoSection {
+                        navigationOptions.forEach { option ->
+                            ChannelInfoOptionContent(
+                                option = option,
+                                isGroupChannel = true,
+                                onViewAction = onViewAction,
+                            )
+                        }
                     }
                 }
             }
-            item {
-                with(ChatTheme.componentFactory) {
-                    ChannelInfoSeparatorItem()
-                }
-            }
-            items(content.options) { option ->
-                with(ChatTheme.componentFactory) {
-                    ChannelInfoOptionItem(
-                        option = option,
-                        isGroupChannel = true,
+
+            // Members section
+            if (content.members.isNotEmpty()) {
+                item {
+                    ChatTheme.componentFactory.GroupChannelInfoMemberSection(
+                        members = content.members,
+                        currentUser = currentUser,
+                        owner = content.owner,
+                        totalMemberCount = totalMembers,
+                        showAddButton = showAddButton,
+                        onAddMembersClick = onAddMembersClick,
                         onViewAction = onViewAction,
                     )
                 }
+            }
+
+            // Actions section
+            if (actionOptions.isNotEmpty()) {
+                item {
+                    ChannelInfoSection {
+                        actionOptions.forEach { option ->
+                            ChannelInfoOptionContent(
+                                option = option,
+                                isGroupChannel = true,
+                                onViewAction = onViewAction,
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+internal fun GroupChannelInfoAvatarContainer(
+    channel: Channel,
+    currentUser: User?,
+    members: ExpandableList<Member>,
+) {
+    val totalMembers = members.size + members.collapsedCount
+    val onlineCount = members.count { it.user.online }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+    ) {
+        ChatTheme.componentFactory.ChannelAvatar(
+            modifier = Modifier.size(80.dp),
+            channel = channel,
+            currentUser = currentUser,
+            showIndicator = false,
+            showBorder = false,
+        )
+        Text(
+            text = ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser),
+            style = ChatTheme.typography.headingLarge,
+            color = ChatTheme.colors.textPrimary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = stringResource(
+                R.string.stream_ui_channel_info_member_count_online,
+                totalMembers,
+                onlineCount,
+            ),
+            style = ChatTheme.typography.metadataDefault,
+            color = ChatTheme.colors.textSecondary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+@Suppress("LongParameterList")
+@Composable
+internal fun GroupChannelInfoMemberSection(
+    members: ExpandableList<Member>,
+    currentUser: User?,
+    owner: User,
+    totalMemberCount: Int,
+    showAddButton: Boolean,
+    onAddMembersClick: () -> Unit,
+    onViewAction: (action: ChannelInfoViewAction) -> Unit,
+) {
+    ChannelInfoSection {
+        // Header row: "N members" + "Add" button
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = StreamTokens.spacingMd, vertical = StreamTokens.spacingXs),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = pluralStringResource(
+                    R.plurals.stream_ui_channel_info_member_count,
+                    totalMemberCount,
+                    totalMemberCount,
+                ),
+                style = ChatTheme.typography.headingSmall,
+                color = ChatTheme.colors.textPrimary,
+            )
+            if (showAddButton) {
+                TextButton(onClick = onAddMembersClick) {
+                    Text(
+                        text = stringResource(R.string.stream_ui_channel_info_member_add_button),
+                        style = ChatTheme.typography.bodyEmphasis,
+                        color = ChatTheme.colors.accentPrimary,
+                    )
+                }
+            }
+        }
+
+        // Member items
+        members.forEach { member ->
+            val isCurrentUserMember = member.getUserId() == currentUser?.id
+            GroupChannelInfoMemberItem(
+                modifier = Modifier,
+                currentUser = currentUser,
+                member = member,
+                isOwner = owner.id == member.getUserId(),
+                onClick = if (isCurrentUserMember) {
+                    null
+                } else {
+                    { onViewAction(ChannelInfoViewAction.MemberClick(member = member)) }
+                },
+            )
+        }
+
+        // "View all" footer
+        if (members.canExpand && members.isCollapsed) {
+            TextButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { onViewAction(ChannelInfoViewAction.ExpandMembersClick) },
+            ) {
+                Text(
+                    text = stringResource(R.string.stream_ui_channel_info_view_all),
+                    style = ChatTheme.typography.bodyEmphasis,
+                    color = ChatTheme.colors.accentPrimary,
+                )
             }
         }
     }
@@ -285,7 +425,7 @@ internal fun GroupChannelInfoMemberItem(
     ) {
         val user = member.user
         ChatTheme.componentFactory.UserAvatar(
-            modifier = Modifier.size(40.dp),
+            modifier = Modifier.size(32.dp),
             user = user,
             showIndicator = user.shouldShowOnlineIndicator(
                 userPresence = ChatTheme.userPresence,
@@ -321,7 +461,9 @@ internal fun GroupChannelInfoMemberItem(
             stringResource(id = R.string.stream_ui_channel_info_member_owner)
         } else {
             when (val role = member.channelRole) {
-                "channel_moderator" -> stringResource(id = R.string.stream_ui_channel_info_member_moderator)
+                "channel_moderator" -> stringResource(
+                    id = R.string.stream_ui_channel_info_member_moderator,
+                )
                 "channel_member" -> ""
                 else -> role.orEmpty()
             }
@@ -341,17 +483,15 @@ internal fun GroupChannelInfoExpandMembersItem(
     collapsedCount: Int,
     onClick: () -> Unit,
 ) {
-    CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.textSecondary)) {
-        ChannelInfoOption(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onClick,
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.KeyboardArrowDown,
-                contentDescription = null,
-            )
-            Text(text = stringResource(R.string.stream_ui_channel_info_expand_button, collapsedCount))
-        }
+    TextButton(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick,
+    ) {
+        Text(
+            text = stringResource(R.string.stream_ui_channel_info_view_all),
+            style = ChatTheme.typography.bodyEmphasis,
+            color = ChatTheme.colors.accentPrimary,
+        )
     }
 }
 
@@ -404,11 +544,11 @@ internal fun GroupChannelInfoCollapsedMembers() {
                 isCollapsed = true,
             ),
             options = listOf(
-                ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = false),
-                ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
-                ChannelInfoViewState.Content.Option.HideChannel(isHidden = true),
+                ChannelInfoViewState.Content.Option.AddMember,
                 ChannelInfoViewState.Content.Option.PinnedMessages,
-                ChannelInfoViewState.Content.Option.Separator,
+                ChannelInfoViewState.Content.Option.MediaAttachments,
+                ChannelInfoViewState.Content.Option.FilesAttachments,
+                ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
                 ChannelInfoViewState.Content.Option.LeaveChannel,
             ),
         ),
@@ -446,11 +586,11 @@ internal fun GroupChannelInfoExpandedMembers() {
                 isCollapsed = false,
             ),
             options = listOf(
-                ChannelInfoViewState.Content.Option.RenameChannel(name = "Group Channel", isReadOnly = true),
-                ChannelInfoViewState.Content.Option.MuteChannel(isMuted = true),
-                ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                ChannelInfoViewState.Content.Option.AddMember,
                 ChannelInfoViewState.Content.Option.PinnedMessages,
-                ChannelInfoViewState.Content.Option.Separator,
+                ChannelInfoViewState.Content.Option.MediaAttachments,
+                ChannelInfoViewState.Content.Option.FilesAttachments,
+                ChannelInfoViewState.Content.Option.MuteChannel(isMuted = true),
                 ChannelInfoViewState.Content.Option.LeaveChannel,
             ),
         ),

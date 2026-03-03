@@ -237,6 +237,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparat
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.chat.android.compose.ui.channel.attachments.ChannelFilesAttachmentsItem as DefaultChannelFilesAttachmentsItem
 import io.getstream.chat.android.compose.ui.channel.attachments.ChannelMediaAttachmentsItem as DefaultChannelMediaAttachmentsItem
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfoOptionItem as DefaultChannelInfoOptionItem
@@ -3073,6 +3074,58 @@ public interface ChatComponentFactory {
     public fun DirectChannelInfoAvatarContainer(user: User) {
         io.getstream.chat.android.compose.ui.channel.info.DirectChannelInfoAvatarContainer(
             user = user,
+        )
+    }
+
+    /**
+     * Factory method for creating the avatar container in the group channel info screen.
+     *
+     * @param channel The channel to display the avatar for.
+     * @param currentUser The currently logged-in user.
+     * @param members The members list of the channel.
+     */
+    @Composable
+    public fun GroupChannelInfoAvatarContainer(
+        channel: Channel,
+        currentUser: User?,
+        members: ExpandableList<Member>,
+    ) {
+        io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoAvatarContainer(
+            channel = channel,
+            currentUser = currentUser,
+            members = members,
+        )
+    }
+
+    /**
+     * Factory method for creating the member section card in the group channel info screen.
+     *
+     * @param members The expandable list of members.
+     * @param currentUser The currently logged-in user.
+     * @param owner The owner of the channel.
+     * @param totalMemberCount The total number of members in the channel.
+     * @param showAddButton Whether to show the "Add" button.
+     * @param onAddMembersClick Callback invoked when the "Add" button is clicked.
+     * @param onViewAction Callback invoked when a view action is triggered.
+     */
+    @Composable
+    public fun GroupChannelInfoMemberSection(
+        members: ExpandableList<Member>,
+        currentUser: User?,
+        owner: User,
+        totalMemberCount: Int,
+        showAddButton: Boolean,
+        onAddMembersClick: () -> Unit,
+        onViewAction: (ChannelInfoViewAction) -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoMemberSection(
+            members = members,
+            currentUser = currentUser,
+            owner = owner,
+            totalMemberCount = totalMemberCount,
+            showAddButton = showAddButton,
+            onAddMembersClick = onAddMembersClick,
+            onViewAction = onViewAction,
         )
     }
 

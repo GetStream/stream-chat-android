@@ -37,11 +37,23 @@ internal fun LazyItemScope.ChannelInfoOptionItem(
     isGroupChannel: Boolean,
     onViewAction: (action: ChannelInfoViewAction) -> Unit,
 ) {
+    ChannelInfoOptionContent(
+        option = option,
+        isGroupChannel = isGroupChannel,
+        onViewAction = onViewAction,
+    )
+}
+
+@Suppress("LongMethod")
+@Composable
+internal fun ChannelInfoOptionContent(
+    option: ChannelInfoViewState.Content.Option,
+    isGroupChannel: Boolean,
+    onViewAction: (action: ChannelInfoViewAction) -> Unit,
+) {
     when (option) {
         is ChannelInfoViewState.Content.Option.Separator -> {
-            with(ChatTheme.componentFactory) {
-                ChannelInfoSeparatorItem()
-            }
+            // No-op: separators are handled by section grouping in the layout
         }
 
         is ChannelInfoViewState.Content.Option.AddMember -> {
