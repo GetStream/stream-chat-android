@@ -3969,10 +3969,6 @@ public final class io/getstream/chat/android/compose/ui/threads/ThreadItemKt {
 	public static final fun ThreadItem (Lio/getstream/chat/android/models/Thread;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
-public final class io/getstream/chat/android/compose/ui/threads/ThreadListBannerKt {
-	public static final fun ThreadListBanner (Lio/getstream/chat/android/compose/ui/threads/ThreadListBannerState;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
-}
-
 public abstract interface class io/getstream/chat/android/compose/ui/threads/ThreadListBannerState {
 }
 

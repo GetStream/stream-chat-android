@@ -54,7 +54,7 @@ import io.getstream.chat.android.compose.ui.util.clickable
  */
 @Suppress("LongMethod")
 @Composable
-public fun ThreadListBanner(
+internal fun ThreadListBanner(
     state: ThreadListBannerState,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
@@ -82,7 +82,7 @@ public fun ThreadListBanner(
         when (state) {
             is ThreadListBannerState.UnreadThreads -> {
                 Icon(
-                    modifier = Modifier.size(StreamTokens.size16),
+                    modifier = Modifier.size(16.dp),
                     painter = painterResource(R.drawable.stream_compose_ic_union),
                     contentDescription = null,
                     tint = color,
@@ -100,8 +100,8 @@ public fun ThreadListBanner(
 
             is ThreadListBannerState.Loading -> {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(StreamTokens.size16),
-                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(16.dp),
+                    strokeWidth = StreamTokens.spacing3xs,
                     color = color,
                 )
                 Text(
@@ -113,7 +113,7 @@ public fun ThreadListBanner(
 
             is ThreadListBannerState.Error -> {
                 Icon(
-                    modifier = Modifier.size(StreamTokens.size16),
+                    modifier = Modifier.size(16.dp),
                     painter = painterResource(R.drawable.stream_compose_ic_exclamation_circle),
                     contentDescription = null,
                     tint = color,

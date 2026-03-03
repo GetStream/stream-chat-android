@@ -92,15 +92,15 @@ internal fun ThreadListLoadingItem(modifier: Modifier = Modifier) {
                 ShimmerProgressIndicator(
                     modifier = Modifier
                         .width(120.dp)
-                        .height(StreamTokens.size12)
-                        .clip(RoundedCornerShape(StreamTokens.radiusFull)),
+                        .height(12.dp)
+                        .clip(PlaceholderShape),
                     highlightColor = highlightColor,
                 )
                 ShimmerProgressIndicator(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(20.dp)
-                        .clip(RoundedCornerShape(StreamTokens.radiusFull)),
+                        .clip(PlaceholderShape),
                     highlightColor = highlightColor,
                 )
             }
@@ -119,15 +119,15 @@ internal fun ThreadListLoadingItem(modifier: Modifier = Modifier) {
                 ShimmerProgressIndicator(
                     modifier = Modifier
                         .width(64.dp)
-                        .height(StreamTokens.size12)
-                        .clip(RoundedCornerShape(StreamTokens.radiusFull)),
+                        .height(12.dp)
+                        .clip(PlaceholderShape),
                     highlightColor = highlightColor,
                 )
                 ShimmerProgressIndicator(
                     modifier = Modifier
                         .width(64.dp)
-                        .height(StreamTokens.size12)
-                        .clip(RoundedCornerShape(StreamTokens.radiusFull)),
+                        .height(12.dp)
+                        .clip(PlaceholderShape),
                     highlightColor = highlightColor,
                 )
             }
@@ -136,12 +136,14 @@ internal fun ThreadListLoadingItem(modifier: Modifier = Modifier) {
         ShimmerProgressIndicator(
             modifier = Modifier
                 .width(48.dp)
-                .height(StreamTokens.size16)
-                .clip(RoundedCornerShape(StreamTokens.radiusFull)),
+                .height(16.dp)
+                .clip(PlaceholderShape),
             highlightColor = highlightColor,
         )
     }
 }
+
+private val PlaceholderShape = RoundedCornerShape(StreamTokens.radiusFull)
 
 @Preview
 @Composable
