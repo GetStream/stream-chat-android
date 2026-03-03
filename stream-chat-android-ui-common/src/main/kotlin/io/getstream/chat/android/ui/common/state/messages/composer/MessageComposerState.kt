@@ -29,6 +29,9 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * Represents the state within the message input.
  *
  * @param inputValue The current text value that's within the input.
+ * When [activeCommand] is non-null, [inputValue] contains only the command arguments
+ * and the full `/command args` text is assembled in
+ * [io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController.buildNewMessage].
  * @param attachments The currently selected attachments.
  * @param action The currently active [MessageAction].
  * @param validationErrors The list of validation errors.
@@ -47,6 +50,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * @param sendEnabled Whether the send action is enabled or not. If true, the send button is enabled and input file is
  * editable unless the user doesn't have proper [ChannelCapabilities] to send messages, otherwise it's disabled.
  * @param selectedMentions The list of selected mentions in the current input.
+ * @param activeCommand The command that is currently active (selected from the suggestion popup).
  */
 public data class MessageComposerState @JvmOverloads constructor(
     val inputValue: String = "",
@@ -66,4 +70,5 @@ public data class MessageComposerState @JvmOverloads constructor(
     val pollsEnabled: Boolean = false,
     val sendEnabled: Boolean = true,
     val selectedMentions: Set<Mention> = emptySet(),
+    val activeCommand: Command? = null,
 )
