@@ -33,7 +33,7 @@ internal fun ChannelInfoMemberOptionItem(
     when (option) {
         is ChannelInfoMemberViewState.Content.Option.MessageMember -> {
             ChannelInfoOptionNavigationButton(
-                icon = R.drawable.stream_compose_empty_channels,
+                icon = R.drawable.stream_compose_ic_new_chat,
                 text = stringResource(R.string.stream_ui_channel_info_member_modal_option_message_member),
                 onClick = { onViewAction(ChannelInfoMemberViewAction.MessageMemberClick) },
             )
@@ -62,7 +62,7 @@ internal fun ChannelInfoMemberOptionItem(
         is ChannelInfoMemberViewState.Content.Option.RemoveMember -> {
             CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.accentError)) {
                 ChannelInfoOptionButton(
-                    icon = R.drawable.stream_compose_ic_person_remove,
+                    icon = R.drawable.stream_ic_action_leave,
                     text = stringResource(R.string.stream_ui_channel_info_member_modal_option_remove_member),
                     onClick = { onViewAction(ChannelInfoMemberViewAction.RemoveMemberClick) },
                 )
