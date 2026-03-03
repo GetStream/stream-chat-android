@@ -300,25 +300,17 @@ private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
  * @param durationFormatter [DurationFormatter] Used to format durations in the app.
  * @param channelNameFormatter [ChannelNameFormatter] Used throughout the app for channel names.
  * @param messagePreviewFormatter [MessagePreviewFormatter] Used to generate a string preview for the given message.
- * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances. When used
- * together with [asyncImageHeadersProvider], header injection is performed via
- * [StreamCoilImageLoaderFactory.imageLoader] with the interceptors list. The default factory
- * ([StreamCoilImageLoaderFactory.defaultFactory]) supports this out of the box. Custom SAM
- * lambda factories (e.g. `StreamCoilImageLoaderFactory { ctx -> ... }`) will **not** receive
- * the interceptors — the async headers will silently have no effect. Custom factories that need
- * auth headers should either override [StreamCoilImageLoaderFactory.imageLoader] with the
- * interceptors parameter, or inject headers directly inside their factory implementation via a
- * custom OkHttp client.
+ * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances. If used in combination with
+ * [asyncImageHeadersProvider] you must override the [StreamCoilImageLoaderFactory.imageLoader] method accepting the
+ * interceptors parameter.
  * @param imageAssetTransformer [ImageAssetTransformer] Used to transform image assets.
- * @param imageHeadersProvider Deprecated. Use [asyncImageHeadersProvider] instead. Headers provided
- * here are injected synchronously on the main thread, which blocks the UI for any non-trivial work.
+ * @param imageHeadersProvider [ImageHeadersProvider] Deprecated. Use [asyncImageHeadersProvider] instead. Headers
+ * provided here are injected synchronously on the main thread, which blocks the UI for any non-trivial work.
  * @param asyncImageHeadersProvider [AsyncImageHeadersProvider] Used to provide headers for image
- * requests. Invoked on IO Dispatcher inside Coil's interceptor pipeline,
- * making it safe for blocking or suspending operations such as reading an auth token. Prefer this
- * over [imageHeadersProvider]. Only one of the two should be active at a time — if both are
- * provided, headers may be applied twice for the same request. Note: has no effect when a custom
- * [imageLoaderFactory] is provided unless that factory overrides
- * [StreamCoilImageLoaderFactory.imageLoader] with the interceptors parameter.
+ * requests. Invoked on IO Dispatcher inside Coil's interceptor pipeline, making it safe for blocking or suspending
+ * operations such as reading an auth token. Prefer this over [imageHeadersProvider]. If you are using this in
+ * combination with a custom [StreamCoilImageLoaderFactory] you must override the
+ * [StreamCoilImageLoaderFactory.imageLoader] method accepting the interceptors parameter.
  * @param downloadAttachmentUriGenerator [DownloadAttachmentUriGenerator] Used to generate download URIs for
  * attachments.
  * @param downloadRequestInterceptor [DownloadRequestInterceptor] Used to intercept download requests.
