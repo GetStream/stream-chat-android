@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.util.extensions
 
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.canBlockUser
@@ -25,6 +26,7 @@ import io.getstream.chat.android.ui.common.utils.canDeleteMessage
 import io.getstream.chat.android.ui.common.utils.canEditMessage
 import io.getstream.chat.android.ui.common.utils.canFlagMessage
 import io.getstream.chat.android.ui.common.utils.canMarkAsUnread
+import io.getstream.chat.android.ui.common.utils.canMuteUser
 import io.getstream.chat.android.ui.common.utils.canPinMessage
 import io.getstream.chat.android.ui.common.utils.canReplyToMessage
 import io.getstream.chat.android.ui.common.utils.canRetryMessage
@@ -97,6 +99,17 @@ internal fun MessageOptionItemVisibility.canPinMessage(
     pinMessageEnabled = isPinMessageVisible,
     message = message,
     ownCapabilities = ownCapabilities,
+)
+
+internal fun MessageOptionItemVisibility.canMuteUser(
+    currentUser: User?,
+    message: Message,
+    channel: Channel,
+): Boolean = canMuteUser(
+    muteUserEnabled = isMuteUserVisible,
+    currentUser = currentUser,
+    message = message,
+    channel = channel,
 )
 
 internal fun MessageOptionItemVisibility.canBlockUser(

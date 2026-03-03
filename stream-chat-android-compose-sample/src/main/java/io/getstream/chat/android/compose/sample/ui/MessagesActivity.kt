@@ -271,7 +271,7 @@ class MessagesActivity : ComponentActivity() {
                                 selectedMessage = selectedMessage,
                                 currentUser = user,
                                 isInThread = listViewModel.isInThread,
-                                ownCapabilities = selectedMessageState.ownCapabilities,
+                                channel = selectedMessageState.channel,
                             ),
                             message = selectedMessage,
                             ownCapabilities = selectedMessageState.ownCapabilities,

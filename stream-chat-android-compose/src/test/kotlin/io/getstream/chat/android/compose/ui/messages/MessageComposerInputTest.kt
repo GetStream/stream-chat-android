@@ -22,6 +22,9 @@ import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputAttachments
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputAttachmentsAndLink
+import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputEdit
+import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputEditAttachmentsAndLink
+import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputEditEmpty
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputFilled
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputLink
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputOverflow
@@ -87,6 +90,20 @@ internal class MessageComposerInputTest : PaparazziComposeTest {
     }
 
     @Test
+    fun edit() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerInputEdit()
+        }
+    }
+
+    @Test
+    fun `edit empty`() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerInputEditEmpty()
+        }
+    }
+
+    @Test
     fun `attachments and link`() {
         snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
             MessageComposerInputAttachmentsAndLink()
@@ -97,6 +114,13 @@ internal class MessageComposerInputTest : PaparazziComposeTest {
     fun `reply, attachments, and link`() {
         snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
             MessageComposerInputReplyAttachmentsAndLink()
+        }
+    }
+
+    @Test
+    fun `edit, attachments, and link`() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerInputEditAttachmentsAndLink()
         }
     }
 }

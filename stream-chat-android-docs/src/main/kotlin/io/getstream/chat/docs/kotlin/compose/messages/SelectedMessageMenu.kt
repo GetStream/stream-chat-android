@@ -59,7 +59,7 @@ private object SelectedMessageMenuUsageSnippet {
                                     selectedMessage = selectedMessage,
                                     currentUser = user,
                                     isInThread = listViewModel.isInThread,
-                                    ownCapabilities = selectedMessageState.ownCapabilities
+                                    channel = selectedMessageState.channel
                                 ),
                                 // The message you selected
                                 message = selectedMessage,
@@ -121,7 +121,7 @@ private object SelectedMessageMenuHandlingActionsSnippet {
                                     selectedMessage = selectedMessage,
                                     currentUser = user,
                                     isInThread = listViewModel.isInThread,
-                                    ownCapabilities = selectedMessageState.ownCapabilities
+                                    channel = selectedMessageState.channel
                                 ),
                                 // The message you selected
                                 message = selectedMessage,
@@ -184,7 +184,7 @@ private object SelectedMessageMenuCustomizationSnippet {
                                     selectedMessage = selectedMessage,
                                     currentUser = user,
                                     isInThread = listViewModel.isInThread,
-                                    ownCapabilities = selectedMessageState.ownCapabilities
+                                    channel = selectedMessageState.channel
                                 ),
                                 // The capabilities the user has in a given channel
                                 ownCapabilities = selectedMessageState.ownCapabilities,

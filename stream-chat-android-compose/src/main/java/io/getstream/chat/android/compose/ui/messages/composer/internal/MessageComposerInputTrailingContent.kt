@@ -18,11 +18,22 @@ package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import android.Manifest
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.state.messages.Edit
@@ -42,40 +53,99 @@ internal fun MessageComposerInputTrailingContent(
     val attachments = state.attachments
     val isInEditMode = state.action is Edit
 
-    // Show cooldown indicator if applicable
-    if (coolDownTime > 0 && !isInEditMode) {
-        ChatTheme.componentFactory.MessageComposerCoolDownIndicator(
-            modifier = Modifier.Companion,
-            coolDownTime = coolDownTime,
-        )
-        return
-    }
-
-    val isRecordAudioPermissionDeclared = LocalContext.current.isPermissionDeclared(Manifest.permission.RECORD_AUDIO)
-    val isRecordingEnabled = isRecordAudioPermissionDeclared && ChatTheme.config.composer.audioRecordingEnabled
     val canSendMessage = state.canSendMessage()
     val isInputValid = (inputText.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty()
     val isRecording = state.recording !is RecordingState.Idle
+    val hasValidContent = canSendMessage && isInputValid && !isRecording
 
-    val shouldShowSendButton = canSendMessage && isInputValid && !isRecording
-    val shouldShowRecordButton = isRecordingEnabled && !shouldShowSendButton
+    val isRecordAudioPermissionDeclared = LocalContext.current.isPermissionDeclared(Manifest.permission.RECORD_AUDIO)
+    val isRecordingEnabled = isRecordAudioPermissionDeclared && ChatTheme.config.composer.audioRecordingEnabled
 
     val actionButton = when {
-        shouldShowSendButton -> "send"
-        shouldShowRecordButton -> "record"
+        coolDownTime > 0 -> ActionButton.CoolDown(coolDownTime)
+        isInEditMode -> ActionButton.Save(enabled = hasValidContent)
+        hasValidContent -> ActionButton.Send
+        isRecordingEnabled -> ActionButton.Record
         else -> null
     }
 
     Crossfade(targetState = actionButton) { button ->
         when (button) {
-            "send" -> ChatTheme.componentFactory.MessageComposerSendButton(
+            is ActionButton.CoolDown -> ChatTheme.componentFactory.MessageComposerCoolDownIndicator(
+                modifier = Modifier.Companion,
+                coolDownTime = button.coolDownTime,
+            )
+
+            is ActionButton.Save -> ChatTheme.componentFactory.MessageComposerSaveButton(
+                enabled = button.enabled,
                 onClick = { onSendClick(inputText, attachments) },
             )
 
-            "record" -> ChatTheme.componentFactory.MessageComposerAudioRecordButton(
+            is ActionButton.Send -> ChatTheme.componentFactory.MessageComposerSendButton(
+                onClick = { onSendClick(inputText, attachments) },
+            )
+
+            is ActionButton.Record -> ChatTheme.componentFactory.MessageComposerAudioRecordingButton(
                 state = state.recording,
                 recordingActions = recordingActions,
             )
+
+            null -> Unit
         }
+    }
+}
+
+private sealed interface ActionButton {
+    data class CoolDown(val coolDownTime: Int) : ActionButton
+    data class Save(val enabled: Boolean) : ActionButton
+    data object Send : ActionButton
+    data object Record : ActionButton
+}
+
+@Composable
+internal fun MessageComposerSendButton(
+    onClick: () -> Unit,
+) {
+    FilledIconButton(
+        modifier = Modifier
+            .size(48.dp)
+            .padding(StreamTokens.spacingXs)
+            .testTag("Stream_ComposerSendButton"),
+        colors = IconButtonDefaults.filledIconButtonColors(
+            containerColor = ChatTheme.colors.accentPrimary,
+            contentColor = ChatTheme.colors.textOnAccent,
+        ),
+        onClick = onClick,
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.stream_compose_ic_send),
+            contentDescription = stringResource(id = R.string.stream_compose_send_message),
+        )
+    }
+}
+
+@Composable
+internal fun MessageComposerSaveButton(
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
+    FilledIconButton(
+        enabled = enabled,
+        modifier = Modifier
+            .size(48.dp)
+            .padding(StreamTokens.spacingXs)
+            .testTag("Stream_ComposerSaveButton"),
+        colors = IconButtonDefaults.filledIconButtonColors(
+            containerColor = ChatTheme.colors.accentPrimary,
+            contentColor = ChatTheme.colors.textOnAccent,
+            disabledContainerColor = ChatTheme.colors.backgroundCoreDisabled,
+            disabledContentColor = ChatTheme.colors.textDisabled,
+        ),
+        onClick = onClick,
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
+            contentDescription = stringResource(id = R.string.stream_compose_save_message),
+        )
     }
 }

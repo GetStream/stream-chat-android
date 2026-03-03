@@ -75,12 +75,14 @@ import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.MarkAsUnread
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import io.getstream.chat.android.ui.common.state.messages.MuteUser
 import io.getstream.chat.android.ui.common.state.messages.Pin
 import io.getstream.chat.android.ui.common.state.messages.React
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.Resend
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.state.messages.UnblockUser
+import io.getstream.chat.android.ui.common.state.messages.UnmuteUser
 import io.getstream.chat.android.ui.common.state.messages.list.CancelGiphy
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
@@ -1508,12 +1510,12 @@ public class MessageListController(
                 if (it.isModerationError(currentUserId)) {
                     SelectedMessageFailedModerationState(
                         message = it,
-                        ownCapabilities = ownCapabilities.value,
+                        channel = channel.value,
                     )
                 } else {
                     SelectedMessageOptionsState(
                         message = it,
-                        ownCapabilities = ownCapabilities.value,
+                        channel = channel.value,
                     )
                 }
             },
@@ -1530,7 +1532,7 @@ public class MessageListController(
             changeSelectMessageState(
                 SelectedMessageReactionsState(
                     message = message,
-                    ownCapabilities = ownCapabilities.value,
+                    channel = channel.value,
                 ),
             )
         }
@@ -1546,7 +1548,7 @@ public class MessageListController(
             changeSelectMessageState(
                 SelectedMessageReactionsPickerState(
                     message = message,
-                    ownCapabilities = ownCapabilities.value,
+                    channel = channel.value,
                 ),
             )
         }
@@ -1613,6 +1615,8 @@ public class MessageListController(
                 _messageActions.value = _messageActions.value + messageAction
             }
 
+            is MuteUser -> muteUser(messageAction.message.user)
+            is UnmuteUser -> unmuteUser(messageAction.message.user)
             is BlockUser -> blockUser(messageAction.message.user.id)
             is UnblockUser -> unblockUser(messageAction.message.user.id)
             is Copy -> copyMessage(messageAction.message)
