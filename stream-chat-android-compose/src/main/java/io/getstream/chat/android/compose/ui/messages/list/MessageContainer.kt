@@ -357,7 +357,8 @@ private fun PinnedAnnotation(item: MessageItemState) {
         }
         MessageAnnotation(
             iconId = R.drawable.stream_compose_ic_annotation_pin,
-            text = pinnedByUser?.let { stringResource(R.string.stream_compose_pinned_to_channel_by, it) },
+            text = pinnedByUser?.let { stringResource(R.string.stream_compose_pinned_to_channel_by, it) }
+                ?: stringResource(R.string.stream_compose_pinned_to_channel),
         )
     }
 }

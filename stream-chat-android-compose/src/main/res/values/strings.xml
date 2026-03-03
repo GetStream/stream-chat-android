@@ -250,6 +250,7 @@
     <string name="stream_compose_giphy_label">GIPHY</string>
     <string name="stream_compose_upload_progress">"%1$s / %2$s"</string>
     <string name="stream_compose_upload_file_count">Uploading %1$d / %2$d …</string>
+    <string name="stream_compose_pinned_to_channel">Pinned</string>
     <string name="stream_compose_pinned_to_channel_by">Pinned by %1$s</string>
     <string name="stream_compose_message_list_you">You</string>
     <string name="stream_compose_also_sent_to_channel">Also sent to the channel</string>

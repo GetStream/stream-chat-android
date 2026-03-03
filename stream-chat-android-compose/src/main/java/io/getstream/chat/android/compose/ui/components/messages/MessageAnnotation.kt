@@ -48,7 +48,7 @@ import io.getstream.chat.android.compose.ui.util.ifNotNull
 @Composable
 internal fun MessageAnnotation(
     @DrawableRes iconId: Int,
-    text: String? = null,
+    text: String,
     trailingText: String? = null,
     contentColor: Color = ChatTheme.colors.textPrimary,
     trailingTextColor: Color = ChatTheme.colors.textPrimary,
@@ -70,14 +70,12 @@ internal fun MessageAnnotation(
             tint = contentColor,
         )
 
-        if (text != null) {
-            Text(
-                modifier = Modifier.testTag("Stream_MessageHeaderLabel"),
-                text = text,
-                style = typography.metadataEmphasis,
-                color = contentColor,
-            )
-        }
+        Text(
+            modifier = Modifier.testTag("Stream_MessageHeaderLabel"),
+            text = text,
+            style = typography.metadataEmphasis,
+            color = contentColor,
+        )
 
         if (trailingText != null) {
             Text(
