@@ -42,11 +42,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
@@ -243,7 +243,7 @@ internal fun DirectChannelInfoAvatarContainer(user: User) {
         verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {
         ChatTheme.componentFactory.UserAvatar(
-            modifier = Modifier.size(80.dp),
+            modifier = Modifier.size(AvatarSize.ExtraExtraLarge),
             user = user,
             showIndicator = user.shouldShowOnlineIndicator(
                 userPresence = ChatTheme.userPresence,

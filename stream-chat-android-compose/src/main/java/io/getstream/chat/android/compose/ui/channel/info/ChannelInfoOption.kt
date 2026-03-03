@@ -99,7 +99,7 @@ internal fun ChannelInfoOptionButton(
         Text(
             modifier = Modifier.weight(1f),
             text = text,
-            style = ChatTheme.typography.bodyEmphasis,
+            style = ChatTheme.typography.bodyDefault,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -126,7 +126,7 @@ internal fun ChannelInfoOptionNavigationButton(
         Text(
             modifier = Modifier.weight(1f),
             text = text,
-            style = ChatTheme.typography.bodyEmphasis,
+            style = ChatTheme.typography.bodyDefault,
             color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -159,7 +159,7 @@ internal fun ChannelInfoOptionSwitch(
         Text(
             modifier = Modifier.weight(1f),
             text = text,
-            style = ChatTheme.typography.bodyEmphasis,
+            style = ChatTheme.typography.bodyDefault,
             color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -182,7 +182,7 @@ internal fun ChannelInfoOptionSwitch(
 private fun ChannelInfoOptionButtonPreview() {
     ChatTheme {
         ChannelInfoOptionButton(
-            icon = R.drawable.stream_compose_ic_delete,
+            icon = R.drawable.stream_ic_action_delete,
             text = "Delete",
             onClick = {},
         )
@@ -194,7 +194,7 @@ private fun ChannelInfoOptionButtonPreview() {
 private fun ChannelInfoOptionNavigationButtonPreview() {
     ChatTheme {
         ChannelInfoOptionNavigationButton(
-            icon = R.drawable.stream_compose_ic_file_picker,
+            icon = R.drawable.stream_ic_files,
             text = "Files",
             onClick = {},
         )
@@ -206,7 +206,7 @@ private fun ChannelInfoOptionNavigationButtonPreview() {
 private fun ChannelInfoOptionSwitchPreview() {
     ChatTheme {
         ChannelInfoOptionSwitch(
-            icon = R.drawable.stream_compose_ic_mute,
+            icon = R.drawable.stream_ic_action_mute,
             text = "Mute",
             checked = true,
             onCheckedChange = {},

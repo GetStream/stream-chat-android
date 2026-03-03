@@ -46,12 +46,12 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
@@ -312,7 +312,7 @@ internal fun GroupChannelInfoAvatarContainer(
         verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {
         ChatTheme.componentFactory.ChannelAvatar(
-            modifier = Modifier.size(80.dp),
+            modifier = Modifier.size(AvatarSize.ExtraExtraLarge),
             channel = channel,
             currentUser = currentUser,
             showIndicator = false,
@@ -372,7 +372,7 @@ internal fun GroupChannelInfoMemberSection(
                 TextButton(onClick = onAddMembersClick) {
                     Text(
                         text = stringResource(R.string.stream_ui_channel_info_member_add_button),
-                        style = ChatTheme.typography.bodyEmphasis,
+                        style = ChatTheme.typography.bodyDefault,
                         color = ChatTheme.colors.accentPrimary,
                     )
                 }
@@ -403,7 +403,7 @@ internal fun GroupChannelInfoMemberSection(
             ) {
                 Text(
                     text = stringResource(R.string.stream_ui_channel_info_view_all),
-                    style = ChatTheme.typography.bodyEmphasis,
+                    style = ChatTheme.typography.bodyDefault,
                     color = ChatTheme.colors.accentPrimary,
                 )
             }
@@ -425,7 +425,7 @@ internal fun GroupChannelInfoMemberItem(
     ) {
         val user = member.user
         ChatTheme.componentFactory.UserAvatar(
-            modifier = Modifier.size(32.dp),
+            modifier = Modifier.size(AvatarSize.Medium),
             user = user,
             showIndicator = user.shouldShowOnlineIndicator(
                 userPresence = ChatTheme.userPresence,
@@ -436,7 +436,7 @@ internal fun GroupChannelInfoMemberItem(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = user.name.takeIf(String::isNotBlank) ?: user.id,
-                style = ChatTheme.typography.bodyEmphasis,
+                style = ChatTheme.typography.bodyDefault,
                 color = if (member.banned) {
                     ChatTheme.colors.accentError
                 } else {
@@ -489,7 +489,7 @@ internal fun GroupChannelInfoExpandMembersItem(
     ) {
         Text(
             text = stringResource(R.string.stream_ui_channel_info_view_all),
-            style = ChatTheme.typography.bodyEmphasis,
+            style = ChatTheme.typography.bodyDefault,
             color = ChatTheme.colors.accentPrimary,
         )
     }
