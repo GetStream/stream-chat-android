@@ -1065,6 +1065,10 @@ public final class io/getstream/chat/android/ui/common/feature/messages/translat
 public final class io/getstream/chat/android/ui/common/feature/threads/ThreadListController$Companion {
 }
 
+public abstract interface class io/getstream/chat/android/ui/common/helper/AsyncImageHeadersProvider {
+	public abstract fun getImageRequestHeaders (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public abstract interface class io/getstream/chat/android/ui/common/helper/ClipboardHandler {
 	public abstract fun copyMessage (Lio/getstream/chat/android/models/Message;)V
 }

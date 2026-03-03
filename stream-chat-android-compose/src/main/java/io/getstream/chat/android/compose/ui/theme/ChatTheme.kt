@@ -30,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -49,6 +50,7 @@ import io.getstream.chat.android.compose.ui.messages.attachments.factory.Attachm
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
 import io.getstream.chat.android.compose.ui.util.DefaultPollSwitchItemFactory
+import io.getstream.chat.android.compose.ui.util.ImageHeadersInterceptor
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
@@ -59,6 +61,7 @@ import io.getstream.chat.android.compose.ui.util.QuotedMessageTextFormatter
 import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
 import io.getstream.chat.android.compose.ui.util.SearchResultNameFormatter
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoaderFactory
+import io.getstream.chat.android.ui.common.helper.AsyncImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.helper.DefaultDownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DefaultImageAssetTransformer
@@ -160,6 +163,12 @@ private val LocalQuotedMessageTextFormatter = compositionLocalOf<QuotedMessageTe
 private val LocalSearchResultNameFormatter = compositionLocalOf<SearchResultNameFormatter> {
     error("No SearchResultNameFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+
+@Deprecated(
+    message = "ImageHeadersProvider is deprecated. Use asyncImageHeadersProvider in ChatTheme instead. " +
+        "Headers are now injected via Coil's interceptor pipeline, which is thread-safe and supports " +
+        "blocking/suspending operations.",
+)
 private val LocalStreamImageHeadersProvider = compositionLocalOf<ImageHeadersProvider> {
     error("No ImageHeadersProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -293,7 +302,13 @@ private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
  * @param messagePreviewFormatter [MessagePreviewFormatter] Used to generate a string preview for the given message.
  * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances.
  * @param imageAssetTransformer [ImageAssetTransformer] Used to transform image assets.
- * @param imageHeadersProvider [ImageHeadersProvider] Used to provide headers for image requests.
+ * @param imageHeadersProvider Deprecated. Use [asyncImageHeadersProvider] instead. Headers provided
+ * here are injected synchronously on the main thread, which blocks the UI for any non-trivial work.
+ * @param asyncImageHeadersProvider [AsyncImageHeadersProvider] Used to provide headers for image
+ * requests. Invoked on a background thread inside Coil's interceptor pipeline, making it safe for
+ * blocking or suspending operations such as reading an auth token. Prefer this over
+ * [imageHeadersProvider]. Only one of the two should be active at a time — if both are provided,
+ * headers may be applied twice for the same request.
  * @param downloadAttachmentUriGenerator [DownloadAttachmentUriGenerator] Used to generate download URIs for
  * attachments.
  * @param downloadRequestInterceptor [DownloadRequestInterceptor] Used to intercept download requests.
@@ -361,6 +376,7 @@ public fun ChatTheme(
     searchResultNameFormatter: SearchResultNameFormatter = SearchResultNameFormatter.defaultFormatter(),
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
     imageHeadersProvider: ImageHeadersProvider = DefaultImageHeadersProvider,
+    asyncImageHeadersProvider: AsyncImageHeadersProvider? = null,
     downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator = DefaultDownloadAttachmentUriGenerator,
     downloadRequestInterceptor: DownloadRequestInterceptor = DownloadRequestInterceptor { },
     imageAssetTransformer: ImageAssetTransformer = DefaultImageAssetTransformer,
@@ -430,6 +446,19 @@ public fun ChatTheme(
         ChatClient.VERSION_PREFIX_HEADER = VersionPrefixHeader.Compose
     }
 
+    val context = LocalContext.current
+    val imageLoader = remember(imageLoaderFactory, asyncImageHeadersProvider) {
+        val base = imageLoaderFactory.imageLoader(context.applicationContext)
+        if (asyncImageHeadersProvider != null) {
+            base.newBuilder()
+                .components { add(ImageHeadersInterceptor(asyncImageHeadersProvider)) }
+                .build()
+        } else {
+            base
+        }
+    }
+
+    @Suppress("DEPRECATION")
     CompositionLocalProvider(
         LocalColors provides colors,
         LocalDimens provides dimens,
@@ -463,7 +492,7 @@ public fun ChatTheme(
         LocalMessageUnreadSeparatorTheme provides messageUnreadSeparatorTheme,
         LocalMessageComposerTheme provides messageComposerTheme,
         LocalAttachmentPickerTheme provides attachmentPickerTheme,
-        LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current.applicationContext),
+        LocalStreamImageLoader provides imageLoader,
         LocalStreamImageHeadersProvider provides imageHeadersProvider,
         LocalStreamDownloadAttachmentUriGenerator provides downloadAttachmentUriGenerator,
         LocalStreamDownloadRequestInterceptor provides downloadRequestInterceptor,
@@ -820,7 +849,15 @@ public object ChatTheme {
 
     /**
      * Retrieves the current [ImageHeadersProvider] at the call site's position in the hierarchy.
+     *
+     * @deprecated Use [asyncImageHeadersProvider] in [ChatTheme] for thread-safe header injection.
      */
+    @Deprecated(
+        message = "ImageHeadersProvider is deprecated. Pass asyncImageHeadersProvider to ChatTheme instead. " +
+            "Headers are now injected via Coil's interceptor pipeline, which is thread-safe and supports " +
+            "blocking/suspending operations.",
+    )
+    @Suppress("DEPRECATION")
     public val streamImageHeadersProvider: ImageHeadersProvider
         @Composable
         @ReadOnlyComposable
