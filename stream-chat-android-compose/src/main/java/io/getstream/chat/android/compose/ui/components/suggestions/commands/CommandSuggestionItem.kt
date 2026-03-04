@@ -148,6 +148,8 @@ private val Command.imageRes: Int
     @DrawableRes get() = when (name) {
         CommandDefaults.MUTE -> UiCommonR.drawable.stream_ic_command_mute
         CommandDefaults.UNMUTE -> UiCommonR.drawable.stream_ic_command_unmute
+        CommandDefaults.BAN -> UiCommonR.drawable.stream_ic_command_ban
+        CommandDefaults.UNBAN -> UiCommonR.drawable.stream_ic_command_unban
         // fallback to the 'giphy' icon for backwards compatibility
         else -> R.drawable.stream_ic_command_giphy
     }
