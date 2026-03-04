@@ -117,6 +117,7 @@ import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
+import io.getstream.chat.android.compose.ui.components.common.CommandChip
 import io.getstream.chat.android.compose.ui.components.common.ContextualMenuItem
 import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
@@ -1635,6 +1636,7 @@ public interface ChatComponentFactory {
         onSendClick: (String, List<Attachment>) -> Unit,
         onAlsoSendToChannelChange: (Boolean) -> Unit,
         recordingActions: AudioRecordingActions,
+        onActiveCommandDismiss: () -> Unit,
     ) {
         MessageInput(
             modifier = modifier,
@@ -1647,6 +1649,7 @@ public interface ChatComponentFactory {
             onSendClick = onSendClick,
             onAlsoSendToChannelChange = onAlsoSendToChannelChange,
             recordingActions = recordingActions,
+            onActiveCommandDismiss = onActiveCommandDismiss,
         )
     }
 
@@ -1702,17 +1705,23 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default leading content of the message composer.
-     * Shown at the start of the composer input.
+     * The default leading content of the message composer input row.
+     * Shown at the start of the composer input, before the text field.
+     * When a command is active, renders a [CommandChip].
      *
      * Used as part of [MessageComposerInput].
-     *
-     * @param state The current state of the message composer.
      */
     @Composable
-    public fun MessageComposerInputLeadingContent(
-        state: MessageComposerState,
-    ) {
+    public fun MessageComposerInputLeadingContent(params: MessageComposerInputLeadingContentParams) {
+        val activeCommand = params.state.activeCommand ?: return
+        CommandChip(
+            modifier = params.modifier.padding(
+                start = StreamTokens.spacingSm,
+                bottom = StreamTokens.spacingSm,
+            ),
+            command = activeCommand,
+            onDismiss = params.onActiveCommandDismiss,
+        )
     }
 
     /**

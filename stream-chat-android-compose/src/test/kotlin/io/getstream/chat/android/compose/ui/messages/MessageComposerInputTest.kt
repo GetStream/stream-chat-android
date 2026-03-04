@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
+import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputActiveCommand
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputAttachments
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputAttachmentsAndLink
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputEdit
@@ -81,6 +82,13 @@ internal class MessageComposerInputTest : PaparazziComposeTest {
     fun `thread mode also send to channel`() {
         snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
             MessageComposerInputThreadModeAlsoSendToChannel()
+        }
+    }
+
+    @Test
+    fun `active command`() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerInputActiveCommand()
         }
     }
 

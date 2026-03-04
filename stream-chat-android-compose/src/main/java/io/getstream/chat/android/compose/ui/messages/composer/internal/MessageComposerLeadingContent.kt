@@ -58,7 +58,11 @@ internal fun MessageComposerLeadingContent(
 
     val canUploadFile = messageInputState.canUploadFile()
 
-    if (canSendMessage && !isRecording && canUploadFile) {
+    val isCommandActive = messageInputState.activeCommand != null
+
+    val showAttachmentButton = canSendMessage && !isRecording && canUploadFile && !isCommandActive
+
+    if (showAttachmentButton) {
         val iconRotation by animateFloatAsState(
             targetValue = if (isAttachmentPickerVisible) OpenAttachmentPickerButtonRotation else 0f,
         )

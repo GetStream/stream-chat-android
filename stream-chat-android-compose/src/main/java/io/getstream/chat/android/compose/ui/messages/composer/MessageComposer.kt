@@ -77,6 +77,7 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param onMentionSelected Handler when the user taps on a mention suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
  * @param onAlsoSendToChannelChange Handler when the "Also send to channel" checkbox is changed.
+ * @param onActiveCommandDismiss Called when the user taps the dismiss button on the active command chip.
  * @param recordingActions The actions that can be performed on an audio recording.
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
@@ -97,6 +98,7 @@ public fun MessageComposer(
     onMentionSelected: (User) -> Unit = { viewModel.selectMention(it) },
     onCommandSelected: (Command) -> Unit = { viewModel.selectCommand(it) },
     onAlsoSendToChannelChange: (Boolean) -> Unit = viewModel::setAlsoSendToChannel,
+    onActiveCommandDismiss: () -> Unit = viewModel::clearActiveCommand,
     recordingActions: AudioRecordingActions = AudioRecordingActions.defaultActions(
         viewModel = viewModel,
         sendOnComplete = ChatTheme.config.composer.audioRecordingSendOnComplete,
@@ -135,6 +137,7 @@ public fun MessageComposer(
             },
             onAlsoSendToChannelChange = onAlsoSendToChannelChange,
             recordingActions = recordingActions,
+            onActiveCommandDismiss = onActiveCommandDismiss,
         )
     },
 ) {
@@ -181,6 +184,7 @@ public fun MessageComposer(
  * @param onMentionSelected Handler when the user taps on a mention suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
  * @param onAlsoSendToChannelChange Handler when the "Also send to channel" checkbox is changed.
+ * @param onActiveCommandDismiss Called when the user taps the dismiss button on the active command chip.
  * @param recordingActions The actions that can be performed on an audio recording.
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
@@ -201,6 +205,7 @@ public fun MessageComposer(
     onMentionSelected: (User) -> Unit = {},
     onCommandSelected: (Command) -> Unit = {},
     onAlsoSendToChannelChange: (Boolean) -> Unit = {},
+    onActiveCommandDismiss: () -> Unit = {},
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
     mentionPopupContent: @Composable (List<User>) -> Unit = {
         ChatTheme.componentFactory.MessageComposerMentionsPopupContent(
@@ -226,6 +231,7 @@ public fun MessageComposer(
             onSendClick = onSendMessage,
             onAlsoSendToChannelChange = onAlsoSendToChannelChange,
             recordingActions = recordingActions,
+            onActiveCommandDismiss = onActiveCommandDismiss,
         )
     },
 ) {

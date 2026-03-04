@@ -41,12 +41,14 @@ import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecor
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.ui.theme.LocalChatConfig
+import io.getstream.chat.android.compose.ui.theme.MessageComposerInputLeadingContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.previewdata.PreviewAttachmentData
+import io.getstream.chat.android.previewdata.PreviewCommandData
 import io.getstream.chat.android.previewdata.PreviewLinkData
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.state.messages.Edit
@@ -69,6 +71,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.RecordingStat
  * @param onSendClick Handler when the send button is clicked.
  * @param onAlsoSendToChannelChange Handler when the "Also send to channel" checkbox is changed.
  * @param recordingActions The [AudioRecordingActions] to be applied to the input.
+ * @param onActiveCommandDismiss Called when the user taps the dismiss button on the command chip.
  */
 @Suppress("LongMethod")
 @Composable
@@ -83,6 +86,7 @@ public fun MessageInput(
     onSendClick: (String, List<Attachment>) -> Unit = { _, _ -> },
     onAlsoSendToChannelChange: (Boolean) -> Unit = {},
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
+    onActiveCommandDismiss: () -> Unit = {},
 ) {
     Column(
         modifier = modifier
@@ -121,7 +125,11 @@ public fun MessageInput(
             verticalAlignment = Alignment.Bottom,
         ) {
             ChatTheme.componentFactory.MessageComposerInputLeadingContent(
-                state = messageComposerState,
+                params = MessageComposerInputLeadingContentParams(
+                    modifier = Modifier,
+                    state = messageComposerState,
+                    onActiveCommandDismiss = onActiveCommandDismiss,
+                ),
             )
 
             val isRecording = messageComposerState.recording !is RecordingState.Idle
@@ -328,6 +336,23 @@ internal fun MessageComposerInputThreadModeAlsoSendToChannel() {
                 parentMessage = PreviewMessageData.message1,
             ),
             alsoSendToChannel = true,
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputActiveCommandPreview() {
+    ChatTheme {
+        MessageComposerInputActiveCommand()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputActiveCommand() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            activeCommand = PreviewCommandData.command1,
         ),
     )
 }
