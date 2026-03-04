@@ -251,8 +251,9 @@ private fun BoxWithConstraintsScope.resolveStackedAvatarDimensions(): StackedGro
     return when {
         // Beyond the largest fixed tier: scale proportionally
         maxWidth > AvatarSize.ExtraExtraLarge -> {
+            val scale = maxWidth / AvatarSize.ExtraExtraLarge
             val avatarScaled = maxWidth * (AvatarSize.Large / AvatarSize.ExtraExtraLarge)
-            val badgeScaled = CountBadgeSize.Large.copy(minSize = maxWidth * 0.5f)
+            val badgeScaled = CountBadgeSize.Large.copy(spacing = CountBadgeSize.Large.spacing * scale)
             StackedGroupAvatarDimensions(avatarSize = avatarScaled, badgeSize = badgeScaled)
         }
         maxWidth >= AvatarSize.ExtraExtraLarge -> StackedGroupAvatarDimensions.XXL
