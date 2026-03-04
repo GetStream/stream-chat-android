@@ -21,6 +21,7 @@ package io.getstream.chat.android.compose.ui.channel.info
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -167,7 +168,8 @@ internal fun ChannelInfoOptionSwitch(
         )
         Switch(
             checked = checked,
-            onCheckedChange = null, // Switch should not be interactable
+            onCheckedChange = null,
+            thumbContent = { Box(Modifier.size(24.dp)) },
             colors = SwitchDefaults.colors(
                 checkedTrackColor = ChatTheme.colors.controlToggleSwitchBgSelected,
                 uncheckedTrackColor = ChatTheme.colors.controlToggleSwitchBg,
