@@ -20,8 +20,8 @@ import androidx.compose.ui.Alignment
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
-import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerDefaultStyle
-import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerDefaultStyleWithVisibleAttachmentPicker
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFixedStyle
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFixedStyleWithVisibleAttachmentPicker
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFloatingStyle
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFloatingStyleWithVisibleAttachmentPicker
 import org.junit.Rule
@@ -33,16 +33,16 @@ internal class MessageComposerTest : PaparazziComposeTest {
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `default style`() {
+    fun `fixed style`() {
         snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
-            MessageComposerDefaultStyle()
+            MessageComposerFixedStyle()
         }
     }
 
     @Test
-    fun `default style with visible attachment picker`() {
+    fun `fixed style with visible attachment picker`() {
         snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
-            MessageComposerDefaultStyleWithVisibleAttachmentPicker()
+            MessageComposerFixedStyleWithVisibleAttachmentPicker()
         }
     }
 

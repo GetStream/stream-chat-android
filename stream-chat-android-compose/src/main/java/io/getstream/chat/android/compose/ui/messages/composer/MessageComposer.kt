@@ -377,14 +377,14 @@ private fun MessageInputValidationError(validationErrors: List<ValidationError>,
 
 @Preview
 @Composable
-private fun MessageComposerDefaultStylePreview() {
+private fun MessageComposerFixedStylePreview() {
     ChatTheme {
-        MessageComposerDefaultStyle()
+        MessageComposerFixedStyle()
     }
 }
 
 @Composable
-internal fun MessageComposerDefaultStyle() {
+internal fun MessageComposerFixedStyle() {
     MessageComposer(
         messageComposerState = PreviewMessageComposerState,
         onSendMessage = { _, _ -> },
@@ -393,14 +393,14 @@ internal fun MessageComposerDefaultStyle() {
 
 @Preview
 @Composable
-private fun MessageComposerDefaultStyleWithVisibleAttachmentPickerPreview() {
+private fun MessageComposerFixedStyleWithVisibleAttachmentPickerPreview() {
     ChatTheme {
-        MessageComposerDefaultStyleWithVisibleAttachmentPicker()
+        MessageComposerFixedStyleWithVisibleAttachmentPicker()
     }
 }
 
 @Composable
-internal fun MessageComposerDefaultStyleWithVisibleAttachmentPicker() {
+internal fun MessageComposerFixedStyleWithVisibleAttachmentPicker() {
     MessageComposer(
         messageComposerState = PreviewMessageComposerState,
         isAttachmentPickerVisible = true,
