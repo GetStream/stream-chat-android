@@ -160,3 +160,51 @@ public class UnarchiveChannel(
     @DrawableRes
     override val icon: Int = R.drawable.stream_ic_action_unarchive
 }
+
+/**
+ * Mute a user (used in DM channels).
+ */
+public class MuteUser(
+    override val channel: Channel,
+    override val label: String,
+    override val onAction: () -> Unit,
+) : ChannelAction {
+    @DrawableRes
+    override val icon: Int = R.drawable.stream_ic_action_mute
+}
+
+/**
+ * Unmute a user (used in DM channels).
+ */
+public class UnmuteUser(
+    override val channel: Channel,
+    override val label: String,
+    override val onAction: () -> Unit,
+) : ChannelAction {
+    @DrawableRes
+    override val icon: Int = R.drawable.stream_ic_action_unmute
+}
+
+/**
+ * Block a user (used in DM channels).
+ */
+public class BlockUser(
+    override val channel: Channel,
+    override val label: String,
+    override val onAction: () -> Unit,
+) : ChannelAction {
+    @DrawableRes
+    override val icon: Int = R.drawable.stream_ic_action_block
+}
+
+/**
+ * Unblock a user (used in DM channels).
+ */
+public class UnblockUser(
+    override val channel: Channel,
+    override val label: String,
+    override val onAction: () -> Unit,
+) : ChannelAction {
+    @DrawableRes
+    override val icon: Int = R.drawable.stream_ic_action_block
+}

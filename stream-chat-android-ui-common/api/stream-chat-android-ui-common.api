@@ -1901,6 +1901,18 @@ public final class io/getstream/chat/android/ui/common/state/channels/actions/Ar
 	public fun isDestructive ()Z
 }
 
+public final class io/getstream/chat/android/ui/common/state/channels/actions/BlockUser : io/getstream/chat/android/ui/common/state/channels/actions/ChannelAction {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;Lkotlin/jvm/functions/Function0;)V
+	public fun getChannel ()Lio/getstream/chat/android/models/Channel;
+	public fun getConfirmationPopup ()Lio/getstream/chat/android/ui/common/state/channels/actions/ConfirmationPopup;
+	public fun getIcon ()I
+	public fun getLabel ()Ljava/lang/String;
+	public fun getOnAction ()Lkotlin/jvm/functions/Function0;
+	public fun getRequiredCapability ()Ljava/lang/String;
+	public fun isDestructive ()Z
+}
+
 public abstract interface class io/getstream/chat/android/ui/common/state/channels/actions/ChannelAction {
 	public abstract fun getChannel ()Lio/getstream/chat/android/models/Channel;
 	public abstract fun getConfirmationPopup ()Lio/getstream/chat/android/ui/common/state/channels/actions/ConfirmationPopup;
@@ -1971,6 +1983,18 @@ public final class io/getstream/chat/android/ui/common/state/channels/actions/Mu
 	public fun isDestructive ()Z
 }
 
+public final class io/getstream/chat/android/ui/common/state/channels/actions/MuteUser : io/getstream/chat/android/ui/common/state/channels/actions/ChannelAction {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;Lkotlin/jvm/functions/Function0;)V
+	public fun getChannel ()Lio/getstream/chat/android/models/Channel;
+	public fun getConfirmationPopup ()Lio/getstream/chat/android/ui/common/state/channels/actions/ConfirmationPopup;
+	public fun getIcon ()I
+	public fun getLabel ()Ljava/lang/String;
+	public fun getOnAction ()Lkotlin/jvm/functions/Function0;
+	public fun getRequiredCapability ()Ljava/lang/String;
+	public fun isDestructive ()Z
+}
+
 public final class io/getstream/chat/android/ui/common/state/channels/actions/PinChannel : io/getstream/chat/android/ui/common/state/channels/actions/ChannelAction {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;Lkotlin/jvm/functions/Function0;)V
@@ -1995,7 +2019,31 @@ public final class io/getstream/chat/android/ui/common/state/channels/actions/Un
 	public fun isDestructive ()Z
 }
 
+public final class io/getstream/chat/android/ui/common/state/channels/actions/UnblockUser : io/getstream/chat/android/ui/common/state/channels/actions/ChannelAction {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;Lkotlin/jvm/functions/Function0;)V
+	public fun getChannel ()Lio/getstream/chat/android/models/Channel;
+	public fun getConfirmationPopup ()Lio/getstream/chat/android/ui/common/state/channels/actions/ConfirmationPopup;
+	public fun getIcon ()I
+	public fun getLabel ()Ljava/lang/String;
+	public fun getOnAction ()Lkotlin/jvm/functions/Function0;
+	public fun getRequiredCapability ()Ljava/lang/String;
+	public fun isDestructive ()Z
+}
+
 public final class io/getstream/chat/android/ui/common/state/channels/actions/UnmuteChannel : io/getstream/chat/android/ui/common/state/channels/actions/ChannelAction {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;Lkotlin/jvm/functions/Function0;)V
+	public fun getChannel ()Lio/getstream/chat/android/models/Channel;
+	public fun getConfirmationPopup ()Lio/getstream/chat/android/ui/common/state/channels/actions/ConfirmationPopup;
+	public fun getIcon ()I
+	public fun getLabel ()Ljava/lang/String;
+	public fun getOnAction ()Lkotlin/jvm/functions/Function0;
+	public fun getRequiredCapability ()Ljava/lang/String;
+	public fun isDestructive ()Z
+}
+
+public final class io/getstream/chat/android/ui/common/state/channels/actions/UnmuteUser : io/getstream/chat/android/ui/common/state/channels/actions/ChannelAction {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;Lkotlin/jvm/functions/Function0;)V
 	public fun getChannel ()Lio/getstream/chat/android/models/Channel;

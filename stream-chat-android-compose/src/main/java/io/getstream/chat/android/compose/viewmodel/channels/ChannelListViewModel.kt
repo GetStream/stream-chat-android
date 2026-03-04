@@ -198,6 +198,14 @@ public class ChannelListViewModel(
         .flatMapLatest { it.channelMutes }
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
+    private val globalMuted: StateFlow<List<io.getstream.chat.android.models.Mute>> = globalState
+        .flatMapLatest { it.muted }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    private val globalBlockedUserIds: StateFlow<List<String>> = globalState
+        .flatMapLatest { it.blockedUserIds }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
     private val typingChannels: StateFlow<Map<String, TypingEvent>> = globalState
         .flatMapLatest { it.typingChannels }
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
@@ -722,6 +730,66 @@ public class ChannelListViewModel(
         chatClient.clientState.user.value?.let { user ->
             chatClient.channel(channel.type, channel.id).removeMembers(listOf(user.id)).enqueue()
         }
+    }
+
+    /**
+     * Mutes a user (used for DM channels).
+     *
+     * @param userId The ID of the user to mute.
+     */
+    public fun muteUser(userId: String) {
+        dismissChannelAction()
+        chatClient.muteUser(userId).enqueue()
+    }
+
+    /**
+     * Unmutes a user (used for DM channels).
+     *
+     * @param userId The ID of the user to unmute.
+     */
+    public fun unmuteUser(userId: String) {
+        dismissChannelAction()
+        chatClient.unmuteUser(userId).enqueue()
+    }
+
+    /**
+     * Blocks a user (used for DM channels).
+     *
+     * @param userId The ID of the user to block.
+     */
+    public fun blockUser(userId: String) {
+        dismissChannelAction()
+        chatClient.blockUser(userId).enqueue()
+    }
+
+    /**
+     * Unblocks a user (used for DM channels).
+     *
+     * @param userId The ID of the user to unblock.
+     */
+    public fun unblockUser(userId: String) {
+        dismissChannelAction()
+        chatClient.unblockUser(userId).enqueue()
+    }
+
+    /**
+     * Checks if a user is muted by the current user.
+     *
+     * @param userId The ID of the user to check.
+     * @return True if the user is muted.
+     */
+    public fun isUserMuted(userId: String): Boolean {
+        return globalMuted.value.any { it.target?.id == userId }
+    }
+
+    /**
+     * Checks if a user is blocked by the current user.
+     *
+     * @param userId The ID of the user to check.
+     * @return True if the user is blocked.
+     */
+    public fun isUserBlocked(userId: String): Boolean {
+        return globalBlockedUserIds.value.contains(userId)
     }
 
     /**

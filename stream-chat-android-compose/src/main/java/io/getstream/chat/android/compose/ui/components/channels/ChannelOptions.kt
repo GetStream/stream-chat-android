@@ -32,19 +32,25 @@ import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.isDistinct
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.ui.common.state.channels.actions.ArchiveChannel
+import io.getstream.chat.android.ui.common.state.channels.actions.BlockUser
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.state.channels.actions.ConfirmationPopup
 import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
 import io.getstream.chat.android.ui.common.state.channels.actions.LeaveGroup
 import io.getstream.chat.android.ui.common.state.channels.actions.MuteChannel
+import io.getstream.chat.android.ui.common.state.channels.actions.MuteUser
 import io.getstream.chat.android.ui.common.state.channels.actions.PinChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.UnarchiveChannel
+import io.getstream.chat.android.ui.common.state.channels.actions.UnblockUser
 import io.getstream.chat.android.ui.common.state.channels.actions.UnmuteChannel
+import io.getstream.chat.android.ui.common.state.channels.actions.UnmuteUser
 import io.getstream.chat.android.ui.common.state.channels.actions.UnpinChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
 
@@ -86,6 +92,11 @@ public fun ChannelOptions(
  * Builds the default list of channel actions, based on the current user permissions and channel state.
  * Each action is self-describing and carries its icon, label, and execution handler.
  *
+ * Actions vary by channel type:
+ * - **DM:** View Info, Mute/Unmute User, Block/Unblock User, Archive Chat, Delete Chat
+ * - **Group (owner):** View Info, Mute/Unmute Group, Archive Group, Delete Group
+ * - **Group (member):** View Info, Mute/Unmute Group, Archive Group, Leave Group
+ *
  * @param selectedChannel The currently selected channel.
  * @param isMuted If the channel is muted or not.
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
@@ -102,16 +113,58 @@ public fun buildDefaultChannelActions(
     viewModel: ChannelListViewModel,
     onViewInfoAction: (Channel) -> Unit,
 ): List<ChannelAction> {
-    val canLeaveChannel = ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL)
-    val canDeleteChannel = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
-    val canMuteChannel = ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL)
-
     val optionVisibility = ChatTheme.channelOptionsTheme.optionVisibility
     val currentUser by viewModel.user.collectAsState()
     val channelName = ChatTheme.channelNameFormatter.formatChannelName(
         selectedChannel,
         currentUser,
     )
+    val isDm = selectedChannel.isDistinct() && selectedChannel.memberCount <= 2
+
+    return if (isDm) {
+        buildDmChannelActions(
+            selectedChannel = selectedChannel,
+            currentUser = currentUser,
+            ownCapabilities = ownCapabilities,
+            optionVisibility = optionVisibility,
+            channelName = channelName,
+            viewModel = viewModel,
+            onViewInfoAction = onViewInfoAction,
+        )
+    } else {
+        buildGroupChannelActions(
+            selectedChannel = selectedChannel,
+            isMuted = isMuted,
+            ownCapabilities = ownCapabilities,
+            optionVisibility = optionVisibility,
+            channelName = channelName,
+            viewModel = viewModel,
+            onViewInfoAction = onViewInfoAction,
+        )
+    }
+}
+
+/**
+ * Builds channel actions for DM (1-to-1) channels.
+ * Shows: View Info, Mute/Unmute User, Block/Unblock User, Archive Chat, Delete Chat.
+ */
+@Suppress("LongMethod", "LongParameterList")
+@Composable
+private fun buildDmChannelActions(
+    selectedChannel: Channel,
+    currentUser: User?,
+    ownCapabilities: Set<String>,
+    optionVisibility: ChannelOptionItemVisibility,
+    channelName: String,
+    viewModel: ChannelListViewModel,
+    onViewInfoAction: (Channel) -> Unit,
+): List<ChannelAction> {
+    val otherUser = selectedChannel.members.firstOrNull { it.user.id != currentUser?.id }?.user
+    val otherUserId = otherUser?.id ?: return emptyList()
+    val isUserMuted = viewModel.isUserMuted(otherUserId)
+    val isUserBlocked = viewModel.isUserBlocked(otherUserId)
+    val canDeleteChannel = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
+
     return listOfNotNull(
         if (optionVisibility.isViewInfoVisible) {
             ViewInfo(
@@ -122,7 +175,96 @@ public fun buildDefaultChannelActions(
         } else {
             null
         },
-        buildMuteAction(
+        if (optionVisibility.isMuteChannelVisible) {
+            if (isUserMuted) {
+                UnmuteUser(
+                    channel = selectedChannel,
+                    label = stringResource(id = R.string.stream_compose_selected_channel_menu_unmute_user),
+                    onAction = { viewModel.unmuteUser(otherUserId) },
+                )
+            } else {
+                MuteUser(
+                    channel = selectedChannel,
+                    label = stringResource(id = R.string.stream_compose_selected_channel_menu_mute_user),
+                    onAction = { viewModel.muteUser(otherUserId) },
+                )
+            }
+        } else {
+            null
+        },
+        if (isUserBlocked) {
+            UnblockUser(
+                channel = selectedChannel,
+                label = stringResource(id = R.string.stream_compose_selected_channel_menu_unblock_user),
+                onAction = { viewModel.unblockUser(otherUserId) },
+            )
+        } else {
+            BlockUser(
+                channel = selectedChannel,
+                label = stringResource(id = R.string.stream_compose_selected_channel_menu_block_user),
+                onAction = { viewModel.blockUser(otherUserId) },
+            )
+        },
+        buildDmArchiveAction(
+            canArchiveChannel = optionVisibility.isArchiveChannelVisible,
+            selectedChannel = selectedChannel,
+            viewModel = viewModel,
+        ),
+        if (optionVisibility.isDeleteChannelVisible && canDeleteChannel) {
+            DeleteConversation(
+                channel = selectedChannel,
+                label = stringResource(id = R.string.stream_compose_selected_channel_menu_delete_chat),
+                onAction = { viewModel.deleteConversation(selectedChannel) },
+                confirmationPopup = ConfirmationPopup(
+                    title = stringResource(
+                        id = R.string.stream_compose_selected_channel_menu_delete_chat_confirmation_title,
+                    ),
+                    message = stringResource(
+                        id = R.string.stream_compose_selected_channel_menu_delete_chat_confirmation_message,
+                        channelName,
+                    ),
+                    confirmButtonText = stringResource(
+                        id = R.string.stream_compose_selected_channel_menu_delete_chat,
+                    ),
+                ),
+            )
+        } else {
+            null
+        },
+    )
+}
+
+/**
+ * Builds channel actions for group channels.
+ * - **Owner (has DELETE_CHANNEL):** View Info, Mute/Unmute Group, Archive Group, Delete Group
+ * - **Member (no DELETE_CHANNEL):** View Info, Mute/Unmute Group, Archive Group, Leave Group
+ */
+@Suppress("LongMethod", "LongParameterList")
+@Composable
+private fun buildGroupChannelActions(
+    selectedChannel: Channel,
+    isMuted: Boolean,
+    ownCapabilities: Set<String>,
+    optionVisibility: ChannelOptionItemVisibility,
+    channelName: String,
+    viewModel: ChannelListViewModel,
+    onViewInfoAction: (Channel) -> Unit,
+): List<ChannelAction> {
+    val canLeaveChannel = ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL)
+    val canDeleteChannel = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
+    val canMuteChannel = ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL)
+
+    return listOfNotNull(
+        if (optionVisibility.isViewInfoVisible) {
+            ViewInfo(
+                channel = selectedChannel,
+                label = stringResource(id = R.string.stream_compose_selected_channel_menu_view_info),
+                onAction = { onViewInfoAction(selectedChannel) },
+            )
+        } else {
+            null
+        },
+        buildGroupMuteAction(
             canMuteChannel = optionVisibility.isMuteChannelVisible && canMuteChannel,
             isMuted = isMuted,
             selectedChannel = selectedChannel,
@@ -133,12 +275,14 @@ public fun buildDefaultChannelActions(
             selectedChannel = selectedChannel,
             viewModel = viewModel,
         ),
-        buildArchiveAction(
+        buildGroupArchiveAction(
             canArchiveChannel = optionVisibility.isArchiveChannelVisible,
             selectedChannel = selectedChannel,
             viewModel = viewModel,
         ),
-        if (optionVisibility.isLeaveChannelVisible && canLeaveChannel) {
+        // Owner pattern: if user can delete, show Delete Group (not Leave)
+        // Member pattern: if user can leave but not delete, show Leave Group
+        if (optionVisibility.isLeaveChannelVisible && canLeaveChannel && !canDeleteChannel) {
             LeaveGroup(
                 channel = selectedChannel,
                 label = stringResource(id = R.string.stream_compose_selected_channel_menu_leave_group),
@@ -162,22 +306,18 @@ public fun buildDefaultChannelActions(
         if (optionVisibility.isDeleteChannelVisible && canDeleteChannel) {
             DeleteConversation(
                 channel = selectedChannel,
-                label = stringResource(
-                    id = R.string.stream_compose_selected_channel_menu_delete_conversation,
-                ),
+                label = stringResource(id = R.string.stream_compose_selected_channel_menu_delete_group),
                 onAction = { viewModel.deleteConversation(selectedChannel) },
                 confirmationPopup = ConfirmationPopup(
                     title = stringResource(
-                        id = R.string
-                            .stream_compose_selected_channel_menu_delete_conversation_confirmation_title,
+                        id = R.string.stream_compose_selected_channel_menu_delete_group_confirmation_title,
                     ),
                     message = stringResource(
-                        id = R.string
-                            .stream_compose_selected_channel_menu_delete_conversation_confirmation_message,
+                        id = R.string.stream_compose_selected_channel_menu_delete_group_confirmation_message,
                         channelName,
                     ),
                     confirmButtonText = stringResource(
-                        id = R.string.stream_compose_selected_channel_menu_delete_conversation,
+                        id = R.string.stream_compose_selected_channel_menu_delete_group,
                     ),
                 ),
             )
@@ -212,31 +352,58 @@ private fun buildPinAction(
 }
 
 /**
- * Builds the archive action for the channel, based on the current state.
+ * Builds the archive action for DM channels, using "Archive Chat" / "Unarchive Chat" labels.
  */
 @Composable
-private fun buildArchiveAction(
+private fun buildDmArchiveAction(
     canArchiveChannel: Boolean,
     selectedChannel: Channel,
     viewModel: ChannelListViewModel,
 ): ChannelAction? = when (selectedChannel.isArchive().takeIf { canArchiveChannel }) {
     false -> ArchiveChannel(
         channel = selectedChannel,
-        label = stringResource(id = R.string.stream_compose_selected_channel_menu_archive_channel),
+        label = stringResource(id = R.string.stream_compose_selected_channel_menu_archive_chat),
         onAction = { viewModel.archiveChannel(selectedChannel) },
     )
 
     true -> UnarchiveChannel(
         channel = selectedChannel,
-        label = stringResource(id = R.string.stream_compose_selected_channel_menu_unarchive_channel),
+        label = stringResource(id = R.string.stream_compose_selected_channel_menu_unarchive_chat),
         onAction = { viewModel.unarchiveChannel(selectedChannel) },
     )
 
     null -> null
 }
 
+/**
+ * Builds the archive action for group channels, using "Archive Group" / "Unarchive Group" labels.
+ */
 @Composable
-private fun buildMuteAction(
+private fun buildGroupArchiveAction(
+    canArchiveChannel: Boolean,
+    selectedChannel: Channel,
+    viewModel: ChannelListViewModel,
+): ChannelAction? = when (selectedChannel.isArchive().takeIf { canArchiveChannel }) {
+    false -> ArchiveChannel(
+        channel = selectedChannel,
+        label = stringResource(id = R.string.stream_compose_selected_channel_menu_archive_group),
+        onAction = { viewModel.archiveChannel(selectedChannel) },
+    )
+
+    true -> UnarchiveChannel(
+        channel = selectedChannel,
+        label = stringResource(id = R.string.stream_compose_selected_channel_menu_unarchive_group),
+        onAction = { viewModel.unarchiveChannel(selectedChannel) },
+    )
+
+    null -> null
+}
+
+/**
+ * Builds the mute action for group channels, using "Mute Group" / "Unmute Group" labels.
+ */
+@Composable
+private fun buildGroupMuteAction(
     canMuteChannel: Boolean,
     isMuted: Boolean,
     selectedChannel: Channel,
@@ -245,13 +412,13 @@ private fun buildMuteAction(
     when (isMuted) {
         true -> UnmuteChannel(
             channel = selectedChannel,
-            label = stringResource(id = R.string.stream_compose_selected_channel_menu_unmute_channel),
+            label = stringResource(id = R.string.stream_compose_selected_channel_menu_unmute_group),
             onAction = { viewModel.unmuteChannel(selectedChannel) },
         )
 
         false -> MuteChannel(
             channel = selectedChannel,
-            label = stringResource(id = R.string.stream_compose_selected_channel_menu_mute_channel),
+            label = stringResource(id = R.string.stream_compose_selected_channel_menu_mute_group),
             onAction = { viewModel.muteChannel(selectedChannel) },
         )
     }
