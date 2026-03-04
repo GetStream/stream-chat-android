@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,10 +41,10 @@ import io.getstream.chat.android.compose.state.messages.attachments.CommandPicke
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
+import io.getstream.chat.android.compose.ui.util.extensions.internal.iconRes
+import io.getstream.chat.android.compose.ui.util.extensions.internal.isPolychromaticIcon
 import io.getstream.chat.android.models.Command
-import io.getstream.chat.android.models.CommandDefaults
 import io.getstream.chat.android.previewdata.PreviewCommandData
-import io.getstream.chat.android.ui.common.R as UiCommonR
 
 @Composable
 internal fun AttachmentCommandPicker(
@@ -100,13 +99,13 @@ private fun CommandItem(
         if (command.isPolychromaticIcon) {
             Image(
                 modifier = Modifier.padding(end = StreamTokens.spacingSm),
-                painter = painterResource(id = command.imageRes),
+                painter = painterResource(id = command.iconRes),
                 contentDescription = null,
             )
         } else {
             Icon(
                 modifier = Modifier.padding(end = StreamTokens.spacingSm),
-                painter = painterResource(id = command.imageRes),
+                painter = painterResource(id = command.iconRes),
                 contentDescription = null,
                 tint = ChatTheme.colors.textSecondary,
             )
@@ -141,18 +140,6 @@ private fun CommandItem(
         }
     }
 }
-
-private val Command.imageRes: Int
-    @DrawableRes get() = when (name) {
-        CommandDefaults.MUTE -> UiCommonR.drawable.stream_ic_command_mute
-        CommandDefaults.UNMUTE -> UiCommonR.drawable.stream_ic_command_unmute
-        CommandDefaults.BAN -> UiCommonR.drawable.stream_ic_command_ban
-        CommandDefaults.UNBAN -> UiCommonR.drawable.stream_ic_command_unban
-        // fallback to the 'giphy' icon for backwards compatibility
-        else -> R.drawable.stream_ic_command_giphy
-    }
-
-private val Command.isPolychromaticIcon: Boolean get() = name == CommandDefaults.GIPHY
 
 @Preview(showBackground = true)
 @Composable

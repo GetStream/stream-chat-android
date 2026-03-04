@@ -48,8 +48,7 @@ import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedInputText
-import io.getstream.chat.android.models.Command
-import io.getstream.chat.android.models.CommandDefaults
+import io.getstream.chat.android.compose.ui.util.extensions.internal.placeholderRes
 import io.getstream.chat.android.ui.common.R
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
@@ -111,7 +110,7 @@ internal fun MessageComposerInputCenterContent(
                 if (value.isEmpty()) {
                     TextFieldPlaceholder(
                         canSendMessage = canSendMessage,
-                        activeCommandDescriptionRes = state.activeCommand?.descriptionRes,
+                        activeCommandDescriptionRes = state.activeCommand?.placeholderRes,
                     )
                 }
             }
@@ -122,16 +121,6 @@ internal fun MessageComposerInputCenterContent(
         keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
     )
 }
-
-private val Command.descriptionRes: Int
-    @StringRes get() = when (name) {
-        CommandDefaults.MUTE -> R.string.stream_ui_message_composer_placeholder_command_mute
-        CommandDefaults.UNMUTE -> R.string.stream_ui_message_composer_placeholder_command_unmute
-        CommandDefaults.BAN -> R.string.stream_ui_message_composer_placeholder_command_ban
-        CommandDefaults.UNBAN -> R.string.stream_ui_message_composer_placeholder_command_unban
-        // fallback to the 'giphy' description for backwards compatibility
-        else -> R.string.stream_ui_message_composer_placeholder_command_giphy
-    }
 
 @Composable
 private fun TextFieldPlaceholder(
