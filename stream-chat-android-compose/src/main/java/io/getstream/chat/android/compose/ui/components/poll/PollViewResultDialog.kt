@@ -261,7 +261,7 @@ private fun PollResultOptionInfo(item: ResultItem) {
                 modifier = Modifier.padding(end = StreamTokens.spacingXs),
                 painter = painterResource(id = R.drawable.stream_compose_ic_trophy),
                 tint = ChatTheme.colors.textPrimary,
-                contentDescription = null,
+                contentDescription = stringResource(R.string.stream_compose_poll_winner_badge),
             )
         }
 

@@ -47,6 +47,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -178,10 +179,10 @@ private fun Content(
                     ) {
                         if (state.isWinner) {
                             Icon(
-                                modifier = Modifier.padding(end = 8.dp),
+                                modifier = Modifier.padding(end = StreamTokens.spacingXs),
                                 painter = painterResource(R.drawable.stream_compose_ic_trophy),
                                 tint = ChatTheme.colors.textPrimary,
-                                contentDescription = null,
+                                contentDescription = stringResource(R.string.stream_compose_poll_winner_badge),
                             )
                         }
                         Text(

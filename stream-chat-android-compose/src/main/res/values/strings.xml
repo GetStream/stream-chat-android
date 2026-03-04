@@ -325,6 +325,7 @@
     <string name="stream_compose_poll_question_label">Question</string>
     <string name="stream_compose_poll_option_label">Option %d</string>
     <string name="stream_compose_poll_view_more">View all</string>
+    <string name="stream_compose_poll_winner_badge">Winner</string>
 
     <string name="stream_compose_poll_created_preview">Poll created: %s</string>
     <string name="stream_compose_poll_closed_preview">Poll closed: %s</string>
