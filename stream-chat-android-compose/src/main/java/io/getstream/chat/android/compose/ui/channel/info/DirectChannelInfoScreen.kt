@@ -278,10 +278,12 @@ internal fun List<ChannelInfoViewState.Content.Option>.filterNavigation() = filt
 }
 
 /**
- * Filters action options: Mute, Hide, Leave, Delete.
+ * Filters action options: Mute, Hide, Leave, Delete, Block.
  */
 internal fun List<ChannelInfoViewState.Content.Option>.filterActions() = filter { option ->
     option is ChannelInfoViewState.Content.Option.MuteChannel ||
+        option is ChannelInfoViewState.Content.Option.MuteUser ||
+        option is ChannelInfoViewState.Content.Option.BlockUser ||
         option is ChannelInfoViewState.Content.Option.HideChannel ||
         option is ChannelInfoViewState.Content.Option.LeaveChannel ||
         option is ChannelInfoViewState.Content.Option.DeleteChannel
@@ -333,8 +335,8 @@ internal fun DirectChannelInfoContent() {
                 ChannelInfoViewState.Content.Option.PinnedMessages,
                 ChannelInfoViewState.Content.Option.MediaAttachments,
                 ChannelInfoViewState.Content.Option.FilesAttachments,
-                ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
-                ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                ChannelInfoViewState.Content.Option.MuteUser(isMuted = false),
+                ChannelInfoViewState.Content.Option.BlockUser(isBlocked = false),
                 ChannelInfoViewState.Content.Option.DeleteChannel,
             ),
         ),

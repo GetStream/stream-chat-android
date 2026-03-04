@@ -84,6 +84,20 @@ public sealed interface ChannelInfoViewState {
             public data class MuteChannel(val isMuted: Boolean) : Option
 
             /**
+             * Indicates an option to mute the other user in a direct channel.
+             *
+             * @param isMuted Indicates if the user is muted.
+             */
+            public data class MuteUser(val isMuted: Boolean) : Option
+
+            /**
+             * Indicates an option to block the other user in a direct channel.
+             *
+             * @param isBlocked Indicates if the user is blocked.
+             */
+            public data class BlockUser(val isBlocked: Boolean) : Option
+
+            /**
              * Indicates an option to hide the channel.
              *
              * @param isHidden Indicates if the channel is hidden.

@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.common.feature.channel.info
 
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.models.Channel
@@ -25,6 +26,7 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.randomCID
@@ -134,11 +136,12 @@ internal class ChannelInfoViewControllerTest {
                     ),
                     options = listOf(
                         ChannelInfoViewState.Content.Option.UserInfo(user = otherMember.user),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
+                        ChannelInfoViewState.Content.Option.MuteUser(isMuted = false),
+                        ChannelInfoViewState.Content.Option.BlockUser(isBlocked = false),
                     ),
                 ),
                 awaitItem(),
@@ -310,11 +313,12 @@ internal class ChannelInfoViewControllerTest {
                     ),
                     options = listOf(
                         ChannelInfoViewState.Content.Option.UserInfo(user = otherMember.user),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
+                        ChannelInfoViewState.Content.Option.MuteUser(isMuted = false),
+                        ChannelInfoViewState.Content.Option.BlockUser(isBlocked = false),
                     ),
                 ),
                 awaitItem(),
@@ -341,12 +345,12 @@ internal class ChannelInfoViewControllerTest {
                     ),
                     options = listOf(
                         ChannelInfoViewState.Content.Option.UserInfo(user = otherMember.user),
-                        ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
+                        ChannelInfoViewState.Content.Option.MuteUser(isMuted = false),
+                        ChannelInfoViewState.Content.Option.BlockUser(isBlocked = false),
                         ChannelInfoViewState.Content.Option.DeleteChannel,
                     ),
                 ),
@@ -1401,6 +1405,12 @@ private class Fixture {
         on { muted } doReturn channelMuted
         on { hidden } doReturn channelHidden
     }
+    private val mutedUsers = MutableStateFlow(emptyList<Mute>())
+    private val blockedUserIds = MutableStateFlow(emptyList<String>())
+    private val globalState: GlobalState = mock {
+        on { muted } doReturn mutedUsers
+        on { blockedUserIds } doReturn this@Fixture.blockedUserIds
+    }
     private val channelClient: ChannelClient = mock()
     private val chatClient: ChatClient = mock()
     private val copyToClipboardHandler: CopyToClipboardHandler = mock()
@@ -1547,6 +1557,7 @@ private class Fixture {
         chatClient = chatClient,
         channelState = MutableStateFlow(channelState),
         channelClient = channelClient,
+        globalState = globalState,
         copyToClipboardHandler = copyToClipboardHandler,
     )
 }

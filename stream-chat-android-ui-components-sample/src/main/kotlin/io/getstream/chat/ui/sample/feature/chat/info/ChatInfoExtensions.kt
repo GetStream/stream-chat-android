@@ -55,6 +55,10 @@ internal fun List<ChannelInfoViewState.Content.Option>.toChannelInfoItems(
                 ),
             )
 
+            // MuteUser and BlockUser are only used in Compose; no-op in XML sample
+            is ChannelInfoViewState.Content.Option.MuteUser -> Unit
+            is ChannelInfoViewState.Content.Option.BlockUser -> Unit
+
             is ChannelInfoViewState.Content.Option.HideChannel -> add(
                 ChatInfoItem.Option.HideChannel(
                     textResId = if (isGroupChannel) {
@@ -214,6 +218,14 @@ internal fun Fragment.showError(error: ChannelInfoViewEvent.Error, isGroupChanne
         } else {
             R.string.stream_ui_channel_info_mute_group_error
         }
+
+        ChannelInfoViewEvent.MuteUserError,
+        ChannelInfoViewEvent.UnmuteUserError,
+        -> R.string.stream_ui_channel_info_mute_user_error
+
+        ChannelInfoViewEvent.BlockUserError,
+        ChannelInfoViewEvent.UnblockUserError,
+        -> R.string.stream_ui_channel_info_block_user_error
 
         ChannelInfoViewEvent.HideChannelError,
         ChannelInfoViewEvent.UnhideChannelError,

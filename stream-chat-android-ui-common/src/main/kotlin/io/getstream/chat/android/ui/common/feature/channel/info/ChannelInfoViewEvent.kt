@@ -209,6 +209,26 @@ public sealed interface ChannelInfoViewEvent {
     public data object MuteChannelError : Error
 
     /**
+     * Indicates an error occurred while muting a user.
+     */
+    public data object MuteUserError : Error
+
+    /**
+     * Indicates an error occurred while unmuting a user.
+     */
+    public data object UnmuteUserError : Error
+
+    /**
+     * Indicates an error occurred while blocking a user.
+     */
+    public data object BlockUserError : Error
+
+    /**
+     * Indicates an error occurred while unblocking a user.
+     */
+    public data object UnblockUserError : Error
+
+    /**
      * Indicates an error occurred while unmuting a channel.
      */
     public data object UnmuteChannelError : Error

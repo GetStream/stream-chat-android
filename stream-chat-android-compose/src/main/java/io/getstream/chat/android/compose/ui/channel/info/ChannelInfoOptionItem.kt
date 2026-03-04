@@ -102,6 +102,44 @@ internal fun ChannelInfoOptionContent(
             )
         }
 
+        is ChannelInfoViewState.Content.Option.MuteUser -> {
+            var muted by remember(option) { mutableStateOf(option.isMuted) }
+
+            ChannelInfoOptionSwitch(
+                icon = R.drawable.stream_ic_action_mute,
+                text = stringResource(R.string.stream_ui_channel_info_option_mute_user),
+                checked = muted,
+                onCheckedChange = { checked ->
+                    muted = checked
+                    if (muted) {
+                        onViewAction(ChannelInfoViewAction.MuteUserClick)
+                    } else {
+                        onViewAction(ChannelInfoViewAction.UnmuteUserClick)
+                    }
+                },
+            )
+        }
+
+        is ChannelInfoViewState.Content.Option.BlockUser -> {
+            CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.accentError)) {
+                ChannelInfoOptionButton(
+                    icon = R.drawable.stream_ic_block,
+                    text = if (option.isBlocked) {
+                        stringResource(R.string.stream_ui_channel_info_option_unblock_user)
+                    } else {
+                        stringResource(R.string.stream_ui_channel_info_option_block_user)
+                    },
+                    onClick = {
+                        if (option.isBlocked) {
+                            onViewAction(ChannelInfoViewAction.UnblockUserClick)
+                        } else {
+                            onViewAction(ChannelInfoViewAction.BlockUserClick)
+                        }
+                    },
+                )
+            }
+        }
+
         is ChannelInfoViewState.Content.Option.HideChannel -> {
             ChannelInfoOptionSwitch(
                 icon = R.drawable.stream_ic_hide,

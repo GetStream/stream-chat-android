@@ -23,6 +23,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.CommandPicke
 import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
+import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -48,6 +49,16 @@ public data class ChannelListConfig(
 )
 
 /**
+ * Behavioral configuration for the channel info screens.
+ *
+ * @param optionFilter A filter function for channel info options, allowing customization of
+ *   which options are displayed. Return `true` to keep the option, `false` to remove it.
+ */
+public data class ChannelInfoConfig(
+    val optionFilter: (option: ChannelInfoViewState.Content.Option) -> Boolean = { true },
+)
+
+/**
  * Central behavioral configuration for the Chat SDK, accessible through `ChatTheme.config`.
  *
  * Groups all feature-flag and behavioral settings by feature area so integrators have a single
@@ -59,6 +70,7 @@ public data class ChannelListConfig(
  * @param mediaGallery Configuration for the media gallery preview screen.
  * @param composer Configuration for the message composer behavior.
  * @param channelList Configuration for the channel list behavior.
+ * @param channelInfo Configuration for the channel info screens.
  * @param attachmentPicker Configuration for the attachment picker behavior.
  */
 public data class ChatConfig(
@@ -67,6 +79,7 @@ public data class ChatConfig(
     val mediaGallery: MediaGalleryConfig = MediaGalleryConfig(),
     val composer: ComposerConfig = ComposerConfig(),
     val channelList: ChannelListConfig = ChannelListConfig(),
+    val channelInfo: ChannelInfoConfig = ChannelInfoConfig(),
     val attachmentPicker: AttachmentPickerConfig = AttachmentPickerConfig(),
 )
 

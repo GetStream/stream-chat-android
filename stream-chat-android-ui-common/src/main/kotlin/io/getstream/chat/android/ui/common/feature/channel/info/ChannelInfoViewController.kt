@@ -17,6 +17,8 @@
 package io.getstream.chat.android.ui.common.feature.channel.info
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.GlobalState
+import io.getstream.chat.android.client.api.state.globalState
 import io.getstream.chat.android.client.api.state.watchChannelAsState
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
@@ -26,6 +28,7 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent.Navigation
 import io.getstream.chat.android.ui.common.helper.CopyToClipboardHandler
@@ -66,6 +69,7 @@ import kotlinx.coroutines.launch
  * @param channelState A [Flow] representing the state of the channel.
  * @param channelClient The [ChannelClient] instance for performing channel-specific operations.
  */
+@Suppress("TooManyFunctions")
 @InternalStreamChatApi
 public class ChannelInfoViewController(
     private val cid: String,
@@ -77,6 +81,7 @@ public class ChannelInfoViewController(
         .watchChannelAsState(cid = cid, messageLimit = 0, coroutineScope = scope)
         .filterNotNull(),
     private val channelClient: ChannelClient = chatClient.channel(cid),
+    globalState: GlobalState = chatClient.globalState,
 ) {
     private val logger by taggedLogger("Chat:ChannelInfoViewController")
 
@@ -100,34 +105,43 @@ public class ChannelInfoViewController(
             .flatMapLatest { channel ->
                 logger.d { "[onChannelState]" }
                 combine(
-                    channel.channelData.onEach {
-                        logger.d {
-                            "[onChannelData] cid: ${it.cid}, name: ${it.name}, capabilities: ${it.ownCapabilities}"
-                        }
-                    },
-                    channel.members.onEach { logger.d { "[onMembers] size: ${it.size}" } },
-                    channel.muted.onEach { logger.d { "[onMuted] $it" } },
-                    channel.hidden.onEach { logger.d { "[onHidden] $it" } },
-                    ::ChannelInfoData,
-                )
+                    combine(
+                        channel.channelData.onEach {
+                            logger.d {
+                                "[onChannelData] cid: ${it.cid}, name: ${it.name}, " +
+                                    "capabilities: ${it.ownCapabilities}"
+                            }
+                        },
+                        channel.members.onEach { logger.d { "[onMembers] size: ${it.size}" } },
+                        channel.muted.onEach { logger.d { "[onMuted] $it" } },
+                        channel.hidden.onEach { logger.d { "[onHidden] $it" } },
+                        ::ChannelData4,
+                    ),
+                    globalState.muted,
+                    globalState.blockedUserIds,
+                ) { data4, mutedUsers, blockedUserIds ->
+                    ChannelInfoData(
+                        channelData = data4.channelData,
+                        members = data4.members,
+                        isMuted = data4.isMuted,
+                        isHidden = data4.isHidden,
+                        mutedUsers = mutedUsers,
+                        blockedUserIds = blockedUserIds,
+                    )
+                }
             }
             .distinctUntilChanged()
-            .onEach { (channelData, members, isMuted, isHidden) ->
-                onChannelInfoData(channelData, members, isMuted, isHidden)
+            .onEach { data ->
+                onChannelInfoData(data)
             }
             .launchIn(scope)
     }
 
-    private fun onChannelInfoData(
-        channelData: ChannelData,
-        members: List<Member>,
-        isMuted: Boolean,
-        isHidden: Boolean,
-    ) {
-        val contentMembers = members
+    private fun onChannelInfoData(data: ChannelInfoData) {
+        val contentMembers = data.members
             .run {
                 // Do not filter out the current user if the channel is a group channel or if there is only one member
-                takeIf { members.size == 1 || channelData.isGroupChannel } ?: filterNotCurrentUser()
+                takeIf { size == 1 || data.channelData.isGroupChannel } ?: filterNotCurrentUser()
             }
 
         _state.update { currentState ->
@@ -143,14 +157,17 @@ public class ChannelInfoViewController(
                     currentState.members.copy(items = contentMembers)
                 }
             }
+            val singleMember = if (contentMembers.size == 1) contentMembers.first() else null
             ChannelInfoViewState.Content(
-                owner = channelData.createdBy,
+                owner = data.channelData.createdBy,
                 members = expandableMembers,
                 options = buildChannelOptionList(
-                    channelData = channelData,
-                    singleMember = if (contentMembers.size == 1) contentMembers.first() else null,
-                    isMuted = isMuted,
-                    isHidden = isHidden,
+                    channelData = data.channelData,
+                    singleMember = singleMember,
+                    isMuted = data.isMuted,
+                    isHidden = data.isHidden,
+                    mutedUsers = data.mutedUsers,
+                    blockedUserIds = data.blockedUserIds,
                 ).mapNotNull { option ->
                     if (optionFilter(option)) option else null
                 },
@@ -184,6 +201,10 @@ public class ChannelInfoViewController(
 
             is ChannelInfoViewAction.MuteChannelClick -> setChannelMute(mute = true)
             is ChannelInfoViewAction.UnmuteChannelClick -> setChannelMute(mute = false)
+            is ChannelInfoViewAction.MuteUserClick -> muteUser()
+            is ChannelInfoViewAction.UnmuteUserClick -> unmuteUser()
+            is ChannelInfoViewAction.BlockUserClick -> blockUser()
+            is ChannelInfoViewAction.UnblockUserClick -> unblockUser()
             is ChannelInfoViewAction.HideChannelClick -> _events.tryEmit(ChannelInfoViewEvent.HideChannelModal)
             is ChannelInfoViewAction.HideChannelConfirmationClick -> setChannelHide(hide = true, action.clearHistory)
             is ChannelInfoViewAction.UnhideChannelClick -> setChannelHide(hide = false)
@@ -299,6 +320,59 @@ public class ChannelInfoViewController(
                     },
                 )
             }
+        }
+    }
+
+    private fun getDmMemberId(): String? {
+        val content = _state.value as? ChannelInfoViewState.Content ?: return null
+        return content.members.firstOrNull()?.getUserId()
+    }
+
+    private fun muteUser() {
+        val userId = getDmMemberId() ?: return
+        logger.d { "[muteUser] userId: $userId" }
+        scope.launch {
+            chatClient.muteUser(userId).await()
+                .onError { error ->
+                    logger.e { "[muteUser] error: ${error.message}" }
+                    _events.tryEmit(ChannelInfoViewEvent.MuteUserError)
+                }
+        }
+    }
+
+    private fun unmuteUser() {
+        val userId = getDmMemberId() ?: return
+        logger.d { "[unmuteUser] userId: $userId" }
+        scope.launch {
+            chatClient.unmuteUser(userId).await()
+                .onError { error ->
+                    logger.e { "[unmuteUser] error: ${error.message}" }
+                    _events.tryEmit(ChannelInfoViewEvent.UnmuteUserError)
+                }
+        }
+    }
+
+    private fun blockUser() {
+        val userId = getDmMemberId() ?: return
+        logger.d { "[blockUser] userId: $userId" }
+        scope.launch {
+            chatClient.blockUser(userId).await()
+                .onError { error ->
+                    logger.e { "[blockUser] error: ${error.message}" }
+                    _events.tryEmit(ChannelInfoViewEvent.BlockUserError)
+                }
+        }
+    }
+
+    private fun unblockUser() {
+        val userId = getDmMemberId() ?: return
+        logger.d { "[unblockUser] userId: $userId" }
+        scope.launch {
+            chatClient.unblockUser(userId).await()
+                .onError { error ->
+                    logger.e { "[unblockUser] error: ${error.message}" }
+                    _events.tryEmit(ChannelInfoViewEvent.UnblockUserError)
+                }
         }
     }
 
@@ -434,11 +508,20 @@ public class ChannelInfoViewController(
 
 private const val MINIMUM_VISIBLE_MEMBERS = 5
 
+private data class ChannelData4(
+    val channelData: ChannelData,
+    val members: List<Member>,
+    val isMuted: Boolean,
+    val isHidden: Boolean,
+)
+
 private data class ChannelInfoData(
     val channelData: ChannelData,
     val members: List<Member>,
     val isMuted: Boolean,
     val isHidden: Boolean,
+    val mutedUsers: List<Mute>,
+    val blockedUserIds: List<String>,
 )
 
 /**
@@ -453,12 +536,16 @@ private val ChannelData.isGroupChannel: Boolean
 private val ChannelData.isDistinct: Boolean
     get() = id.startsWith("!members")
 
+@Suppress("LongParameterList")
 private fun buildChannelOptionList(
     channelData: ChannelData,
     singleMember: Member?,
     isMuted: Boolean,
     isHidden: Boolean,
+    mutedUsers: List<Mute>,
+    blockedUserIds: List<String>,
 ) = buildList {
+    val isDmChannel = singleMember != null && !channelData.isGroupChannel
     if (channelData.isGroupChannel &&
         channelData.ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS)
     ) {
@@ -474,21 +561,31 @@ private fun buildChannelOptionList(
             ),
         )
     }
-    if (channelData.ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL)) {
-        add(ChannelInfoViewState.Content.Option.MuteChannel(isMuted))
-    }
-    add(ChannelInfoViewState.Content.Option.HideChannel(isHidden))
-    add(ChannelInfoViewState.Content.Option.PinnedMessages)
-    add(ChannelInfoViewState.Content.Option.MediaAttachments)
-    add(ChannelInfoViewState.Content.Option.FilesAttachments)
-    add(ChannelInfoViewState.Content.Option.Separator)
-    if (channelData.isGroupChannel) {
-        if (channelData.ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL)) {
-            add(ChannelInfoViewState.Content.Option.LeaveChannel)
-        }
-    } else {
+    if (isDmChannel) {
+        // DM channel: user-level mute instead of channel mute, no hide
+        add(ChannelInfoViewState.Content.Option.PinnedMessages)
+        add(ChannelInfoViewState.Content.Option.MediaAttachments)
+        add(ChannelInfoViewState.Content.Option.FilesAttachments)
+        add(ChannelInfoViewState.Content.Option.Separator)
+        val isUserMuted = mutedUsers.any { it.target?.id == singleMember.getUserId() }
+        add(ChannelInfoViewState.Content.Option.MuteUser(isMuted = isUserMuted))
+        val isUserBlocked = blockedUserIds.contains(singleMember.getUserId())
+        add(ChannelInfoViewState.Content.Option.BlockUser(isBlocked = isUserBlocked))
         if (channelData.ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)) {
             add(ChannelInfoViewState.Content.Option.DeleteChannel)
+        }
+    } else {
+        // Group channel: channel-level mute, hide, leave
+        if (channelData.ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL)) {
+            add(ChannelInfoViewState.Content.Option.MuteChannel(isMuted))
+        }
+        add(ChannelInfoViewState.Content.Option.HideChannel(isHidden))
+        add(ChannelInfoViewState.Content.Option.PinnedMessages)
+        add(ChannelInfoViewState.Content.Option.MediaAttachments)
+        add(ChannelInfoViewState.Content.Option.FilesAttachments)
+        add(ChannelInfoViewState.Content.Option.Separator)
+        if (channelData.ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL)) {
+            add(ChannelInfoViewState.Content.Option.LeaveChannel)
         }
     }
 }
