@@ -75,15 +75,12 @@ internal fun MessageComposerInputCenterContent(
         }
     }
 
-    val description = stringResource(id = R.string.stream_compose_cd_message_input)
     val inputFieldTheme = ChatTheme.messageComposerTheme.inputField
     val visualTransformation = rememberVisualTransformation(state.selectedMentions)
     val canSendMessage = state.canSendMessage()
 
     BasicTextField(
-        modifier = modifier
-            .semantics { contentDescription = description }
-            .testTag("Stream_ComposerInputField"),
+        modifier = modifier.testTag("Stream_ComposerInputField"),
         value = textState,
         onValueChange = {
             textState = it
