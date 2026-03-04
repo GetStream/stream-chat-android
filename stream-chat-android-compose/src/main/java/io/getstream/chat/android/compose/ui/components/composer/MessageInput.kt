@@ -342,17 +342,35 @@ internal fun MessageComposerInputThreadModeAlsoSendToChannel() {
 
 @Preview
 @Composable
-private fun MessageComposerInputActiveCommandPreview() {
+private fun MessageComposerInputActiveCommandPlaceholderPreview() {
     ChatTheme {
-        MessageComposerInputActiveCommand()
+        MessageComposerInputActiveCommandPlaceholder()
     }
 }
 
 @Composable
-internal fun MessageComposerInputActiveCommand() {
+internal fun MessageComposerInputActiveCommandPlaceholder() {
     MessageInput(
         messageComposerState = PreviewMessageComposerState.copy(
             activeCommand = PreviewCommandData.command1,
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputActiveCommandFilledPreview() {
+    ChatTheme {
+        MessageComposerInputActiveCommandFilled()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputActiveCommandFilled() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            activeCommand = PreviewCommandData.command1,
+            inputValue = "The Office",
         ),
     )
 }
