@@ -212,7 +212,6 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMembe
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewEvent
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
-import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
 import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
@@ -1129,15 +1128,9 @@ public interface ChatComponentFactory {
      * Usually shows pinned indicator and thread labels.
      */
     @Composable
-    public fun ColumnScope.MessageTop(
-        messageItem: MessageItemState,
-        reactionSorting: ReactionSorting,
-        onReactionsClick: (Message) -> Unit,
-    ) {
+    public fun ColumnScope.MessageTop(messageItem: MessageItemState) {
         DefaultMessageTop(
             messageItem = messageItem,
-            reactionSorting = reactionSorting,
-            onReactionsClick = onReactionsClick,
         )
     }
 
@@ -1372,15 +1365,7 @@ public interface ChatComponentFactory {
     public fun MessageFooterContent(
         messageItem: MessageItemState,
     ) {
-        MessageFooter(
-            messageItem = messageItem,
-            onToggleOriginalText = {
-                // Important: This is a workaround to avoid a breaking change in the ChatComponentFactory API.
-                // In the next major version, this callback should be passed as a parameter to the MessageFooterContent.
-                val translationsStore = MessageOriginalTranslationsStore.forChannel(messageItem.message.cid)
-                translationsStore.toggleOriginalText(messageItem.message.id)
-            },
-        )
+        MessageFooter(messageItem = messageItem)
     }
 
     @Composable

@@ -277,15 +277,6 @@ fun UserRobot.assertThreadReplyLabelOnParentMessage(): UserRobot {
     return this
 }
 
-fun UserRobot.assertThreadReplyLabelOnThreadMessage(): UserRobot {
-    assertEquals(
-        appContext.getString(R.string.stream_compose_thread_reply),
-        Message.threadRepliesLabel.waitToAppear().text,
-    )
-    assertTrue(Message.threadParticipantAvatar.isDisplayed())
-    return this
-}
-
 fun UserRobot.assertAlsoInTheChannelLabelInChannel(): UserRobot {
     assertEquals(
         appContext.getString(R.string.stream_compose_replied_to_thread),
