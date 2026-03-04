@@ -22,12 +22,16 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.feature.channel.add.group.AddGroupChannelActivity
 import io.getstream.chat.android.compose.sample.ui.MessagesActivity
+import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import kotlinx.coroutines.flow.collectLatest
 
 /**
@@ -40,7 +44,7 @@ class AddChannelActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ChatTheme {
+            ChatTheme(componentFactory = CustomChatComponentFactory) {
                 AddChannelScreen(
                     state = viewModel.state.collectAsStateWithLifecycle().value,
                     onSearchQueryChanged = viewModel::onSearchQueryChanged,
@@ -88,5 +92,17 @@ class AddChannelActivity : ComponentActivity() {
         val intent = Intent(this, AddGroupChannelActivity::class.java)
         startActivity(intent)
         finish()
+    }
+}
+
+private val CustomChatComponentFactory = object : ChatComponentFactory {
+    @Composable
+    override fun MessageComposerLeadingContent(
+        modifier: Modifier,
+        state: MessageComposerState,
+        isAttachmentPickerVisible: Boolean,
+        onAttachmentsClick: () -> Unit,
+    ) {
+        // Disable adding attachments when sending the very first message in this flow
     }
 }

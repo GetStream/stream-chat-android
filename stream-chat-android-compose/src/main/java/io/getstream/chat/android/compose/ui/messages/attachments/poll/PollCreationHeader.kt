@@ -141,7 +141,7 @@ internal fun DefaultPollOptionsHeaderTrailingContent(
     ) {
         Icon(
             painter = painterResource(R.drawable.stream_compose_ic_send),
-            contentDescription = stringResource(R.string.stream_compose_send_message),
+            contentDescription = stringResource(R.string.stream_compose_message_composer_send_button),
         )
     }
 }

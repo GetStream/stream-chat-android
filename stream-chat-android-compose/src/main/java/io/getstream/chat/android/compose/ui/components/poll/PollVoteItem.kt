@@ -16,16 +16,21 @@
 
 package io.getstream.chat.android.compose.ui.components.poll
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Vote
 
 @Composable
@@ -34,17 +39,21 @@ internal fun PollVoteItem(
     modifier: Modifier = Modifier,
 ) {
     val user = vote.user ?: return
+    val borderSize = 2.dp
 
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
     ) {
         ChatTheme.componentFactory.UserAvatar(
-            modifier = Modifier.size(AvatarSize.ExtraSmall),
+            modifier = Modifier
+                .size(AvatarSize.Medium + borderSize * 2)
+                .background(ChatTheme.colors.borderCoreOnDark, CircleShape)
+                .padding(borderSize),
             user = user,
             showIndicator = false,
-            showBorder = false,
+            showBorder = true,
         )
 
         Text(
@@ -52,17 +61,13 @@ internal fun PollVoteItem(
             text = user.name,
             color = ChatTheme.colors.textPrimary,
             style = ChatTheme.typography.bodyDefault,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
 
         Text(
             text = ChatTheme.dateFormatter.formatRelativeDate(vote.createdAt),
-            color = ChatTheme.colors.textSecondary,
-            style = ChatTheme.typography.bodyEmphasis,
-        )
-
-        Text(
-            text = ChatTheme.dateFormatter.formatTime(vote.createdAt),
-            color = ChatTheme.colors.textSecondary,
+            color = ChatTheme.colors.textTertiary,
             style = ChatTheme.typography.bodyDefault,
         )
     }

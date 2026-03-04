@@ -98,6 +98,7 @@ internal fun MessageComposerInputCenterContent(
             Box(
                 modifier = Modifier.padding(
                     start = StreamTokens.spacingMd,
+                    top = StreamTokens.spacingMd,
                     bottom = StreamTokens.spacingMd,
                 ),
                 contentAlignment = Alignment.CenterStart,
@@ -119,9 +120,9 @@ internal fun MessageComposerInputCenterContent(
 @Composable
 private fun TextFieldPlaceholder(canSendMessage: Boolean) {
     val text = if (canSendMessage) {
-        stringResource(id = R.string.stream_compose_message_label)
+        stringResource(id = R.string.stream_compose_message_composer_empty_placeholder)
     } else {
-        stringResource(id = R.string.stream_compose_cannot_send_messages_label)
+        stringResource(id = R.string.stream_compose_message_composer_cannot_send_placeholder)
     }
     Text(
         text = text,

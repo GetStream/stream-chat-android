@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.components
+package io.getstream.chat.android.compose.ui.components.messages
 
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.ui.Modifier
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
@@ -24,18 +24,15 @@ import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import org.junit.Rule
 import org.junit.Test
 
-internal class TranslatedLabelTest : PaparazziComposeTest {
+internal class MessageAnnotationTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `translated label for English`() {
-        snapshotWithDarkModeRow {
-            TranslatedLabel(
-                modifier = Modifier.wrapContentHeight(),
-                translatedTo = "English",
-            )
+    fun `message annotations`() {
+        snapshotWithDarkMode {
+            MessageAnnotations(Modifier.fillMaxWidth())
         }
     }
 }

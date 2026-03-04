@@ -105,8 +105,6 @@
     <string name="stream_compose_message_list_empty_messages">No messages</string>
     <string name="stream_compose_message_list_error_cannot_open_link">There is no app to view this url:\n%s</string>
     <string name="stream_compose_message_list_unsupported_attachment">Unsupported attachment</string>
-    <string name="stream_compose_message_list_translated">Translated to %s</string>
-    <string name="stream_compose_message_list_show_original">&#160;· Show original</string>
     <string name="stream_compose_message_list_show_translation">Show translation</string>
 
     <!--  Quoted Message  -->
@@ -168,8 +166,12 @@
     <string name="stream_compose_message_composer_error_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
     <string name="stream_compose_message_composer_instant_commands">Instant Commands</string>
     <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
-    <string name="stream_compose_message_composer_show_in_channel">Also send as direct message</string>
+    <string name="stream_compose_message_composer_show_in_channel">Also send in Channel</string>
     <string name="stream_compose_message_composer_file_not_supported">File type is not supported</string>
+    <string name="stream_compose_message_composer_empty_placeholder">Send a message</string>
+    <string name="stream_compose_message_composer_cannot_send_placeholder">You can\'t send messages in this channel</string>
+    <string name="stream_compose_message_composer_send_button">Send</string>
+    <string name="stream_compose_message_composer_save_button">Save</string>
 
     <!-- Message Preview -->
     <string name="stream_compose_audio_recording_preview">Voice message</string>
@@ -222,12 +224,6 @@
     <string name="stream_compose_attachment_poll_picker_cta">Create Poll</string>
     <string name="stream_compose_attachment_commands_picker">Commands</string>
 
-    <string name="stream_compose_message_label">Message</string>
-    <string name="stream_compose_cannot_send_messages_label">You can\'t send messages in this channel</string>
-    <string name="stream_compose_send_message">Send</string>
-    <string name="stream_compose_save_message">Save</string>
-
-
     <string name="stream_compose_attachments">Attachments</string>
     <string name="stream_compose_images_option">Images</string>
     <string name="stream_compose_files_option">Files</string>
@@ -254,10 +250,16 @@
     <string name="stream_compose_giphy_label">GIPHY</string>
     <string name="stream_compose_upload_progress">"%1$s / %2$s"</string>
     <string name="stream_compose_upload_file_count">Uploading %1$d / %2$d …</string>
+    <string name="stream_compose_pinned_to_channel">Pinned</string>
     <string name="stream_compose_pinned_to_channel_by">Pinned by %1$s</string>
     <string name="stream_compose_message_list_you">You</string>
     <string name="stream_compose_also_sent_to_channel">Also sent to the channel</string>
     <string name="stream_compose_replied_to_thread">Replied to a thread</string>
+    <string name="stream_compose_message_list_saved_for_later">Saved for later</string>
+    <string name="stream_compose_message_list_remind_me">Remind me</string>
+    <string name="stream_compose_message_list_auto_translated">Translated</string>
+    <string name="stream_compose_message_list_view_original">View original</string>
+    <string name="stream_compose_message_list_view">View</string>
     <string name="stream_compose_replied_to">replied to:&#160;</string>
 
     <!--  Image Preview  -->
@@ -320,6 +322,14 @@
         <item quantity="one">%d vote</item>
         <item quantity="other">%d votes</item>
     </plurals>
+    <plurals name="stream_compose_poll_total_vote_counts">
+        <item quantity="one">%d vote total</item>
+        <item quantity="other">%d votes total</item>
+    </plurals>
+    <string name="stream_compose_poll_question_label">Question</string>
+    <string name="stream_compose_poll_option_label">Option %d</string>
+    <string name="stream_compose_poll_view_more">View all</string>
+    <string name="stream_compose_poll_winner_badge">Winner</string>
 
     <string name="stream_compose_poll_created_preview">Poll created: %s</string>
     <string name="stream_compose_poll_closed_preview">Poll closed: %s</string>

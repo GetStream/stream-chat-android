@@ -7,14 +7,10 @@ import android.os.PersistableBundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -23,19 +19,15 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
+import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -43,7 +35,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
-import io.getstream.chat.docs.R
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/message-composer/#usage)
@@ -91,7 +83,7 @@ private object MessageComposerUsageSnippet {
                         }
                     )
                 }
-            ) { contentPadding ->
+            ) { _ ->
                 // 5 - the rest of your UI
                 // ...
             }
@@ -128,7 +120,7 @@ private object MessageComposerHandlingActionsSnippet {
                         onCancelAction = viewModel::dismissMessageActions,
                         onMentionSelected = viewModel::selectMention,
                         onCommandSelected = viewModel::selectCommand,
-                        onAlsoSendToChannelSelected = viewModel::setAlsoSendToChannel,
+                        onAlsoSendToChannelChange = viewModel::setAlsoSendToChannel,
                     )
                 }
             }
@@ -180,11 +172,46 @@ private object MessageComposerCustomizationSnippet {
 
         val composerViewModel by viewModels<MessageComposerViewModel>(factoryProducer = { factory })
 
+        object CustomComponentFactory : ChatComponentFactory {
+            @Composable
+            override fun MessageComposerInputCenterContent(
+                state: MessageComposerState,
+                onValueChange: (String) -> Unit,
+                modifier: Modifier,
+            ) {
+                OutlinedTextField(
+                    modifier = modifier,
+                    value = state.inputValue,
+                    onValueChange = onValueChange,
+                    placeholder = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.Email,
+                                contentDescription = null
+                            )
+                            Text(
+                                modifier = Modifier.padding(start = 4.dp),
+                                text = "Type something",
+                                color = ChatTheme.colors.textSecondary
+                            )
+                        }
+                    },
+                    enabled = state.canSendMessage(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color.Transparent,
+                        unfocusedBorderColor = Color.Transparent,
+                    ),
+                )
+            }
+        }
+
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
             setContent {
-                ChatTheme {
+                ChatTheme(
+                    componentFactory = CustomComponentFactory,
+                ) {
                     MyCustomComposer()
                 }
             }
@@ -192,13 +219,11 @@ private object MessageComposerCustomizationSnippet {
 
         @Composable
         fun MyCustomComposer() {
-            val composerState by composerViewModel.messageComposerState.collectAsState()
             MessageComposer(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 viewModel = composerViewModel,
-                leadingContent = {},
                 input = { inputState ->
                     val onSendClick: (String, List<Attachment>) -> Unit = { text, attachments ->
                         composerViewModel.sendMessage(
@@ -222,51 +247,8 @@ private object MessageComposerCustomizationSnippet {
                             viewModel = composerViewModel,
                             sendOnComplete = ChatTheme.config.composer.audioRecordingSendOnComplete,
                         ),
-                        centerContent = { modifier ->
-                            // create a custom text field
-                            OutlinedTextField(
-                                modifier = modifier,
-                                value = composerState.inputValue,
-                                onValueChange = composerViewModel::setMessageInput,
-                                placeholder = {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(
-                                            imageVector = Icons.Default.Email,
-                                            contentDescription = null
-                                        )
-                                        Text(
-                                            modifier = Modifier.padding(start = 4.dp),
-                                            text = "Type something",
-                                            color = ChatTheme.colors.textSecondary
-                                        )
-                                    }
-                                },
-                                enabled = composerState.canSendMessage(),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = Color.Transparent,
-                                    unfocusedBorderColor = Color.Transparent,
-                                ),
-                            )
-                        },
-                        trailingContent = { // add a send button inside the input
-                            Icon(
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .clickable(
-                                        interactionSource = remember { MutableInteractionSource() },
-                                        indication = ripple()
-                                    ) {
-                                        val state = composerViewModel.messageComposerState.value
-                                        onSendClick(state.inputValue, state.attachments)
-                                    },
-                                painter = painterResource(id = R.drawable.stream_compose_ic_send),
-                                tint = ChatTheme.colors.accentPrimary,
-                                contentDescription = null
-                            )
-                        },
                     )
                 },
-                trailingContent = { Spacer(modifier = Modifier.size(8.dp)) } // remove the outer send button
             )
         }
     }
