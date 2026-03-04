@@ -249,10 +249,11 @@ private fun StackedGroupAvatar(
 @Suppress("MagicNumber")
 private fun BoxWithConstraintsScope.resolveStackedAvatarDimensions(): StackedGroupAvatarDimensions {
     return when {
-        // Beyond the largest fixed tier: scale proportionally using the same ratio (40/64 = 0.625)
+        // Beyond the largest fixed tier: scale proportionally
         maxWidth > AvatarSize.ExtraExtraLarge -> {
-            val scaled = maxWidth * (AvatarSize.Large / AvatarSize.ExtraExtraLarge)
-            StackedGroupAvatarDimensions(avatarSize = scaled, badgeSize = CountBadgeSize.Large)
+            val avatarScaled = maxWidth * (AvatarSize.Large / AvatarSize.ExtraExtraLarge)
+            val badgeScaled = CountBadgeSize.Large.copy(minSize = maxWidth * 0.5f)
+            StackedGroupAvatarDimensions(avatarSize = avatarScaled, badgeSize = badgeScaled)
         }
         maxWidth >= AvatarSize.ExtraExtraLarge -> StackedGroupAvatarDimensions.XXL
         maxWidth >= AvatarSize.ExtraLarge -> StackedGroupAvatarDimensions.XL
@@ -307,7 +308,7 @@ private fun directMessageRecipient(channel: Channel, currentUser: User?): User? 
 @Preview
 @Composable
 private fun ChannelAvatarPreview() {
-    val sizes = AvatarSize.run { listOf(ExtraLarge, Large, Medium) }
+    val sizes = AvatarSize.run { listOf(ExtraExtraLarge * 1.5f, ExtraExtraLarge, ExtraLarge, Large, Medium) }
     val variants = listOf(0, 1, 2, 3, 4, 5, 13, 1000)
     ChatTheme {
         Column(

@@ -67,26 +67,29 @@ internal fun CountBadge(
     )
 }
 
-internal enum class CountBadgeSize(
+internal data class CountBadgeSize(
     val minSize: Dp,
     val spacing: Dp,
     val textStyle: (StreamDesign.Typography) -> TextStyle,
 ) {
-    Large(
-        minSize = 32.dp,
-        spacing = StreamTokens.spacingXs,
-        textStyle = StreamDesign.Typography::numericLarge,
-    ),
-    Medium(
-        minSize = 24.dp,
-        spacing = StreamTokens.spacingXs,
-        textStyle = StreamDesign.Typography::numericLarge,
-    ),
-    Small(
-        minSize = 20.dp,
-        spacing = StreamTokens.spacing2xs,
-        textStyle = StreamDesign.Typography::numericMedium,
-    ),
+    companion object {
+        val Large = CountBadgeSize(
+            minSize = 32.dp,
+            spacing = StreamTokens.spacingXs,
+            textStyle = StreamDesign.Typography::numericLarge,
+        )
+        val Medium = CountBadgeSize(
+            minSize = 24.dp,
+            spacing = StreamTokens.spacingXs,
+            textStyle = StreamDesign.Typography::numericLarge,
+        )
+        val Small = CountBadgeSize(
+            minSize = 20.dp,
+            spacing = StreamTokens.spacing2xs,
+            textStyle = StreamDesign.Typography::numericMedium,
+        )
+        val entries = listOf(Large, Medium, Small)
+    }
 }
 
 @Preview
