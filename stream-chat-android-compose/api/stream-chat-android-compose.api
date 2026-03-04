@@ -2139,6 +2139,10 @@ public final class io/getstream/chat/android/compose/ui/messages/MessagesScreenK
 	public static final fun PollDialogs (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;ZLandroidx/compose/runtime/Composer;I)V
 }
 
+public final class io/getstream/chat/android/compose/ui/messages/attachments/AttachmentCommandPickerKt {
+	public static final fun CommandSuggestionItem (Lio/getstream/chat/android/models/Command;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+}
+
 public final class io/getstream/chat/android/compose/ui/messages/attachments/AttachmentPickerActions {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/messages/attachments/AttachmentPickerActions$Companion;
