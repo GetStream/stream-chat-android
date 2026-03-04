@@ -208,6 +208,18 @@ public class ChannelInfoViewController(
                 _events.tryEmit(ChannelInfoViewEvent.NavigateToDraftChannel(event.memberId))
             }
 
+            is ChannelInfoMemberViewEvent.MuteUser ->
+                _events.tryEmit(ChannelInfoViewEvent.MuteUser(event.member))
+
+            is ChannelInfoMemberViewEvent.UnmuteUser ->
+                _events.tryEmit(ChannelInfoViewEvent.UnmuteUser(event.member))
+
+            is ChannelInfoMemberViewEvent.BlockUser ->
+                _events.tryEmit(ChannelInfoViewEvent.BlockUser(event.member))
+
+            is ChannelInfoMemberViewEvent.UnblockUser ->
+                _events.tryEmit(ChannelInfoViewEvent.UnblockUser(event.member))
+
             is ChannelInfoMemberViewEvent.BanMember ->
                 _events.tryEmit(ChannelInfoViewEvent.BanMemberModal(event.member))
 

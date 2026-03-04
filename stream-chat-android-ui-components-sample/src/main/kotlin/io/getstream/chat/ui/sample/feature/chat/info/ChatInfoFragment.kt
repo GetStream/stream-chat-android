@@ -91,6 +91,11 @@ class ChatInfoFragment : Fragment() {
                 is ChannelInfoViewEvent.Error -> showError(event, isGroupChannel = false)
                 is ChannelInfoViewEvent.Navigation -> onNavigationEvent(event)
                 is ChannelInfoViewEvent.Modal -> showModal(event, viewModel, isGroupChannel = false)
+                is ChannelInfoViewEvent.MuteUser,
+                is ChannelInfoViewEvent.UnmuteUser,
+                is ChannelInfoViewEvent.BlockUser,
+                is ChannelInfoViewEvent.UnblockUser,
+                -> Unit
             }
         }
     }

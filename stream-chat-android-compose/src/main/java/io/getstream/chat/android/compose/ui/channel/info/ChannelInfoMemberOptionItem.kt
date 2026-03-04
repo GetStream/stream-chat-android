@@ -26,57 +26,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.common.MenuOptionItem
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewAction
-import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
+import io.getstream.chat.android.ui.common.state.channel.info.MemberAction
 
 @Composable
-internal fun ChannelInfoMemberOptionItem(
-    option: ChannelInfoMemberViewState.Content.Option,
-    onViewAction: (action: ChannelInfoMemberViewAction) -> Unit,
-) {
-    when (option) {
-        is ChannelInfoMemberViewState.Content.Option.MessageMember -> {
-            MemberMenuOptionItem(
-                icon = R.drawable.stream_ic_chat_bubble,
-                text = stringResource(R.string.stream_ui_channel_info_member_modal_option_message_member),
-                isDestructive = false,
-                onClick = { onViewAction(ChannelInfoMemberViewAction.MessageMemberClick) },
-            )
-        }
-
-        is ChannelInfoMemberViewState.Content.Option.BanMember -> {
-            MemberMenuOptionItem(
-                icon = R.drawable.stream_ic_ban,
-                text = stringResource(R.string.stream_ui_channel_info_member_modal_option_ban_member),
-                isDestructive = true,
-                onClick = { onViewAction(ChannelInfoMemberViewAction.BanMemberClick) },
-            )
-        }
-
-        is ChannelInfoMemberViewState.Content.Option.UnbanMember -> {
-            MemberMenuOptionItem(
-                icon = R.drawable.stream_ic_ban,
-                text = stringResource(R.string.stream_ui_channel_info_member_modal_option_unban_member),
-                isDestructive = true,
-                onClick = { onViewAction(ChannelInfoMemberViewAction.UnbanMemberClick) },
-            )
-        }
-
-        is ChannelInfoMemberViewState.Content.Option.RemoveMember -> {
-            MemberMenuOptionItem(
-                icon = R.drawable.stream_ic_action_leave,
-                text = stringResource(R.string.stream_ui_channel_info_member_modal_option_remove_member),
-                isDestructive = true,
-                onClick = { onViewAction(ChannelInfoMemberViewAction.RemoveMemberClick) },
-            )
-        }
-    }
+internal fun ChannelInfoMemberOptionItem(action: MemberAction) {
+    MemberMenuOptionItem(
+        icon = action.icon,
+        text = action.label,
+        isDestructive = action.isDestructive,
+        onClick = action.onAction,
+    )
 }
 
 @Composable

@@ -26,6 +26,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewEvent
@@ -114,41 +115,38 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
                     banExpiresTextView.text = formatBanExpiry(member.banExpires)
                     userAvatarView.setUser(user)
 
-                    state.options.forEach { option ->
-                        when (option) {
-                            is ChannelInfoMemberViewState.Content.Option.MessageMember -> {
-                                optionMessage.isVisible = true
-                                optionMessage.setOnClickListener {
-                                    viewModel.onViewAction(ChannelInfoMemberViewAction.MessageMemberClick)
-                                }
-                            }
+                    optionMessage.isVisible = true
+                    optionMessage.setOnClickListener {
+                        viewModel.onViewAction(ChannelInfoMemberViewAction.MessageMemberClick)
+                    }
 
-                            is ChannelInfoMemberViewState.Content.Option.BanMember -> {
-                                optionBan.isVisible = true
-                                optionBan.setOnOptionText(
-                                    getString(R.string.stream_ui_channel_info_member_modal_option_ban_member),
-                                )
-                                optionBan.setOnClickListener {
-                                    viewModel.onViewAction(ChannelInfoMemberViewAction.BanMemberClick)
-                                }
+                    val canBan = state.capabilities.contains(ChannelCapabilities.BAN_CHANNEL_MEMBERS)
+                    if (canBan) {
+                        optionBan.isVisible = true
+                        if (member.banned) {
+                            optionBan.setOnOptionText(
+                                getString(R.string.stream_ui_channel_info_member_modal_option_unban_member),
+                            )
+                            optionBan.setOnClickListener {
+                                viewModel.onViewAction(ChannelInfoMemberViewAction.UnbanMemberClick)
                             }
+                        } else {
+                            optionBan.setOnOptionText(
+                                getString(R.string.stream_ui_channel_info_member_modal_option_ban_member),
+                            )
+                            optionBan.setOnClickListener {
+                                viewModel.onViewAction(ChannelInfoMemberViewAction.BanMemberClick)
+                            }
+                        }
+                    }
 
-                            is ChannelInfoMemberViewState.Content.Option.UnbanMember -> {
-                                optionBan.isVisible = true
-                                optionBan.setOnOptionText(
-                                    getString(R.string.stream_ui_channel_info_member_modal_option_unban_member),
-                                )
-                                optionBan.setOnClickListener {
-                                    viewModel.onViewAction(ChannelInfoMemberViewAction.UnbanMemberClick)
-                                }
-                            }
-
-                            is ChannelInfoMemberViewState.Content.Option.RemoveMember -> {
-                                optionRemove.isVisible = true
-                                optionRemove.setOnClickListener {
-                                    viewModel.onViewAction(ChannelInfoMemberViewAction.RemoveMemberClick)
-                                }
-                            }
+                    val canRemove = state.capabilities.contains(
+                        ChannelCapabilities.UPDATE_CHANNEL_MEMBERS,
+                    )
+                    if (canRemove) {
+                        optionRemove.isVisible = true
+                        optionRemove.setOnClickListener {
+                            viewModel.onViewAction(ChannelInfoMemberViewAction.RemoveMemberClick)
                         }
                     }
                 }
@@ -183,6 +181,10 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
 
                 is FragmentResult.BanMember -> ChannelInfoMemberViewEvent.BanMember(option.member)
                 is FragmentResult.UnbanMember -> ChannelInfoMemberViewEvent.UnbanMember(option.member)
+                is FragmentResult.MuteUser -> ChannelInfoMemberViewEvent.MuteUser(option.member)
+                is FragmentResult.UnmuteUser -> ChannelInfoMemberViewEvent.UnmuteUser(option.member)
+                is FragmentResult.BlockUser -> ChannelInfoMemberViewEvent.BlockUser(option.member)
+                is FragmentResult.UnblockUser -> ChannelInfoMemberViewEvent.UnblockUser(option.member)
                 is FragmentResult.RemoveMember -> ChannelInfoMemberViewEvent.RemoveMember(option.member)
             }
 
@@ -191,6 +193,10 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
                 is ChannelInfoMemberViewEvent.MessageMember -> FragmentResult.MessageMember(memberId, distinctCid)
                 is ChannelInfoMemberViewEvent.BanMember -> FragmentResult.BanMember(member)
                 is ChannelInfoMemberViewEvent.UnbanMember -> FragmentResult.UnbanMember(member)
+                is ChannelInfoMemberViewEvent.MuteUser -> FragmentResult.MuteUser(member)
+                is ChannelInfoMemberViewEvent.UnmuteUser -> FragmentResult.UnmuteUser(member)
+                is ChannelInfoMemberViewEvent.BlockUser -> FragmentResult.BlockUser(member)
+                is ChannelInfoMemberViewEvent.UnblockUser -> FragmentResult.UnblockUser(member)
                 is ChannelInfoMemberViewEvent.RemoveMember -> FragmentResult.RemoveMember(member)
             },
         )
@@ -202,5 +208,9 @@ private sealed interface FragmentResult : Parcelable {
     data class MessageMember(val memberId: String, val distinctCid: String?) : FragmentResult
     data class BanMember(val member: @RawValue Member) : FragmentResult
     data class UnbanMember(val member: @RawValue Member) : FragmentResult
+    data class MuteUser(val member: @RawValue Member) : FragmentResult
+    data class UnmuteUser(val member: @RawValue Member) : FragmentResult
+    data class BlockUser(val member: @RawValue Member) : FragmentResult
+    data class UnblockUser(val member: @RawValue Member) : FragmentResult
     data class RemoveMember(val member: @RawValue Member) : FragmentResult
 }

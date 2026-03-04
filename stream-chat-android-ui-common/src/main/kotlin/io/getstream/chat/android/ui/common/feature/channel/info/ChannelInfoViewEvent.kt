@@ -103,6 +103,34 @@ public sealed interface ChannelInfoViewEvent {
     public data class RemoveMemberModal(val member: Member) : Modal
 
     /**
+     * Indicates an event to mute a member's user.
+     *
+     * @param member The member whose user is to be muted.
+     */
+    public data class MuteUser(val member: Member) : ChannelInfoViewEvent
+
+    /**
+     * Indicates an event to unmute a member's user.
+     *
+     * @param member The member whose user is to be unmuted.
+     */
+    public data class UnmuteUser(val member: Member) : ChannelInfoViewEvent
+
+    /**
+     * Indicates an event to block a member's user.
+     *
+     * @param member The member whose user is to be blocked.
+     */
+    public data class BlockUser(val member: Member) : ChannelInfoViewEvent
+
+    /**
+     * Indicates an event to unblock a member's user.
+     *
+     * @param member The member whose user is to be unblocked.
+     */
+    public data class UnblockUser(val member: Member) : ChannelInfoViewEvent
+
+    /**
      * Represents navigation events.
      *
      * @param reason The reason for navigation or null if not applicable.

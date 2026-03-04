@@ -104,6 +104,11 @@ class GroupChatInfoFragment : Fragment() {
                 is ChannelInfoViewEvent.Error -> showError(event, isGroupChannel = true)
                 is ChannelInfoViewEvent.Navigation -> onNavigationEvent(event)
                 is ChannelInfoViewEvent.Modal -> showModal(event, viewModel, isGroupChannel = true)
+                is ChannelInfoViewEvent.MuteUser,
+                is ChannelInfoViewEvent.UnmuteUser,
+                is ChannelInfoViewEvent.BlockUser,
+                is ChannelInfoViewEvent.UnblockUser,
+                -> Unit
             }
         }
         viewModel.state.observe(viewLifecycleOwner) { state ->

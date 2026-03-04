@@ -146,6 +146,10 @@
     <string name="stream_ui_channel_info_member_modal_option_message_member">Message</string>
     <string name="stream_ui_channel_info_member_modal_option_ban_member">Ban</string>
     <string name="stream_ui_channel_info_member_modal_option_unban_member">Unban</string>
+    <string name="stream_ui_channel_info_member_modal_option_mute_user">Mute</string>
+    <string name="stream_ui_channel_info_member_modal_option_unmute_user">Unmute</string>
+    <string name="stream_ui_channel_info_member_modal_option_block_user">Block</string>
+    <string name="stream_ui_channel_info_member_modal_option_unblock_user">Unblock</string>
     <string name="stream_ui_channel_info_member_modal_option_remove_member">Remove from group</string>
 
     <string name="stream_ui_channel_info_ban_member_modal_title">Banning %s for:</string>

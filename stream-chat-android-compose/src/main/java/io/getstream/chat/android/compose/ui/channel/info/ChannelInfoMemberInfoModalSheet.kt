@@ -49,6 +49,7 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoMemberViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoMemberViewModelFactory
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewAction
@@ -112,13 +113,17 @@ private fun ChannelInfoMemberInfoModalSheetContent(
         isLoading = isLoading,
     ) {
         val content = state as ChannelInfoMemberViewState.Content
+        val actions = buildDefaultMemberActions(
+            member = content.member,
+            capabilities = content.capabilities,
+            isMuted = content.isMuted,
+            isBlocked = content.isBlocked,
+            onViewAction = onViewAction,
+        )
         Column(modifier = Modifier.fillMaxWidth()) {
             ChatTheme.componentFactory.ChannelInfoMemberInfoModalSheetTopBar(content.member)
-            content.options.forEach { option ->
-                ChannelInfoMemberOptionItem(
-                    option = option,
-                    onViewAction = onViewAction,
-                )
+            actions.forEach { action ->
+                ChatTheme.componentFactory.ChannelInfoMemberOptionItem(action = action)
             }
         }
     }
@@ -258,15 +263,12 @@ internal fun ChannelInfoMemberInfoModalSheetContent(banned: Boolean) {
     ChannelInfoMemberInfoModalSheetContent(
         state = ChannelInfoMemberViewState.Content(
             member = member,
-            options = buildList {
-                add(ChannelInfoMemberViewState.Content.Option.MessageMember(member))
-                if (banned) {
-                    add(ChannelInfoMemberViewState.Content.Option.UnbanMember(member))
-                } else {
-                    add(ChannelInfoMemberViewState.Content.Option.BanMember(member))
-                }
-                add(ChannelInfoMemberViewState.Content.Option.RemoveMember(member))
-            },
+            capabilities = setOf(
+                ChannelCapabilities.BAN_CHANNEL_MEMBERS,
+                ChannelCapabilities.UPDATE_CHANNEL_MEMBERS,
+            ),
+            isMuted = false,
+            isBlocked = false,
         ),
         onViewAction = {},
     )

@@ -96,6 +96,11 @@ class GroupChannelInfoActivity : ComponentActivity() {
                         is ChannelInfoViewEvent.Error -> showError(event)
                         is ChannelInfoViewEvent.Navigation -> onNavigationEvent(event)
                         is ChannelInfoViewEvent.Modal -> Unit
+                        is ChannelInfoViewEvent.MuteUser,
+                        is ChannelInfoViewEvent.UnmuteUser,
+                        is ChannelInfoViewEvent.BlockUser,
+                        is ChannelInfoViewEvent.UnblockUser,
+                        -> Unit
                     }
                 }
             }
