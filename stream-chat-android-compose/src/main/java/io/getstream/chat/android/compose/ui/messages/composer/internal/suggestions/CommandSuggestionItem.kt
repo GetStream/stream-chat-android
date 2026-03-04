@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.components.suggestions.commands
+package io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -38,30 +37,11 @@ import io.getstream.chat.android.compose.ui.util.extensions.internal.iconRes
 import io.getstream.chat.android.compose.ui.util.extensions.internal.isPolychromaticIcon
 import io.getstream.chat.android.models.Command
 
-/**
- * Represents the command suggestion item in the command suggestion list popup.
- *
- * @param command The command to display.
- * @param modifier Modifier for styling.
- * @param onCommandSelected Handler when the user taps on an item.
- * @param leadingContent Customizable composable function that represents the leading content of a command item.
- * @param centerContent Customizable composable function that represents the center content of a command item.
- */
 @Composable
-public fun CommandSuggestionItem(
+internal fun CommandSuggestionItem(
     command: Command,
     modifier: Modifier = Modifier,
     onCommandSelected: (Command) -> Unit = {},
-    leadingContent: @Composable RowScope.(Command) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerCommandSuggestionItemLeadingContent(command = it)
-        }
-    },
-    centerContent: @Composable RowScope.(Command) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerCommandSuggestionItemCenterContent(command = it, modifier = Modifier.weight(1f))
-        }
-    },
 ) {
     Row(
         modifier = modifier
@@ -71,9 +51,15 @@ public fun CommandSuggestionItem(
             .testTag("Stream_SuggestionListGiphyButton"),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        leadingContent(command)
+        ChatTheme.componentFactory.MessageComposerCommandSuggestionItemLeadingContent(
+            modifier = Modifier,
+            command = command,
+        )
 
-        centerContent(command)
+        ChatTheme.componentFactory.MessageComposerCommandSuggestionItemCenterContent(
+            modifier = Modifier.weight(1f),
+            command = command,
+        )
     }
 }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.components.suggestions.commands
+package io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions
 
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi

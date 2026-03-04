@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.messages.composer
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,6 +42,8 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
+import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.CommandSuggestionList
+import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.SuggestionsMenu
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.ui.theme.LocalChatConfig
@@ -54,6 +57,7 @@ import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewCommandData
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
@@ -80,7 +84,6 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param onActiveCommandDismiss Called when the user taps the dismiss button on the active command chip.
  * @param recordingActions The actions that can be performed on an audio recording.
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
- * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
  */
 @Composable
@@ -107,12 +110,6 @@ public fun MessageComposer(
         ChatTheme.componentFactory.MessageComposerMentionsPopupContent(
             mentionSuggestions = it,
             onMentionSelected = onMentionSelected,
-        )
-    },
-    commandPopupContent: @Composable (List<Command>) -> Unit = {
-        ChatTheme.componentFactory.MessageComposerCommandsPopupContent(
-            commandSuggestions = it,
-            onCommandSelected = onCommandSelected,
         )
     },
     input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
@@ -156,7 +153,6 @@ public fun MessageComposer(
         onAlsoSendToChannelSelected = onAlsoSendToChannelChange,
         recordingActions = recordingActions,
         mentionPopupContent = mentionPopupContent,
-        commandPopupContent = commandPopupContent,
         input = input,
         messageComposerState = messageComposerState,
         onCancelAction = onCancelAction,
@@ -187,7 +183,6 @@ public fun MessageComposer(
  * @param onActiveCommandDismiss Called when the user taps the dismiss button on the active command chip.
  * @param recordingActions The actions that can be performed on an audio recording.
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
- * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
  */
 @Composable
@@ -211,12 +206,6 @@ public fun MessageComposer(
         ChatTheme.componentFactory.MessageComposerMentionsPopupContent(
             mentionSuggestions = it,
             onMentionSelected = onMentionSelected,
-        )
-    },
-    commandPopupContent: @Composable (List<Command>) -> Unit = {
-        ChatTheme.componentFactory.MessageComposerCommandsPopupContent(
-            commandSuggestions = it,
-            onCommandSelected = onCommandSelected,
         )
     },
     input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
@@ -245,10 +234,16 @@ public fun MessageComposer(
         snackbarHostState = snackbarHostState,
     )
 
-    MessageComposerSurface(
-        modifier = modifier,
-        floatingStyleEnabled = ChatTheme.config.composer.floatingStyleEnabled,
-    ) {
+    MessageComposerSurface(modifier = modifier) {
+        if (commandSuggestions.isNotEmpty()) {
+            SuggestionsMenu {
+                CommandSuggestionList(
+                    commands = commandSuggestions,
+                    onCommandSelected = onCommandSelected,
+                )
+            }
+        }
+
         Row(
             modifier = Modifier
                 .padding(vertical = StreamTokens.spacing2xs)
@@ -286,20 +281,15 @@ public fun MessageComposer(
         if (mentionSuggestions.isNotEmpty()) {
             mentionPopupContent(mentionSuggestions)
         }
-
-        if (commandSuggestions.isNotEmpty()) {
-            commandPopupContent(commandSuggestions)
-        }
     }
 }
 
 @Composable
 private fun MessageComposerSurface(
     modifier: Modifier,
-    floatingStyleEnabled: Boolean,
     content: @Composable () -> Unit,
 ) {
-    if (floatingStyleEnabled) {
+    if (ChatTheme.config.composer.floatingStyleEnabled) {
         Box(
             modifier = modifier,
         ) {
@@ -310,8 +300,11 @@ private fun MessageComposerSurface(
             modifier = modifier,
             shadowElevation = 24.dp,
             color = ChatTheme.colors.backgroundElevationElevation1,
-            content = content,
-        )
+        ) {
+            Column {
+                content()
+            }
+        }
     }
 }
 
@@ -404,6 +397,28 @@ internal fun MessageComposerFixedStyleWithVisibleAttachmentPicker() {
     MessageComposer(
         messageComposerState = PreviewMessageComposerState,
         isAttachmentPickerVisible = true,
+        onSendMessage = { _, _ -> },
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerFixedStyleWithCommandSuggestionsPreview() {
+    ChatTheme {
+        MessageComposerFixedStyleWithCommandSuggestions()
+    }
+}
+
+@Composable
+internal fun MessageComposerFixedStyleWithCommandSuggestions() {
+    MessageComposer(
+        messageComposerState = PreviewMessageComposerState.copy(
+            commandSuggestions = listOf(
+                PreviewCommandData.command1,
+                PreviewCommandData.command2,
+                PreviewCommandData.command3,
+            ),
+        ),
         onSendMessage = { _, _ -> },
     )
 }

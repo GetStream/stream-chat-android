@@ -208,11 +208,11 @@ fun UserRobot.assertAttachmentsMenu(isDisplayed: Boolean): UserRobot {
 
 fun UserRobot.assertComposerCommandsMenu(isDisplayed: Boolean): UserRobot {
     if (isDisplayed) {
-        assertTrue(Composer.suggestionList.waitToAppear().isDisplayed())
-        assertTrue(Composer.suggestionListTitle.isDisplayed())
+        assertTrue(Composer.commandSuggestionList.waitToAppear().isDisplayed())
+        assertTrue(Composer.commandSuggestionListTitle.isDisplayed())
     } else {
-        assertFalse(Composer.suggestionList.waitToDisappear().isDisplayed())
-        assertFalse(Composer.suggestionListTitle.isDisplayed())
+        assertFalse(Composer.commandSuggestionList.waitToDisappear().isDisplayed())
+        assertFalse(Composer.commandSuggestionListTitle.isDisplayed())
     }
     return this
 }
