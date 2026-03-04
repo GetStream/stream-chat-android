@@ -24,6 +24,7 @@ import java.util.UUID
  * The option switch item for creating a poll.
  *
  * @property title The title of this poll item.
+ * @property description The description of this poll item.
  * @property enabled Indicates if this switch is enabled or not.
  * @property key The key that identifies this poll item.
  * @property pollSwitchInput Optional input field to be presented when the switch is enabled.
@@ -32,6 +33,7 @@ import java.util.UUID
 @Immutable
 public data class PollSwitchItem(
     public val title: String,
+    public val description: String,
     public val enabled: Boolean,
     public val key: String = UUID.randomUUID().toString(),
     public val pollSwitchInput: PollSwitchInput? = null,

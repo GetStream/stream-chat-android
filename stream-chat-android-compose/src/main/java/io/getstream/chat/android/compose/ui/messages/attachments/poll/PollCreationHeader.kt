@@ -104,7 +104,6 @@ public fun PollCreationHeader(
 @Composable
 internal fun DefaultPollOptionsHeaderLeadingContent(onBackPressed: () -> Unit) {
     BackButton(
-        modifier = Modifier.padding(end = 32.dp),
         painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
         onBackPressed = onBackPressed,
     )
