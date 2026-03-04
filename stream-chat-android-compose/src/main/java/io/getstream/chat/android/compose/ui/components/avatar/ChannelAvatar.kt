@@ -246,22 +246,26 @@ private fun StackedGroupAvatar(
     }
 }
 
-private val CHANNEL_INFO_AVATAR_THRESHOLD = 80.dp
-
+@Suppress("MagicNumber")
 private fun BoxWithConstraintsScope.resolveStackedAvatarDimensions(): StackedGroupAvatarDimensions {
     return when {
-        maxWidth >= CHANNEL_INFO_AVATAR_THRESHOLD -> StackedGroupAvatarDimensions.ChannelInfo
-        maxWidth >= AvatarSize.ExtraExtraLarge -> StackedGroupAvatarDimensions.ExtraExtraLarge
-        maxWidth >= AvatarSize.ExtraLarge -> StackedGroupAvatarDimensions.ExtraLarge
-        else -> StackedGroupAvatarDimensions.Large
+        // Beyond the largest fixed tier: scale proportionally using the same ratio (40/64 = 0.625)
+        maxWidth > AvatarSize.ExtraExtraLarge -> {
+            val scaled = maxWidth * (AvatarSize.Large / AvatarSize.ExtraExtraLarge)
+            StackedGroupAvatarDimensions(avatarSize = scaled, badgeSize = CountBadgeSize.Large)
+        }
+        maxWidth >= AvatarSize.ExtraExtraLarge -> StackedGroupAvatarDimensions.XXL
+        maxWidth >= AvatarSize.ExtraLarge -> StackedGroupAvatarDimensions.XL
+        else -> StackedGroupAvatarDimensions.L
     }
 }
 
-private enum class StackedGroupAvatarDimensions(val avatarSize: Dp, val badgeSize: CountBadgeSize) {
-    ChannelInfo(avatarSize = 64.dp, badgeSize = CountBadgeSize.Large),
-    ExtraExtraLarge(avatarSize = AvatarSize.Large, badgeSize = CountBadgeSize.Large),
-    ExtraLarge(avatarSize = AvatarSize.Medium, badgeSize = CountBadgeSize.Medium),
-    Large(avatarSize = AvatarSize.Small, badgeSize = CountBadgeSize.Small),
+private data class StackedGroupAvatarDimensions(val avatarSize: Dp, val badgeSize: CountBadgeSize) {
+    companion object {
+        val XXL = StackedGroupAvatarDimensions(avatarSize = AvatarSize.Large, badgeSize = CountBadgeSize.Large)
+        val XL = StackedGroupAvatarDimensions(avatarSize = AvatarSize.Medium, badgeSize = CountBadgeSize.Medium)
+        val L = StackedGroupAvatarDimensions(avatarSize = AvatarSize.Small, badgeSize = CountBadgeSize.Small)
+    }
 }
 
 @Composable
