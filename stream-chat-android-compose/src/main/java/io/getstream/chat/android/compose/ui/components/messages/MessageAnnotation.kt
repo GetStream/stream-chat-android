@@ -17,8 +17,10 @@
 package io.getstream.chat.android.compose.ui.components.messages
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,7 +32,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.ifNotNull
@@ -89,5 +93,49 @@ internal fun MessageAnnotation(
                 color = trailingTextColor,
             )
         }
+    }
+}
+
+@Composable
+internal fun MessageAnnotations(modifier: Modifier) {
+    Column(modifier) {
+        MessageAnnotation(
+            iconId = R.drawable.stream_compose_ic_annotation_pin,
+            text = "Pinned by You",
+        )
+        MessageAnnotation(
+            iconId = R.drawable.stream_compose_ic_annotation_bookmark,
+            text = "Saved for later",
+            contentColor = ChatTheme.colors.accentPrimary,
+        )
+        MessageAnnotation(
+            iconId = R.drawable.stream_compose_ic_annotation_arrow_up_right,
+            text = "Also sent to the channel",
+            trailingText = "View",
+            trailingTextColor = ChatTheme.colors.chatTextLink,
+        )
+        MessageAnnotation(
+            iconId = R.drawable.stream_compose_ic_annotation_reminder,
+            text = "Remind me",
+            trailingText = "in 2 hours",
+        )
+        MessageAnnotation(
+            iconId = R.drawable.stream_compose_ic_annotation_translated,
+            text = "Translated",
+            trailingText = "View original",
+            trailingTextColor = ChatTheme.colors.chatTextLink,
+        )
+    }
+}
+
+@Preview
+@Composable
+internal fun MessageAnnotationsPreview() {
+    ChatTheme {
+        MessageAnnotations(
+            Modifier
+                .background(ChatTheme.colors.backgroundCoreApp)
+                .padding(StreamTokens.spacingMd),
+        )
     }
 }
