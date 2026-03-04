@@ -29,6 +29,7 @@ import coil3.request.allowHardware
 import coil3.request.crossfade
 import coil3.video.VideoFrameDecoder
 import io.getstream.chat.android.client.internal.file.StreamFileManager
+import kotlinx.coroutines.Dispatchers
 import okio.Path.Companion.toOkioPath
 
 private const val DEFAULT_MEMORY_PERCENTAGE = 0.25
@@ -80,6 +81,7 @@ public class StreamImageLoaderFactory(
                     .maxSizePercent(DEFAULT_DISK_CACHE_PERCENTAGE)
                     .build()
             }
+            .interceptorCoroutineContext(Dispatchers.IO)
             .components {
                 interceptors.forEach { add(it) }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
