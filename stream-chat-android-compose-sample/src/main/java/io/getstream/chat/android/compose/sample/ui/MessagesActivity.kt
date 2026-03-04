@@ -22,11 +22,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.core.net.toUri
 import io.getstream.chat.android.compose.sample.ChatApp
+import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
@@ -45,15 +45,14 @@ import io.getstream.chat.android.compose.ui.theme.MessageOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.theme.TranslationConfig
-import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 
 class MessagesActivity : ComponentActivity() {
+
+    private val settings by lazy { customSettings() }
 
     private val cid: String by lazy {
         requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)) { "Channel ID must be provided" }
@@ -71,11 +70,6 @@ class MessagesActivity : ComponentActivity() {
             isComposerDraftMessageEnabled = true,
         )
     }
-
-    private val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
-
-    private val attachmentsPickerViewModel by viewModels<AttachmentsPickerViewModel>(factoryProducer = { factory })
-    private val composerViewModel by viewModels<MessageComposerViewModel>(factoryProducer = { factory })
 
     private val channelInfoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
@@ -113,6 +107,7 @@ class MessagesActivity : ComponentActivity() {
                 composer = ComposerConfig(
                     audioRecordingEnabled = true,
                     linkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
+                    floatingStyleEnabled = settings.isComposerFloatingStyleEnabled,
                 ),
                 translation = TranslationConfig(enabled = ChatApp.autoTranslationEnabled),
                 attachmentPicker = AttachmentPickerConfig(useSystemPicker = false),
