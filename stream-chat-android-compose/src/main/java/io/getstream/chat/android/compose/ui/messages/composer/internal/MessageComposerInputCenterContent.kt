@@ -126,8 +126,10 @@ private fun TextFieldPlaceholder(canSendMessage: Boolean) {
     }
     Text(
         text = text,
-        color = ChatTheme.colors.textSecondary,
-        style = ChatTheme.messageComposerTheme.inputField.textStyle,
+        color = ChatTheme.colors.inputTextPlaceholder,
+        style = ChatTheme.typography.bodyDefault,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
     )
 }
 
