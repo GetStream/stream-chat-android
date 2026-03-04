@@ -309,7 +309,7 @@ internal fun GroupChannelInfoAvatarContainer(
     val onlineCount = members.count { it.user.online }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
     ) {
         ChatTheme.componentFactory.ChannelAvatar(
             modifier = Modifier.size(AvatarSize.ExtraExtraLarge),

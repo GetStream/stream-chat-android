@@ -240,7 +240,7 @@ private fun DirectChannelInfoContent(
 internal fun DirectChannelInfoAvatarContainer(user: User) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
     ) {
         ChatTheme.componentFactory.UserAvatar(
             modifier = Modifier.size(AvatarSize.ExtraExtraLarge),

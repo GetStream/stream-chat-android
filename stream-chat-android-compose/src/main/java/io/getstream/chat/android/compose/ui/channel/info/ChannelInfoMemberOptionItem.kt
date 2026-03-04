@@ -32,8 +32,8 @@ internal fun ChannelInfoMemberOptionItem(
 ) {
     when (option) {
         is ChannelInfoMemberViewState.Content.Option.MessageMember -> {
-            ChannelInfoOptionNavigationButton(
-                icon = R.drawable.stream_compose_ic_new_chat,
+            ChannelInfoOptionButton(
+                icon = R.drawable.stream_ic_chat_bubble,
                 text = stringResource(R.string.stream_ui_channel_info_member_modal_option_message_member),
                 onClick = { onViewAction(ChannelInfoMemberViewAction.MessageMemberClick) },
             )
