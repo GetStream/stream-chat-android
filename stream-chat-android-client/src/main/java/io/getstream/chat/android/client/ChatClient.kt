@@ -101,6 +101,7 @@ import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.extractBaseUrl
+import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.isLaterThanDays
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.AppSettingManager
@@ -2595,12 +2596,29 @@ internal constructor(
      * cross-user ordering issues when the device clock is skewed.
      */
     private suspend fun Message.ensureCreatedLocallyAt(cid: String): Message {
-        val lastMessageAt = repositoryFacade.selectChannel(cid = cid)?.lastMessageAt
-        val lastMessageAtPlusOneMillisecond = lastMessageAt?.let {
-            Date(it.time + 1)
+        val parentId = this.parentId
+        if (parentId != null) {
+            // Thread reply
+            val lastMessage = repositoryFacade.selectMessagesForThread(parentId, limit = 1).lastOrNull()
+            val lastMessageAt = lastMessage?.getCreatedAtOrNull()
+            val lastMessageAtPlusOneMillisecond = lastMessageAt?.let {
+                Date(it.time + 1)
+            }
+            val createdLocallyAt = max(lastMessageAtPlusOneMillisecond, serverClockOffset.estimatedServerTime())
+            return copy(createdLocallyAt = this.createdLocallyAt ?: createdLocallyAt)
+        } else {
+            // Regular message
+            val (type, id) = cid.cidToTypeAndId()
+            // Fetch channel lastMessageAt from state, fallback to offline storage
+            val channelState = logicRegistry?.channelStateLogic(type, id)?.listenForChannelState()
+            val lastMessageAt = channelState?.channelData?.value?.lastMessageAt
+                ?: repositoryFacade.selectChannel(cid = cid)?.lastMessageAt
+            val lastMessageAtPlusOneMillisecond = lastMessageAt?.let {
+                Date(it.time + 1)
+            }
+            val createdLocallyAt = max(lastMessageAtPlusOneMillisecond, serverClockOffset.estimatedServerTime())
+            return copy(createdLocallyAt = this.createdLocallyAt ?: createdLocallyAt)
         }
-        val createdLocallyAt = max(lastMessageAtPlusOneMillisecond, serverClockOffset.estimatedServerTime())
-        return copy(createdLocallyAt = this.createdLocallyAt ?: createdLocallyAt)
     }
 
     /**
