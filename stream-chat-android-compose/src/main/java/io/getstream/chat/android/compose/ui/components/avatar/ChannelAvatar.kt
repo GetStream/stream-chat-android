@@ -249,11 +249,11 @@ private fun StackedGroupAvatar(
 @Suppress("MagicNumber")
 private fun BoxWithConstraintsScope.resolveStackedAvatarDimensions(): StackedGroupAvatarDimensions {
     return when {
-        // Beyond the largest fixed tier: scale proportionally
+        // Beyond the largest fixed tier: keep the same edge gap as XXL so the container looks equally full.
         maxWidth > AvatarSize.ExtraExtraLarge -> {
-            val scale = maxWidth / AvatarSize.ExtraExtraLarge
-            val avatarScaled = maxWidth * (AvatarSize.Large / AvatarSize.ExtraExtraLarge)
-            val badgeScaled = CountBadgeSize.Large.copy(spacing = CountBadgeSize.Large.spacing * scale)
+            val avatarScaled = maxWidth - AvatarSize.ExtraExtraLarge + AvatarSize.Large
+            val badgeScale = maxWidth / AvatarSize.ExtraExtraLarge
+            val badgeScaled = CountBadgeSize.Large.copy(spacing = CountBadgeSize.Large.spacing * badgeScale)
             StackedGroupAvatarDimensions(avatarSize = avatarScaled, badgeSize = badgeScaled)
         }
         maxWidth >= AvatarSize.ExtraExtraLarge -> StackedGroupAvatarDimensions.XXL
