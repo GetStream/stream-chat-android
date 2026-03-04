@@ -24,7 +24,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -51,6 +50,7 @@ import io.getstream.chat.android.previewdata.PreviewAttachmentData
 import io.getstream.chat.android.previewdata.PreviewLinkData
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.state.messages.Edit
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
@@ -67,11 +67,10 @@ import io.getstream.chat.android.ui.common.state.messages.composer.RecordingStat
  * @param onLinkPreviewClick Handler when a link preview is clicked.
  * @param onCancelLinkPreviewClick Handler when the cancel link preview button is clicked.
  * @param onSendClick Handler when the send button is clicked.
+ * @param onAlsoSendToChannelChange Handler when the "Also send to channel" checkbox is changed.
  * @param recordingActions The [AudioRecordingActions] to be applied to the input.
- * @param leadingContent The content to be displayed at the start of the input.
- * @param centerContent The content to be displayed in the center of the input (the text field).
- * @param trailingContent The content to be displayed at the end of the input.
  */
+@Suppress("LongMethod")
 @Composable
 public fun MessageInput(
     messageComposerState: MessageComposerState,
@@ -82,26 +81,8 @@ public fun MessageInput(
     onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onCancelLinkPreviewClick: (() -> Unit)? = null,
     onSendClick: (String, List<Attachment>) -> Unit = { _, _ -> },
+    onAlsoSendToChannelChange: (Boolean) -> Unit = {},
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
-    leadingContent: @Composable RowScope.() -> Unit = {
-        ChatTheme.componentFactory.MessageComposerInputLeadingContent(
-            state = messageComposerState,
-        )
-    },
-    centerContent: @Composable (Modifier) -> Unit = { modifier ->
-        ChatTheme.componentFactory.MessageComposerInputCenterContent(
-            state = messageComposerState,
-            onValueChange = onValueChange,
-            modifier = modifier,
-        )
-    },
-    trailingContent: @Composable RowScope.() -> Unit = {
-        ChatTheme.componentFactory.MessageComposerInputTrailingContent(
-            state = messageComposerState,
-            recordingActions = recordingActions,
-            onSendClick = onSendClick,
-        )
-    },
 ) {
     Column(
         modifier = modifier
@@ -139,16 +120,33 @@ public fun MessageInput(
                 .defaultMinSize(minHeight = 48.dp),
             verticalAlignment = Alignment.Bottom,
         ) {
-            leadingContent()
+            ChatTheme.componentFactory.MessageComposerInputLeadingContent(
+                state = messageComposerState,
+            )
 
             val isRecording = messageComposerState.recording !is RecordingState.Idle
             if (!isRecording) {
-                centerContent(Modifier.weight(1f))
+                Column(modifier = Modifier.weight(1f)) {
+                    ChatTheme.componentFactory.MessageComposerInputCenterContent(
+                        modifier = Modifier,
+                        state = messageComposerState,
+                        onValueChange = onValueChange,
+                    )
+                    ChatTheme.componentFactory.MessageComposerInputCenterBottomContent(
+                        modifier = Modifier,
+                        state = messageComposerState,
+                        onAlsoSendToChannelChange = onAlsoSendToChannelChange,
+                    )
+                }
             } else {
                 Spacer(Modifier.weight(1f))
             }
 
-            trailingContent()
+            ChatTheme.componentFactory.MessageComposerInputTrailingContent(
+                state = messageComposerState,
+                recordingActions = recordingActions,
+                onSendClick = onSendClick,
+            )
         }
     }
 }
@@ -291,6 +289,45 @@ internal fun MessageComposerInputSlowMode() {
         messageComposerState = PreviewMessageComposerState.copy(
             inputValue = "Slow mode, wait 9s",
             coolDownTime = 9,
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputThreadModePreview() {
+    ChatTheme {
+        MessageComposerInputThreadMode()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputThreadMode() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            messageMode = MessageMode.MessageThread(
+                parentMessage = PreviewMessageData.message1,
+            ),
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputThreadModeAlsoSendToChannelPreview() {
+    ChatTheme {
+        MessageComposerInputThreadModeAlsoSendToChannel()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputThreadModeAlsoSendToChannel() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            messageMode = MessageMode.MessageThread(
+                parentMessage = PreviewMessageData.message1,
+            ),
+            alsoSendToChannel = true,
         ),
     )
 }

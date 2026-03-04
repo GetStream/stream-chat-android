@@ -71,11 +71,6 @@ public class MessageComposerViewModel(
     public val input: MutableStateFlow<String> = messageComposerController.input
 
     /**
-     * If the message will be shown in the channel after it is sent.
-     */
-    public val alsoSendToChannel: MutableStateFlow<Boolean> = messageComposerController.alsoSendToChannel
-
-    /**
      * Represents the remaining time until the user is allowed to send the next message.
      */
     public val cooldownTimer: MutableStateFlow<Int> = messageComposerController.cooldownTimer

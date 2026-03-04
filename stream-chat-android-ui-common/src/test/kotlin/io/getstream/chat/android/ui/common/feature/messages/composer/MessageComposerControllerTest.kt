@@ -72,6 +72,7 @@ import org.mockito.kotlin.whenever
 import java.io.File
 import java.util.Date
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class MessageComposerControllerTest {
 
     @Test
@@ -251,7 +252,6 @@ internal class MessageComposerControllerTest {
         assertEquals(MessageInput.Source.MentionSelected, controller.messageInput.value.source)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `Given idle state When startRecording is called Then delegates to media recorder`() = runTest {
         // Given
@@ -322,7 +322,6 @@ internal class MessageComposerControllerTest {
 
     // region sendMessage tests
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `Given normal mode When sendMessage called Then chatClient sendMessage is invoked with correct message`() = runTest {
         // Given
@@ -359,7 +358,6 @@ internal class MessageComposerControllerTest {
         assertTrue(capturedMessage.skipEnrichUrl)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `Given normal mode When sendMessage called Then data is cleared`() = runTest {
         // Given
@@ -389,7 +387,6 @@ internal class MessageComposerControllerTest {
         assertEquals(emptyList<Any>(), controller.state.value.attachments)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `Given thread mode with alsoSendToChannel true When sendMessage called Then showInChannel is true`() = runTest {
         // Given
@@ -428,7 +425,6 @@ internal class MessageComposerControllerTest {
         assertEquals("Thread reply", capturedMessage.text)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `Given thread mode with alsoSendToChannel false When sendMessage called Then showInChannel is false`() = runTest {
         // Given
@@ -467,7 +463,51 @@ internal class MessageComposerControllerTest {
         assertEquals("Thread reply", capturedMessage.text)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `Given thread mode with alsoSendToChannel true When clearData called Then alsoSendToChannel remains true`() =
+        runTest {
+            // Given
+            val parentMessage = randomMessage()
+            val fixture = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState()
+            val controller = fixture.get()
+
+            controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+            controller.setAlsoSendToChannel(true)
+
+            // When
+            controller.clearData()
+            advanceUntilIdle()
+
+            // Then
+            assertTrue(controller.state.value.alsoSendToChannel)
+        }
+
+    @Test
+    fun `Given normal mode with alsoSendToChannel true When clearData called Then alsoSendToChannel is false`() =
+        runTest {
+            // Given
+            val fixture = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState()
+            val controller = fixture.get()
+            controller.setAlsoSendToChannel(true)
+
+            // When
+            controller.clearData()
+            advanceUntilIdle()
+
+            // Then
+            assertFalse(controller.state.value.alsoSendToChannel)
+        }
+
     @Test
     fun `Given edit mode with text changes When sendMessage called Then editMessage is invoked`() = runTest {
         // Given
@@ -507,7 +547,6 @@ internal class MessageComposerControllerTest {
         verify(fixture.chatClient, never()).sendMessage(any(), any(), any(), any())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `Given edit mode with no text changes When sendMessage called Then no API call is made and data is cleared`() = runTest {
         // Given
@@ -545,7 +584,6 @@ internal class MessageComposerControllerTest {
         assertEquals(emptyList<Any>(), controller.state.value.attachments)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `Given moderation error message When sendMessage called Then old message is deleted and new one is sent`() = runTest {
         // Given
@@ -618,7 +656,6 @@ internal class MessageComposerControllerTest {
     // infrastructure.
     //
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `Given endOfNewerMessages is true When sendMessage called Then loadNewestMessages is not called`() = runTest {
         // Given
@@ -644,7 +681,6 @@ internal class MessageComposerControllerTest {
         verify(fixture.chatClient, never()).inheritScope(any())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `Given thread mode and endOfNewerMessages is false When sendMessage called Then loadNewestMessages is not called`() = runTest {
         // Given
@@ -673,7 +709,6 @@ internal class MessageComposerControllerTest {
         verify(fixture.chatClient, never()).inheritScope(any())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `Given endOfNewerMessages is false When sendMessage called Then loadNewestMessages is called`() = runTest {
         // Given

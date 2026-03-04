@@ -17,7 +17,7 @@
 package io.getstream.chat.android.compose.ui.theme
 
 import android.net.Uri
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -152,7 +152,6 @@ import io.getstream.chat.android.compose.ui.components.suggestions.mentions.Ment
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerActions
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordingButton
-import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerFooterInThreadMode
 import io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerEditIndicator
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderLeadingContent
@@ -1425,13 +1424,9 @@ public interface ChatComponentFactory {
         onCommandSelected: (Command) -> Unit,
         onAlsoSendToChannelSelected: (Boolean) -> Unit,
         recordingActions: AudioRecordingActions,
-        headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit,
-        footerContent: @Composable ColumnScope.(MessageComposerState) -> Unit,
         mentionPopupContent: @Composable (List<User>) -> Unit,
         commandPopupContent: @Composable (List<Command>) -> Unit,
-        leadingContent: @Composable RowScope.(MessageComposerState) -> Unit,
         input: @Composable RowScope.(MessageComposerState) -> Unit,
-        trailingContent: @Composable (MessageComposerState) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.composer.MessageComposer(
             messageComposerState = messageComposerState,
@@ -1445,39 +1440,19 @@ public interface ChatComponentFactory {
             onLinkPreviewClick = onLinkPreviewClick,
             onMentionSelected = onMentionSelected,
             onCommandSelected = onCommandSelected,
-            onAlsoSendToChannelSelected = onAlsoSendToChannelSelected,
+            onAlsoSendToChannelChange = onAlsoSendToChannelSelected,
             recordingActions = recordingActions,
-            headerContent = headerContent,
-            footerContent = footerContent,
             mentionPopupContent = mentionPopupContent,
             commandPopupContent = commandPopupContent,
-            leadingContent = leadingContent,
             input = input,
-            trailingContent = trailingContent,
         )
-    }
-
-    /**
-     * The default header content of the message composer.
-     * Shown on top of the composer. Can be overridden to add custom content above the input.
-     *
-     * @param state The current state of the message composer.
-     * @param onCancel The action to perform when the cancel button is clicked.
-     * @param onLinkPreviewClick The action to perform when the link preview is clicked.
-     */
-    @Composable
-    public fun ColumnScope.MessageComposerHeaderContent(
-        state: MessageComposerState,
-        onCancel: () -> Unit,
-        onLinkPreviewClick: ((LinkPreview) -> Unit)?,
-    ) {
     }
 
     /**
      * Shows a preview of the link that the user has entered in the message composer.
      * Shows the link image preview, the title of the link and its description.
      *
-     * Used as part of [MessageComposerHeaderContent].
+     * Used as part of [MessageComposerInput].
      *
      * @param modifier The modifier to apply to the composable.
      * @param linkPreview The link preview to show.
@@ -1497,34 +1472,6 @@ public interface ChatComponentFactory {
             onContentClick = onContentClick,
             onCancelClick = onCancelClick,
         )
-    }
-
-    /**
-     * The default footer content of the message composer.
-     * When replying to a thread, it provides the checkbox to also send the message to the channel.
-     *
-     * @param state The current state of the message composer.
-     * @param onAlsoSendToChannelSelected The action to perform when the "Also send to channel" checkbox is selected.
-     */
-    @Composable
-    public fun ColumnScope.MessageComposerFooterContent(
-        state: MessageComposerState,
-        onAlsoSendToChannelSelected: (Boolean) -> Unit,
-    ) {
-        Box(modifier = Modifier.animateContentSize()) {
-            when (state.messageMode) {
-                is MessageMode.Normal -> {
-                    // no footer in normal mode
-                }
-
-                is MessageMode.MessageThread -> {
-                    DefaultMessageComposerFooterInThreadMode(
-                        alsoSendToChannel = state.alsoSendToChannel,
-                        onAlsoSendToChannelChanged = onAlsoSendToChannelSelected,
-                    )
-                }
-            }
-        }
     }
 
     /**
@@ -1657,12 +1604,14 @@ public interface ChatComponentFactory {
     /**
      * The default leading content of the message composer, which includes an add attachment button by default.
      *
+     * @param modifier The modifier to apply to the composable.
      * @param state The current state of the message composer.
      * @param isAttachmentPickerVisible Whether the attachment picker is visible.
      * @param onAttachmentsClick The action to perform when the attachments button is clicked.
      */
     @Composable
-    public fun RowScope.MessageComposerLeadingContent(
+    public fun MessageComposerLeadingContent(
+        modifier: Modifier,
         state: MessageComposerState,
         isAttachmentPickerVisible: Boolean,
         onAttachmentsClick: () -> Unit,
@@ -1677,20 +1626,20 @@ public interface ChatComponentFactory {
     /**
      * The default input of the message composer.
      *
+     * @param modifier The modifier to apply to the composable.
      * @param state The current state of the message composer.
      * @param onInputChanged The action to perform when the input is changed.
      * @param onAttachmentRemoved The action to perform when an attachment is removed.
+     * @param onCancel The action to perform when the cancel button is clicked.
      * @param onLinkPreviewClick The action to perform when a link preview is clicked.
      * @param onCancelLinkPreviewClick The action to perform when the link preview cancel button is clicked.
-     * @param label The label of the message composer.
      * @param onSendClick The action to perform when the send button is clicked.
+     * @param onAlsoSendToChannelChange The action to perform when the "Also send to channel" checkbox is changed.
      * @param recordingActions The actions to control the audio recording.
-     * @param leadingContent The leading content of the message composer.
-     * @param centerContent The center content of the message composer (the text field).
-     * @param trailingContent The trailing content of the message composer.
      */
     @Composable
-    public fun RowScope.MessageComposerInput(
+    public fun MessageComposerInput(
+        modifier: Modifier,
         state: MessageComposerState,
         onInputChanged: (String) -> Unit,
         onAttachmentRemoved: (Attachment) -> Unit,
@@ -1698,13 +1647,11 @@ public interface ChatComponentFactory {
         onLinkPreviewClick: ((LinkPreview) -> Unit)?,
         onCancelLinkPreviewClick: (() -> Unit)?,
         onSendClick: (String, List<Attachment>) -> Unit,
+        onAlsoSendToChannelChange: (Boolean) -> Unit,
         recordingActions: AudioRecordingActions,
-        leadingContent: @Composable RowScope.() -> Unit,
-        centerContent: @Composable (Modifier) -> Unit,
-        trailingContent: @Composable RowScope.() -> Unit,
     ) {
         MessageInput(
-            modifier = Modifier.weight(1f),
+            modifier = modifier,
             messageComposerState = state,
             onValueChange = onInputChanged,
             onAttachmentRemoved = onAttachmentRemoved,
@@ -1712,10 +1659,8 @@ public interface ChatComponentFactory {
             onLinkPreviewClick = onLinkPreviewClick,
             onCancelLinkPreviewClick = onCancelLinkPreviewClick,
             onSendClick = onSendClick,
+            onAlsoSendToChannelChange = onAlsoSendToChannelChange,
             recordingActions = recordingActions,
-            leadingContent = leadingContent,
-            centerContent = centerContent,
-            trailingContent = trailingContent,
         )
     }
 
@@ -1805,6 +1750,33 @@ public interface ChatComponentFactory {
             onValueChange = onValueChange,
             modifier = modifier,
         )
+    }
+
+    /**
+     * The default center bottom content of the message composer input.
+     * Shown at the bottom of the composer input.
+     *
+     * Used as part of [MessageComposerInput].
+     *
+     * @param state The current state of the message composer.
+     * @param onAlsoSendToChannelChange The action to perform when the "Also send to channel" checkbox is changed.
+     * @param modifier The modifier to apply to the composable.
+     */
+    @Composable
+    public fun MessageComposerInputCenterBottomContent(
+        state: MessageComposerState,
+        onAlsoSendToChannelChange: (Boolean) -> Unit,
+        modifier: Modifier,
+    ) {
+        val inThreadMode = state.messageMode is MessageMode.MessageThread
+        AnimatedContent(targetState = inThreadMode) { visible ->
+            if (visible) {
+                io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerInputCenterBottomContent(
+                    alsoSendToChannel = state.alsoSendToChannel,
+                    onAlsoSendToChannelChange = onAlsoSendToChannelChange,
+                )
+            }
+        }
     }
 
     /**

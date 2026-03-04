@@ -168,8 +168,12 @@
     <string name="stream_compose_message_composer_error_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
     <string name="stream_compose_message_composer_instant_commands">Instant Commands</string>
     <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
-    <string name="stream_compose_message_composer_show_in_channel">Also send as direct message</string>
+    <string name="stream_compose_message_composer_show_in_channel">Also send in Channel</string>
     <string name="stream_compose_message_composer_file_not_supported">File type is not supported</string>
+    <string name="stream_compose_message_composer_empty_placeholder">Send a message</string>
+    <string name="stream_compose_message_composer_cannot_send_placeholder">You can\'t send messages in this channel</string>
+    <string name="stream_compose_message_composer_send_button">Send</string>
+    <string name="stream_compose_message_composer_save_button">Save</string>
 
     <!-- Message Preview -->
     <string name="stream_compose_audio_recording_preview">Voice message</string>
@@ -221,12 +225,6 @@
     <string name="stream_compose_attachment_poll_picker_content">Create a poll and let everyone vote</string>
     <string name="stream_compose_attachment_poll_picker_cta">Create Poll</string>
     <string name="stream_compose_attachment_commands_picker">Commands</string>
-
-    <string name="stream_compose_message_label">Message</string>
-    <string name="stream_compose_cannot_send_messages_label">You can\'t send messages in this channel</string>
-    <string name="stream_compose_send_message">Send</string>
-    <string name="stream_compose_save_message">Save</string>
-
 
     <string name="stream_compose_attachments">Attachments</string>
     <string name="stream_compose_images_option">Images</string>
