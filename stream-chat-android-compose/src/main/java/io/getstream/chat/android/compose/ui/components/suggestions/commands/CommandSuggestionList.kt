@@ -80,13 +80,13 @@ internal fun DefaultCommandSuggestionListHeader(modifier: Modifier = Modifier) {
             .padding(
                 start = StreamTokens.spacingMd,
                 end = StreamTokens.spacingMd,
-                top = StreamTokens.spacingXs,
-                bottom = StreamTokens.spacingMd,
+                top = StreamTokens.spacingMd,
+                bottom = StreamTokens.spacingXs,
             )
             .fillMaxWidth(),
         text = stringResource(R.string.stream_compose_message_composer_instant_commands),
         style = ChatTheme.typography.headingSmall,
-        color = ChatTheme.colors.textPrimary,
+        color = ChatTheme.colors.textTertiary,
     )
 }
 
