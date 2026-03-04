@@ -246,8 +246,11 @@ private fun StackedGroupAvatar(
     }
 }
 
+private val CHANNEL_INFO_AVATAR_THRESHOLD = 80.dp
+
 private fun BoxWithConstraintsScope.resolveStackedAvatarDimensions(): StackedGroupAvatarDimensions {
     return when {
+        maxWidth >= CHANNEL_INFO_AVATAR_THRESHOLD -> StackedGroupAvatarDimensions.ChannelInfo
         maxWidth >= AvatarSize.ExtraExtraLarge -> StackedGroupAvatarDimensions.ExtraExtraLarge
         maxWidth >= AvatarSize.ExtraLarge -> StackedGroupAvatarDimensions.ExtraLarge
         else -> StackedGroupAvatarDimensions.Large
@@ -255,6 +258,7 @@ private fun BoxWithConstraintsScope.resolveStackedAvatarDimensions(): StackedGro
 }
 
 private enum class StackedGroupAvatarDimensions(val avatarSize: Dp, val badgeSize: CountBadgeSize) {
+    ChannelInfo(avatarSize = AvatarSize.ExtraLarge, badgeSize = CountBadgeSize.Large),
     ExtraExtraLarge(avatarSize = AvatarSize.Large, badgeSize = CountBadgeSize.Large),
     ExtraLarge(avatarSize = AvatarSize.Medium, badgeSize = CountBadgeSize.Medium),
     Large(avatarSize = AvatarSize.Small, badgeSize = CountBadgeSize.Small),
