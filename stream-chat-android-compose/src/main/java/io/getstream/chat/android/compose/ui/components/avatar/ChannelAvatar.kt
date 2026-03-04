@@ -258,7 +258,7 @@ private fun BoxWithConstraintsScope.resolveStackedAvatarDimensions(): StackedGro
 }
 
 private enum class StackedGroupAvatarDimensions(val avatarSize: Dp, val badgeSize: CountBadgeSize) {
-    ChannelInfo(avatarSize = AvatarSize.ExtraLarge, badgeSize = CountBadgeSize.Large),
+    ChannelInfo(avatarSize = 64.dp, badgeSize = CountBadgeSize.Large),
     ExtraExtraLarge(avatarSize = AvatarSize.Large, badgeSize = CountBadgeSize.Large),
     ExtraLarge(avatarSize = AvatarSize.Medium, badgeSize = CountBadgeSize.Medium),
     Large(avatarSize = AvatarSize.Small, badgeSize = CountBadgeSize.Small),
