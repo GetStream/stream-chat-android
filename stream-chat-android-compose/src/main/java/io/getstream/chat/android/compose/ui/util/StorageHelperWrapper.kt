@@ -22,6 +22,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
 import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
+import io.getstream.log.taggedLogger
 
 /**
  * Wrapper around the [StorageHelper] class, with some extra functionality that makes it easier to
@@ -38,6 +39,8 @@ public class StorageHelperWrapper(
     private val storageHelper: StorageHelper = StorageHelper(),
     private val attachmentFilter: AttachmentFilter = AttachmentFilter(),
 ) {
+
+    private val logger by taggedLogger("Chat:StorageHelperWrapper")
 
     /**
      * Loads a list of file metadata from the system and filters it against file types accepted by the backend.
@@ -71,12 +74,20 @@ public class StorageHelperWrapper(
     /**
      * Loads attachment files from the provided metadata, so that we can upload them.
      *
+     * Attachments whose underlying content cannot be resolved (e.g. cloud-backed URIs from
+     * Google Drive that are not locally available) are skipped and a warning is logged.
+     *
      * @param metaData The list of attachment meta data that we transform.
-     * @return List of [Attachment]s with files prepared for uploading.
+     * @return List of [Attachment]s with files prepared for uploading. May be smaller than
+     * [metaData] if some entries could not be resolved.
      */
     private fun getAttachmentsFromMetaData(metaData: List<AttachmentMetaData>): List<Attachment> {
-        return metaData.map {
+        return metaData.mapNotNull {
             val fileFromUri = storageHelper.getCachedFileFromUri(context, it)
+            if (fileFromUri == null && it.uri != null) {
+                logger.w { "[getAttachmentsFromMetaData] Skipping unresolvable attachment: ${it.title} (${it.uri})" }
+                return@mapNotNull null
+            }
 
             Attachment(
                 upload = fileFromUri,

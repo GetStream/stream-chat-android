@@ -25,6 +25,7 @@ import android.webkit.MimeTypeMap
 import io.getstream.chat.android.client.internal.file.StreamFileManager
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
+import io.getstream.log.taggedLogger
 import java.io.File
 
 /**
@@ -43,6 +44,7 @@ import java.io.File
 @Suppress("TooManyFunctions")
 public class StorageHelper {
     private val fileManager = StreamFileManager()
+    private val logger by taggedLogger("Chat:StorageHelper")
 
     /**
      * Retrieves or creates a cached copy of a file from the given attachment metadata.
@@ -55,12 +57,16 @@ public class StorageHelper {
      * to prevent naming conflicts. The file name is derived from the attachment's title with
      * proper extension handling.
      *
+     * Content URIs backed by cloud storage providers (e.g. Google Drive) may fail to provide
+     * an input stream if the file is not locally available. In such cases this method returns
+     * `null` instead of throwing.
+     *
      * @param context The Android context used to access the content resolver and cache directory.
      * @param attachmentMetaData The attachment metadata containing either a file or URI reference.
-     * @return A [File] object pointing to the cached file, or `null` if both file and URI are null.
-     *
-     * @throws java.io.IOException If there's an error reading from the URI or writing to cache.
+     * @return A [File] object pointing to the cached file, or `null` if both file and URI are null
+     * or if the content could not be read from the URI.
      */
+    @Suppress("TooGenericExceptionCaught")
     public fun getCachedFileFromUri(
         context: Context,
         attachmentMetaData: AttachmentMetaData,
@@ -68,13 +74,16 @@ public class StorageHelper {
         if (attachmentMetaData.file == null && attachmentMetaData.uri == null) {
             return null
         }
-        if (attachmentMetaData.file != null) {
-            return attachmentMetaData.file!!
-        }
+        attachmentMetaData.file?.let { return it }
 
+        val uri = attachmentMetaData.uri ?: return null
         val fileName = attachmentMetaData.getTitleWithExtension()
-        val inputStream = context.contentResolver.openInputStream(attachmentMetaData.uri!!)
-            ?: return null
+        val inputStream = try {
+            context.contentResolver.openInputStream(uri)
+        } catch (e: Exception) {
+            logger.e(e) { "[getCachedFileFromUri] Failed to open input stream for URI: $uri" }
+            null
+        } ?: return null
         return fileManager.writeFileInTimestampedCache(
             context = context,
             fileName = fileName,

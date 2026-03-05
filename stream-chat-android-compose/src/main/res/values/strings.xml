@@ -128,6 +128,7 @@
     <string name="stream_compose_message_composer_error_file_size">File is too large - max %1$s.</string>
     <string name="stream_compose_message_composer_error_attachment_count">Attachments count (%1$d) exceeded.</string>
     <string name="stream_compose_message_composer_error_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
+    <string name="stream_compose_attachment_picker_error_file_not_available">Some files could not be loaded. They may need to be downloaded to the device first.</string>
     <string name="stream_compose_message_composer_instant_commands">Instant Commands</string>
     <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
     <string name="stream_compose_message_composer_show_in_channel">Also send as direct message</string>

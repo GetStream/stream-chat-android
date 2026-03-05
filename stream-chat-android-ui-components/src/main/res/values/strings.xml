@@ -106,6 +106,7 @@
     <string name="stream_ui_message_composer_error_file_size">File is too large - max %s.</string>
     <string name="stream_ui_message_composer_error_attachment_count">Attachments count (%d) exceeded.</string>
     <string name="stream_ui_message_composer_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
+    <string name="stream_ui_attachment_picker_error_file_not_available">Some files could not be loaded. They may need to be downloaded to the device first.</string>
 
     <!-- Audio Recording -->
     <string name="stream_ui_message_composer_slide_to_cancel">Slide to cancel</string>

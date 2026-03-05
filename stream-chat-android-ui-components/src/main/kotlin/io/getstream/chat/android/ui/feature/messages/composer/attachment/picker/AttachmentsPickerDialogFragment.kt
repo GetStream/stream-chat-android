@@ -23,6 +23,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckedTextView
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.descendants
 import androidx.viewpager2.widget.ViewPager2
@@ -62,7 +63,15 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
      * A listener that is invoked when attachment picking has been completed
      */
     private var attachmentSelectionListener: AttachmentSelectionListener? = AttachmentSelectionListener { attachments ->
-        attachmentsSelectionListener?.onAttachmentsSelected(attachments.map { it.toAttachment(requireContext()) })
+        val resolved = attachments.mapNotNull { it.toAttachment(requireContext()) }
+        if (resolved.size < attachments.size) {
+            Toast.makeText(
+                requireContext(),
+                R.string.stream_ui_attachment_picker_error_file_not_available,
+                Toast.LENGTH_LONG,
+            ).show()
+        }
+        attachmentsSelectionListener?.onAttachmentsSelected(resolved)
     }
 
     /**

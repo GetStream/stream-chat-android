@@ -4979,6 +4979,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/Attachme
 	public static synthetic fun changeAttachmentPickerMode$default (Lio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel;Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public final fun changeAttachmentState (Z)V
 	public final fun changeSelectedAttachments (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentPickerItemState;)V
+	public final fun clearUnresolvedAttachments ()V
 	public final fun dismissAttachments ()V
 	public final fun getAttachments ()Ljava/util/List;
 	public final fun getAttachmentsFromMetaData (Ljava/util/List;)Ljava/util/List;
@@ -4989,6 +4990,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/Attachme
 	public final fun getHasPickedAttachments ()Z
 	public final fun getHasPickedFiles ()Z
 	public final fun getHasPickedImages ()Z
+	public final fun getHasUnresolvedAttachments ()Z
 	public final fun getImages ()Ljava/util/List;
 	public final fun getPolls ()Ljava/util/List;
 	public final fun getSelectedAttachments ()Ljava/util/List;

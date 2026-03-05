@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
@@ -35,6 +36,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +45,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -102,6 +105,20 @@ public fun AttachmentsPicker(
         }
     }
     BackHandler(onBack = dismissAction)
+
+    val context = LocalContext.current
+    val hasUnresolvedAttachments = attachmentsPickerViewModel.hasUnresolvedAttachments
+    LaunchedEffect(hasUnresolvedAttachments) {
+        if (hasUnresolvedAttachments) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.stream_compose_attachment_picker_error_file_not_available),
+                Toast.LENGTH_LONG,
+            ).show()
+            attachmentsPickerViewModel.clearUnresolvedAttachments()
+        }
+    }
+
     // Cross-validate requested tabFactories with the allowed ones from BE
     val filter = remember { AttachmentsPickerTabFactoryFilter() }
     val allowedFactories = filter.filterAllowedFactories(tabFactories, attachmentsPickerViewModel.channel, messageMode)
