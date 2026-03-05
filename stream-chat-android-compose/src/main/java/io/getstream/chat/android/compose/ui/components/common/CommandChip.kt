@@ -63,17 +63,17 @@ internal fun CommandChip(
             modifier = Modifier.size(StreamTokens.size12),
             painter = painterResource(id = R.drawable.stream_compose_ic_command_chip),
             contentDescription = null,
-            tint = ChatTheme.colors.badgeTextInverse,
+            tint = ChatTheme.colors.textInverse,
         )
         Text(
             text = command.name.uppercase(Locale.ROOT),
             style = ChatTheme.typography.metadataEmphasis,
-            color = ChatTheme.colors.badgeTextInverse,
+            color = ChatTheme.colors.textInverse,
         )
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_command_chip_cancel),
             contentDescription = stringResource(id = R.string.stream_compose_cancel),
-            tint = ChatTheme.colors.badgeTextInverse,
+            tint = ChatTheme.colors.textInverse,
         )
     }
 }
