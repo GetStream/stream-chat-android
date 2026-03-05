@@ -36,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -205,14 +204,13 @@ internal fun ThreadItemReplyCount(replyCount: Int) {
  * Displays the formatted timestamp for when the thread was last updated.
  *
  * @param thread The [Thread] whose [Thread.updatedAt] is formatted and displayed.
- * @see ThreadTimestampFormatter
  */
 @Composable
 internal fun ThreadItemTimestamp(thread: Thread) {
     val updatedAt = thread.updatedAt
-    val context = LocalContext.current
-    val timestamp = remember(updatedAt, context) {
-        ThreadTimestampFormatter.format(updatedAt, context)
+    val formatter = ChatTheme.dateFormatter
+    val timestamp = remember(updatedAt) {
+        formatter.formatRelativeTime(updatedAt)
     }
     Text(
         text = timestamp,
