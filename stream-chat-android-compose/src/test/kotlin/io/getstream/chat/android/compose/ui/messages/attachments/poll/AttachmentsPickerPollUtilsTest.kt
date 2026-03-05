@@ -72,6 +72,7 @@ internal class AttachmentsPickerPollUtilsTest {
         val switches = listOf(
             PollSwitchItem(
                 title = "Multiple answers",
+                description = "",
                 pollSwitchInput = PollSwitchInput(
                     value = "2",
                     description = "Enter an integer between 1 and 2",
@@ -84,16 +85,19 @@ internal class AttachmentsPickerPollUtilsTest {
             ),
             PollSwitchItem(
                 title = "Anonymous poll",
+                description = "",
                 key = PollSwitchItemKeys.VOTING_VISIBILITY,
                 enabled = true,
             ),
             PollSwitchItem(
                 title = "Suggest an option",
+                description = "",
                 key = PollSwitchItemKeys.ALLOW_USER_SUGGESTED_OPTIONS,
                 enabled = true,
             ),
             PollSwitchItem(
                 title = "Add a comment",
+                description = "",
                 key = PollSwitchItemKeys.ALLOW_ANSWERS,
                 enabled = true,
             ),

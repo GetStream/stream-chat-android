@@ -18,19 +18,23 @@ package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.poll.PollOptionInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
 /**
  * Poll option's question Composable that consist of the title and [PollOptionInput].
@@ -47,21 +51,29 @@ public fun PollQuestionInput(
     question: String,
     onQuestionChanged: (String) -> Unit,
 ) {
-    Column(modifier = modifier.padding(16.dp)) {
+    val colors = ChatTheme.colors
+
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs)) {
         Text(
-            modifier = Modifier.padding(bottom = 8.dp),
             text = title,
-            color = ChatTheme.colors.textPrimary,
-            style = ChatTheme.typography.headingMedium,
-            fontSize = 16.sp,
+            color = colors.textPrimary,
+            style = ChatTheme.typography.headingSmall,
         )
 
         PollOptionInput(
             value = question,
             onValueChange = onQuestionChanged,
-            decorationBox = { innerTextField ->
-                innerTextField.invoke()
-            },
+            description = stringResource(R.string.stream_compose_poll_questions_description),
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = colors.inputBorderDefault,
+                    shape = PollInputShape,
+                )
+                .clip(shape = PollInputShape)
+                .defaultMinSize(minHeight = PollInputMinHeight)
+                .padding(horizontal = StreamTokens.spacingMd, vertical = StreamTokens.spacingSm),
         )
     }
 }
