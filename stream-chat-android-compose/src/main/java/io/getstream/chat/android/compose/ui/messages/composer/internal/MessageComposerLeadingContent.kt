@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.composer.internal
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
@@ -26,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.graphicsLayer
@@ -58,41 +60,50 @@ internal fun MessageComposerLeadingContent(
 
     val canUploadFile = messageInputState.canUploadFile()
 
-    if (canSendMessage && !isRecording && canUploadFile) {
-        val iconRotation by animateFloatAsState(
-            targetValue = if (isAttachmentPickerVisible) OpenAttachmentPickerButtonRotation else 0f,
-        )
-        FilledIconButton(
-            enabled = isAddButtonEnabled,
-            modifier = Modifier
-                .padding(end = 8.dp)
-                .border(
-                    width = 1.dp,
-                    color = ChatTheme.colors.borderCoreDefault,
-                    shape = CircleShape,
-                )
-                .then(
-                    if (ChatTheme.config.composer.floatingStyleEnabled) {
-                        Modifier.shadow(6.dp, shape = CircleShape)
-                    } else {
-                        Modifier
-                    },
-                )
-                .size(48.dp)
-                .testTag("Stream_ComposerAttachmentsButton"),
-            colors = IconButtonDefaults.filledIconButtonColors(
-                containerColor = ChatTheme.colors.backgroundElevationElevation1,
-                disabledContainerColor = ChatTheme.colors.backgroundElevationElevation1,
-                contentColor = ChatTheme.colors.buttonSecondaryText,
-                disabledContentColor = ChatTheme.colors.textDisabled,
-            ),
-            onClick = onAttachmentsClick,
-        ) {
-            Icon(
-                modifier = Modifier.graphicsLayer { rotationZ = iconRotation },
-                painter = painterResource(id = R.drawable.stream_compose_ic_add),
-                contentDescription = stringResource(id = R.string.stream_compose_attachments),
+    val isCommandActive = messageInputState.activeCommand != null
+
+    val showAttachmentButton = canSendMessage && !isRecording && canUploadFile && !isCommandActive
+
+    AnimatedContent(
+        targetState = showAttachmentButton,
+        contentAlignment = Alignment.Center,
+    ) { visible ->
+        if (visible) {
+            val iconRotation by animateFloatAsState(
+                targetValue = if (isAttachmentPickerVisible) OpenAttachmentPickerButtonRotation else 0f,
             )
+            FilledIconButton(
+                enabled = isAddButtonEnabled,
+                modifier = Modifier
+                    .padding(end = 8.dp)
+                    .border(
+                        width = 1.dp,
+                        color = ChatTheme.colors.borderCoreDefault,
+                        shape = CircleShape,
+                    )
+                    .then(
+                        if (ChatTheme.config.composer.floatingStyleEnabled) {
+                            Modifier.shadow(6.dp, shape = CircleShape)
+                        } else {
+                            Modifier
+                        },
+                    )
+                    .size(48.dp)
+                    .testTag("Stream_ComposerAttachmentsButton"),
+                colors = IconButtonDefaults.filledIconButtonColors(
+                    containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                    disabledContainerColor = ChatTheme.colors.backgroundElevationElevation1,
+                    contentColor = ChatTheme.colors.buttonSecondaryText,
+                    disabledContentColor = ChatTheme.colors.textDisabled,
+                ),
+                onClick = onAttachmentsClick,
+            ) {
+                Icon(
+                    modifier = Modifier.graphicsLayer { rotationZ = iconRotation },
+                    painter = painterResource(id = R.drawable.stream_compose_ic_add),
+                    contentDescription = stringResource(id = R.string.stream_compose_attachments),
+                )
+            }
         }
     }
 }

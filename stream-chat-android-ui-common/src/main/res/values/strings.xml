@@ -180,4 +180,13 @@
     <string name="stream_ui_channel_attachments_files_empty_text">Files sent in this chat will appear here.</string>
     <string name="stream_ui_channel_attachments_files_load_error">Failed to load files attachments!</string>
 
+    <!-- Message Composer -->
+    <string name="stream_ui_message_composer_placeholder_default">Send a message</string>
+    <string name="stream_ui_message_composer_placeholder_cannot_send_messages">You can\'t send messages in this channel</string>
+    <string name="stream_ui_message_composer_placeholder_command_giphy">Search GIFs</string>
+    <string name="stream_ui_message_composer_placeholder_command_mute">\@username</string>
+    <string name="stream_ui_message_composer_placeholder_command_unmute">\@username</string>
+    <string name="stream_ui_message_composer_placeholder_command_ban">\@username</string>
+    <string name="stream_ui_message_composer_placeholder_command_unban">\@username</string>
+
 </resources>

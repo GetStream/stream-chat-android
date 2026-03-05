@@ -73,7 +73,6 @@
   <string name="stream_compose_message_composer_instant_commands">"इंस्टेंट कमांड्स"</string>
   <string name="stream_compose_message_composer_show_in_channel">"सीधे मैसेज के रूप में भी भेजें"</string>
   <string name="stream_compose_message_deleted">"मैसेज मिटाया गया"</string>
-  <string name="stream_compose_message_composer_empty_placeholder">"मेसेज भेजें"</string>
   <string name="stream_compose_message_list_empty_messages">"कोई मैसेज नहीं"</string>
   <string name="stream_compose_message_list_giphy_cancel">"रद्द करें"</string>
   <string name="stream_compose_message_list_giphy_send">"भेजें"</string>
