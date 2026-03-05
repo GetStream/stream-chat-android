@@ -17,7 +17,9 @@
 package io.getstream.chat.android.compose.ui.messages.composer
 
 import android.widget.Toast
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,6 +33,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -41,6 +44,9 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
+import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.CommandSuggestionList
+import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.SuggestionsMenu
+import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.UserSuggestionList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.ui.theme.LocalChatConfig
@@ -54,6 +60,8 @@ import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewCommandData
+import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
@@ -74,12 +82,11 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
  * @param onLinkPreviewClick Handler when the user taps on a link preview.
  * @param onCancelLinkPreviewClick Handler when the user taps on the cancel link preview.
- * @param onMentionSelected Handler when the user taps on a mention suggestion item.
+ * @param onUserSelected Handler when the user taps on a user suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
  * @param onAlsoSendToChannelChange Handler when the "Also send to channel" checkbox is changed.
+ * @param onActiveCommandDismiss Called when the user taps the dismiss button on the active command chip.
  * @param recordingActions The actions that can be performed on an audio recording.
- * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
- * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
  */
 @Composable
@@ -94,25 +101,14 @@ public fun MessageComposer(
     onCancelAction: () -> Unit = { viewModel.dismissMessageActions() },
     onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onCancelLinkPreviewClick: (() -> Unit)? = { viewModel.cancelLinkPreview() },
-    onMentionSelected: (User) -> Unit = { viewModel.selectMention(it) },
+    onUserSelected: (User) -> Unit = { viewModel.selectMention(it) },
     onCommandSelected: (Command) -> Unit = { viewModel.selectCommand(it) },
     onAlsoSendToChannelChange: (Boolean) -> Unit = viewModel::setAlsoSendToChannel,
+    onActiveCommandDismiss: () -> Unit = viewModel::clearActiveCommand,
     recordingActions: AudioRecordingActions = AudioRecordingActions.defaultActions(
         viewModel = viewModel,
         sendOnComplete = ChatTheme.config.composer.audioRecordingSendOnComplete,
     ),
-    mentionPopupContent: @Composable (List<User>) -> Unit = {
-        ChatTheme.componentFactory.MessageComposerMentionsPopupContent(
-            mentionSuggestions = it,
-            onMentionSelected = onMentionSelected,
-        )
-    },
-    commandPopupContent: @Composable (List<Command>) -> Unit = {
-        ChatTheme.componentFactory.MessageComposerCommandsPopupContent(
-            commandSuggestions = it,
-            onCommandSelected = onCommandSelected,
-        )
-    },
     input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
         val inputFocusRequester = remember { FocusRequester() }
         LaunchedEffect(Unit) {
@@ -135,6 +131,7 @@ public fun MessageComposer(
             },
             onAlsoSendToChannelChange = onAlsoSendToChannelChange,
             recordingActions = recordingActions,
+            onActiveCommandDismiss = onActiveCommandDismiss,
         )
     },
 ) {
@@ -148,12 +145,10 @@ public fun MessageComposer(
 
             onSendMessage(messageWithData)
         },
-        onMentionSelected = onMentionSelected,
+        onUserSelected = onUserSelected,
         onCommandSelected = onCommandSelected,
         onAlsoSendToChannelSelected = onAlsoSendToChannelChange,
         recordingActions = recordingActions,
-        mentionPopupContent = mentionPopupContent,
-        commandPopupContent = commandPopupContent,
         input = input,
         messageComposerState = messageComposerState,
         onCancelAction = onCancelAction,
@@ -178,12 +173,11 @@ public fun MessageComposer(
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
  * @param onLinkPreviewClick Handler when the user taps on a link preview.
  * @param onCancelLinkPreviewClick Handler when the user taps on the cancel link preview.
- * @param onMentionSelected Handler when the user taps on a mention suggestion item.
+ * @param onUserSelected Handler when the user taps on a user suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
  * @param onAlsoSendToChannelChange Handler when the "Also send to channel" checkbox is changed.
+ * @param onActiveCommandDismiss Called when the user taps the dismiss button on the active command chip.
  * @param recordingActions The actions that can be performed on an audio recording.
- * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
- * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
  */
 @Composable
@@ -198,22 +192,11 @@ public fun MessageComposer(
     onCancelAction: () -> Unit = {},
     onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onCancelLinkPreviewClick: (() -> Unit)? = null,
-    onMentionSelected: (User) -> Unit = {},
+    onUserSelected: (User) -> Unit = {},
     onCommandSelected: (Command) -> Unit = {},
     onAlsoSendToChannelChange: (Boolean) -> Unit = {},
+    onActiveCommandDismiss: () -> Unit = {},
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
-    mentionPopupContent: @Composable (List<User>) -> Unit = {
-        ChatTheme.componentFactory.MessageComposerMentionsPopupContent(
-            mentionSuggestions = it,
-            onMentionSelected = onMentionSelected,
-        )
-    },
-    commandPopupContent: @Composable (List<Command>) -> Unit = {
-        ChatTheme.componentFactory.MessageComposerCommandsPopupContent(
-            commandSuggestions = it,
-            onCommandSelected = onCommandSelected,
-        )
-    },
     input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
         ChatTheme.componentFactory.MessageComposerInput(
             modifier = Modifier.weight(1f),
@@ -226,11 +209,12 @@ public fun MessageComposer(
             onSendClick = onSendMessage,
             onAlsoSendToChannelChange = onAlsoSendToChannelChange,
             recordingActions = recordingActions,
+            onActiveCommandDismiss = onActiveCommandDismiss,
         )
     },
 ) {
     val validationErrors = messageComposerState.validationErrors
-    val mentionSuggestions = messageComposerState.mentionSuggestions
+    val userSuggestions = messageComposerState.mentionSuggestions
     val commandSuggestions = messageComposerState.commandSuggestions
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -239,10 +223,26 @@ public fun MessageComposer(
         snackbarHostState = snackbarHostState,
     )
 
-    MessageComposerSurface(
-        modifier = modifier,
-        floatingStyleEnabled = ChatTheme.config.composer.floatingStyleEnabled,
-    ) {
+    MessageComposerSurface(modifier = modifier) {
+        if (userSuggestions.isNotEmpty()) {
+            SuggestionsMenu(contentMaxHeight = UserSuggestionsMaxHeight) {
+                UserSuggestionList(
+                    users = userSuggestions,
+                    currentUser = messageComposerState.currentUser,
+                    onUserSelected = onUserSelected,
+                )
+            }
+        }
+
+        if (commandSuggestions.isNotEmpty()) {
+            SuggestionsMenu(contentMaxHeight = CommandSuggestionsMaxHeight) {
+                CommandSuggestionList(
+                    commands = commandSuggestions,
+                    onCommandSelected = onCommandSelected,
+                )
+            }
+        }
+
         Row(
             modifier = Modifier
                 .padding(vertical = StreamTokens.spacing2xs)
@@ -276,24 +276,18 @@ public fun MessageComposer(
         if (snackbarHostState.currentSnackbarData != null) {
             SnackbarPopup(hostState = snackbarHostState)
         }
-
-        if (mentionSuggestions.isNotEmpty()) {
-            mentionPopupContent(mentionSuggestions)
-        }
-
-        if (commandSuggestions.isNotEmpty()) {
-            commandPopupContent(commandSuggestions)
-        }
     }
 }
+
+private val UserSuggestionsMaxHeight = 176.dp
+private val CommandSuggestionsMaxHeight = 208.dp
 
 @Composable
 private fun MessageComposerSurface(
     modifier: Modifier,
-    floatingStyleEnabled: Boolean,
     content: @Composable () -> Unit,
 ) {
-    if (floatingStyleEnabled) {
+    if (ChatTheme.config.composer.floatingStyleEnabled) {
         Box(
             modifier = modifier,
         ) {
@@ -304,8 +298,11 @@ private fun MessageComposerSurface(
             modifier = modifier,
             shadowElevation = 24.dp,
             color = ChatTheme.colors.backgroundElevationElevation1,
-            content = content,
-        )
+        ) {
+            Column(modifier = Modifier.animateContentSize(alignment = Alignment.BottomCenter)) {
+                content()
+            }
+        }
     }
 }
 
@@ -371,14 +368,14 @@ private fun MessageInputValidationError(validationErrors: List<ValidationError>,
 
 @Preview
 @Composable
-private fun MessageComposerDefaultStylePreview() {
+private fun MessageComposerFixedStylePreview() {
     ChatTheme {
-        MessageComposerDefaultStyle()
+        MessageComposerFixedStyle()
     }
 }
 
 @Composable
-internal fun MessageComposerDefaultStyle() {
+internal fun MessageComposerFixedStyle() {
     MessageComposer(
         messageComposerState = PreviewMessageComposerState,
         onSendMessage = { _, _ -> },
@@ -387,17 +384,62 @@ internal fun MessageComposerDefaultStyle() {
 
 @Preview
 @Composable
-private fun MessageComposerDefaultStyleWithVisibleAttachmentPickerPreview() {
+private fun MessageComposerFixedStyleWithVisibleAttachmentPickerPreview() {
     ChatTheme {
-        MessageComposerDefaultStyleWithVisibleAttachmentPicker()
+        MessageComposerFixedStyleWithVisibleAttachmentPicker()
     }
 }
 
 @Composable
-internal fun MessageComposerDefaultStyleWithVisibleAttachmentPicker() {
+internal fun MessageComposerFixedStyleWithVisibleAttachmentPicker() {
     MessageComposer(
         messageComposerState = PreviewMessageComposerState,
         isAttachmentPickerVisible = true,
+        onSendMessage = { _, _ -> },
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerFixedStyleWithUserSuggestionsPreview() {
+    ChatTheme {
+        MessageComposerFixedStyleWithUserSuggestions()
+    }
+}
+
+@Composable
+internal fun MessageComposerFixedStyleWithUserSuggestions() {
+    MessageComposer(
+        messageComposerState = PreviewMessageComposerState.copy(
+            currentUser = PreviewUserData.userWithOnlineStatus,
+            mentionSuggestions = listOf(
+                PreviewUserData.userWithOnlineStatus,
+                PreviewUserData.user1,
+                PreviewUserData.user5,
+            ),
+        ),
+        onSendMessage = { _, _ -> },
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerFixedStyleWithCommandSuggestionsPreview() {
+    ChatTheme {
+        MessageComposerFixedStyleWithCommandSuggestions()
+    }
+}
+
+@Composable
+internal fun MessageComposerFixedStyleWithCommandSuggestions() {
+    MessageComposer(
+        messageComposerState = PreviewMessageComposerState.copy(
+            commandSuggestions = listOf(
+                PreviewCommandData.command1,
+                PreviewCommandData.command2,
+                PreviewCommandData.command3,
+            ),
+        ),
         onSendMessage = { _, _ -> },
     )
 }
@@ -436,6 +478,57 @@ internal fun MessageComposerFloatingStyleWithVisibleAttachmentPicker() {
         MessageComposer(
             messageComposerState = PreviewMessageComposerState,
             isAttachmentPickerVisible = true,
+            onSendMessage = { _, _ -> },
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MessageComposerFloatingStyleWithUserSuggestionsPreview() {
+    ChatTheme {
+        MessageComposerFloatingStyleWithUserSuggestions()
+    }
+}
+
+@Composable
+internal fun MessageComposerFloatingStyleWithUserSuggestions() {
+    val config = ChatTheme.config.copy(composer = ComposerConfig(floatingStyleEnabled = true))
+    CompositionLocalProvider(LocalChatConfig provides config) {
+        MessageComposer(
+            messageComposerState = PreviewMessageComposerState.copy(
+                currentUser = PreviewUserData.userWithOnlineStatus,
+                mentionSuggestions = listOf(
+                    PreviewUserData.userWithOnlineStatus,
+                    PreviewUserData.user1,
+                    PreviewUserData.user5,
+                ),
+            ),
+            onSendMessage = { _, _ -> },
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MessageComposerFloatingStyleWithCommandSuggestionsPreview() {
+    ChatTheme {
+        MessageComposerFloatingStyleWithCommandSuggestions()
+    }
+}
+
+@Composable
+internal fun MessageComposerFloatingStyleWithCommandSuggestions() {
+    val config = ChatTheme.config.copy(composer = ComposerConfig(floatingStyleEnabled = true))
+    CompositionLocalProvider(LocalChatConfig provides config) {
+        MessageComposer(
+            messageComposerState = PreviewMessageComposerState.copy(
+                commandSuggestions = listOf(
+                    PreviewCommandData.command1,
+                    PreviewCommandData.command2,
+                    PreviewCommandData.command3,
+                ),
+            ),
             onSendMessage = { _, _ -> },
         )
     }

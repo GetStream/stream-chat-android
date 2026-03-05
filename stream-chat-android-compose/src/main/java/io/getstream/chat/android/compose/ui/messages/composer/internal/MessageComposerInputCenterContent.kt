@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.composer.internal
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
@@ -32,8 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
@@ -43,12 +42,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
-import io.getstream.chat.android.compose.R
+import androidx.compose.ui.text.style.TextOverflow
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedInputText
+import io.getstream.chat.android.compose.ui.util.extensions.internal.placeholderRes
+import io.getstream.chat.android.ui.common.R
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -75,15 +76,12 @@ internal fun MessageComposerInputCenterContent(
         }
     }
 
-    val description = stringResource(id = R.string.stream_compose_cd_message_input)
     val inputFieldTheme = ChatTheme.messageComposerTheme.inputField
     val visualTransformation = rememberVisualTransformation(state.selectedMentions)
     val canSendMessage = state.canSendMessage()
 
     BasicTextField(
-        modifier = modifier
-            .semantics { contentDescription = description }
-            .testTag("Stream_ComposerInputField"),
+        modifier = modifier.testTag("Stream_ComposerInputField"),
         value = textState,
         onValueChange = {
             textState = it
@@ -97,7 +95,11 @@ internal fun MessageComposerInputCenterContent(
         decorationBox = { innerTextField ->
             Box(
                 modifier = Modifier.padding(
-                    start = StreamTokens.spacingMd,
+                    start = if (state.activeCommand != null) {
+                        StreamTokens.spacingSm
+                    } else {
+                        StreamTokens.spacingMd
+                    },
                     top = StreamTokens.spacingMd,
                     bottom = StreamTokens.spacingMd,
                 ),
@@ -106,7 +108,10 @@ internal fun MessageComposerInputCenterContent(
                 innerTextField()
 
                 if (value.isEmpty()) {
-                    TextFieldPlaceholder(canSendMessage)
+                    TextFieldPlaceholder(
+                        canSendMessage = canSendMessage,
+                        activeCommandDescriptionRes = state.activeCommand?.placeholderRes,
+                    )
                 }
             }
         },
@@ -118,16 +123,21 @@ internal fun MessageComposerInputCenterContent(
 }
 
 @Composable
-private fun TextFieldPlaceholder(canSendMessage: Boolean) {
+private fun TextFieldPlaceholder(
+    canSendMessage: Boolean,
+    @StringRes activeCommandDescriptionRes: Int?,
+) {
     val text = if (canSendMessage) {
-        stringResource(id = R.string.stream_compose_message_composer_empty_placeholder)
+        stringResource(activeCommandDescriptionRes ?: R.string.stream_ui_message_composer_placeholder_default)
     } else {
-        stringResource(id = R.string.stream_compose_message_composer_cannot_send_placeholder)
+        stringResource(R.string.stream_ui_message_composer_placeholder_cannot_send_messages)
     }
     Text(
         text = text,
-        color = ChatTheme.colors.textSecondary,
-        style = ChatTheme.messageComposerTheme.inputField.textStyle,
+        color = ChatTheme.colors.inputTextPlaceholder,
+        style = ChatTheme.typography.bodyDefault,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
     )
 }
 

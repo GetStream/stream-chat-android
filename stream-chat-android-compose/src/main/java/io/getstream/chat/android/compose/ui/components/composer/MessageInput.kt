@@ -25,11 +25,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -41,12 +41,14 @@ import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecor
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.ui.theme.LocalChatConfig
+import io.getstream.chat.android.compose.ui.theme.MessageComposerInputLeadingContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.previewdata.PreviewAttachmentData
+import io.getstream.chat.android.previewdata.PreviewCommandData
 import io.getstream.chat.android.previewdata.PreviewLinkData
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.state.messages.Edit
@@ -69,6 +71,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.RecordingStat
  * @param onSendClick Handler when the send button is clicked.
  * @param onAlsoSendToChannelChange Handler when the "Also send to channel" checkbox is changed.
  * @param recordingActions The [AudioRecordingActions] to be applied to the input.
+ * @param onActiveCommandDismiss Called when the user taps the dismiss button on the command chip.
  */
 @Suppress("LongMethod")
 @Composable
@@ -83,6 +86,7 @@ public fun MessageInput(
     onSendClick: (String, List<Attachment>) -> Unit = { _, _ -> },
     onAlsoSendToChannelChange: (Boolean) -> Unit = {},
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
+    onActiveCommandDismiss: () -> Unit = {},
 ) {
     Column(
         modifier = modifier
@@ -102,7 +106,7 @@ public fun MessageInput(
                 color = ChatTheme.colors.backgroundElevationElevation1,
                 shape = MessageInputShape,
             )
-            .defaultMinSize(minHeight = 48.dp)
+            .minimumInteractiveComponentSize()
             .animateContentSize(alignment = Alignment.BottomStart),
         verticalArrangement = Arrangement.Bottom,
     ) {
@@ -117,11 +121,15 @@ public fun MessageInput(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .defaultMinSize(minHeight = 48.dp),
+                .minimumInteractiveComponentSize(),
             verticalAlignment = Alignment.Bottom,
         ) {
             ChatTheme.componentFactory.MessageComposerInputLeadingContent(
-                state = messageComposerState,
+                params = MessageComposerInputLeadingContentParams(
+                    modifier = Modifier,
+                    state = messageComposerState,
+                    onActiveCommandDismiss = onActiveCommandDismiss,
+                ),
             )
 
             val isRecording = messageComposerState.recording !is RecordingState.Idle
@@ -328,6 +336,41 @@ internal fun MessageComposerInputThreadModeAlsoSendToChannel() {
                 parentMessage = PreviewMessageData.message1,
             ),
             alsoSendToChannel = true,
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputActiveCommandPlaceholderPreview() {
+    ChatTheme {
+        MessageComposerInputActiveCommandPlaceholder()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputActiveCommandPlaceholder() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            activeCommand = PreviewCommandData.command1,
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputActiveCommandFilledPreview() {
+    ChatTheme {
+        MessageComposerInputActiveCommandFilled()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputActiveCommandFilled() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            activeCommand = PreviewCommandData.command1,
+            inputValue = "The Office",
         ),
     )
 }
