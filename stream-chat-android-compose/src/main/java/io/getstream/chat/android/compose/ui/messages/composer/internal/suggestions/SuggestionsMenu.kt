@@ -26,7 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -34,6 +34,7 @@ import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvide
 
 @Composable
 internal fun SuggestionsMenu(
+    contentMaxHeight: Dp,
     content: @Composable () -> Unit,
 ) {
     if (ChatTheme.config.composer.floatingStyleEnabled) {
@@ -45,7 +46,7 @@ internal fun SuggestionsMenu(
                         horizontal = StreamTokens.spacingMd,
                         vertical = StreamTokens.spacingSm,
                     )
-                    .heightIn(max = SuggestionsMaxHeight),
+                    .heightIn(max = contentMaxHeight),
                 elevation = CardDefaults.cardElevation(defaultElevation = StreamTokens.elevation3),
                 shape = SuggestionsShape,
                 colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundElevationElevation1),
@@ -55,12 +56,11 @@ internal fun SuggestionsMenu(
         }
     } else {
         Box(
-            modifier = Modifier.heightIn(max = SuggestionsMaxHeight),
+            modifier = Modifier.heightIn(max = contentMaxHeight),
         ) {
             content()
         }
     }
 }
 
-private val SuggestionsMaxHeight = 200.dp
 private val SuggestionsShape = RoundedCornerShape(StreamTokens.radius3xl)

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,6 +26,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewUserData
 
@@ -38,6 +40,7 @@ internal fun UserSuggestionList(
         modifier = Modifier
             .fillMaxWidth()
             .testTag("Stream_UserSuggestionList"),
+        contentPadding = PaddingValues(vertical = StreamTokens.spacingXs),
     ) {
         items(
             items = users,

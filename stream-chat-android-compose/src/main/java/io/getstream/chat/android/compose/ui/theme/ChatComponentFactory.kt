@@ -150,7 +150,6 @@ import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestio
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultCommandSuggestionItemLeadingContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultUserSuggestionItemCenterContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultUserSuggestionItemLeadingContent
-import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultUserSuggestionItemTrailingContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.UserSuggestionItem
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderLeadingContent
@@ -1529,7 +1528,6 @@ public interface ChatComponentFactory {
         modifier: Modifier,
         user: User,
     ) {
-        DefaultUserSuggestionItemTrailingContent()
     }
 
     /**
