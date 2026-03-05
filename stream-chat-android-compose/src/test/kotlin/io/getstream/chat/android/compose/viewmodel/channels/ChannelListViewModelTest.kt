@@ -356,6 +356,8 @@ internal class ChannelListViewModelTest {
         init {
             val statePlugin: StatePlugin = mock()
             whenever(globalState.typingChannels) doReturn MutableStateFlow(emptyMap())
+            whenever(globalState.muted) doReturn MutableStateFlow(emptyList())
+            whenever(globalState.blockedUserIds) doReturn MutableStateFlow(emptyList())
             whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
             whenever(statePlugin.resolveDependency(eq(GlobalState::class))) doReturn globalState
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
