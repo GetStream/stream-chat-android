@@ -22,19 +22,22 @@ package io.getstream.chat.android.compose.ui.messages.attachments.poll
  * Each subtype carries only the data it needs. [PollSwitchList] pattern-matches on the concrete
  * type to decide how to render each item.
  */
-internal sealed interface PollSwitchItem {
+internal sealed interface PollSwitchState {
     val enabled: Boolean
     val onCheckedChange: (Boolean) -> Unit
 
     /**
-     * "Multiple votes" toggle with an input for the max votes per person.
+     * "Multiple votes" toggle with a child "Limit votes per person" row containing a stepper.
      */
     data class MultipleVotes(
         override val enabled: Boolean,
         override val onCheckedChange: (Boolean) -> Unit,
-        val maxVotesPerUser: Int,
-        val onMaxVotesCommit: (String) -> Unit,
-    ) : PollSwitchItem
+        val limitVotesEnabled: Boolean,
+        val onLimitVotesCheckedChange: (Boolean) -> Unit,
+        val maxVotesPerUserText: String,
+        val onMaxVotesChange: (String) -> Unit,
+        val onMaxVotesFocusLost: () -> Unit,
+    ) : PollSwitchState
 
     /**
      * "Anonymous poll" toggle.
@@ -42,7 +45,7 @@ internal sealed interface PollSwitchItem {
     data class AnonymousPoll(
         override val enabled: Boolean,
         override val onCheckedChange: (Boolean) -> Unit,
-    ) : PollSwitchItem
+    ) : PollSwitchState
 
     /**
      * "Suggest an option" toggle.
@@ -50,7 +53,7 @@ internal sealed interface PollSwitchItem {
     data class SuggestAnOption(
         override val enabled: Boolean,
         override val onCheckedChange: (Boolean) -> Unit,
-    ) : PollSwitchItem
+    ) : PollSwitchState
 
     /**
      * "Allow comments" toggle.
@@ -58,5 +61,5 @@ internal sealed interface PollSwitchItem {
     data class AllowComments(
         override val enabled: Boolean,
         override val onCheckedChange: (Boolean) -> Unit,
-    ) : PollSwitchItem
+    ) : PollSwitchState
 }

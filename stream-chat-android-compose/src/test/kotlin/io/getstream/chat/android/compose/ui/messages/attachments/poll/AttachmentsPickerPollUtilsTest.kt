@@ -54,7 +54,7 @@ internal class AttachmentsPickerPollUtilsTest {
     }
 
     @Test
-    fun testPollConfigWithMultipleVotesEnabled() {
+    fun testPollConfigWithMultipleVotesNoLimit() {
         // given
         val pollQuestion = "Poll question"
         val options = listOf(
@@ -65,7 +65,7 @@ internal class AttachmentsPickerPollUtilsTest {
             question = pollQuestion,
             optionItemList = options,
             multipleVotesEnabled = true,
-            maxVotesPerUser = 5,
+            limitVotesEnabled = false,
         )
         // when
         val pollConfig = pollConfigFrom(pollQuestion, options, state)
@@ -76,7 +76,7 @@ internal class AttachmentsPickerPollUtilsTest {
             description = "",
             votingVisibility = VotingVisibility.PUBLIC,
             enforceUniqueVote = false,
-            maxVotesAllowed = 5,
+            maxVotesAllowed = null,
             allowUserSuggestedOptions = false,
             allowAnswers = false,
         )
@@ -96,7 +96,8 @@ internal class AttachmentsPickerPollUtilsTest {
             question = pollQuestion,
             optionItemList = options,
             multipleVotesEnabled = true,
-            maxVotesPerUser = 2,
+            limitVotesEnabled = true,
+            maxVotesPerUserText = "2",
             anonymousPollEnabled = true,
             suggestAnOptionEnabled = true,
             allowCommentsEnabled = true,

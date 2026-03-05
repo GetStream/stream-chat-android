@@ -26,59 +26,63 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamPrimitiveColors
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.applyIf
+import io.getstream.chat.android.compose.ui.util.clickable
+import io.getstream.chat.android.ui.common.utils.PollsConstants
 
 /**
  * Displays the poll feature toggles (multiple votes, anonymous poll, suggest an option, allow comments).
  *
- * @param items The list of [PollSwitchItem]s to render. Only include items that should be visible.
+ * @param items The list of [PollSwitchState]s to render. Only include items that should be visible.
  */
 @Composable
-internal fun PollSwitchList(items: List<PollSwitchItem>) {
+internal fun PollSwitchList(items: List<PollSwitchState>) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingMd),
     ) {
         items.forEach { item ->
             when (item) {
-                is PollSwitchItem.MultipleVotes -> MultipleVotesItem(item)
-                is PollSwitchItem.AnonymousPoll -> SimpleSwitchItem(
+                is PollSwitchState.MultipleVotes -> MultipleVotesItem(item)
+                is PollSwitchState.AnonymousPoll -> SimpleSwitchItem(
                     title = stringResource(R.string.stream_compose_poll_option_switch_anonymous_poll),
                     description = stringResource(R.string.stream_compose_poll_option_switch_anonymous_poll_description),
                     item = item,
                 )
 
-                is PollSwitchItem.SuggestAnOption -> SimpleSwitchItem(
+                is PollSwitchState.SuggestAnOption -> SimpleSwitchItem(
                     title = stringResource(R.string.stream_compose_poll_option_switch_suggest_option),
                     description = stringResource(R.string.stream_compose_poll_option_switch_suggest_option_description),
                     item = item,
                 )
 
-                is PollSwitchItem.AllowComments -> SimpleSwitchItem(
+                is PollSwitchState.AllowComments -> SimpleSwitchItem(
                     title = stringResource(R.string.stream_compose_poll_option_switch_add_comment),
                     description = stringResource(R.string.stream_compose_poll_option_switch_add_comment_description),
                     item = item,
@@ -89,16 +93,19 @@ internal fun PollSwitchList(items: List<PollSwitchItem>) {
 }
 
 @Composable
-private fun MultipleVotesItem(item: PollSwitchItem.MultipleVotes) {
+private fun MultipleVotesItem(item: PollSwitchState.MultipleVotes) {
     PollSwitchListItem(
         title = stringResource(R.string.stream_compose_poll_option_switch_multiple_answers),
         description = stringResource(R.string.stream_compose_poll_option_switch_multiple_answers_description),
         enabled = item.enabled,
         onCheckedChange = item.onCheckedChange,
     ) {
-        MaxVotesInput(
-            maxVotesPerUser = item.maxVotesPerUser,
-            onMaxVotesCommit = item.onMaxVotesCommit,
+        LimitVotesPerUser(
+            enabled = item.limitVotesEnabled,
+            onCheckedChange = item.onLimitVotesCheckedChange,
+            maxVotesPerUserText = item.maxVotesPerUserText,
+            onMaxVotesChange = item.onMaxVotesChange,
+            onMaxVotesFocusLost = item.onMaxVotesFocusLost,
         )
     }
 }
@@ -107,7 +114,7 @@ private fun MultipleVotesItem(item: PollSwitchItem.MultipleVotes) {
 private fun SimpleSwitchItem(
     title: String,
     description: String,
-    item: PollSwitchItem,
+    item: PollSwitchState,
 ) {
     PollSwitchListItem(
         title = title,
@@ -185,34 +192,51 @@ private fun PollSwitchHeader(
 }
 
 @Composable
-private fun MaxVotesInput(
-    maxVotesPerUser: Int,
-    onMaxVotesCommit: (String) -> Unit,
+private fun LimitVotesPerUser(
+    enabled: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    maxVotesPerUserText: String,
+    onMaxVotesChange: (String) -> Unit,
+    onMaxVotesFocusLost: () -> Unit,
 ) {
-    val colors = ChatTheme.colors
-    var text by remember(maxVotesPerUser) { mutableStateOf(maxVotesPerUser.toString()) }
-    BasicTextField(
-        value = text,
-        onValueChange = { text = it },
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = StreamTokens.spacingXs)
-            .border(
-                width = 1.dp,
-                color = colors.borderCoreDefault,
-                shape = RoundedCornerShape(StreamTokens.radiusMd),
+            .padding(top = StreamTokens.spacingMd),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+            ) {
+                Text(
+                    text = stringResource(R.string.stream_compose_poll_option_limit_votes),
+                    style = ChatTheme.typography.headingSmall,
+                    color = ChatTheme.colors.textPrimary,
+                )
+                Text(
+                    text = stringResource(R.string.stream_compose_poll_option_limit_votes_description),
+                    style = ChatTheme.typography.captionDefault,
+                    color = ChatTheme.colors.textTertiary,
+                )
+            }
+
+            PollSwitch(enabled = enabled, onCheckedChange = onCheckedChange)
+        }
+
+        if (enabled) {
+            Stepper(
+                modifier = Modifier.padding(top = StreamTokens.spacingXs),
+                text = maxVotesPerUserText,
+                onTextChange = onMaxVotesChange,
+                onFocusLost = onMaxVotesFocusLost,
+                range = PollsConstants.MULTIPLE_ANSWERS_RANGE,
             )
-            .padding(StreamTokens.spacingMd)
-            .onFocusChanged { focusState ->
-                if (!focusState.isFocused) {
-                    onMaxVotesCommit(text)
-                }
-            },
-        textStyle = ChatTheme.typography.bodyDefault.copy(color = colors.textPrimary),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        singleLine = true,
-        cursorBrush = SolidColor(colors.accentPrimary),
-    )
+        }
+    }
 }
 
 @Composable
@@ -243,6 +267,79 @@ private fun PollSwitch(enabled: Boolean, onCheckedChange: (Boolean) -> Unit) {
     )
 }
 
+@Composable
+private fun Stepper(
+    text: String,
+    onTextChange: (String) -> Unit,
+    onFocusLost: () -> Unit,
+    range: IntRange,
+    modifier: Modifier = Modifier,
+) {
+    val colors = ChatTheme.colors
+    val currentValue = (text.toIntOrNull() ?: range.first).coerceIn(range)
+
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        StepperButton(
+            iconRes = R.drawable.stream_compose_ic_minus,
+            enabled = currentValue > range.first,
+            onClick = { onTextChange((currentValue - 1).coerceIn(range).toString()) },
+        )
+        BasicTextField(
+            value = text,
+            onValueChange = { newValue -> onTextChange(newValue.filter(Char::isDigit)) },
+            modifier = Modifier
+                .width(40.dp * LocalDensity.current.fontScale)
+                .onFocusChanged { focusState ->
+                    if (!focusState.isFocused) {
+                        onFocusLost()
+                    }
+                },
+            textStyle = ChatTheme.typography.headingSmall.copy(
+                color = colors.textPrimary,
+                textAlign = TextAlign.Center,
+            ),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            singleLine = true,
+            cursorBrush = SolidColor(colors.accentPrimary),
+        )
+        StepperButton(
+            iconRes = R.drawable.stream_compose_ic_plus,
+            enabled = currentValue < range.last,
+            onClick = { onTextChange((currentValue + 1).coerceIn(range).toString()) },
+        )
+    }
+}
+
+@Composable
+private fun StepperButton(
+    iconRes: Int,
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .size(40.dp)
+            .border(
+                width = 1.dp,
+                color = if (enabled) ChatTheme.colors.borderCoreDefault else ChatTheme.colors.borderUtilityDisabled,
+                shape = CircleShape,
+            )
+            .clip(CircleShape)
+            .applyIf(enabled) { clickable(onClick = onClick) },
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            modifier = Modifier.size(20.dp),
+            painter = painterResource(id = iconRes),
+            contentDescription = null,
+            tint = if (enabled) ChatTheme.colors.buttonSecondaryText else ChatTheme.colors.textDisabled,
+        )
+    }
+}
+
 @Preview
 @Composable
 private fun PollSwitchListPreview() {
@@ -255,15 +352,17 @@ private fun PollSwitchListPreview() {
 internal fun PollSwitchList() {
     PollSwitchList(
         items = listOf(
-            PollSwitchItem.MultipleVotes(
+            PollSwitchState.MultipleVotes(
                 enabled = true,
                 onCheckedChange = {},
-                maxVotesPerUser = 5,
-                onMaxVotesCommit = {},
+                limitVotesEnabled = true,
+                onLimitVotesCheckedChange = {},
+                maxVotesPerUserText = "5",
+                onMaxVotesChange = {},
+                onMaxVotesFocusLost = {},
             ),
-            PollSwitchItem.AnonymousPoll(enabled = false, onCheckedChange = {}),
-            PollSwitchItem.SuggestAnOption(enabled = false, onCheckedChange = {}),
-            PollSwitchItem.AllowComments(enabled = false, onCheckedChange = {}),
+            PollSwitchState.AnonymousPoll(enabled = false, onCheckedChange = {}),
+            PollSwitchState.SuggestAnOption(enabled = false, onCheckedChange = {}),
         ),
     )
 }

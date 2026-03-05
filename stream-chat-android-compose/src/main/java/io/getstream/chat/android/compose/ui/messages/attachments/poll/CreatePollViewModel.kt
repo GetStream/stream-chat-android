@@ -35,7 +35,8 @@ import kotlinx.coroutines.flow.update
  * @property question The poll question text.
  * @property optionItemList The list of poll options.
  * @property multipleVotesEnabled Whether the "multiple votes" toggle is on.
- * @property maxVotesPerUser The current max-votes-per-person value.
+ * @property limitVotesEnabled Whether the "limit votes per person" child toggle is on.
+ * @property maxVotesPerUserText The max votes per user text for the stepper.
  * @property anonymousPollEnabled Whether the "anonymous poll" toggle is on.
  * @property suggestAnOptionEnabled Whether the "suggest an option" toggle is on.
  * @property allowCommentsEnabled Whether the "allow comments" toggle is on.
@@ -48,7 +49,8 @@ internal data class CreatePollViewState(
     val question: String = "",
     val optionItemList: List<PollOptionItem> = emptyList(),
     val multipleVotesEnabled: Boolean = false,
-    val maxVotesPerUser: Int = PollsConstants.MIN_NUMBER_OF_MULTIPLE_ANSWERS,
+    val limitVotesEnabled: Boolean = false,
+    val maxVotesPerUserText: String = PollsConstants.MULTIPLE_ANSWERS_RANGE.first.toString(),
     val anonymousPollEnabled: Boolean = false,
     val suggestAnOptionEnabled: Boolean = false,
     val allowCommentsEnabled: Boolean = false,
@@ -84,29 +86,32 @@ internal class CreatePollViewModel(private val pollsConfig: PollsConfig) : ViewM
         )
 
     /**
-     * The list of [PollSwitchItem]s to display, derived from the current state and config.
+     * The list of [PollSwitchState]s to display, derived from the current state and config.
      */
-    val switchItems: StateFlow<List<PollSwitchItem>> = _state
+    val switchItems: StateFlow<List<PollSwitchState>> = _state
         .map { current ->
             buildList {
                 if (pollsConfig.multipleVotes.configurable) {
                     add(
-                        PollSwitchItem.MultipleVotes(
+                        PollSwitchState.MultipleVotes(
                             enabled = current.multipleVotesEnabled,
                             onCheckedChange = ::updateMultipleVotes,
-                            maxVotesPerUser = current.maxVotesPerUser,
-                            onMaxVotesCommit = ::commitMaxVotesText,
+                            limitVotesEnabled = current.limitVotesEnabled,
+                            onLimitVotesCheckedChange = ::updateLimitVotes,
+                            maxVotesPerUserText = current.maxVotesPerUserText,
+                            onMaxVotesChange = ::updateMaxVotes,
+                            onMaxVotesFocusLost = ::coerceMaxVotes,
                         ),
                     )
                 }
                 if (pollsConfig.anonymousPoll.configurable) {
-                    add(PollSwitchItem.AnonymousPoll(current.anonymousPollEnabled, ::updateAnonymousPoll))
+                    add(PollSwitchState.AnonymousPoll(current.anonymousPollEnabled, ::updateAnonymousPoll))
                 }
                 if (pollsConfig.suggestAnOption.configurable) {
-                    add(PollSwitchItem.SuggestAnOption(current.suggestAnOptionEnabled, ::updateSuggestAnOption))
+                    add(PollSwitchState.SuggestAnOption(current.suggestAnOptionEnabled, ::updateSuggestAnOption))
                 }
                 if (pollsConfig.allowComments.configurable) {
-                    add(PollSwitchItem.AllowComments(current.allowCommentsEnabled, ::updateAllowComments))
+                    add(PollSwitchState.AllowComments(current.allowCommentsEnabled, ::updateAllowComments))
                 }
             }
         }
@@ -132,29 +137,39 @@ internal class CreatePollViewModel(private val pollsConfig: PollsConfig) : ViewM
 
     /**
      * Updates the "multiple votes" toggle state.
-     * When disabled, resets maxVotesPerUser.
+     * When disabled, resets limitVotesEnabled and maxVotesPerUser.
      */
     fun updateMultipleVotes(enabled: Boolean) {
         _state.update {
             it.copy(
                 multipleVotesEnabled = enabled,
-                maxVotesPerUser = if (enabled) it.maxVotesPerUser else PollsConstants.MIN_NUMBER_OF_MULTIPLE_ANSWERS,
+                limitVotesEnabled = if (enabled) it.limitVotesEnabled else false,
             )
         }
     }
 
     /**
-     * Commits a raw text value for max votes. Parses and clamps; non-numeric reverts to current value.
+     * Updates the "limit votes per person" child toggle state.
      */
-    fun commitMaxVotesText(text: String) {
-        _state.update { current ->
-            val parsed = text.trim().toIntOrNull() ?: return@update current
-            current.copy(
-                maxVotesPerUser = parsed.coerceIn(
-                    PollsConstants.MIN_NUMBER_OF_MULTIPLE_ANSWERS,
-                    PollsConstants.MAX_NUMBER_OF_MULTIPLE_ANSWERS,
-                ),
-            )
+    fun updateLimitVotes(enabled: Boolean) {
+        _state.update {
+            it.copy(limitVotesEnabled = enabled)
+        }
+    }
+
+    /**
+     * Updates the max votes per user value.
+     */
+    fun updateMaxVotes(text: String) {
+        _state.update { it.copy(maxVotesPerUserText = text) }
+    }
+
+    fun coerceMaxVotes() {
+        _state.update {
+            val coerced = it.maxVotesPerUserText.toIntOrNull()
+                ?.coerceIn(PollsConstants.MULTIPLE_ANSWERS_RANGE)
+                ?: PollsConstants.MULTIPLE_ANSWERS_RANGE.first
+            it.copy(maxVotesPerUserText = coerced.toString())
         }
     }
 
