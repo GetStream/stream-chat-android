@@ -282,7 +282,7 @@ private fun AttachmentLink(link: String, color: Color, modifier: Modifier = Modi
         Icon(
             painter = painterResource(R.drawable.stream_compose_ic_link),
             contentDescription = null,
-            modifier = Modifier.size(StreamTokens.size12),
+            modifier = Modifier.size(12.dp),
             tint = color,
         )
         Text(

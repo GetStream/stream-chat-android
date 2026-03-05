@@ -60,7 +60,7 @@ internal fun CommandChip(
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
     ) {
         Icon(
-            modifier = Modifier.size(StreamTokens.size12),
+            modifier = Modifier.size(12.dp),
             painter = painterResource(id = R.drawable.stream_compose_ic_command_chip),
             contentDescription = null,
             tint = ChatTheme.colors.textInverse,
