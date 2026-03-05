@@ -37,6 +37,8 @@ import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.Date
 
 /**
@@ -299,7 +301,10 @@ internal class ChannelLogicImpl(
         state.setChannelConfig(channel.config)
         // Reset messages (ensure they are sorted - when coming from DB)
         if (messageLimit > 0) {
-            state.setMessages(channel.messages.sortedBy { it.getCreatedAtOrNull() })
+            val sortedMessages = withContext(Dispatchers.Default) {
+                channel.messages.sortedBy { it.getCreatedAtOrNull() }
+            }
+            state.setMessages(sortedMessages)
             state.setEndOfOlderMessages(channel.messages.size < messageLimit)
         }
         // Add pinned messages
