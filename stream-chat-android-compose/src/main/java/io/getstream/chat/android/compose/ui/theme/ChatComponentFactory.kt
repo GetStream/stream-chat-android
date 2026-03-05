@@ -780,7 +780,6 @@ public interface ChatComponentFactory {
             channel = channel,
             currentUser = currentUser,
             connectionState = connectionState,
-            typingUsers = typingUsers,
             messageMode = messageMode,
             onHeaderTitleClick = onClick,
         )

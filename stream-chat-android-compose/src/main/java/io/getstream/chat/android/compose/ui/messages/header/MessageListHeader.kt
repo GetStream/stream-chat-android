@@ -177,7 +177,6 @@ internal fun DefaultMessageListHeaderLeadingContent(onBackPressed: () -> Unit) {
  * @param currentUser The current user.
  * @param connectionState A flag that governs if we show the subtitle or the network loading view.
  * @param modifier Modifier for styling.
- * @param typingUsers The list of typing users.
  * @param messageMode Currently active message mode, used to define the title information.
  * @param onHeaderTitleClick Handler for when the user taps on the header title section.
  */
@@ -188,7 +187,6 @@ public fun DefaultMessageListHeaderCenterContent(
     currentUser: User?,
     connectionState: ConnectionState,
     modifier: Modifier = Modifier,
-    typingUsers: List<User> = emptyList(),
     messageMode: MessageMode = MessageMode.Normal,
     onHeaderTitleClick: ((Channel) -> Unit)? = null,
 ) {
@@ -236,7 +234,6 @@ public fun DefaultMessageListHeaderCenterContent(
             is ConnectionState.Connected -> {
                 DefaultMessageListHeaderSubtitle(
                     subtitle = subtitle,
-                    typingUsers = typingUsers,
                 )
             }
 
@@ -267,12 +264,10 @@ public fun DefaultMessageListHeaderCenterContent(
  * and total member count.
  *
  * @param subtitle The subtitle to show.
- * @param typingUsers Currently typing users (unused, typing is shown in the message list).
  */
 @Composable
 internal fun DefaultMessageListHeaderSubtitle(
     subtitle: String,
-    typingUsers: List<User>,
 ) {
     Text(
         modifier = Modifier.testTag("Stream_ParticipantsInfo"),
