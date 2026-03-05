@@ -159,10 +159,9 @@ private fun buildDmChannelActions(
     viewModel: ChannelListViewModel,
     onViewInfoAction: (Channel) -> Unit,
 ): List<ChannelAction> {
-    val otherUser = selectedChannel.members.firstOrNull { it.user.id != currentUser?.id }?.user
-    val otherUserId = otherUser?.id ?: return emptyList()
-    val isUserMuted = viewModel.isUserMuted(otherUserId)
-    val isUserBlocked = viewModel.isUserBlocked(otherUserId)
+    val otherUserId = selectedChannel.members.firstOrNull { it.user.id != currentUser?.id }?.user?.id
+    val isUserMuted = otherUserId?.let { viewModel.isUserMuted(it) } ?: false
+    val isUserBlocked = otherUserId?.let { viewModel.isUserBlocked(it) } ?: false
     val canDeleteChannel = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
 
     return listOfNotNull(
@@ -175,7 +174,7 @@ private fun buildDmChannelActions(
         } else {
             null
         },
-        if (optionVisibility.isMuteChannelVisible) {
+        if (otherUserId != null && optionVisibility.isMuteChannelVisible) {
             if (isUserMuted) {
                 UnmuteUser(
                     channel = selectedChannel,
@@ -192,7 +191,9 @@ private fun buildDmChannelActions(
         } else {
             null
         },
-        if (isUserBlocked) {
+        if (otherUserId == null) {
+            null
+        } else if (isUserBlocked) {
             UnblockUser(
                 channel = selectedChannel,
                 label = stringResource(id = R.string.stream_compose_selected_channel_menu_unblock_user),

@@ -307,7 +307,7 @@ internal fun GroupChannelInfoAvatarContainer(
     members: ExpandableList<Member>,
 ) {
     val totalMembers = members.size + members.collapsedCount
-    val onlineCount = members.count { it.user.online }
+    val onlineCount = channel.members.count { it.user.online }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
