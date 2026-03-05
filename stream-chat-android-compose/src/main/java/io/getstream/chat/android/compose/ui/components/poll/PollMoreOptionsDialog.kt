@@ -199,7 +199,7 @@ private fun LazyListScope.pollMoreOptionsContent(
             poll = poll,
             option = option,
             voteCount = voteCount,
-            checkedCount = poll.ownVotes.count { it.optionId == option.id },
+            checkedCount = poll.ownVotes.size,
             checked = isVotedByMine,
             onCastVote = { onCastVote.invoke(option) },
             onRemoveVote = {
