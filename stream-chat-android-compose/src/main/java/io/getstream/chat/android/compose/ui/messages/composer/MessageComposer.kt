@@ -223,7 +223,7 @@ public fun MessageComposer(
 
     MessageComposerSurface(modifier = modifier) {
         if (userSuggestions.isNotEmpty()) {
-            SuggestionsMenu {
+            SuggestionsMenu(contentMaxHeight = UserSuggestionsMaxHeight) {
                 UserSuggestionList(
                     users = userSuggestions,
                     currentUser = messageComposerState.currentUser,
@@ -233,7 +233,7 @@ public fun MessageComposer(
         }
 
         if (commandSuggestions.isNotEmpty()) {
-            SuggestionsMenu {
+            SuggestionsMenu(contentMaxHeight = CommandSuggestionsMaxHeight) {
                 CommandSuggestionList(
                     commands = commandSuggestions,
                     onCommandSelected = onCommandSelected,
@@ -276,6 +276,9 @@ public fun MessageComposer(
         }
     }
 }
+
+private val UserSuggestionsMaxHeight = 176.dp
+private val CommandSuggestionsMaxHeight = 208.dp
 
 @Composable
 private fun MessageComposerSurface(
