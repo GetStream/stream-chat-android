@@ -117,6 +117,7 @@ import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
+import io.getstream.chat.android.compose.ui.components.common.CommandChip
 import io.getstream.chat.android.compose.ui.components.common.ContextualMenuItem
 import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
@@ -140,19 +141,16 @@ import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSiz
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleSize
 import io.getstream.chat.android.compose.ui.components.selectedmessage.MessageMenuHeader
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
-import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionItem
-import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionList
-import io.getstream.chat.android.compose.ui.components.suggestions.commands.DefaultCommandSuggestionItemCenterContent
-import io.getstream.chat.android.compose.ui.components.suggestions.commands.DefaultCommandSuggestionItemLeadingContent
-import io.getstream.chat.android.compose.ui.components.suggestions.mentions.DefaultMentionSuggestionItemCenterContent
-import io.getstream.chat.android.compose.ui.components.suggestions.mentions.DefaultMentionSuggestionItemLeadingContent
-import io.getstream.chat.android.compose.ui.components.suggestions.mentions.DefaultMentionSuggestionItemTrailingContent
-import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionItem
-import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionList
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerActions
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordingButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerEditIndicator
+import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.CommandSuggestionItem
+import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultCommandSuggestionItemCenterContent
+import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultCommandSuggestionItemLeadingContent
+import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultUserSuggestionItemCenterContent
+import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultUserSuggestionItemLeadingContent
+import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.UserSuggestionItem
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderTrailingContent
@@ -166,6 +164,7 @@ import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageListLoad
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageModeratedContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageThreadSeparatorContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageTop
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageTypingIndicatorContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageUnreadSeparatorContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesHelperContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesLoadingMoreIndicator
@@ -779,7 +778,6 @@ public interface ChatComponentFactory {
             channel = channel,
             currentUser = currentUser,
             connectionState = connectionState,
-            typingUsers = typingUsers,
             messageMode = messageMode,
             onHeaderTitleClick = onClick,
         )
@@ -1005,6 +1003,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun LazyItemScope.MessageListTypingIndicatorItemContent(typingItem: TypingItemState) {
+        DefaultMessageTypingIndicatorContent(typingItem)
     }
 
     /**
@@ -1405,12 +1404,10 @@ public interface ChatComponentFactory {
         onAttachmentRemoved: (Attachment) -> Unit,
         onCancelAction: () -> Unit,
         onLinkPreviewClick: ((LinkPreview) -> Unit)?,
-        onMentionSelected: (User) -> Unit,
+        onUserSelected: (User) -> Unit,
         onCommandSelected: (Command) -> Unit,
         onAlsoSendToChannelSelected: (Boolean) -> Unit,
         recordingActions: AudioRecordingActions,
-        mentionPopupContent: @Composable (List<User>) -> Unit,
-        commandPopupContent: @Composable (List<Command>) -> Unit,
         input: @Composable RowScope.(MessageComposerState) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.composer.MessageComposer(
@@ -1423,12 +1420,10 @@ public interface ChatComponentFactory {
             onAttachmentRemoved = onAttachmentRemoved,
             onCancelAction = onCancelAction,
             onLinkPreviewClick = onLinkPreviewClick,
-            onMentionSelected = onMentionSelected,
+            onUserSelected = onUserSelected,
             onCommandSelected = onCommandSelected,
             onAlsoSendToChannelChange = onAlsoSendToChannelSelected,
             recordingActions = recordingActions,
-            mentionPopupContent = mentionPopupContent,
-            commandPopupContent = commandPopupContent,
             input = input,
         )
     }
@@ -1460,92 +1455,85 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default mentions popup content of the message composer.
-     * Shown when the user types '@' in the composer, and there are available users that can be mentioned.
+     * The default user suggestion item of the message composer.
      *
-     * @param mentionSuggestions The list of mention suggestions to show.
-     * @param onMentionSelected The action to perform when a mention is selected.
-     */
-    @Composable
-    public fun MessageComposerMentionsPopupContent(
-        mentionSuggestions: List<User>,
-        onMentionSelected: (User) -> Unit,
-    ) {
-        MentionSuggestionList(users = mentionSuggestions, onMentionSelected = onMentionSelected)
-    }
-
-    /**
-     * The default mention suggestion item of the message composer.
-     *
-     * Used in [MessageComposerMentionsPopupContent].
+     * Used in [io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.UserSuggestionList].
      *
      * @param user The user for which the suggestion is rendered.
-     * @param onMentionSelected The action to perform when the mention is selected.
+     * @param currentUser The current user.
+     * @param onUserSelected The action to perform when the user is selected.
      */
     @Composable
-    public fun MessageComposerMentionSuggestionItem(
+    public fun MessageComposerUserSuggestionItem(
         user: User,
-        onMentionSelected: (User) -> Unit,
+        currentUser: User?,
+        onUserSelected: (User) -> Unit,
     ) {
-        MentionSuggestionItem(user = user, onMentionSelected = onMentionSelected)
+        UserSuggestionItem(
+            user = user,
+            currentUser = currentUser,
+            onUserSelected = onUserSelected,
+        )
     }
 
     /**
-     * The default leading content of the mention suggestion item of the message composer.
+     * The default leading content of the user suggestion item of the message composer.
      *
-     * Used as part of [MessageComposerMentionSuggestionItem].
+     * Used as part of [MessageComposerUserSuggestionItem].
      *
+     * @param modifier The modifier to apply to the composable.
      * @param user The user for which the leading content is rendered.
      */
     @Composable
-    public fun RowScope.MessageComposerMentionSuggestionItemLeadingContent(user: User) {
-        DefaultMentionSuggestionItemLeadingContent(user)
+    public fun MessageComposerUserSuggestionItemLeadingContent(
+        modifier: Modifier,
+        user: User,
+        currentUser: User?,
+    ) {
+        DefaultUserSuggestionItemLeadingContent(
+            modifier = modifier,
+            user = user,
+        )
     }
 
     /**
-     * The default center content of the mention suggestion item of the message composer.
+     * The default center content of the user suggestion item of the message composer.
      *
-     * Used as part of [MessageComposerMentionSuggestionItem].
+     * Used as part of [MessageComposerUserSuggestionItem].
      *
+     * @param modifier The modifier to apply to the composable.
      * @param user The user for which the center content is rendered.
      */
     @Composable
-    public fun RowScope.MessageComposerMentionSuggestionItemCenterContent(user: User) {
-        DefaultMentionSuggestionItemCenterContent(user)
+    public fun MessageComposerUserSuggestionItemCenterContent(
+        modifier: Modifier,
+        user: User,
+    ) {
+        DefaultUserSuggestionItemCenterContent(
+            modifier = modifier,
+            user = user,
+        )
     }
 
     /**
-     * The default trailing content of the mention suggestion item of the message composer.
+     * The default trailing content of the user suggestion item of the message composer.
      *
-     * Used as part of [MessageComposerMentionSuggestionItem].
+     * Used as part of [MessageComposerUserSuggestionItem].
      *
+     * @param modifier The modifier to apply to the composable.
      * @param user The user for which the trailing content is rendered.
      */
     @Composable
-    public fun RowScope.MessageComposerMentionSuggestionItemTrailingContent(user: User) {
-        DefaultMentionSuggestionItemTrailingContent()
-    }
-
-    /**
-     * The default instant commands popup content of the message composer.
-     * Shown when the user types '/' in the composer, and there are available commands that can be used, or when the
-     * user click the "Commands" button.
-     *
-     * @param commandSuggestions The list of command suggestions to show.
-     * @param onCommandSelected The action to perform when a command is selected.
-     */
-    @Composable
-    public fun MessageComposerCommandsPopupContent(
-        commandSuggestions: List<Command>,
-        onCommandSelected: (Command) -> Unit,
+    public fun MessageComposerUserSuggestionItemTrailingContent(
+        modifier: Modifier,
+        user: User,
     ) {
-        CommandSuggestionList(commands = commandSuggestions, onCommandSelected = onCommandSelected)
     }
 
     /**
      * The default command suggestion item of the message composer.
      *
-     * Used in [MessageComposerCommandsPopupContent].
+     * Used in [io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.CommandSuggestionList].
      *
      * @param command The command for which the suggestion is rendered.
      * @param onCommandSelected The action to perform when the command is selected.
@@ -1555,7 +1543,10 @@ public interface ChatComponentFactory {
         command: Command,
         onCommandSelected: (Command) -> Unit,
     ) {
-        CommandSuggestionItem(command, onCommandSelected = onCommandSelected)
+        CommandSuggestionItem(
+            command = command,
+            onCommandSelected = onCommandSelected,
+        )
     }
 
     /**
@@ -1563,11 +1554,18 @@ public interface ChatComponentFactory {
      *
      * Used as part of [MessageComposerCommandSuggestionItem].
      *
+     * @param modifier The modifier to apply to the composable.
      * @param command The command for which the leading content is rendered.
      */
     @Composable
-    public fun RowScope.MessageComposerCommandSuggestionItemLeadingContent(command: Command) {
-        DefaultCommandSuggestionItemLeadingContent(command)
+    public fun MessageComposerCommandSuggestionItemLeadingContent(
+        modifier: Modifier,
+        command: Command,
+    ) {
+        DefaultCommandSuggestionItemLeadingContent(
+            modifier = modifier,
+            command = command,
+        )
     }
 
     /**
@@ -1634,6 +1632,7 @@ public interface ChatComponentFactory {
         onSendClick: (String, List<Attachment>) -> Unit,
         onAlsoSendToChannelChange: (Boolean) -> Unit,
         recordingActions: AudioRecordingActions,
+        onActiveCommandDismiss: () -> Unit,
     ) {
         MessageInput(
             modifier = modifier,
@@ -1646,6 +1645,7 @@ public interface ChatComponentFactory {
             onSendClick = onSendClick,
             onAlsoSendToChannelChange = onAlsoSendToChannelChange,
             recordingActions = recordingActions,
+            onActiveCommandDismiss = onActiveCommandDismiss,
         )
     }
 
@@ -1701,17 +1701,23 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default leading content of the message composer.
-     * Shown at the start of the composer input.
+     * The default leading content of the message composer input row.
+     * Shown at the start of the composer input, before the text field.
+     * When a command is active, renders a [CommandChip].
      *
      * Used as part of [MessageComposerInput].
-     *
-     * @param state The current state of the message composer.
      */
     @Composable
-    public fun MessageComposerInputLeadingContent(
-        state: MessageComposerState,
-    ) {
+    public fun MessageComposerInputLeadingContent(params: MessageComposerInputLeadingContentParams) {
+        val activeCommand = params.state.activeCommand ?: return
+        CommandChip(
+            modifier = params.modifier.padding(
+                start = StreamTokens.spacingSm,
+                bottom = StreamTokens.spacingSm,
+            ),
+            command = activeCommand,
+            onDismiss = params.onActiveCommandDismiss,
+        )
     }
 
     /**

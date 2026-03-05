@@ -14,40 +14,27 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.components.poll
+package io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions
 
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
+import com.android.ide.common.rendering.api.SessionParams
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import org.junit.Rule
 import org.junit.Test
 
-internal class PollOptionInputTest : PaparazziComposeTest {
+internal class CommandSuggestionListTest : PaparazziComposeTest {
 
     @get:Rule
-    override val paparazzi: Paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
+    override val paparazzi = Paparazzi(
+        deviceConfig = DeviceConfig.PIXEL_2,
+        renderingMode = SessionParams.RenderingMode.SHRINK,
+    )
 
     @Test
-    fun `empty input`() {
-        snapshotWithDarkMode {
-            PollOptionInput(
-                value = "",
-                onValueChange = {},
-                description = "Description",
-                decorationBox = { innerTextField -> innerTextField.invoke() },
-            )
-        }
-    }
-
-    @Test
-    fun `with input`() {
-        snapshotWithDarkMode {
-            PollOptionInput(
-                value = "Entered text",
-                onValueChange = {},
-                description = "Description",
-                decorationBox = { innerTextField -> innerTextField.invoke() },
-            )
+    fun `command suggestion list`() {
+        snapshotWithDarkModeRow {
+            CommandSuggestionList()
         }
     }
 }

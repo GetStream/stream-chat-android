@@ -23,18 +23,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -42,18 +34,16 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.R
@@ -68,158 +58,155 @@ import io.getstream.chat.android.ui.common.utils.PollsConstants
  * @param modifier The [Modifier] for styling.
  * @param pollSwitchItems A list of [PollSwitchItem] to create the configuration list.
  * @param onSwitchesChanged A lambda that will be executed when a switch on the list is changed.
- * @param itemHeightSize The height size of the question item.
- * @param itemInnerPadding The inner padding size of the question item.
  */
 @Composable
 public fun PollSwitchList(
     modifier: Modifier = Modifier,
     pollSwitchItems: List<PollSwitchItem>,
     onSwitchesChanged: (List<PollSwitchItem>) -> Unit,
-    itemHeightSize: Dp = 56.dp,
-    itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
 ) {
-    @Suppress("SpreadOperator")
-    val switchItemList = remember(pollSwitchItems) { mutableStateListOf(*pollSwitchItems.toTypedArray()) }
-    val heightIn = pollSwitchItems.size * (itemHeightSize.value * 2 + 8)
+    val switchItemList = remember(pollSwitchItems) { pollSwitchItems.toMutableStateList() }
 
-    LazyColumn(
-        modifier = modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .fillMaxWidth()
-            .heightIn(max = heightIn.dp),
-        state = rememberLazyListState(),
-        userScrollEnabled = false,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingMd),
     ) {
-        itemsIndexed(switchItemList, key = { _, item -> item.key }) { index, item ->
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .animateContentSize()
-                    .height(
-                        if (item.pollSwitchInput != null && item.enabled) {
-                            itemHeightSize * 2
-                        } else {
-                            itemHeightSize
-                        },
-                    )
-                    .border(
-                        width = 1.dp,
-                        color = if (item.pollOptionError == null) {
-                            ChatTheme.colors.backgroundCoreSurface
-                        } else {
-                            ChatTheme.colors.accentError
-                        },
-                        shape = RoundedCornerShape(StreamTokens.radiusXl),
-                    )
-                    .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
-                    .background(ChatTheme.colors.backgroundCoreSurface),
-            ) {
-                val layoutDirection = LocalLayoutDirection.current
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.Center)
-                        .padding(
-                            start = itemInnerPadding.calculateStartPadding(layoutDirection = layoutDirection),
-                            end = itemInnerPadding.calculateEndPadding(layoutDirection = layoutDirection),
-                        ),
-                ) {
-                    val context = LocalContext.current
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f),
-                            text = item.title,
-                            color = ChatTheme.colors.textPrimary,
-                            fontSize = 16.sp,
-                        )
-
-                        Switch(
-                            colors = SwitchDefaults.colors().copy(
-                                checkedTrackColor = ChatTheme.colors.accentSuccess,
-                                checkedBorderColor = ChatTheme.colors.accentSuccess,
-                                uncheckedTrackColor = ChatTheme.colors.textSecondary,
-                                uncheckedBorderColor = ChatTheme.colors.textSecondary,
-                            ),
-                            thumbContent = {
-                                Box(
-                                    modifier = Modifier
-                                        .size(24.dp)
-                                        .clip(CircleShape)
-                                        .background(
-                                            color = if (item.enabled) {
-                                                Color.White
-                                            } else {
-                                                ChatTheme.colors.backgroundCoreDisabled
-                                            },
-                                        ),
-                                )
-                            },
-                            checked = item.enabled,
-                            onCheckedChange = { checked ->
-                                switchItemList[index] = item.copy(
-                                    enabled = checked,
-                                    // Validate the poll switch input even on checked state change
-                                    pollOptionError = item.pollSwitchInput?.run {
-                                        if (checked) {
-                                            errorOrNull(context, value.toString())
-                                        } else {
-                                            null
-                                        }
-                                    },
-                                )
-                                onSwitchesChanged(switchItemList)
-                            },
-                        )
-                    }
-
-                    if (item.pollSwitchInput != null && item.enabled) {
-                        val switchInput = item.pollSwitchInput
-                        PollOptionInput(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f),
-                            value = switchInput.value.toString(),
-                            description = switchInput.description,
-                            shape = RoundedCornerShape(0.dp),
-                            keyboardOptions = KeyboardOptions(keyboardType = switchInput.keyboardType),
-                            onValueChange = { newValue ->
-                                switchItemList[index] = item.copy(
-                                    pollSwitchInput = switchInput.copy(value = newValue),
-                                    pollOptionError = switchInput.errorOrNull(context, newValue),
-                                )
-                                onSwitchesChanged(switchItemList)
-                            },
-                            innerPadding = PaddingValues(vertical = 4.dp),
-                            decorationBox = { innerTextField ->
-                                if (item.pollOptionError == null) {
-                                    innerTextField.invoke()
-                                } else if (item.title.isNotBlank()) {
-                                    Column {
-                                        Text(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(bottom = 4.dp),
-                                            text = item.pollOptionError.message,
-                                            color = ChatTheme.colors.accentError,
-                                            fontSize = 12.sp,
-                                        )
-                                        innerTextField.invoke()
-                                    }
-                                }
-                            },
-                        )
-                    }
-                }
-            }
+        switchItemList.forEachIndexed { index, item ->
+            PollSwitchListItem(
+                item = item,
+                onItemChanged = { newItem ->
+                    switchItemList[index] = newItem
+                    onSwitchesChanged(switchItemList.toList())
+                },
+            )
         }
     }
+}
+
+@Composable
+private fun PollSwitchListItem(
+    item: PollSwitchItem,
+    onItemChanged: (PollSwitchItem) -> Unit,
+) {
+    val borderColor = if (item.pollOptionError == null) {
+        ChatTheme.colors.backgroundCoreSurface
+    } else {
+        ChatTheme.colors.accentError
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize()
+            .border(width = 1.dp, color = borderColor, shape = RoundedCornerShape(StreamTokens.radiusXl))
+            .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
+            .background(ChatTheme.colors.backgroundCoreSurface)
+            .padding(StreamTokens.spacingMd),
+    ) {
+        val context = LocalContext.current
+        PollSwitchHeader(
+            item = item,
+            onCheckedChange = { checked ->
+                onItemChanged(
+                    item.copy(
+                        enabled = checked,
+                        pollOptionError = item.pollSwitchInput?.run {
+                            if (checked) errorOrNull(context, value.toString()) else null
+                        },
+                    ),
+                )
+            },
+        )
+
+        if (item.pollSwitchInput != null && item.enabled) {
+            PollSwitchInputField(item = item, onItemChanged = onItemChanged)
+        }
+    }
+}
+
+@Composable
+private fun PollSwitchHeader(
+    item: PollSwitchItem,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().weight(1f),
+            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+        ) {
+            Text(
+                text = item.title,
+                style = ChatTheme.typography.headingSmall,
+                color = ChatTheme.colors.textPrimary,
+            )
+            Text(
+                text = item.description,
+                style = ChatTheme.typography.captionDefault,
+                color = ChatTheme.colors.textTertiary,
+            )
+        }
+
+        Switch(
+            colors = SwitchDefaults.colors(
+                checkedTrackColor = ChatTheme.colors.accentPrimary,
+                checkedBorderColor = ChatTheme.colors.accentPrimary,
+                uncheckedTrackColor = ChatTheme.colors.textSecondary,
+                uncheckedBorderColor = ChatTheme.colors.textSecondary,
+            ),
+            thumbContent = {
+                Box(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clip(CircleShape)
+                        .background(
+                            color = if (item.enabled) Color.White else ChatTheme.colors.backgroundCoreDisabled,
+                        ),
+                )
+            },
+            checked = item.enabled,
+            onCheckedChange = onCheckedChange,
+        )
+    }
+}
+
+@Composable
+private fun PollSwitchInputField(
+    item: PollSwitchItem,
+    onItemChanged: (PollSwitchItem) -> Unit,
+) {
+    val context = LocalContext.current
+    val switchInput = item.pollSwitchInput ?: return
+    PollOptionInput(
+        modifier = Modifier.fillMaxWidth(),
+        value = switchInput.value.toString(),
+        description = switchInput.description,
+        keyboardOptions = KeyboardOptions(keyboardType = switchInput.keyboardType),
+        onValueChange = { newValue ->
+            onItemChanged(
+                item.copy(
+                    pollSwitchInput = switchInput.copy(value = newValue),
+                    pollOptionError = switchInput.errorOrNull(context, newValue),
+                ),
+            )
+        },
+        decorationBox = { innerTextField ->
+            if (item.pollOptionError == null) {
+                innerTextField.invoke()
+            } else if (item.title.isNotBlank()) {
+                Column {
+                    Text(
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
+                        text = item.pollOptionError.message,
+                        color = ChatTheme.colors.accentError,
+                        fontSize = 12.sp,
+                    )
+                    innerTextField.invoke()
+                }
+            }
+        },
+    )
 }
 
 internal fun PollSwitchInput.errorOrNull(
@@ -235,12 +222,14 @@ internal fun PollSwitchInput.errorOrNull(
             parse = String::toIntOrNull,
             defaultValue = -1,
         )
+
         KeyboardType.Decimal -> validateRange(
             context = context,
             input = input,
             parse = String::toFloatOrNull,
             defaultValue = -1f,
         )
+
         else -> null
     }
 }
@@ -255,7 +244,7 @@ private inline fun <T : Comparable<T>> PollSwitchInput.validateRange(
     val min = minValue?.toString()?.let(parse) ?: defaultValue
     val max = maxValue?.toString()?.let(parse) ?: defaultValue
 
-    return if (value < min || value > max) {
+    return if (value !in min..max) {
         PollOptionNumberExceed(
             message = context.getString(R.string.stream_ui_poll_multiple_answers_error, min, max),
         )
@@ -279,6 +268,7 @@ internal fun PollSwitchList() {
         pollSwitchItems = listOf(
             PollSwitchItem(
                 title = stringResource(id = R.string.stream_compose_poll_option_switch_multiple_answers),
+                description = stringResource(R.string.stream_compose_poll_option_switch_multiple_answers_description),
                 pollSwitchInput = PollSwitchInput(
                     keyboardType = KeyboardType.Number,
                     description = stringResource(id = R.string.stream_compose_poll_option_max_number_of_answers_hint),
@@ -296,6 +286,7 @@ internal fun PollSwitchList() {
             ),
             PollSwitchItem(
                 title = stringResource(id = R.string.stream_compose_poll_option_switch_multiple_answers),
+                description = stringResource(R.string.stream_compose_poll_option_switch_multiple_answers_description),
                 pollSwitchInput = PollSwitchInput(
                     keyboardType = KeyboardType.Text,
                     value = "",
@@ -305,10 +296,12 @@ internal fun PollSwitchList() {
             ),
             PollSwitchItem(
                 title = stringResource(id = R.string.stream_compose_poll_option_switch_anonymous_poll),
+                description = stringResource(R.string.stream_compose_poll_option_switch_anonymous_poll_description),
                 enabled = false,
             ),
             PollSwitchItem(
                 title = stringResource(id = R.string.stream_compose_poll_option_switch_suggest_option),
+                description = stringResource(R.string.stream_compose_poll_option_switch_suggest_option_description),
                 enabled = false,
             ),
         ),

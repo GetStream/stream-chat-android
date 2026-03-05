@@ -1117,7 +1117,7 @@ internal class ChannelLogicImplTest {
     inner class UpdateDataForChannel {
 
         @Test
-        fun `should update channel data`() {
+        fun `should update channel data`() = runTest {
             // Given
             val channel = randomChannel(
                 id = "123",
@@ -1139,7 +1139,7 @@ internal class ChannelLogicImplTest {
         }
 
         @Test
-        fun `should update member count`() {
+        fun `should update member count`() = runTest {
             // Given
             val channel = randomChannel(
                 id = "123",
@@ -1158,7 +1158,7 @@ internal class ChannelLogicImplTest {
         }
 
         @Test
-        fun `should upsert members`() {
+        fun `should upsert members`() = runTest {
             // Given
             val members = listOf(randomMember(), randomMember())
             val channel = randomChannel(
@@ -1178,7 +1178,7 @@ internal class ChannelLogicImplTest {
         }
 
         @Test
-        fun `should upsert watchers`() {
+        fun `should upsert watchers`() = runTest {
             // Given
             val watchers = listOf(User(id = "u1"), User(id = "u2"))
             val channel = randomChannel(
@@ -1198,7 +1198,7 @@ internal class ChannelLogicImplTest {
         }
 
         @Test
-        fun `should update reads`() {
+        fun `should update reads`() = runTest {
             // Given
             val reads = listOf(randomChannelUserRead())
             val channel = randomChannel(
@@ -1219,7 +1219,7 @@ internal class ChannelLogicImplTest {
         }
 
         @Test
-        fun `should update channel config`() {
+        fun `should update channel config`() = runTest {
             // Given
             val config = Config(name = "test")
             val channel = randomChannel(
@@ -1240,13 +1240,14 @@ internal class ChannelLogicImplTest {
         }
 
         @Test
-        fun `should set messages when messageLimit is positive`() {
-            // Given
-            val messages = listOf(randomMessage(id = "m1"), randomMessage(id = "m2"))
+        fun `should set messages sorted by createdAt when messageLimit is positive`() = runTest {
+            // Given - messages in descending order (as returned by the DB query)
+            val olderMessage = randomMessage(id = "m1", createdAt = Date(1000L), createdLocallyAt = null)
+            val newerMessage = randomMessage(id = "m2", createdAt = Date(2000L), createdLocallyAt = null)
             val channel = randomChannel(
                 id = "123",
                 type = "messaging",
-                messages = messages,
+                messages = listOf(newerMessage, olderMessage), // DESC from DB
                 members = emptyList(),
                 watchers = emptyList(),
                 read = emptyList(),
@@ -1255,12 +1256,12 @@ internal class ChannelLogicImplTest {
             )
             // When
             sut.updateDataForChannel(channel = channel, messageLimit = 30)
-            // Then
-            verify(stateImpl).setMessages(messages)
+            // Then - messages must be sorted ascending before being set into state
+            verify(stateImpl).setMessages(listOf(olderMessage, newerMessage))
         }
 
         @Test
-        fun `should set end of older messages based on message count vs limit`() {
+        fun `should set end of older messages based on message count vs limit`() = runTest {
             // Given (messageLimit=30, messages.size=2, so endOfOlder=true)
             val messages = listOf(randomMessage(id = "m1"), randomMessage(id = "m2"))
             val channel = randomChannel(
@@ -1280,7 +1281,7 @@ internal class ChannelLogicImplTest {
         }
 
         @Test
-        fun `should set end of older messages to false when messages fill the limit`() {
+        fun `should set end of older messages to false when messages fill the limit`() = runTest {
             // Given (messageLimit=2, messages.size=2, so endOfOlder=false)
             val messages = listOf(randomMessage(id = "m1"), randomMessage(id = "m2"))
             val channel = randomChannel(
@@ -1300,7 +1301,7 @@ internal class ChannelLogicImplTest {
         }
 
         @Test
-        fun `should not set messages when messageLimit is zero`() {
+        fun `should not set messages when messageLimit is zero`() = runTest {
             // Given
             val messages = listOf(randomMessage(id = "m1"))
             val channel = randomChannel(
@@ -1321,7 +1322,7 @@ internal class ChannelLogicImplTest {
         }
 
         @Test
-        fun `should add pinned messages`() {
+        fun `should add pinned messages`() = runTest {
             // Given
             val pinnedMessages = listOf(randomMessage(id = "p1", pinned = true))
             val channel = randomChannel(
@@ -1341,7 +1342,7 @@ internal class ChannelLogicImplTest {
         }
 
         @Test
-        fun `should reset loading states`() {
+        fun `should reset loading states`() = runTest {
             // Given
             val channel = randomChannel(
                 id = "123",

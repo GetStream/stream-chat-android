@@ -16,8 +16,12 @@
 
 package io.getstream.chat.android.compose.ui.messages.list
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -39,10 +43,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.compose.ui.components.TypingIndicator
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
+import io.getstream.chat.android.compose.ui.components.common.CountBadge
+import io.getstream.chat.android.compose.ui.components.common.CountBadgeSize
+import io.getstream.chat.android.compose.ui.components.messages.MessageBubble
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
@@ -50,11 +63,13 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
+import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.StartOfTheChannelItemState
 import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
@@ -266,5 +281,74 @@ internal fun DefaultMessageModeratedContent(moderatedMessageItemState: Moderated
         color = ChatTheme.colors.textSecondary,
         style = ChatTheme.typography.metadataEmphasis,
         textAlign = TextAlign.Center,
+    )
+}
+
+/**
+ * The default typing indicator content shown as a message bubble in the message list.
+ *
+ * @param state The typing item state containing the list of typing users.
+ */
+@Composable
+internal fun DefaultMessageTypingIndicatorContent(state: TypingItemState) {
+    Row(
+        modifier = Modifier
+            .padding(StreamTokens.spacingXs)
+            .testTag("Stream_MessageListTypingIndicator"),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+        verticalAlignment = Alignment.Bottom,
+    ) {
+        val overflowCount = state.typingUsers.size - MaxTypingUsersAvatars
+        UserAvatarStack(
+            overlap = StreamTokens.spacingXs,
+            users = state.typingUsers.take(MaxTypingUsersAvatars),
+            avatarSize = AvatarSize.Medium,
+            showBorder = true,
+            trailingContent = if (overflowCount > 0) {
+                { CountBadge(text = "+$overflowCount", size = CountBadgeSize.Medium) }
+            } else {
+                null
+            },
+        )
+
+        val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(state)
+        MessageBubble(
+            modifier = Modifier.padding(bottom = StreamTokens.spacing3xs),
+            color = MessageStyling.backgroundColor(outgoing = false),
+            shape = MessageStyling.shape(MessagePosition.BOTTOM, messageAlignment = messageAlignment),
+            border = BorderStroke(1.dp, ChatTheme.colors.chatBorderIncoming),
+        ) {
+            Box(
+                modifier = Modifier
+                    .defaultMinSize(minWidth = 36.dp, minHeight = 36.dp)
+                    .padding(vertical = StreamTokens.spacingXs, horizontal = StreamTokens.spacingSm),
+                contentAlignment = Alignment.Center,
+            ) {
+                TypingIndicator()
+            }
+        }
+    }
+}
+
+private const val MaxTypingUsersAvatars = 3
+
+@Preview(showBackground = true)
+@Composable
+private fun TypingIndicatorContentPreview() {
+    ChatPreviewTheme {
+        TypingIndicatorContentMultipleUsers()
+    }
+}
+
+@Composable
+internal fun TypingIndicatorContentMultipleUsers() {
+    DefaultMessageTypingIndicatorContent(
+        state = TypingItemState(
+            typingUsers = listOf(
+                PreviewUserData.user1,
+                PreviewUserData.user2,
+                PreviewUserData.user3,
+            ),
+        ),
     )
 }

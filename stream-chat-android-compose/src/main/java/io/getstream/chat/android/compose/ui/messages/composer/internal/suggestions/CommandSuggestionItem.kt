@@ -1,0 +1,122 @@
+/*
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.clickable
+import io.getstream.chat.android.compose.ui.util.extensions.internal.iconRes
+import io.getstream.chat.android.compose.ui.util.extensions.internal.isPolychromaticIcon
+import io.getstream.chat.android.models.Command
+
+@Composable
+internal fun CommandSuggestionItem(
+    command: Command,
+    modifier: Modifier = Modifier,
+    onCommandSelected: (Command) -> Unit = {},
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onCommandSelected(command) }
+            .padding(StreamTokens.spacingSm)
+            .testTag("Stream_SuggestionListGiphyButton"),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        ChatTheme.componentFactory.MessageComposerCommandSuggestionItemLeadingContent(
+            modifier = Modifier,
+            command = command,
+        )
+
+        ChatTheme.componentFactory.MessageComposerCommandSuggestionItemCenterContent(
+            modifier = Modifier.weight(1f),
+            command = command,
+        )
+    }
+}
+
+/**
+ * Represents the default content shown at the start of the command list item.
+ *
+ * @param command The command to show the icon for.
+ */
+@Composable
+internal fun DefaultCommandSuggestionItemLeadingContent(
+    command: Command,
+    modifier: Modifier = Modifier,
+) {
+    if (command.isPolychromaticIcon) {
+        Image(
+            modifier = modifier.padding(end = StreamTokens.spacingSm),
+            painter = painterResource(id = command.iconRes),
+            contentDescription = null,
+        )
+    } else {
+        Icon(
+            modifier = modifier.padding(end = StreamTokens.spacingSm),
+            painter = painterResource(id = command.iconRes),
+            contentDescription = null,
+            tint = ChatTheme.colors.textSecondary,
+        )
+    }
+}
+
+/**
+ *  Represents the center portion of the command item, that show the user name and the user ID.
+ *
+ *  @param command The user to show the info for.
+ *  @param modifier Modifier for styling.
+ */
+@Composable
+internal fun DefaultCommandSuggestionItemCenterContent(
+    command: Command,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+    ) {
+        Text(
+            text = command.name.replaceFirstChar(Char::uppercase),
+            style = ChatTheme.typography.bodyDefault,
+            color = ChatTheme.colors.textPrimary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = command.description,
+            style = ChatTheme.typography.captionDefault,
+            color = ChatTheme.colors.textTertiary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}

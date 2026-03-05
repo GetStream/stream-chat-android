@@ -39,11 +39,13 @@ internal class CreatePollViewModelTest {
     private val defaultSwitches = listOf(
         PollSwitchItem(
             title = "Multiple answers",
+            description = "",
             enabled = false,
             key = "maxVotesAllowed",
         ),
         PollSwitchItem(
             title = "Anonymous poll",
+            description = "",
             enabled = false,
             key = "votingVisibility",
         ),
@@ -115,6 +117,7 @@ internal class CreatePollViewModelTest {
         val newSwitches = listOf(
             PollSwitchItem(
                 title = "Multiple answers",
+                description = "",
                 enabled = true,
                 key = "maxVotesAllowed",
             ),
@@ -146,6 +149,7 @@ internal class CreatePollViewModelTest {
             listOf(
                 PollSwitchItem(
                     title = "Multiple answers",
+                    description = "",
                     enabled = true,
                     key = "maxVotesAllowed",
                 ),
@@ -263,6 +267,7 @@ internal class CreatePollViewModelTest {
         val switchesWithEnabledInput = listOf(
             PollSwitchItem(
                 title = "Multiple answers",
+                description = "",
                 enabled = true,
                 key = "maxVotesAllowed",
                 pollSwitchInput = PollSwitchInput(
@@ -392,6 +397,7 @@ internal class CreatePollViewModelTest {
         val switchesWithError = listOf(
             PollSwitchItem(
                 title = "Multiple answers",
+                description = "",
                 enabled = false,
                 key = "maxVotesAllowed",
                 pollOptionError = PollOptionNumberExceed("Value exceeds maximum"),
@@ -410,6 +416,7 @@ internal class CreatePollViewModelTest {
         val switchesWithEnabledInput = listOf(
             PollSwitchItem(
                 title = "Multiple answers",
+                description = "",
                 enabled = true,
                 key = "maxVotesAllowed",
                 pollSwitchInput = PollSwitchInput(
@@ -448,6 +455,7 @@ internal class CreatePollViewModelTest {
         val switchesWithDisabledInput = listOf(
             PollSwitchItem(
                 title = "Multiple answers",
+                description = "",
                 enabled = false,
                 key = "maxVotesAllowed",
                 pollSwitchInput = PollSwitchInput(
@@ -469,6 +477,7 @@ internal class CreatePollViewModelTest {
         val switchesWithValidInput = listOf(
             PollSwitchItem(
                 title = "Multiple answers",
+                description = "",
                 enabled = true,
                 key = "maxVotesAllowed",
                 pollSwitchInput = PollSwitchInput(
@@ -522,6 +531,7 @@ internal class CreatePollViewModelTest {
             val updatedSwitches = listOf(
                 PollSwitchItem(
                     title = "Multiple answers",
+                    description = "",
                     enabled = true,
                     key = "maxVotesAllowed",
                     pollSwitchInput = PollSwitchInput(
@@ -531,6 +541,7 @@ internal class CreatePollViewModelTest {
                 ),
                 PollSwitchItem(
                     title = "Anonymous poll",
+                    description = "",
                     enabled = true,
                     key = "votingVisibility",
                 ),
