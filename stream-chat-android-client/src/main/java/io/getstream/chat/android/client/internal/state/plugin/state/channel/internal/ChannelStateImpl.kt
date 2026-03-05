@@ -494,7 +494,7 @@ internal class ChannelStateImpl(
     /**
      * Replaces the pending messages list with [messages]. The server is authoritative — every
      * channel response returns the latest 100 pending messages sorted by createdAt ASC, so we
-     * always replace rather than merge. No-op when the feature is disabled.
+     * always replace rather than merge.
      */
     fun setPendingMessages(messages: List<Message>) = pendingMessagesManager.setPendingMessages(messages)
 

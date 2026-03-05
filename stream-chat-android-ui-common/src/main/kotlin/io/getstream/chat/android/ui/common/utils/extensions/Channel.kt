@@ -51,7 +51,7 @@ public fun Channel.isDirectMessaging(): Boolean {
 }
 
 /**
- * Returns channel's last regular or system message if exists.
+ * Returns channel's last regular or system message if exists (including pending messages).
  * Deleted and messages from shadow-banned users, are not taken into account.
  *
  * @return Last message from the channel or null if it doesn't exist.

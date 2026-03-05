@@ -201,7 +201,7 @@ internal class DomainMappingTest {
             message = with(sut) { downstreamPendingMessageDto.message.toDomain() },
             metadata = downstreamPendingMessageDto.metadata.orEmpty(),
         )
-        val result = with(sut) { downstreamPendingMessageDto.toDomain(null, downstreamPendingMessageDto.message.cid) }
+        val result = with(sut) { downstreamPendingMessageDto.toDomain(downstreamPendingMessageDto.message.cid) }
         assertEquals(expected, result)
     }
 
