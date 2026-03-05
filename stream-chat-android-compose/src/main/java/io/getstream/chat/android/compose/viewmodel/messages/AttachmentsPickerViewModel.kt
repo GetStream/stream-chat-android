@@ -132,6 +132,22 @@ public class AttachmentsPickerViewModel @JvmOverloads constructor(
     )
 
     /**
+     * Set to `true` when one or more selected attachments could not be resolved (e.g. the
+     * content URI points to a cloud file that is not locally available). The UI layer should
+     * observe this flag and show an appropriate message, then call [clearUnresolvedAttachments]
+     * to reset it.
+     */
+    internal var hasUnresolvedAttachments: Boolean by mutableStateOf(false)
+        private set
+
+    /**
+     * Resets the [hasUnresolvedAttachments] flag after the UI has consumed the event.
+     */
+    internal fun clearUnresolvedAttachments() {
+        hasUnresolvedAttachments = false
+    }
+
+    /**
      * Loads all the items based on the current type.
      */
     @Deprecated("This method is no longer used and will be removed in future versions.")
@@ -220,9 +236,14 @@ public class AttachmentsPickerViewModel @JvmOverloads constructor(
      */
     public fun getSelectedAttachments(): List<Attachment> {
         val dataSet = if (attachmentsPickerMode == Files) files else images
-        val selectedAttachments = dataSet.filter { it.isSelected }
-
-        return storageHelper.getAttachmentsForUpload(selectedAttachments.map { it.attachmentMetaData })
+        val selectedMetaData = dataSet
+            .filter(AttachmentPickerItemState::isSelected)
+            .map(AttachmentPickerItemState::attachmentMetaData)
+        val attachments = storageHelper.getAttachmentsForUpload(selectedMetaData)
+        if (attachments.size < selectedMetaData.size) {
+            hasUnresolvedAttachments = true
+        }
+        return attachments
     }
 
     /**
@@ -273,6 +294,9 @@ public class AttachmentsPickerViewModel @JvmOverloads constructor(
         viewModelScope.launch {
             val attachments = withContext(DispatcherProvider.IO) {
                 getAttachmentsFromMetaData(metadata)
+            }
+            if (attachments.size < metadata.size) {
+                hasUnresolvedAttachments = true
             }
             onComplete(attachments)
         }
