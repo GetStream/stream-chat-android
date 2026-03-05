@@ -46,6 +46,7 @@ internal fun CommandSuggestionList(
         item {
             Text(
                 modifier = Modifier
+                    .testTag("Stream_CommandSuggestionListTitle")
                     .padding(
                         start = StreamTokens.spacingMd,
                         end = StreamTokens.spacingMd,
