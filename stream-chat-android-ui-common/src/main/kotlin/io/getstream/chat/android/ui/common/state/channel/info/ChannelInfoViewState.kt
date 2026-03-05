@@ -52,11 +52,6 @@ public sealed interface ChannelInfoViewState {
          */
         public sealed interface Option {
             /**
-             * Indicates a separator option in the channel information UI.
-             */
-            public data object Separator : Option
-
-            /**
              * Indicates an option to add a member to the channel.
              */
             public data object AddMember : Option

@@ -39,8 +39,6 @@ internal fun List<ChannelInfoViewState.Content.Option>.toChannelInfoItems(
             // Not applicable in this UI
             is ChannelInfoViewState.Content.Option.UserInfo -> Unit
 
-            is ChannelInfoViewState.Content.Option.Separator -> add(ChatInfoItem.Separator)
-
             is ChannelInfoViewState.Content.Option.RenameChannel ->
                 add(ChatInfoItem.ChannelName(option.name))
 

@@ -132,7 +132,7 @@ private fun GroupChannelInfoScaffold(
                 onAddMembersClick = onAddMembersClick,
             )
         },
-        containerColor = ChatTheme.colors.backgroundElevationElevation1,
+        containerColor = ChatTheme.colors.backgroundCoreApp,
     ) { padding ->
         GroupChannelInfoContent(
             modifier = Modifier.padding(padding),
@@ -199,7 +199,7 @@ internal fun GroupChannelInfoTopBar(
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = ChatTheme.colors.backgroundElevationElevation1,
+            containerColor = ChatTheme.colors.backgroundCoreApp,
         ),
     )
 }

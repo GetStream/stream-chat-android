@@ -115,7 +115,7 @@ private fun DirectChannelInfoScaffold(
                 onNavigationIconClick = onNavigationIconClick,
             )
         },
-        containerColor = ChatTheme.colors.backgroundElevationElevation1,
+        containerColor = ChatTheme.colors.backgroundCoreApp,
     ) { padding ->
         DirectChannelInfoContent(
             state = infoState,
@@ -168,7 +168,7 @@ internal fun DirectChannelInfoTopBar(
             )
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = ChatTheme.colors.backgroundElevationElevation1,
+            containerColor = ChatTheme.colors.backgroundCoreApp,
         ),
     )
 }

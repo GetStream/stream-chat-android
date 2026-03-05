@@ -99,7 +99,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -140,7 +140,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                         ChannelInfoViewState.Content.Option.MuteUser(isMuted = false),
                         ChannelInfoViewState.Content.Option.BlockUser(isBlocked = false),
                     ),
@@ -181,7 +181,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -212,7 +212,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -230,7 +230,6 @@ internal class ChannelInfoViewControllerTest {
             ChannelInfoViewState.Content.Option.PinnedMessages,
             ChannelInfoViewState.Content.Option.MediaAttachments,
             ChannelInfoViewState.Content.Option.FilesAttachments,
-            ChannelInfoViewState.Content.Option.Separator,
         )
         val sut = Fixture()
             .given(channel = channel)
@@ -317,7 +316,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                         ChannelInfoViewState.Content.Option.MuteUser(isMuted = false),
                         ChannelInfoViewState.Content.Option.BlockUser(isBlocked = false),
                     ),
@@ -349,7 +348,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                         ChannelInfoViewState.Content.Option.MuteUser(isMuted = false),
                         ChannelInfoViewState.Content.Option.BlockUser(isBlocked = false),
                         ChannelInfoViewState.Content.Option.DeleteChannel,
@@ -386,7 +385,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -422,7 +421,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                         ChannelInfoViewState.Content.Option.DeleteChannel,
                     ),
                 ),
@@ -462,7 +461,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -483,7 +482,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -588,7 +587,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -609,7 +608,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -637,7 +636,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -673,7 +672,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -694,7 +693,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -722,7 +721,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -773,7 +772,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -800,7 +799,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -825,7 +824,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -862,7 +861,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -881,7 +880,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -906,7 +905,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -982,7 +981,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                         ChannelInfoViewState.Content.Option.LeaveChannel,
                     ),
                 ),
@@ -1027,7 +1026,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                         ChannelInfoViewState.Content.Option.LeaveChannel,
                     ),
                 ),
@@ -1086,7 +1085,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                         ChannelInfoViewState.Content.Option.DeleteChannel,
                     ),
                 ),
@@ -1125,7 +1124,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                         ChannelInfoViewState.Content.Option.DeleteChannel,
                     ),
                 ),

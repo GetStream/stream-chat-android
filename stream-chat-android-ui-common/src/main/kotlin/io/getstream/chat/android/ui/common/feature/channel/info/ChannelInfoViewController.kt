@@ -563,7 +563,6 @@ private fun buildChannelOptionList(
         add(ChannelInfoViewState.Content.Option.PinnedMessages)
         add(ChannelInfoViewState.Content.Option.MediaAttachments)
         add(ChannelInfoViewState.Content.Option.FilesAttachments)
-        add(ChannelInfoViewState.Content.Option.Separator)
         val isUserMuted = mutedUsers.any { it.target?.id == singleMember.getUserId() }
         add(ChannelInfoViewState.Content.Option.MuteUser(isMuted = isUserMuted))
         val isUserBlocked = blockedUserIds.contains(singleMember.getUserId())
@@ -580,7 +579,6 @@ private fun buildChannelOptionList(
         add(ChannelInfoViewState.Content.Option.PinnedMessages)
         add(ChannelInfoViewState.Content.Option.MediaAttachments)
         add(ChannelInfoViewState.Content.Option.FilesAttachments)
-        add(ChannelInfoViewState.Content.Option.Separator)
         if (channelData.ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)) {
             add(ChannelInfoViewState.Content.Option.DeleteChannel)
         } else if (channelData.ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL)) {

@@ -52,10 +52,6 @@ internal fun ChannelInfoOptionContent(
     onViewAction: (action: ChannelInfoViewAction) -> Unit,
 ) {
     when (option) {
-        is ChannelInfoViewState.Content.Option.Separator -> {
-            // No-op: separators are handled by section grouping in the layout
-        }
-
         is ChannelInfoViewState.Content.Option.AddMember -> {
             // Not rendered as an option, but as a button in the top bar
         }

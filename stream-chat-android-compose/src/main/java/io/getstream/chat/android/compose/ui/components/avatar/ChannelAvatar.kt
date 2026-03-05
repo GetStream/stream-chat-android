@@ -246,7 +246,6 @@ private fun StackedGroupAvatar(
     }
 }
 
-@Suppress("MagicNumber")
 private fun BoxWithConstraintsScope.resolveStackedAvatarDimensions(): StackedGroupAvatarDimensions {
     return when {
         // Beyond the largest fixed tier: keep the same edge gap as XXL so the container looks equally full.

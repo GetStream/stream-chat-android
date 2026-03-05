@@ -148,7 +148,7 @@ public fun buildDefaultChannelActions(
  * Builds channel actions for DM (1-to-1) channels.
  * Shows: View Info, Mute/Unmute User, Block/Unblock User, Archive Chat, Delete Chat.
  */
-@Suppress("LongMethod", "LongParameterList")
+@Suppress("LongParameterList")
 @Composable
 private fun buildDmChannelActions(
     selectedChannel: Channel,
@@ -160,79 +160,127 @@ private fun buildDmChannelActions(
     onViewInfoAction: (Channel) -> Unit,
 ): List<ChannelAction> {
     val otherUserId = selectedChannel.members.firstOrNull { it.user.id != currentUser?.id }?.user?.id
-    val isUserMuted = otherUserId?.let { viewModel.isUserMuted(it) } ?: false
-    val isUserBlocked = otherUserId?.let { viewModel.isUserBlocked(it) } ?: false
     val canDeleteChannel = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
 
     return listOfNotNull(
-        if (optionVisibility.isViewInfoVisible) {
-            ViewInfo(
-                channel = selectedChannel,
-                label = stringResource(id = R.string.stream_compose_selected_channel_menu_view_info),
-                onAction = { onViewInfoAction(selectedChannel) },
-            )
-        } else {
-            null
-        },
-        if (otherUserId != null && optionVisibility.isMuteChannelVisible) {
-            if (isUserMuted) {
-                UnmuteUser(
-                    channel = selectedChannel,
-                    label = stringResource(id = R.string.stream_compose_selected_channel_menu_unmute_user),
-                    onAction = { viewModel.unmuteUser(otherUserId) },
-                )
-            } else {
-                MuteUser(
-                    channel = selectedChannel,
-                    label = stringResource(id = R.string.stream_compose_selected_channel_menu_mute_user),
-                    onAction = { viewModel.muteUser(otherUserId) },
-                )
-            }
-        } else {
-            null
-        },
-        if (otherUserId == null) {
-            null
-        } else if (isUserBlocked) {
-            UnblockUser(
-                channel = selectedChannel,
-                label = stringResource(id = R.string.stream_compose_selected_channel_menu_unblock_user),
-                onAction = { viewModel.unblockUser(otherUserId) },
-            )
-        } else {
-            BlockUser(
-                channel = selectedChannel,
-                label = stringResource(id = R.string.stream_compose_selected_channel_menu_block_user),
-                onAction = { viewModel.blockUser(otherUserId) },
-            )
-        },
+        buildDmViewInfoAction(
+            isVisible = optionVisibility.isViewInfoVisible,
+            selectedChannel = selectedChannel,
+            onViewInfoAction = onViewInfoAction,
+        ),
+        buildDmMuteUserAction(
+            isVisible = optionVisibility.isMuteChannelVisible,
+            otherUserId = otherUserId,
+            selectedChannel = selectedChannel,
+            viewModel = viewModel,
+        ),
+        buildDmBlockUserAction(
+            otherUserId = otherUserId,
+            selectedChannel = selectedChannel,
+            viewModel = viewModel,
+        ),
         buildDmArchiveAction(
             canArchiveChannel = optionVisibility.isArchiveChannelVisible,
             selectedChannel = selectedChannel,
             viewModel = viewModel,
         ),
-        if (optionVisibility.isDeleteChannelVisible && canDeleteChannel) {
-            DeleteConversation(
-                channel = selectedChannel,
-                label = stringResource(id = R.string.stream_compose_selected_channel_menu_delete_chat),
-                onAction = { viewModel.deleteConversation(selectedChannel) },
-                confirmationPopup = ConfirmationPopup(
-                    title = stringResource(
-                        id = R.string.stream_compose_selected_channel_menu_delete_chat_confirmation_title,
-                    ),
-                    message = stringResource(
-                        id = R.string.stream_compose_selected_channel_menu_delete_chat_confirmation_message,
-                        channelName,
-                    ),
-                    confirmButtonText = stringResource(
-                        id = R.string.stream_compose_selected_channel_menu_delete_chat,
-                    ),
-                ),
-            )
-        } else {
-            null
-        },
+        buildDmDeleteAction(
+            isVisible = optionVisibility.isDeleteChannelVisible && canDeleteChannel,
+            selectedChannel = selectedChannel,
+            channelName = channelName,
+            viewModel = viewModel,
+        ),
     )
+}
+
+@Composable
+private fun buildDmViewInfoAction(
+    isVisible: Boolean,
+    selectedChannel: Channel,
+    onViewInfoAction: (Channel) -> Unit,
+): ChannelAction? = if (isVisible) {
+    ViewInfo(
+        channel = selectedChannel,
+        label = stringResource(id = R.string.stream_compose_selected_channel_menu_view_info),
+        onAction = { onViewInfoAction(selectedChannel) },
+    )
+} else {
+    null
+}
+
+@Composable
+private fun buildDmMuteUserAction(
+    isVisible: Boolean,
+    otherUserId: String?,
+    selectedChannel: Channel,
+    viewModel: ChannelListViewModel,
+): ChannelAction? {
+    if (otherUserId == null || !isVisible) return null
+    val isUserMuted = viewModel.isUserMuted(otherUserId)
+    return if (isUserMuted) {
+        UnmuteUser(
+            channel = selectedChannel,
+            label = stringResource(id = R.string.stream_compose_selected_channel_menu_unmute_user),
+            onAction = { viewModel.unmuteUser(otherUserId) },
+        )
+    } else {
+        MuteUser(
+            channel = selectedChannel,
+            label = stringResource(id = R.string.stream_compose_selected_channel_menu_mute_user),
+            onAction = { viewModel.muteUser(otherUserId) },
+        )
+    }
+}
+
+@Composable
+private fun buildDmBlockUserAction(
+    otherUserId: String?,
+    selectedChannel: Channel,
+    viewModel: ChannelListViewModel,
+): ChannelAction? {
+    otherUserId ?: return null
+    val isUserBlocked = viewModel.isUserBlocked(otherUserId)
+    return if (isUserBlocked) {
+        UnblockUser(
+            channel = selectedChannel,
+            label = stringResource(id = R.string.stream_compose_selected_channel_menu_unblock_user),
+            onAction = { viewModel.unblockUser(otherUserId) },
+        )
+    } else {
+        BlockUser(
+            channel = selectedChannel,
+            label = stringResource(id = R.string.stream_compose_selected_channel_menu_block_user),
+            onAction = { viewModel.blockUser(otherUserId) },
+        )
+    }
+}
+
+@Composable
+private fun buildDmDeleteAction(
+    isVisible: Boolean,
+    selectedChannel: Channel,
+    channelName: String,
+    viewModel: ChannelListViewModel,
+): ChannelAction? = if (isVisible) {
+    DeleteConversation(
+        channel = selectedChannel,
+        label = stringResource(id = R.string.stream_compose_selected_channel_menu_delete_chat),
+        onAction = { viewModel.deleteConversation(selectedChannel) },
+        confirmationPopup = ConfirmationPopup(
+            title = stringResource(
+                id = R.string.stream_compose_selected_channel_menu_delete_chat_confirmation_title,
+            ),
+            message = stringResource(
+                id = R.string.stream_compose_selected_channel_menu_delete_chat_confirmation_message,
+                channelName,
+            ),
+            confirmButtonText = stringResource(
+                id = R.string.stream_compose_selected_channel_menu_delete_chat,
+            ),
+        ),
+    )
+} else {
+    null
 }
 
 /**
