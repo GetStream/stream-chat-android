@@ -143,7 +143,7 @@ fun UserRobot.assertDeletedMessage(text: String? = null, hard: Boolean = false):
 fun UserRobot.assertQuotedMessage(text: String, quote: String = "", isDisplayed: Boolean = true): UserRobot {
     val quotedMessageInList = Message.quotedMessage.hasAncestor(MessageListPage.MessageList.messages)
     if (isDisplayed) {
-        assertEquals(quote, quotedMessageInList.waitToAppear().text)
+        assertEquals(quote, quotedMessageInList.waitToAppear().waitForText(quote).text)
     } else {
         assertFalse(quotedMessageInList.waitToDisappear().isDisplayed())
     }
