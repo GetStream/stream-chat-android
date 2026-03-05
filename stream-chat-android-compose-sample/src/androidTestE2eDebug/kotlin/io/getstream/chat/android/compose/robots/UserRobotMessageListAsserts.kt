@@ -30,6 +30,7 @@ import io.getstream.chat.android.compose.uiautomator.findObjects
 import io.getstream.chat.android.compose.uiautomator.height
 import io.getstream.chat.android.compose.uiautomator.isDisplayed
 import io.getstream.chat.android.compose.uiautomator.retryOnStaleObjectException
+import io.getstream.chat.android.compose.uiautomator.seconds
 import io.getstream.chat.android.compose.uiautomator.wait
 import io.getstream.chat.android.compose.uiautomator.waitForCount
 import io.getstream.chat.android.compose.uiautomator.waitForText
@@ -68,14 +69,14 @@ fun UserRobot.assertMessageAuthor(isCurrentUser: Boolean): UserRobot {
 }
 
 fun UserRobot.assertMessageTimestamps(count: Int): UserRobot {
-    assertEquals(count, Message.timestamp.findObjects().size)
+    assertEquals(count, Message.timestamp.waitForCount(count).size)
     return this
 }
 
 fun UserRobot.assertMessageDeliveryStatus(status: MessageDeliveryStatus, count: Int? = null): UserRobot {
     when (status) {
         MessageDeliveryStatus.READ -> {
-            assertTrue(Message.deliveryStatusIsRead.wait().isDisplayed())
+            assertTrue(Message.deliveryStatusIsRead.wait(30.seconds).isDisplayed())
             if (count != null) {
                 assertEquals(count, Message.deliveryStatusIsRead.waitForCount(count).size)
             }
