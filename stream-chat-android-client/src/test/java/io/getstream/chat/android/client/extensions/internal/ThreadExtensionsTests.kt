@@ -22,9 +22,9 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
-import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.VotingVisibility
+import io.getstream.chat.android.randomThreadParticipant
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.Test
@@ -48,8 +48,14 @@ internal class ThreadExtensionsTests {
         createdAt = now,
         user = user2,
     )
-    private val threadParticipant1 = ThreadParticipant(user = user1)
-    private val threadParticipant2 = ThreadParticipant(user = user2)
+    private val threadParticipant1 = randomThreadParticipant(
+        user = user1,
+        lastThreadMessageAt = now,
+    )
+    private val threadParticipant2 = randomThreadParticipant(
+        user = user2,
+        lastThreadMessageAt = Date(now.time - 1_000),
+    )
     private val channelUserRead1 = ChannelUserRead(
         user = user1,
         unreadMessages = 0,

@@ -1041,10 +1041,18 @@ public fun randomThreadInfo(
     threadParticipants = threadParticipants,
 )
 
+/**
+ * Creates a random [ThreadParticipant] fixture.
+ *
+ * @param user The participant user.
+ * @param lastThreadMessageAt Timestamp of the participant's latest thread reply, if available.
+ */
 public fun randomThreadParticipant(
     user: User = randomUser(),
+    lastThreadMessageAt: Date? = randomDateOrNull(),
 ): ThreadParticipant = ThreadParticipant(
     user = user,
+    lastThreadMessageAt = lastThreadMessageAt,
 )
 
 public fun randomAppSettings(

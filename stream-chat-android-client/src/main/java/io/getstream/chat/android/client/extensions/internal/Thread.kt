@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.extensions.internal
 
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
+import io.getstream.chat.android.client.internal.state.utils.internal.upsertSorted
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Message
@@ -25,6 +26,21 @@ import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.User
 import java.util.Date
+
+/**
+ * Comparator sorting participants by [ThreadParticipant.lastThreadMessageAt] descending.
+ * Participants with null timestamps (mentioned-only, never replied) are placed last.
+ */
+private val PARTICIPANT_BY_LAST_REPLY: Comparator<ThreadParticipant> =
+    compareByDescending<ThreadParticipant> { it.lastThreadMessageAt?.time ?: Long.MIN_VALUE }
+
+/**
+ * Sorts participants by [ThreadParticipant.lastThreadMessageAt] descending (most recent repliers first).
+ * Participants with null [ThreadParticipant.lastThreadMessageAt] (e.g. mentioned-only, never replied) are placed last.
+ */
+@InternalStreamChatApi
+public fun List<ThreadParticipant>.sortedByLastReply(): List<ThreadParticipant> =
+    sortedWith(PARTICIPANT_BY_LAST_REPLY)
 
 /**
  * Updates the given Thread with the new message (parent or reply).
@@ -68,16 +84,19 @@ public fun Thread.upsertReply(reply: Message): Thread {
         it.getCreatedAtOrNull()
     }
     val lastMessageAt = sortedNewReplies.lastOrNull()?.getCreatedAtOrNull()
-    // The new message could be from a new thread participant
+    // Update participant recency only when a new reply is inserted (not on edits/updates).
     val threadParticipants = if (isInsert) {
         upsertThreadParticipantInList(
-            newParticipant = ThreadParticipant(user = reply.user),
+            newParticipant = ThreadParticipant(
+                user = reply.user,
+                lastThreadMessageAt = reply.getCreatedAtOrNull(),
+            ),
             participants = this.threadParticipants,
         )
     } else {
         this.threadParticipants
     }
-    val participantCount = threadParticipants.size
+    val participantCount = if (isInsert) threadParticipants.size else this.participantCount
     // Update read counts (+1 for each non-sender of the message)
     val read = if (isInsert) {
         updateReadCounts(this.read, reply)
@@ -191,20 +210,11 @@ private fun upsertMessageInList(newMessage: Message, messages: List<Message>): L
 private fun upsertThreadParticipantInList(
     newParticipant: ThreadParticipant,
     participants: List<ThreadParticipant>,
-): List<ThreadParticipant> {
-    // Insert
-    if (participants.none { it.getUserId() == newParticipant.getUserId() }) {
-        return participants + listOf(newParticipant)
-    }
-    // Update
-    return participants.map { participant ->
-        if (participant.getUserId() == newParticipant.getUserId()) {
-            newParticipant
-        } else {
-            participant
-        }
-    }
-}
+): List<ThreadParticipant> = participants.upsertSorted(
+    element = newParticipant,
+    idSelector = { it.getUserId() },
+    comparator = PARTICIPANT_BY_LAST_REPLY,
+)
 
 private fun updateReadCounts(read: List<ChannelUserRead>, reply: Message): List<ChannelUserRead> {
     return read.map { userRead ->

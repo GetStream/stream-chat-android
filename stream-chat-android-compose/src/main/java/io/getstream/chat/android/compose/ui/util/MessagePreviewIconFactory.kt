@@ -62,6 +62,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
         internal const val LINK = "link"
         internal const val LOCATION = "location"
         internal const val POLL = "poll"
+        internal const val DELETED = "deleted"
     }
 
     @Suppress("LongMethod")
@@ -125,6 +126,14 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
                 Icon(
                     modifier = iconModifier,
                     painter = painterResource(id = R.drawable.stream_compose_ic_poll),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textSecondary,
+                )
+            },
+            DELETED to InlineTextContent(placeholder) {
+                Icon(
+                    modifier = iconModifier,
+                    painter = painterResource(id = R.drawable.stream_compose_ic_block),
                     contentDescription = null,
                     tint = ChatTheme.colors.textSecondary,
                 )

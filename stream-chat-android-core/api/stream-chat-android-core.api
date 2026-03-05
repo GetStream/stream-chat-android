@@ -2247,11 +2247,13 @@ public final class io/getstream/chat/android/models/ThreadInfo : io/getstream/ch
 }
 
 public final class io/getstream/chat/android/models/ThreadParticipant : io/getstream/chat/android/models/UserEntity {
-	public fun <init> (Lio/getstream/chat/android/models/User;)V
+	public fun <init> (Lio/getstream/chat/android/models/User;Ljava/util/Date;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/User;
-	public final fun copy (Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/models/ThreadParticipant;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/ThreadParticipant;Lio/getstream/chat/android/models/User;ILjava/lang/Object;)Lio/getstream/chat/android/models/ThreadParticipant;
+	public final fun component2 ()Ljava/util/Date;
+	public final fun copy (Lio/getstream/chat/android/models/User;Ljava/util/Date;)Lio/getstream/chat/android/models/ThreadParticipant;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/ThreadParticipant;Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/models/ThreadParticipant;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLastThreadMessageAt ()Ljava/util/Date;
 	public fun getUser ()Lio/getstream/chat/android/models/User;
 	public fun getUserId ()Ljava/lang/String;
 	public fun hashCode ()I

@@ -49,4 +49,7 @@ public interface QueryThreadsState {
 
     /** The IDs of the threads which exist, but are not (yet) loaded in the paginated list of threads. */
     public val unseenThreadIds: StateFlow<Set<String>>
+
+    /** Indicates that the last initial or refresh load failed. Not set for pagination failures. */
+    public val loadingError: StateFlow<Boolean>
 }

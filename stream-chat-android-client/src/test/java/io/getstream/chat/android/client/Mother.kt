@@ -987,6 +987,16 @@ internal object Mother {
         extraData = extraData,
     )
 
+    fun randomDownstreamThreadParticipantDto(
+        userId: String = randomString(),
+        user: DownstreamUserDto? = randomDownstreamUserDto(id = userId),
+        lastThreadMessageAt: Date? = randomDateOrNull(),
+    ): DownstreamThreadParticipantDto = DownstreamThreadParticipantDto(
+        user_id = userId,
+        user = user,
+        last_thread_message_at = lastThreadMessageAt,
+    )
+
     fun randomDownstreamThreadInfoDto(
         channelCid: String = randomString(),
         channel: DownstreamChannelDto? = randomDownstreamChannelDto(id = channelCid),
