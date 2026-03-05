@@ -45,7 +45,6 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
-import io.getstream.chat.android.compose.ui.components.TypingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -178,7 +177,6 @@ internal fun DefaultMessageListHeaderLeadingContent(onBackPressed: () -> Unit) {
  * @param currentUser The current user.
  * @param connectionState A flag that governs if we show the subtitle or the network loading view.
  * @param modifier Modifier for styling.
- * @param typingUsers The list of typing users.
  * @param messageMode Currently active message mode, used to define the title information.
  * @param onHeaderTitleClick Handler for when the user taps on the header title section.
  */
@@ -189,7 +187,6 @@ public fun DefaultMessageListHeaderCenterContent(
     currentUser: User?,
     connectionState: ConnectionState,
     modifier: Modifier = Modifier,
-    typingUsers: List<User> = emptyList(),
     messageMode: MessageMode = MessageMode.Normal,
     onHeaderTitleClick: ((Channel) -> Unit)? = null,
 ) {
@@ -227,7 +224,7 @@ public fun DefaultMessageListHeaderCenterContent(
         Text(
             modifier = Modifier.testTag("Stream_ChannelName"),
             text = title,
-            style = ChatTheme.typography.headingMedium,
+            style = ChatTheme.typography.headingSmall,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             color = ChatTheme.colors.textPrimary,
@@ -237,7 +234,6 @@ public fun DefaultMessageListHeaderCenterContent(
             is ConnectionState.Connected -> {
                 DefaultMessageListHeaderSubtitle(
                     subtitle = subtitle,
-                    typingUsers = typingUsers,
                 )
             }
 
@@ -264,54 +260,23 @@ public fun DefaultMessageListHeaderCenterContent(
 }
 
 /**
- * Represents the default message list header subtitle, which shows either the number of people online
- * and total member count or the currently typing users.
+ * Represents the default message list header subtitle, which shows the number of people online
+ * and total member count.
  *
  * @param subtitle The subtitle to show.
- * @param typingUsers Currently typing users.
  */
 @Composable
 internal fun DefaultMessageListHeaderSubtitle(
     subtitle: String,
-    typingUsers: List<User>,
 ) {
-    val textColor = ChatTheme.colors.textSecondary
-    val textStyle = ChatTheme.typography.metadataDefault
-
-    if (typingUsers.isEmpty()) {
-        Text(
-            modifier = Modifier.testTag("Stream_ParticipantsInfo"),
-            text = subtitle,
-            color = textColor,
-            style = textStyle,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-    } else {
-        Row(
-            modifier = Modifier,
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            val typingUsersText = LocalContext.current.resources.getQuantityString(
-                R.plurals.stream_compose_message_list_header_typing_users,
-                typingUsers.size,
-                typingUsers.first().name,
-                typingUsers.size - 1,
-            )
-
-            TypingIndicator()
-
-            Text(
-                modifier = Modifier.testTag("Stream_MessageListTypingIndicator"),
-                text = typingUsersText,
-                color = textColor,
-                style = textStyle,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-    }
+    Text(
+        modifier = Modifier.testTag("Stream_ParticipantsInfo"),
+        text = subtitle,
+        color = ChatTheme.colors.textSecondary,
+        style = ChatTheme.typography.captionDefault,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+    )
 }
 
 /**

@@ -1466,10 +1466,6 @@ public final class io/getstream/chat/android/compose/ui/components/avatar/Avatar
 	public final fun getSmall-D9Ej5fM ()F
 }
 
-public final class io/getstream/chat/android/compose/ui/components/avatar/AvatarStackKt {
-	public static final fun UserAvatarStack-nRywnlk (FLjava/util/List;FLandroidx/compose/ui/Modifier;ZLandroidx/compose/runtime/Composer;II)V
-}
-
 public final class io/getstream/chat/android/compose/ui/components/avatar/ChannelAvatarKt {
 	public static final fun ChannelAvatar (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/runtime/Composer;II)V
 }
@@ -1772,7 +1768,7 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Giph
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/MessageBubbleKt {
-	public static final fun MessageBubble-ZPw9REg (JLandroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageBubble-yWKOrZg (JLandroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/BorderStroke;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/MessageContentKt {
@@ -2571,7 +2567,7 @@ public final class io/getstream/chat/android/compose/ui/messages/header/Composab
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/header/MessageListHeaderKt {
-	public static final fun DefaultMessageListHeaderCenterContent (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Landroidx/compose/ui/Modifier;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageMode;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+	public static final fun DefaultMessageListHeaderCenterContent (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ui/common/state/messages/MessageMode;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 	public static final fun MessageListHeader-LIL5028 (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Landroidx/compose/ui/Modifier;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageMode;JLandroidx/compose/ui/graphics/Shape;FLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
 }
 
@@ -2580,6 +2576,15 @@ public final class io/getstream/chat/android/compose/ui/messages/list/Composable
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class io/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessageItemKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessageItemKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessageListKt {
@@ -4029,7 +4034,7 @@ public final class io/getstream/chat/android/compose/ui/util/LocalStreamImageLoa
 
 public abstract interface class io/getstream/chat/android/compose/ui/util/MessageAlignmentProvider {
 	public static final field Companion Lio/getstream/chat/android/compose/ui/util/MessageAlignmentProvider$Companion;
-	public abstract fun provideMessageAlignment (Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;)Lio/getstream/chat/android/compose/state/messages/MessageAlignment;
+	public abstract fun provideMessageAlignment (Lio/getstream/chat/android/ui/common/state/messages/list/MessageListItemState;)Lio/getstream/chat/android/compose/state/messages/MessageAlignment;
 }
 
 public final class io/getstream/chat/android/compose/ui/util/MessageAlignmentProvider$Companion {
