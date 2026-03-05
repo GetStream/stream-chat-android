@@ -284,34 +284,38 @@
     <string name="stream_compose_media_gallery_share_large_file_prompt_message">%.2f MB needs to be downloaded before sharing.</string>
 
     <!-- Content Description -->
-    <string name="stream_compose_cd_channel_item" translatable="false">Channel item</string>
-    <string name="stream_compose_cd_message_item" translatable="false">Message item</string>
-    <string name="stream_compose_cd_play_button" translatable="false">Play button</string>
+    <string name="stream_compose_cd_channel_item">Channel item</string>
+    <string name="stream_compose_cd_message_item">Message item</string>
+    <string name="stream_compose_cd_play_button">Play button</string>
 
     <!--  Poll  -->
-    <string name="stream_compose_poll_title" translatable="false">Create Poll</string>
-    <string name="stream_compose_poll_questions_title" translatable="false">Questions</string>
-    <string name="stream_compose_poll_questions_description" translatable="false">Ask a question</string>
-    <string name="stream_compose_poll_option_title" translatable="false">Options</string>
-    <string name="stream_compose_poll_option_description" translatable="false">Add an option</string>
-    <string name="stream_compose_poll_option_hint" translatable="false">Add an option</string>
-    <string name="stream_compose_poll_option_error_duplicated" translatable="false">This is already an option</string>
-    <string name="stream_compose_poll_option_discard_dialog_title" translatable="false">Discard poll</string>
-    <string name="stream_compose_poll_option_discard_dialog_description" translatable="false">Are you sure want to discard your poll?</string>
-    <string name="stream_compose_poll_option_discard_dialog_cancel" translatable="false">Keep Editing</string>
-    <string name="stream_compose_poll_option_discard_dialog_confirm" translatable="false">Discard</string>
-    <string name="stream_compose_poll_option_switch_multiple_answers" translatable="false">Multiple answers</string>
-    <string name="stream_compose_poll_option_switch_anonymous_poll" translatable="false">Anonymous poll</string>
-    <string name="stream_compose_poll_option_switch_suggest_option" translatable="false">Suggest an option</string>
-    <string name="stream_compose_poll_option_switch_add_comment" translatable="false">Add a comment</string>
+    <string name="stream_compose_poll_title">Create Poll</string>
+    <string name="stream_compose_poll_questions_title">Question</string>
+    <string name="stream_compose_poll_questions_description">Ask a question</string>
+    <string name="stream_compose_poll_option_title">Options</string>
+    <string name="stream_compose_poll_option_description">Add an option</string>
+    <string name="stream_compose_poll_option_hint">Add an option</string>
+    <string name="stream_compose_poll_option_error_duplicated">This is already an option</string>
+    <string name="stream_compose_poll_option_discard_dialog_title">Discard poll</string>
+    <string name="stream_compose_poll_option_discard_dialog_description">Are you sure you want to discard your poll?</string>
+    <string name="stream_compose_poll_option_discard_dialog_cancel">Keep Editing</string>
+    <string name="stream_compose_poll_option_discard_dialog_confirm">Discard</string>
+    <string name="stream_compose_poll_option_switch_multiple_answers">Multiple answers</string>
+    <string name="stream_compose_poll_option_switch_multiple_answers_description">Select more than one option</string>
+    <string name="stream_compose_poll_option_switch_anonymous_poll">Anonymous poll</string>
+    <string name="stream_compose_poll_option_switch_anonymous_poll_description">Hide who voted</string>
+    <string name="stream_compose_poll_option_switch_suggest_option">Suggest an option</string>
+    <string name="stream_compose_poll_option_switch_suggest_option_description">Let others add options</string>
+    <string name="stream_compose_poll_option_switch_add_comment">Add a comment</string>
+    <string name="stream_compose_poll_option_switch_add_comment_description">Allow others to add comments</string>
     <string name="stream_compose_poll_option_max_number_of_answers_hint">Max number of answers</string>
-    <string name="stream_compose_poll_view_result" translatable="false">View Results</string>
+    <string name="stream_compose_poll_view_result">View Results</string>
     <string name="stream_compose_poll_show_all_votes">Show All</string>
     <string name="stream_compose_poll_option_results_error">An error occurred while loading the poll option results. Please try again later.</string>
-    <string name="stream_compose_poll_end_vote" translatable="false">End Vote</string>
+    <string name="stream_compose_poll_end_vote">End Vote</string>
     <string name="stream_compose_poll_suggest_option">Suggest Option</string>
-    <string name="stream_compose_poll_options" translatable="false">Poll Options</string>
-    <string name="stream_compose_poll_results" translatable="false">Poll Results</string>
+    <string name="stream_compose_poll_options">Poll Options</string>
+    <string name="stream_compose_poll_results">Poll Results</string>
     <string name="stream_compose_poll_answers">Poll Comments</string>
     <string name="stream_compose_add_answer">Add a Comment</string>
     <string name="stream_compose_edit_answer">Update Comment</string>

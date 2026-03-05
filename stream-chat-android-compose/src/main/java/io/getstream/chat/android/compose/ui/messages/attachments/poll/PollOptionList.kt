@@ -14,32 +14,26 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import android.content.Context
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,7 +44,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.R
@@ -58,155 +51,68 @@ import io.getstream.chat.android.compose.ui.components.poll.PollOptionInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
-import sh.calvin.reorderable.ReorderableItem
-import sh.calvin.reorderable.rememberReorderableLazyListState
+import sh.calvin.reorderable.ReorderableColumn
+import sh.calvin.reorderable.ReorderableScope
 
 /**
  * The Poll Creation option list that is a Composable that enables users to create and reorder question items easily.
  *
  * @param modifier The [Modifier] for styling.
- * @param lazyListState State of the lazy list that represents the list of messages. Useful for controlling the
- * scroll state.
  * @param title The title of the question list.
  * @param optionItems The list of pre-questions. The type of the list is [PollOptionItem].
  * @param onQuestionsChanged This lambda will be executed when the item of the question list is reordered.
- * @param itemHeightSize The height size of the question item.
- * @param itemInnerPadding The inner padding size of the question item.
  */
 @Composable
 public fun PollOptionList(
     modifier: Modifier = Modifier,
-    lazyListState: LazyListState = rememberLazyListState(),
     title: String = stringResource(id = R.string.stream_compose_poll_option_title),
     optionItems: List<PollOptionItem> = emptyList(),
     onQuestionsChanged: (List<PollOptionItem>) -> Unit,
-    itemHeightSize: Dp = 56.dp,
-    itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
 ) {
     val context = LocalContext.current
+    val colors = ChatTheme.colors
     var optionItemList by remember(optionItems) { mutableStateOf(optionItems) }
 
-    val reorderableLazyListState = rememberReorderableLazyListState(
-        lazyListState = lazyListState,
-        scrollThreshold = itemHeightSize,
-    ) { from, to ->
-        optionItemList = optionItemList.toMutableList().apply {
-            add(to.index, removeAt(from.index))
-            onQuestionsChanged.invoke(optionItemList)
-        }
-    }
-
-    val heightIn = optionItemList.size * (itemHeightSize.value + 8)
-
-    Text(
-        modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
-        text = title,
-        color = ChatTheme.colors.textPrimary,
-        style = ChatTheme.typography.headingMedium,
-        fontSize = 16.sp,
-    )
-
-    LazyColumn(
+    Column(
         modifier = modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .fillMaxWidth()
-            .heightIn(max = heightIn.dp),
-        userScrollEnabled = false,
-        state = lazyListState,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+            .padding(vertical = StreamTokens.spacingXs)
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {
-        itemsIndexed(optionItemList, key = { _, item -> item.key }) { index, item ->
-            ReorderableItem(reorderableLazyListState, key = item.key) { _ ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(itemHeightSize)
-                        .border(
-                            width = 1.dp,
-                            color = if (item.pollOptionError == null) {
-                                ChatTheme.colors.backgroundCoreSurface
-                            } else {
-                                ChatTheme.colors.accentError
-                            },
-                            shape = RoundedCornerShape(StreamTokens.radiusXl),
-                        )
-                        .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
-                        .background(ChatTheme.colors.backgroundCoreSurface),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    PollOptionInput(
-                        modifier = Modifier.weight(1f),
-                        value = item.title,
-                        description = stringResource(id = R.string.stream_compose_poll_option_hint),
-                        innerPadding = if (item.pollOptionError == null) {
-                            PaddingValues(horizontal = 16.dp, vertical = 18.dp)
-                        } else {
-                            PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-                        },
-                        onValueChange = { newTitle ->
-                            val duplicated = optionItemList
-                                .withIndex()
-                                .any {
-                                    it.index != index &&
-                                        it.value.title.trim() == newTitle.trim()
-                                }
-                            optionItemList = optionItemList.mapIndexed { i, item ->
-                                when (i) {
-                                    index -> item.copy(
-                                        title = newTitle,
-                                        pollOptionError = when (duplicated) {
-                                            false -> null
-                                            true -> PollOptionDuplicated(
-                                                context.getString(R.string.stream_compose_poll_option_error_duplicated),
-                                            )
-                                        },
-                                    )
-                                    else -> item
-                                }
-                            }
-                            onQuestionsChanged.invoke(optionItemList)
-                        },
-                        decorationBox = { innerTextField ->
-                            if (item.pollOptionError == null) {
-                                innerTextField.invoke()
-                            } else if (item.title.isNotBlank()) {
-                                Column {
-                                    Text(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(bottom = 4.dp),
-                                        text = item.pollOptionError.message,
-                                        color = ChatTheme.colors.accentError,
-                                        fontSize = 12.sp,
-                                    )
-                                    innerTextField.invoke()
-                                }
-                            }
-                        },
-                    )
+        Text(
+            modifier = Modifier.padding(top = StreamTokens.spacingMd),
+            text = title,
+            color = colors.textPrimary,
+            style = ChatTheme.typography.headingSmall,
+        )
 
-                    IconButton(
-                        modifier = Modifier.draggableHandle(),
-                        onClick = {},
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.stream_compose_ic_drag_handle),
-                            contentDescription = null,
-                        )
-                    }
+        ReorderableColumn(
+            list = optionItemList,
+            onSettle = { fromIndex, toIndex ->
+                optionItemList = optionItemList.toMutableList().apply {
+                    add(toIndex, removeAt(fromIndex))
                 }
+                onQuestionsChanged(optionItemList)
+            },
+            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+        ) { index, item, _ ->
+            key(item.key) {
+                PollOptionRow(
+                    item = item,
+                    onTitleChange = { newTitle ->
+                        optionItemList = optionItemList.updateOnTitleChange(context, index, newTitle)
+                        onQuestionsChanged.invoke(optionItemList)
+                    },
+                    onRemove = {
+                        optionItemList = optionItemList.toMutableList().apply { removeAt(index) }
+                        onQuestionsChanged(optionItemList)
+                    },
+                )
             }
         }
-    }
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(itemHeightSize)
-            .padding(horizontal = 16.dp)
-            .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
-            .background(ChatTheme.messageComposerTheme.inputField.backgroundColor)
-            .clickable {
+        AddPollOptionButton(
+            onClick = {
                 optionItemList = optionItemList
                     .toMutableList()
                     .apply {
@@ -214,16 +120,124 @@ public fun PollOptionList(
                         onQuestionsChanged.invoke(this)
                     }
             },
+        )
+    }
+}
+
+@Composable
+private fun ReorderableScope.PollOptionRow(
+    item: PollOptionItem,
+    onTitleChange: (String) -> Unit,
+    onRemove: () -> Unit,
+) {
+    val colors = ChatTheme.colors
+    val borderColor = if (item.pollOptionError == null) colors.inputBorderDefault else colors.accentError
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(width = 1.dp, color = borderColor, shape = PollInputShape)
+            .clip(shape = PollInputShape),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        IconButton(
+            modifier = Modifier.draggableHandle(),
+            onClick = {},
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.stream_compose_ic_drag_handle),
+                contentDescription = null,
+                tint = colors.inputTextIcon,
+                modifier = Modifier.size(20.dp),
+            )
+        }
+
+        PollOptionInput(
+            modifier = Modifier.weight(1f),
+            value = item.title,
+            description = stringResource(id = R.string.stream_compose_poll_option_hint),
+            onValueChange = onTitleChange,
+            decorationBox = { innerTextField ->
+                if (item.pollOptionError == null || item.title.isBlank()) {
+                    innerTextField()
+                } else {
+                    Column {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = StreamTokens.spacing2xs),
+                            text = item.pollOptionError.message,
+                            color = colors.accentError,
+                            fontSize = 12.sp,
+                        )
+                        innerTextField()
+                    }
+                }
+            },
+        )
+
+        IconButton(onClick = onRemove) {
+            Icon(
+                painter = painterResource(R.drawable.stream_compose_ic_circle_minus),
+                contentDescription = null,
+                tint = colors.inputTextIcon,
+                modifier = Modifier.size(20.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun AddPollOptionButton(onClick: () -> Unit) {
+    val colors = ChatTheme.colors
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = PollInputMinHeight)
+            .border(
+                width = 1.dp,
+                color = colors.inputBorderDefault,
+                shape = PollInputShape,
+            )
+            .clip(PollInputShape)
+            .clickable(onClick = onClick),
     ) {
         Text(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterStart)
-                .padding(itemInnerPadding),
+                .padding(horizontal = StreamTokens.spacingMd, vertical = StreamTokens.spacingSm),
             text = stringResource(id = R.string.stream_compose_poll_option_description),
-            color = ChatTheme.colors.textSecondary,
-            fontSize = 16.sp,
+            style = ChatTheme.typography.bodyDefault,
+            color = colors.inputTextPlaceholder,
         )
+    }
+}
+
+// Align with IconButton's default min touch target size
+internal val PollInputMinHeight @Composable get() = LocalMinimumInteractiveComponentSize.current
+internal val PollInputShape = RoundedCornerShape(StreamTokens.radiusLg)
+
+private fun List<PollOptionItem>.updateOnTitleChange(
+    context: Context,
+    affectedIndex: Int,
+    newTitle: String,
+): List<PollOptionItem> {
+    val isDuplicated = withIndex().any { it.index != affectedIndex && it.value.title.trim() == newTitle.trim() }
+    return mapIndexed { i, optionItem ->
+        if (i == affectedIndex) {
+            optionItem.copy(
+                title = newTitle,
+                pollOptionError = when {
+                    isDuplicated -> PollOptionDuplicated(
+                        context.getString(R.string.stream_compose_poll_option_error_duplicated),
+                    )
+
+                    else -> null
+                },
+            )
+        } else {
+            optionItem
+        }
     }
 }
 
