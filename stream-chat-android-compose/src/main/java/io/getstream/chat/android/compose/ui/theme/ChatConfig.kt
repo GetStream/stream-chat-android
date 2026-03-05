@@ -48,6 +48,32 @@ public data class ChannelListConfig(
 )
 
 /**
+ * Configuration for a single poll feature toggle.
+ *
+ * @param configurable Whether the toggle is shown in the poll creation UI.
+ * @param defaultValue The initial enabled/disabled state of the toggle.
+ */
+public data class PollFeatureConfig(
+    val configurable: Boolean = true,
+    val defaultValue: Boolean = false,
+)
+
+/**
+ * Configuration for the poll creation screen.
+ *
+ * @param multipleVotes Configuration for the "multiple votes" toggle.
+ * @param anonymousPoll Configuration for the "anonymous poll" toggle.
+ * @param suggestAnOption Configuration for the "suggest an option" toggle.
+ * @param allowComments Configuration for the "allow comments" toggle.
+ */
+public data class PollsConfig(
+    val multipleVotes: PollFeatureConfig = PollFeatureConfig(),
+    val anonymousPoll: PollFeatureConfig = PollFeatureConfig(),
+    val suggestAnOption: PollFeatureConfig = PollFeatureConfig(),
+    val allowComments: PollFeatureConfig = PollFeatureConfig(),
+)
+
+/**
  * Central behavioral configuration for the Chat SDK, accessible through `ChatTheme.config`.
  *
  * Groups all feature-flag and behavioral settings by feature area so integrators have a single
@@ -60,6 +86,7 @@ public data class ChannelListConfig(
  * @param composer Configuration for the message composer behavior.
  * @param channelList Configuration for the channel list behavior.
  * @param attachmentPicker Configuration for the attachment picker behavior.
+ * @param polls Configuration for the poll creation screen.
  */
 public data class ChatConfig(
     val translation: TranslationConfig = TranslationConfig(),
@@ -68,6 +95,7 @@ public data class ChatConfig(
     val composer: ComposerConfig = ComposerConfig(),
     val channelList: ChannelListConfig = ChannelListConfig(),
     val attachmentPicker: AttachmentPickerConfig = AttachmentPickerConfig(),
+    val polls: PollsConfig = PollsConfig(),
 )
 
 /**

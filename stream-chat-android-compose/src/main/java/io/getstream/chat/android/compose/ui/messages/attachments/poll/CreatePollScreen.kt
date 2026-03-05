@@ -55,7 +55,7 @@ public fun CreatePollScreen(
     onCreatePoll: (PollConfig) -> Unit,
 ) {
     val viewModel: CreatePollViewModel = viewModel(
-        factory = CreatePollViewModelFactory(ChatTheme.pollSwitchitemFactory.providePollSwitchItemList()),
+        factory = CreatePollViewModelFactory(ChatTheme.config.polls),
     )
     val backAction = {
         // Invoke reset() - important to clear the ViewModel state. (the view model can be persisted across opening and
@@ -84,7 +84,7 @@ public fun CreatePollScreen(
                         pollConfigFrom(
                             pollQuestion = state.question,
                             pollOptions = state.optionItemList,
-                            pollSwitches = state.switchItemList,
+                            state = state,
                         ),
                     )
                     backAction()
@@ -116,8 +116,7 @@ public fun CreatePollScreen(
 
             // Poll configuration switches
             PollSwitchList(
-                pollSwitchItems = state.switchItemList,
-                onSwitchesChanged = viewModel::updateSwitches,
+                items = viewModel.switchItems.collectAsState().value,
             )
 
             BackHandler(onBack = backOrDiscardDialog)
@@ -135,6 +134,7 @@ public fun CreatePollScreen(
         }
     }
 }
+
 
 @Preview
 @Composable
