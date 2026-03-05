@@ -234,7 +234,7 @@ private fun PollMessageContent(
                 voteCount = voteCount,
                 users = poll.getVotes(option).mapNotNull(Vote::user),
                 totalVoteCount = poll.voteCountsByOption.values.sum(),
-                checkedCount = poll.ownVotes.count { it.optionId == option.id },
+                checkedCount = poll.ownVotes.size,
                 checked = poll.ownVotes.any { it.optionId == option.id },
                 style = style,
                 onCastVote = { onCastVote.invoke(option) },
@@ -411,7 +411,8 @@ private fun PollOptionItem(
             RadioCheck(
                 checked = checked,
                 onCheckedChange = { enabled: Boolean ->
-                    if (enabled && checkedCount < poll.maxVotesAllowed && !checked) {
+                    val canVote = poll.maxVotesAllowed?.let { checkedCount < it } ?: true
+                    if (enabled && canVote && !checked) {
                         onCastVote.invoke()
                     } else if (!enabled) {
                         onRemoveVote.invoke()

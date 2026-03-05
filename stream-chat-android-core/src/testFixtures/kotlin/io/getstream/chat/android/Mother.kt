@@ -851,7 +851,7 @@ public fun randomPollConfig(
     options: List<String> = listOf(randomString()),
     votingVisibility: VotingVisibility = VotingVisibility.PUBLIC,
     enforceUniqueVote: Boolean = randomBoolean(),
-    maxVotesAllowed: Int = positiveRandomInt(),
+    maxVotesAllowed: Int? = positiveRandomInt(),
     allowUserSuggestedOptions: Boolean = randomBoolean(),
     allowAnswers: Boolean = randomBoolean(),
 ): PollConfig = PollConfig(
@@ -871,7 +871,7 @@ public fun randomPoll(
     description: String = randomString(),
     votingVisibility: VotingVisibility = VotingVisibility.PUBLIC,
     enforceUniqueVote: Boolean = randomBoolean(),
-    maxVotesAllowed: Int = positiveRandomInt(),
+    maxVotesAllowed: Int? = positiveRandomInt(),
     voteCount: Int = positiveRandomInt(),
     voteCountsByOption: Map<String, Int> = emptyMap(),
     allowUserSuggestedOptions: Boolean = randomBoolean(),

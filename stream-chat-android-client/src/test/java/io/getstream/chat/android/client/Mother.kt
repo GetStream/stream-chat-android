@@ -1067,7 +1067,7 @@ internal object Mother {
         description: String = randomString(),
         votingVisibility: String = "public",
         enforceUniqueVote: Boolean = randomBoolean(),
-        maxVotesAllowed: Int = randomInt(),
+        maxVotesAllowed: Int? = randomInt(),
         allowUserSuggestedOptions: Boolean = randomBoolean(),
         allowAnswers: Boolean = randomBoolean(),
         options: List<DownstreamPollOptionDto> = listOf(randomDownstreamOptionDto()),
