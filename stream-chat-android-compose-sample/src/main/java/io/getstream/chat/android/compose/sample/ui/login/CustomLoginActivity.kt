@@ -46,7 +46,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -125,14 +124,36 @@ class CustomLoginActivity : AppCompatActivity() {
                     var userTokenText by remember { mutableStateOf("") }
                     var userNameText by remember { mutableStateOf("") }
                     var isAdaptiveLayoutEnabled by remember { mutableStateOf(settings.isAdaptiveLayoutEnabled) }
+                    var isComposerFloatingStyleEnabled by remember {
+                        mutableStateOf(settings.isComposerFloatingStyleEnabled)
+                    }
 
                     val isLoginButtonEnabled = apiKeyText.isNotEmpty() &&
                         userIdText.isNotEmpty() &&
                         userTokenText.isNotEmpty()
 
-                    LaunchedEffect(isAdaptiveLayoutEnabled) {
-                        settings.isAdaptiveLayoutEnabled = isAdaptiveLayoutEnabled
-                    }
+                    val featureFlags = listOf(
+                        FeatureFlag(
+                            label = stringResource(R.string.custom_login_flag_adaptive_layout_label),
+                            description = stringResource(R.string.custom_login_flag_adaptive_layout_description),
+                            value = isAdaptiveLayoutEnabled,
+                            onValueChange = {
+                                isAdaptiveLayoutEnabled = it
+                                settings.isAdaptiveLayoutEnabled = it
+                            },
+                        ),
+                        FeatureFlag(
+                            label = stringResource(R.string.custom_login_flag_composer_floating_style_label),
+                            description = stringResource(
+                                R.string.custom_login_flag_composer_floating_style_description,
+                            ),
+                            value = isComposerFloatingStyleEnabled,
+                            onValueChange = {
+                                isComposerFloatingStyleEnabled = it
+                                settings.isComposerFloatingStyleEnabled = it
+                            },
+                        ),
+                    )
 
                     CustomLoginInputField(
                         hint = stringResource(id = R.string.custom_login_hint_api_key),
@@ -160,10 +181,14 @@ class CustomLoginActivity : AppCompatActivity() {
 
                     HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
-                    EnableAdaptiveScreenField(
-                        value = isAdaptiveLayoutEnabled,
-                        onValueChange = { isChecked -> isAdaptiveLayoutEnabled = isChecked },
-                    )
+                    featureFlags.forEach { flag ->
+                        FeatureFlagField(
+                            value = flag.value,
+                            label = flag.label,
+                            description = flag.description,
+                            onValueChange = flag.onValueChange,
+                        )
+                    }
 
                     Spacer(modifier = Modifier.weight(1f))
 
@@ -272,8 +297,10 @@ class CustomLoginActivity : AppCompatActivity() {
     }
 
     @Composable
-    private fun EnableAdaptiveScreenField(
+    private fun FeatureFlagField(
         value: Boolean,
+        label: String,
+        description: String,
         onValueChange: (Boolean) -> Unit,
     ) {
         Row(
@@ -293,11 +320,11 @@ class CustomLoginActivity : AppCompatActivity() {
             )
             Column {
                 Text(
-                    text = stringResource(id = R.string.custom_login_enable_adaptive_layout),
+                    text = label,
                     style = ChatTheme.typography.headingMedium,
                 )
                 Text(
-                    text = stringResource(id = R.string.custom_login_enable_adaptive_layout_description),
+                    text = description,
                     style = ChatTheme.typography.metadataDefault,
                 )
             }
@@ -327,6 +354,13 @@ class CustomLoginActivity : AppCompatActivity() {
     private fun showError(error: Error) {
         Toast.makeText(this, "Login failed: ${error.message}", Toast.LENGTH_SHORT).show()
     }
+
+    private data class FeatureFlag(
+        val label: String,
+        val description: String,
+        val value: Boolean,
+        val onValueChange: (Boolean) -> Unit,
+    )
 
     companion object {
         fun createIntent(context: Context): Intent {

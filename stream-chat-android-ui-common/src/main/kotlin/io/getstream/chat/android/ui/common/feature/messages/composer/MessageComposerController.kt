@@ -653,8 +653,9 @@ public class MessageComposerController(
     }
 
     /**
-     * Clears all the data from the input — text, attachments, validation errors, and actions.
-     * In thread mode, [alsoSendToChannel] is preserved until the user toggles it; otherwise it is reset.
+     * Clears all the data from the input — text, attachments, validation errors, actions, and active command.
+     * In thread mode, [MessageComposerState.alsoSendToChannel] is preserved until the user toggles it;
+     * otherwise it is reset.
      */
     public fun clearData() {
         logger.i { "[clearData]" }
@@ -662,6 +663,7 @@ public class MessageComposerController(
         scope.launch { clearDraftMessage(messageMode.value) }
         messageInput.value = MessageInput()
         state.update { it.copy(attachments = emptyList()) }
+        clearActiveCommand()
         validationErrors.value = emptyList()
         if (!isInThread) {
             state.update { it.copy(alsoSendToChannel = false) }
@@ -782,7 +784,12 @@ public class MessageComposerController(
         val activeAction = activeAction
 
         val currentUserId = chatClient.getCurrentUser()?.id
-        val trimmedMessage = message.trim()
+        val fullText = if (config.isActiveCommandEnabled) {
+            state.value.activeCommand?.let { "/${it.name} $message" } ?: message
+        } else {
+            message
+        }
+        val trimmedMessage = fullText.trim()
         val activeMessage = activeAction?.message ?: Message()
         val replyMessageId = (activeAction as? Reply)?.message?.id
         val mentions = filterMentions(selectedMentions, trimmedMessage)
@@ -885,11 +892,26 @@ public class MessageComposerController(
     /**
      * Switches the message composer to the command input mode.
      *
+     * Sets [MessageComposerState.activeCommand] and clears the text input so the user can type
+     * the command arguments. The full `/command args` string is assembled in [buildNewMessage].
+     *
      * @param command The command that was selected.
      */
     public fun selectCommand(command: Command) {
-        setMessageInputInternal("/${command.name} ", MessageInput.Source.CommandSelected)
+        state.update { it.copy(activeCommand = command) }
+        setMessageInputInternal(
+            value = if (config.isActiveCommandEnabled) "" else "/${command.name} ",
+            source = MessageInput.Source.CommandSelected,
+        )
         _inputFocusEvents.tryEmit(Unit)
+    }
+
+    /**
+     * Dismisses the active command, clearing [MessageComposerState.activeCommand] and resetting the text input.
+     */
+    public fun clearActiveCommand() {
+        state.update { it.copy(activeCommand = null) }
+        setMessageInputInternal("", MessageInput.Source.Default)
     }
 
     /**
@@ -1126,12 +1148,14 @@ public class MessageComposerController(
      * @param maxAttachmentCount The maximum number of attachments allowed in a message.
      * @param isLinkPreviewEnabled If link previews are enabled.
      * @param isDraftMessageEnabled If draft messages are enabled.
+     * @param isActiveCommandEnabled If active commands are enabled.
      */
     @InternalStreamChatApi
     public data class Config(
         val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
         val isLinkPreviewEnabled: Boolean = false,
         val isDraftMessageEnabled: Boolean = false,
+        val isActiveCommandEnabled: Boolean = false,
     )
 
     private fun getDraftMessageOrEmpty(messageMode: MessageMode): DraftMessage =

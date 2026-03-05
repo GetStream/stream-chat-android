@@ -53,6 +53,7 @@
     <ID>MaxLineLength:StreamColors.kt$StreamColors$*</ID>
     <ID>MaxLineLength:WaveformSlider.kt$// StreamLog.v("WaveformTrack") { "[onDraw] startIdx: $startIdx, totalBars: $totalBars, visibleBarLimit: $visibleBarLimit, waveformData.size: ${waveformData.size}" }</ID>
     <ID>TooManyFunctions:MessageComposerViewModel.kt$MessageComposerViewModel : ViewModel</ID>
+    <ID>TooManyFunctions:MessageComposer.kt$io.getstream.chat.android.compose.ui.messages.composer.MessageComposer.kt</ID>
     <ID>TopLevelPropertyNaming:AudioWaveSeekbar.kt$private const val DEFAULT_TRACKER_HEIGHT_DP = 60</ID>
     <ID>TopLevelPropertyNaming:AudioWaveSeekbar.kt$private const val DEFAULT_TRACKER_WIDTH = 4</ID>
     <ID>TopLevelPropertyNaming:DefaultMessageComposerRecordingContent.kt$private const val HOLD_TO_RECORD_DISMISS_TIMEOUT = 1000L</ID>

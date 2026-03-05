@@ -320,6 +320,152 @@ internal class MessageComposerControllerTest {
         }
     }
 
+    @Test
+    fun `Given activeCommand is disabled When selectCommand called Then activeCommand is set and inputValue is not empty`() = runTest {
+        // Given
+        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(isActiveCommandEnabled = false))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+
+        // When
+        controller.selectCommand(command)
+        advanceUntilIdle()
+
+        // Then
+        assertEquals(command, controller.state.value.activeCommand)
+        assertEquals("/${command.name} ", controller.state.value.inputValue)
+    }
+
+    @Test
+    fun `Given a command When selectCommand called Then activeCommand is set and inputValue is empty`() = runTest {
+        // Given
+        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(isActiveCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+
+        // When
+        controller.selectCommand(command)
+        advanceUntilIdle()
+
+        // Then
+        assertEquals(command, controller.state.value.activeCommand)
+        assertEquals("", controller.state.value.inputValue)
+    }
+
+    @Test
+    fun `Given an active command When clearActiveCommand called Then activeCommand is null and inputValue is empty`() =
+        runTest {
+            // Given
+            val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+            val controller = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(command))),
+                )
+                .get()
+            controller.selectCommand(command)
+            advanceUntilIdle()
+
+            // When
+            controller.clearActiveCommand()
+            advanceUntilIdle()
+
+            // Then
+            assertEquals(null, controller.state.value.activeCommand)
+            assertEquals("", controller.state.value.inputValue)
+        }
+
+    @Test
+    fun `Given an active command with args When buildNewMessage called Then full command text is used`() = runTest {
+        // Given
+        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(isActiveCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+        controller.selectCommand(command)
+        advanceUntilIdle()
+
+        // When
+        val message = controller.buildNewMessage("hello world")
+
+        // Then
+        assertEquals("/giphy hello world", message.text)
+    }
+
+    @Test
+    fun `Given an active command with no args When buildNewMessage called Then command name only is used`() = runTest {
+        // Given
+        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(isActiveCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+        controller.selectCommand(command)
+        advanceUntilIdle()
+
+        // When
+        val message = controller.buildNewMessage("")
+
+        // Then
+        assertEquals("/giphy", message.text)
+    }
+
+    @Test
+    fun `Given an active command When clearData called Then activeCommand is null`() = runTest {
+        // Given
+        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+        controller.selectCommand(command)
+        advanceUntilIdle()
+
+        // When
+        controller.clearData()
+        advanceUntilIdle()
+
+        // Then
+        assertEquals(null, controller.state.value.activeCommand)
+    }
+
     // region sendMessage tests
 
     @Test
@@ -755,9 +901,14 @@ internal class MessageComposerControllerTest {
         private val globalState: GlobalState = mock()
         private val inheritedScope: CoroutineScope = TestScope()
         val mediaRecorder: StreamMediaRecorder = mock()
+        private var config = MessageComposerController.Config()
 
         fun givenAppSettings(appSettings: AppSettings = defaultAppSettings()) = apply {
             whenever(chatClient.getAppSettings()) doReturn appSettings
+        }
+
+        fun givenConfig(config: MessageComposerController.Config) = apply {
+            this.config = config
         }
 
         private fun defaultAppSettings(): AppSettings {
@@ -844,6 +995,7 @@ internal class MessageComposerControllerTest {
                 mediaRecorder = mediaRecorder,
                 userLookupHandler = mock(),
                 fileToUri = mock(),
+                config = config,
                 globalState = MutableStateFlow(globalState),
             )
         }
