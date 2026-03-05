@@ -242,7 +242,8 @@ private fun PollMoreOptionItem(
                 modifier = Modifier.padding(end = 8.dp),
                 checked = checked,
                 onCheckedChange = { enabled ->
-                    if (enabled && checkedCount < poll.maxVotesAllowed && !checked) {
+                    val canVote = poll.maxVotesAllowed?.let { checkedCount < it } ?: true
+                    if (enabled && canVote && !checked) {
                         onCastVote.invoke()
                     } else if (!enabled) {
                         onRemoveVote.invoke()

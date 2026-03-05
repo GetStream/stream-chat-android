@@ -31,7 +31,7 @@ internal class PollEntity(
     val options: List<OptionEntity>,
     val votingVisibility: String,
     val enforceUniqueVote: Boolean,
-    val maxVotesAllowed: Int,
+    val maxVotesAllowed: Int?,
     val allowUserSuggestedOptions: Boolean,
     val allowAnswers: Boolean,
     val voteCount: Int,
