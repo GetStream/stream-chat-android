@@ -251,24 +251,22 @@ private fun BoxWithConstraintsScope.resolveStackedAvatarDimensions(): StackedGro
     return when {
         // Beyond the largest fixed tier: keep the same edge gap as XXL so the container looks equally full.
         maxWidth > AvatarSize.ExtraExtraLarge -> {
-            val avatarScaled = maxWidth - AvatarSize.ExtraExtraLarge + AvatarSize.ExtraLarge
+            val avatarScaled = maxWidth - AvatarSize.ExtraExtraLarge + AvatarSize.Large
             val badgeScale = maxWidth / AvatarSize.ExtraExtraLarge
             val badgeScaled = CountBadgeSize.Large.copy(spacing = CountBadgeSize.Large.spacing * badgeScale)
             StackedGroupAvatarDimensions(avatarSize = avatarScaled, badgeSize = badgeScaled)
         }
         maxWidth >= AvatarSize.ExtraExtraLarge -> StackedGroupAvatarDimensions.XXL
-        maxWidth >= 64.dp -> StackedGroupAvatarDimensions.XL
-        maxWidth >= AvatarSize.ExtraLarge -> StackedGroupAvatarDimensions.L
-        else -> StackedGroupAvatarDimensions.S
+        maxWidth >= AvatarSize.ExtraLarge -> StackedGroupAvatarDimensions.XL
+        else -> StackedGroupAvatarDimensions.L
     }
 }
 
 private data class StackedGroupAvatarDimensions(val avatarSize: Dp, val badgeSize: CountBadgeSize) {
     companion object {
-        val XXL = StackedGroupAvatarDimensions(avatarSize = AvatarSize.ExtraLarge, badgeSize = CountBadgeSize.Large)
-        val XL = StackedGroupAvatarDimensions(avatarSize = AvatarSize.Large, badgeSize = CountBadgeSize.Large)
-        val L = StackedGroupAvatarDimensions(avatarSize = AvatarSize.Medium, badgeSize = CountBadgeSize.Medium)
-        val S = StackedGroupAvatarDimensions(avatarSize = AvatarSize.Small, badgeSize = CountBadgeSize.Small)
+        val XXL = StackedGroupAvatarDimensions(avatarSize = AvatarSize.Large, badgeSize = CountBadgeSize.Large)
+        val XL = StackedGroupAvatarDimensions(avatarSize = AvatarSize.Medium, badgeSize = CountBadgeSize.Medium)
+        val L = StackedGroupAvatarDimensions(avatarSize = AvatarSize.Small, badgeSize = CountBadgeSize.Small)
     }
 }
 

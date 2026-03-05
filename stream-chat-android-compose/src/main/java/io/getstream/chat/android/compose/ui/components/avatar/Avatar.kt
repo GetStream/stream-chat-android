@@ -81,5 +81,5 @@ public object AvatarSize {
     public val Medium: Dp = 32.dp
     public val Large: Dp = 40.dp
     public val ExtraLarge: Dp = 48.dp
-    public val ExtraExtraLarge: Dp = 80.dp
+    public val ExtraExtraLarge: Dp = 64.dp
 }
