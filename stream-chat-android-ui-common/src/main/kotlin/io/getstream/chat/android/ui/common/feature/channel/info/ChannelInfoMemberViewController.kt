@@ -19,7 +19,7 @@ package io.getstream.chat.android.ui.common.feature.channel.info
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.state.GlobalState
-import io.getstream.chat.android.client.api.state.globalState
+import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.client.api.state.watchChannelAsState
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -69,7 +69,7 @@ public class ChannelInfoMemberViewController(
     channelState: Flow<ChannelState> = chatClient
         .watchChannelAsState(cid = cid, messageLimit = 0, coroutineScope = scope)
         .filterNotNull(),
-    globalState: GlobalState = chatClient.globalState,
+    globalState: Flow<GlobalState> = chatClient.globalStateFlow,
 ) {
     private val logger by taggedLogger("Chat:ChannelInfoMemberViewController")
 
@@ -78,17 +78,19 @@ public class ChannelInfoMemberViewController(
      */
     @OptIn(ExperimentalCoroutinesApi::class)
     public val state: StateFlow<ChannelInfoMemberViewState> =
-        channelState.flatMapLatest { channel ->
-            combine(
-                channel.channelData,
-                channel.members
-                    .mapNotNull { members -> members.firstOrNull { it.getUserId() == memberId } }
-                    .onEach { logger.d { "[onMember] name: ${it.user.name}" } },
-                queryDistinctChannel(),
-                globalState.muted,
-                globalState.blockedUserIds,
-                ::ChannelInfoMemberData,
-            )
+        globalState.flatMapLatest { global ->
+            channelState.flatMapLatest { channel ->
+                combine(
+                    channel.channelData,
+                    channel.members
+                        .mapNotNull { members -> members.firstOrNull { it.getUserId() == memberId } }
+                        .onEach { logger.d { "[onMember] name: ${it.user.name}" } },
+                    queryDistinctChannel(),
+                    global.muted,
+                    global.blockedUserIds,
+                    ::ChannelInfoMemberData,
+                )
+            }
         }.map { data ->
             this.member = data.member
             this.distinctCid = data.distinctChannel?.cid

@@ -39,6 +39,7 @@ import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -439,7 +440,7 @@ internal class ChannelInfoMemberViewControllerTest {
             scope = scope,
             chatClient = chatClient,
             channelState = MutableStateFlow(channelState),
-            globalState = globalState,
+            globalState = flowOf(globalState),
         )
     }
 }

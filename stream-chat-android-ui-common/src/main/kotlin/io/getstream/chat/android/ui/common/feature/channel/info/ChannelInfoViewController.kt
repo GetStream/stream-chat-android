@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.common.feature.channel.info
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.GlobalState
-import io.getstream.chat.android.client.api.state.globalState
+import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.client.api.state.watchChannelAsState
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
@@ -81,7 +81,7 @@ public class ChannelInfoViewController(
         .watchChannelAsState(cid = cid, messageLimit = 0, coroutineScope = scope)
         .filterNotNull(),
     private val channelClient: ChannelClient = chatClient.channel(cid),
-    globalState: GlobalState = chatClient.globalState,
+    globalState: Flow<GlobalState> = chatClient.globalStateFlow,
 ) {
     private val logger by taggedLogger("Chat:ChannelInfoViewController")
 
@@ -101,8 +101,8 @@ public class ChannelInfoViewController(
 
     init {
         @Suppress("OPT_IN_USAGE")
-        channelState
-            .flatMapLatest { channel ->
+        globalState.flatMapLatest { global ->
+            channelState.flatMapLatest { channel ->
                 logger.d { "[onChannelState]" }
                 combine(
                     combine(
@@ -117,8 +117,8 @@ public class ChannelInfoViewController(
                         channel.hidden.onEach { logger.d { "[onHidden] $it" } },
                         ::ChannelData4,
                     ),
-                    globalState.muted,
-                    globalState.blockedUserIds,
+                    global.muted,
+                    global.blockedUserIds,
                 ) { data4, mutedUsers, blockedUserIds ->
                     ChannelInfoData(
                         channelData = data4.channelData,
@@ -130,6 +130,7 @@ public class ChannelInfoViewController(
                     )
                 }
             }
+        }
             .distinctUntilChanged()
             .onEach { data ->
                 onChannelInfoData(data)
@@ -229,17 +230,13 @@ public class ChannelInfoViewController(
                 _events.tryEmit(ChannelInfoViewEvent.NavigateToDraftChannel(event.memberId))
             }
 
-            is ChannelInfoMemberViewEvent.MuteUser ->
-                _events.tryEmit(ChannelInfoViewEvent.MuteUser(event.member))
+            is ChannelInfoMemberViewEvent.MuteUser -> muteUser(event.member.getUserId())
 
-            is ChannelInfoMemberViewEvent.UnmuteUser ->
-                _events.tryEmit(ChannelInfoViewEvent.UnmuteUser(event.member))
+            is ChannelInfoMemberViewEvent.UnmuteUser -> unmuteUser(event.member.getUserId())
 
-            is ChannelInfoMemberViewEvent.BlockUser ->
-                _events.tryEmit(ChannelInfoViewEvent.BlockUser(event.member))
+            is ChannelInfoMemberViewEvent.BlockUser -> blockUser(event.member.getUserId())
 
-            is ChannelInfoMemberViewEvent.UnblockUser ->
-                _events.tryEmit(ChannelInfoViewEvent.UnblockUser(event.member))
+            is ChannelInfoMemberViewEvent.UnblockUser -> unblockUser(event.member.getUserId())
 
             is ChannelInfoMemberViewEvent.BanMember ->
                 _events.tryEmit(ChannelInfoViewEvent.BanMemberModal(event.member))
@@ -328,8 +325,8 @@ public class ChannelInfoViewController(
         return content.members.firstOrNull()?.getUserId()
     }
 
-    private fun muteUser() {
-        val userId = getDmMemberId() ?: return
+    private fun muteUser(userId: String? = getDmMemberId()) {
+        userId ?: return
         logger.d { "[muteUser] userId: $userId" }
         scope.launch {
             chatClient.muteUser(userId).await()
@@ -340,8 +337,8 @@ public class ChannelInfoViewController(
         }
     }
 
-    private fun unmuteUser() {
-        val userId = getDmMemberId() ?: return
+    private fun unmuteUser(userId: String? = getDmMemberId()) {
+        userId ?: return
         logger.d { "[unmuteUser] userId: $userId" }
         scope.launch {
             chatClient.unmuteUser(userId).await()
@@ -352,8 +349,8 @@ public class ChannelInfoViewController(
         }
     }
 
-    private fun blockUser() {
-        val userId = getDmMemberId() ?: return
+    private fun blockUser(userId: String? = getDmMemberId()) {
+        userId ?: return
         logger.d { "[blockUser] userId: $userId" }
         scope.launch {
             chatClient.blockUser(userId).await()
@@ -364,8 +361,8 @@ public class ChannelInfoViewController(
         }
     }
 
-    private fun unblockUser() {
-        val userId = getDmMemberId() ?: return
+    private fun unblockUser(userId: String? = getDmMemberId()) {
+        userId ?: return
         logger.d { "[unblockUser] userId: $userId" }
         scope.launch {
             chatClient.unblockUser(userId).await()

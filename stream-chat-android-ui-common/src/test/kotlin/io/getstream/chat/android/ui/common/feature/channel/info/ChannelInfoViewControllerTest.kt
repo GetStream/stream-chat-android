@@ -45,6 +45,7 @@ import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
@@ -1559,7 +1560,7 @@ private class Fixture {
         chatClient = chatClient,
         channelState = MutableStateFlow(channelState),
         channelClient = channelClient,
-        globalState = globalState,
+        globalState = flowOf(globalState),
         copyToClipboardHandler = copyToClipboardHandler,
     )
 }
