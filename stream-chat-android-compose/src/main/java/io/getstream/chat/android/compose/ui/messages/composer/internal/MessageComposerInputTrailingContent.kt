@@ -52,6 +52,7 @@ internal fun MessageComposerInputTrailingContent(
     val validationErrors = state.validationErrors
     val attachments = state.attachments
     val isInEditMode = state.action is Edit
+    val hasActiveCommand = state.activeCommand != null
 
     val canSendMessage = state.canSendMessage()
     val isInputValid = (inputText.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty()
@@ -63,7 +64,7 @@ internal fun MessageComposerInputTrailingContent(
 
     val actionButton = when {
         coolDownTime > 0 -> ActionButton.CoolDown(coolDownTime)
-        isInEditMode -> ActionButton.Save(enabled = hasValidContent)
+        isInEditMode || hasActiveCommand -> ActionButton.Save(enabled = hasValidContent)
         hasValidContent -> ActionButton.Send
         isRecordingEnabled -> ActionButton.Record
         else -> null

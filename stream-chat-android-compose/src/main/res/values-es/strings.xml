@@ -88,7 +88,6 @@
   <string name="stream_compose_message_composer_instant_commands">"Comandos instantáneos"</string>
   <string name="stream_compose_message_composer_show_in_channel">"También enviar cómo mensaje directo"</string>
   <string name="stream_compose_message_deleted">"Mensaje eliminado"</string>
-  <string name="stream_compose_message_composer_empty_placeholder">"Enviar mensaje"</string>
   <string name="stream_compose_message_list_empty_messages">"Sin mensajes"</string>
   <string name="stream_compose_message_list_error_cannot_open_link">"No hay ninguna aplicación para ver esta URL:
 %s"</string>

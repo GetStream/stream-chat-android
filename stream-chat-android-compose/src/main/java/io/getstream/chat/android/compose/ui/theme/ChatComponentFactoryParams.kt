@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.state.messages.MessageReactionItemState
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 
 /**
@@ -58,5 +59,18 @@ public data class ChannelMediaAttachmentsPreviewBottomBarParams(
  */
 public data class MessageFooterStatusIndicatorParams(
     val messageItem: MessageItemState,
+    val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for the [ChatComponentFactory.MessageComposerInputLeadingContent] component.
+ *
+ * @param state The message composer state.
+ * @param onActiveCommandDismiss Handler when the active command is dismissed.
+ * @param modifier Modifier for styling.
+ */
+public data class MessageComposerInputLeadingContentParams(
+    val state: MessageComposerState,
+    val onActiveCommandDismiss: () -> Unit,
     val modifier: Modifier = Modifier,
 )

@@ -68,7 +68,8 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
         }
 
         composeTestRule.onNodeWithText("Instant Commands").assertExists()
-        composeTestRule.onNodeWithText("/${command.name} ${command.args}").assertExists()
+        composeTestRule.onNodeWithText(command.name.replaceFirstChar(Char::uppercase)).assertExists()
+        composeTestRule.onNodeWithText(command.description).assertExists()
     }
 
     @Test

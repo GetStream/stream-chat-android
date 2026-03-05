@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.components.suggestions.mentions
+package io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions
 
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
@@ -23,7 +23,7 @@ import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import org.junit.Rule
 import org.junit.Test
 
-internal class MentionSuggestionListTest : PaparazziComposeTest {
+internal class CommandSuggestionListTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(
@@ -32,9 +32,9 @@ internal class MentionSuggestionListTest : PaparazziComposeTest {
     )
 
     @Test
-    fun `mention suggestion list`() {
+    fun `command suggestion list`() {
         snapshotWithDarkModeRow {
-            MentionSuggestionList()
+            CommandSuggestionList()
         }
     }
 }

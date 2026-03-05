@@ -136,6 +136,7 @@ public class MessagesViewModelFactory(
                         maxAttachmentCount = maxAttachmentCount,
                         isLinkPreviewEnabled = isComposerLinkPreviewEnabled,
                         isDraftMessageEnabled = isComposerDraftMessageEnabled,
+                        isActiveCommandEnabled = true,
                     ),
                 ),
                 storageHelper = storageHelper,
