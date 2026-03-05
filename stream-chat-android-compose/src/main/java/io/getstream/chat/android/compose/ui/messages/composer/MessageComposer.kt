@@ -462,6 +462,31 @@ internal fun MessageComposerFloatingStyleWithVisibleAttachmentPicker() {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+private fun MessageComposerFloatingStyleWithCommandSuggestionsPreview() {
+    ChatTheme {
+        MessageComposerFloatingStyleWithCommandSuggestions()
+    }
+}
+
+@Composable
+internal fun MessageComposerFloatingStyleWithCommandSuggestions() {
+    val config = ChatTheme.config.copy(composer = ComposerConfig(floatingStyleEnabled = true))
+    CompositionLocalProvider(LocalChatConfig provides config) {
+        MessageComposer(
+            messageComposerState = PreviewMessageComposerState.copy(
+                commandSuggestions = listOf(
+                    PreviewCommandData.command1,
+                    PreviewCommandData.command2,
+                    PreviewCommandData.command3,
+                ),
+            ),
+            onSendMessage = { _, _ -> },
+        )
+    }
+}
+
 private val PreviewMessageComposerState = MessageComposerState(
     ownCapabilities = ChannelCapabilities.toSet(),
     hasCommands = true,
