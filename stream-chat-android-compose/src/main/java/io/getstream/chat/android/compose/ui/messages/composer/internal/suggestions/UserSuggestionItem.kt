@@ -71,7 +71,6 @@ internal fun UserSuggestionItem(
 @Composable
 internal fun DefaultUserSuggestionItemLeadingContent(
     user: User,
-    currentUser: User?,
     modifier: Modifier = Modifier,
 ) {
     ChatTheme.componentFactory.UserAvatar(

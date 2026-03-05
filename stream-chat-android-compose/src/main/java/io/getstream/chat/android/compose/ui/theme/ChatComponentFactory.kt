@@ -1493,7 +1493,6 @@ public interface ChatComponentFactory {
         DefaultUserSuggestionItemLeadingContent(
             modifier = modifier,
             user = user,
-            currentUser = currentUser,
         )
     }
 
