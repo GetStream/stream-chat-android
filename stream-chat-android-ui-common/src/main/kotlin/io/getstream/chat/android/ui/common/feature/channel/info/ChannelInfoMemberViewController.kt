@@ -18,14 +18,16 @@ package io.getstream.chat.android.ui.common.feature.channel.info
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.state.GlobalState
+import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.client.api.state.watchChannelAsState
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
 import io.getstream.log.taggedLogger
@@ -56,6 +58,7 @@ import kotlinx.coroutines.flow.stateIn
  * @param scope The [CoroutineScope] used for launching coroutines.
  * @param chatClient The [ChatClient] instance used for interacting with the chat API.
  * @param channelState A [Flow] representing the state of the channel.
+ * @param globalState The [GlobalState] instance for accessing muted/blocked state.
  */
 @InternalStreamChatApi
 public class ChannelInfoMemberViewController(
@@ -66,6 +69,7 @@ public class ChannelInfoMemberViewController(
     channelState: Flow<ChannelState> = chatClient
         .watchChannelAsState(cid = cid, messageLimit = 0, coroutineScope = scope)
         .filterNotNull(),
+    globalState: Flow<GlobalState> = chatClient.globalStateFlow,
 ) {
     private val logger by taggedLogger("Chat:ChannelInfoMemberViewController")
 
@@ -74,24 +78,27 @@ public class ChannelInfoMemberViewController(
      */
     @OptIn(ExperimentalCoroutinesApi::class)
     public val state: StateFlow<ChannelInfoMemberViewState> =
-        channelState.flatMapLatest { channel ->
-            combine(
-                channel.channelData,
-                channel.members
-                    .mapNotNull { members -> members.firstOrNull { it.getUserId() == memberId } }
-                    .onEach { logger.d { "[onMember] name: ${it.user.name}" } },
-                queryDistinctChannel(),
-                ::ChannelInfoMemberData,
-            )
-        }.map { (channelData, member, distinctChannel) ->
-            this.member = member
-            this.distinctCid = distinctChannel?.cid
+        globalState.flatMapLatest { global ->
+            channelState.flatMapLatest { channel ->
+                combine(
+                    channel.channelData,
+                    channel.members
+                        .mapNotNull { members -> members.firstOrNull { it.getUserId() == memberId } }
+                        .onEach { logger.d { "[onMember] name: ${it.user.name}" } },
+                    queryDistinctChannel(),
+                    global.muted,
+                    global.blockedUserIds,
+                    ::ChannelInfoMemberData,
+                )
+            }
+        }.map { data ->
+            this.member = data.member
+            this.distinctCid = data.distinctChannel?.cid
             ChannelInfoMemberViewState.Content(
-                member = member,
-                options = buildOptionList(
-                    member = member,
-                    capabilities = channelData.ownCapabilities,
-                ),
+                member = data.member,
+                capabilities = data.channelData.ownCapabilities,
+                isMuted = data.mutedUsers.any { it.target?.id == memberId },
+                isBlocked = data.blockedUserIds.contains(memberId),
             )
         }.stateIn(
             scope = scope,
@@ -152,6 +159,18 @@ public class ChannelInfoMemberViewController(
             is ChannelInfoMemberViewAction.MessageMemberClick ->
                 _events.tryEmit(ChannelInfoMemberViewEvent.MessageMember(memberId, distinctCid))
 
+            is ChannelInfoMemberViewAction.MuteUserClick ->
+                _events.tryEmit(ChannelInfoMemberViewEvent.MuteUser(member))
+
+            is ChannelInfoMemberViewAction.UnmuteUserClick ->
+                _events.tryEmit(ChannelInfoMemberViewEvent.UnmuteUser(member))
+
+            is ChannelInfoMemberViewAction.BlockUserClick ->
+                _events.tryEmit(ChannelInfoMemberViewEvent.BlockUser(member))
+
+            is ChannelInfoMemberViewAction.UnblockUserClick ->
+                _events.tryEmit(ChannelInfoMemberViewEvent.UnblockUser(member))
+
             is ChannelInfoMemberViewAction.BanMemberClick ->
                 _events.tryEmit(ChannelInfoMemberViewEvent.BanMember(member))
 
@@ -170,18 +189,6 @@ private data class ChannelInfoMemberData(
     val channelData: ChannelData,
     val member: Member,
     val distinctChannel: Channel?,
+    val mutedUsers: List<Mute>,
+    val blockedUserIds: List<String>,
 )
-
-private fun buildOptionList(member: Member, capabilities: Set<String>) = buildList {
-    add(ChannelInfoMemberViewState.Content.Option.MessageMember(member = member))
-    if (capabilities.contains(ChannelCapabilities.BAN_CHANNEL_MEMBERS)) {
-        if (member.banned) {
-            add(ChannelInfoMemberViewState.Content.Option.UnbanMember(member = member))
-        } else {
-            add(ChannelInfoMemberViewState.Content.Option.BanMember(member = member))
-        }
-    }
-    if (capabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS)) {
-        add(ChannelInfoMemberViewState.Content.Option.RemoveMember(member = member))
-    }
-}

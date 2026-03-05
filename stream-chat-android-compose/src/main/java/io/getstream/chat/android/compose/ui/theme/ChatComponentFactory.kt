@@ -203,14 +203,13 @@ import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
-import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewEvent
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
-import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
+import io.getstream.chat.android.ui.common.state.channel.info.MemberAction
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -232,6 +231,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparat
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.chat.android.compose.ui.channel.attachments.ChannelFilesAttachmentsItem as DefaultChannelFilesAttachmentsItem
 import io.getstream.chat.android.compose.ui.channel.attachments.ChannelMediaAttachmentsItem as DefaultChannelMediaAttachmentsItem
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfoOptionItem as DefaultChannelInfoOptionItem
@@ -3022,6 +3022,58 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * Factory method for creating the avatar container in the group channel info screen.
+     *
+     * @param channel The channel to display the avatar for.
+     * @param currentUser The currently logged-in user.
+     * @param members The members list of the channel.
+     */
+    @Composable
+    public fun GroupChannelInfoAvatarContainer(
+        channel: Channel,
+        currentUser: User?,
+        members: ExpandableList<Member>,
+    ) {
+        io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoAvatarContainer(
+            channel = channel,
+            currentUser = currentUser,
+            members = members,
+        )
+    }
+
+    /**
+     * Factory method for creating the member section card in the group channel info screen.
+     *
+     * @param members The expandable list of members.
+     * @param currentUser The currently logged-in user.
+     * @param owner The owner of the channel.
+     * @param totalMemberCount The total number of members in the channel.
+     * @param showAddButton Whether to show the "Add" button.
+     * @param onAddMembersClick Callback invoked when the "Add" button is clicked.
+     * @param onViewAction Callback invoked when a view action is triggered.
+     */
+    @Composable
+    public fun GroupChannelInfoMemberSection(
+        members: ExpandableList<Member>,
+        currentUser: User?,
+        owner: User,
+        totalMemberCount: Int,
+        showAddButton: Boolean,
+        onAddMembersClick: () -> Unit,
+        onViewAction: (ChannelInfoViewAction) -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoMemberSection(
+            members = members,
+            currentUser = currentUser,
+            owner = owner,
+            totalMemberCount = totalMemberCount,
+            showAddButton = showAddButton,
+            onAddMembersClick = onAddMembersClick,
+            onViewAction = onViewAction,
+        )
+    }
+
+    /**
      * Factory method for creating the top bar of the group channel info screen.
      *
      * @param headerState The state of the channel header.
@@ -3102,14 +3154,14 @@ public interface ChatComponentFactory {
      * @param onClick Callback invoked when the user clicks on the member item.
      */
     @Composable
-    public fun LazyItemScope.GroupChannelInfoMemberItem(
+    public fun GroupChannelInfoMemberItem(
         currentUser: User?,
         member: Member,
         isOwner: Boolean,
         onClick: (() -> Unit)?,
     ) {
         io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoMemberItem(
-            modifier = Modifier.animateItem(),
+            modifier = Modifier,
             currentUser = currentUser,
             member = member,
             isOwner = isOwner,
@@ -3124,7 +3176,7 @@ public interface ChatComponentFactory {
      * @param onClick Callback invoked when the user clicks to expand the member list.
      */
     @Composable
-    public fun LazyItemScope.GroupChannelInfoExpandMembersItem(
+    public fun GroupChannelInfoExpandMembersItem(
         collapsedCount: Int,
         onClick: () -> Unit,
     ) {
@@ -3174,19 +3226,16 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the channel info member option item.
+     * Factory method for creating a single member option item.
      *
-     * @param option The channel info member option to display.
-     * @param onViewAction Callback invoked when a view action is triggered.
+     * @param action The member action to render.
      */
     @Composable
-    public fun LazyItemScope.ChannelInfoMemberOptionItem(
-        option: ChannelInfoMemberViewState.Content.Option,
-        onViewAction: (action: ChannelInfoMemberViewAction) -> Unit,
+    public fun ChannelInfoMemberOptionItem(
+        action: MemberAction,
     ) {
         io.getstream.chat.android.compose.ui.channel.info.ChannelInfoMemberOptionItem(
-            option = option,
-            onViewAction = onViewAction,
+            action = action,
         )
     }
 

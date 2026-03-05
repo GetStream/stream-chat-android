@@ -156,7 +156,7 @@ internal fun LazyGridItemScope.ChannelMediaAttachmentsItem(
         @Suppress("MagicNumber")
         ChatTheme.componentFactory.UserAvatar(
             modifier = Modifier
-                .align(Alignment.BottomEnd)
+                .align(Alignment.TopStart)
                 .padding(8.dp)
                 .fillMaxSize(.25f)
                 .aspectRatio(1f),

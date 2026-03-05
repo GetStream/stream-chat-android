@@ -32,7 +32,7 @@ public data class ChannelOptionItemVisibility(
     val isViewInfoVisible: Boolean = true,
     val isLeaveChannelVisible: Boolean = true,
     val isMuteChannelVisible: Boolean = true,
-    val isArchiveChannelVisible: Boolean = false,
+    val isArchiveChannelVisible: Boolean = true,
     val isPinChannelVisible: Boolean = false,
     val isDeleteChannelVisible: Boolean = true,
 )

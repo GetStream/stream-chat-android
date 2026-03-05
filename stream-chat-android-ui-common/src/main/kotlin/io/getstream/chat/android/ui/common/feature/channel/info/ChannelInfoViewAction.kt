@@ -81,6 +81,26 @@ public sealed interface ChannelInfoViewAction {
     public data object UnmuteChannelClick : ChannelInfoViewAction
 
     /**
+     * Represents the mute user click action.
+     */
+    public data object MuteUserClick : ChannelInfoViewAction
+
+    /**
+     * Represents the unmute user click action.
+     */
+    public data object UnmuteUserClick : ChannelInfoViewAction
+
+    /**
+     * Represents the block user click action.
+     */
+    public data object BlockUserClick : ChannelInfoViewAction
+
+    /**
+     * Represents the unblock user click action.
+     */
+    public data object UnblockUserClick : ChannelInfoViewAction
+
+    /**
      * Represents the hide channel click action.
      */
     public data object HideChannelClick : ChannelInfoViewAction

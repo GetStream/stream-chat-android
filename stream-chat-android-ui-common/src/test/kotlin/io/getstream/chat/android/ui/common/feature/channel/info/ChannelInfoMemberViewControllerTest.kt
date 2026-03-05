@@ -19,12 +19,14 @@ package io.getstream.chat.android.ui.common.feature.channel.info
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.toChannelData
@@ -37,6 +39,7 @@ import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -44,6 +47,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import java.util.Date
 
 internal class ChannelInfoMemberViewControllerTest {
 
@@ -55,7 +59,32 @@ internal class ChannelInfoMemberViewControllerTest {
     }
 
     @Test
-    fun `member options`() = runTest {
+    fun `member content with no capabilities`() = runTest {
+        val member = randomMember()
+        val channel = randomChannel(
+            ownCapabilities = emptySet(),
+            members = listOf(member),
+        )
+        val fixture = Fixture().given(channel, memberId = member.getUserId())
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1)
+
+            assertEquals(
+                ChannelInfoMemberViewState.Content(
+                    member = member,
+                    capabilities = emptySet(),
+                    isMuted = false,
+                    isBlocked = false,
+                ),
+                awaitItem(),
+            )
+        }
+    }
+
+    @Test
+    fun `member content with capabilities`() = runTest {
         var member = randomMember()
         var channel = randomChannel(
             ownCapabilities = emptySet(),
@@ -65,14 +94,14 @@ internal class ChannelInfoMemberViewControllerTest {
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
-            skipItems(1) // Skip initial state
+            skipItems(1)
 
             assertEquals(
                 ChannelInfoMemberViewState.Content(
                     member = member,
-                    options = listOf(
-                        ChannelInfoMemberViewState.Content.Option.MessageMember(member),
-                    ),
+                    capabilities = emptySet(),
+                    isMuted = false,
+                    isBlocked = false,
                 ),
                 awaitItem(),
             )
@@ -88,11 +117,12 @@ internal class ChannelInfoMemberViewControllerTest {
             assertEquals(
                 ChannelInfoMemberViewState.Content(
                     member = member,
-                    options = listOf(
-                        ChannelInfoMemberViewState.Content.Option.MessageMember(member),
-                        ChannelInfoMemberViewState.Content.Option.BanMember(member),
-                        ChannelInfoMemberViewState.Content.Option.RemoveMember(member),
+                    capabilities = setOf(
+                        ChannelCapabilities.UPDATE_CHANNEL_MEMBERS,
+                        ChannelCapabilities.BAN_CHANNEL_MEMBERS,
                     ),
+                    isMuted = false,
+                    isBlocked = false,
                 ),
                 awaitItem(),
             )
@@ -104,14 +134,65 @@ internal class ChannelInfoMemberViewControllerTest {
             assertEquals(
                 ChannelInfoMemberViewState.Content(
                     member = member,
-                    options = listOf(
-                        ChannelInfoMemberViewState.Content.Option.MessageMember(member),
-                        ChannelInfoMemberViewState.Content.Option.UnbanMember(member),
-                        ChannelInfoMemberViewState.Content.Option.RemoveMember(member),
+                    capabilities = setOf(
+                        ChannelCapabilities.UPDATE_CHANNEL_MEMBERS,
+                        ChannelCapabilities.BAN_CHANNEL_MEMBERS,
                     ),
+                    isMuted = false,
+                    isBlocked = false,
                 ),
                 awaitItem(),
             )
+        }
+    }
+
+    @Test
+    fun `muted state is reflected`() = runTest {
+        val member = randomMember()
+        val channel = randomChannel(members = listOf(member))
+        val fixture = Fixture().given(channel, memberId = member.getUserId())
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1)
+
+            val initial = awaitItem() as ChannelInfoMemberViewState.Content
+            assertEquals(false, initial.isMuted)
+
+            fixture.setMuted(
+                listOf(
+                    Mute(
+                        user = randomUser(),
+                        target = member.user,
+                        createdAt = Date(),
+                        updatedAt = Date(),
+                        expires = null,
+                    ),
+                ),
+            )
+
+            val muted = awaitItem() as ChannelInfoMemberViewState.Content
+            assertEquals(true, muted.isMuted)
+        }
+    }
+
+    @Test
+    fun `blocked state is reflected`() = runTest {
+        val member = randomMember()
+        val channel = randomChannel(members = listOf(member))
+        val fixture = Fixture().given(channel, memberId = member.getUserId())
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1)
+
+            val initial = awaitItem() as ChannelInfoMemberViewState.Content
+            assertEquals(false, initial.isBlocked)
+
+            fixture.setBlocked(listOf(member.getUserId()))
+
+            val blocked = awaitItem() as ChannelInfoMemberViewState.Content
+            assertEquals(true, blocked.isBlocked)
         }
     }
 
@@ -122,7 +203,7 @@ internal class ChannelInfoMemberViewControllerTest {
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
-            skipItems(1) // Skip initial state
+            skipItems(1)
 
             sut.events.test {
                 sut.onViewAction(ChannelInfoMemberViewAction.MessageMemberClick)
@@ -153,7 +234,7 @@ internal class ChannelInfoMemberViewControllerTest {
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
-            skipItems(2) // Skip initial states
+            skipItems(2)
 
             sut.events.test {
                 sut.onViewAction(ChannelInfoMemberViewAction.MessageMemberClick)
@@ -177,7 +258,7 @@ internal class ChannelInfoMemberViewControllerTest {
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
-            skipItems(2) // Skip initial states
+            skipItems(2)
 
             sut.events.test {
                 sut.onViewAction(ChannelInfoMemberViewAction.BanMemberClick)
@@ -195,7 +276,7 @@ internal class ChannelInfoMemberViewControllerTest {
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
-            skipItems(2) // Skip initial states
+            skipItems(2)
 
             sut.events.test {
                 sut.onViewAction(ChannelInfoMemberViewAction.UnbanMemberClick)
@@ -213,12 +294,84 @@ internal class ChannelInfoMemberViewControllerTest {
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
-            skipItems(2) // Skip initial states
+            skipItems(2)
 
             sut.events.test {
                 sut.onViewAction(ChannelInfoMemberViewAction.RemoveMemberClick)
 
                 assertEquals(ChannelInfoMemberViewEvent.RemoveMember(member), awaitItem())
+            }
+        }
+    }
+
+    @Test
+    fun `mute user click`() = runTest {
+        val member = randomMember()
+        val channel = randomChannel(members = listOf(member))
+        val fixture = Fixture().given(channel, memberId = member.getUserId())
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2)
+
+            sut.events.test {
+                sut.onViewAction(ChannelInfoMemberViewAction.MuteUserClick)
+
+                assertEquals(ChannelInfoMemberViewEvent.MuteUser(member), awaitItem())
+            }
+        }
+    }
+
+    @Test
+    fun `unmute user click`() = runTest {
+        val member = randomMember()
+        val channel = randomChannel(members = listOf(member))
+        val fixture = Fixture().given(channel, memberId = member.getUserId())
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2)
+
+            sut.events.test {
+                sut.onViewAction(ChannelInfoMemberViewAction.UnmuteUserClick)
+
+                assertEquals(ChannelInfoMemberViewEvent.UnmuteUser(member), awaitItem())
+            }
+        }
+    }
+
+    @Test
+    fun `block user click`() = runTest {
+        val member = randomMember()
+        val channel = randomChannel(members = listOf(member))
+        val fixture = Fixture().given(channel, memberId = member.getUserId())
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2)
+
+            sut.events.test {
+                sut.onViewAction(ChannelInfoMemberViewAction.BlockUserClick)
+
+                assertEquals(ChannelInfoMemberViewEvent.BlockUser(member), awaitItem())
+            }
+        }
+    }
+
+    @Test
+    fun `unblock user click`() = runTest {
+        val member = randomMember()
+        val channel = randomChannel(members = listOf(member))
+        val fixture = Fixture().given(channel, memberId = member.getUserId())
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2)
+
+            sut.events.test {
+                sut.onViewAction(ChannelInfoMemberViewAction.UnblockUserClick)
+
+                assertEquals(ChannelInfoMemberViewEvent.UnblockUser(member), awaitItem())
             }
         }
     }
@@ -233,6 +386,12 @@ internal class ChannelInfoMemberViewControllerTest {
         private val chatClient: ChatClient = mock {
             on { getCurrentUser() } doReturn randomUser()
             on { queryChannels(any()) } doReturn emptyList<Channel>().asCall()
+        }
+        private val mutedUsers = MutableStateFlow(emptyList<Mute>())
+        private val blockedUserIds = MutableStateFlow(emptyList<String>())
+        private val globalState: GlobalState = mock {
+            on { muted } doReturn mutedUsers
+            on { this.blockedUserIds } doReturn this@Fixture.blockedUserIds
         }
         private var memberId: String = randomString()
 
@@ -267,12 +426,21 @@ internal class ChannelInfoMemberViewControllerTest {
             }
         }
 
+        fun setMuted(mutes: List<Mute>) {
+            mutedUsers.value = mutes
+        }
+
+        fun setBlocked(userIds: List<String>) {
+            blockedUserIds.value = userIds
+        }
+
         fun get(scope: CoroutineScope) = ChannelInfoMemberViewController(
             cid = randomCID(),
             memberId = memberId,
             scope = scope,
             chatClient = chatClient,
             channelState = MutableStateFlow(channelState),
+            globalState = flowOf(globalState),
         )
     }
 }

@@ -52,11 +52,6 @@ public sealed interface ChannelInfoViewState {
          */
         public sealed interface Option {
             /**
-             * Indicates a separator option in the channel information UI.
-             */
-            public data object Separator : Option
-
-            /**
              * Indicates an option to add a member to the channel.
              */
             public data object AddMember : Option
@@ -82,6 +77,20 @@ public sealed interface ChannelInfoViewState {
              * @param isMuted Indicates if the channel is muted.
              */
             public data class MuteChannel(val isMuted: Boolean) : Option
+
+            /**
+             * Indicates an option to mute the other user in a direct channel.
+             *
+             * @param isMuted Indicates if the user is muted.
+             */
+            public data class MuteUser(val isMuted: Boolean) : Option
+
+            /**
+             * Indicates an option to block the other user in a direct channel.
+             *
+             * @param isBlocked Indicates if the user is blocked.
+             */
+            public data class BlockUser(val isBlocked: Boolean) : Option
 
             /**
              * Indicates an option to hide the channel.

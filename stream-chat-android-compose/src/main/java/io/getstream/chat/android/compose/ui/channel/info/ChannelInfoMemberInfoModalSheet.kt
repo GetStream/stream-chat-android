@@ -18,13 +18,11 @@ package io.getstream.chat.android.compose.ui.channel.info
 
 import android.content.Context
 import android.text.format.DateUtils
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -41,15 +39,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoMemberViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoMemberViewModelFactory
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewAction
@@ -113,20 +113,17 @@ private fun ChannelInfoMemberInfoModalSheetContent(
         isLoading = isLoading,
     ) {
         val content = state as ChannelInfoMemberViewState.Content
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
+        val actions = buildDefaultMemberActions(
+            member = content.member,
+            capabilities = content.capabilities,
+            isMuted = content.isMuted,
+            isBlocked = content.isBlocked,
+            onViewAction = onViewAction,
+        )
+        Column(modifier = Modifier.fillMaxWidth()) {
             ChatTheme.componentFactory.ChannelInfoMemberInfoModalSheetTopBar(content.member)
-            LazyColumn {
-                items(content.options) { option ->
-                    with(ChatTheme.componentFactory) {
-                        ChannelInfoMemberOptionItem(
-                            option = option,
-                            onViewAction = onViewAction,
-                        )
-                    }
-                }
+            actions.forEach { action ->
+                ChatTheme.componentFactory.ChannelInfoMemberOptionItem(action = action)
             }
         }
     }
@@ -134,39 +131,21 @@ private fun ChannelInfoMemberInfoModalSheetContent(
 
 @Composable
 internal fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+    val context = LocalContext.current
+    val user = member.user
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                start = StreamTokens.spacingMd,
+                end = StreamTokens.spacingMd,
+                top = StreamTokens.spacingMd,
+                bottom = StreamTokens.spacingSm,
+            ),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        val context = LocalContext.current
-        val user = member.user
-        Text(
-            text = user.name.takeIf(String::isNotBlank) ?: user.id,
-            style = ChatTheme.typography.headingMedium,
-            color = ChatTheme.colors.textPrimary,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Text(
-            text = user.getLastSeenText(context),
-            style = ChatTheme.typography.metadataDefault,
-            color = ChatTheme.colors.textSecondary,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        if (member.banned) {
-            Text(
-                text = member.getBanExpirationText(context),
-                style = ChatTheme.typography.metadataDefault,
-                color = ChatTheme.colors.accentError,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
         ChatTheme.componentFactory.UserAvatar(
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .size(72.dp),
+            modifier = Modifier.size(AvatarSize.ExtraLarge),
             user = user,
             showIndicator = user.shouldShowOnlineIndicator(
                 userPresence = ChatTheme.userPresence,
@@ -174,6 +153,35 @@ internal fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
             ),
             showBorder = false,
         )
+        Column(
+            modifier = Modifier
+                .padding(start = StreamTokens.spacingSm)
+                .weight(1f),
+        ) {
+            Text(
+                text = user.name.takeIf(String::isNotBlank) ?: user.id,
+                style = ChatTheme.typography.headingSmall,
+                color = ChatTheme.colors.textPrimary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = user.getLastSeenText(context),
+                style = ChatTheme.typography.captionDefault,
+                color = ChatTheme.colors.textSecondary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            if (member.banned) {
+                Text(
+                    text = member.getBanExpirationText(context),
+                    style = ChatTheme.typography.captionDefault,
+                    color = ChatTheme.colors.accentError,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
     }
 }
 
@@ -255,15 +263,12 @@ internal fun ChannelInfoMemberInfoModalSheetContent(banned: Boolean) {
     ChannelInfoMemberInfoModalSheetContent(
         state = ChannelInfoMemberViewState.Content(
             member = member,
-            options = buildList {
-                add(ChannelInfoMemberViewState.Content.Option.MessageMember(member))
-                if (banned) {
-                    add(ChannelInfoMemberViewState.Content.Option.UnbanMember(member))
-                } else {
-                    add(ChannelInfoMemberViewState.Content.Option.BanMember(member))
-                }
-                add(ChannelInfoMemberViewState.Content.Option.RemoveMember(member))
-            },
+            capabilities = setOf(
+                ChannelCapabilities.BAN_CHANNEL_MEMBERS,
+                ChannelCapabilities.UPDATE_CHANNEL_MEMBERS,
+            ),
+            isMuted = false,
+            isBlocked = false,
         ),
         onViewAction = {},
     )

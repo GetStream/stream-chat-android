@@ -39,8 +39,6 @@ internal fun List<ChannelInfoViewState.Content.Option>.toChannelInfoItems(
             // Not applicable in this UI
             is ChannelInfoViewState.Content.Option.UserInfo -> Unit
 
-            is ChannelInfoViewState.Content.Option.Separator -> add(ChatInfoItem.Separator)
-
             is ChannelInfoViewState.Content.Option.RenameChannel ->
                 add(ChatInfoItem.ChannelName(option.name))
 
@@ -54,6 +52,10 @@ internal fun List<ChannelInfoViewState.Content.Option>.toChannelInfoItems(
                     isChecked = option.isMuted,
                 ),
             )
+
+            // MuteUser and BlockUser are only used in Compose; no-op in XML sample
+            is ChannelInfoViewState.Content.Option.MuteUser -> Unit
+            is ChannelInfoViewState.Content.Option.BlockUser -> Unit
 
             is ChannelInfoViewState.Content.Option.HideChannel -> add(
                 ChatInfoItem.Option.HideChannel(
@@ -214,6 +216,14 @@ internal fun Fragment.showError(error: ChannelInfoViewEvent.Error, isGroupChanne
         } else {
             R.string.stream_ui_channel_info_mute_group_error
         }
+
+        ChannelInfoViewEvent.MuteUserError,
+        ChannelInfoViewEvent.UnmuteUserError,
+        -> R.string.stream_ui_channel_info_mute_user_error
+
+        ChannelInfoViewEvent.BlockUserError,
+        ChannelInfoViewEvent.UnblockUserError,
+        -> R.string.stream_ui_channel_info_block_user_error
 
         ChannelInfoViewEvent.HideChannelError,
         ChannelInfoViewEvent.UnhideChannelError,

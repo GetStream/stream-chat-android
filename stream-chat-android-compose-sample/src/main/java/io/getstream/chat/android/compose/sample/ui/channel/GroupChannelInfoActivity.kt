@@ -96,6 +96,11 @@ class GroupChannelInfoActivity : ComponentActivity() {
                         is ChannelInfoViewEvent.Error -> showError(event)
                         is ChannelInfoViewEvent.Navigation -> onNavigationEvent(event)
                         is ChannelInfoViewEvent.Modal -> Unit
+                        is ChannelInfoViewEvent.MuteUser,
+                        is ChannelInfoViewEvent.UnmuteUser,
+                        is ChannelInfoViewEvent.BlockUser,
+                        is ChannelInfoViewEvent.UnblockUser,
+                        -> Unit
                     }
                 }
             }
@@ -158,6 +163,14 @@ class GroupChannelInfoActivity : ComponentActivity() {
             ChannelInfoViewEvent.MuteChannelError,
             ChannelInfoViewEvent.UnmuteChannelError,
             -> R.string.stream_ui_channel_info_mute_group_error
+
+            ChannelInfoViewEvent.MuteUserError,
+            ChannelInfoViewEvent.UnmuteUserError,
+            -> R.string.stream_ui_channel_info_mute_user_error
+
+            ChannelInfoViewEvent.BlockUserError,
+            ChannelInfoViewEvent.UnblockUserError,
+            -> R.string.stream_ui_channel_info_block_user_error
 
             ChannelInfoViewEvent.HideChannelError,
             ChannelInfoViewEvent.UnhideChannelError,

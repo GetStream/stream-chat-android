@@ -248,16 +248,25 @@ private fun StackedGroupAvatar(
 
 private fun BoxWithConstraintsScope.resolveStackedAvatarDimensions(): StackedGroupAvatarDimensions {
     return when {
-        maxWidth >= AvatarSize.ExtraExtraLarge -> StackedGroupAvatarDimensions.ExtraExtraLarge
-        maxWidth >= AvatarSize.ExtraLarge -> StackedGroupAvatarDimensions.ExtraLarge
-        else -> StackedGroupAvatarDimensions.Large
+        // Beyond the largest fixed tier: keep the same edge gap as XXL so the container looks equally full.
+        maxWidth > AvatarSize.ExtraExtraLarge -> {
+            val avatarScaled = maxWidth - AvatarSize.ExtraExtraLarge + AvatarSize.Large
+            val badgeScale = maxWidth / AvatarSize.ExtraExtraLarge
+            val badgeScaled = CountBadgeSize.Large.copy(spacing = CountBadgeSize.Large.spacing * badgeScale)
+            StackedGroupAvatarDimensions(avatarSize = avatarScaled, badgeSize = badgeScaled)
+        }
+        maxWidth >= AvatarSize.ExtraExtraLarge -> StackedGroupAvatarDimensions.XXL
+        maxWidth >= AvatarSize.ExtraLarge -> StackedGroupAvatarDimensions.XL
+        else -> StackedGroupAvatarDimensions.L
     }
 }
 
-private enum class StackedGroupAvatarDimensions(val avatarSize: Dp, val badgeSize: CountBadgeSize) {
-    ExtraExtraLarge(avatarSize = AvatarSize.Large, badgeSize = CountBadgeSize.Large),
-    ExtraLarge(avatarSize = AvatarSize.Medium, badgeSize = CountBadgeSize.Medium),
-    Large(avatarSize = AvatarSize.Small, badgeSize = CountBadgeSize.Small),
+private data class StackedGroupAvatarDimensions(val avatarSize: Dp, val badgeSize: CountBadgeSize) {
+    companion object {
+        val XXL = StackedGroupAvatarDimensions(avatarSize = AvatarSize.Large, badgeSize = CountBadgeSize.Large)
+        val XL = StackedGroupAvatarDimensions(avatarSize = AvatarSize.Medium, badgeSize = CountBadgeSize.Medium)
+        val L = StackedGroupAvatarDimensions(avatarSize = AvatarSize.Small, badgeSize = CountBadgeSize.Small)
+    }
 }
 
 @Composable
@@ -299,7 +308,7 @@ private fun directMessageRecipient(channel: Channel, currentUser: User?): User? 
 @Preview
 @Composable
 private fun ChannelAvatarPreview() {
-    val sizes = AvatarSize.run { listOf(ExtraLarge, Large, Medium) }
+    val sizes = AvatarSize.run { listOf(ExtraExtraLarge * 1.5f, ExtraExtraLarge, ExtraLarge, Large, Medium) }
     val variants = listOf(0, 1, 2, 3, 4, 5, 13, 1000)
     ChatTheme {
         Column(
