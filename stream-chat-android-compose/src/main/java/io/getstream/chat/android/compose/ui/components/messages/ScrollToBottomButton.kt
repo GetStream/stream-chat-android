@@ -88,11 +88,11 @@ internal fun ScrollToBottomButton(
                 Surface(
                     modifier = Modifier.border(
                         width = 1.dp,
-                        color = ChatTheme.colors.borderCoreOnDark,
+                        color = ChatTheme.colors.badgeBorder,
                         shape = BadgeShape,
                     ),
                     shape = BadgeShape,
-                    color = ChatTheme.colors.accentPrimary,
+                    color = ChatTheme.colors.badgeBgPrimary,
                     contentColor = ChatTheme.colors.badgeTextOnAccent,
                 ) {
                     Text(

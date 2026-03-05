@@ -218,7 +218,7 @@ private fun VideoThumbnailOverlay(
         modifier = modifier
             .background(
                 shape = overlayShape,
-                color = ChatTheme.colors.badgeBgInverse,
+                color = ChatTheme.colors.accentBlack,
             )
             .padding(
                 horizontal = StreamTokens.spacingXs,
@@ -230,12 +230,12 @@ private fun VideoThumbnailOverlay(
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_video),
             contentDescription = null,
-            tint = ChatTheme.colors.badgeTextInverse,
+            tint = ChatTheme.colors.textOnAccent,
         )
         Text(
             text = MediaStringUtil.convertVideoLength(videoLength),
             style = ChatTheme.typography.numericMedium,
-            color = ChatTheme.colors.badgeTextInverse,
+            color = ChatTheme.colors.textOnAccent,
         )
     }
 }
