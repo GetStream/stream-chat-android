@@ -383,8 +383,7 @@ internal fun GroupChannelInfoMemberSection(
         // Member items
         members.forEach { member ->
             val isCurrentUserMember = member.getUserId() == currentUser?.id
-            GroupChannelInfoMemberItem(
-                modifier = Modifier,
+            ChatTheme.componentFactory.GroupChannelInfoMemberItem(
                 currentUser = currentUser,
                 member = member,
                 isOwner = owner.id == member.getUserId(),
@@ -398,16 +397,10 @@ internal fun GroupChannelInfoMemberSection(
 
         // "View all" footer
         if (members.canExpand && members.isCollapsed) {
-            TextButton(
-                modifier = Modifier.fillMaxWidth(),
+            ChatTheme.componentFactory.GroupChannelInfoExpandMembersItem(
+                collapsedCount = members.collapsedCount,
                 onClick = { onViewAction(ChannelInfoViewAction.ExpandMembersClick) },
-            ) {
-                Text(
-                    text = stringResource(R.string.stream_ui_channel_info_view_all),
-                    style = ChatTheme.typography.bodyDefault,
-                    color = ChatTheme.colors.accentPrimary,
-                )
-            }
+            )
         }
     }
 }

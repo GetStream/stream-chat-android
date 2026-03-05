@@ -3209,14 +3209,14 @@ public interface ChatComponentFactory {
      * @param onClick Callback invoked when the user clicks on the member item.
      */
     @Composable
-    public fun LazyItemScope.GroupChannelInfoMemberItem(
+    public fun GroupChannelInfoMemberItem(
         currentUser: User?,
         member: Member,
         isOwner: Boolean,
         onClick: (() -> Unit)?,
     ) {
         io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoMemberItem(
-            modifier = Modifier.animateItem(),
+            modifier = Modifier,
             currentUser = currentUser,
             member = member,
             isOwner = isOwner,
@@ -3231,7 +3231,7 @@ public interface ChatComponentFactory {
      * @param onClick Callback invoked when the user clicks to expand the member list.
      */
     @Composable
-    public fun LazyItemScope.GroupChannelInfoExpandMembersItem(
+    public fun GroupChannelInfoExpandMembersItem(
         collapsedCount: Int,
         onClick: () -> Unit,
     ) {

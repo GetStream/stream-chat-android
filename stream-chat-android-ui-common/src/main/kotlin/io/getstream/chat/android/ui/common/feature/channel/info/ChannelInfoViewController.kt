@@ -115,7 +115,7 @@ public class ChannelInfoViewController(
                         channel.members.onEach { logger.d { "[onMembers] size: ${it.size}" } },
                         channel.muted.onEach { logger.d { "[onMuted] $it" } },
                         channel.hidden.onEach { logger.d { "[onHidden] $it" } },
-                        ::ChannelData4,
+                        ::ChannelBaseData,
                     ),
                     global.muted,
                     global.blockedUserIds,
@@ -505,7 +505,7 @@ public class ChannelInfoViewController(
 
 private const val MINIMUM_VISIBLE_MEMBERS = 5
 
-private data class ChannelData4(
+private data class ChannelBaseData(
     val channelData: ChannelData,
     val members: List<Member>,
     val isMuted: Boolean,
