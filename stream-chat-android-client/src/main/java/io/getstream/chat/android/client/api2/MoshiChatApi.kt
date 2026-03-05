@@ -1104,24 +1104,19 @@ constructor(
     private fun flattenChannel(response: ChannelResponse): Channel = with(domainMapping) {
         return response.channel.toDomain().let { channel ->
             val channelInfo = response.channel.toChannelInfo()
-            // Pending messages are treated as regular messages from the current user, so we can merge them with the
-            // regular messages.
-            val channelMessages =
-                (response.messages).map {
-                    it.toDomain(channelInfo).enrichWithCid(channel.cid)
-                }
+            val channelMessages = response.messages.map {
+                it.toDomain(channelInfo).enrichWithCid(channel.cid)
+            }
             channel.copy(
                 watcherCount = response.watcher_count,
                 read = response.read.map {
-                    it.toDomain(
-                        lastReceivedEventDate = channel.lastMessageAt ?: it.last_read,
-                    )
+                    it.toDomain(lastReceivedEventDate = channel.lastMessageAt ?: it.last_read)
                 },
                 members = response.members.map { it.toDomain() },
                 membership = response.membership?.toDomain(),
                 messages = channelMessages,
                 pendingMessages = response.pending_messages.map { pending ->
-                    pending.toDomain(channelInfo).let { it.copy(message = it.message.enrichWithCid(channel.cid)) }
+                    pending.toDomain(channelInfo, channel.cid)
                 },
                 pinnedMessages = response.pinned_messages.map {
                     it.toDomain(channelInfo).enrichWithCid(channel.cid)

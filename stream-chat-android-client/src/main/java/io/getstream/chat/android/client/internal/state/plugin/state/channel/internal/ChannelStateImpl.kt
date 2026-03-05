@@ -481,7 +481,7 @@ internal class ChannelStateImpl(
     }
 
     /**
-     * Retrieves the oldest (non-pending message).
+     * Retrieves the oldest (non-pending) message.
      */
     fun getOldestMessage(): Message? {
         return _messages.value.firstOrNull()

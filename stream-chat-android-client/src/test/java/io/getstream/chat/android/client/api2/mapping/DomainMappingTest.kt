@@ -200,12 +200,12 @@ internal class DomainMappingTest {
             message = with(sut) { downstreamPendingMessageDto.message.toDomain() },
             metadata = downstreamPendingMessageDto.metadata.orEmpty(),
         )
-        val result = with(sut) { downstreamPendingMessageDto.toDomain() }
+        val result = with(sut) { downstreamPendingMessageDto.toDomain(null, downstreamPendingMessageDto.message.cid) }
         assertEquals(expected, result)
     }
 
     @Test
-    fun `MessageResponse is correctly mappend to PendingMessage`() {
+    fun `MessageResponse is correctly mapped to PendingMessage`() {
         val messageDto = randomDownstreamMessageDto()
         val pendingMessageMetadata = randomPendingMessageMetadata()
         val messageResponse = MessageResponse(messageDto, pendingMessageMetadata)
