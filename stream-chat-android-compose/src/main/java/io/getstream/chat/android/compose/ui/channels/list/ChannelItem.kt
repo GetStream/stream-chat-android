@@ -208,15 +208,11 @@ internal fun RowScope.DefaultChannelItemCenterContent(
     currentUser: User?,
 ) {
     val channel = channelItemState.channel
-    val isDirectMessaging = channel.isOneToOne(currentUser)
     // Use raw last message (including deleted) for preview; fall back to filtered for non-deleted
     val rawLastMessage = channel.getLastMessageIncludingDeleted(currentUser)
     val isLastMessageDeleted = rawLastMessage?.isDeleted() == true
     val lastMessage = if (isLastMessageDeleted) rawLastMessage else channel.getLastMessage(currentUser)
     val unreadCount = channel.currentUserUnreadCount(currentUserId = currentUser?.id)
-    val isLastMessageFromCurrentUser = lastMessage?.user?.id == currentUser?.id
-
-    val mutePosition = ChatTheme.config.channelList.muteIndicatorPosition
 
     Column(
         modifier = Modifier

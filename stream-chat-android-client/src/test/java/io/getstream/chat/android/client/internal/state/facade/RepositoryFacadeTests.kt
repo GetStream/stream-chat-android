@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.internal.state.facade
 
+import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
@@ -30,6 +31,7 @@ import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomConfig
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomPendingMessage
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -263,15 +265,15 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     fun `When storing state for a channel, messages and config should be stored as well`() = runTest {
         val channel = randomChannel(
             config = randomConfig(),
-
         ).let { channel ->
             channel.copy(
                 messages = (0..positiveRandomInt(20)).map { randomMessage(cid = channel.cid) },
+                pendingMessages = (0..positiveRandomInt(20)).map { randomPendingMessage() },
             )
         }
         val expectedChannelsConfig = listOf(ChannelConfig(channel.type, channel.config))
         val expectedChannels = listOf(channel)
-        val expectedMessages = channel.messages
+        val expectedMessages = channel.messages + channel.pendingMessages.map { it.message.enrichWithCid(channel.cid) }
 
         sut.storeStateForChannel(channel)
 
@@ -288,6 +290,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
             ).let { channel ->
                 channel.copy(
                     messages = (0..positiveRandomInt(20)).map { randomMessage(cid = channel.cid) },
+                    pendingMessages = emptyList(),
                 )
             }
         }

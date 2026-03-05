@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.R
 
@@ -55,17 +56,23 @@ public fun Channel.isDirectMessaging(): Boolean {
  *
  * @return Last message from the channel or null if it doesn't exist.
  */
-public fun Channel.getPreviewMessage(currentUser: User?): Message? =
-    if (isInsideSearch) {
+public fun Channel.getPreviewMessage(currentUser: User?): Message? {
+    // Consider last pending message (if available)
+    val lastPendingMessage = pendingMessages.lastOrNull()?.let(PendingMessage::message)
+    // Consider the currently active set of messages
+    val activeMessages = if (isInsideSearch) {
         cachedLatestMessages
     } else {
         messages
-    }.asSequence()
+    }
+    return (activeMessages + listOfNotNull(lastPendingMessage))
+        .asSequence()
         .filter { it.createdAt != null || it.createdLocallyAt != null }
         .filterNot { it.isDeleted() }
         .filter { it.user.id == currentUser?.id || !it.shadowed }
         .filter { it.isRegular() || it.isSystem() }
         .maxByOrNull { it.getCreatedAtOrDefault(NEVER) }
+}
 
 /**
  * Returns the channel name if exists, or the list of member names if the channel is distinct.

@@ -44,7 +44,6 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.mapping.toDomain
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
@@ -1108,7 +1107,7 @@ constructor(
             // Pending messages are treated as regular messages from the current user, so we can merge them with the
             // regular messages.
             val channelMessages =
-                (response.messages + response.pending_messages.map(DownstreamPendingMessageDto::message)).map {
+                (response.messages).map {
                     it.toDomain(channelInfo).enrichWithCid(channel.cid)
                 }
             channel.copy(
@@ -1121,7 +1120,9 @@ constructor(
                 members = response.members.map { it.toDomain() },
                 membership = response.membership?.toDomain(),
                 messages = channelMessages,
-                pendingMessages = response.pending_messages.map { it.toDomain() },
+                pendingMessages = response.pending_messages.map { pending ->
+                    pending.toDomain(channelInfo).let { it.copy(message = it.message.enrichWithCid(channel.cid)) }
+                },
                 pinnedMessages = response.pinned_messages.map {
                     it.toDomain(channelInfo).enrichWithCid(channel.cid)
                 },

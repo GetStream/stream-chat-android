@@ -273,9 +273,9 @@ internal class DomainMapping(
     /**
      * Transforms [DownstreamPendingMessageDto] to [PendingMessage].
      */
-    internal fun DownstreamPendingMessageDto.toDomain(): PendingMessage =
+    internal fun DownstreamPendingMessageDto.toDomain(fallbackChannelInfo: ChannelInfo? = null): PendingMessage =
         PendingMessage(
-            message = message.toDomain(),
+            message = message.toDomain(fallbackChannelInfo),
             metadata = metadata.orEmpty(),
         )
 

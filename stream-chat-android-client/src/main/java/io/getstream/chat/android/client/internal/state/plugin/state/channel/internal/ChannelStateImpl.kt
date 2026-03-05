@@ -94,6 +94,8 @@ internal class ChannelStateImpl(
     private val _quotedMessagesMap = MutableStateFlow<Map<String, Set<String>>>(emptyMap())
     private val _messages = MutableStateFlow<List<Message>>(emptyList())
 
+    private val pendingMessagesManager = PendingMessagesManager()
+
     /**
      * Keeps track of the latest messages in the channel, if `Jump to message` was called, and a different, non-latest
      * message set was loaded.
@@ -152,11 +154,17 @@ internal class ChannelStateImpl(
         it.mapValues { entry -> entry.value.toList() }
     }
 
-    override val messages: StateFlow<List<Message>> = _messages.asStateFlow()
+    override val messages: StateFlow<List<Message>> = combineStates(
+        _messages,
+        pendingMessagesManager.pendingMessagesInRange,
+    ) { regular, pending ->
+        if (pending.isEmpty()) return@combineStates regular
+        regular.mergeSorted(pending, idSelector = Message::id, comparator = MESSAGE_COMPARATOR)
+    }
 
     override val pinnedMessages: StateFlow<List<Message>> = _pinnedMessages.asStateFlow()
 
-    override val messagesState: StateFlow<MessagesState> = combineStates(_loading, _messages) { loading, messages ->
+    override val messagesState: StateFlow<MessagesState> = combineStates(_loading, messages) { loading, messages ->
         when {
             loading -> MessagesState.Loading
             messages.isEmpty() -> MessagesState.OfflineNoResults
@@ -471,6 +479,50 @@ internal class ChannelStateImpl(
             }
         }
     }
+
+    /**
+     * Retrieves the oldest (non-pending message).
+     */
+    fun getOldestMessage(): Message? {
+        return _messages.value.firstOrNull()
+    }
+
+    // endregion
+
+    // region PendingMessages
+
+    /**
+     * Replaces the pending messages list with [messages]. The server is authoritative — every
+     * channel response returns the latest 100 pending messages sorted by createdAt ASC, so we
+     * always replace rather than merge. No-op when the feature is disabled.
+     */
+    fun setPendingMessages(messages: List<Message>) = pendingMessagesManager.setPendingMessages(messages)
+
+    /**
+     * Removes a single pending message by [id]. Called when a pending message is promoted to a
+     * regular message (message.new event) or deleted (message.deleted event).
+     */
+    fun removePendingMessage(id: String) = pendingMessagesManager.removePendingMessage(id)
+
+    /**
+     * Advances the oldest-loaded-date floor to the oldest date in [messages] if it is earlier
+     * than the current floor. The floor only ever moves backward — must only be called from
+     * paginated channel queries, never from a full channel data update.
+     */
+    fun advanceOldestLoadedDate(messages: List<Message>) = pendingMessagesManager.advanceOldestLoadedDate(messages)
+
+    /**
+     * Sets the newest-loaded-date ceiling to [date]. Pass `null` to remove the ceiling, i.e.
+     * when the user is viewing the latest messages. Set to the newest message date when jumping
+     * to a specific message so that newer pending messages are hidden.
+     */
+    fun setNewestLoadedDate(date: Date?) = pendingMessagesManager.setNewestLoadedDate(date)
+
+    /**
+     * Advances the newest-loaded-date ceiling forward if [date] is more recent than the current
+     * ceiling. Used when paginating toward newer messages while still not at the latest page.
+     */
+    fun advanceNewestLoadedDate(date: Date?) = pendingMessagesManager.advanceNewestLoadedDate(date)
 
     // endregion
 
@@ -1126,6 +1178,7 @@ internal class ChannelStateImpl(
      */
     fun setChannelConfig(config: Config) {
         _channelConfig.value = config
+        pendingMessagesManager.setEnabled(config.markMessagesPending)
     }
 
     // endregion
@@ -1372,6 +1425,7 @@ internal class ChannelStateImpl(
         _repliedMessage.value = null
         _quotedMessagesMap.value = emptyMap()
         _messages.value = emptyList()
+        pendingMessagesManager.reset()
         _cachedLatestMessages.value = emptyList()
         _pinnedMessages.value = emptyList()
         _oldMessages.value = emptyList()

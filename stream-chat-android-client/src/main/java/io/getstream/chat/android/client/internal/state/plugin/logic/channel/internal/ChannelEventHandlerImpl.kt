@@ -167,6 +167,8 @@ internal class ChannelEventHandlerImpl(
                 if (enrichedMessage.isPinned(now)) {
                     state.addPinnedMessage(enrichedMessage)
                 }
+                // Message promoted from pending to regular — remove from pending list
+                state.removePendingMessage(enrichedMessage.id)
             }
 
             is NotificationMessageNewEvent -> {
@@ -226,6 +228,8 @@ internal class ChannelEventHandlerImpl(
                 if (event.message.pinned) {
                     state.deletePinnedMessage(event.message.id)
                 }
+                // Message deleted while pending — remove from pending list
+                state.removePendingMessage(event.message.id)
             }
 
             is NotificationThreadMessageNewEvent -> {
