@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.util
 import android.content.Context
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
+import coil3.intercept.Interceptor
 import io.getstream.chat.android.ui.common.images.StreamImageLoaderFactory
 
 /**
@@ -31,15 +32,40 @@ public fun interface StreamCoilImageLoaderFactory {
      */
     public fun imageLoader(context: Context): ImageLoader
 
+    /**
+     * Returns a new Coil [ImageLoader] with the given [interceptors] prepended to the component
+     * registry, ahead of all decoders and Coil's built-in EngineInterceptor.
+     *
+     * The default implementation **ignores [interceptors]** and delegates to [imageLoader].
+     * This means that when a custom [StreamCoilImageLoaderFactory] is used alongside
+     * [ChatTheme]'s `asyncImageHeadersProvider`, the async headers will **not** be injected —
+     * the custom factory's loader is returned as-is.
+     *
+     * Custom class implementations that want to support interceptor injection should override this
+     * method, for example by forwarding [interceptors] to [StreamImageLoaderFactory]:
+     * ```kotlin
+     * override fun imageLoader(context: Context, interceptors: List<Interceptor>): ImageLoader =
+     *     StreamImageLoaderFactory(interceptors = interceptors, builder = myCustomBuilder)
+     *         .newImageLoader(context)
+     * ```
+     *
+     * Integrators using a custom [StreamCoilImageLoaderFactory] who also need auth headers on
+     * image requests should either override this method or inject the headers directly inside
+     * their factory's [imageLoader] implementation (e.g. via a custom OkHttp client).
+     *
+     * @param context The [Context] to build the [ImageLoader] with.
+     * @param interceptors Coil [Interceptor]s to prepend to the component registry.
+     */
+    public fun imageLoader(context: Context, interceptors: List<Interceptor>): ImageLoader =
+        imageLoader(context)
+
     public companion object {
         /**
          * Returns the default singleton instance of [StreamCoilImageLoaderFactory].
          *
          * @return The default implementation of [StreamCoilImageLoaderFactory].
          */
-        public fun defaultFactory(): StreamCoilImageLoaderFactory {
-            return DefaultStreamCoilImageLoaderFactory
-        }
+        public fun defaultFactory(): StreamCoilImageLoaderFactory = DefaultStreamCoilImageLoaderFactory
     }
 }
 
@@ -67,6 +93,13 @@ internal object DefaultStreamCoilImageLoaderFactory : StreamCoilImageLoaderFacto
      * @return [ImageLoader] that loads images in the app.
      */
     override fun imageLoader(context: Context): ImageLoader = imageLoader ?: newImageLoader(context)
+
+    override fun imageLoader(context: Context, interceptors: List<Interceptor>): ImageLoader =
+        if (interceptors.isEmpty()) {
+            imageLoader(context)
+        } else {
+            StreamImageLoaderFactory(interceptors = interceptors).newImageLoader(context)
+        }
 
     /**
      * Builds a new [ImageLoader] using the given Android [Context]. If the loader already exists, we return it.
