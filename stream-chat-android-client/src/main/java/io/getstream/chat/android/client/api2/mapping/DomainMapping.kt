@@ -456,7 +456,7 @@ internal class DomainMapping(
             options = options.map { it.toDomain() },
             votingVisibility = voting_visibility.toVotingVisibility(),
             enforceUniqueVote = enforce_unique_vote,
-            maxVotesAllowed = max_votes_allowed ?: 1,
+            maxVotesAllowed = max_votes_allowed,
             allowUserSuggestedOptions = allow_user_suggested_options,
             allowAnswers = allow_answers,
             voteCount = vote_count,

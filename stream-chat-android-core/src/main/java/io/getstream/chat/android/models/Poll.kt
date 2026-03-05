@@ -31,7 +31,7 @@ import java.util.Date
  * @property votingVisibility The visibility of the votes.
  * If set to [VotingVisibility.ANONYMOUS], the votes will be anonymous.
  * @property enforceUniqueVote If set to true, a user can only vote once.
- * @property maxVotesAllowed The maximum number of votes a user can cast.
+ * @property maxVotesAllowed The maximum number of votes a user can cast, or null for unlimited votes.
  * @property allowUserSuggestedOptions If set to true, users can suggest new options.
  * @property allowAnswers If set to true, users can vote.
  * @property voteCount The total number of votes cast in the poll.
@@ -130,7 +130,7 @@ public data class Option(
  * @property votingVisibility The visibility of the votes.
  * If set to [VotingVisibility.ANONYMOUS], the votes will be anonymous.
  * @property enforceUniqueVote If set to true, a user can only vote once.
- * @property maxVotesAllowed The maximum number of votes a user can cast.
+ * @property maxVotesAllowed The maximum number of votes a user can cast, or null for unlimited votes.
  * @property allowUserSuggestedOptions If set to true, users can suggest new options.
  * @property allowAnswers If set to true, users can send answers.
  * @property extraData Any additional data associated with the poll.
@@ -157,7 +157,7 @@ public data class PollConfig internal constructor(
      * @param description The description of the poll. Default: empty.
      * @param votingVisibility The visibility of the votes. Default: [VotingVisibility.PUBLIC].
      * @param enforceUniqueVote If set to true, a user can only vote once. Default: true.
-     * @param maxVotesAllowed The maximum number of votes a user can cast. Default: 1.
+     * @param maxVotesAllowed The maximum number of votes a user can cast, or null for unlimited votes. Default: 1.
      * @param allowUserSuggestedOptions If set to true, users can suggest new options. Default: false.
      * @param allowAnswers If set to true, users can send answers. Default: false.
      */
@@ -194,7 +194,7 @@ public data class PollConfig internal constructor(
      * @param description The description of the poll. Default: empty.
      * @param votingVisibility The visibility of the votes. Default: [VotingVisibility.PUBLIC].
      * @param enforceUniqueVote If set to true, a user can only vote once. Default: true.
-     * @param maxVotesAllowed The maximum number of votes a user can cast. Default: 1.
+     * @param maxVotesAllowed The maximum number of votes a user can cast, or null for unlimited votes. Default: 1.
      * @param allowUserSuggestedOptions If set to true, users can suggest new options. Default: false.
      * @param allowAnswers If set to true, users can send answers. Default: false.
      * @param extraData Any additional data associated with the poll.
