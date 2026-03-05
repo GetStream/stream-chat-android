@@ -64,6 +64,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.core.view.HapticFeedbackConstantsCompat
 import io.getstream.chat.android.client.utils.message.belongsToThread
 import io.getstream.chat.android.client.utils.message.isDeleted
@@ -448,6 +449,7 @@ private fun MessageContentWithReactions(
     content: @Composable () -> Unit,
 ) {
     Layout(
+        modifier = Modifier.zIndex(1f),
         content = {
             if (reactions != null) reactions()
             content()

@@ -48,6 +48,7 @@ internal class ThreadListControllerTest {
             assertTrue(state.isLoading)
             assertFalse(state.isLoadingMore)
             assertEquals(0, state.unseenThreadsCount)
+            assertFalse(state.loadingError)
         }
     }
 
@@ -61,6 +62,7 @@ internal class ThreadListControllerTest {
             on { loading } doReturn MutableStateFlow(false)
             on { loadingMore } doReturn MutableStateFlow(false)
             on { unseenThreadIds } doReturn MutableStateFlow(emptySet())
+            on { loadingError } doReturn MutableStateFlow(false)
         }
         val sut = Fixture()
             .givenQueryThreadsState(state)
@@ -112,6 +114,7 @@ internal class ThreadListControllerTest {
             on { loading } doReturn MutableStateFlow(false)
             on { loadingMore } doReturn MutableStateFlow(true)
             on { unseenThreadIds } doReturn MutableStateFlow(emptySet())
+            on { loadingError } doReturn MutableStateFlow(false)
         }
         val fixture = Fixture().givenQueryThreadsState(state)
         val sut = fixture.get(backgroundScope, query)
@@ -136,6 +139,7 @@ internal class ThreadListControllerTest {
             on { loadingMore } doReturn MutableStateFlow(false)
             on { unseenThreadIds } doReturn MutableStateFlow(emptySet())
             on { next } doReturn MutableStateFlow(null)
+            on { loadingError } doReturn MutableStateFlow(false)
         }
         val fixture = Fixture().givenQueryThreadsState(state)
         val sut = fixture.get(backgroundScope, query)
@@ -161,6 +165,7 @@ internal class ThreadListControllerTest {
             on { loadingMore } doReturn MutableStateFlow(false)
             on { unseenThreadIds } doReturn MutableStateFlow(emptySet())
             on { next } doReturn MutableStateFlow(nextPage)
+            on { loadingError } doReturn MutableStateFlow(false)
         }
         val fixture = Fixture()
             .givenQueryThreadsState(state)
@@ -175,6 +180,24 @@ internal class ThreadListControllerTest {
             sut.loadNextPage()
 
             fixture.verifyQueryThreadsResult(nextPageQuery)
+        }
+    }
+
+    @Test
+    fun `loadingError is propagated from QueryThreadsState to ThreadListState`() = runTest {
+        val state = mock<QueryThreadsState> {
+            on { threads } doReturn MutableStateFlow(emptyList())
+            on { loading } doReturn MutableStateFlow(false)
+            on { loadingMore } doReturn MutableStateFlow(false)
+            on { unseenThreadIds } doReturn MutableStateFlow(emptySet())
+            on { loadingError } doReturn MutableStateFlow(true)
+        }
+        val sut = Fixture().givenQueryThreadsState(state).get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+            val actual = awaitItem()
+            assertTrue(actual.loadingError)
         }
     }
 

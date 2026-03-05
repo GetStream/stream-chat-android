@@ -69,6 +69,7 @@ import io.getstream.chat.android.client.api2.model.response.QueryPollVotesRespon
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.models.Answer
@@ -459,7 +460,7 @@ internal class DomainMapping(
             options = options.map { it.toDomain() },
             votingVisibility = voting_visibility.toVotingVisibility(),
             enforceUniqueVote = enforce_unique_vote,
-            maxVotesAllowed = max_votes_allowed ?: 1,
+            maxVotesAllowed = max_votes_allowed,
             allowUserSuggestedOptions = allow_user_suggested_options,
             allowAnswers = allow_answers,
             voteCount = vote_count,
@@ -768,7 +769,7 @@ internal class DomainMapping(
             createdByUserId = created_by_user_id,
             createdBy = created_by?.toDomain(),
             participantCount = participant_count,
-            threadParticipants = thread_participants.orEmpty().map { it.toDomain() },
+            threadParticipants = thread_participants.orEmpty().map { it.toDomain() }.sortedByLastReply(),
             lastMessageAt = last_message_at,
             createdAt = created_at,
             updatedAt = updated_at,
@@ -803,7 +804,7 @@ internal class DomainMapping(
             title = title,
             updatedAt = updated_at,
             channel = channel?.toDomain(),
-            threadParticipants = thread_participants.orEmpty().map { it.toDomain() },
+            threadParticipants = thread_participants.orEmpty().map { it.toDomain() }.sortedByLastReply(),
             extraData = extraData,
         )
 
@@ -812,6 +813,7 @@ internal class DomainMapping(
      */
     internal fun DownstreamThreadParticipantDto.toDomain(): ThreadParticipant = ThreadParticipant(
         user = user?.toDomain() ?: User(id = user_id),
+        lastThreadMessageAt = last_thread_message_at,
     )
 
     /**

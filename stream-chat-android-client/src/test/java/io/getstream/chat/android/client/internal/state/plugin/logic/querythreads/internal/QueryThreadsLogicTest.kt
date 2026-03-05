@@ -37,8 +37,8 @@ import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
-import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomThreadParticipant
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
@@ -71,8 +71,8 @@ internal class QueryThreadsLogicTest {
             createdBy = null,
             participantCount = 2,
             threadParticipants = listOf(
-                ThreadParticipant(User(id = "usrId1")),
-                ThreadParticipant(User(id = "usrId2")),
+                randomThreadParticipant(user = User(id = "usrId1")),
+                randomThreadParticipant(user = User(id = "usrId2")),
             ),
             lastMessageAt = Date(),
             createdAt = Date(),
@@ -157,6 +157,7 @@ internal class QueryThreadsLogicTest {
             // when
             logic.onQueryThreadsRequest(QueryThreadsRequest())
             // then
+            verify(stateLogic, times(1)).setLoadingError(false)
             verify(stateLogic, times(1)).setLoading(true)
             verify(stateLogic, never()).setLoadingMore(any())
             verify(databaseLogic, times(1)).getLocalThreadsOrder(anyOrNull(), any())
@@ -165,7 +166,7 @@ internal class QueryThreadsLogicTest {
         }
 
     @Test
-    fun `Given QueryThreadsLogic When requesting new data by force reload Should update loading state and clear current data`() =
+    fun `Given QueryThreadsLogic When requesting reload with unseen threads Should keep threads and clear unseen IDs`() =
         runTest {
             // given
             val stateLogic = mock<QueryThreadsStateLogic>()
@@ -175,10 +176,12 @@ internal class QueryThreadsLogicTest {
             // when
             logic.onQueryThreadsRequest(QueryThreadsRequest())
             // then
+            verify(stateLogic, times(1)).setLoadingError(false)
             verify(stateLogic, times(1)).setLoading(true)
             verify(stateLogic, never()).setLoadingMore(any())
-            verify(stateLogic, times(1)).clearThreads()
+            verify(stateLogic, never()).clearThreads()
             verify(stateLogic, times(1)).clearUnseenThreadIds()
+            verifyNoInteractions(databaseLogic)
         }
 
     @Test
@@ -247,7 +250,7 @@ internal class QueryThreadsLogicTest {
     }
 
     @Test
-    fun `Given QueryThreadsLogic When handling error result Should update loading state`() = runTest {
+    fun `Given QueryThreadsLogic When handling error result Should update loading state and set loadingError`() = runTest {
         // given
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
@@ -259,6 +262,27 @@ internal class QueryThreadsLogicTest {
         // then
         verify(stateLogic, times(1)).setLoading(false)
         verify(stateLogic, times(1)).setLoadingMore(false)
+        verify(stateLogic, times(1)).setLoadingError(true)
+        verify(stateLogic, never()).setNext(any())
+        verify(stateLogic, never()).upsertThreads(any())
+        verify(stateLogic, never()).setThreads(any())
+        verify(stateLogic, never()).clearUnseenThreadIds()
+    }
+
+    @Test
+    fun `Given QueryThreadsLogic When handling pagination error result Should not set loadingError`() = runTest {
+        // given
+        val stateLogic = mock<QueryThreadsStateLogic>()
+        val databaseLogic = mock<QueryThreadsDatabaseLogic>()
+        val logic = QueryThreadsLogic(stateLogic, databaseLogic)
+        // when
+        val request = QueryThreadsRequest(next = "page2Cursor")
+        val result = Result.Failure(Error.GenericError("error"))
+        logic.onQueryThreadsResult(result, request)
+        // then
+        verify(stateLogic, times(1)).setLoading(false)
+        verify(stateLogic, times(1)).setLoadingMore(false)
+        verify(stateLogic, never()).setLoadingError(any())
         verify(stateLogic, never()).setNext(any())
         verify(stateLogic, never()).upsertThreads(any())
         verify(stateLogic, never()).setThreads(any())

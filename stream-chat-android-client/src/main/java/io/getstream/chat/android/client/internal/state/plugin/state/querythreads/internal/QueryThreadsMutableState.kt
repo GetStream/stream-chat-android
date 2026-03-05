@@ -43,6 +43,7 @@ internal class QueryThreadsMutableState(
     private var _loadingMore: MutableStateFlow<Boolean>? = MutableStateFlow(false)
     private var _next: MutableStateFlow<String?>? = MutableStateFlow(null)
     private var _unseenThreadIds: MutableStateFlow<Set<String>>? = MutableStateFlow(emptySet())
+    private var _loadingError: MutableStateFlow<Boolean>? = MutableStateFlow(false)
 
     /**
      * Exposes a read-only map of the threads.
@@ -56,6 +57,7 @@ internal class QueryThreadsMutableState(
     override val loadingMore: StateFlow<Boolean> = _loadingMore!!
     override val next: StateFlow<String?> = _next!!
     override val unseenThreadIds: StateFlow<Set<String>> = _unseenThreadIds!!
+    override val loadingError: StateFlow<Boolean> = _loadingError!!
 
     /**
      * Updates the loading state. Will be true only during the initial load, or during a full reload.
@@ -181,6 +183,15 @@ internal class QueryThreadsMutableState(
     }
 
     /**
+     * Updates the loading error state.
+     *
+     * @param error Whether a non-pagination load has failed.
+     */
+    internal fun setLoadingError(error: Boolean) {
+        _loadingError?.value = error
+    }
+
+    /**
      * Clears all data from the state.
      */
     internal fun destroy() {
@@ -190,5 +201,6 @@ internal class QueryThreadsMutableState(
         _loadingMore = null
         _next = null
         _unseenThreadIds = null
+        _loadingError = null
     }
 }

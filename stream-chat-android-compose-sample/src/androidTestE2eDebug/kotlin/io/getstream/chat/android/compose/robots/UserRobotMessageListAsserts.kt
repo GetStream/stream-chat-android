@@ -263,8 +263,13 @@ fun UserRobot.assertThreadMessage(text: String): UserRobot {
 }
 
 fun UserRobot.assertThreadReplyLabelOnParentMessage(): UserRobot {
+    val expectedResult = appContext.resources.getQuantityString(
+        R.plurals.stream_compose_message_list_thread_footnote,
+        1,
+        1,
+    )
     assertEquals(
-        appContext.getString(R.string.stream_compose_message_list_thread_footnote_thread_reply),
+        expectedResult,
         Message.threadRepliesLabel.waitToAppear().text,
     )
     assertTrue(Message.threadParticipantAvatar.isDisplayed())
@@ -350,11 +355,11 @@ fun UserRobot.assertThreadReplyLabel(replies: Int, inThread: Boolean = false): U
             ThreadPage.ThreadList.repliesCountLabel.waitToAppear().waitForText(expectedResult).text,
         )
     } else {
-        val expectedResult = if (replies == 1) {
-            appContext.getString(R.string.stream_compose_message_list_thread_footnote_thread_reply)
-        } else {
-            appContext.getString(R.string.stream_compose_message_list_thread_footnote_thread_replies, replies)
-        }
+        val expectedResult = appContext.resources.getQuantityString(
+            R.plurals.stream_compose_message_list_thread_footnote,
+            replies,
+            replies,
+        )
         assertEquals(expectedResult, Message.threadRepliesLabel.waitToAppear().text)
     }
     return this

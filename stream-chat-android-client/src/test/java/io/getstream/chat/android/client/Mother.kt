@@ -987,6 +987,16 @@ internal object Mother {
         extraData = extraData,
     )
 
+    fun randomDownstreamThreadParticipantDto(
+        userId: String = randomString(),
+        user: DownstreamUserDto? = randomDownstreamUserDto(id = userId),
+        lastThreadMessageAt: Date? = randomDateOrNull(),
+    ): DownstreamThreadParticipantDto = DownstreamThreadParticipantDto(
+        user_id = userId,
+        user = user,
+        last_thread_message_at = lastThreadMessageAt,
+    )
+
     fun randomDownstreamThreadInfoDto(
         channelCid: String = randomString(),
         channel: DownstreamChannelDto? = randomDownstreamChannelDto(id = channelCid),
@@ -1057,7 +1067,7 @@ internal object Mother {
         description: String = randomString(),
         votingVisibility: String = "public",
         enforceUniqueVote: Boolean = randomBoolean(),
-        maxVotesAllowed: Int = randomInt(),
+        maxVotesAllowed: Int? = randomInt(),
         allowUserSuggestedOptions: Boolean = randomBoolean(),
         allowAnswers: Boolean = randomBoolean(),
         options: List<DownstreamPollOptionDto> = listOf(randomDownstreamOptionDto()),

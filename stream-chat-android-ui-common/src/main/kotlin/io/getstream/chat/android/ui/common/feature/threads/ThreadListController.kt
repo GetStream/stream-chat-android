@@ -75,8 +75,9 @@ public class ThreadListController(
                         it.loading,
                         it.loadingMore,
                         it.unseenThreadIds,
-                    ) { threads, loading, loadingMore, unseenThreadIds ->
-                        ThreadListState(threads, loading, loadingMore, unseenThreadIds.size)
+                        it.loadingError,
+                    ) { threads, loading, loadingMore, unseenThreadIds, loadingError ->
+                        ThreadListState(threads, loading, loadingMore, unseenThreadIds.size, loadingError)
                     }
                 }
                 .collectLatest {
@@ -133,6 +134,7 @@ public class ThreadListController(
             isLoading = true,
             isLoadingMore = false,
             unseenThreadsCount = 0,
+            loadingError = false,
         )
     }
 }

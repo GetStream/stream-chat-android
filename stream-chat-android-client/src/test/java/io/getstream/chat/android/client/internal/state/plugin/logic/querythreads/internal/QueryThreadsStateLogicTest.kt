@@ -57,8 +57,9 @@ internal class QueryThreadsStateLogicTest {
             createdBy = null,
             participantCount = 2,
             threadParticipants = listOf(
-                ThreadParticipant(User(id = "usrId1")),
-                ThreadParticipant(User(id = "usrId2")),
+                // Sorted descending by lastThreadMessageAt (most recent first)
+                ThreadParticipant(user = User(id = "usrId2"), lastThreadMessageAt = Date(2000)),
+                ThreadParticipant(user = User(id = "usrId1"), lastThreadMessageAt = Date(1000)),
             ),
             lastMessageAt = Date(),
             createdAt = Date(),
@@ -441,20 +442,29 @@ internal class QueryThreadsStateLogicTest {
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
         val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
+        val replyCreatedAt = Date()
         val reply = Message(
             id = "mId3",
             cid = "messaging:123",
             text = "Updated text",
             parentId = "mId1",
+            createdAt = replyCreatedAt,
             user = User(id = "usrId3"),
         )
         // when
         logic.upsertReply(reply)
         // then
+        val expectedNewParticipant = ThreadParticipant(
+            user = User(id = "usrId3"),
+            lastThreadMessageAt = replyCreatedAt,
+        )
         val expectedUpdatedThread = threadList[0].copy(
             latestReplies = threadList[0].latestReplies + listOf(reply),
+            lastMessageAt = replyCreatedAt,
+            updatedAt = replyCreatedAt,
             participantCount = 3,
-            threadParticipants = threadList[0].threadParticipants + listOf(ThreadParticipant(User("usrId3"))),
+            // New participant has the most recent lastThreadMessageAt, so it sorts to the front
+            threadParticipants = listOf(expectedNewParticipant) + threadList[0].threadParticipants,
             read = threadList[0].read.map { read ->
                 read.copy(unreadMessages = read.unreadMessages + 1)
             },
@@ -469,18 +479,29 @@ internal class QueryThreadsStateLogicTest {
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
         val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
+        val replyCreatedAt = Date()
         val reply = Message(
             id = "mId3",
             cid = "messaging:123",
             text = "Updated text",
             parentId = "mId1",
+            createdAt = replyCreatedAt,
             user = User(id = "usrId2"),
         )
         // when
         logic.upsertReply(reply)
         // then
+        val expectedUpdatedParticipant = ThreadParticipant(
+            user = User(id = "usrId2"),
+            lastThreadMessageAt = replyCreatedAt,
+        )
         val expectedUpdatedThread = threadList[0].copy(
             latestReplies = threadList[0].latestReplies + listOf(reply),
+            lastMessageAt = replyCreatedAt,
+            updatedAt = replyCreatedAt,
+            threadParticipants = threadList[0].threadParticipants.map { p ->
+                if (p.user.id == "usrId2") expectedUpdatedParticipant else p
+            },
             read = threadList[0].read.map { read ->
                 if (read.user.id == "usrId2") {
                     read

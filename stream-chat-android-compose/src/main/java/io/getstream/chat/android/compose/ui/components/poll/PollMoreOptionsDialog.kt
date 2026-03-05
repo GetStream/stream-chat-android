@@ -199,7 +199,7 @@ private fun LazyListScope.pollMoreOptionsContent(
             poll = poll,
             option = option,
             voteCount = voteCount,
-            checkedCount = poll.ownVotes.count { it.optionId == option.id },
+            checkedCount = poll.ownVotes.size,
             checked = isVotedByMine,
             onCastVote = { onCastVote.invoke(option) },
             onRemoveVote = {
@@ -242,7 +242,8 @@ private fun PollMoreOptionItem(
                 modifier = Modifier.padding(end = 8.dp),
                 checked = checked,
                 onCheckedChange = { enabled ->
-                    if (enabled && checkedCount < poll.maxVotesAllowed && !checked) {
+                    val canVote = poll.maxVotesAllowed?.let { checkedCount < it } ?: true
+                    if (enabled && canVote && !checked) {
                         onCastVote.invoke()
                     } else if (!enabled) {
                         onRemoveVote.invoke()
