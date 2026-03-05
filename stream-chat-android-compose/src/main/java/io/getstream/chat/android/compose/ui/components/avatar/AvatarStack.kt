@@ -43,7 +43,7 @@ import io.getstream.chat.android.previewdata.PreviewUserData
  * @param trailingContent Optional composable rendered after the avatars.
  */
 @Composable
-public fun UserAvatarStack(
+internal fun UserAvatarStack(
     overlap: Dp,
     users: List<User>,
     avatarSize: Dp,
