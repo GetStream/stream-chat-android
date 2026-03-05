@@ -358,8 +358,6 @@ internal class ChannelLogicImpl(
     }
 
     private fun updateMessages(query: QueryChannelRequest, channel: Channel) {
-        // Set newest pending messages from the response
-        state.setPendingMessages(channel.pendingMessages.map { it.message })
         when {
             !query.isFilteringMessages() -> {
                 // Loading newest messages (no pagination):

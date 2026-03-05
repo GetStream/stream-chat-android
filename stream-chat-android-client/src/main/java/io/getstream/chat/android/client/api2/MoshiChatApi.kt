@@ -1116,7 +1116,7 @@ constructor(
                 membership = response.membership?.toDomain(),
                 messages = channelMessages,
                 pendingMessages = response.pending_messages.map { pending ->
-                    pending.toDomain(channelInfo, channel.cid)
+                    pending.toDomain(channel.cid, channelInfo)
                 },
                 pinnedMessages = response.pinned_messages.map {
                     it.toDomain(channelInfo).enrichWithCid(channel.cid)
