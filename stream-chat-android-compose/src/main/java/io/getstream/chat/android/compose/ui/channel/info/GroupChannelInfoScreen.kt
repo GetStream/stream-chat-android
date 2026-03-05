@@ -201,6 +201,9 @@ internal fun GroupChannelInfoTopBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = ChatTheme.colors.backgroundCoreApp,
             scrolledContainerColor = ChatTheme.colors.backgroundCoreApp,
+            titleContentColor = ChatTheme.colors.textPrimary,
+            navigationIconContentColor = ChatTheme.colors.textPrimary,
+            actionIconContentColor = ChatTheme.colors.textPrimary,
         ),
     )
 }
