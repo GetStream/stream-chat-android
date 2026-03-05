@@ -25,48 +25,33 @@ import io.getstream.chat.android.models.VotingVisibility
  *
  * @param pollQuestion The question of the poll.
  * @param pollOptions The list of poll options.
- * @param pollSwitches The list of poll switches.
+ * @param state The current poll creation view state.
  */
 internal fun pollConfigFrom(
     pollQuestion: String,
     pollOptions: List<PollOptionItem>,
-    pollSwitches: List<PollSwitchItem>,
+    state: CreatePollViewState,
 ): PollConfig {
     val options = pollOptions
         .filter { it.title.isNotEmpty() }
         .map { it.title }
-    val allowUserSuggestedOptions = pollSwitches.any {
-        it.key == PollSwitchItemKeys.ALLOW_USER_SUGGESTED_OPTIONS && it.enabled
-    }
-    val allowAnswers = pollSwitches.any {
-        it.key == PollSwitchItemKeys.ALLOW_ANSWERS && it.enabled
-    }
-    val anonymousPoll = pollSwitches.any {
-        it.key == PollSwitchItemKeys.VOTING_VISIBILITY && it.enabled
-    }
-    val votingVisibility = if (anonymousPoll) {
+    val votingVisibility = if (state.anonymousPollEnabled) {
         VotingVisibility.ANONYMOUS
     } else {
         VotingVisibility.PUBLIC
     }
-    val maxVotesEnabled = pollSwitches.any {
-        it.key == PollSwitchItemKeys.MAX_VOTES_ALLOWED && it.enabled
-    }
-    val maxVotesAllowed = if (maxVotesEnabled) {
-        pollSwitches.first { it.key == PollSwitchItemKeys.MAX_VOTES_ALLOWED }.pollSwitchInput?.value.toString().toInt()
+    val maxVotesAllowed = if (state.multipleVotesEnabled) {
+        state.maxVotesPerUser
     } else {
         1
-    }
-    val enforceUniqueVotes = pollSwitches.none {
-        it.key == PollSwitchItemKeys.MAX_VOTES_ALLOWED && it.enabled
     }
     return PollConfig(
         name = pollQuestion,
         options = options.map { text -> PollOption(text = text) },
-        allowUserSuggestedOptions = allowUserSuggestedOptions,
-        allowAnswers = allowAnswers,
+        allowUserSuggestedOptions = state.suggestAnOptionEnabled,
+        allowAnswers = state.allowCommentsEnabled,
         votingVisibility = votingVisibility,
         maxVotesAllowed = maxVotesAllowed,
-        enforceUniqueVote = enforceUniqueVotes,
+        enforceUniqueVote = !state.multipleVotesEnabled,
     )
 }
