@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.messages.composer
 
 import android.widget.Toast
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,6 +33,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -297,7 +299,7 @@ private fun MessageComposerSurface(
             shadowElevation = 24.dp,
             color = ChatTheme.colors.backgroundElevationElevation1,
         ) {
-            Column {
+            Column(modifier = Modifier.animateContentSize(alignment = Alignment.BottomCenter)) {
                 content()
             }
         }
