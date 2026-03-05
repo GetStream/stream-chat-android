@@ -68,6 +68,7 @@ import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
+import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.core.internal.StreamHandsOff
@@ -274,11 +275,13 @@ internal class DomainMapping(
     /**
      * Transforms [DownstreamPendingMessageDto] to [PendingMessage].
      */
-    internal fun DownstreamPendingMessageDto.toDomain(): PendingMessage =
-        PendingMessage(
-            message = message.toDomain(),
-            metadata = metadata.orEmpty(),
-        )
+    internal fun DownstreamPendingMessageDto.toDomain(
+        cid: String,
+        fallbackChannelInfo: ChannelInfo? = null,
+    ): PendingMessage = PendingMessage(
+        message = message.toDomain(fallbackChannelInfo).enrichWithCid(cid),
+        metadata = metadata.orEmpty(),
+    )
 
     /**
      * Transforms [MessageResponse] to [PendingMessage].

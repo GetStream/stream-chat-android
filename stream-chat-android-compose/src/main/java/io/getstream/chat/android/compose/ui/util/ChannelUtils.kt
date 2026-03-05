@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.model.UserPresence
 import io.getstream.chat.android.ui.common.utils.extensions.getMembersStatusText
@@ -43,12 +44,22 @@ public fun Channel.getLastMessage(currentUser: User?): Message? = getPreviewMess
  * Returns channel's last regular or system message, **including deleted messages**.
  * Used by the channel list to show "Message deleted" when the last message was deleted.
  */
-internal fun Channel.getLastMessageIncludingDeleted(currentUser: User?): Message? =
-    messages.asSequence()
+internal fun Channel.getLastMessageIncludingDeleted(currentUser: User?): Message? {
+    // Consider last pending message (if available)
+    val lastPendingMessage = pendingMessages.lastOrNull()?.let(PendingMessage::message)
+    // Consider the currently active set of messages
+    val activeMessages = if (isInsideSearch) {
+        cachedLatestMessages
+    } else {
+        messages
+    }
+    return (activeMessages + listOfNotNull(lastPendingMessage))
+        .asSequence()
         .filter { it.createdAt != null || it.createdLocallyAt != null }
         .filter { it.user.id == currentUser?.id || !it.shadowed }
         .filter { it.isRegular() || it.isSystem() || it.isDeleted() }
         .maxByOrNull { it.getCreatedAtOrDefault(NEVER) }
+}
 
 /**
  * Filters the read status of each person other than the target user.

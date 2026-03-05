@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.result.Result
@@ -182,7 +183,7 @@ internal class ChannelLogicImpl(
 
     override suspend fun loadBefore(messageId: String?, limit: Int): Result<Channel> {
         state.setLoadingOlderMessages(true)
-        val messageId = messageId ?: getOldestMessage()?.id
+        val messageId = messageId ?: state.getOldestMessage()?.id
         val request = QueryChannelPaginationRequest(limit)
             .apply {
                 if (messageId != null) {
@@ -299,6 +300,8 @@ internal class ChannelLogicImpl(
         state.updateReads(channel.read)
         // Update channel config
         state.setChannelConfig(channel.config)
+        // Set pending messages
+        state.setPendingMessages(channel.pendingMessages.map(PendingMessage::message))
         // Reset messages (ensure they are sorted - when coming from DB)
         if (messageLimit > 0) {
             val sortedMessages = withContext(Dispatchers.Default) {
@@ -331,11 +334,6 @@ internal class ChannelLogicImpl(
             .await()
     }
 
-    private fun getOldestMessage(): Message? {
-        val messages = state.messages.value
-        return messages.firstOrNull()
-    }
-
     private fun updatePaginationEnd(query: QueryChannelRequest, endReached: Boolean) {
         when {
             // Querying the newest messages (no pagination applied)
@@ -365,15 +363,18 @@ internal class ChannelLogicImpl(
                 // Loading newest messages (no pagination):
                 // 1. Clear any cached latest messages (we are replacing the whole list)
                 // 2. Replace the active messages with the loaded ones
+                // 3. No pending messages ceiling — we are at the latest messages
                 state.clearCachedLatestMessages()
                 state.setMessages(channel.messages)
                 state.setInsideSearch(false)
+                state.setNewestLoadedDate(null)
             }
 
             query.isFilteringAroundIdMessages() -> {
                 // Loading messages around a specific message:
                 // 1. Cache the current messages (for access to latest messages) (unless already inside search)
                 // 2. Replace the active messages with the loaded ones
+                // 3. Set ceiling to newest in loaded page — pending messages newer than the page are hidden
                 if (state.insideSearch.value) {
                     // We are currently around a message, don't cache the latest messages, just replace the active set
                     // Otherwise, the cached message set will wrongly hold the previous "around" set, instead of the
@@ -385,6 +386,7 @@ internal class ChannelLogicImpl(
                     state.setMessages(channel.messages)
                     state.setInsideSearch(true)
                 }
+                state.setNewestLoadedDate(channel.messages.lastOrNull()?.getCreatedAtOrNull())
             }
 
             query.isFilteringNewerMessages() -> {
@@ -393,17 +395,28 @@ internal class ChannelLogicImpl(
                 state.trimOldestMessages()
                 val endReached = query.messagesLimit() > channel.messages.size
                 if (endReached) {
+                    // Reached the latest messages — remove the ceiling
                     state.clearCachedLatestMessages()
                     state.setInsideSearch(false)
+                    state.setNewestLoadedDate(null)
+                } else {
+                    // Still paginating toward latest — advance ceiling to include newly loaded messages
+                    state.advanceNewestLoadedDate(channel.messages.lastOrNull()?.getCreatedAtOrNull())
                 }
             }
 
             query.filteringOlderMessages() -> {
-                // Loading older messages - prepend
+                // Loading older messages - prepend; ceiling does not change
                 state.upsertMessages(channel.messages)
                 state.trimNewestMessages()
             }
         }
+        // Advance the oldest-loaded-date floor. Only queryChannel pagination (this path) should
+        // set this floor — updateDataForChannel (QueryChannels) must not, otherwise a channel-list
+        // preview would incorrectly filter out older pending messages.
+        state.advanceOldestLoadedDate(channel.messages)
+        // Replace pending messages — server always returns the full latest set (up to 100, ASC).
+        state.setPendingMessages(channel.pendingMessages.map { it.message })
     }
 
     private suspend fun fetchOfflineChannel(cid: String, request: QueryChannelRequest): Channel? {

@@ -49,6 +49,7 @@ import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMembers
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMute
+import io.getstream.chat.android.randomPendingMessage
 import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
@@ -1196,6 +1197,55 @@ internal class ChannelStateLogicTest {
 
         // then - lastMessageAt should stay the same (no update)
         assertEquals(initialDate, updatedChannelData?.lastMessageAt)
+    }
+
+    @Test
+    fun `Given channel with pending messages, When updateDataForChannel is called on normal path, Then pending message objects are included in upsertMessages`() {
+        // given
+        val regularMessage = randomMessage()
+        val pendingMessage = randomPendingMessage()
+        val channel = randomChannel(
+            messages = listOf(regularMessage),
+            pendingMessages = listOf(pendingMessage),
+        )
+
+        // when
+        channelStateLogic.updateDataForChannel(
+            channel = channel,
+            shouldRefreshMessages = false,
+            scrollUpdate = false,
+            isNotificationUpdate = false,
+            isWatchChannel = true,
+            messageLimit = 30,
+        )
+
+        // then
+        verify(mutableState).upsertMessages(eq(listOf(regularMessage, pendingMessage.message)))
+    }
+
+    @Test
+    fun `Given channel with pending messages and inside search, When updateDataForChannel is called, Then pending message objects are included in updateCachedLatestMessages`() {
+        // given
+        _insideSearch.value = true
+        val regularMessage = randomMessage()
+        val pendingMessage = randomPendingMessage()
+        val channel = randomChannel(
+            messages = listOf(regularMessage),
+            pendingMessages = listOf(pendingMessage),
+        )
+
+        // when
+        channelStateLogic.updateDataForChannel(
+            channel = channel,
+            shouldRefreshMessages = false,
+            scrollUpdate = false,
+            isNotificationUpdate = false,
+            messageLimit = 30,
+        )
+
+        // then
+        verify(mutableState).updateCachedLatestMessages(any())
+        verify(mutableState, times(0)).upsertMessages(any())
     }
 
     // endregion

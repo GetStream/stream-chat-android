@@ -402,6 +402,7 @@ private fun MicButtonVisual(
             modifier = Modifier.testTag("Stream_ComposerRecordAudioButton"),
             painter = painterResource(id = R.drawable.stream_compose_ic_mic),
             contentDescription = null,
+            tint = ChatTheme.colors.textPrimary,
         )
     }
 }

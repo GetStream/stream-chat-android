@@ -664,11 +664,13 @@ internal class ChannelStateLogic(
                     isWatchChannel = isWatchChannel,
                 )
             ) {
-                upsertMessages(channel.messages, shouldRefreshMessages)
+                val pendingMessageObjects = channel.pendingMessages.map { it.message }
+                upsertMessages(channel.messages + pendingMessageObjects, shouldRefreshMessages)
                 upsertPinnedMessages(channel.pinnedMessages, shouldRefreshMessages)
             } else {
                 // will leave only unique messages in the list
-                upsertCachedMessages(channel.pinnedMessages + channel.messages)
+                val pendingMessageObjects = channel.pendingMessages.map { it.message }
+                upsertCachedMessages(channel.pinnedMessages + channel.messages + pendingMessageObjects)
             }
         }
 

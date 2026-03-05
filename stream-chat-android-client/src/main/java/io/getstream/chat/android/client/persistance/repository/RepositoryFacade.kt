@@ -172,7 +172,11 @@ public class RepositoryFacade private constructor(
         insertChannels(channels)
         insertMessages(
             channels.flatMap { channel ->
-                channel.messages.map { it.enrichWithCid(channel.cid) }
+                // Store regular messages and pending messages together so that pending messages
+                // surface naturally when the user paginates into their time range
+                val regularMessages = channel.messages.map { it.enrichWithCid(channel.cid) }
+                val pendingMessages = channel.pendingMessages.map { it.message.enrichWithCid(channel.cid) }
+                regularMessages + pendingMessages
             },
         )
     }

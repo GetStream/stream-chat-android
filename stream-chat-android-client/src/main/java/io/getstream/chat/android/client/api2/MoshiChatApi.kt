@@ -44,7 +44,6 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.mapping.toDomain
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
@@ -1105,23 +1104,20 @@ constructor(
     private fun flattenChannel(response: ChannelResponse): Channel = with(domainMapping) {
         return response.channel.toDomain().let { channel ->
             val channelInfo = response.channel.toChannelInfo()
-            // Pending messages are treated as regular messages from the current user, so we can merge them with the
-            // regular messages.
-            val channelMessages =
-                (response.messages + response.pending_messages.map(DownstreamPendingMessageDto::message)).map {
-                    it.toDomain(channelInfo).enrichWithCid(channel.cid)
-                }
+            val channelMessages = response.messages.map {
+                it.toDomain(channelInfo).enrichWithCid(channel.cid)
+            }
             channel.copy(
                 watcherCount = response.watcher_count,
                 read = response.read.map {
-                    it.toDomain(
-                        lastReceivedEventDate = channel.lastMessageAt ?: it.last_read,
-                    )
+                    it.toDomain(lastReceivedEventDate = channel.lastMessageAt ?: it.last_read)
                 },
                 members = response.members.map { it.toDomain() },
                 membership = response.membership?.toDomain(),
                 messages = channelMessages,
-                pendingMessages = response.pending_messages.map { it.toDomain() },
+                pendingMessages = response.pending_messages.map { pending ->
+                    pending.toDomain(channel.cid, channelInfo)
+                },
                 pinnedMessages = response.pinned_messages.map {
                     it.toDomain(channelInfo).enrichWithCid(channel.cid)
                 },
