@@ -214,7 +214,7 @@ internal interface ChannelLogic {
      * @param isNotificationUpdate Whether the update is triggered by a notification.
      * @param isChannelsStateUpdate Whether the update is part of a broader channels state update.
      */
-    fun updateDataForChannel(
+    suspend fun updateDataForChannel(
         channel: Channel,
         messageLimit: Int,
         shouldRefreshMessages: Boolean = false,

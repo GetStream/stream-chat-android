@@ -157,7 +157,7 @@ internal class ChannelLogicLegacyImpl(
         stateLogic.deleteMessage(message)
     }
 
-    override fun updateDataForChannel(
+    override suspend fun updateDataForChannel(
         channel: Channel,
         messageLimit: Int,
         shouldRefreshMessages: Boolean,
@@ -337,7 +337,7 @@ internal class ChannelLogicLegacyImpl(
         }
     }
 
-    private fun updateDataFromLocalChannel(
+    private suspend fun updateDataFromLocalChannel(
         localChannel: Channel,
         isNotificationUpdate: Boolean,
         messageLimit: Int,
