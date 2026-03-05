@@ -266,7 +266,7 @@ internal class ChannelLogicImpl(
         state.setKeystrokeParentMessageId(messageId)
     }
 
-    override fun updateDataForChannel(
+    override suspend fun updateDataForChannel(
         channel: Channel,
         messageLimit: Int,
         shouldRefreshMessages: Boolean,
@@ -297,9 +297,9 @@ internal class ChannelLogicImpl(
         state.updateReads(channel.read)
         // Update channel config
         state.setChannelConfig(channel.config)
-        // Reset messages
+        // Reset messages (ensure they are sorted - when coming from DB)
         if (messageLimit > 0) {
-            state.setMessages(channel.messages)
+            state.setMessages(channel.messages.sortedBy { it.getCreatedAtOrNull() })
             state.setEndOfOlderMessages(channel.messages.size < messageLimit)
         }
         // Add pinned messages
@@ -407,7 +407,6 @@ internal class ChannelLogicImpl(
         // Fetch messages for the channel
         val messages = repository
             .selectMessagesForChannel(cid, request.toAnyChannelPaginationRequest())
-            .sortedBy { it.getCreatedAtOrNull() }
         // Enrich the channel with messages
         return channel.copy(messages = messages)
     }
