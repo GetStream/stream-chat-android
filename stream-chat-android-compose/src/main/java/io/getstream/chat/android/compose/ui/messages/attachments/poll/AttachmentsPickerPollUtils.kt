@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.messages.attachments.poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.VotingVisibility
+import io.getstream.chat.android.ui.common.utils.PollsConstants
 
 /**
  * Builds a [PollConfig] from the provided poll creation data.
@@ -40,10 +41,12 @@ internal fun pollConfigFrom(
     } else {
         VotingVisibility.PUBLIC
     }
-    val maxVotesAllowed = if (state.multipleVotesEnabled) {
-        state.maxVotesPerUser
-    } else {
-        1
+    val maxVotesAllowed = when {
+        !state.multipleVotesEnabled -> 1
+        !state.limitVotesEnabled -> null
+        else -> state.maxVotesPerUserText.toIntOrNull()
+            ?.coerceIn(PollsConstants.MULTIPLE_ANSWERS_RANGE)
+            ?: PollsConstants.MULTIPLE_ANSWERS_RANGE.first
     }
     return PollConfig(
         name = pollQuestion,

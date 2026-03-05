@@ -318,13 +318,14 @@
     <string name="stream_compose_poll_option_discard_dialog_confirm">Discard</string>
     <string name="stream_compose_poll_option_switch_multiple_answers">Multiple votes</string>
     <string name="stream_compose_poll_option_switch_multiple_answers_description">Select more than one option</string>
+    <string name="stream_compose_poll_option_limit_votes">Limit votes per person</string>
+    <string name="stream_compose_poll_option_limit_votes_description">Choose between 2\u201310 options</string>
     <string name="stream_compose_poll_option_switch_anonymous_poll">Anonymous poll</string>
     <string name="stream_compose_poll_option_switch_anonymous_poll_description">Hide who voted</string>
     <string name="stream_compose_poll_option_switch_suggest_option">Suggest an option</string>
     <string name="stream_compose_poll_option_switch_suggest_option_description">Let others add options</string>
     <string name="stream_compose_poll_option_switch_add_comment">Add a comment</string>
     <string name="stream_compose_poll_option_switch_add_comment_description">Allow others to add comments</string>
-
     <string name="stream_compose_poll_view_result">View Results</string>
     <string name="stream_compose_poll_show_all_votes">Show All</string>
     <string name="stream_compose_poll_option_results_error">An error occurred while loading the poll option results. Please try again later.</string>

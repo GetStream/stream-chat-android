@@ -135,7 +135,6 @@ public fun CreatePollScreen(
     }
 }
 
-
 @Preview
 @Composable
 private fun CreatePollScreenPreview() {

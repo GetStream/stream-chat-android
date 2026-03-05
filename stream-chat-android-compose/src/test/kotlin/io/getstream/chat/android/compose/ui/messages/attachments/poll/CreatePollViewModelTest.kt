@@ -113,17 +113,19 @@ internal class CreatePollViewModelTest {
     }
 
     @Test
-    fun `Given multiple votes disabled When updateMultipleVotes is called Then maxVotes should be reset`() = runTest {
+    fun `Given multiple votes disabled When updateMultipleVotes is called Then limitVotes should be reset`() = runTest {
         val viewModel = CreatePollViewModel(defaultConfig)
 
         viewModel.updateMultipleVotes(true)
-        viewModel.commitMaxVotesText("5")
+        viewModel.updateLimitVotes(true)
+        viewModel.updateMaxVotes("5")
         viewModel.updateMultipleVotes(false)
 
         viewModel.state.test {
             val state = awaitItem()
             assertFalse(state.multipleVotesEnabled)
-            assertEquals(PollsConstants.MIN_NUMBER_OF_MULTIPLE_ANSWERS, state.maxVotesPerUser)
+            assertFalse(state.limitVotesEnabled)
+            assertEquals("5", state.maxVotesPerUserText)
         }
     }
 
@@ -139,54 +141,48 @@ internal class CreatePollViewModelTest {
         }
     }
 
-    // commitMaxVotesText tests
+    // updateLimitVotes tests
 
     @Test
-    fun `Given valid number text When commitMaxVotesText Then maxVotesPerUser should be that number`() = runTest {
+    fun `Given limitVotes enabled When updateLimitVotes(true) Then state should reflect it`() = runTest {
         val viewModel = CreatePollViewModel(defaultConfig)
 
-        viewModel.commitMaxVotesText("5")
+        viewModel.updateMultipleVotes(true)
+        viewModel.updateLimitVotes(true)
 
         viewModel.state.test {
             val state = awaitItem()
-            assertEquals(5, state.maxVotesPerUser)
+            assertTrue(state.limitVotesEnabled)
         }
     }
 
     @Test
-    fun `Given number below MIN When commitMaxVotesText Then maxVotesPerUser should clamp to MIN`() = runTest {
+    fun `Given limitVotes disabled When updateLimitVotes(false) Then maxVotesPerUser should be preserved`() = runTest {
         val viewModel = CreatePollViewModel(defaultConfig)
 
-        viewModel.commitMaxVotesText("0")
+        viewModel.updateMultipleVotes(true)
+        viewModel.updateLimitVotes(true)
+        viewModel.updateMaxVotes("5")
+        viewModel.updateLimitVotes(false)
 
         viewModel.state.test {
             val state = awaitItem()
-            assertEquals(PollsConstants.MIN_NUMBER_OF_MULTIPLE_ANSWERS, state.maxVotesPerUser)
+            assertFalse(state.limitVotesEnabled)
+            assertEquals("5", state.maxVotesPerUserText)
         }
     }
 
+    // updateMaxVotes tests
+
     @Test
-    fun `Given number above MAX When commitMaxVotesText Then maxVotesPerUser should clamp to MAX`() = runTest {
+    fun `Given a value When updateMaxVotes is called Then maxVotesPerUser should be that value`() = runTest {
         val viewModel = CreatePollViewModel(defaultConfig)
 
-        viewModel.commitMaxVotesText("99")
+        viewModel.updateMaxVotes("5")
 
         viewModel.state.test {
             val state = awaitItem()
-            assertEquals(PollsConstants.MAX_NUMBER_OF_MULTIPLE_ANSWERS, state.maxVotesPerUser)
-        }
-    }
-
-    @Test
-    fun `Given non-numeric text When commitMaxVotesText Then maxVotesPerUser should remain unchanged`() = runTest {
-        val viewModel = CreatePollViewModel(defaultConfig)
-
-        viewModel.commitMaxVotesText("5")
-        viewModel.commitMaxVotesText("abc")
-
-        viewModel.state.test {
-            val state = awaitItem()
-            assertEquals(5, state.maxVotesPerUser)
+            assertEquals("5", state.maxVotesPerUserText)
         }
     }
 
@@ -205,7 +201,8 @@ internal class CreatePollViewModelTest {
             ),
         )
         viewModel.updateMultipleVotes(true)
-        viewModel.commitMaxVotesText("5")
+        viewModel.updateLimitVotes(true)
+        viewModel.updateMaxVotes("5")
 
         // Reset the state
         viewModel.reset()
@@ -216,7 +213,8 @@ internal class CreatePollViewModelTest {
             assertEquals("", state.question)
             assertEquals(emptyList<PollOptionItem>(), state.optionItemList)
             assertFalse(state.multipleVotesEnabled)
-            assertEquals(PollsConstants.MIN_NUMBER_OF_MULTIPLE_ANSWERS, state.maxVotesPerUser)
+            assertFalse(state.limitVotesEnabled)
+            assertEquals(PollsConstants.MULTIPLE_ANSWERS_RANGE.first.toString(), state.maxVotesPerUserText)
             assertFalse(state.hasError)
             assertFalse(state.isCreationEnabled)
             assertFalse(state.hasChanges)
@@ -426,27 +424,41 @@ internal class CreatePollViewModelTest {
     // Visibility tests
 
     @Test
-    fun `Given default config When checking visibility Then all features should be shown`() {
+    fun `Given default config When checking switchItems Then all features should be present`() = runTest {
         val viewModel = CreatePollViewModel(defaultConfig)
 
-        assertTrue(viewModel.multipleVotesShown)
-        assertTrue(viewModel.anonymousPollShown)
-        assertTrue(viewModel.suggestAnOptionShown)
-        assertTrue(viewModel.allowCommentsShown)
+        viewModel.switchItems.test {
+            val items = awaitItem()
+            assertEquals(
+                listOf(
+                    PollSwitchState.MultipleVotes::class,
+                    PollSwitchState.AnonymousPoll::class,
+                    PollSwitchState.SuggestAnOption::class,
+                    PollSwitchState.AllowComments::class,
+                ),
+                items.map { it::class },
+            )
+        }
     }
 
     @Test
-    fun `Given config with hidden features When checking visibility Then features should be hidden`() {
+    fun `Given config with hidden features When checking switchItems Then features should be absent`() = runTest {
         val config = PollsConfig(
             multipleVotes = PollFeatureConfig(configurable = false),
             anonymousPoll = PollFeatureConfig(configurable = false),
         )
         val viewModel = CreatePollViewModel(config)
 
-        assertFalse(viewModel.multipleVotesShown)
-        assertFalse(viewModel.anonymousPollShown)
-        assertTrue(viewModel.suggestAnOptionShown)
-        assertTrue(viewModel.allowCommentsShown)
+        viewModel.switchItems.test {
+            val items = awaitItem()
+            assertEquals(
+                listOf(
+                    PollSwitchState.SuggestAnOption::class,
+                    PollSwitchState.AllowComments::class,
+                ),
+                items.map { it::class },
+            )
+        }
     }
 
     // Default value tests
@@ -501,16 +513,20 @@ internal class CreatePollViewModelTest {
             assertTrue(state.isCreationEnabled)
             assertFalse(state.hasError)
 
-            // User enables multiple votes — no error since input always has a valid value
+            // User enables multiple votes — no error since stepper always has a valid value
             viewModel.updateMultipleVotes(true)
             state = awaitItem()
             assertFalse(state.hasError)
             assertTrue(state.isCreationEnabled)
 
-            // User sets max votes
-            viewModel.commitMaxVotesText("5")
+            // User enables limit votes and sets max
+            viewModel.updateLimitVotes(true)
             state = awaitItem()
-            assertEquals(5, state.maxVotesPerUser)
+            assertTrue(state.limitVotesEnabled)
+
+            viewModel.updateMaxVotes("5")
+            state = awaitItem()
+            assertEquals("5", state.maxVotesPerUserText)
 
             // User enables anonymous poll
             viewModel.updateAnonymousPoll(true)
