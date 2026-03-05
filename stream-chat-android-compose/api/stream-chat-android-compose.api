@@ -1815,10 +1815,6 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Quot
 	public static final fun QuotedMessage (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/Message;Landroidx/compose/runtime/Composer;II)V
 }
 
-public final class io/getstream/chat/android/compose/ui/components/messages/ThreadParticipantsKt {
-	public static final fun ThreadParticipants (Ljava/util/List;Lio/getstream/chat/android/compose/state/messages/MessageAlignment;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/BorderStroke;ILandroidx/compose/runtime/Composer;II)V
-}
-
 public final class io/getstream/chat/android/compose/ui/components/messages/UploadingFooterKt {
 	public static final fun UploadingFooter (Lio/getstream/chat/android/models/Message;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
