@@ -17,35 +17,29 @@
 package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.PollConfig
-import kotlinx.coroutines.launch
 
 /**
  * Screen for creating a new poll with options and configuration switches.
@@ -78,78 +72,66 @@ public fun CreatePollScreen(
             backAction()
         }
     }
-    val coroutineScope = rememberCoroutineScope()
-    val questionListLazyState = rememberLazyListState()
-
-    val nestedScrollConnection = remember {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                val delta = -available.y
-                coroutineScope.launch {
-                    questionListLazyState.scrollBy(delta)
-                }
-                return Offset.Zero
-            }
-        }
-    }
-
-    Column(
-        modifier = Modifier
-            .systemBarsPadding()
-            .fillMaxSize()
-            .nestedScroll(nestedScrollConnection)
-            .verticalScroll(rememberScrollState())
-            .background(ChatTheme.colors.backgroundCoreApp),
-    ) {
-        // Header
-        PollCreationHeader(
-            modifier = Modifier.fillMaxWidth(),
-            enabledCreation = state.isCreationEnabled,
-            onPollCreateClicked = {
-                onCreatePoll(
-                    pollConfigFrom(
-                        pollQuestion = state.question,
-                        pollOptions = state.optionItemList,
-                        pollSwitches = state.switchItemList,
-                    ),
-                )
-                backAction()
-            },
-            onBackPressed = backOrDiscardDialog,
-        )
-
-        // Poll question input
-        PollQuestionInput(
-            question = state.question,
-            onQuestionChanged = viewModel::updateQuestion,
-        )
-
-        // Options list
-        PollOptionList(
-            lazyListState = questionListLazyState,
-            optionItems = state.optionItemList,
-            onQuestionsChanged = viewModel::updateOptions,
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        // Poll configuration switches
-        PollSwitchList(
-            pollSwitchItems = state.switchItemList,
-            onSwitchesChanged = viewModel::updateSwitches,
-        )
-
-        BackHandler(onBack = backOrDiscardDialog)
-
-        // Discard dialog
-        if (isShowingDiscardDialog) {
-            PollCreationDiscardDialog(
-                onCancelClicked = { isShowingDiscardDialog = false },
-                onDiscardClicked = {
-                    isShowingDiscardDialog = false
+    Scaffold(
+        modifier = Modifier.systemBarsPadding(),
+        containerColor = ChatTheme.colors.backgroundCoreApp,
+        topBar = {
+            PollCreationHeader(
+                modifier = Modifier.fillMaxWidth(),
+                enabledCreation = state.isCreationEnabled,
+                onPollCreateClicked = {
+                    onCreatePoll(
+                        pollConfigFrom(
+                            pollQuestion = state.question,
+                            pollOptions = state.optionItemList,
+                            pollSwitches = state.switchItemList,
+                        ),
+                    )
                     backAction()
                 },
+                onBackPressed = backOrDiscardDialog,
             )
+        },
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .padding(StreamTokens.spacingMd)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+        ) {
+            // Poll question input
+            PollQuestionInput(
+                question = state.question,
+                onQuestionChanged = viewModel::updateQuestion,
+            )
+
+            // Options list
+            PollOptionList(
+                optionItems = state.optionItemList,
+                onQuestionsChanged = viewModel::updateOptions,
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // Poll configuration switches
+            PollSwitchList(
+                pollSwitchItems = state.switchItemList,
+                onSwitchesChanged = viewModel::updateSwitches,
+            )
+
+            BackHandler(onBack = backOrDiscardDialog)
+
+            // Discard dialog
+            if (isShowingDiscardDialog) {
+                PollCreationDiscardDialog(
+                    onCancelClicked = { isShowingDiscardDialog = false },
+                    onDiscardClicked = {
+                        isShowingDiscardDialog = false
+                        backAction()
+                    },
+                )
+            }
         }
     }
 }

@@ -62,6 +62,9 @@ public class DefaultPollSwitchItemFactory(
         listOf(
             PollSwitchItem(
                 title = context.getString(R.string.stream_compose_poll_option_switch_multiple_answers),
+                description = context.getString(
+                    R.string.stream_compose_poll_option_switch_multiple_answers_description,
+                ),
                 pollSwitchInput = PollSwitchInput(
                     value = "",
                     description = context.getString(R.string.stream_compose_poll_option_max_number_of_answers_hint),
@@ -74,16 +77,19 @@ public class DefaultPollSwitchItemFactory(
             ),
             PollSwitchItem(
                 title = context.getString(R.string.stream_compose_poll_option_switch_anonymous_poll),
+                description = context.getString(R.string.stream_compose_poll_option_switch_anonymous_poll_description),
                 key = PollSwitchItemKeys.VOTING_VISIBILITY,
                 enabled = false,
             ),
             PollSwitchItem(
                 title = context.getString(R.string.stream_compose_poll_option_switch_suggest_option),
+                description = context.getString(R.string.stream_compose_poll_option_switch_suggest_option_description),
                 key = PollSwitchItemKeys.ALLOW_USER_SUGGESTED_OPTIONS,
                 enabled = false,
             ),
             PollSwitchItem(
                 title = context.getString(R.string.stream_compose_poll_option_switch_add_comment),
+                description = context.getString(R.string.stream_compose_poll_option_switch_add_comment_description),
                 key = PollSwitchItemKeys.ALLOW_ANSWERS,
                 enabled = false,
             ),
