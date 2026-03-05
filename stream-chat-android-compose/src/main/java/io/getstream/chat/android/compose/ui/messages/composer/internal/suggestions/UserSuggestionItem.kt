@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.components.suggestions.mentions
+package io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -32,7 +31,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -40,64 +38,49 @@ import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 
-/**
- * Represents the mention suggestion item in the mention suggestion list popup.
- *
- * @param user The user that will be used to autocomplete the mention.
- * @param modifier Modifier for styling.
- * @param onMentionSelected Handler when the user taps on an item.
- * @param leadingContent Customizable composable function that represents the leading content of a mention item.
- * @param centerContent Customizable composable function that represents the center content of a mention item.
- * @param trailingContent Customizable composable function that represents the trailing content of the a mention item.
- */
 @Composable
-public fun MentionSuggestionItem(
+internal fun UserSuggestionItem(
     user: User,
-    onMentionSelected: (User) -> Unit,
+    currentUser: User?,
+    onUserSelected: (User) -> Unit,
     modifier: Modifier = Modifier,
-    leadingContent: @Composable RowScope.(User) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerMentionSuggestionItemLeadingContent(user = it)
-        }
-    },
-    centerContent: @Composable RowScope.(User) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerMentionSuggestionItemCenterContent(user = it)
-        }
-    },
-    trailingContent: @Composable RowScope.(User) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerMentionSuggestionItemTrailingContent(user = it)
-        }
-    },
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .clickable { onMentionSelected(user) }
+            .clickable { onUserSelected(user) }
             .padding(
                 vertical = StreamTokens.spacingXs,
                 horizontal = StreamTokens.spacingMd,
             )
-            .testTag("Stream_MentionSuggestionItem"),
+            .testTag("Stream_UserSuggestionItem"),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        leadingContent(user)
-
-        centerContent(user)
-
-        trailingContent(user)
+        ChatTheme.componentFactory.MessageComposerUserSuggestionItemLeadingContent(
+            modifier = Modifier,
+            user = user,
+            currentUser = currentUser,
+        )
+        ChatTheme.componentFactory.MessageComposerUserSuggestionItemCenterContent(
+            modifier = Modifier.weight(1f),
+            user = user,
+        )
+        ChatTheme.componentFactory.MessageComposerUserSuggestionItemTrailingContent(
+            modifier = Modifier,
+            user = user,
+        )
     }
 }
 
 /**
  * Represents the default content shown at the start of the mention list item.
- *
- * @param user The user item to show the content for.
  */
 @Composable
-internal fun DefaultMentionSuggestionItemLeadingContent(user: User) {
+internal fun DefaultUserSuggestionItemLeadingContent(
+    user: User,
+    currentUser: User?,
+) {
     ChatTheme.componentFactory.UserAvatar(
         modifier = Modifier
             .padding(end = 8.dp)
@@ -105,7 +88,7 @@ internal fun DefaultMentionSuggestionItemLeadingContent(user: User) {
         user = user,
         showIndicator = user.shouldShowOnlineIndicator(
             userPresence = ChatTheme.userPresence,
-            currentUser = ChatClient.instance().getCurrentUser(),
+            currentUser = currentUser,
         ),
         showBorder = false,
     )
@@ -113,17 +96,13 @@ internal fun DefaultMentionSuggestionItemLeadingContent(user: User) {
 
 /**
  *  Represents the center portion of the mention item, that show the user name and the user ID.
- *
- *  @param user The user to show the info for.
  */
 @Composable
-internal fun RowScope.DefaultMentionSuggestionItemCenterContent(user: User) {
-    Column(
-        modifier = Modifier
-            .weight(1f)
-            .wrapContentHeight()
-            .align(Alignment.CenterVertically),
-    ) {
+internal fun DefaultUserSuggestionItemCenterContent(
+    modifier: Modifier,
+    user: User,
+) {
+    Column(modifier = modifier) {
         val username = "@${user.id}"
         Text(
             text = user.name.ifEmpty { username },
@@ -148,7 +127,7 @@ internal fun RowScope.DefaultMentionSuggestionItemCenterContent(user: User) {
  * Represents the default content shown at the end of the mention list item.
  */
 @Composable
-internal fun DefaultMentionSuggestionItemTrailingContent() {
+internal fun DefaultUserSuggestionItemTrailingContent() {
     Icon(
         modifier = Modifier
             .padding(start = 8.dp)

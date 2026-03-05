@@ -219,9 +219,9 @@ fun UserRobot.assertComposerCommandsMenu(isDisplayed: Boolean): UserRobot {
 
 fun UserRobot.assertComposerMentionsMenu(isDisplayed: Boolean): UserRobot {
     if (isDisplayed) {
-        assertTrue(Composer.participantMentionSuggestion.waitToAppear().isDisplayed())
+        assertTrue(Composer.userSuggestion.waitToAppear().isDisplayed())
     } else {
-        assertFalse(Composer.participantMentionSuggestion.waitToDisappear().isDisplayed())
+        assertFalse(Composer.userSuggestion.waitToDisappear().isDisplayed())
     }
     return this
 }

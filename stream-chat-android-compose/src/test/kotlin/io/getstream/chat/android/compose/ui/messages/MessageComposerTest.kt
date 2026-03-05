@@ -25,6 +25,7 @@ import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFix
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFixedStyleWithVisibleAttachmentPicker
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFloatingStyle
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFloatingStyleWithCommandSuggestions
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFloatingStyleWithUserSuggestions
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFloatingStyleWithVisibleAttachmentPicker
 import org.junit.Rule
 import org.junit.Test
@@ -66,6 +67,13 @@ internal class MessageComposerTest : PaparazziComposeTest {
     fun `floating style with visible attachment picker`() {
         snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
             MessageComposerFloatingStyleWithVisibleAttachmentPicker()
+        }
+    }
+
+    @Test
+    fun `floating style with user suggestions`() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerFloatingStyleWithUserSuggestions()
         }
     }
 

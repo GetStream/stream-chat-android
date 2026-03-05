@@ -44,6 +44,7 @@ import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.CommandSuggestionList
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.SuggestionsMenu
+import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.UserSuggestionList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.ui.theme.LocalChatConfig
@@ -58,6 +59,7 @@ import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewCommandData
+import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
@@ -78,12 +80,11 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
  * @param onLinkPreviewClick Handler when the user taps on a link preview.
  * @param onCancelLinkPreviewClick Handler when the user taps on the cancel link preview.
- * @param onMentionSelected Handler when the user taps on a mention suggestion item.
+ * @param onUserSelected Handler when the user taps on a user suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
  * @param onAlsoSendToChannelChange Handler when the "Also send to channel" checkbox is changed.
  * @param onActiveCommandDismiss Called when the user taps the dismiss button on the active command chip.
  * @param recordingActions The actions that can be performed on an audio recording.
- * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
  */
 @Composable
@@ -98,7 +99,7 @@ public fun MessageComposer(
     onCancelAction: () -> Unit = { viewModel.dismissMessageActions() },
     onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onCancelLinkPreviewClick: (() -> Unit)? = { viewModel.cancelLinkPreview() },
-    onMentionSelected: (User) -> Unit = { viewModel.selectMention(it) },
+    onUserSelected: (User) -> Unit = { viewModel.selectMention(it) },
     onCommandSelected: (Command) -> Unit = { viewModel.selectCommand(it) },
     onAlsoSendToChannelChange: (Boolean) -> Unit = viewModel::setAlsoSendToChannel,
     onActiveCommandDismiss: () -> Unit = viewModel::clearActiveCommand,
@@ -106,12 +107,6 @@ public fun MessageComposer(
         viewModel = viewModel,
         sendOnComplete = ChatTheme.config.composer.audioRecordingSendOnComplete,
     ),
-    mentionPopupContent: @Composable (List<User>) -> Unit = {
-        ChatTheme.componentFactory.MessageComposerMentionsPopupContent(
-            mentionSuggestions = it,
-            onMentionSelected = onMentionSelected,
-        )
-    },
     input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
         val inputFocusRequester = remember { FocusRequester() }
         LaunchedEffect(Unit) {
@@ -148,11 +143,10 @@ public fun MessageComposer(
 
             onSendMessage(messageWithData)
         },
-        onMentionSelected = onMentionSelected,
+        onUserSelected = onUserSelected,
         onCommandSelected = onCommandSelected,
         onAlsoSendToChannelSelected = onAlsoSendToChannelChange,
         recordingActions = recordingActions,
-        mentionPopupContent = mentionPopupContent,
         input = input,
         messageComposerState = messageComposerState,
         onCancelAction = onCancelAction,
@@ -177,12 +171,11 @@ public fun MessageComposer(
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
  * @param onLinkPreviewClick Handler when the user taps on a link preview.
  * @param onCancelLinkPreviewClick Handler when the user taps on the cancel link preview.
- * @param onMentionSelected Handler when the user taps on a mention suggestion item.
+ * @param onUserSelected Handler when the user taps on a user suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
  * @param onAlsoSendToChannelChange Handler when the "Also send to channel" checkbox is changed.
  * @param onActiveCommandDismiss Called when the user taps the dismiss button on the active command chip.
  * @param recordingActions The actions that can be performed on an audio recording.
- * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
  */
 @Composable
@@ -197,17 +190,11 @@ public fun MessageComposer(
     onCancelAction: () -> Unit = {},
     onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onCancelLinkPreviewClick: (() -> Unit)? = null,
-    onMentionSelected: (User) -> Unit = {},
+    onUserSelected: (User) -> Unit = {},
     onCommandSelected: (Command) -> Unit = {},
     onAlsoSendToChannelChange: (Boolean) -> Unit = {},
     onActiveCommandDismiss: () -> Unit = {},
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
-    mentionPopupContent: @Composable (List<User>) -> Unit = {
-        ChatTheme.componentFactory.MessageComposerMentionsPopupContent(
-            mentionSuggestions = it,
-            onMentionSelected = onMentionSelected,
-        )
-    },
     input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
         ChatTheme.componentFactory.MessageComposerInput(
             modifier = Modifier.weight(1f),
@@ -225,7 +212,7 @@ public fun MessageComposer(
     },
 ) {
     val validationErrors = messageComposerState.validationErrors
-    val mentionSuggestions = messageComposerState.mentionSuggestions
+    val userSuggestions = messageComposerState.mentionSuggestions
     val commandSuggestions = messageComposerState.commandSuggestions
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -235,6 +222,16 @@ public fun MessageComposer(
     )
 
     MessageComposerSurface(modifier = modifier) {
+        if (userSuggestions.isNotEmpty()) {
+            SuggestionsMenu {
+                UserSuggestionList(
+                    users = userSuggestions,
+                    currentUser = messageComposerState.currentUser,
+                    onUserSelected = onUserSelected,
+                )
+            }
+        }
+
         if (commandSuggestions.isNotEmpty()) {
             SuggestionsMenu {
                 CommandSuggestionList(
@@ -276,10 +273,6 @@ public fun MessageComposer(
 
         if (snackbarHostState.currentSnackbarData != null) {
             SnackbarPopup(hostState = snackbarHostState)
-        }
-
-        if (mentionSuggestions.isNotEmpty()) {
-            mentionPopupContent(mentionSuggestions)
         }
     }
 }
@@ -403,6 +396,29 @@ internal fun MessageComposerFixedStyleWithVisibleAttachmentPicker() {
 
 @Preview
 @Composable
+private fun MessageComposerFixedStyleWithUserSuggestionsPreview() {
+    ChatTheme {
+        MessageComposerFixedStyleWithUserSuggestions()
+    }
+}
+
+@Composable
+internal fun MessageComposerFixedStyleWithUserSuggestions() {
+    MessageComposer(
+        messageComposerState = PreviewMessageComposerState.copy(
+            currentUser = PreviewUserData.userWithOnlineStatus,
+            mentionSuggestions = listOf(
+                PreviewUserData.userWithOnlineStatus,
+                PreviewUserData.user1,
+                PreviewUserData.user5,
+            ),
+        ),
+        onSendMessage = { _, _ -> },
+    )
+}
+
+@Preview
+@Composable
 private fun MessageComposerFixedStyleWithCommandSuggestionsPreview() {
     ChatTheme {
         MessageComposerFixedStyleWithCommandSuggestions()
@@ -457,6 +473,32 @@ internal fun MessageComposerFloatingStyleWithVisibleAttachmentPicker() {
         MessageComposer(
             messageComposerState = PreviewMessageComposerState,
             isAttachmentPickerVisible = true,
+            onSendMessage = { _, _ -> },
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MessageComposerFloatingStyleWithUserSuggestionsPreview() {
+    ChatTheme {
+        MessageComposerFloatingStyleWithUserSuggestions()
+    }
+}
+
+@Composable
+internal fun MessageComposerFloatingStyleWithUserSuggestions() {
+    val config = ChatTheme.config.copy(composer = ComposerConfig(floatingStyleEnabled = true))
+    CompositionLocalProvider(LocalChatConfig provides config) {
+        MessageComposer(
+            messageComposerState = PreviewMessageComposerState.copy(
+                currentUser = PreviewUserData.userWithOnlineStatus,
+                mentionSuggestions = listOf(
+                    PreviewUserData.userWithOnlineStatus,
+                    PreviewUserData.user1,
+                    PreviewUserData.user5,
+                ),
+            ),
             onSendMessage = { _, _ -> },
         )
     }

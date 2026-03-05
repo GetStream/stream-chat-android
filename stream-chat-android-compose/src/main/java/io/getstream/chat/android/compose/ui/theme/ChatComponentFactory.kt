@@ -141,11 +141,6 @@ import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSiz
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleSize
 import io.getstream.chat.android.compose.ui.components.selectedmessage.MessageMenuHeader
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
-import io.getstream.chat.android.compose.ui.components.suggestions.mentions.DefaultMentionSuggestionItemCenterContent
-import io.getstream.chat.android.compose.ui.components.suggestions.mentions.DefaultMentionSuggestionItemLeadingContent
-import io.getstream.chat.android.compose.ui.components.suggestions.mentions.DefaultMentionSuggestionItemTrailingContent
-import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionItem
-import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionList
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerActions
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordingButton
@@ -153,6 +148,10 @@ import io.getstream.chat.android.compose.ui.messages.composer.internal.MessageCo
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.CommandSuggestionItem
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultCommandSuggestionItemCenterContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultCommandSuggestionItemLeadingContent
+import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultUserSuggestionItemCenterContent
+import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultUserSuggestionItemLeadingContent
+import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultUserSuggestionItemTrailingContent
+import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.UserSuggestionItem
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderTrailingContent
@@ -1406,11 +1405,10 @@ public interface ChatComponentFactory {
         onAttachmentRemoved: (Attachment) -> Unit,
         onCancelAction: () -> Unit,
         onLinkPreviewClick: ((LinkPreview) -> Unit)?,
-        onMentionSelected: (User) -> Unit,
+        onUserSelected: (User) -> Unit,
         onCommandSelected: (Command) -> Unit,
         onAlsoSendToChannelSelected: (Boolean) -> Unit,
         recordingActions: AudioRecordingActions,
-        mentionPopupContent: @Composable (List<User>) -> Unit,
         input: @Composable RowScope.(MessageComposerState) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.composer.MessageComposer(
@@ -1423,11 +1421,10 @@ public interface ChatComponentFactory {
             onAttachmentRemoved = onAttachmentRemoved,
             onCancelAction = onCancelAction,
             onLinkPreviewClick = onLinkPreviewClick,
-            onMentionSelected = onMentionSelected,
+            onUserSelected = onUserSelected,
             onCommandSelected = onCommandSelected,
             onAlsoSendToChannelChange = onAlsoSendToChannelSelected,
             recordingActions = recordingActions,
-            mentionPopupContent = mentionPopupContent,
             input = input,
         )
     }
@@ -1459,70 +1456,80 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default mentions popup content of the message composer.
-     * Shown when the user types '@' in the composer, and there are available users that can be mentioned.
+     * The default user suggestion item of the message composer.
      *
-     * @param mentionSuggestions The list of mention suggestions to show.
-     * @param onMentionSelected The action to perform when a mention is selected.
-     */
-    @Composable
-    public fun MessageComposerMentionsPopupContent(
-        mentionSuggestions: List<User>,
-        onMentionSelected: (User) -> Unit,
-    ) {
-        MentionSuggestionList(users = mentionSuggestions, onMentionSelected = onMentionSelected)
-    }
-
-    /**
-     * The default mention suggestion item of the message composer.
-     *
-     * Used in [MessageComposerMentionsPopupContent].
+     * Used in [io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.UserSuggestionList].
      *
      * @param user The user for which the suggestion is rendered.
-     * @param onMentionSelected The action to perform when the mention is selected.
+     * @param currentUser The current user.
+     * @param onUserSelected The action to perform when the user is selected.
      */
     @Composable
-    public fun MessageComposerMentionSuggestionItem(
+    public fun MessageComposerUserSuggestionItem(
         user: User,
-        onMentionSelected: (User) -> Unit,
+        currentUser: User?,
+        onUserSelected: (User) -> Unit,
     ) {
-        MentionSuggestionItem(user = user, onMentionSelected = onMentionSelected)
+        UserSuggestionItem(
+            user = user,
+            currentUser = currentUser,
+            onUserSelected = onUserSelected,
+        )
     }
 
     /**
-     * The default leading content of the mention suggestion item of the message composer.
+     * The default leading content of the user suggestion item of the message composer.
      *
-     * Used as part of [MessageComposerMentionSuggestionItem].
+     * Used as part of [MessageComposerUserSuggestionItem].
      *
+     * @param modifier The modifier to apply to the composable.
      * @param user The user for which the leading content is rendered.
      */
     @Composable
-    public fun RowScope.MessageComposerMentionSuggestionItemLeadingContent(user: User) {
-        DefaultMentionSuggestionItemLeadingContent(user)
+    public fun MessageComposerUserSuggestionItemLeadingContent(
+        modifier: Modifier,
+        user: User,
+        currentUser: User?,
+    ) {
+        DefaultUserSuggestionItemLeadingContent(
+            user = user,
+            currentUser = currentUser,
+        )
     }
 
     /**
-     * The default center content of the mention suggestion item of the message composer.
+     * The default center content of the user suggestion item of the message composer.
      *
-     * Used as part of [MessageComposerMentionSuggestionItem].
+     * Used as part of [MessageComposerUserSuggestionItem].
      *
+     * @param modifier The modifier to apply to the composable.
      * @param user The user for which the center content is rendered.
      */
     @Composable
-    public fun RowScope.MessageComposerMentionSuggestionItemCenterContent(user: User) {
-        DefaultMentionSuggestionItemCenterContent(user)
+    public fun MessageComposerUserSuggestionItemCenterContent(
+        modifier: Modifier,
+        user: User,
+    ) {
+        DefaultUserSuggestionItemCenterContent(
+            modifier = modifier,
+            user = user,
+        )
     }
 
     /**
-     * The default trailing content of the mention suggestion item of the message composer.
+     * The default trailing content of the user suggestion item of the message composer.
      *
-     * Used as part of [MessageComposerMentionSuggestionItem].
+     * Used as part of [MessageComposerUserSuggestionItem].
      *
+     * @param modifier The modifier to apply to the composable.
      * @param user The user for which the trailing content is rendered.
      */
     @Composable
-    public fun RowScope.MessageComposerMentionSuggestionItemTrailingContent(user: User) {
-        DefaultMentionSuggestionItemTrailingContent()
+    public fun MessageComposerUserSuggestionItemTrailingContent(
+        modifier: Modifier,
+        user: User,
+    ) {
+        DefaultUserSuggestionItemTrailingContent()
     }
 
     /**
