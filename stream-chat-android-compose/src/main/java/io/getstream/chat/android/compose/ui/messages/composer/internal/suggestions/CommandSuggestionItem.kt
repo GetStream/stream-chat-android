@@ -69,16 +69,19 @@ internal fun CommandSuggestionItem(
  * @param command The command to show the icon for.
  */
 @Composable
-internal fun DefaultCommandSuggestionItemLeadingContent(command: Command) {
+internal fun DefaultCommandSuggestionItemLeadingContent(
+    command: Command,
+    modifier: Modifier = Modifier,
+) {
     if (command.isPolychromaticIcon) {
         Image(
-            modifier = Modifier.padding(end = StreamTokens.spacingSm),
+            modifier = modifier.padding(end = StreamTokens.spacingSm),
             painter = painterResource(id = command.iconRes),
             contentDescription = null,
         )
     } else {
         Icon(
-            modifier = Modifier.padding(end = StreamTokens.spacingSm),
+            modifier = modifier.padding(end = StreamTokens.spacingSm),
             painter = painterResource(id = command.iconRes),
             contentDescription = null,
             tint = ChatTheme.colors.textSecondary,

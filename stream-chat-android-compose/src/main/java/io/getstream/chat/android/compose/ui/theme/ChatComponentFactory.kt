@@ -1491,6 +1491,7 @@ public interface ChatComponentFactory {
         currentUser: User?,
     ) {
         DefaultUserSuggestionItemLeadingContent(
+            modifier = modifier,
             user = user,
             currentUser = currentUser,
         )
@@ -1562,7 +1563,10 @@ public interface ChatComponentFactory {
         modifier: Modifier,
         command: Command,
     ) {
-        DefaultCommandSuggestionItemLeadingContent(command)
+        DefaultCommandSuggestionItemLeadingContent(
+            modifier = modifier,
+            command = command,
+        )
     }
 
     /**

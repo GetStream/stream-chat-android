@@ -72,9 +72,10 @@ internal fun UserSuggestionItem(
 internal fun DefaultUserSuggestionItemLeadingContent(
     user: User,
     currentUser: User?,
+    modifier: Modifier = Modifier,
 ) {
     ChatTheme.componentFactory.UserAvatar(
-        modifier = Modifier.size(AvatarSize.Medium),
+        modifier = modifier.size(AvatarSize.Medium),
         user = user,
         showIndicator = false,
         showBorder = true,
