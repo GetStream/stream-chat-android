@@ -37,6 +37,7 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.previewdata.PreviewCommandData
+import java.util.Locale
 
 /**
  * A pill-shaped chip displayed inside the composer input row when a command is active.
@@ -65,7 +66,7 @@ internal fun CommandChip(
             tint = ChatTheme.colors.badgeTextInverse,
         )
         Text(
-            text = command.name.uppercase(),
+            text = command.name.uppercase(Locale.ROOT),
             style = ChatTheme.typography.metadataEmphasis,
             color = ChatTheme.colors.badgeTextInverse,
         )
