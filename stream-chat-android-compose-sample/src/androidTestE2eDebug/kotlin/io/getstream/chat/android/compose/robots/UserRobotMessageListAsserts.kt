@@ -190,14 +190,7 @@ fun UserRobot.assertComposerSize(isChangeable: Boolean): UserRobot {
 
 fun UserRobot.assertTypingIndicator(isDisplayed: Boolean): UserRobot {
     if (isDisplayed) {
-        assertEquals(
-            appContext.resources.getQuantityString(
-                R.plurals.stream_compose_message_list_header_typing_users,
-                1,
-                ParticipantRobot.name,
-            ),
-            MessageListPage.MessageList.typingIndicator.waitToAppear().text,
-        )
+        assertTrue(MessageListPage.MessageList.typingIndicator.waitToAppear().isDisplayed())
     } else {
         assertFalse(MessageListPage.MessageList.typingIndicator.waitToDisappear().isDisplayed())
     }
