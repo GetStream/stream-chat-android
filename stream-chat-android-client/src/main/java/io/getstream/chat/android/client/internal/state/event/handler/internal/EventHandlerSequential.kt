@@ -526,7 +526,9 @@ internal class EventHandlerSequential(
         )
         pollEvents.forEach { batchBuilder.addPollToFetch(it.poll.id) }
 
-        val users: List<User> = events.filterIsInstance<UserEvent>().map { it.user } +
+        val users: List<User> = events.filterIsInstance<UserEvent>()
+            .filterNot { it is UserStartWatchingEvent || it is UserStopWatchingEvent }
+            .map { it.user } +
             events.filterIsInstance<HasOwnUser>().map { it.me }
 
         batchBuilder.addUsers(users)

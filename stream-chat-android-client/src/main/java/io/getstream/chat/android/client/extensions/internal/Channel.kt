@@ -265,7 +265,7 @@ public fun Collection<Channel>.updateUsers(users: Map<String, User>): List<Chann
  * pinnedMessages of channel instance.
  */
 internal fun Channel.updateUsers(users: Map<String, User>): Channel {
-    return if (users().map(User::id).any(users::containsKey)) {
+    return if (users().any { user -> users[user.id]?.let { it != user } == true }) {
         copy(
             messages = messages.updateUsers(users),
             members = members.updateUsers(users).toList(),

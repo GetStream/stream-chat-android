@@ -90,6 +90,7 @@ public fun Channels(
             itemsIndexed(
                 items = channelItems,
                 key = { _, item -> item.key },
+                contentType = { _, item -> item::class },
             ) { index, item ->
                 itemContent(item)
 
