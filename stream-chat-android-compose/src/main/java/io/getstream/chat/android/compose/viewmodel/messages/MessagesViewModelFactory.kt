@@ -93,7 +93,7 @@ public class MessagesViewModelFactory(
         autoTranslationEnabled = autoTranslationEnabled,
         getCurrentUser = { chatClient.getCurrentUser() },
     ),
-    private val enforceUniqueReactions: Boolean = true,
+    private val enforceUniqueReactions: Boolean = false,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val showSystemMessages: Boolean = true,
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,

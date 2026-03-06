@@ -1018,7 +1018,7 @@ internal class MessageListControllerTests {
         controller.reactToMessage(reaction, message, skipPush = true)
 
         verify(chatClient).sendReaction(
-            enforceUnique = true,
+            enforceUnique = false,
             reaction = reaction,
             cid = CID,
             skipPush = true,
@@ -1042,7 +1042,7 @@ internal class MessageListControllerTests {
         controller.reactToMessage(reaction, message)
 
         verify(chatClient).sendReaction(
-            enforceUnique = true,
+            enforceUnique = false,
             reaction = reaction,
             cid = CID,
             skipPush = false,
@@ -1092,7 +1092,7 @@ internal class MessageListControllerTests {
         controller.reactToMessage(reaction, message)
 
         verify(chatClient).sendReaction(
-            enforceUnique = true,
+            enforceUnique = false,
             reaction = reaction,
             cid = CID,
             skipPush = false,
