@@ -1065,6 +1065,10 @@ public final class io/getstream/chat/android/ui/common/feature/messages/translat
 public final class io/getstream/chat/android/ui/common/feature/threads/ThreadListController$Companion {
 }
 
+public abstract interface class io/getstream/chat/android/ui/common/helper/AsyncImageHeadersProvider {
+	public abstract fun getImageRequestHeaders (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public abstract interface class io/getstream/chat/android/ui/common/helper/ClipboardHandler {
 	public abstract fun copyMessage (Lio/getstream/chat/android/models/Message;)V
 }
@@ -1194,6 +1198,8 @@ public final class io/getstream/chat/android/ui/common/helper/internal/StorageHe
 public final class io/getstream/chat/android/ui/common/images/StreamImageLoaderFactory : coil3/SingletonImageLoader$Factory {
 	public static final field $stable I
 	public fun <init> ()V
+	public fun <init> (Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Ljava/util/List;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Lkotlin/jvm/functions/Function1;)V
 	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun newImageLoader (Landroid/content/Context;)Lcoil3/ImageLoader;
