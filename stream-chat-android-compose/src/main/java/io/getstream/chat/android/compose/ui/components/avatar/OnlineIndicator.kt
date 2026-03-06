@@ -50,9 +50,11 @@ internal fun OnlineIndicator(
     )
 }
 
-internal enum class OnlineIndicatorDimensions(val indicatorSize: Dp, val borderWidth: Dp, val offset: Dp) {
-    Small(indicatorSize = 8.dp, borderWidth = 1.dp, offset = 1.dp),
-    Medium(indicatorSize = 12.dp, borderWidth = 2.dp, offset = 2.dp),
-    Large(indicatorSize = 14.dp, borderWidth = 2.dp, offset = 2.dp),
-    ExtraLarge(indicatorSize = 16.dp, borderWidth = 2.dp, offset = 0.dp),
+internal data class OnlineIndicatorDimensions(val indicatorSize: Dp, val borderWidth: Dp, val offset: Dp) {
+    companion object {
+        val Small = OnlineIndicatorDimensions(indicatorSize = 8.dp, borderWidth = 1.dp, offset = 1.dp)
+        val Medium = OnlineIndicatorDimensions(indicatorSize = 12.dp, borderWidth = 2.dp, offset = 2.dp)
+        val Large = OnlineIndicatorDimensions(indicatorSize = 14.dp, borderWidth = 2.dp, offset = 2.dp)
+        val ExtraLarge = OnlineIndicatorDimensions(indicatorSize = 16.dp, borderWidth = 2.dp, offset = 0.dp)
+    }
 }
