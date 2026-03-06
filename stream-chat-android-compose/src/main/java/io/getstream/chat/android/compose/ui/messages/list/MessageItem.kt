@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.messages.list
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -25,6 +26,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -253,16 +255,30 @@ internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadDateSep
  */
 @Composable
 internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageItemState) {
-    Text(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp, horizontal = 16.dp),
-        text = systemMessageState.message.text,
-        color = ChatTheme.colors.textSecondary,
-        style = ChatTheme.typography.metadataEmphasis,
-        textAlign = TextAlign.Center,
-    )
+            .padding(vertical = StreamTokens.spacingXs, horizontal = StreamTokens.spacing2xl),
+        contentAlignment = Alignment.Center,
+    ) {
+        Box(
+            modifier = Modifier
+                .background(ChatTheme.colors.backgroundCoreSurfaceSubtle, SystemMessageShape)
+                .border(1.dp, ChatTheme.colors.borderCoreSubtle, SystemMessageShape)
+                .padding(vertical = StreamTokens.spacingXs, horizontal = StreamTokens.spacingSm),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = systemMessageState.message.text,
+                style = ChatTheme.typography.metadataDefault,
+                color = ChatTheme.colors.chatTextSystem,
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
 }
+
+private val SystemMessageShape = RoundedCornerShape(StreamTokens.radiusXl)
 
 /**
  * The default Moderated message content.
