@@ -129,7 +129,7 @@ class MessagesActivity : ComponentActivity() {
             viewModelFactory = factory,
             reactionSorting = ReactionSortingByLastReactionAt,
             onBackPressed = { finish() },
-            onHeaderTitleClick = ::openChannelInfo,
+            onChannelAvatarClick = ::openChannelInfo,
             onMessageLinkClick = { _, link ->
                 openLink(link)
             },

@@ -106,7 +106,7 @@ private object MessageListHeaderHandlingActionsSnippet {
                         onHeaderTitleClick = {
                             // Handle clicks on the header title
                         },
-                        onChannelAvatarClick = {
+                        onChannelAvatarClick = { channel ->
                             // Handle clicks on the channel avatar
                         },
                         // Content
