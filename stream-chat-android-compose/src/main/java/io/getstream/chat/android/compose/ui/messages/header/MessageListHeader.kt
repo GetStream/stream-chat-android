@@ -92,7 +92,7 @@ public fun MessageListHeader(
     elevation: Dp = StreamTokens.elevation3,
     onBackPressed: () -> Unit = {},
     onHeaderTitleClick: ((Channel) -> Unit)? = null,
-    onChannelAvatarClick: (() -> Unit)? = null,
+    onChannelAvatarClick: ((Channel) -> Unit)? = null,
     leadingContent: @Composable RowScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             MessageListHeaderLeadingContent(
@@ -290,12 +290,12 @@ internal fun DefaultMessageListHeaderSubtitle(
 internal fun DefaultMessageListHeaderTrailingContent(
     channel: Channel,
     currentUser: User?,
-    onClick: (() -> Unit)?,
+    onClick: ((Channel) -> Unit)?,
 ) {
     ChatTheme.componentFactory.ChannelAvatar(
         modifier = Modifier
             .size(40.dp)
-            .ifNotNull(onClick) { clickable(onClick = it) },
+            .ifNotNull(onClick) { callback -> clickable { callback(channel) } },
         channel = channel,
         currentUser = currentUser,
         showIndicator = false,
