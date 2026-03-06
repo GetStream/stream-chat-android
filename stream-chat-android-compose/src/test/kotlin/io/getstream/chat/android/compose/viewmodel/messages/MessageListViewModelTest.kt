@@ -111,7 +111,7 @@ internal class MessageListViewModelTest {
 
         viewModel.performMessageAction(React(reaction1, message1))
 
-        verify(chatClient).sendReaction(eq(reaction1), eq(true), eq(CID), eq(false))
+        verify(chatClient).sendReaction(eq(reaction1), eq(false), eq(CID), eq(false))
     }
 
     @Test
@@ -133,7 +133,7 @@ internal class MessageListViewModelTest {
 
         viewModel.performMessageAction(React(reaction1, message1, skipPush = true))
 
-        verify(chatClient).sendReaction(eq(reaction1), eq(true), eq(CID), eq(true))
+        verify(chatClient).sendReaction(eq(reaction1), eq(false), eq(CID), eq(true))
     }
 
     @Test

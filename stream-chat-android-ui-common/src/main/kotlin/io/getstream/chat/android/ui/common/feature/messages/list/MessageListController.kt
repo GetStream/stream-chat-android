@@ -190,7 +190,7 @@ public class MessageListController(
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val showSystemMessages: Boolean = true,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
-    private val enforceUniqueReactions: Boolean = true,
+    private val enforceUniqueReactions: Boolean = false,
     private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler(),
     private val threadDateSeparatorHandler: DateSeparatorHandler =
         DateSeparatorHandler.getDefaultThreadDateSeparatorHandler(),
