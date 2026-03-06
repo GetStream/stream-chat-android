@@ -215,8 +215,13 @@ public fun MessagesScreen(
                 onThreadClick = remember(composerViewModel, listViewModel) {
                     {
                             message ->
-                        composerViewModel.setMessageMode(MessageMode.MessageThread(message))
-                        listViewModel.openMessageThread(message)
+                        if (listViewModel.isInThread) {
+                            listViewModel.leaveThread()
+                            composerViewModel.leaveThread()
+                        } else {
+                            composerViewModel.setMessageMode(MessageMode.MessageThread(message))
+                            listViewModel.openMessageThread(message)
+                        }
                     }
                 },
                 onUserAvatarClick = onUserAvatarClick,
