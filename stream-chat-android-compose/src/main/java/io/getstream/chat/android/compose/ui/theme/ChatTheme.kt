@@ -41,13 +41,11 @@ import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
-import io.getstream.chat.android.compose.ui.util.DefaultPollSwitchItemFactory
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
 import io.getstream.chat.android.compose.ui.util.MessagePreviewIconFactory
 import io.getstream.chat.android.compose.ui.util.MessageTextFormatter
-import io.getstream.chat.android.compose.ui.util.PollSwitchItemFactory
 import io.getstream.chat.android.compose.ui.util.ReactionResolver
 import io.getstream.chat.android.compose.ui.util.SearchResultNameFormatter
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoaderFactory
@@ -108,12 +106,6 @@ private val LocalReactionOptionsTheme = compositionLocalOf<ReactionOptionsTheme>
 }
 private val LocalMessagePreviewIconFactory = compositionLocalOf<MessagePreviewIconFactory> {
     error("No message preview icon factory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
-private val LocalPollSwitchItemFactory = compositionLocalOf<PollSwitchItemFactory> {
-    error(
-        "No reaction poll switch item factory provided! Make sure to wrap all usages of Stream components " +
-            "in a ChatTheme.",
-    )
 }
 private val LocalDateFormatter = compositionLocalOf<DateFormatter> {
     error("No DateFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
@@ -190,7 +182,6 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param reactionOptionsTheme [ReactionOptionsTheme] Theme for the reaction option list in the selected message menu.
  * For theming the message option list in the same menu, use [messageOptionsTheme].
  * @param messagePreviewIconFactory Used to create a preview icon for the given message type.
- * @param pollSwitchItemFactory Factory for creating poll switch items in the poll creation screen.
  * @param allowUIAutomationTest Allow to simulate ui automation with given test tags.
  * @param dateFormatter [DateFormatter] Used throughout the app for date and time information.
  * @param timeProvider [TimeProvider] Used throughout the app for time information.
@@ -236,7 +227,6 @@ public fun ChatTheme(
     reactionResolver: ReactionResolver = ReactionResolver.defaultResolver(),
     reactionOptionsTheme: ReactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
     messagePreviewIconFactory: MessagePreviewIconFactory = MessagePreviewIconFactory.defaultFactory(),
-    pollSwitchItemFactory: PollSwitchItemFactory = DefaultPollSwitchItemFactory(context = LocalContext.current),
     allowUIAutomationTest: Boolean = false,
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     timeProvider: TimeProvider = TimeProvider.DEFAULT,
@@ -289,7 +279,6 @@ public fun ChatTheme(
         LocalReactionResolver provides reactionResolver,
         LocalMessagePreviewIconFactory provides messagePreviewIconFactory,
         LocalReactionOptionsTheme provides reactionOptionsTheme,
-        LocalPollSwitchItemFactory provides pollSwitchItemFactory,
         LocalDateFormatter provides dateFormatter,
         LocalTimeProvider provides timeProvider,
         LocalDurationFormatter provides durationFormatter,
@@ -405,14 +394,6 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessagePreviewIconFactory.current
-
-    /**
-     * Retrieves the current [PollSwitchItemFactory] at the call site's position in the hierarchy.
-     */
-    public val pollSwitchitemFactory: PollSwitchItemFactory
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalPollSwitchItemFactory.current
 
     /**
      * Retrieves the current [DateFormatter] at the call site's position in the hierarchy.

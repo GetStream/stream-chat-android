@@ -34,6 +34,11 @@ public object PollsConstants {
     public const val MAX_NUMBER_OF_MULTIPLE_ANSWERS: Int = 10
 
     /**
+     * The allowed range of multiple answers per user in a poll.
+     */
+    public val MULTIPLE_ANSWERS_RANGE: IntRange = MIN_NUMBER_OF_MULTIPLE_ANSWERS..MAX_NUMBER_OF_MULTIPLE_ANSWERS
+
+    /**
      * The maximum number of visible options in a poll message.
      */
     public const val MAX_NUMBER_OF_VISIBLE_OPTIONS: Int = 10

@@ -18,20 +18,21 @@ package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import io.getstream.chat.android.compose.ui.theme.PollsConfig
 
 /**
  * Factory for creating instances of [CreatePollViewModel].
  *
- * @param configSwitches The list of [PollSwitchItem]s to be used in the ViewModel.
+ * @param pollsConfig The [PollsConfig] to be used in the ViewModel.
  */
 internal class CreatePollViewModelFactory(
-    private val configSwitches: List<PollSwitchItem>,
+    private val pollsConfig: PollsConfig,
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(CreatePollViewModel::class.java)) {
-            return CreatePollViewModel(configSwitches) as T
+            return CreatePollViewModel(pollsConfig) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
     }
