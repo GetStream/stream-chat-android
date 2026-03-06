@@ -22,6 +22,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +36,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -76,6 +78,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryInjector
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract.Input
+import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.components.common.PlayButton
 import io.getstream.chat.android.compose.ui.components.common.PlayButtonSize
@@ -221,38 +224,40 @@ public fun MediaAttachmentContent(
         message.attachments.filter { (it.isImage() || it.isVideo()) && !it.hasLink() }
     }
 
-    if (attachments.size == 1) {
-        SingleMediaAttachment(
-            attachment = attachments.first(),
-            message = message,
-            modifier = modifier,
-            onMediaGalleryPreviewResult = state.onMediaGalleryPreviewResult,
-            onLongItemClick = state.onLongItemClick,
-            skipEnrichUrl = skipEnrichUrl,
-            onContentItemClick = onItemClick,
-            overlayContent = itemOverlayContent,
-        )
-    } else {
-        val gridSpacing = StreamTokens.spacing2xs
-        val description =
-            stringResource(R.string.stream_ui_message_list_semantics_message_attachments, attachments.size)
-        Row(
-            modifier = modifier
-                .semantics { this.contentDescription = description }
-                .padding(MessageStyling.messageSectionPadding),
-            horizontalArrangement = Arrangement.spacedBy(gridSpacing),
-        ) {
-            MultipleMediaAttachmentsColumns(
-                attachments = attachments,
-                gridSpacing = gridSpacing,
-                maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
+    Box(modifier = modifier) {
+        if (attachments.size == 1) {
+            SingleMediaAttachment(
+                attachment = attachments.first(),
                 message = message,
-                skipEnrichUrl = skipEnrichUrl,
+                modifier = Modifier,
                 onMediaGalleryPreviewResult = state.onMediaGalleryPreviewResult,
                 onLongItemClick = state.onLongItemClick,
+                skipEnrichUrl = skipEnrichUrl,
                 onContentItemClick = onItemClick,
-                itemOverlayContent = itemOverlayContent,
+                overlayContent = itemOverlayContent,
             )
+        } else {
+            val gridSpacing = StreamTokens.spacing2xs
+            val description =
+                stringResource(R.string.stream_ui_message_list_semantics_message_attachments, attachments.size)
+            Row(
+                modifier = Modifier
+                    .semantics { this.contentDescription = description }
+                    .padding(MessageStyling.messageSectionPadding),
+                horizontalArrangement = Arrangement.spacedBy(gridSpacing),
+            ) {
+                MultipleMediaAttachmentsColumns(
+                    attachments = attachments,
+                    gridSpacing = gridSpacing,
+                    maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
+                    message = message,
+                    skipEnrichUrl = skipEnrichUrl,
+                    onMediaGalleryPreviewResult = state.onMediaGalleryPreviewResult,
+                    onLongItemClick = state.onLongItemClick,
+                    onContentItemClick = onItemClick,
+                    itemOverlayContent = itemOverlayContent,
+                )
+            }
         }
     }
 }
@@ -611,6 +616,25 @@ internal fun MediaAttachmentContentItem(
                     }
                 }
             }
+        }
+
+        val uploadState = attachment.uploadState
+        if (uploadState is Attachment.UploadState.InProgress) {
+            LoadingIndicator(
+                progress = uploadState::progressFraction,
+                modifier = Modifier
+                    .border(
+                        width = 2.dp,
+                        color = ChatTheme.colors.badgeBorder,
+                        shape = CircleShape,
+                    )
+                    .background(
+                        color = ChatTheme.colors.backgroundElevationElevation0,
+                        shape = CircleShape,
+                    )
+                    .padding(2.dp)
+                    .size(24.dp),
+            )
         }
     }
 }

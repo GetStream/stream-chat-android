@@ -25,16 +25,44 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * Shows the default loading UI.
+ * Shows the default indeterminate loading indicator.
  *
  * @param modifier Modifier for styling.
  */
 @Composable
 public fun LoadingIndicator(modifier: Modifier = Modifier) {
+    val colors = ChatTheme.colors
     Box(
         modifier,
         contentAlignment = Alignment.Center,
     ) {
-        CircularProgressIndicator(strokeWidth = 2.dp, color = ChatTheme.colors.accentPrimary)
+        CircularProgressIndicator(
+            strokeWidth = 2.dp,
+            trackColor = colors.borderCoreDefault,
+            color = colors.accentPrimary,
+        )
+    }
+}
+
+/**
+ * Shows a determinate loading indicator with progress.
+ *
+ * @param progress The current progress value between 0f and 1f.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+public fun LoadingIndicator(progress: () -> Float, modifier: Modifier = Modifier) {
+    val colors = ChatTheme.colors
+    Box(
+        modifier,
+        contentAlignment = Alignment.Center,
+    ) {
+        CircularProgressIndicator(
+            progress = progress,
+            strokeWidth = 2.dp,
+            trackColor = colors.borderCoreDefault,
+            color = colors.accentPrimary,
+            gapSize = 0.dp,
+        )
     }
 }
