@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
+import io.getstream.chat.android.compose.ui.components.common.RadioButton
 import io.getstream.chat.android.compose.ui.components.common.RadioCheck
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -156,10 +157,17 @@ internal fun DefaultFilesPickerItem(
             )
         }
 
-        RadioCheck(
-            checked = fileItem.isSelected,
-            onCheckedChange = null,
-        )
+        if (allowMultipleSelection) {
+            RadioCheck(
+                checked = fileItem.isSelected,
+                onCheckedChange = null,
+            )
+        } else {
+            RadioButton(
+                checked = fileItem.isSelected,
+                onCheckedChange = null,
+            )
+        }
     }
 }
 

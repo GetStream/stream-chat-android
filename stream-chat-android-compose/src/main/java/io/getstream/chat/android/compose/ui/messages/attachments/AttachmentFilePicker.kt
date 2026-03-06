@@ -245,20 +245,14 @@ internal fun AttachmentFilePickerSingleSelection() {
         ),
         attachments = listOf(
             AttachmentPickerItemState(
-                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_PDF).apply {
-                    size = 10_000
-                },
+                attachmentMetaData = AttachmentMetaData1,
             ),
             AttachmentPickerItemState(
-                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_MP3).apply {
-                    size = 100_000
-                },
+                attachmentMetaData = AttachmentMetaData2,
                 isSelected = true,
             ),
             AttachmentPickerItemState(
-                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_MP4).apply {
-                    size = 1_000_000
-                },
+                attachmentMetaData = AttachmentMetaData3,
             ),
         ),
     )
@@ -279,22 +273,40 @@ internal fun AttachmentFilePickerMultipleSelection() {
         pickerMode = FilePickerMode(),
         attachments = listOf(
             AttachmentPickerItemState(
-                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_PDF).apply {
-                    size = 10_000
-                },
+                attachmentMetaData = AttachmentMetaData1,
                 isSelected = true,
             ),
             AttachmentPickerItemState(
-                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_MP3).apply {
-                    size = 100_000
-                },
+                attachmentMetaData = AttachmentMetaData2,
                 isSelected = true,
             ),
             AttachmentPickerItemState(
-                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_MP4).apply {
-                    size = 1_000_000
-                },
+                attachmentMetaData = AttachmentMetaData3,
             ),
         ),
     )
+}
+
+@Suppress("MagicNumber")
+private val AttachmentMetaData1 = AttachmentMetaData(
+    title = "PDF",
+    mimeType = MimeType.MIME_TYPE_PDF,
+).apply {
+    size = 10_000
+}
+
+@Suppress("MagicNumber")
+private val AttachmentMetaData2 = AttachmentMetaData(
+    title = "MP3",
+    mimeType = MimeType.MIME_TYPE_MP3,
+).apply {
+    size = 100_000
+}
+
+@Suppress("MagicNumber")
+private val AttachmentMetaData3 = AttachmentMetaData(
+    title = "MP4",
+    mimeType = MimeType.MIME_TYPE_MP4,
+).apply {
+    size = 1_000_000
 }
