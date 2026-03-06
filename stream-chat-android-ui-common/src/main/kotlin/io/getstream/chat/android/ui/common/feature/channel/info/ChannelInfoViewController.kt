@@ -571,11 +571,10 @@ private fun buildChannelOptionList(
             add(ChannelInfoViewState.Content.Option.DeleteChannel)
         }
     } else {
-        // Group channel: channel-level mute, hide, leave
+        // Group channel: channel-level mute, leave
         if (channelData.ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL)) {
             add(ChannelInfoViewState.Content.Option.MuteChannel(isMuted))
         }
-        add(ChannelInfoViewState.Content.Option.HideChannel(isHidden))
         add(ChannelInfoViewState.Content.Option.PinnedMessages)
         add(ChannelInfoViewState.Content.Option.MediaAttachments)
         add(ChannelInfoViewState.Content.Option.FilesAttachments)

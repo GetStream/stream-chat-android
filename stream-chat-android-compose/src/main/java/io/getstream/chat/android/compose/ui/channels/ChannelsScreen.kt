@@ -79,7 +79,7 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
 public fun ChannelsScreen(
     viewModelFactory: ChannelViewModelFactory = ChannelViewModelFactory(),
     viewModelKey: String? = null,
-    title: String = "Stream Chat",
+    title: String = "Chats",
     isShowingHeader: Boolean = true,
     searchMode: SearchMode = SearchMode.None,
     onHeaderActionClick: () -> Unit = {},

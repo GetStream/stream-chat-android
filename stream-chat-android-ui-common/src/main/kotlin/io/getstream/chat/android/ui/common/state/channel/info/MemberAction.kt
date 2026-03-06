@@ -86,7 +86,6 @@ public class BlockUser(
 ) : MemberAction {
     @DrawableRes
     override val icon: Int = R.drawable.stream_ic_block
-    override val isDestructive: Boolean = true
 }
 
 /**

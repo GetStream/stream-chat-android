@@ -241,7 +241,6 @@ class ChannelsActivity : ComponentActivity() {
     private fun ChannelsContent(onHeaderAvatarClick: () -> Unit) {
         ChannelsScreen(
             viewModelFactory = channelsViewModelFactory,
-            title = stringResource(id = R.string.app_name),
             isShowingHeader = true,
             searchMode = SearchMode.Messages,
             onChannelClick = ::openMessages,
