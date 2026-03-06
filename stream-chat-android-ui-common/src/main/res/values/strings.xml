@@ -148,13 +148,13 @@
     <string name="stream_ui_channel_info_member_modal_ban_no_expiration">Ban has no expiration</string>
     <string name="stream_ui_channel_info_member_modal_ban_expires_at">Ban expires %s</string>
     <string name="stream_ui_channel_info_member_modal_ban_expired">Ban has already expired</string>
-    <string name="stream_ui_channel_info_member_modal_option_message_member">Message</string>
-    <string name="stream_ui_channel_info_member_modal_option_ban_member">Ban</string>
-    <string name="stream_ui_channel_info_member_modal_option_unban_member">Unban</string>
-    <string name="stream_ui_channel_info_member_modal_option_mute_user">Mute</string>
-    <string name="stream_ui_channel_info_member_modal_option_unmute_user">Unmute</string>
-    <string name="stream_ui_channel_info_member_modal_option_block_user">Block</string>
-    <string name="stream_ui_channel_info_member_modal_option_unblock_user">Unblock</string>
+    <string name="stream_ui_channel_info_member_modal_option_message_member">Send Direct Message</string>
+    <string name="stream_ui_channel_info_member_modal_option_ban_member">Ban User</string>
+    <string name="stream_ui_channel_info_member_modal_option_unban_member">Unban User</string>
+    <string name="stream_ui_channel_info_member_modal_option_mute_user">Mute User</string>
+    <string name="stream_ui_channel_info_member_modal_option_unmute_user">Unmute User</string>
+    <string name="stream_ui_channel_info_member_modal_option_block_user">Block User</string>
+    <string name="stream_ui_channel_info_member_modal_option_unblock_user">Unblock User</string>
     <string name="stream_ui_channel_info_member_modal_option_remove_member">Remove from group</string>
 
     <string name="stream_ui_channel_info_ban_member_modal_title">Banning %s for:</string>
