@@ -81,7 +81,7 @@ public fun MessageThreadFooter(
 
 private val ConnectorWidth = 12.dp
 private val ConnectorHeight = 36.dp
-private val ConnectorExtension = 10.dp
+private val ConnectorExtension = 8.dp
 
 @Composable
 @Suppress("MagicNumber")

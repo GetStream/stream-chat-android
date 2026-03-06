@@ -209,7 +209,7 @@ internal class MessageListViewModelTest {
             ),
         )
 
-        verify(chatClient).sendReaction(reaction = reaction1, enforceUnique = true, cid = CID, skipPush = false)
+        verify(chatClient).sendReaction(reaction = reaction1, enforceUnique = false, cid = CID, skipPush = false)
     }
 
     @Test
@@ -233,7 +233,7 @@ internal class MessageListViewModelTest {
             ),
         )
 
-        verify(chatClient).sendReaction(reaction = reaction1, enforceUnique = true, cid = CID, skipPush = true)
+        verify(chatClient).sendReaction(reaction = reaction1, enforceUnique = false, cid = CID, skipPush = true)
     }
 
     @Test
