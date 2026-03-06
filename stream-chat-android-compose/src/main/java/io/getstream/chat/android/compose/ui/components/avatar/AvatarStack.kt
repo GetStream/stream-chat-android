@@ -64,7 +64,7 @@ internal fun UserAvatarStack(
             componentFactory.UserAvatar(
                 modifier = Modifier
                     .size(avatarSize + borderSize)
-                    .border(borderSize, colors.borderCoreOnDark, CircleShape)
+                    .border(borderSize, colors.borderCoreInverse, CircleShape)
                     .padding(borderSize),
                 user = user,
                 showBorder = showBorder && index == 0,
