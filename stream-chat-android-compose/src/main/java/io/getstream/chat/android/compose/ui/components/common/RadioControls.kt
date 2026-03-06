@@ -38,12 +38,58 @@ import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.ifNotNull
 
 @Composable
+internal fun RadioButton(
+    checked: Boolean,
+    onCheckedChange: ((Boolean) -> Unit)?,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
+    RadioControlBase(
+        checked = checked,
+        onCheckedChange = onCheckedChange,
+        modifier = modifier,
+        enabled = enabled,
+    ) {
+        Box(
+            modifier = Modifier
+                .size(10.dp)
+                .background(ChatTheme.colors.controlRadioButtonIndicator, CircleShape),
+        )
+    }
+}
+
+@Composable
 internal fun RadioCheck(
     checked: Boolean,
     onCheckedChange: ((Boolean) -> Unit)?,
     modifier: Modifier = Modifier,
     borderColor: Color = ChatTheme.colors.controlRadioCheckBorder,
     enabled: Boolean = true,
+) {
+    RadioControlBase(
+        checked = checked,
+        onCheckedChange = onCheckedChange,
+        modifier = modifier,
+        borderColor = borderColor,
+        enabled = enabled,
+    ) {
+        Icon(
+            modifier = Modifier.size(12.dp),
+            painter = painterResource(R.drawable.stream_compose_ic_checkmark),
+            tint = ChatTheme.colors.controlRadioCheckIconSelected,
+            contentDescription = null,
+        )
+    }
+}
+
+@Composable
+private fun RadioControlBase(
+    checked: Boolean,
+    onCheckedChange: ((Boolean) -> Unit)?,
+    modifier: Modifier = Modifier,
+    borderColor: Color = ChatTheme.colors.controlRadioCheckBorder,
+    enabled: Boolean = true,
+    content: @Composable () -> Unit,
 ) {
     val colors = ChatTheme.colors
     Box(
@@ -57,24 +103,33 @@ internal fun RadioCheck(
                     else -> background(colors.backgroundCoreDisabled, CircleShape)
                 }
             }
-            .ifNotNull(onCheckedChange) { onCheckedChange ->
+            .ifNotNull(onCheckedChange) { onChange ->
                 clickable(
                     enabled = enabled,
                     bounded = false,
-                    onClick = { onCheckedChange(!checked) },
+                    onClick = { onChange(!checked) },
                 )
             },
         contentAlignment = Alignment.Center,
     ) {
         if (checked) {
-            Icon(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .size(12.dp),
-                painter = painterResource(R.drawable.stream_compose_ic_checkmark),
-                tint = colors.controlRadioCheckIconSelected,
-                contentDescription = null,
-            )
+            content()
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun RadioButtonPreview() {
+    ChatTheme {
+        Row(
+            Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            RadioButton(checked = false, enabled = true, onCheckedChange = {})
+            RadioButton(checked = true, enabled = true, onCheckedChange = {})
+            RadioButton(checked = false, enabled = false, onCheckedChange = {})
+            RadioButton(checked = true, enabled = false, onCheckedChange = {})
         }
     }
 }
