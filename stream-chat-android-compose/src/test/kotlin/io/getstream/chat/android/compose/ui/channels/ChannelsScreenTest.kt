@@ -56,7 +56,7 @@ internal class ChannelsScreenTest : MockedChatClientTest {
             }
         }
 
-        composeTestRule.onNodeWithText("Stream Chat").assertExists()
+        composeTestRule.onNodeWithText("Chats").assertExists()
         composeTestRule.onNodeWithTag("Stream_ChannelListLoading").assertExists()
     }
 
