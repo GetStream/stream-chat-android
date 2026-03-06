@@ -103,7 +103,13 @@ public fun MessageList(
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     threadsVerticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
     threadMessagesStart: ThreadMessagesStart? = null,
-    onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
+    onThreadClick: (Message) -> Unit = {
+        if (viewModel.isInThread) {
+            viewModel.leaveThread()
+        } else {
+            viewModel.openMessageThread(it)
+        }
+    },
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
     onReactionsClick: (Message) -> Unit = { viewModel.selectReactions(it) },
     onMessagesPageStartReached: () -> Unit = { viewModel.loadOlderMessages() },

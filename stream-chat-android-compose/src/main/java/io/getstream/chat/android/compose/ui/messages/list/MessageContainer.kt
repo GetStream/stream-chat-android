@@ -66,7 +66,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.view.HapticFeedbackConstantsCompat
-import io.getstream.chat.android.client.utils.message.belongsToThread
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isGiphy
 import io.getstream.chat.android.client.utils.message.isPinned
@@ -166,7 +165,7 @@ public fun MessageContainer(
     val clickModifier = Modifier.combinedClickable(
         interactionSource = remember { MutableInteractionSource() },
         indication = null,
-        onClick = { if (message.belongsToThread()) onThreadClick(message) },
+        onClick = {},
         onLongClick = {
             if (!message.isDeleted() && !message.isUploading()) {
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -229,7 +228,7 @@ public fun MessageContainer(
                         modifier = Modifier.weight(1f, fill = false),
                         horizontalAlignment = messageAlignment.contentAlignment,
                     ) {
-                        MessageTop(messageItem = messageItem)
+                        MessageTop(messageItem = messageItem, onThreadClick = onThreadClick)
                         MessageContentWithReactions(
                             messageAlignment = messageAlignment,
                             reactions = rememberMessageReactions(message, reactionSorting)?.let { reactions ->
@@ -324,11 +323,11 @@ internal fun RowScope.DefaultMessageAuthor(
  * @param messageItem The message item to show the content for.
  */
 @Composable
-internal fun DefaultMessageTop(messageItem: MessageItemState) {
+internal fun DefaultMessageTop(messageItem: MessageItemState, onThreadClick: (Message) -> Unit = {}) {
     Column(Modifier.verticalPaddingIfNotEmpty(StreamTokens.spacing2xs)) {
         SavedForLaterAnnotation(messageItem)
         PinnedAnnotation(messageItem)
-        ShowInChannelAnnotation(messageItem)
+        ShowInChannelAnnotation(messageItem, onThreadClick)
         ReminderAnnotation(messageItem)
         TranslationAnnotation(messageItem)
     }
@@ -365,7 +364,7 @@ private fun PinnedAnnotation(item: MessageItemState) {
 }
 
 @Composable
-private fun ShowInChannelAnnotation(item: MessageItemState) {
+private fun ShowInChannelAnnotation(item: MessageItemState, onThreadClick: (Message) -> Unit) {
     if (item.message.showInChannel) {
         val alsoSendToChannelTextRes = if (item.isInThread) {
             R.string.stream_compose_also_sent_to_channel
@@ -377,6 +376,7 @@ private fun ShowInChannelAnnotation(item: MessageItemState) {
             text = stringResource(alsoSendToChannelTextRes),
             trailingText = stringResource(R.string.stream_compose_message_list_view),
             trailingTextColor = ChatTheme.colors.chatTextLink,
+            onClick = { onThreadClick(item.message) },
         )
     }
 }
