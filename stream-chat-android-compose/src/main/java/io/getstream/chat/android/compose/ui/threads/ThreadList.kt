@@ -265,7 +265,7 @@ internal fun DefaultThreadListEmptyContent(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center,
     ) {
         Icon(
-            painter = painterResource(R.drawable.stream_compose_ic_threads_empty),
+            painter = painterResource(R.drawable.stream_compose_ic_bubbles),
             contentDescription = null,
             tint = ChatTheme.colors.textTertiary,
         )
