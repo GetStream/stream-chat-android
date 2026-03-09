@@ -175,12 +175,34 @@ public class MessagesViewModelFactory(
      * Creates the required [ViewModel] for our use case, based on the [factories] we provided.
      */
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+        val savedStateHandle = extras.createSavedStateHandle()
         if (modelClass == AttachmentsPickerViewModel::class.java) {
             @Suppress("UNCHECKED_CAST")
             return AttachmentsPickerViewModel(
                 storageHelper = storageHelper,
                 channelState = channelStateFlow,
-                savedStateHandle = extras.createSavedStateHandle(),
+                savedStateHandle = savedStateHandle,
+            ) as T
+        }
+        if (modelClass == MessageComposerViewModel::class.java) {
+            @Suppress("UNCHECKED_CAST")
+            return MessageComposerViewModel(
+                messageComposerController = MessageComposerController(
+                    chatClient = chatClient,
+                    channelState = channelStateFlow,
+                    mediaRecorder = mediaRecorder,
+                    userLookupHandler = userLookupHandler,
+                    fileToUri = fileToUriConverter,
+                    channelCid = channelId,
+                    config = MessageComposerController.Config(
+                        maxAttachmentCount = maxAttachmentCount,
+                        isLinkPreviewEnabled = isComposerLinkPreviewEnabled,
+                        isDraftMessageEnabled = isComposerDraftMessageEnabled,
+                        isActiveCommandEnabled = true,
+                    ),
+                ),
+                storageHelper = storageHelper,
+                savedStateHandle = savedStateHandle,
             ) as T
         }
         return create(modelClass)

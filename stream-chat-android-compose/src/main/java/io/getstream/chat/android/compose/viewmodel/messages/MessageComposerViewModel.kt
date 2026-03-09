@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.compose.viewmodel.messages
 
+import android.os.Build
+import android.os.Bundle
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -27,6 +30,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -39,6 +43,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 
 /**
  * ViewModel responsible for handling the composing and sending of messages.
@@ -47,12 +52,23 @@ import kotlinx.coroutines.flow.StateFlow
  * Additionally, all the core data that can be reused across our SDKs is available through shared data sources, while
  * implementation-specific data is stored in respective in the [ViewModel].
  *
+ * This ViewModel is the **single source of truth for the selected attachments** in the current composer
+ * session. Attachments are kept in an insertion-ordered map keyed by URI string, so the order in which
+ * the user adds items (gallery picks, camera captures, system picker results) is preserved in the
+ * composer's attachment list.
+ *
+ * The selected attachment state persists across Activity recreation (e.g. "Don't keep activities")
+ * via [savedStateHandle]. It is cleared by [clearAttachments], which must be called when the
+ * attachments are consumed (e.g. message sent, poll created, command selected).
+ *
  * @param messageComposerController The controller used to relay all the actions and fetch all the state.
  * @param storageHelper Resolves deferred attachment files before sending.
+ * @param savedStateHandle Persists selected attachment state across Activity recreation.
  */
 public class MessageComposerViewModel(
     private val messageComposerController: MessageComposerController,
     private val storageHelper: AttachmentStorageHelper,
+    private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
 ) : ViewModel() {
 
     /**
@@ -116,6 +132,26 @@ public class MessageComposerViewModel(
     public val ownCapabilities: StateFlow<Set<String>> = messageComposerController.ownCapabilities
 
     /**
+     * Insertion-ordered map of URI string → [Attachment] for all attachments currently staged for
+     * the next message. Covers grid picks (gallery / files tab), camera captures, and system picker
+     * results, interleaved in the order the user added them.
+     *
+     * Persisted via [savedStateHandle] so selections survive Activity recreation.
+     */
+    private val _selectedAttachments = MutableStateFlow(
+        savedStateHandle.get<Bundle>(KeySelectedAttachments)
+            ?.getBundleList(KeySelectedAttachmentItems)
+            ?.mapNotNull(Bundle::toUriStringAttachmentPair)
+            ?.toMap(LinkedHashMap())
+            ?: linkedMapOf(),
+    )
+
+    init {
+        // Re-sync any attachments restored from saved state into the controller on recreation.
+        if (_selectedAttachments.value.isNotEmpty()) syncToController()
+    }
+
+    /**
      * Called when the input changes and the internal state needs to be updated.
      *
      * @param value Current state value.
@@ -153,31 +189,59 @@ public class MessageComposerViewModel(
     public fun dismissMessageActions(): Unit = messageComposerController.dismissMessageActions()
 
     /**
-     * @see [MessageComposerController.updateSelectedAttachments]
+     * Adds [attachments] to the staged attachment list, preserving insertion order.
+     *
+     * Attachments are keyed by [EXTRA_SOURCE_URI] stored in each attachment's [Attachment.extraData].
+     * Duplicate URIs are silently ignored.
+     *
+     * @param attachments The attachments to add.
      */
-    public fun updateSelectedAttachments(attachments: List<Attachment>) {
-        messageComposerController.updateSelectedAttachments(attachments)
+    public fun addAttachments(attachments: List<Attachment>) {
+        _selectedAttachments.update { current ->
+            LinkedHashMap(current).also { updated ->
+                attachments.forEach { attachment ->
+                    attachment.sourceUriString()?.let { updated.putIfAbsent(it, attachment) }
+                }
+            }
+        }
+        persistAndSync()
     }
 
     /**
-     * Stores the selected attachments from the attachment picker. These will be shown in the UI,
-     * within the composer component. We upload and send these attachments once the user taps on the
-     * send button.
+     * Removes [attachment] from the staged attachment list.
      *
-     * @param attachments The attachments to store and show in the composer.
-     */
-    public fun addSelectedAttachments(attachments: List<Attachment>): Unit =
-        messageComposerController.addSelectedAttachments(attachments)
-
-    /**
-     * Removes a selected attachment from the list, when the user taps on the cancel/delete button.
-     *
-     * This will update the UI to remove it from the composer component.
+     * The attachment is identified by [EXTRA_SOURCE_URI] in its [Attachment.extraData].
      *
      * @param attachment The attachment to remove.
      */
-    public fun removeSelectedAttachment(attachment: Attachment): Unit =
-        messageComposerController.removeSelectedAttachment(attachment)
+    public fun removeAttachment(attachment: Attachment) {
+        val key = attachment.sourceUriString() ?: return
+        _selectedAttachments.update { LinkedHashMap(it).also { map -> map.remove(key) } }
+        persistAndSync()
+    }
+
+    /**
+     * Removes all staged attachments whose URI string key is contained in [uris].
+     *
+     * @param uris The URI string keys to remove.
+     */
+    internal fun removeAttachmentsByUris(uris: Set<String>) {
+        if (uris.isEmpty()) return
+        _selectedAttachments.update { current ->
+            LinkedHashMap(current).also { it.keys.removeAll(uris) }
+        }
+        persistAndSync()
+    }
+
+    /**
+     * Removes all staged attachments. Call this when the attachments are consumed
+     * (e.g. after a message is sent, a poll is created, or a command is selected).
+     */
+    public fun clearAttachments() {
+        _selectedAttachments.value = linkedMapOf()
+        savedStateHandle.remove<Bundle>(KeySelectedAttachments)
+        messageComposerController.updateSelectedAttachments(emptyList())
+    }
 
     /**
      * Creates a poll with the given [pollConfig].
@@ -198,6 +262,7 @@ public class MessageComposerViewModel(
      * It also dismisses any current message actions.
      *
      * @param message The message to send.
+     * @param callback Invoked when the API call completes.
      */
     public fun sendMessage(
         message: Message,
@@ -271,6 +336,8 @@ public class MessageComposerViewModel(
 
     /**
      * Sets the typing updates buffer.
+     *
+     * @param buffer The buffer to use for typing updates.
      */
     public fun setTypingUpdatesBuffer(buffer: TypingUpdatesBuffer) {
         messageComposerController.typingUpdatesBuffer = buffer
@@ -315,4 +382,62 @@ public class MessageComposerViewModel(
         super.onCleared()
         messageComposerController.onCleared()
     }
+
+    private fun persistAndSync() {
+        savedStateHandle[KeySelectedAttachments] = Bundle().apply {
+            putParcelableArrayList(
+                KeySelectedAttachmentItems,
+                ArrayList(_selectedAttachments.value.values.map(Attachment::toBundle)),
+            )
+        }
+        syncToController()
+    }
+
+    private fun syncToController() {
+        messageComposerController.updateSelectedAttachments(_selectedAttachments.value.values.toList())
+    }
 }
+
+private const val KeySelectedAttachments = "stream_composer_selected_attachments"
+private const val KeySelectedAttachmentItems = "stream_composer_selected_attachment_items"
+private const val KeyBundleUri = "uri"
+private const val KeyBundleType = "type"
+private const val KeyBundleName = "name"
+private const val KeyBundleFileSize = "fileSize"
+private const val KeyBundleMimeType = "mimeType"
+private const val AttachmentBundleSize = 5
+
+private fun Attachment.sourceUriString(): String? = extraData[EXTRA_SOURCE_URI] as? String
+
+private fun Attachment.toBundle(): Bundle = Bundle(AttachmentBundleSize).apply {
+    sourceUriString()?.let { putString(KeyBundleUri, it) }
+    type?.let { putString(KeyBundleType, it) }
+    putString(KeyBundleName, name)
+    putInt(KeyBundleFileSize, fileSize)
+    mimeType?.let { putString(KeyBundleMimeType, it) }
+}
+
+private fun Bundle.toAttachment(): Attachment? {
+    val uri = getString(KeyBundleUri) ?: return null
+    return Attachment(
+        type = getString(KeyBundleType),
+        name = getString(KeyBundleName) ?: "",
+        fileSize = getInt(KeyBundleFileSize),
+        mimeType = getString(KeyBundleMimeType),
+        extraData = mapOf(EXTRA_SOURCE_URI to uri),
+    )
+}
+
+private fun Bundle.toUriStringAttachmentPair(): Pair<String, Attachment>? {
+    val attachment = toAttachment() ?: return null
+    val uriString = attachment.sourceUriString() ?: return null
+    return uriString to attachment
+}
+
+@Suppress("DEPRECATION")
+private fun Bundle.getBundleList(key: String): List<Bundle> =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        getParcelableArrayList(key, Bundle::class.java) ?: emptyList()
+    } else {
+        getParcelableArrayList<Bundle>(key) ?: emptyList()
+    }

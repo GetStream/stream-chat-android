@@ -97,7 +97,7 @@ public fun MessageComposer(
     onSendMessage: (Message) -> Unit = { viewModel.sendMessage(it) },
     onAttachmentsClick: () -> Unit = {},
     onValueChange: (String) -> Unit = { viewModel.setMessageInput(it) },
-    onAttachmentRemoved: (Attachment) -> Unit = { viewModel.removeSelectedAttachment(it) },
+    onAttachmentRemoved: (Attachment) -> Unit = { viewModel.removeAttachment(it) },
     onCancelAction: () -> Unit = { viewModel.dismissMessageActions() },
     onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onCancelLinkPreviewClick: (() -> Unit)? = { viewModel.cancelLinkPreview() },

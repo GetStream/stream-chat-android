@@ -72,6 +72,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Flag
@@ -350,9 +351,10 @@ internal fun DefaultBottomBarContent(
             isAttachmentPickerVisible = attachmentsPickerViewModel.isPickerVisible,
             onAttachmentsClick = attachmentsPickerViewModel::togglePickerVisibility,
             onAttachmentRemoved = { attachment ->
-                attachmentsPickerViewModel.deselectAttachment(attachment)
-                attachmentsPickerViewModel.removeExternalAttachment(attachment)
-                composerViewModel.updateSelectedAttachments(attachmentsPickerViewModel.getSelectedAttachments())
+                attachment.extraData[EXTRA_SOURCE_URI]
+                    ?.let { it as? String }
+                    ?.let(attachmentsPickerViewModel::removeFromGridSelection)
+                composerViewModel.removeAttachment(attachment)
             },
             onCancelAction = {
                 listViewModel.dismissAllMessageActions()
@@ -361,13 +363,14 @@ internal fun DefaultBottomBarContent(
             onLinkPreviewClick = onComposerLinkPreviewClick,
             onSendMessage = { message ->
                 attachmentsPickerViewModel.setPickerVisible(visible = false)
-                attachmentsPickerViewModel.clearSelection()
+                attachmentsPickerViewModel.clearGridSelection()
                 composerViewModel.sendMessage(
                     message.copy(
                         skipPushNotification = skipPushNotification,
                         skipEnrichUrl = skipEnrichUrl,
                     ),
                 )
+                composerViewModel.clearAttachments()
             },
         )
 
