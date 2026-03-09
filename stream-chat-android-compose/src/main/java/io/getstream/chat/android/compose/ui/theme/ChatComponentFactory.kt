@@ -3874,7 +3874,7 @@ public interface ChatComponentFactory {
      *
      * Shows a row of buttons that launch system pickers (photo picker, file browser, camera).
      * This variant does not require storage permissions since it uses system intents.
-     * Used when [ChatTheme.attachmentPickerConfig.useSystemPicker] is `true`.
+     * Used when [ChatTheme.config.attachmentPicker.useSystemPicker] is `true`.
      *
      * @param channel Used to check channel capabilities for filtering available modes.
      * @param messageMode Used to filter modes (e.g., polls disabled in threads).

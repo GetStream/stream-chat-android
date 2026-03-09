@@ -125,7 +125,7 @@ class AddingCustomAttachments {
                                 type = "date",
                                 extraData = mutableMapOf("payload" to payload)
                             )
-                            messageComposerViewModel.addSelectedAttachments(listOf(attachment))
+                            messageComposerViewModel.addAttachments(listOf(attachment))
                         }
 
                         // Show the date picker dialog on a click on the calendar button

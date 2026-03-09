@@ -116,7 +116,7 @@ private object MessageComposerHandlingActionsSnippet {
                         viewModel = viewModel,
                         onSendMessage = viewModel::sendMessage,
                         onValueChange = viewModel::setMessageInput,
-                        onAttachmentRemoved = viewModel::removeSelectedAttachment,
+                        onAttachmentRemoved = viewModel::removeAttachment,
                         onCancelAction = viewModel::dismissMessageActions,
                         onUserSelected = viewModel::selectMention,
                         onCommandSelected = viewModel::selectCommand,
@@ -239,9 +239,9 @@ private object MessageComposerCustomizationSnippet {
                             .weight(7f)
                             .padding(start = 8.dp),
                         messageComposerState = inputState,
-                        onValueChange = { composerViewModel.setMessageInput(it) },
-                        onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
-                        onCancelAction = { composerViewModel.dismissMessageActions() },
+                        onValueChange = composerViewModel::setMessageInput,
+                        onAttachmentRemoved = composerViewModel::removeAttachment,
+                        onCancelAction = composerViewModel::dismissMessageActions,
                         onSendClick = onSendClick,
                         recordingActions = AudioRecordingActions.defaultActions(
                             viewModel = composerViewModel,

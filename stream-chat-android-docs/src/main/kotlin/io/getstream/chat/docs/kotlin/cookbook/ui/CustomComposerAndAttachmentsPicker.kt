@@ -39,6 +39,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.CameraPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
@@ -184,9 +185,9 @@ private fun CustomMessageComposer(
                 }
                 MessageInput(
                     messageComposerState = composerState,
-                    onValueChange = { composerViewModel.setMessageInput(it) },
-                    onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
-                    onCancelAction = { composerViewModel.dismissMessageActions() },
+                    onValueChange = composerViewModel::setMessageInput,
+                    onAttachmentRemoved = composerViewModel::removeAttachment,
+                    onCancelAction = composerViewModel::dismissMessageActions,
                     onSendClick = onSendClick,
                     recordingActions = AudioRecordingActions.defaultActions(
                         viewModel = composerViewModel,
@@ -268,7 +269,11 @@ private fun CustomAttachmentsPicker(
                             isSubmitEnabled = attachmentsPickerViewModel.attachments.any { it.isSelected },
                             onSubmitClick = {
                                 actions.onAttachmentsSelected(
-                                    attachmentsPickerViewModel.getSelectedAttachments(),
+                                    attachmentsPickerViewModel.getAttachmentsFromMetadata(
+                                        attachmentsPickerViewModel.attachments
+                                            .filter(AttachmentPickerItemState::isSelected)
+                                            .map(AttachmentPickerItemState::attachmentMetaData),
+                                    ),
                                 )
                             },
                         )

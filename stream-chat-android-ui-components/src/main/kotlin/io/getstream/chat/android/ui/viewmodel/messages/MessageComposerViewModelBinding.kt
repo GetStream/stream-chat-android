@@ -240,19 +240,11 @@ private infix fun (() -> Unit).and(that: (() -> Unit)?): () -> Unit = when (that
 }
 
 internal object MessageComposerViewModelDefaults {
-    val MessageComposerViewModel.sendMessageButtonClickListener: (Message) -> Unit
-        get() = {
-            sendMessage(it)
-        }
+    val MessageComposerViewModel.sendMessageButtonClickListener: (Message) -> Unit get() = ::sendMessage
     val MessageComposerViewModel.textInputChangeListener: (String) -> Unit get() = { setMessageInput(it) }
-    val MessageComposerViewModel.attachmentSelectionListener: (List<Attachment>) -> Unit
-        get() = {
-            addSelectedAttachments(
-                it,
-            )
-        }
+    val MessageComposerViewModel.attachmentSelectionListener: (List<Attachment>) -> Unit get() = ::addAttachments
     val MessageComposerViewModel.pollSubmissionListener: (PollConfig) -> Unit get() = { createPoll(it) }
-    val MessageComposerViewModel.attachmentRemovalListener: (Attachment) -> Unit get() = { removeSelectedAttachment(it) }
+    val MessageComposerViewModel.attachmentRemovalListener: (Attachment) -> Unit get() = ::removeAttachment
     val MessageComposerViewModel.mentionSelectionListener: (User) -> Unit get() = { selectMention(it) }
     val MessageComposerViewModel.commandSelectionListener: (Command) -> Unit get() = { selectCommand(it) }
     val MessageComposerViewModel.alsoSendToChannelSelectionListener: (Boolean) -> Unit get() = { setAlsoSendToChannel(it) }
