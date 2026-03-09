@@ -43,6 +43,7 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.MentionType
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageInput
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -298,6 +299,187 @@ internal class MessageComposerControllerTest {
 
         // Then
         assertEquals(attachments.size, controller.state.value.attachments.size)
+    }
+
+    @Test
+    fun `Given staged attachments When removeAttachment called Then the matching URI is removed`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val a1 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+        val a2 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:2"))
+        controller.addAttachments(listOf(a1, a2))
+
+        // When
+        controller.removeAttachment(a1)
+
+        // Then
+        assertEquals(1, controller.state.value.attachments.size)
+        assertEquals("uri:2", controller.state.value.attachments.first().extraData[EXTRA_SOURCE_URI])
+    }
+
+    @Test
+    fun `Given staged attachments When removeAttachment called with unknown URI Then nothing changes`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val a1 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+        controller.addAttachments(listOf(a1))
+        val unknown = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:unknown"))
+
+        // When
+        controller.removeAttachment(unknown)
+
+        // Then
+        assertEquals(1, controller.state.value.attachments.size)
+    }
+
+    @Test
+    fun `Given staged attachments When removeAttachmentsByUris called Then matching URIs are removed`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val a1 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+        val a2 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:2"))
+        val a3 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:3"))
+        controller.addAttachments(listOf(a1, a2, a3))
+
+        // When
+        controller.removeAttachmentsByUris(setOf("uri:1", "uri:3"))
+
+        // Then
+        assertEquals(1, controller.state.value.attachments.size)
+        assertEquals("uri:2", controller.state.value.attachments.first().extraData[EXTRA_SOURCE_URI])
+    }
+
+    @Test
+    fun `Given staged attachments When removeAttachmentsByUris called with empty set Then nothing changes`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val a1 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+        controller.addAttachments(listOf(a1))
+
+        // When
+        controller.removeAttachmentsByUris(emptySet())
+
+        // Then
+        assertEquals(1, controller.state.value.attachments.size)
+    }
+
+    @Test
+    fun `Given staged attachments When clearAttachments called Then attachments list is empty`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        controller.addAttachments(
+            listOf(
+                randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1")),
+                randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:2")),
+            ),
+        )
+
+        // When
+        controller.clearAttachments()
+
+        // Then
+        assertTrue(controller.state.value.attachments.isEmpty())
+    }
+
+    @Test
+    fun `Given a staged attachment When addAttachments called with same URI Then value is updated and count stays the same`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val original = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+        val updated = original.copy(type = "updated_type", extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+        controller.addAttachments(listOf(original))
+
+        // When
+        controller.addAttachments(listOf(updated))
+
+        // Then
+        assertEquals(1, controller.state.value.attachments.size)
+        assertEquals("updated_type", controller.state.value.attachments.first().type)
+    }
+
+    @Test
+    fun `Given attachments added and cleared When selectedAttachments is collected Then it emits the updated lists`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val a1 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+        val a2 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:2"))
+
+        controller.selectedAttachments.test {
+            awaitItem() // initial empty emission from the underlying StateFlow
+
+            // When
+            controller.addAttachments(listOf(a1, a2))
+            assertEquals(2, awaitItem().size)
+
+            controller.clearAttachments()
+            assertTrue(awaitItem().isEmpty())
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `Given picker attachments staged When entering and dismissing edit mode Then picker selections are preserved`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val pickerAttachment = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+        controller.addAttachments(listOf(pickerAttachment))
+
+        // When
+        controller.performMessageAction(Edit(randomMessage(cid = CID)))
+        controller.dismissMessageActions()
+
+        // Then
+        assertEquals(1, controller.state.value.attachments.size)
+        assertEquals("uri:1", controller.state.value.attachments.first().extraData[EXTRA_SOURCE_URI])
     }
 
     @Test

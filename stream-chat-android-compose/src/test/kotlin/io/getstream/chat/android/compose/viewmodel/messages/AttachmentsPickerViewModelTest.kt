@@ -378,6 +378,63 @@ internal class AttachmentsPickerViewModelTest {
     }
 
     @Test
+    fun `Given single-select mode When a second item is selected Then the first is automatically deselected`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(GalleryPickerMode(allowMultipleSelection = false))
+        viewModel.loadMediaItems(imageAttachment1, imageAttachment2)
+        viewModel.select(viewModel.attachments.first())
+
+        viewModel.select(viewModel.attachments.last())
+
+        assertFalse(viewModel.attachments.first().isSelected)
+        assertTrue(viewModel.attachments.last().isSelected)
+    }
+
+    @Test
+    fun `Given single-select mode When selectItem is called Then returns the previously selected URIs`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(GalleryPickerMode(allowMultipleSelection = false))
+        viewModel.loadMediaItems(imageAttachment1, imageAttachment2)
+        viewModel.select(viewModel.attachments.first())
+
+        val replaced = viewModel.selectItem(imageUri2.toString())
+
+        assertEquals(setOf(imageUri1.toString()), replaced)
+    }
+
+    @Test
+    fun `Given multi-select gallery mode When selecting multiple items Then all remain selected`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(GalleryPickerMode(allowMultipleSelection = true))
+        viewModel.loadMediaItems(imageAttachment1, imageAttachment2)
+        viewModel.select(viewModel.attachments.first())
+        viewModel.select(viewModel.attachments.last())
+
+        assertTrue(viewModel.attachments.first().isSelected)
+        assertTrue(viewModel.attachments.last().isSelected)
+    }
+
+    @Test
+    fun `Given multi-select file mode When selecting multiple items Then all remain selected`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(FilePickerMode(allowMultipleSelection = true))
+        viewModel.loadFileItems(fileAttachment1, fileAttachment2)
+        viewModel.select(viewModel.attachments.first())
+        viewModel.select(viewModel.attachments.last())
+
+        assertTrue(viewModel.attachments.first().isSelected)
+        assertTrue(viewModel.attachments.last().isSelected)
+    }
+
+    @Test
     fun `loadAttachments loads file metadata for FilePickerMode`() = runTest {
         val expectedMetadata = listOf(fileAttachment1, fileAttachment2)
         whenever(storageHelper.getFileMetadata()) doReturn expectedMetadata
