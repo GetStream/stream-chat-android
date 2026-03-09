@@ -31,6 +31,7 @@ import org.amshove.kluent.`should be`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import java.util.Date
 
 internal class CapabilitiesHelperTest {
 
@@ -152,27 +153,38 @@ internal class CapabilitiesHelperTest {
 
         @JvmStatic
         fun canReplyToMessageArguments() = listOf(
+            // case: reply disabled
             Arguments.of(
                 false,
                 randomMessage(),
                 randomChannelCapabilities(),
                 false,
             ),
+            // case: message not synced
             Arguments.of(
                 randomBoolean(),
                 randomMessage(syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED))),
                 randomChannelCapabilities(),
                 false,
             ),
+            // case: no QUOTE_MESSAGE capability
             Arguments.of(
                 randomBoolean(),
-                randomMessage(),
+                randomMessage(deletedAt = null, deletedForMe = false),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
                 false,
             ),
+            // case: message is deleted
             Arguments.of(
                 true,
-                randomMessage(syncStatus = SyncStatus.COMPLETED),
+                randomMessage(syncStatus = SyncStatus.COMPLETED, deletedAt = Date(), deletedForMe = false),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
+                false,
+            ),
+            // case: all conditions met
+            Arguments.of(
+                true,
+                randomMessage(syncStatus = SyncStatus.COMPLETED, deletedAt = null, deletedForMe = false),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
                 true,
             ),

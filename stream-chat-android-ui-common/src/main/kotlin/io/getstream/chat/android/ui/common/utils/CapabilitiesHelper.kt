@@ -20,6 +20,7 @@ package io.getstream.chat.android.ui.common.utils
 
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.message.hasSharedLocation
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isThreadReply
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -59,7 +60,10 @@ public fun canReplyToMessage(
     replyEnabled: Boolean,
     message: Message,
     ownCapabilities: Set<String>,
-): Boolean = replyEnabled && message.isSynced() && ownCapabilities.contains(ChannelCapabilities.QUOTE_MESSAGE)
+): Boolean = replyEnabled &&
+    message.isSynced() &&
+    !message.isDeleted() &&
+    ownCapabilities.contains(ChannelCapabilities.QUOTE_MESSAGE)
 
 /**
  * Determines whether a thread reply can be made to the given message.

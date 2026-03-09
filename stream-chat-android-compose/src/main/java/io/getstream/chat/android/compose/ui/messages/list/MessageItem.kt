@@ -267,18 +267,17 @@ public fun MessageItem(
 
     val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
     val description = stringResource(id = R.string.stream_compose_cd_message_item)
-    val isSwipable = ChatTheme.messageOptionsTheme.optionVisibility
-        .canReplyToMessage(
-            message = message,
-            ownCapabilities = messageItem.ownCapabilities,
-        )
+    val optionVisibility = ChatTheme.messageOptionsTheme.optionVisibility
+    val isSwipeable = remember(message, messageItem.ownCapabilities, optionVisibility) {
+        optionVisibility.canReplyToMessage(message, messageItem.ownCapabilities)
+    }
 
     // Remember the message to ensure updated values are captured in the onReply lambda
     val replyMessage by rememberUpdatedState(message)
     SwipeToReply(
         modifier = modifier,
         onReply = { onReply(replyMessage) },
-        isSwipeable = { isSwipable },
+        isSwipeable = isSwipeable,
         swipeToReplyContent = swipeToReplyContent,
     ) {
         Box(
@@ -735,7 +734,7 @@ private fun getMessageBubbleShape(position: List<MessagePosition>, ownsMessage: 
  *
  * @param modifier Modifier for styling.
  * @param onReply Handler when the user swipes to reply.
- * @param isSwipeable Handler to determine if the message is swipeable.
+ * @param isSwipeable Indicator if swipe-to-reply is enabled.
  * @param swipeToReplyContent The content to show when swiping to reply.
  * @param content The swipeable content to show when not swiping to reply.
  */
@@ -744,7 +743,7 @@ private fun getMessageBubbleShape(position: List<MessagePosition>, ownsMessage: 
 private fun SwipeToReply(
     modifier: Modifier = Modifier,
     onReply: () -> Unit = {},
-    isSwipeable: () -> Boolean = { true },
+    isSwipeable: Boolean = true,
     swipeToReplyContent: @Composable RowScope.() -> Unit,
     content: @Composable () -> Unit,
 ) {
@@ -779,8 +778,8 @@ private fun SwipeToReply(
                 .fillMaxWidth()
                 .onSizeChanged { rowWidth = it.width.toFloat() }
                 .offset { IntOffset(x = offset.value.roundToInt(), y = 0) }
-                .pointerInput(swipeToReplyWidth) {
-                    if (isSwipeable()) {
+                .pointerInput(swipeToReplyWidth, isSwipeable) {
+                    if (isSwipeable) {
                         detectHorizontalDragGestures(
                             onHorizontalDrag = { change, dragAmount ->
                                 // Only consume if horizontal drag dominates vertical

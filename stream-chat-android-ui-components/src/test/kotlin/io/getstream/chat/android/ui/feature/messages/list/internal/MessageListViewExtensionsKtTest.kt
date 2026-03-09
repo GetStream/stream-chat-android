@@ -33,6 +33,7 @@ import org.amshove.kluent.`should be`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import java.util.Date
 
 internal class MessageListViewExtensionsKtTest {
 
@@ -154,27 +155,42 @@ internal class MessageListViewExtensionsKtTest {
 
         @JvmStatic
         fun canReplyToMessageArguments() = listOf(
+            // case: reply disabled
             Arguments.of(
                 randomMessageListViewStyle(replyEnabled = false),
-                randomMessage(),
+                randomMessage(deletedAt = null, deletedForMe = false),
                 randomChannelCapabilities(),
                 false,
             ),
+            // case: message not synced
             Arguments.of(
                 randomMessageListViewStyle(),
-                randomMessage(syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED))),
+                randomMessage(
+                    syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED)),
+                    deletedAt = null,
+                    deletedForMe = false,
+                ),
                 randomChannelCapabilities(),
                 false,
             ),
+            // case: no QUOTE_MESSAGE capability
             Arguments.of(
                 randomMessageListViewStyle(),
-                randomMessage(),
+                randomMessage(deletedAt = null, deletedForMe = false),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
                 false,
             ),
+            // case: message is deleted
             Arguments.of(
                 randomMessageListViewStyle(replyEnabled = true),
-                randomMessage(syncStatus = SyncStatus.COMPLETED),
+                randomMessage(syncStatus = SyncStatus.COMPLETED, deletedAt = Date(), deletedForMe = false),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
+                false,
+            ),
+            // case: all conditions met
+            Arguments.of(
+                randomMessageListViewStyle(replyEnabled = true),
+                randomMessage(syncStatus = SyncStatus.COMPLETED, deletedAt = null, deletedForMe = false),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
                 true,
             ),
