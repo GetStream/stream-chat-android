@@ -32,8 +32,6 @@ import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.StateFlow
 
-private const val MESSAGE_LIMIT = 1
-private const val MEMBER_LIMIT = 30
 private const val INITIAL_CHANNEL_OFFSET = 0
 private const val CHANNEL_LIMIT = 30
 
@@ -154,13 +152,16 @@ internal class QueryChannelsLogic(
      */
     internal suspend fun queryFirstPage(): Result<List<Channel>> {
         logger.d { "[queryFirstPage] no args" }
+        val currentRequest = queryChannelsStateLogic.getState().currentRequest.value
+        val messageLimit = currentRequest?.messageLimit
+        val memberLimit = currentRequest?.memberLimit
         val request = QueryChannelsRequest(
             filter = filter,
             offset = INITIAL_CHANNEL_OFFSET,
             limit = CHANNEL_LIMIT,
             querySort = sort,
-            messageLimit = MESSAGE_LIMIT,
-            memberLimit = MEMBER_LIMIT,
+            messageLimit = messageLimit,
+            memberLimit = memberLimit,
         )
 
         queryChannelsStateLogic.setCurrentRequest(request)
