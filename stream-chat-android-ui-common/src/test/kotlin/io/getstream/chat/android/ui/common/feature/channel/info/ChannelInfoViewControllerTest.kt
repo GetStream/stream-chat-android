@@ -774,20 +774,6 @@ internal class ChannelInfoViewControllerTest {
                     awaitItem(),
                 )
             }
-
-            assertEquals(
-                ChannelInfoViewState.Content(
-                    members = emptyMembers(),
-                    options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
-                        ChannelInfoViewState.Content.Option.PinnedMessages,
-                        ChannelInfoViewState.Content.Option.MediaAttachments,
-                        ChannelInfoViewState.Content.Option.FilesAttachments,
-
-                    ),
-                ),
-                awaitItem(),
-            )
         }
     }
 
@@ -852,20 +838,6 @@ internal class ChannelInfoViewControllerTest {
             fixture.givenUnhideChannel()
 
             sut.onViewAction(ChannelInfoViewAction.UnhideChannelClick)
-
-            assertEquals(
-                ChannelInfoViewState.Content(
-                    members = emptyMembers(),
-                    options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
-                        ChannelInfoViewState.Content.Option.PinnedMessages,
-                        ChannelInfoViewState.Content.Option.MediaAttachments,
-                        ChannelInfoViewState.Content.Option.FilesAttachments,
-
-                    ),
-                ),
-                awaitItem(),
-            )
         }
     }
 

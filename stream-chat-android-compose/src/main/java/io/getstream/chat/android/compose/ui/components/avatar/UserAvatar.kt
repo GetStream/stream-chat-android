@@ -85,6 +85,15 @@ public fun UserAvatar(
 }
 
 internal fun BoxWithConstraintsScope.resolveIndicatorDimensions(): OnlineIndicatorDimensions = when {
+    maxWidth > AvatarSize.ExtraExtraLarge -> {
+        val scale = maxWidth / AvatarSize.ExtraExtraLarge
+        val base = OnlineIndicatorDimensions.ExtraLarge
+        OnlineIndicatorDimensions(
+            indicatorSize = base.indicatorSize * scale,
+            borderWidth = base.borderWidth,
+            offset = base.offset,
+        )
+    }
     maxWidth >= AvatarSize.ExtraExtraLarge -> OnlineIndicatorDimensions.ExtraLarge
     maxWidth >= AvatarSize.ExtraLarge -> OnlineIndicatorDimensions.ExtraLarge
     maxWidth >= AvatarSize.Large -> OnlineIndicatorDimensions.Large
