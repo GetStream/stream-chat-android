@@ -69,8 +69,8 @@ public data class AttachmentPickerActions(
         /**
          * Lightweight defaults suitable for standalone [AttachmentPicker] usage without a composer.
          *
-         * Handles picker-level concerns only: toggling selection state and dismissing the picker.
-         * Poll, command, and attachment-submission actions are no-ops.
+         * Handles picker-level concerns only: toggling the grid selection index and dismissing the
+         * picker. Attachment submission, poll, and command actions are no-ops.
          *
          * @param attachmentsPickerViewModel The [AttachmentsPickerViewModel] that drives picker state.
          */
@@ -78,8 +78,14 @@ public data class AttachmentPickerActions(
             attachmentsPickerViewModel: AttachmentsPickerViewModel,
         ): AttachmentPickerActions = AttachmentPickerActions(
             onAttachmentItemSelected = { item ->
+                val uriString = item.attachmentMetaData.uri?.toString() ?: return@AttachmentPickerActions
                 val multiSelect = attachmentsPickerViewModel.pickerMode?.allowMultipleSelection == true
-                attachmentsPickerViewModel.toggleSelection(item, multiSelect)
+                if (item.isSelected) {
+                    attachmentsPickerViewModel.removeFromGridSelection(uriString)
+                } else {
+                    if (!multiSelect) attachmentsPickerViewModel.clearGridSelection()
+                    attachmentsPickerViewModel.addToGridSelection(uriString)
+                }
             },
             onAttachmentsSelected = {},
             onCreatePollClick = {},
@@ -92,35 +98,50 @@ public data class AttachmentPickerActions(
         /**
          * Default implementation wiring both the picker and composer view models.
          *
-         * Handles attachment selection, poll creation, command insertion, and picker dismissal.
+         * [AttachmentsPickerViewModel] owns the grid selection index (URI checkmarks).
+         * [MessageComposerViewModel] owns the full attachment list for the message.
+         * This function is the sole coordination point between the two.
          *
          * @param attachmentsPickerViewModel The [AttachmentsPickerViewModel] that drives picker state.
-         * @param composerViewModel The [MessageComposerViewModel] that receives selected attachments
-         *  and handles poll creation and command insertion.
+         * @param composerViewModel The [MessageComposerViewModel] that owns the selected attachment list.
          */
         public fun defaultActions(
             attachmentsPickerViewModel: AttachmentsPickerViewModel,
             composerViewModel: MessageComposerViewModel,
         ): AttachmentPickerActions = AttachmentPickerActions(
             onAttachmentItemSelected = { item ->
+                val uriString = item.attachmentMetaData.uri?.toString() ?: return@AttachmentPickerActions
                 val multiSelect = attachmentsPickerViewModel.pickerMode?.allowMultipleSelection == true
-                attachmentsPickerViewModel.toggleSelection(item, multiSelect)
-                composerViewModel.updateSelectedAttachments(attachmentsPickerViewModel.getSelectedAttachments())
+                if (item.isSelected) {
+                    attachmentsPickerViewModel.removeFromGridSelection(uriString)
+                    composerViewModel.removeAttachmentsByUris(setOf(uriString))
+                } else {
+                    val attachment = attachmentsPickerViewModel
+                        .getAttachmentsFromMetadata(listOf(item.attachmentMetaData))
+                        .firstOrNull() ?: return@AttachmentPickerActions
+                    if (!multiSelect) {
+                        composerViewModel.removeAttachmentsByUris(attachmentsPickerViewModel.gridSelectedUris.value)
+                        attachmentsPickerViewModel.clearGridSelection()
+                    }
+                    attachmentsPickerViewModel.addToGridSelection(uriString)
+                    composerViewModel.addAttachments(listOf(attachment))
+                }
             },
             onAttachmentsSelected = { attachments ->
-                attachmentsPickerViewModel.addExternalAttachments(attachments)
-                composerViewModel.updateSelectedAttachments(attachmentsPickerViewModel.getSelectedAttachments())
+                composerViewModel.addAttachments(attachments)
             },
             onCreatePollClick = {},
             onCreatePoll = { pollConfig ->
                 attachmentsPickerViewModel.setPickerVisible(visible = false)
-                attachmentsPickerViewModel.clearSelection()
+                attachmentsPickerViewModel.clearGridSelection()
+                composerViewModel.clearAttachments()
                 composerViewModel.createPoll(pollConfig)
             },
             onCreatePollDismissed = {},
             onCommandSelected = { command ->
                 attachmentsPickerViewModel.setPickerVisible(visible = false)
-                attachmentsPickerViewModel.clearSelection()
+                attachmentsPickerViewModel.clearGridSelection()
+                composerViewModel.clearAttachments()
                 composerViewModel.selectCommand(command)
             },
             onDismiss = { attachmentsPickerViewModel.setPickerVisible(visible = false) },
