@@ -407,9 +407,9 @@ internal fun RowScope.MultipleMediaAttachmentsColumns(
             )
 
             if (isLastVisibleSlot && hasHiddenItems) {
-                val anyOverflowUploading = attachments.drop(maximumNumberOfPreviewedItems - 1).any { item ->
-                    item.uploadState is Attachment.UploadState.InProgress ||
-                        item.uploadState is Attachment.UploadState.Idle
+                val anyOverflowUploading = (maximumNumberOfPreviewedItems until attachments.size).any { i ->
+                    val state = attachments[i].uploadState
+                    state is Attachment.UploadState.InProgress || state is Attachment.UploadState.Idle
                 }
 
                 Box(modifier = Modifier.weight(1f)) {
