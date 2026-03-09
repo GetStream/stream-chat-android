@@ -79,6 +79,8 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
  * @param onChannelClick Handler for Channel item clicks.
  * @param onViewChannelInfoAction Handler for when the user selects the [ViewInfo] option for a [Channel].
  * @param onBackPressed Handler for back press action.
+ * @param isBackPressEnabled Indicator if the default back handler is enabled. Set to `false` to fully disable the back
+ * handling and catch the back-press event in a [BackHandler] higher in the compose hierarchy. Default: `true`.
  */
 @Composable
 @Suppress("LongMethod")
@@ -94,6 +96,7 @@ public fun ChannelsScreen(
     onSearchMessageItemClick: (Message) -> Unit = {},
     onViewChannelInfoAction: (Channel) -> Unit = {},
     onBackPressed: () -> Unit = {},
+    isBackPressEnabled: Boolean = true,
 ) {
     val listViewModel: ChannelListViewModel = viewModel(
         ChannelListViewModel::class.java,
@@ -105,7 +108,7 @@ public fun ChannelsScreen(
     val user by listViewModel.user.collectAsState()
     val connectionState by listViewModel.connectionState.collectAsState()
 
-    BackHandler(enabled = true) {
+    BackHandler(enabled = isBackPressEnabled) {
         if (selectedChannel != null) {
             listViewModel.selectChannel(null)
         } else {
