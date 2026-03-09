@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.viewmodel.messages
 import android.content.ClipboardManager
 import android.content.Context
 import androidx.core.net.toUri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
@@ -49,15 +50,19 @@ import java.io.File
 
 /**
  * Holds all the dependencies needed to build the ViewModels for the Messages Screen.
- * Currently builds the [MessageComposerViewModel], [MessageListViewModel] and [AttachmentsPickerViewModel].
- * @param context Used to build the [ClipboardManager].
+ * Currently, builds the [MessageComposerViewModel], [MessageListViewModel] and [AttachmentsPickerViewModel].
+ *
+ * @param context Android context used to access system services and device storage.
  * @param channelId The current channel ID, to load the messages from.
  * @param messageId The message id to which we want to scroll to when opening the message list.
  * @param parentMessageId The ID of the parent [Message] if the message we want to scroll to is in a thread. If the
  * message we want to scroll to is not in a thread, you can pass in a null value.
+ * @param autoTranslationEnabled Whether auto-translation of messages is enabled.
  * @param chatClient The client to use for API calls.
  * @param clientState The current state of the SDK.
  * @param mediaRecorder The media recorder for async voice messages.
+ * @param userLookupHandler Handler used to look up users for mention autocomplete.
+ * @param fileToUriConverter Converts a local [File] to a URI string used as an attachment source.
  * @param messageLimit The number of messages to load in a single page.
  * @param clipboardHandler [ClipboardHandler] used to copy messages.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
@@ -91,7 +96,7 @@ public class MessagesViewModelFactory(
     private val clipboardHandler: ClipboardHandler = ClipboardHandlerImpl(
         clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager,
         autoTranslationEnabled = autoTranslationEnabled,
-        getCurrentUser = { chatClient.getCurrentUser() },
+        getCurrentUser = chatClient::getCurrentUser,
     ),
     private val enforceUniqueReactions: Boolean = false,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
@@ -120,11 +125,36 @@ public class MessagesViewModelFactory(
     private val storageHelper by lazy { AttachmentStorageHelper(context) }
 
     /**
-     * The list of factories that can build [ViewModel]s that our Messages feature components use.
+     * Creates the required [ViewModel] for our use case.
+     *
+     * Supports [MessageComposerViewModel], [MessageListViewModel], and [AttachmentsPickerViewModel].
+     * [MessageComposerViewModel] and [AttachmentsPickerViewModel] will receive a [SavedStateHandle]
+     * sourced from [extras], allowing them to survive Activity recreation.
+     * Throws [IllegalArgumentException] for any other class.
+     *
+     * @param modelClass The class of the [ViewModel] to create.
+     * @param extras [CreationExtras] provided by the [androidx.lifecycle.ViewModelStoreOwner].
      */
-    private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
-        MessageComposerViewModel::class.java to {
-            MessageComposerViewModel(
+    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T =
+        createViewModel(modelClass, savedStateHandle = extras.createSavedStateHandle())
+
+    /**
+     * Creates the required [ViewModel] for our use case.
+     *
+     * Supports [MessageComposerViewModel], [MessageListViewModel], and [AttachmentsPickerViewModel].
+     * Throws [IllegalArgumentException] for any other class.
+     *
+     * Prefer [create] with [CreationExtras] so that [MessageComposerViewModel] and
+     * [AttachmentsPickerViewModel] can survive Activity recreation.
+     *
+     * @param modelClass The class of the [ViewModel] to create.
+     */
+    override fun <T : ViewModel> create(modelClass: Class<T>): T =
+        createViewModel(modelClass, savedStateHandle = null)
+
+    private fun <T : ViewModel> createViewModel(modelClass: Class<T>, savedStateHandle: SavedStateHandle?): T {
+        val viewModel: ViewModel = when (modelClass) {
+            MessageComposerViewModel::class.java -> MessageComposerViewModel(
                 messageComposerController = MessageComposerController(
                     chatClient = chatClient,
                     channelState = channelStateFlow,
@@ -140,10 +170,9 @@ public class MessagesViewModelFactory(
                     ),
                 ),
                 storageHelper = storageHelper,
+                savedStateHandle = savedStateHandle ?: SavedStateHandle(),
             )
-        },
-        MessageListViewModel::class.java to {
-            MessageListViewModel(
+            MessageListViewModel::class.java -> MessageListViewModel(
                 MessageListController(
                     cid = channelId,
                     clipboardHandler = clipboardHandler,
@@ -165,58 +194,18 @@ public class MessagesViewModelFactory(
                     showThreadSeparatorInEmptyThread = showThreadSeparatorInEmptyThread,
                 ),
             )
-        },
-        AttachmentsPickerViewModel::class.java to {
-            AttachmentsPickerViewModel(storageHelper, channelStateFlow)
-        },
-    )
-
-    /**
-     * Creates the required [ViewModel] for our use case, based on the [factories] we provided.
-     */
-    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        val savedStateHandle = extras.createSavedStateHandle()
-        if (modelClass == AttachmentsPickerViewModel::class.java) {
-            @Suppress("UNCHECKED_CAST")
-            return AttachmentsPickerViewModel(
+            AttachmentsPickerViewModel::class.java -> AttachmentsPickerViewModel(
                 storageHelper = storageHelper,
                 channelState = channelStateFlow,
-                savedStateHandle = savedStateHandle,
-            ) as T
-        }
-        if (modelClass == MessageComposerViewModel::class.java) {
-            @Suppress("UNCHECKED_CAST")
-            return MessageComposerViewModel(
-                messageComposerController = MessageComposerController(
-                    chatClient = chatClient,
-                    channelState = channelStateFlow,
-                    mediaRecorder = mediaRecorder,
-                    userLookupHandler = userLookupHandler,
-                    fileToUri = fileToUriConverter,
-                    channelCid = channelId,
-                    config = MessageComposerController.Config(
-                        maxAttachmentCount = maxAttachmentCount,
-                        isLinkPreviewEnabled = isComposerLinkPreviewEnabled,
-                        isDraftMessageEnabled = isComposerDraftMessageEnabled,
-                        isActiveCommandEnabled = true,
-                    ),
-                ),
-                storageHelper = storageHelper,
-                savedStateHandle = savedStateHandle,
-            ) as T
-        }
-        return create(modelClass)
-    }
-
-    /**
-     * Creates the required [ViewModel] for our use case, based on the [factories] we provided.
-     */
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val viewModel: ViewModel = factories[modelClass]?.invoke()
-            ?: throw IllegalArgumentException(
-                "MessagesViewModelFactory can only create instances of " +
-                    "the following classes: ${factories.keys.joinToString { it.simpleName }}",
+                savedStateHandle = savedStateHandle ?: SavedStateHandle(),
             )
+            else -> throw IllegalArgumentException(
+                "MessagesViewModelFactory can only create instances of " +
+                    "${MessageComposerViewModel::class.java.simpleName}, " +
+                    "${MessageListViewModel::class.java.simpleName}, or " +
+                    "${AttachmentsPickerViewModel::class.java.simpleName}.",
+            )
+        }
 
         @Suppress("UNCHECKED_CAST")
         return viewModel as T
