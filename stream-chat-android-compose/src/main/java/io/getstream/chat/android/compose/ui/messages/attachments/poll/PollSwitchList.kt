@@ -99,15 +99,20 @@ private fun MultipleVotesItem(item: PollSwitchState.MultipleVotes) {
         description = stringResource(R.string.stream_compose_poll_option_switch_multiple_answers_description),
         enabled = item.enabled,
         onCheckedChange = item.onCheckedChange,
-    ) {
-        LimitVotesPerUser(
-            enabled = item.limitVotesEnabled,
-            onCheckedChange = item.onLimitVotesCheckedChange,
-            maxVotesPerUserText = item.maxVotesPerUserText,
-            onMaxVotesChange = item.onMaxVotesChange,
-            onMaxVotesFocusLost = item.onMaxVotesFocusLost,
-        )
-    }
+        childContent = if (item.limitVotesConfigurable) {
+            {
+                LimitVotesPerUser(
+                    enabled = item.limitVotesEnabled,
+                    onCheckedChange = item.onLimitVotesCheckedChange,
+                    maxVotesPerUserText = item.maxVotesPerUserText,
+                    onMaxVotesChange = item.onMaxVotesChange,
+                    onMaxVotesFocusLost = item.onMaxVotesFocusLost,
+                )
+            }
+        } else {
+            null
+        },
+    )
 }
 
 @Composable
@@ -356,6 +361,7 @@ internal fun PollSwitchList() {
                 enabled = true,
                 onCheckedChange = {},
                 limitVotesEnabled = true,
+                limitVotesConfigurable = true,
                 onLimitVotesCheckedChange = {},
                 maxVotesPerUserText = "5",
                 onMaxVotesChange = {},

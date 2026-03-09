@@ -33,6 +33,7 @@ internal sealed interface PollSwitchState {
         override val enabled: Boolean,
         override val onCheckedChange: (Boolean) -> Unit,
         val limitVotesEnabled: Boolean,
+        val limitVotesConfigurable: Boolean,
         val onLimitVotesCheckedChange: (Boolean) -> Unit,
         val maxVotesPerUserText: String,
         val onMaxVotesChange: (String) -> Unit,

@@ -97,6 +97,7 @@ internal class CreatePollViewModel(private val pollsConfig: PollsConfig) : ViewM
                             enabled = current.multipleVotesEnabled,
                             onCheckedChange = ::updateMultipleVotes,
                             limitVotesEnabled = current.limitVotesEnabled,
+                            limitVotesConfigurable = pollsConfig.maxVotesPerUser.configurable,
                             onLimitVotesCheckedChange = ::updateLimitVotes,
                             maxVotesPerUserText = current.maxVotesPerUserText,
                             onMaxVotesChange = ::updateMaxVotes,
@@ -203,6 +204,7 @@ internal class CreatePollViewModel(private val pollsConfig: PollsConfig) : ViewM
 
     private fun initialState(): CreatePollViewState = CreatePollViewState(
         multipleVotesEnabled = pollsConfig.multipleVotes.defaultValue,
+        limitVotesEnabled = pollsConfig.maxVotesPerUser.defaultValue,
         anonymousPollEnabled = pollsConfig.anonymousPoll.defaultValue,
         suggestAnOptionEnabled = pollsConfig.suggestAnOption.defaultValue,
         allowCommentsEnabled = pollsConfig.allowComments.defaultValue,

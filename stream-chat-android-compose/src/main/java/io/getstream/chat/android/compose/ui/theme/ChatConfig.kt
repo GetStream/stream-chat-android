@@ -62,12 +62,14 @@ public data class PollFeatureConfig(
  * Configuration for the poll creation screen.
  *
  * @param multipleVotes Configuration for the "multiple votes" toggle.
+ * @param maxVotesPerUser Configuration for the "limit votes per user" toggle (child of "multiple votes").
  * @param anonymousPoll Configuration for the "anonymous poll" toggle.
  * @param suggestAnOption Configuration for the "suggest an option" toggle.
  * @param allowComments Configuration for the "allow comments" toggle.
  */
 public data class PollsConfig(
     val multipleVotes: PollFeatureConfig = PollFeatureConfig(),
+    val maxVotesPerUser: PollFeatureConfig = PollFeatureConfig(),
     val anonymousPoll: PollFeatureConfig = PollFeatureConfig(),
     val suggestAnOption: PollFeatureConfig = PollFeatureConfig(),
     val allowComments: PollFeatureConfig = PollFeatureConfig(),
