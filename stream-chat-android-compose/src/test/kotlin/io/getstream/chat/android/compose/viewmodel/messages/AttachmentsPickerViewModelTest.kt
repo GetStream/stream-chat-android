@@ -270,7 +270,6 @@ internal class AttachmentsPickerViewModelTest {
         assertFalse(viewModel.attachments.first().isSelected)
         viewModel.setPickerMode(FilePickerMode())
         assertFalse(viewModel.attachments.first().isSelected)
-        assertTrue(viewModel.selectedUris.value.isEmpty())
     }
 
     @Test
@@ -341,7 +340,7 @@ internal class AttachmentsPickerViewModelTest {
     }
 
     @Test
-    fun `Given same file in both tabs When selecting Should only count once in selectedUris`() {
+    fun `Given same file in both tabs When selecting Should appear selected in both tabs`() {
         val viewModel = createViewModel()
 
         viewModel.setPickerVisible(visible = true)
@@ -356,7 +355,6 @@ internal class AttachmentsPickerViewModelTest {
         assertTrue(viewModel.attachments.first().isSelected)
         viewModel.setPickerMode(FilePickerMode())
         assertTrue(viewModel.attachments.first().isSelected)
-        assertEquals(1, viewModel.selectedUris.value.size)
     }
 
     @Test
@@ -472,7 +470,7 @@ internal class AttachmentsPickerViewModelTest {
      */
     private fun AttachmentsPickerViewModel.select(item: AttachmentPickerItemState) {
         val uriString = item.attachmentMetaData.uri?.toString() ?: return
-        addToSelection(uriString)
+        selectItem(uriString)
     }
 
     /**
