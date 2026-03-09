@@ -100,7 +100,7 @@ public class AttachmentsPickerViewModel(
     private val _fileItems = MutableStateFlow<List<AttachmentMetaData>>(emptyList())
 
     /**
-     * URI strings of grid items (gallery or files tab) currently checked by the user.
+     * URI strings of items currently checked by the user in the in-app attachment browser.
      * Used only for driving `isSelected` state in the attachment grid — the full attachment
      * list for the composer is owned by [MessageComposerViewModel].
      *
@@ -125,13 +125,14 @@ public class AttachmentsPickerViewModel(
     public val isPickerVisible: Boolean by _isPickerVisible.asState(viewModelScope)
 
     /**
-     * URI strings of grid items currently selected by the user, used to show checkmarks.
+     * URI strings of items currently selected by the user in the in-app attachment browser,
+     * used to show checkmarks.
      */
-    internal val gridSelectedUris: StateFlow<Set<String>> = _gridSelectedUris
+    internal val selectedUris: StateFlow<Set<String>> = _gridSelectedUris
 
     /**
      * The attachment list for the active [pickerMode], with each item's [AttachmentPickerItemState.isSelected]
-     * reflecting whether it appears in [gridSelectedUris].
+     * reflecting whether it appears in [selectedUris].
      */
     public val attachments: List<AttachmentPickerItemState> by combine(
         _pickerMode,
@@ -189,30 +190,55 @@ public class AttachmentsPickerViewModel(
     }
 
     /**
-     * Marks [uriString] as selected in the grid. Has no effect if already selected.
+     * Selects [uriString] in the picker, respecting the active picker mode's multi-select setting.
      *
-     * @param uriString The URI string of the grid item to select.
+     * In single-select mode, all existing selections are cleared before the new item is selected,
+     * and the previously selected URIs are returned so callers can react (e.g. remove from the composer).
+     * In multi-select mode, the item is added to the existing selection and an empty set is returned.
+     *
+     * @param uriString The URI string of the item to select.
+     * @return The set of URI strings that were cleared in single-select mode, or an empty set in multi-select mode.
      */
-    internal fun addToGridSelection(uriString: String) {
+    internal fun selectItem(uriString: String): Set<String> {
+        val multiSelect = when (val mode = pickerMode) {
+            is GalleryPickerMode -> mode.allowMultipleSelection
+            is FilePickerMode -> mode.allowMultipleSelection
+            else -> false
+        }
+        val replaced = if (!multiSelect) {
+            _gridSelectedUris.value.also { clearSelection() }
+        } else {
+            emptySet()
+        }
+        addToSelection(uriString)
+        return replaced
+    }
+
+    /**
+     * Marks [uriString] as selected in the picker. Has no effect if already selected.
+     *
+     * @param uriString The URI string of the item to select.
+     */
+    internal fun addToSelection(uriString: String) {
         _gridSelectedUris.value = _gridSelectedUris.value + uriString
         savedStateHandle[KeyGridSelectedUris] = ArrayList(_gridSelectedUris.value)
     }
 
     /**
-     * Removes [uriString] from the grid selection. Has no effect if not selected.
+     * Removes [uriString] from the picker selection. Has no effect if not selected.
      *
-     * @param uriString The URI string of the grid item to deselect.
+     * @param uriString The URI string of the item to deselect.
      */
-    internal fun removeFromGridSelection(uriString: String) {
+    internal fun removeFromSelection(uriString: String) {
         _gridSelectedUris.value = _gridSelectedUris.value - uriString
         savedStateHandle[KeyGridSelectedUris] = ArrayList(_gridSelectedUris.value)
     }
 
     /**
-     * Clears all grid selections. Call this when the selection is consumed
+     * Clears all picker selections. Call this when the selection is consumed
      * (e.g. after a message is sent, a poll is created, or a command is selected).
      */
-    internal fun clearGridSelection() {
+    internal fun clearSelection() {
         _gridSelectedUris.value = emptySet()
         savedStateHandle.remove<ArrayList<String>>(KeyGridSelectedUris)
     }

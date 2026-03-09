@@ -181,7 +181,7 @@ internal class AttachmentsPickerViewModelTest {
         viewModel.select(viewModel.attachments.first())
         viewModel.select(viewModel.attachments.last())
 
-        viewModel.removeFromGridSelection(imageUri1.toString())
+        viewModel.removeFromSelection(imageUri1.toString())
 
         assertFalse(viewModel.attachments.first().isSelected)
         assertTrue(viewModel.attachments.last().isSelected)
@@ -230,7 +230,7 @@ internal class AttachmentsPickerViewModelTest {
         viewModel.setPickerMode(FilePickerMode())
         viewModel.loadFileItems(fileAttachment1)
 
-        viewModel.removeFromGridSelection(imageUri1.toString())
+        viewModel.removeFromSelection(imageUri1.toString())
 
         viewModel.setPickerMode(GalleryPickerMode())
         assertFalse(viewModel.attachments.first().isSelected)
@@ -253,7 +253,7 @@ internal class AttachmentsPickerViewModelTest {
     }
 
     @Test
-    fun `Given selections When calling clearGridSelection Should remove all selections`() {
+    fun `Given selections When calling clearSelection Should remove all selections`() {
         val viewModel = createViewModel()
 
         viewModel.setPickerVisible(visible = true)
@@ -264,13 +264,13 @@ internal class AttachmentsPickerViewModelTest {
         viewModel.loadFileItems(fileAttachment1)
         viewModel.select(viewModel.attachments.first())
 
-        viewModel.clearGridSelection()
+        viewModel.clearSelection()
 
         viewModel.setPickerMode(GalleryPickerMode())
         assertFalse(viewModel.attachments.first().isSelected)
         viewModel.setPickerMode(FilePickerMode())
         assertFalse(viewModel.attachments.first().isSelected)
-        assertTrue(viewModel.gridSelectedUris.value.isEmpty())
+        assertTrue(viewModel.selectedUris.value.isEmpty())
     }
 
     @Test
@@ -341,7 +341,7 @@ internal class AttachmentsPickerViewModelTest {
     }
 
     @Test
-    fun `Given same file in both tabs When selecting Should only count once in gridSelectedUris`() {
+    fun `Given same file in both tabs When selecting Should only count once in selectedUris`() {
         val viewModel = createViewModel()
 
         viewModel.setPickerVisible(visible = true)
@@ -356,7 +356,7 @@ internal class AttachmentsPickerViewModelTest {
         assertTrue(viewModel.attachments.first().isSelected)
         viewModel.setPickerMode(FilePickerMode())
         assertTrue(viewModel.attachments.first().isSelected)
-        assertEquals(1, viewModel.gridSelectedUris.value.size)
+        assertEquals(1, viewModel.selectedUris.value.size)
     }
 
     @Test
@@ -372,7 +372,7 @@ internal class AttachmentsPickerViewModelTest {
         viewModel.setPickerMode(GalleryPickerMode())
         viewModel.select(viewModel.attachments.first())
 
-        viewModel.removeFromGridSelection(imageUri1.toString())
+        viewModel.removeFromSelection(imageUri1.toString())
 
         assertFalse(viewModel.attachments.first().isSelected)
         viewModel.setPickerMode(FilePickerMode())
@@ -467,21 +467,21 @@ internal class AttachmentsPickerViewModelTest {
         AttachmentsPickerViewModel(storageHelper, channelState)
 
     /**
-     * Selects an item in the grid by adding its URI to the grid selection.
+     * Selects an item by adding its URI to the picker selection.
      * Assumes the item is not yet selected.
      */
     private fun AttachmentsPickerViewModel.select(item: AttachmentPickerItemState) {
         val uriString = item.attachmentMetaData.uri?.toString() ?: return
-        addToGridSelection(uriString)
+        addToSelection(uriString)
     }
 
     /**
-     * Deselects an item in the grid by removing its URI from the grid selection.
+     * Deselects an item by removing its URI from the picker selection.
      * Assumes the item is currently selected.
      */
     private fun AttachmentsPickerViewModel.deselect(item: AttachmentPickerItemState) {
         val uriString = item.attachmentMetaData.uri?.toString() ?: return
-        removeFromGridSelection(uriString)
+        removeFromSelection(uriString)
     }
 
     /**
