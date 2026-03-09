@@ -32,6 +32,9 @@ import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.recover
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 
 private const val TAG = "Chat:UploadWorker"
 
@@ -105,31 +108,37 @@ public class UploadAttachmentsWorker(
     @Suppress("TooGenericExceptionCaught")
     private suspend fun uploadAttachments(message: Message): List<Attachment> {
         return try {
-            message.attachments.map { attachment ->
-                if (attachment.uploadState != Attachment.UploadState.Success) {
-                    logger.d {
-                        "[uploadAttachments] #uploader; uploading attachment ${attachment.uploadId} " +
-                            "for message ${message.id}"
-                    }
-                    val progressCallback = channelStateLogic?.let { logic ->
-                        ProgressCallbackImpl(
-                            message.id,
-                            attachment.uploadId!!,
-                            logic,
-                        )
-                    }
+            coroutineScope {
+                message.attachments.map { attachment ->
+                    async {
+                        if (attachment.uploadState != Attachment.UploadState.Success) {
+                            logger.d {
+                                "[uploadAttachments] #uploader; uploading attachment ${attachment.uploadId} " +
+                                    "for message ${message.id}"
+                            }
+                            val progressCallback = channelStateLogic?.let { logic ->
+                                ProgressCallbackImpl(
+                                    message.id,
+                                    attachment.uploadId!!,
+                                    logic,
+                                )
+                            }
 
-                    attachmentUploader.uploadAttachment(channelType, channelId, attachment, progressCallback)
-                        .recover { error -> attachment.copy(uploadState = Attachment.UploadState.Failed(error)) }
-                        .value
-                } else {
-                    logger.i {
-                        "[uploadAttachments] #uploader; attachment ${attachment.uploadId}" +
-                            " for message ${message.id} already uploaded"
+                            attachmentUploader.uploadAttachment(channelType, channelId, attachment, progressCallback)
+                                .recover { error ->
+                                    attachment.copy(uploadState = Attachment.UploadState.Failed(error))
+                                }
+                                .value
+                        } else {
+                            logger.i {
+                                "[uploadAttachments] #uploader; attachment ${attachment.uploadId}" +
+                                    " for message ${message.id} already uploaded"
+                            }
+                            attachment
+                        }
                     }
-                    attachment
-                }
-            }.toMutableList()
+                }.awaitAll()
+            }
         } catch (e: Exception) {
             logger.e { "[uploadAttachments] #uploader; unable to upload attachments: ${e.message}" }
             message.attachments.map {
@@ -140,7 +149,7 @@ public class UploadAttachmentsWorker(
                             Error.ThrowableError(message = "Could not upload attachments.", cause = e),
                         ),
                 )
-            }.toMutableList()
+            }
         }
     }
 
