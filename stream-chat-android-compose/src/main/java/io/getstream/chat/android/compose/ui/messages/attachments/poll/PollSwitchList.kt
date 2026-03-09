@@ -44,6 +44,8 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -282,6 +284,7 @@ private fun Stepper(
 ) {
     val colors = ChatTheme.colors
     val currentValue = (text.toIntOrNull() ?: range.first).coerceIn(range)
+    val inputContentDescription = stringResource(R.string.stream_compose_poll_option_limit_votes_input)
 
     Row(
         modifier = modifier,
@@ -289,6 +292,7 @@ private fun Stepper(
     ) {
         StepperButton(
             iconRes = R.drawable.stream_compose_ic_minus,
+            contentDescription = stringResource(R.string.stream_compose_poll_option_limit_votes_decrease),
             enabled = currentValue > range.first,
             onClick = { onTextChange((currentValue - 1).coerceIn(range).toString()) },
         )
@@ -297,6 +301,7 @@ private fun Stepper(
             onValueChange = { newValue -> onTextChange(newValue.filter(Char::isDigit)) },
             modifier = Modifier
                 .width(40.dp * LocalDensity.current.fontScale)
+                .semantics { this.contentDescription = inputContentDescription }
                 .onFocusChanged { focusState ->
                     if (!focusState.isFocused) {
                         onFocusLost()
@@ -312,6 +317,7 @@ private fun Stepper(
         )
         StepperButton(
             iconRes = R.drawable.stream_compose_ic_plus,
+            contentDescription = stringResource(R.string.stream_compose_poll_option_limit_votes_increase),
             enabled = currentValue < range.last,
             onClick = { onTextChange((currentValue + 1).coerceIn(range).toString()) },
         )
@@ -321,6 +327,7 @@ private fun Stepper(
 @Composable
 private fun StepperButton(
     iconRes: Int,
+    contentDescription: String,
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
@@ -339,7 +346,7 @@ private fun StepperButton(
         Icon(
             modifier = Modifier.size(20.dp),
             painter = painterResource(id = iconRes),
-            contentDescription = null,
+            contentDescription = contentDescription,
             tint = if (enabled) ChatTheme.colors.buttonSecondaryText else ChatTheme.colors.textDisabled,
         )
     }

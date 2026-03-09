@@ -320,6 +320,9 @@
     <string name="stream_compose_poll_option_switch_multiple_answers_description">Select more than one option</string>
     <string name="stream_compose_poll_option_limit_votes">Limit votes per person</string>
     <string name="stream_compose_poll_option_limit_votes_description">Choose between 2\u201310 options</string>
+    <string name="stream_compose_poll_option_limit_votes_decrease">Decrease votes per person</string>
+    <string name="stream_compose_poll_option_limit_votes_increase">Increase votes per person</string>
+    <string name="stream_compose_poll_option_limit_votes_input">Votes per person</string>
     <string name="stream_compose_poll_option_switch_anonymous_poll">Anonymous poll</string>
     <string name="stream_compose_poll_option_switch_anonymous_poll_description">Hide who voted</string>
     <string name="stream_compose_poll_option_switch_suggest_option">Suggest an option</string>
