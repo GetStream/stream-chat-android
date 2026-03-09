@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments
 
+import androidx.compose.runtime.Stable
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -27,10 +28,11 @@ import io.getstream.chat.android.models.PollConfig
  * Actions that can be performed in the attachment picker.
  *
  * Each property maps a user gesture or lifecycle event to a handler.
- * Override individual actions via [copy] to customise behaviour while keeping the rest at their defaults.
+ * To customise individual actions, construct a new instance overriding only the properties you need,
+ * using the companion object factories as a starting point.
  *
  * @property onAttachmentItemSelected Called when a user taps an attachment item to select or deselect it
- *  inside the in-app picker grid.
+ *  inside the in-app attachment browser.
  * @property onAttachmentsSelected Called when attachments are confirmed and should be added to the composer.
  *  Receives the list of [Attachment] objects ready to be sent. Triggered by system pickers, camera, and
  *  file browser results.
@@ -42,6 +44,7 @@ import io.getstream.chat.android.models.PollConfig
  * @property onCommandSelected Called when the user selects a slash command from the command picker.
  * @property onDismiss Called when the attachment picker should be dismissed (back press, outside tap, etc.).
  */
+@Stable
 public data class AttachmentPickerActions(
     val onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
     val onAttachmentsSelected: (List<Attachment>) -> Unit,
@@ -69,7 +72,7 @@ public data class AttachmentPickerActions(
         /**
          * Lightweight defaults suitable for standalone [AttachmentPicker] usage without a composer.
          *
-         * Handles picker-level concerns only: toggling the grid selection index and dismissing the
+         * Handles picker-level concerns only: toggling the selection index and dismissing the
          * picker. Attachment submission, poll, and command actions are no-ops.
          *
          * @param attachmentsPickerViewModel The [AttachmentsPickerViewModel] that drives picker state.
@@ -78,14 +81,7 @@ public data class AttachmentPickerActions(
             attachmentsPickerViewModel: AttachmentsPickerViewModel,
         ): AttachmentPickerActions = AttachmentPickerActions(
             onAttachmentItemSelected = { item ->
-                val uriString = item.attachmentMetaData.uri?.toString() ?: return@AttachmentPickerActions
-                val multiSelect = attachmentsPickerViewModel.pickerMode?.allowMultipleSelection == true
-                if (item.isSelected) {
-                    attachmentsPickerViewModel.removeFromGridSelection(uriString)
-                } else {
-                    if (!multiSelect) attachmentsPickerViewModel.clearGridSelection()
-                    attachmentsPickerViewModel.addToGridSelection(uriString)
-                }
+                handlePickerItemSelection(item, attachmentsPickerViewModel)
             },
             onAttachmentsSelected = {},
             onCreatePollClick = {},
@@ -98,53 +94,72 @@ public data class AttachmentPickerActions(
         /**
          * Default implementation wiring both the picker and composer view models.
          *
-         * [AttachmentsPickerViewModel] owns the grid selection index (URI checkmarks).
-         * [MessageComposerViewModel] owns the full attachment list for the message.
-         * This function is the sole coordination point between the two.
+         * Handles item selection, attachment submission, poll creation, command selection, and dismissal.
+         * Use this when the [AttachmentPicker] is paired with a [MessageComposerViewModel].
          *
          * @param attachmentsPickerViewModel The [AttachmentsPickerViewModel] that drives picker state.
-         * @param composerViewModel The [MessageComposerViewModel] that owns the selected attachment list.
+         * @param composerViewModel The [MessageComposerViewModel] that manages the attachment list for the message.
          */
         public fun defaultActions(
             attachmentsPickerViewModel: AttachmentsPickerViewModel,
             composerViewModel: MessageComposerViewModel,
         ): AttachmentPickerActions = AttachmentPickerActions(
             onAttachmentItemSelected = { item ->
-                val uriString = item.attachmentMetaData.uri?.toString() ?: return@AttachmentPickerActions
-                val multiSelect = attachmentsPickerViewModel.pickerMode?.allowMultipleSelection == true
-                if (item.isSelected) {
-                    attachmentsPickerViewModel.removeFromGridSelection(uriString)
-                    composerViewModel.removeAttachmentsByUris(setOf(uriString))
-                } else {
-                    val attachment = attachmentsPickerViewModel
-                        .getAttachmentsFromMetadata(listOf(item.attachmentMetaData))
-                        .firstOrNull() ?: return@AttachmentPickerActions
-                    if (!multiSelect) {
-                        composerViewModel.removeAttachmentsByUris(attachmentsPickerViewModel.gridSelectedUris.value)
-                        attachmentsPickerViewModel.clearGridSelection()
-                    }
-                    attachmentsPickerViewModel.addToGridSelection(uriString)
-                    composerViewModel.addAttachments(listOf(attachment))
-                }
+                handleItemSelection(item, attachmentsPickerViewModel, composerViewModel)
             },
-            onAttachmentsSelected = { attachments ->
-                composerViewModel.addAttachments(attachments)
-            },
+            onAttachmentsSelected = composerViewModel::addAttachments,
             onCreatePollClick = {},
             onCreatePoll = { pollConfig ->
-                attachmentsPickerViewModel.setPickerVisible(visible = false)
-                attachmentsPickerViewModel.clearGridSelection()
-                composerViewModel.clearAttachments()
+                consumePickerSession(attachmentsPickerViewModel, composerViewModel)
                 composerViewModel.createPoll(pollConfig)
             },
             onCreatePollDismissed = {},
             onCommandSelected = { command ->
-                attachmentsPickerViewModel.setPickerVisible(visible = false)
-                attachmentsPickerViewModel.clearGridSelection()
-                composerViewModel.clearAttachments()
+                consumePickerSession(attachmentsPickerViewModel, composerViewModel)
                 composerViewModel.selectCommand(command)
             },
             onDismiss = { attachmentsPickerViewModel.setPickerVisible(visible = false) },
         )
     }
+}
+
+private fun handlePickerItemSelection(
+    item: AttachmentPickerItemState,
+    pickerViewModel: AttachmentsPickerViewModel,
+) {
+    val uriString = item.attachmentMetaData.uri?.toString() ?: return
+    if (item.isSelected) {
+        pickerViewModel.removeFromSelection(uriString)
+    } else {
+        pickerViewModel.selectItem(uriString)
+    }
+}
+
+private fun handleItemSelection(
+    item: AttachmentPickerItemState,
+    pickerViewModel: AttachmentsPickerViewModel,
+    composerViewModel: MessageComposerViewModel,
+) {
+    val uriString = item.attachmentMetaData.uri?.toString() ?: return
+    if (item.isSelected) {
+        pickerViewModel.removeFromSelection(uriString)
+        composerViewModel.removeAttachmentsByUris(setOf(uriString))
+    } else {
+        val attachment = pickerViewModel
+            .getAttachmentsFromMetadata(listOf(item.attachmentMetaData))
+            .firstOrNull() ?: return
+        val replaced = pickerViewModel.selectItem(uriString)
+        composerViewModel.removeAttachmentsByUris(replaced)
+        composerViewModel.addAttachments(listOf(attachment))
+    }
+}
+
+private fun consumePickerSession(
+    pickerViewModel: AttachmentsPickerViewModel,
+    composerViewModel: MessageComposerViewModel,
+) {
+    // Polls and commands are mutually exclusive with file attachments — reset both.
+    pickerViewModel.setPickerVisible(visible = false)
+    pickerViewModel.clearSelection()
+    composerViewModel.clearAttachments()
 }
