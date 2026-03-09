@@ -97,7 +97,7 @@ internal class AttachmentsPickerPollUtilsTest {
             optionItemList = options,
             multipleVotesEnabled = true,
             limitVotesEnabled = true,
-            maxVotesPerUserText = "2",
+            maxVotesPerPersonText = "2",
             anonymousPollEnabled = true,
             suggestAnOptionEnabled = true,
             allowCommentsEnabled = true,

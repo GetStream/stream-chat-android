@@ -44,7 +44,7 @@ internal fun pollConfigFrom(
     val maxVotesAllowed = when {
         !state.multipleVotesEnabled -> 1
         !state.limitVotesEnabled -> null
-        else -> state.maxVotesPerUserText.toIntOrNull()
+        else -> state.maxVotesPerPersonText.toIntOrNull()
             ?.coerceIn(PollsConstants.MULTIPLE_ANSWERS_RANGE)
             ?: PollsConstants.MULTIPLE_ANSWERS_RANGE.first
     }

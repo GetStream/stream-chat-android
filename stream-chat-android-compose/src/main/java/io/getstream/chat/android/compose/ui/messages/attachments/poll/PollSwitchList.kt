@@ -103,10 +103,10 @@ private fun MultipleVotesItem(item: PollSwitchState.MultipleVotes) {
         onCheckedChange = item.onCheckedChange,
         childContent = if (item.limitVotesConfigurable) {
             {
-                LimitVotesPerUser(
+                LimitVotesPerPerson(
                     enabled = item.limitVotesEnabled,
                     onCheckedChange = item.onLimitVotesCheckedChange,
-                    maxVotesPerUserText = item.maxVotesPerUserText,
+                    maxVotesPerPersonText = item.maxVotesPerPersonText,
                     onMaxVotesChange = item.onMaxVotesChange,
                     onMaxVotesFocusLost = item.onMaxVotesFocusLost,
                 )
@@ -199,10 +199,10 @@ private fun PollSwitchHeader(
 }
 
 @Composable
-private fun LimitVotesPerUser(
+private fun LimitVotesPerPerson(
     enabled: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    maxVotesPerUserText: String,
+    maxVotesPerPersonText: String,
     onMaxVotesChange: (String) -> Unit,
     onMaxVotesFocusLost: () -> Unit,
 ) {
@@ -237,7 +237,7 @@ private fun LimitVotesPerUser(
         if (enabled) {
             Stepper(
                 modifier = Modifier.padding(top = StreamTokens.spacingXs),
-                text = maxVotesPerUserText,
+                text = maxVotesPerPersonText,
                 onTextChange = onMaxVotesChange,
                 onFocusLost = onMaxVotesFocusLost,
                 range = PollsConstants.MULTIPLE_ANSWERS_RANGE,
@@ -370,7 +370,7 @@ internal fun PollSwitchList() {
                 limitVotesEnabled = true,
                 limitVotesConfigurable = true,
                 onLimitVotesCheckedChange = {},
-                maxVotesPerUserText = "5",
+                maxVotesPerPersonText = "5",
                 onMaxVotesChange = {},
                 onMaxVotesFocusLost = {},
             ),

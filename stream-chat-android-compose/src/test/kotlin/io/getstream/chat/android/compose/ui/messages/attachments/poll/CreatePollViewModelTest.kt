@@ -125,7 +125,7 @@ internal class CreatePollViewModelTest {
             val state = awaitItem()
             assertFalse(state.multipleVotesEnabled)
             assertFalse(state.limitVotesEnabled)
-            assertEquals("5", state.maxVotesPerUserText)
+            assertEquals("5", state.maxVotesPerPersonText)
         }
     }
 
@@ -157,7 +157,7 @@ internal class CreatePollViewModelTest {
     }
 
     @Test
-    fun `Given limitVotes disabled When updateLimitVotes(false) Then maxVotesPerUser should be preserved`() = runTest {
+    fun `Given limitVotes disabled When updateLimitVotes(false) Then maxVotesPerPerson should be preserved`() = runTest {
         val viewModel = CreatePollViewModel(defaultConfig)
 
         viewModel.updateMultipleVotes(true)
@@ -168,21 +168,21 @@ internal class CreatePollViewModelTest {
         viewModel.state.test {
             val state = awaitItem()
             assertFalse(state.limitVotesEnabled)
-            assertEquals("5", state.maxVotesPerUserText)
+            assertEquals("5", state.maxVotesPerPersonText)
         }
     }
 
     // updateMaxVotes tests
 
     @Test
-    fun `Given a value When updateMaxVotes is called Then maxVotesPerUser should be that value`() = runTest {
+    fun `Given a value When updateMaxVotes is called Then maxVotesPerPerson should be that value`() = runTest {
         val viewModel = CreatePollViewModel(defaultConfig)
 
         viewModel.updateMaxVotes("5")
 
         viewModel.state.test {
             val state = awaitItem()
-            assertEquals("5", state.maxVotesPerUserText)
+            assertEquals("5", state.maxVotesPerPersonText)
         }
     }
 
@@ -214,7 +214,7 @@ internal class CreatePollViewModelTest {
             assertEquals(emptyList<PollOptionItem>(), state.optionItemList)
             assertFalse(state.multipleVotesEnabled)
             assertFalse(state.limitVotesEnabled)
-            assertEquals(PollsConstants.MULTIPLE_ANSWERS_RANGE.first.toString(), state.maxVotesPerUserText)
+            assertEquals(PollsConstants.MULTIPLE_ANSWERS_RANGE.first.toString(), state.maxVotesPerPersonText)
             assertFalse(state.hasError)
             assertFalse(state.isCreationEnabled)
             assertFalse(state.hasChanges)
@@ -526,7 +526,7 @@ internal class CreatePollViewModelTest {
 
             viewModel.updateMaxVotes("5")
             state = awaitItem()
-            assertEquals("5", state.maxVotesPerUserText)
+            assertEquals("5", state.maxVotesPerPersonText)
 
             // User enables anonymous poll
             viewModel.updateAnonymousPoll(true)

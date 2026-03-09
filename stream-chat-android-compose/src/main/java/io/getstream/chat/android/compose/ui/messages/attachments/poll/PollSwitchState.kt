@@ -35,7 +35,7 @@ internal sealed interface PollSwitchState {
         val limitVotesEnabled: Boolean,
         val limitVotesConfigurable: Boolean,
         val onLimitVotesCheckedChange: (Boolean) -> Unit,
-        val maxVotesPerUserText: String,
+        val maxVotesPerPersonText: String,
         val onMaxVotesChange: (String) -> Unit,
         val onMaxVotesFocusLost: () -> Unit,
     ) : PollSwitchState
