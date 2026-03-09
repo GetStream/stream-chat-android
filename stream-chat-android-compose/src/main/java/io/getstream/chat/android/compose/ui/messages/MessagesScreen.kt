@@ -353,7 +353,7 @@ internal fun DefaultBottomBarContent(
             onAttachmentRemoved = { attachment ->
                 attachment.extraData[EXTRA_SOURCE_URI]
                     ?.let { it as? String }
-                    ?.let(attachmentsPickerViewModel::removeFromGridSelection)
+                    ?.let(attachmentsPickerViewModel::removeFromSelection)
                 composerViewModel.removeAttachment(attachment)
             },
             onCancelAction = {
@@ -363,7 +363,7 @@ internal fun DefaultBottomBarContent(
             onLinkPreviewClick = onComposerLinkPreviewClick,
             onSendMessage = { message ->
                 attachmentsPickerViewModel.setPickerVisible(visible = false)
-                attachmentsPickerViewModel.clearGridSelection()
+                attachmentsPickerViewModel.clearSelection()
                 composerViewModel.sendMessage(
                     message.copy(
                         skipPushNotification = skipPushNotification,
