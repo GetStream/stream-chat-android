@@ -70,6 +70,7 @@ import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isGiphy
 import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.client.utils.message.isPoll
+import io.getstream.chat.android.client.utils.message.isThreadStart
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.MessageAlignment
@@ -165,7 +166,7 @@ public fun MessageContainer(
     val clickModifier = Modifier.combinedClickable(
         interactionSource = remember { MutableInteractionSource() },
         indication = null,
-        onClick = {},
+        onClick = { if (message.isThreadStart() && !messageItem.isInThread) onThreadClick(message) },
         onLongClick = {
             if (!message.isDeleted() && !message.isUploading()) {
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
