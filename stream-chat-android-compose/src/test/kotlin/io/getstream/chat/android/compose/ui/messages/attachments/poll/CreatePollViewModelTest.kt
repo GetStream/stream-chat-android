@@ -108,7 +108,7 @@ internal class CreatePollViewModelTest {
 
         viewModel.state.test {
             val state = awaitItem()
-            assertTrue(state.multipleVotesEnabled)
+            assertTrue(state.multipleVotes.enabled)
         }
     }
 
@@ -123,8 +123,8 @@ internal class CreatePollViewModelTest {
 
         viewModel.state.test {
             val state = awaitItem()
-            assertFalse(state.multipleVotesEnabled)
-            assertFalse(state.limitVotesEnabled)
+            assertFalse(state.multipleVotes.enabled)
+            assertFalse(state.limitVotesPerPerson.enabled)
             assertEquals("5", state.maxVotesPerPersonText)
         }
     }
@@ -137,7 +137,7 @@ internal class CreatePollViewModelTest {
 
         viewModel.state.test {
             val state = awaitItem()
-            assertTrue(state.anonymousPollEnabled)
+            assertTrue(state.anonymousPoll.enabled)
         }
     }
 
@@ -152,7 +152,7 @@ internal class CreatePollViewModelTest {
 
         viewModel.state.test {
             val state = awaitItem()
-            assertTrue(state.limitVotesEnabled)
+            assertTrue(state.limitVotesPerPerson.enabled)
         }
     }
 
@@ -167,7 +167,7 @@ internal class CreatePollViewModelTest {
 
         viewModel.state.test {
             val state = awaitItem()
-            assertFalse(state.limitVotesEnabled)
+            assertFalse(state.limitVotesPerPerson.enabled)
             assertEquals("5", state.maxVotesPerPersonText)
         }
     }
@@ -212,8 +212,8 @@ internal class CreatePollViewModelTest {
             val state = awaitItem()
             assertEquals("", state.question)
             assertEquals(emptyList<PollOptionItem>(), state.optionItemList)
-            assertFalse(state.multipleVotesEnabled)
-            assertFalse(state.limitVotesEnabled)
+            assertFalse(state.multipleVotes.enabled)
+            assertFalse(state.limitVotesPerPerson.enabled)
             assertEquals(PollsConstants.MULTIPLE_ANSWERS_RANGE.first.toString(), state.maxVotesPerPersonText)
             assertFalse(state.hasError)
             assertFalse(state.isCreationEnabled)
@@ -421,46 +421,6 @@ internal class CreatePollViewModelTest {
         }
     }
 
-    // Visibility tests
-
-    @Test
-    fun `Given default config When checking switchItems Then all features should be present`() = runTest {
-        val viewModel = CreatePollViewModel(defaultConfig)
-
-        viewModel.switchItems.test {
-            val items = awaitItem()
-            assertEquals(
-                listOf(
-                    PollSwitchState.MultipleVotes::class,
-                    PollSwitchState.AnonymousPoll::class,
-                    PollSwitchState.SuggestAnOption::class,
-                    PollSwitchState.AllowComments::class,
-                ),
-                items.map { it::class },
-            )
-        }
-    }
-
-    @Test
-    fun `Given config with hidden features When checking switchItems Then features should be absent`() = runTest {
-        val config = PollsConfig(
-            multipleVotes = PollFeatureConfig(configurable = false),
-            anonymousPoll = PollFeatureConfig(configurable = false),
-        )
-        val viewModel = CreatePollViewModel(config)
-
-        viewModel.switchItems.test {
-            val items = awaitItem()
-            assertEquals(
-                listOf(
-                    PollSwitchState.SuggestAnOption::class,
-                    PollSwitchState.AllowComments::class,
-                ),
-                items.map { it::class },
-            )
-        }
-    }
-
     // Default value tests
 
     @Test
@@ -473,10 +433,10 @@ internal class CreatePollViewModelTest {
 
         viewModel.state.test {
             val state = awaitItem()
-            assertTrue(state.multipleVotesEnabled)
-            assertTrue(state.anonymousPollEnabled)
-            assertFalse(state.suggestAnOptionEnabled)
-            assertFalse(state.allowCommentsEnabled)
+            assertTrue(state.multipleVotes.enabled)
+            assertTrue(state.anonymousPoll.enabled)
+            assertFalse(state.suggestAnOption.enabled)
+            assertFalse(state.allowComments.enabled)
         }
     }
 
@@ -522,7 +482,7 @@ internal class CreatePollViewModelTest {
             // User enables limit votes and sets max
             viewModel.updateLimitVotes(true)
             state = awaitItem()
-            assertTrue(state.limitVotesEnabled)
+            assertTrue(state.limitVotesPerPerson.enabled)
 
             viewModel.updateMaxVotes("5")
             state = awaitItem()
@@ -531,7 +491,7 @@ internal class CreatePollViewModelTest {
             // User enables anonymous poll
             viewModel.updateAnonymousPoll(true)
             state = awaitItem()
-            assertTrue(state.anonymousPollEnabled)
+            assertTrue(state.anonymousPoll.enabled)
             assertTrue(state.isCreationEnabled)
         }
     }

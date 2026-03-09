@@ -64,8 +64,8 @@ internal class AttachmentsPickerPollUtilsTest {
         val state = CreatePollViewState(
             question = pollQuestion,
             optionItemList = options,
-            multipleVotesEnabled = true,
-            limitVotesEnabled = false,
+            multipleVotes = switchEnabled(true),
+            limitVotesPerPerson = switchEnabled(false),
         )
         // when
         val pollConfig = pollConfigFrom(pollQuestion, options, state)
@@ -95,12 +95,12 @@ internal class AttachmentsPickerPollUtilsTest {
         val state = CreatePollViewState(
             question = pollQuestion,
             optionItemList = options,
-            multipleVotesEnabled = true,
-            limitVotesEnabled = true,
+            multipleVotes = switchEnabled(true),
+            limitVotesPerPerson = switchEnabled(true),
             maxVotesPerPersonText = "2",
-            anonymousPollEnabled = true,
-            suggestAnOptionEnabled = true,
-            allowCommentsEnabled = true,
+            anonymousPoll = switchEnabled(true),
+            suggestAnOption = switchEnabled(true),
+            allowComments = switchEnabled(true),
         )
 
         // when
@@ -118,4 +118,7 @@ internal class AttachmentsPickerPollUtilsTest {
         )
         pollConfig `should be equal to` expected
     }
+
+    private fun switchEnabled(enabled: Boolean) =
+        PollSwitchItem(visible = true, enabled = enabled, onCheckedChange = {})
 }

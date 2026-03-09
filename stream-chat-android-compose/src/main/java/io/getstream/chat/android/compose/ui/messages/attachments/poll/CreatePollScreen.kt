@@ -116,7 +116,14 @@ public fun CreatePollScreen(
 
             // Poll configuration switches
             PollSwitchList(
-                items = viewModel.switchItems.collectAsState().value,
+                multipleVotes = state.multipleVotes,
+                limitVotesPerPerson = state.limitVotesPerPerson,
+                maxVotesPerPersonText = state.maxVotesPerPersonText,
+                onMaxVotesChanged = viewModel::updateMaxVotes,
+                onMaxVotesFocusLost = viewModel::coerceMaxVotes,
+                anonymousPoll = state.anonymousPoll,
+                suggestAnOption = state.suggestAnOption,
+                allowComments = state.allowComments,
             )
 
             BackHandler(onBack = backOrDiscardDialog)

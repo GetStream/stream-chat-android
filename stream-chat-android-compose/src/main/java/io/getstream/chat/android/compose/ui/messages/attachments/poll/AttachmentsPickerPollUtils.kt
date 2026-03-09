@@ -36,14 +36,14 @@ internal fun pollConfigFrom(
     val options = pollOptions
         .filter { it.title.isNotEmpty() }
         .map { it.title }
-    val votingVisibility = if (state.anonymousPollEnabled) {
+    val votingVisibility = if (state.anonymousPoll.enabled) {
         VotingVisibility.ANONYMOUS
     } else {
         VotingVisibility.PUBLIC
     }
     val maxVotesAllowed = when {
-        !state.multipleVotesEnabled -> 1
-        !state.limitVotesEnabled -> null
+        !state.multipleVotes.enabled -> 1
+        !state.limitVotesPerPerson.enabled -> null
         else -> state.maxVotesPerPersonText.toIntOrNull()
             ?.coerceIn(PollsConstants.MULTIPLE_ANSWERS_RANGE)
             ?: PollsConstants.MULTIPLE_ANSWERS_RANGE.first
@@ -51,10 +51,10 @@ internal fun pollConfigFrom(
     return PollConfig(
         name = pollQuestion,
         options = options.map { text -> PollOption(text = text) },
-        allowUserSuggestedOptions = state.suggestAnOptionEnabled,
-        allowAnswers = state.allowCommentsEnabled,
+        allowUserSuggestedOptions = state.suggestAnOption.enabled,
+        allowAnswers = state.allowComments.enabled,
         votingVisibility = votingVisibility,
         maxVotesAllowed = maxVotesAllowed,
-        enforceUniqueVote = !state.multipleVotesEnabled,
+        enforceUniqueVote = !state.multipleVotes.enabled,
     )
 }

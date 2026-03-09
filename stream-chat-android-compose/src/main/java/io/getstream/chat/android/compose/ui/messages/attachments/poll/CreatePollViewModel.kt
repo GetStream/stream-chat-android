@@ -20,6 +20,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.util.fastAny
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.getstream.chat.android.compose.ui.theme.PollFeatureConfig
 import io.getstream.chat.android.compose.ui.theme.PollsConfig
 import io.getstream.chat.android.ui.common.utils.PollsConstants
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,30 +31,37 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 /**
- * Represents the UI state of the poll creation screen.
+ * A single poll feature toggle combining visibility, enabled state, and callback.
  *
- * @property question The poll question text.
- * @property optionItemList The list of poll options.
- * @property multipleVotesEnabled Whether the "multiple votes" toggle is on.
- * @property limitVotesEnabled Whether the "limit votes per person" child toggle is on.
- * @property maxVotesPerPersonText The max votes per person text for the stepper.
- * @property anonymousPollEnabled Whether the "anonymous poll" toggle is on.
- * @property suggestAnOptionEnabled Whether the "suggest an option" toggle is on.
- * @property allowCommentsEnabled Whether the "allow comments" toggle is on.
- * @property hasError Whether there are validation errors in the poll.
- * @property isCreationEnabled Whether the poll can be created (all required fields are valid).
- * @property hasChanges Whether there are unsaved changes.
+ * @property visible Whether this toggle is shown in the poll creation UI.
+ * @property enabled Whether this toggle is currently on.
+ * @property onCheckedChange Called when the toggle is flipped.
+ */
+@Immutable
+internal data class PollSwitchItem(
+    val visible: Boolean,
+    val enabled: Boolean,
+    val onCheckedChange: (Boolean) -> Unit,
+) {
+    constructor(config: PollFeatureConfig, onCheckedChange: (Boolean) -> Unit) :
+        this(visible = config.configurable, enabled = config.defaultValue, onCheckedChange = onCheckedChange)
+}
+
+private val HiddenSwitch = PollSwitchItem(visible = false, enabled = false, onCheckedChange = {})
+
+/**
+ * Represents the UI state of the poll creation screen.
  */
 @Immutable
 internal data class CreatePollViewState(
     val question: String = "",
     val optionItemList: List<PollOptionItem> = emptyList(),
-    val multipleVotesEnabled: Boolean = false,
-    val limitVotesEnabled: Boolean = false,
+    val multipleVotes: PollSwitchItem = HiddenSwitch,
+    val limitVotesPerPerson: PollSwitchItem = HiddenSwitch,
     val maxVotesPerPersonText: String = PollsConstants.MULTIPLE_ANSWERS_RANGE.first.toString(),
-    val anonymousPollEnabled: Boolean = false,
-    val suggestAnOptionEnabled: Boolean = false,
-    val allowCommentsEnabled: Boolean = false,
+    val anonymousPoll: PollSwitchItem = HiddenSwitch,
+    val suggestAnOption: PollSwitchItem = HiddenSwitch,
+    val allowComments: PollSwitchItem = HiddenSwitch,
     val hasError: Boolean = false,
     val isCreationEnabled: Boolean = false,
     val hasChanges: Boolean = false,
@@ -86,17 +94,6 @@ internal class CreatePollViewModel(private val pollsConfig: PollsConfig) : ViewM
         )
 
     /**
-     * The list of [PollSwitchState]s to display, derived from the current state and config.
-     */
-    val switchItems: StateFlow<List<PollSwitchState>> = _state
-        .map(::buildSwitchItems)
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
-            initialValue = buildSwitchItems(_state.value),
-        )
-
-    /**
      * Updates the poll question.
      */
     fun updateQuestion(newQuestion: String) {
@@ -112,13 +109,13 @@ internal class CreatePollViewModel(private val pollsConfig: PollsConfig) : ViewM
 
     /**
      * Updates the "multiple votes" toggle state.
-     * When disabled, resets limitVotesEnabled and maxVotesPerPerson.
+     * When disabled, resets the limit votes toggle.
      */
     fun updateMultipleVotes(enabled: Boolean) {
         _state.update {
             it.copy(
-                multipleVotesEnabled = enabled,
-                limitVotesEnabled = if (enabled) it.limitVotesEnabled else false,
+                multipleVotes = it.multipleVotes.copy(enabled = enabled),
+                limitVotesPerPerson = it.limitVotesPerPerson.copy(enabled = enabled && it.limitVotesPerPerson.enabled),
             )
         }
     }
@@ -128,7 +125,7 @@ internal class CreatePollViewModel(private val pollsConfig: PollsConfig) : ViewM
      */
     fun updateLimitVotes(enabled: Boolean) {
         _state.update {
-            it.copy(limitVotesEnabled = enabled)
+            it.copy(limitVotesPerPerson = it.limitVotesPerPerson.copy(enabled = enabled))
         }
     }
 
@@ -152,21 +149,21 @@ internal class CreatePollViewModel(private val pollsConfig: PollsConfig) : ViewM
      * Updates the "anonymous poll" toggle state.
      */
     fun updateAnonymousPoll(enabled: Boolean) {
-        _state.update { it.copy(anonymousPollEnabled = enabled) }
+        _state.update { it.copy(anonymousPoll = it.anonymousPoll.copy(enabled = enabled)) }
     }
 
     /**
      * Updates the "suggest an option" toggle state.
      */
     fun updateSuggestAnOption(enabled: Boolean) {
-        _state.update { it.copy(suggestAnOptionEnabled = enabled) }
+        _state.update { it.copy(suggestAnOption = it.suggestAnOption.copy(enabled = enabled)) }
     }
 
     /**
      * Updates the "allow comments" toggle state.
      */
     fun updateAllowComments(enabled: Boolean) {
-        _state.update { it.copy(allowCommentsEnabled = enabled) }
+        _state.update { it.copy(allowComments = it.allowComments.copy(enabled = enabled)) }
     }
 
     /**
@@ -176,38 +173,27 @@ internal class CreatePollViewModel(private val pollsConfig: PollsConfig) : ViewM
         _state.value = initialState()
     }
 
-    private fun buildSwitchItems(current: CreatePollViewState): List<PollSwitchState> = buildList {
-        if (pollsConfig.multipleVotes.configurable) {
-            add(
-                PollSwitchState.MultipleVotes(
-                    enabled = current.multipleVotesEnabled,
-                    onCheckedChange = ::updateMultipleVotes,
-                    limitVotesEnabled = current.limitVotesEnabled,
-                    limitVotesConfigurable = pollsConfig.maxVotesPerPerson.configurable,
-                    onLimitVotesCheckedChange = ::updateLimitVotes,
-                    maxVotesPerPersonText = current.maxVotesPerPersonText,
-                    onMaxVotesChange = ::updateMaxVotes,
-                    onMaxVotesFocusLost = ::coerceMaxVotes,
-                ),
-            )
-        }
-        if (pollsConfig.anonymousPoll.configurable) {
-            add(PollSwitchState.AnonymousPoll(current.anonymousPollEnabled, ::updateAnonymousPoll))
-        }
-        if (pollsConfig.suggestAnOption.configurable) {
-            add(PollSwitchState.SuggestAnOption(current.suggestAnOptionEnabled, ::updateSuggestAnOption))
-        }
-        if (pollsConfig.allowComments.configurable) {
-            add(PollSwitchState.AllowComments(current.allowCommentsEnabled, ::updateAllowComments))
-        }
-    }
-
     private fun initialState(): CreatePollViewState = CreatePollViewState(
-        multipleVotesEnabled = pollsConfig.multipleVotes.defaultValue,
-        limitVotesEnabled = pollsConfig.maxVotesPerPerson.defaultValue,
-        anonymousPollEnabled = pollsConfig.anonymousPoll.defaultValue,
-        suggestAnOptionEnabled = pollsConfig.suggestAnOption.defaultValue,
-        allowCommentsEnabled = pollsConfig.allowComments.defaultValue,
+        multipleVotes = PollSwitchItem(
+            config = pollsConfig.multipleVotes,
+            onCheckedChange = ::updateMultipleVotes,
+        ),
+        limitVotesPerPerson = PollSwitchItem(
+            config = pollsConfig.maxVotesPerPerson,
+            onCheckedChange = ::updateLimitVotes,
+        ),
+        anonymousPoll = PollSwitchItem(
+            config = pollsConfig.anonymousPoll,
+            onCheckedChange = ::updateAnonymousPoll,
+        ),
+        suggestAnOption = PollSwitchItem(
+            config = pollsConfig.suggestAnOption,
+            onCheckedChange = ::updateSuggestAnOption,
+        ),
+        allowComments = PollSwitchItem(
+            config = pollsConfig.allowComments,
+            onCheckedChange = ::updateAllowComments,
+        ),
     )
 
     private fun isCreationEnabled(state: CreatePollViewState): Boolean {

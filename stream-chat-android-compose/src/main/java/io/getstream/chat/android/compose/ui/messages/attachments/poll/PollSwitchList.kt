@@ -27,10 +27,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -61,74 +63,77 @@ import io.getstream.chat.android.ui.common.utils.PollsConstants
 /**
  * Displays the poll feature toggles (multiple votes, anonymous poll, suggest an option, allow comments).
  *
- * @param items The list of [PollSwitchState]s to render. Only include items that should be visible.
+ * @param multipleVotes Toggle for allowing multiple votes.
+ * @param limitVotesPerPerson Toggle for limiting votes per person (child of multiple votes).
+ * @param maxVotesPerPersonText Current text value for the max votes stepper.
+ * @param onMaxVotesChanged Called when the max votes stepper value changes.
+ * @param onMaxVotesFocusLost Called when the max votes stepper loses focus.
+ * @param anonymousPoll Toggle for anonymous poll.
+ * @param suggestAnOption Toggle for suggesting an option.
+ * @param allowComments Toggle for allowing comments.
  */
+@Suppress("LongParameterList")
 @Composable
-internal fun PollSwitchList(items: List<PollSwitchState>) {
+internal fun PollSwitchList(
+    multipleVotes: PollSwitchItem,
+    limitVotesPerPerson: PollSwitchItem,
+    maxVotesPerPersonText: String,
+    onMaxVotesChanged: (String) -> Unit,
+    onMaxVotesFocusLost: () -> Unit,
+    anonymousPoll: PollSwitchItem,
+    suggestAnOption: PollSwitchItem,
+    allowComments: PollSwitchItem,
+) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingMd),
     ) {
-        items.forEach { item ->
-            when (item) {
-                is PollSwitchState.MultipleVotes -> MultipleVotesItem(item)
-                is PollSwitchState.AnonymousPoll -> SimpleSwitchItem(
-                    title = stringResource(R.string.stream_compose_poll_option_switch_anonymous_poll),
-                    description = stringResource(R.string.stream_compose_poll_option_switch_anonymous_poll_description),
-                    item = item,
-                )
-
-                is PollSwitchState.SuggestAnOption -> SimpleSwitchItem(
-                    title = stringResource(R.string.stream_compose_poll_option_switch_suggest_option),
-                    description = stringResource(R.string.stream_compose_poll_option_switch_suggest_option_description),
-                    item = item,
-                )
-
-                is PollSwitchState.AllowComments -> SimpleSwitchItem(
-                    title = stringResource(R.string.stream_compose_poll_option_switch_add_comment),
-                    description = stringResource(R.string.stream_compose_poll_option_switch_add_comment_description),
-                    item = item,
-                )
-            }
+        if (multipleVotes.visible) {
+            PollSwitchListItem(
+                title = stringResource(R.string.stream_compose_poll_option_switch_multiple_answers),
+                description = stringResource(R.string.stream_compose_poll_option_switch_multiple_answers_description),
+                enabled = multipleVotes.enabled,
+                onCheckedChange = multipleVotes.onCheckedChange,
+                childContent = if (limitVotesPerPerson.visible) {
+                    {
+                        LimitVotesPerPerson(
+                            enabled = limitVotesPerPerson.enabled,
+                            onCheckedChange = limitVotesPerPerson.onCheckedChange,
+                            maxVotesPerPersonText = maxVotesPerPersonText,
+                            onMaxVotesChange = onMaxVotesChanged,
+                            onMaxVotesFocusLost = onMaxVotesFocusLost,
+                        )
+                    }
+                } else {
+                    null
+                },
+            )
+        }
+        if (anonymousPoll.visible) {
+            PollSwitchListItem(
+                title = stringResource(R.string.stream_compose_poll_option_switch_anonymous_poll),
+                description = stringResource(R.string.stream_compose_poll_option_switch_anonymous_poll_description),
+                enabled = anonymousPoll.enabled,
+                onCheckedChange = anonymousPoll.onCheckedChange,
+            )
+        }
+        if (suggestAnOption.visible) {
+            PollSwitchListItem(
+                title = stringResource(R.string.stream_compose_poll_option_switch_suggest_option),
+                description = stringResource(R.string.stream_compose_poll_option_switch_suggest_option_description),
+                enabled = suggestAnOption.enabled,
+                onCheckedChange = suggestAnOption.onCheckedChange,
+            )
+        }
+        if (allowComments.visible) {
+            PollSwitchListItem(
+                title = stringResource(R.string.stream_compose_poll_option_switch_add_comment),
+                description = stringResource(R.string.stream_compose_poll_option_switch_add_comment_description),
+                enabled = allowComments.enabled,
+                onCheckedChange = allowComments.onCheckedChange,
+            )
         }
     }
-}
-
-@Composable
-private fun MultipleVotesItem(item: PollSwitchState.MultipleVotes) {
-    PollSwitchListItem(
-        title = stringResource(R.string.stream_compose_poll_option_switch_multiple_answers),
-        description = stringResource(R.string.stream_compose_poll_option_switch_multiple_answers_description),
-        enabled = item.enabled,
-        onCheckedChange = item.onCheckedChange,
-        childContent = if (item.limitVotesConfigurable) {
-            {
-                LimitVotesPerPerson(
-                    enabled = item.limitVotesEnabled,
-                    onCheckedChange = item.onLimitVotesCheckedChange,
-                    maxVotesPerPersonText = item.maxVotesPerPersonText,
-                    onMaxVotesChange = item.onMaxVotesChange,
-                    onMaxVotesFocusLost = item.onMaxVotesFocusLost,
-                )
-            }
-        } else {
-            null
-        },
-    )
-}
-
-@Composable
-private fun SimpleSwitchItem(
-    title: String,
-    description: String,
-    item: PollSwitchState,
-) {
-    PollSwitchListItem(
-        title = title,
-        description = description,
-        enabled = item.enabled,
-        onCheckedChange = item.onCheckedChange,
-    )
 }
 
 @Composable
@@ -356,26 +361,22 @@ private fun StepperButton(
 @Composable
 private fun PollSwitchListPreview() {
     ChatTheme {
-        PollSwitchList()
+        PollSwitchListPreviewContent()
     }
 }
 
 @Composable
-internal fun PollSwitchList() {
-    PollSwitchList(
-        items = listOf(
-            PollSwitchState.MultipleVotes(
-                enabled = true,
-                onCheckedChange = {},
-                limitVotesEnabled = true,
-                limitVotesConfigurable = true,
-                onLimitVotesCheckedChange = {},
-                maxVotesPerPersonText = "5",
-                onMaxVotesChange = {},
-                onMaxVotesFocusLost = {},
-            ),
-            PollSwitchState.AnonymousPoll(enabled = false, onCheckedChange = {}),
-            PollSwitchState.SuggestAnOption(enabled = false, onCheckedChange = {}),
-        ),
-    )
+internal fun PollSwitchListPreviewContent() {
+    Column(Modifier.verticalScroll(rememberScrollState())) {
+        PollSwitchList(
+            multipleVotes = PollSwitchItem(visible = true, enabled = true, onCheckedChange = {}),
+            limitVotesPerPerson = PollSwitchItem(visible = true, enabled = true, onCheckedChange = {}),
+            maxVotesPerPersonText = "5",
+            onMaxVotesChanged = {},
+            onMaxVotesFocusLost = {},
+            anonymousPoll = PollSwitchItem(visible = true, enabled = false, onCheckedChange = {}),
+            suggestAnOption = PollSwitchItem(visible = true, enabled = false, onCheckedChange = {}),
+            allowComments = PollSwitchItem(visible = true, enabled = false, onCheckedChange = {}),
+        )
+    }
 }
