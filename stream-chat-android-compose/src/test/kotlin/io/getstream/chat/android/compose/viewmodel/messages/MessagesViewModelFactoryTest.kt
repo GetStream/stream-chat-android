@@ -77,8 +77,8 @@ internal class MessagesViewModelFactoryTest {
         }
 
         assertEquals(
-            "MessagesViewModelFactory can only create instances of the following classes: " +
-                "MessageComposerViewModel, MessageListViewModel, AttachmentsPickerViewModel",
+            "MessagesViewModelFactory can only create instances of " +
+                "MessageComposerViewModel, MessageListViewModel, or AttachmentsPickerViewModel.",
             exception.message,
         )
     }
