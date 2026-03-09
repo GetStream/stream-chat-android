@@ -10,17 +10,14 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.datepicker.MaterialDatePicker
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.ChatClient.Companion.instance
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.models.Filters.eq
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.chat.android.ui.common.feature.messages.composer.mention.CompatUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserQueryFilter
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
@@ -48,10 +45,7 @@ import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFacto
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
 import io.getstream.chat.docs.R
 import io.getstream.chat.docs.databinding.MessageComposerLeadingContentBinding
-import io.getstream.result.Result
-import io.getstream.result.call.Call
 import io.getstream.result.call.map
-import kotlin.jvm.functions.Function1
 
 /**
  * [Message Composer](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer)
@@ -199,10 +193,10 @@ private object MessageComposer : Fragment() {
                 messageComposerViewModel.setMessageInput(text)
             }
             messageComposerView.attachmentSelectionListener = { attachments ->
-                messageComposerViewModel.addSelectedAttachments(attachments)
+                messageComposerViewModel.addAttachments(attachments)
             }
             messageComposerView.attachmentRemovalListener = { attachment ->
-                messageComposerViewModel.removeSelectedAttachment(attachment)
+                messageComposerViewModel.removeAttachment(attachment)
             }
             messageComposerView.mentionSelectionListener = { user ->
                 messageComposerViewModel.selectMention(user)
@@ -294,7 +288,7 @@ private object MessageComposer : Fragment() {
             messageComposerView.setLeadingContent(
                 DefaultMessageComposerLeadingContent(context).also {
                     it.attachmentsButtonClickListener = {
-                        // Show attachment dialog and invoke messageComposerViewModel.addSelectedAttachments(attachments)
+                        // Show attachment dialog and invoke messageComposerViewModel.addAttachments(attachments)
                     }
                     it.commandsButtonClickListener = { messageComposerViewModel.toggleCommandsVisibility() }
                 }
@@ -303,7 +297,7 @@ private object MessageComposer : Fragment() {
                 DefaultMessageComposerCenterContent(context).also {
                     it.textInputChangeListener = { text -> messageComposerViewModel.setMessageInput(text) }
                     it.attachmentRemovalListener =
-                        { attachment -> messageComposerViewModel.removeSelectedAttachment(attachment) }
+                        { attachment -> messageComposerViewModel.removeAttachment(attachment) }
                 }
             )
             messageComposerView.setTrailingContent(

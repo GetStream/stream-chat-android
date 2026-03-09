@@ -4511,12 +4511,13 @@ public final class io/getstream/chat/android/ui/viewmodel/mentions/MentionListVi
 
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModel : androidx/lifecycle/ViewModel {
 	public fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/MessageComposerController;)V
-	public final fun addSelectedAttachments (Ljava/util/List;)V
+	public final fun addAttachments (Ljava/util/List;)V
 	public final fun buildNewMessage ()Lio/getstream/chat/android/models/Message;
 	public final fun buildNewMessage (Ljava/lang/String;)Lio/getstream/chat/android/models/Message;
 	public final fun buildNewMessage (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/models/Message;
 	public static synthetic fun buildNewMessage$default (Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModel;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/models/Message;
 	public final fun cancelRecording ()V
+	public final fun clearAttachments ()V
 	public final fun clearData ()V
 	public final fun completeRecording ()V
 	public final fun createPoll (Lio/getstream/chat/android/models/PollConfig;)V
@@ -4535,7 +4536,7 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageCompos
 	public final fun lockRecording ()V
 	public final fun pauseRecording ()V
 	public final fun performMessageAction (Lio/getstream/chat/android/ui/common/state/messages/MessageAction;)V
-	public final fun removeSelectedAttachment (Lio/getstream/chat/android/models/Attachment;)V
+	public final fun removeAttachment (Lio/getstream/chat/android/models/Attachment;)V
 	public final fun seekRecordingTo (F)V
 	public final fun selectCommand (Lio/getstream/chat/android/models/Command;)V
 	public final fun selectMention (Lio/getstream/chat/android/models/User;)V
