@@ -81,7 +81,7 @@ public data class AttachmentPickerActions(
                 val multiSelect = attachmentsPickerViewModel.pickerMode?.allowMultipleSelection == true
                 attachmentsPickerViewModel.toggleSelection(item, multiSelect)
             },
-            onAttachmentsSelected = { attachmentsPickerViewModel.setPickerVisible(visible = false) },
+            onAttachmentsSelected = {},
             onCreatePollClick = {},
             onCreatePoll = {},
             onCreatePollDismissed = {},
@@ -108,17 +108,19 @@ public data class AttachmentPickerActions(
                 composerViewModel.updateSelectedAttachments(attachmentsPickerViewModel.getSelectedAttachments())
             },
             onAttachmentsSelected = { attachments ->
-                attachmentsPickerViewModel.setPickerVisible(visible = false)
-                composerViewModel.addSelectedAttachments(attachments)
+                attachmentsPickerViewModel.addExternalAttachments(attachments)
+                composerViewModel.updateSelectedAttachments(attachmentsPickerViewModel.getSelectedAttachments())
             },
             onCreatePollClick = {},
             onCreatePoll = { pollConfig ->
                 attachmentsPickerViewModel.setPickerVisible(visible = false)
+                attachmentsPickerViewModel.clearSelection()
                 composerViewModel.createPoll(pollConfig)
             },
             onCreatePollDismissed = {},
             onCommandSelected = { command ->
                 attachmentsPickerViewModel.setPickerVisible(visible = false)
+                attachmentsPickerViewModel.clearSelection()
                 composerViewModel.selectCommand(command)
             },
             onDismiss = { attachmentsPickerViewModel.setPickerVisible(visible = false) },

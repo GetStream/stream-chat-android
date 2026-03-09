@@ -350,8 +350,9 @@ internal fun DefaultBottomBarContent(
             isAttachmentPickerVisible = attachmentsPickerViewModel.isPickerVisible,
             onAttachmentsClick = attachmentsPickerViewModel::togglePickerVisibility,
             onAttachmentRemoved = { attachment ->
-                composerViewModel.removeSelectedAttachment(attachment)
                 attachmentsPickerViewModel.deselectAttachment(attachment)
+                attachmentsPickerViewModel.removeExternalAttachment(attachment)
+                composerViewModel.updateSelectedAttachments(attachmentsPickerViewModel.getSelectedAttachments())
             },
             onCancelAction = {
                 listViewModel.dismissAllMessageActions()
