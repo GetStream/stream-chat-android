@@ -89,37 +89,11 @@ internal class CreatePollViewModel(private val pollsConfig: PollsConfig) : ViewM
      * The list of [PollSwitchState]s to display, derived from the current state and config.
      */
     val switchItems: StateFlow<List<PollSwitchState>> = _state
-        .map { current ->
-            buildList {
-                if (pollsConfig.multipleVotes.configurable) {
-                    add(
-                        PollSwitchState.MultipleVotes(
-                            enabled = current.multipleVotesEnabled,
-                            onCheckedChange = ::updateMultipleVotes,
-                            limitVotesEnabled = current.limitVotesEnabled,
-                            limitVotesConfigurable = pollsConfig.maxVotesPerUser.configurable,
-                            onLimitVotesCheckedChange = ::updateLimitVotes,
-                            maxVotesPerUserText = current.maxVotesPerUserText,
-                            onMaxVotesChange = ::updateMaxVotes,
-                            onMaxVotesFocusLost = ::coerceMaxVotes,
-                        ),
-                    )
-                }
-                if (pollsConfig.anonymousPoll.configurable) {
-                    add(PollSwitchState.AnonymousPoll(current.anonymousPollEnabled, ::updateAnonymousPoll))
-                }
-                if (pollsConfig.suggestAnOption.configurable) {
-                    add(PollSwitchState.SuggestAnOption(current.suggestAnOptionEnabled, ::updateSuggestAnOption))
-                }
-                if (pollsConfig.allowComments.configurable) {
-                    add(PollSwitchState.AllowComments(current.allowCommentsEnabled, ::updateAllowComments))
-                }
-            }
-        }
+        .map(::buildSwitchItems)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
-            initialValue = emptyList(),
+            initialValue = buildSwitchItems(_state.value),
         )
 
     /**
@@ -200,6 +174,32 @@ internal class CreatePollViewModel(private val pollsConfig: PollsConfig) : ViewM
      */
     fun reset() {
         _state.value = initialState()
+    }
+
+    private fun buildSwitchItems(current: CreatePollViewState): List<PollSwitchState> = buildList {
+        if (pollsConfig.multipleVotes.configurable) {
+            add(
+                PollSwitchState.MultipleVotes(
+                    enabled = current.multipleVotesEnabled,
+                    onCheckedChange = ::updateMultipleVotes,
+                    limitVotesEnabled = current.limitVotesEnabled,
+                    limitVotesConfigurable = pollsConfig.maxVotesPerUser.configurable,
+                    onLimitVotesCheckedChange = ::updateLimitVotes,
+                    maxVotesPerUserText = current.maxVotesPerUserText,
+                    onMaxVotesChange = ::updateMaxVotes,
+                    onMaxVotesFocusLost = ::coerceMaxVotes,
+                ),
+            )
+        }
+        if (pollsConfig.anonymousPoll.configurable) {
+            add(PollSwitchState.AnonymousPoll(current.anonymousPollEnabled, ::updateAnonymousPoll))
+        }
+        if (pollsConfig.suggestAnOption.configurable) {
+            add(PollSwitchState.SuggestAnOption(current.suggestAnOptionEnabled, ::updateSuggestAnOption))
+        }
+        if (pollsConfig.allowComments.configurable) {
+            add(PollSwitchState.AllowComments(current.allowCommentsEnabled, ::updateAllowComments))
+        }
     }
 
     private fun initialState(): CreatePollViewState = CreatePollViewState(
