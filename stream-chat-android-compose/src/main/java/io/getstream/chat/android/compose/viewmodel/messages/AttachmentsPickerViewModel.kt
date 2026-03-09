@@ -47,29 +47,22 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.channels.Channel as CoroutineChannel
 
 /**
- * ViewModel for the attachment picker. Manages storage browsing and picker UI state.
+ * ViewModel for the attachment picker. Drives picker tab state, device storage browsing,
+ * and the `isSelected` checkmarks shown in [attachments].
  *
- * **Responsibilities:**
- * - Active picker tab ([pickerMode]) and visibility ([isPickerVisible])
- * - Loading media and file metadata from device storage ([loadAttachments])
- * - Resolving system-picker URIs into [Attachment]s ([resolveAndSubmitUris])
- * - Tracking which grid items the user has selected via [gridSelectedUris], used to drive
- *   `isSelected` checkmarks in the attachment grid
+ * Note: [attachments] reflects only the checkmark selection, not the full attachment list
+ * staged for the message. The composer attachment list is owned by [MessageComposerViewModel].
  *
- * **Not responsible for:** the full content or ordering of the message's attachment list.
- * That is owned by [MessageComposerViewModel], which is the single source of truth for all
- * attachments in the current composer session.
- *
- * The [gridSelectedUris] index and picker tab survive Activity destruction
- * (e.g. "Don't keep activities") via [savedStateHandle].
- * [gridSelectedUris] is cleared by [clearGridSelection] when the selection is consumed
- * (e.g. message sent, poll created, command selected).
+ * The active tab and checkmark selection survive process death (e.g. "Don't keep activities").
+ * Checkmarks are not reset on hide — they persist until the session is explicitly consumed
+ * (e.g. after a message is sent, a poll is created, or a command is selected).
  *
  * @param storageHelper Provides device storage queries and attachment conversion.
  * @param channelState Provides the current [ChannelState] for channel-specific configuration.
- * @param savedStateHandle Persists picker state across Activity recreation.
+ * @param savedStateHandle Persists picker tab and selection state across process death.
  */
 public class AttachmentsPickerViewModel(
     private val storageHelper: AttachmentStorageHelper,
@@ -99,20 +92,17 @@ public class AttachmentsPickerViewModel(
     private val _mediaItems = MutableStateFlow<List<AttachmentMetaData>>(emptyList())
     private val _fileItems = MutableStateFlow<List<AttachmentMetaData>>(emptyList())
 
-    /**
-     * URI strings of items currently checked by the user in the in-app attachment browser.
-     * Used only for driving `isSelected` state in the attachment grid — the full attachment
-     * list for the composer is owned by [MessageComposerViewModel].
-     *
-     * Persisted so checkmarks survive Activity recreation (e.g. when the camera is launched).
-     */
-    private val _gridSelectedUris = MutableStateFlow<Set<String>>(
-        savedStateHandle.get<ArrayList<String>>(KeyGridSelectedUris)?.toSet() ?: emptySet(),
+    // URI strings of items checked by the user. Drives isSelected in attachments.
+    // Separate from the composer's attachment list — shared across gallery and file tabs.
+    // Persisted so checkmarks survive process death (e.g. camera launch).
+    private val _selectedUris = MutableStateFlow(
+        savedStateHandle.get<ArrayList<String>>(KeySelectedUris)?.toSet() ?: emptySet(),
     )
     private val _isPickerVisible = MutableStateFlow(
         savedStateHandle[KeyPickerVisible] ?: false,
     )
-    private val _submittedAttachments = kotlinx.coroutines.channels.Channel<SubmittedAttachments>(capacity = UNLIMITED)
+    private val _submittedAttachments = CoroutineChannel<SubmittedAttachments>(capacity = UNLIMITED)
+    private var loadAttachmentsJob: Job? = null
 
     /**
      * The active picker tab.
@@ -125,27 +115,21 @@ public class AttachmentsPickerViewModel(
     public val isPickerVisible: Boolean by _isPickerVisible.asState(viewModelScope)
 
     /**
-     * URI strings of items currently selected by the user in the in-app attachment browser,
-     * used to show checkmarks.
-     */
-    internal val selectedUris: StateFlow<Set<String>> = _gridSelectedUris
-
-    /**
      * The attachment list for the active [pickerMode], with each item's [AttachmentPickerItemState.isSelected]
-     * reflecting whether it appears in [selectedUris].
+     * reflecting the current picker selection.
      */
     public val attachments: List<AttachmentPickerItemState> by combine(
         _pickerMode,
         _mediaItems,
         _fileItems,
-        _gridSelectedUris,
-    ) { mode, media, files, gridUris ->
+        _selectedUris,
+    ) { mode, media, files, uris ->
         val items = when (mode) {
             is GalleryPickerMode, null -> media
             is FilePickerMode -> files
             else -> emptyList()
         }
-        items.map { meta -> AttachmentPickerItemState(meta, isSelected = meta.uri?.toString() in gridUris) }
+        items.map { meta -> AttachmentPickerItemState(meta, isSelected = meta.uri?.toString() in uris) }
     }.asState(viewModelScope, emptyList())
 
     /**
@@ -169,17 +153,15 @@ public class AttachmentsPickerViewModel(
     }
 
     /**
-     * Shows or hides the attachment picker. Hiding clears cached data but preserves the
-     * current grid selection so checkmarks remain when the picker is reopened.
-     *
-     * Call [clearGridSelection] after this to also reset the selection (e.g. after sending a message).
+     * Shows or hides the attachment picker. Hiding clears cached media data but preserves the
+     * current selection so checkmarks remain when the picker is reopened.
      *
      * @param visible `true` to show the picker, `false` to hide it.
      */
     public fun setPickerVisible(visible: Boolean) {
         _isPickerVisible.value = visible
         savedStateHandle[KeyPickerVisible] = visible
-        if (!visible) clearCachedData()
+        if (!visible) resetPickerState()
     }
 
     /**
@@ -206,7 +188,7 @@ public class AttachmentsPickerViewModel(
             else -> false
         }
         val replaced = if (!multiSelect) {
-            _gridSelectedUris.value.also { clearSelection() }
+            _selectedUris.value.also { clearSelection() }
         } else {
             emptySet()
         }
@@ -214,14 +196,9 @@ public class AttachmentsPickerViewModel(
         return replaced
     }
 
-    /**
-     * Marks [uriString] as selected in the picker. Has no effect if already selected.
-     *
-     * @param uriString The URI string of the item to select.
-     */
-    internal fun addToSelection(uriString: String) {
-        _gridSelectedUris.value = _gridSelectedUris.value + uriString
-        savedStateHandle[KeyGridSelectedUris] = ArrayList(_gridSelectedUris.value)
+    private fun addToSelection(uriString: String) {
+        _selectedUris.value += uriString
+        savedStateHandle[KeySelectedUris] = ArrayList(_selectedUris.value)
     }
 
     /**
@@ -230,8 +207,8 @@ public class AttachmentsPickerViewModel(
      * @param uriString The URI string of the item to deselect.
      */
     internal fun removeFromSelection(uriString: String) {
-        _gridSelectedUris.value = _gridSelectedUris.value - uriString
-        savedStateHandle[KeyGridSelectedUris] = ArrayList(_gridSelectedUris.value)
+        _selectedUris.value -= uriString
+        savedStateHandle[KeySelectedUris] = ArrayList(_selectedUris.value)
     }
 
     /**
@@ -239,21 +216,17 @@ public class AttachmentsPickerViewModel(
      * (e.g. after a message is sent, a poll is created, or a command is selected).
      */
     internal fun clearSelection() {
-        _gridSelectedUris.value = emptySet()
-        savedStateHandle.remove<ArrayList<String>>(KeyGridSelectedUris)
+        _selectedUris.value = emptySet()
+        savedStateHandle.remove<ArrayList<String>>(KeySelectedUris)
     }
 
     /**
-     * Converts the given [metaData] into lightweight [Attachment]s.
-     *
-     * File resolution is deferred to send time via [AttachmentStorageHelper.resolveAttachmentFiles].
+     * Converts the given [metaData] into lightweight [Attachment]s ready to be staged in the composer.
      *
      * @param metaData The metadata items to convert.
      */
     public fun getAttachmentsFromMetadata(metaData: List<AttachmentMetaData>): List<Attachment> =
         storageHelper.toAttachments(metaData)
-
-    private var loadAttachmentsJob: Job? = null
 
     /**
      * Loads attachment metadata from device storage for the current [pickerMode].
@@ -300,7 +273,7 @@ public class AttachmentsPickerViewModel(
         }
     }
 
-    private fun clearCachedData() {
+    private fun resetPickerState() {
         _pickerMode.value = null
         savedStateHandle[KeyPickerMode] = null as String?
         _mediaItems.value = emptyList()
@@ -310,7 +283,7 @@ public class AttachmentsPickerViewModel(
 
 private const val KeyPickerVisible = "stream_picker_visible"
 private const val KeyPickerMode = "stream_picker_mode"
-private const val KeyGridSelectedUris = "stream_picker_grid_selected_uris"
+private const val KeySelectedUris = "stream_selected_uris"
 
 /**
  * Event emitted when system picker URIs have been resolved into [Attachment]s.
@@ -323,6 +296,8 @@ public data class SubmittedAttachments(
     val hasUnsupportedFiles: Boolean,
 )
 
+// Custom AttachmentPickerMode implementations cannot be serialized; they save as "unknown"
+// and restore as null (i.e. the active tab is not preserved across process death for custom modes).
 private fun AttachmentPickerMode.toSavedKey(): String = when (this) {
     is GalleryPickerMode -> "gallery"
     is FilePickerMode -> "file"
