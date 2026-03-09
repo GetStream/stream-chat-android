@@ -160,12 +160,14 @@ internal class CapabilitiesHelperTest {
                 randomChannelCapabilities(),
                 false,
             ),
+            // case: message not synced
             Arguments.of(
                 randomBoolean(),
                 randomMessage(syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED))),
                 randomChannelCapabilities(),
                 false,
             ),
+            // case: no QUOTE_MESSAGE capability
             Arguments.of(
                 randomBoolean(),
                 randomMessage(deletedAt = null, deletedForMe = false),
@@ -195,7 +197,6 @@ internal class CapabilitiesHelperTest {
                 randomChannelCapabilities(),
                 false,
             ),
-            // case: message not synced
             Arguments.of(
                 randomBoolean(),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.READ_EVENTS)),
@@ -212,18 +213,13 @@ internal class CapabilitiesHelperTest {
         fun canPinMessageArguments() = listOf(
             Arguments.of(
                 false,
-                randomMessage(deletedAt = null, deletedForMe = false),
+                randomMessage(),
                 randomChannelCapabilities(),
                 false,
             ),
-            // case: no QUOTE_MESSAGE capability
             Arguments.of(
                 randomBoolean(),
-                randomMessage(
-                    syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED)),
-                    deletedAt = null,
-                    deletedForMe = false,
-                ),
+                randomMessage(syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED))),
                 randomChannelCapabilities(),
                 false,
             ),

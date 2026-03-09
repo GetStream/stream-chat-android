@@ -165,12 +165,14 @@ internal class MessageOptionItemVisibilityTest {
                 randomChannelCapabilities(),
                 false,
             ),
+            // case: message not synced
             Arguments.of(
                 MessageOptionItemVisibility(),
                 randomMessage(syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED))),
                 randomChannelCapabilities(),
                 false,
             ),
+            // case: no QUOTE_MESSAGE capability
             Arguments.of(
                 MessageOptionItemVisibility(),
                 randomMessage(deletedAt = null, deletedForMe = false),
@@ -200,7 +202,6 @@ internal class MessageOptionItemVisibilityTest {
                 randomChannelCapabilities(),
                 false,
             ),
-            // case: message not synced
             Arguments.of(
                 MessageOptionItemVisibility(),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.READ_EVENTS)),
@@ -221,14 +222,9 @@ internal class MessageOptionItemVisibilityTest {
                 randomChannelCapabilities(),
                 false,
             ),
-            // case: no QUOTE_MESSAGE capability
             Arguments.of(
                 MessageOptionItemVisibility(),
-                randomMessage(
-                    syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED)),
-                    deletedAt = null,
-                    deletedForMe = false,
-                ),
+                randomMessage(syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED))),
                 randomChannelCapabilities(),
                 false,
             ),

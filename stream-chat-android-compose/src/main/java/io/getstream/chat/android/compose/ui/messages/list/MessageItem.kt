@@ -734,7 +734,7 @@ private fun getMessageBubbleShape(position: List<MessagePosition>, ownsMessage: 
  *
  * @param modifier Modifier for styling.
  * @param onReply Handler when the user swipes to reply.
- * @param isSwipeable Indicator if swipe-te-reply is enabled.
+ * @param isSwipeable Indicator if swipe-to-reply is enabled.
  * @param swipeToReplyContent The content to show when swiping to reply.
  * @param content The swipeable content to show when not swiping to reply.
  */
