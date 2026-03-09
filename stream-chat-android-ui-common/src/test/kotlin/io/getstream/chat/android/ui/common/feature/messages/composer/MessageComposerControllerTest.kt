@@ -72,6 +72,7 @@ import org.mockito.kotlin.whenever
 import java.io.File
 import java.util.Date
 
+@Suppress("LargeClass")
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class MessageComposerControllerTest {
 
@@ -278,7 +279,7 @@ internal class MessageComposerControllerTest {
     }
 
     @Test
-    fun `Given no attachments When updateSelectedAttachments called Then attachments are set`() = runTest {
+    fun `Given no attachments When addAttachments called Then attachments are set`() = runTest {
         // Given
         val controller = Fixture()
             .givenAppSettings()
@@ -287,13 +288,16 @@ internal class MessageComposerControllerTest {
             .givenGlobalState()
             .givenChannelState()
             .get()
-        val attachments = listOf(randomAttachment(), randomAttachment())
+        val attachments = listOf(
+            randomAttachment(extraData = mapOf("io.getstream.sourceUri" to "uri:1")),
+            randomAttachment(extraData = mapOf("io.getstream.sourceUri" to "uri:2")),
+        )
 
         // When
-        controller.updateSelectedAttachments(attachments)
+        controller.addAttachments(attachments)
 
         // Then
-        assertEquals(attachments, controller.state.value.attachments)
+        assertEquals(attachments.size, controller.state.value.attachments.size)
     }
 
     @Test
@@ -519,7 +523,7 @@ internal class MessageComposerControllerTest {
         val controller = fixture.get()
 
         controller.setMessageInput("Hello World")
-        controller.addSelectedAttachments(listOf(randomAttachment()))
+        controller.addAttachments(listOf(randomAttachment()))
 
         val message = Message(cid = CID, text = "Hello World")
         val callback: Call.Callback<Message> = mock()

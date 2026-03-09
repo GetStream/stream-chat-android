@@ -37,6 +37,7 @@ import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Men
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggester
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggestionOptions
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageInput
@@ -246,6 +247,16 @@ public class MessageComposerController(
      * Emits each time the message input field should request focus (e.g. after a command is selected).
      */
     public val inputFocusEvents: SharedFlow<Unit> = _inputFocusEvents.asSharedFlow()
+
+    // Insertion-ordered map keyed by EXTRA_SOURCE_URI. Tracks picker selections
+    // independently of edit-mode attachments, so selections survive entering and exiting edit mode.
+    private val _selectedAttachments = MutableStateFlow(linkedMapOf<String, Attachment>())
+
+    /**
+     * Emits the current list of attachments staged by the picker whenever the selection changes.
+     * Collected by the ViewModel layer to persist selections across process death.
+     */
+    public val selectedAttachments: Flow<List<Attachment>> = _selectedAttachments.map { it.values.toList() }
 
     /** Full message composer state holding all the required information. */
     public val state: MutableStateFlow<MessageComposerState> = MutableStateFlow(MessageComposerState())
@@ -591,52 +602,62 @@ public class MessageComposerController(
     public fun dismissMessageActions() {
         if (isInEditMode) {
             setMessageInputInternal("", MessageInput.Source.Default)
-            state.update { it.copy(attachments = emptyList()) }
+            syncAttachments()
         }
 
         this.messageActions.value = emptySet()
     }
 
     /**
-     * Updates the selected attachments that are shown within the composer UI.
-     */
-    public fun updateSelectedAttachments(attachments: List<Attachment>) {
-        state.update { it.copy(attachments = attachments) }
-        handleValidationErrors()
-    }
-
-    /**
-     * Stores the selected attachments from the attachment picker. These will be shown in the UI,
-     * within the composer component. We upload and send these attachments once the user taps on the
-     * send button.
+     * Adds [attachments] to the staged list, preserving insertion order.
      *
-     * @param attachments The attachments to store and show in the composer.
+     * Attachments are keyed by [EXTRA_SOURCE_URI] from [Attachment.extraData], preserving insertion order.
+     * If a URI is already present, its value is updated in place without changing its position.
+     *
+     * @param attachments The attachments to stage.
      */
-    public fun addSelectedAttachments(attachments: List<Attachment>) {
-        logger.d { "[addSelectedAttachments] attachments: $attachments" }
-        state.update { current ->
-            val merged = (current.attachments + attachments).distinctBy {
-                if (it.name != null && it.mimeType?.isNotEmpty() == true) {
-                    it.name
-                } else {
-                    it
+    public fun addAttachments(attachments: List<Attachment>) {
+        _selectedAttachments.update { current ->
+            LinkedHashMap(current).also { updated ->
+                attachments.forEach { attachment ->
+                    attachment.sourceUriString()?.let { updated[it] = attachment }
                 }
             }
-            current.copy(attachments = merged)
         }
-        handleValidationErrors()
+        syncAttachments()
     }
 
     /**
-     * Removes a selected attachment from the list, when the user taps on the cancel/delete button.
+     * Removes [attachment] from the staged list.
      *
-     * This will update the UI to remove it from the composer component.
+     * The attachment is identified by [EXTRA_SOURCE_URI] in its [Attachment.extraData].
+     * Has no effect if the attachment is not staged.
      *
      * @param attachment The attachment to remove.
      */
-    public fun removeSelectedAttachment(attachment: Attachment) {
-        state.update { it.copy(attachments = it.attachments - attachment) }
-        handleValidationErrors()
+    public fun removeAttachment(attachment: Attachment) {
+        val key = attachment.sourceUriString() ?: return
+        _selectedAttachments.update { LinkedHashMap(it).also { map -> map.remove(key) } }
+        syncAttachments()
+    }
+
+    /**
+     * Removes all staged attachments whose URI string key is contained in [uris].
+     *
+     * @param uris The URI string keys to remove.
+     */
+    public fun removeAttachmentsByUris(uris: Set<String>) {
+        if (uris.isEmpty()) return
+        _selectedAttachments.update { current -> LinkedHashMap(current).also { it.keys.removeAll(uris) } }
+        syncAttachments()
+    }
+
+    /**
+     * Removes all staged attachments and updates the composer state.
+     */
+    public fun clearAttachments() {
+        _selectedAttachments.value = linkedMapOf()
+        syncAttachments()
     }
 
     /**
@@ -662,7 +683,7 @@ public class MessageComposerController(
         dismissMessageActions()
         scope.launch { clearDraftMessage(messageMode.value) }
         messageInput.value = MessageInput()
-        state.update { it.copy(attachments = emptyList()) }
+        clearAttachments()
         clearActiveCommand()
         validationErrors.value = emptyList()
         if (!isInThread) {
@@ -855,6 +876,11 @@ public class MessageComposerController(
             saveDraftMessage(messageMode.value)
             scope.cancel()
         }
+    }
+
+    private fun syncAttachments() {
+        state.update { it.copy(attachments = _selectedAttachments.value.values.toList()) }
+        handleValidationErrors()
     }
 
     /**
@@ -1179,3 +1205,5 @@ public class MessageComposerController(
         linkPreviews.value = emptyList()
     }
 }
+
+private fun Attachment.sourceUriString(): String? = extraData[EXTRA_SOURCE_URI]?.toString()
