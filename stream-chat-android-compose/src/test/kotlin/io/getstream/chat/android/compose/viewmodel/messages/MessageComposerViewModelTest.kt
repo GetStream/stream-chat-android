@@ -180,6 +180,47 @@ internal class MessageComposerViewModelTest {
         }
 
     @Test
+    fun `Given staged attachments When removeAttachmentsByUris is called Then matching attachments are removed from state`() =
+        runTest {
+            val viewModel = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .get()
+
+            viewModel.addAttachments(
+                listOf(
+                    Attachment(extraData = mapOf(EXTRA_SOURCE_URI to "content://media/1")),
+                    Attachment(extraData = mapOf(EXTRA_SOURCE_URI to "content://media/2")),
+                    Attachment(extraData = mapOf(EXTRA_SOURCE_URI to "content://media/3")),
+                ),
+            )
+            viewModel.removeAttachmentsByUris(setOf("content://media/1", "content://media/3"))
+
+            viewModel.messageComposerState.value.attachments.size `should be equal to` 1
+        }
+
+    @Test
+    fun `Given staged attachments When clearAttachments is called Then all attachments are removed from state`() =
+        runTest {
+            val viewModel = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .get()
+
+            viewModel.addAttachments(
+                listOf(
+                    Attachment(extraData = mapOf(EXTRA_SOURCE_URI to "content://media/1")),
+                    Attachment(extraData = mapOf(EXTRA_SOURCE_URI to "content://media/2")),
+                ),
+            )
+            viewModel.clearAttachments()
+
+            viewModel.messageComposerState.value.attachments.size `should be equal to` 0
+        }
+
+    @Test
     fun `Given message composer When checking the also send to channel checkbox Should update the checkbox state`() =
         runTest {
             val viewModel = Fixture()
