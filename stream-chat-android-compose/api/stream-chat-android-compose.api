@@ -4382,6 +4382,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/Attachme
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/ui/common/helper/internal/AttachmentStorageHelper;Lkotlinx/coroutines/flow/StateFlow;Landroidx/lifecycle/SavedStateHandle;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/ui/common/helper/internal/AttachmentStorageHelper;Lkotlinx/coroutines/flow/StateFlow;Landroidx/lifecycle/SavedStateHandle;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun addExternalAttachments (Ljava/util/List;)V
 	public final fun clearSelection ()V
 	public final fun deselectAttachment (Lio/getstream/chat/android/models/Attachment;)V
 	public final fun getAttachments ()Ljava/util/List;
@@ -4392,6 +4393,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/Attachme
 	public final fun getSubmittedAttachments ()Lkotlinx/coroutines/flow/Flow;
 	public final fun isPickerVisible ()Z
 	public final fun loadAttachments ()V
+	public final fun removeExternalAttachment (Lio/getstream/chat/android/models/Attachment;)V
 	public final fun resolveAndSubmitUris (Ljava/util/List;)V
 	public final fun setPickerMode (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentPickerMode;)V
 	public final fun setPickerVisible (Z)V

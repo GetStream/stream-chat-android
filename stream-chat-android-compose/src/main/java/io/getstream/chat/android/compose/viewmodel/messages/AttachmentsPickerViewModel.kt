@@ -17,6 +17,8 @@
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import android.net.Uri
+import android.os.Build
+import android.os.Bundle
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -46,6 +48,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -53,17 +56,27 @@ import kotlinx.coroutines.withContext
  * ViewModel for the attachment picker. Manages available media and file attachments,
  * user selection state, and conversion to uploadable [Attachment] objects.
  *
+ * This ViewModel is the single source of truth for all attachments in the current composer
+ * session. The composer's attachment list is always derived from [getSelectedAttachments],
+ * which merges externally-added attachments (camera, system picker) with grid selections.
+ *
  * Media and file items are stored in separate lists so they survive tab switches.
  * Selection is centralised in a single [Set] of [Uri]s, so items that appear in both
  * tabs (e.g. an image visible in the gallery and the files list) share selection state
  * automatically — no explicit cross-tab synchronisation is needed.
  *
- * Picker visibility and active tab survive Activity destruction (e.g. "Don't keep
- * activities") so that pending system picker results are delivered on recreation.
+ * The following state survives Activity destruction (e.g. "Don't keep activities"):
+ * - Picker visibility and active tab — so pending system picker results are delivered on recreation.
+ * - URI-based grid selection — so gallery/file picks are not lost when the camera is launched.
+ * - Externally-added attachments (camera, system picker) — so captures are not lost across
+ *   multiple camera sessions.
+ *
+ * All persisted state is cleared by [clearSelection], which must be called when the associated
+ * attachments are consumed (e.g. message sent, poll created, command selected).
  *
  * @param storageHelper Provides device storage queries and attachment conversion.
  * @param channelState Provides the current [ChannelState] for channel-specific configuration.
- * @param savedStateHandle Persists picker visibility and mode across Activity recreation.
+ * @param savedStateHandle Persists picker state across Activity recreation.
  */
 public class AttachmentsPickerViewModel(
     private val storageHelper: AttachmentStorageHelper,
@@ -92,10 +105,26 @@ public class AttachmentsPickerViewModel(
     )
     private val _mediaItems = MutableStateFlow<List<AttachmentMetaData>>(emptyList())
     private val _fileItems = MutableStateFlow<List<AttachmentMetaData>>(emptyList())
-    private val _selectedUris = MutableStateFlow<Set<Uri>>(linkedSetOf())
+    private val _selectedUris = MutableStateFlow<Set<Uri>>(
+        savedStateHandle.get<ArrayList<Uri>>(KeySelectedUris)?.let(::LinkedHashSet) ?: linkedSetOf(),
+    )
+    private val _selectedGridAttachments = MutableStateFlow<Map<Uri, Attachment>>(
+        savedStateHandle.get<Bundle>(KeySelectedGridAttachments)
+            ?.getBundleList(KeySelectedGridAttachmentItems)
+            ?.mapNotNull(Bundle::toUriAttachmentPair)
+            ?.toMap()
+            ?: emptyMap(),
+    )
     private val _isPickerVisible = MutableStateFlow(
         savedStateHandle[KeyPickerVisible] ?: false,
     )
+    private val _externalAttachments = MutableStateFlow<List<Attachment>>(
+        savedStateHandle.get<Bundle>(KeyExternalAttachments)
+            ?.getBundleList(KeyExternalAttachmentItems)
+            ?.mapNotNull(Bundle::toAttachment)
+            ?: emptyList(),
+    )
+    private val _submittedAttachments = kotlinx.coroutines.channels.Channel<SubmittedAttachments>(capacity = UNLIMITED)
 
     /**
      * The active picker tab.
@@ -124,8 +153,6 @@ public class AttachmentsPickerViewModel(
         }
         items.map { meta -> AttachmentPickerItemState(meta, isSelected = meta.uri in selected) }
     }.asState(viewModelScope, emptyList())
-
-    private val _submittedAttachments = kotlinx.coroutines.channels.Channel<SubmittedAttachments>(capacity = UNLIMITED)
 
     /**
      * One-shot events for attachments resolved from system picker URIs.
@@ -184,11 +211,21 @@ public class AttachmentsPickerViewModel(
 
         if (!allowMultipleSelection && currentlySelected) return
 
-        _selectedUris.value = if (currentlySelected) {
-            _selectedUris.value - uri
+        if (currentlySelected) {
+            _selectedUris.value = _selectedUris.value - uri
+            _selectedGridAttachments.update { it - uri }
         } else {
-            if (allowMultipleSelection) _selectedUris.value + uri else linkedSetOf(uri)
+            val attachment = storageHelper.toAttachments(listOf(item.attachmentMetaData)).firstOrNull()
+            if (allowMultipleSelection) {
+                _selectedUris.value = _selectedUris.value + uri
+                if (attachment != null) _selectedGridAttachments.update { it + (uri to attachment) }
+            } else {
+                _selectedUris.value = linkedSetOf(uri)
+                _selectedGridAttachments.value = if (attachment != null) mapOf(uri to attachment) else emptyMap()
+            }
         }
+        savedStateHandle[KeySelectedUris] = ArrayList(_selectedUris.value)
+        persistSelectedGridAttachments(_selectedGridAttachments.value)
     }
 
     /**
@@ -201,22 +238,50 @@ public class AttachmentsPickerViewModel(
         val sourceUri = (attachment.extraData[EXTRA_SOURCE_URI] as? String)
             ?.let(Uri::parse) ?: return
         _selectedUris.value -= sourceUri
+        _selectedGridAttachments.update { it - sourceUri }
+        savedStateHandle[KeySelectedUris] = ArrayList(_selectedUris.value)
+        persistSelectedGridAttachments(_selectedGridAttachments.value)
     }
 
     /**
      * Returns lightweight preview [Attachment] objects for all selected items across both tabs,
-     * ordered by the sequence in which the user selected them.
+     * ordered by the sequence in which the user selected them, preceded by any externally-added
+     * attachments (e.g. from the camera or system file picker).
      *
      * Items that appear in both tabs are deduplicated by URI.
      * No file copying is performed; file resolution is deferred to send time
      * via [AttachmentStorageHelper.resolveAttachmentFiles].
      */
     public fun getSelectedAttachments(): List<Attachment> {
-        val allItemsByUri = (_mediaItems.value + _fileItems.value)
-            .mapNotNull { meta -> meta.uri?.let { it to meta } }
-            .toMap()
-        val orderedMeta = _selectedUris.value.mapNotNull(allItemsByUri::get)
-        return storageHelper.toAttachments(orderedMeta)
+        val orderedGridAttachments = _selectedUris.value.mapNotNull { _selectedGridAttachments.value[it] }
+        return _externalAttachments.value + orderedGridAttachments
+    }
+
+    /**
+     * Adds attachments from one-shot sources (e.g. camera capture, system file picker) to the
+     * picker's selection state so that they are included in [getSelectedAttachments] and survive
+     * picker close/reopen within the same composer session.
+     *
+     * These attachments are cleared by [clearSelection] (e.g. after a message is sent).
+     *
+     * @param attachments The attachments to add.
+     */
+    public fun addExternalAttachments(attachments: List<Attachment>) {
+        _externalAttachments.update { it + attachments }
+        persistExternalAttachments(_externalAttachments.value)
+    }
+
+    /**
+     * Removes an externally-added attachment from the picker's selection state.
+     *
+     * Call this when the user removes an attachment that was added via [addExternalAttachments]
+     * (e.g. from the camera) from the message composer, so the picker state stays consistent.
+     *
+     * @param attachment The attachment to remove.
+     */
+    public fun removeExternalAttachment(attachment: Attachment) {
+        _externalAttachments.update { it - attachment }
+        persistExternalAttachments(_externalAttachments.value)
     }
 
     /**
@@ -277,11 +342,30 @@ public class AttachmentsPickerViewModel(
     }
 
     /**
-     * Removes all selected URIs. Call this when the associated attachments are consumed
-     * (e.g. message sent, poll created) so the picker starts fresh on next open.
+     * Removes all selected URIs and externally-added attachments. Call this when the associated
+     * attachments are consumed (e.g. message sent, poll created) so the picker starts fresh on
+     * next open.
      */
     public fun clearSelection() {
         _selectedUris.value = linkedSetOf()
+        _selectedGridAttachments.value = emptyMap()
+        _externalAttachments.value = emptyList()
+        savedStateHandle.remove<Bundle>(KeyExternalAttachments)
+        savedStateHandle.remove<Bundle>(KeySelectedGridAttachments)
+        savedStateHandle.remove<ArrayList<Uri>>(KeySelectedUris)
+    }
+
+    private fun persistExternalAttachments(attachments: List<Attachment>) {
+        savedStateHandle[KeyExternalAttachments] = Bundle().apply {
+            putParcelableArrayList(KeyExternalAttachmentItems, ArrayList(attachments.map(Attachment::toBundle)))
+        }
+    }
+
+    private fun persistSelectedGridAttachments(attachments: Map<Uri, Attachment>) {
+        savedStateHandle[KeySelectedGridAttachments] = Bundle().apply {
+            val bundleList = ArrayList(attachments.values.map(Attachment::toBundle))
+            putParcelableArrayList(KeySelectedGridAttachmentItems, bundleList)
+        }
     }
 
     private fun clearCachedData() {
@@ -294,6 +378,50 @@ public class AttachmentsPickerViewModel(
 
 private const val KeyPickerVisible = "stream_picker_visible"
 private const val KeyPickerMode = "stream_picker_mode"
+private const val KeySelectedUris = "stream_selected_uris"
+private const val KeyExternalAttachments = "stream_external_attachments"
+private const val KeyExternalAttachmentItems = "stream_external_attachment_items"
+private const val KeySelectedGridAttachments = "stream_selected_grid_attachments"
+private const val KeySelectedGridAttachmentItems = "stream_selected_grid_attachment_items"
+private const val KeyBundleUri = "uri"
+private const val KeyBundleType = "type"
+private const val KeyBundleName = "name"
+private const val KeyBundleFileSize = "fileSize"
+private const val KeyBundleMimeType = "mimeType"
+private const val AttachmentBundleSize = 5
+
+private fun Attachment.toBundle(): Bundle = Bundle(AttachmentBundleSize).apply {
+    (extraData[EXTRA_SOURCE_URI] as? String)?.let { putString(KeyBundleUri, it) }
+    type?.let { putString(KeyBundleType, it) }
+    putString(KeyBundleName, name)
+    putInt(KeyBundleFileSize, fileSize)
+    mimeType?.let { putString(KeyBundleMimeType, it) }
+}
+
+private fun Bundle.toAttachment(): Attachment? {
+    val uri = getString(KeyBundleUri) ?: return null
+    return Attachment(
+        type = getString(KeyBundleType),
+        name = getString(KeyBundleName) ?: "",
+        fileSize = getInt(KeyBundleFileSize),
+        mimeType = getString(KeyBundleMimeType),
+        extraData = mapOf(EXTRA_SOURCE_URI to uri),
+    )
+}
+
+private fun Bundle.toUriAttachmentPair(): Pair<Uri, Attachment>? {
+    val attachment = toAttachment() ?: return null
+    val uriString = attachment.extraData[EXTRA_SOURCE_URI] as? String ?: return null
+    return Uri.parse(uriString) to attachment
+}
+
+@Suppress("DEPRECATION")
+private fun Bundle.getBundleList(key: String): List<Bundle> =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        getParcelableArrayList(key, Bundle::class.java) ?: emptyList()
+    } else {
+        getParcelableArrayList<Bundle>(key) ?: emptyList()
+    }
 
 /**
  * Event emitted when system picker URIs have been resolved into [Attachment]s.

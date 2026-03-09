@@ -43,7 +43,7 @@ public interface AttachmentPickerMode
  * Defaults to [MediaType.ImagesAndVideos].
  */
 public data class GalleryPickerMode(
-    val allowMultipleSelection: Boolean = true,
+    val allowMultipleSelection: Boolean = false,
     val mediaType: MediaType = MediaType.ImagesAndVideos,
 ) : AttachmentPickerMode
 
@@ -57,7 +57,7 @@ public data class GalleryPickerMode(
  * only single selection is allowed. Defaults to `true`.
  */
 public data class FilePickerMode(
-    val allowMultipleSelection: Boolean = true,
+    val allowMultipleSelection: Boolean = false,
 ) : AttachmentPickerMode
 
 /**
