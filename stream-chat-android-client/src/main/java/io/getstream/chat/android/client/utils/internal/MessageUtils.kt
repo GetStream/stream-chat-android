@@ -24,10 +24,10 @@ import io.getstream.chat.android.models.MessageType
 /**
  * Updates the type of the [Message] based on its content.
  *
- * If the message contains a command or has attachments to upload, the type will be [MessageType.EPHEMERAL].
+ * If the message has attachments to upload, the type will be [MessageType.EPHEMERAL] (local-only - after the
+ * attachments are uploaded, the type is changed to [MessageType.REGULAR]).
  * If the message is a system message, the type will be [MessageType.SYSTEM].
- * Otherwise, the type will be [MessageType.REGULAR], as we cannot send messages which are not regular, ephemeral, or
- * system.
+ * Otherwise, the type will be [MessageType.REGULAR], as we cannot send messages which are not regular or system.
  *
  * @param message The message to update.
  */
