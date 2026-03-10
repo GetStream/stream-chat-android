@@ -3451,7 +3451,7 @@ public interface ChatComponentFactory {
                 .padding(horizontal = 12.dp, vertical = 8.dp),
             text = label,
             style = ChatTheme.typography.bodyEmphasis,
-            color = ChatTheme.colors.textOnDark,
+            color = ChatTheme.colors.textInverse,
         )
     }
 
