@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.components
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
@@ -53,12 +54,13 @@ public fun LoadingIndicator(modifier: Modifier = Modifier) {
 @Composable
 public fun LoadingIndicator(progress: () -> Float, modifier: Modifier = Modifier) {
     val colors = ChatTheme.colors
+    val animatedProgress = animateFloatAsState(targetValue = progress(), label = "progress")
     Box(
         modifier,
         contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator(
-            progress = progress,
+            progress = animatedProgress::value,
             strokeWidth = 2.dp,
             trackColor = colors.borderCoreDefault,
             color = colors.accentPrimary,
