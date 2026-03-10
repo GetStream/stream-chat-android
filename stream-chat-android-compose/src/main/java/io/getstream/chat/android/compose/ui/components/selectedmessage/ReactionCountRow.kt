@@ -44,22 +44,21 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.clickable
-import io.getstream.chat.android.models.Reaction
 
 /**
  * Horizontally scrollable row of reaction chips with counts.
  *
  * @param reactionGroups The list of reaction types with their emoji and count.
- * @param ownReactions The current user's reactions on this message (used to determine selected state).
- * @param onReactionOptionSelected Called with the reaction type when a chip is tapped.
+ * @param selectedReactionType The currently selected reaction type for filtering, or null if no filter is active.
+ * @param onReactionSelected Called with the reaction type when a chip is tapped (for filtering).
  * @param onAddReactionClick Called when the add-reaction chip is tapped, or null to hide it.
  * @param modifier Modifier for styling.
  */
 @Composable
 internal fun ReactionCountRow(
     reactionGroups: List<MessageReactionItemState>,
-    ownReactions: List<Reaction>,
-    onReactionOptionSelected: (String) -> Unit,
+    selectedReactionType: String?,
+    onReactionSelected: (String) -> Unit,
     onAddReactionClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
@@ -88,8 +87,8 @@ internal fun ReactionCountRow(
 
         reactionGroups.forEach { reaction ->
             ReactionChip(
-                checked = ownReactions.any { it.type == reaction.type },
-                onClick = { onReactionOptionSelected(reaction.type) },
+                checked = selectedReactionType == reaction.type,
+                onClick = { onReactionSelected(reaction.type) },
                 count = reaction.count,
                 icon = {
                     ChatTheme.componentFactory.ReactionIcon(
@@ -141,8 +140,8 @@ private fun ReactionCountRowPreview() {
     ChatTheme {
         ReactionCountRow(
             reactionGroups = PreviewReactionData.manyReactions(),
-            ownReactions = listOf(Reaction(type = "love")),
-            onReactionOptionSelected = {},
+            selectedReactionType = "love",
+            onReactionSelected = {},
             onAddReactionClick = {},
         )
     }

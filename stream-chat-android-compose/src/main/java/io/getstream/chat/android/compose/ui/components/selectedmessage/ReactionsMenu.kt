@@ -31,7 +31,10 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalResources
@@ -140,10 +143,15 @@ internal fun ReactionsMenuContent(
         )
     }
 
+    var selectedReactionType by remember { mutableStateOf<String?>(null) }
+    val filteredUserReactions = remember(userReactions, selectedReactionType) {
+        selectedReactionType?.let { type -> userReactions.filter { it.type == type } } ?: userReactions
+    }
+
     val reactionCountText = LocalResources.current.getQuantityString(
         R.plurals.stream_compose_message_reactions,
-        userReactions.size,
-        userReactions.size,
+        filteredUserReactions.size,
+        filteredUserReactions.size,
     )
 
     Column(
@@ -163,22 +171,35 @@ internal fun ReactionsMenuContent(
 
         ReactionCountRow(
             reactionGroups = reactionGroups,
-            ownReactions = message.ownReactions,
-            onReactionOptionSelected = onReactionOptionSelected,
+            selectedReactionType = selectedReactionType,
+            onReactionSelected = { type ->
+                selectedReactionType = if (selectedReactionType == type) null else type
+            },
             onAddReactionClick = onAddReactionClick,
         )
 
-        userReactions.forEach { item ->
-            UserReactionRow(
-                item = item,
-                onClick = if (item.isMine) {
-                    { onReactionOptionSelected(item.type) }
-                } else {
-                    null
-                },
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
+        UserReactionsList(
+            userReactions = filteredUserReactions,
+            onReactionOptionSelected = onReactionOptionSelected,
+        )
+    }
+}
+
+@Composable
+private fun UserReactionsList(
+    userReactions: List<UserReactionItemState>,
+    onReactionOptionSelected: (String) -> Unit,
+) {
+    userReactions.forEach { item ->
+        UserReactionRow(
+            item = item,
+            onClick = if (item.isMine) {
+                { onReactionOptionSelected(item.type) }
+            } else {
+                null
+            },
+        )
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
