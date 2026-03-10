@@ -25,20 +25,20 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -47,26 +47,33 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.components.button.StreamButton
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
+import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.clickable
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Answer
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.VotingVisibility
+import io.getstream.chat.android.previewdata.PreviewPollData
+import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
+import java.util.Date
 
 @Suppress("LongMethod", "MagicNumber")
 @Composable
@@ -85,11 +92,11 @@ public fun PollAnswersDialog(
             targetState = true
         }
     }
-    val showAddAnswerDialog = remember { mutableStateOf(false) }
-    if (showAddAnswerDialog.value) {
+    var showAddAnswerDialog by remember { mutableStateOf(false) }
+    if (showAddAnswerDialog) {
         AddAnswerDialog(
             initMessage = currentUserAnswer?.text ?: "",
-            onDismiss = { showAddAnswerDialog.value = false },
+            onDismiss = { showAddAnswerDialog = false },
             onNewAnswer = { newAnswer ->
                 listViewModel.castAnswer(selectedPoll.message, selectedPoll.poll, newAnswer)
             },
@@ -99,6 +106,8 @@ public fun PollAnswersDialog(
         alignment = Alignment.BottomCenter,
         onDismissRequest = onDismissRequest,
     ) {
+        BackHandler(onBack = onBackPressed)
+
         @Suppress("MagicNumber")
         AnimatedVisibility(
             visibleState = state,
@@ -110,102 +119,103 @@ public fun PollAnswersDialog(
                 slideOutVertically(animationSpec = tween(400)),
             label = "poll answers dialog",
         ) {
-            val poll = selectedPoll.poll
+            Content(
+                poll = selectedPoll.poll,
+                currentUserAnswer = currentUserAnswer,
+                showAnonymousAvatar = showAnonymousAvatar,
+                onBackPressed = onBackPressed,
+                onAddOrEditClick = { showAddAnswerDialog = true },
+            )
+        }
+    }
+}
 
-            BackHandler { onBackPressed.invoke() }
-
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(ChatTheme.colors.backgroundCoreApp),
-            ) {
-                item {
-                    PollDialogHeader(
-                        title = stringResource(id = R.string.stream_compose_poll_answers),
-                        onBackPressed = onBackPressed,
-                    )
+@Composable
+private fun Content(
+    poll: Poll,
+    currentUserAnswer: Answer? = null,
+    showAnonymousAvatar: Boolean = false,
+    onBackPressed: () -> Unit = {},
+    onAddOrEditClick: () -> Unit = {},
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ChatTheme.colors.backgroundCoreApp),
+    ) {
+        PollDialogHeader(
+            title = stringResource(id = R.string.stream_compose_poll_answers),
+            onBackPressed = onBackPressed,
+            trailingContent = {
+                if (!poll.closed && currentUserAnswer == null) {
+                    StreamButton(
+                        onClick = onAddOrEditClick,
+                        style = StreamButtonStyleDefaults.primarySolid,
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.stream_compose_ic_edit),
+                            contentDescription = stringResource(id = R.string.stream_compose_add_answer),
+                            modifier = Modifier.size(20.dp),
+                        )
+                    }
                 }
+            },
+        )
 
-                items(
-                    items = poll.answers,
-                    key = { answer -> answer.id },
-                ) { answer ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = StreamTokens.spacingMd)
+                .padding(top = StreamTokens.spacing2xl),
+            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingMd),
+        ) {
+            val showAvatar = (poll.votingVisibility == VotingVisibility.PUBLIC) || showAnonymousAvatar
+
+            if (currentUserAnswer != null) {
+                PollAnswersItem(
+                    answer = currentUserAnswer,
+                    showAvatar = showAvatar,
+                    showUpdateButton = !poll.closed,
+                    onUpdateClick = onAddOrEditClick,
+                )
+            }
+            poll.answers.forEach { answer ->
+                if (answer.id != currentUserAnswer?.id) {
                     PollAnswersItem(
                         answer = answer,
-                        showAvatar = (poll.votingVisibility == VotingVisibility.PUBLIC) || showAnonymousAvatar,
+                        showAvatar = showAvatar,
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-
-                item { Spacer(modifier = Modifier.height(16.dp)) }
-
-                if (!poll.closed) {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
-                                .clip(shape = ButtonDefaults.shape)
-                                .clickable { showAddAnswerDialog.value = true }
-                                .background(color = ChatTheme.colors.backgroundCoreSurface),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 11.dp),
-                                text = stringResource(
-                                    id = when (currentUserAnswer == null) {
-                                        true -> R.string.stream_compose_add_answer
-                                        false -> R.string.stream_compose_edit_answer
-                                    },
-                                ),
-                                textAlign = TextAlign.Center,
-                                color = ChatTheme.colors.accentPrimary,
-                                fontSize = 16.sp,
-                            )
-                        }
-                    }
                 }
             }
         }
     }
 }
 
-@Suppress("LongMethod")
 @Composable
 internal fun PollAnswersItem(
     answer: Answer,
     showAvatar: Boolean,
+    showUpdateButton: Boolean = false,
+    onUpdateClick: () -> Unit = {},
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .background(
-                color = ChatTheme.colors.backgroundCoreSurface,
-                shape = RoundedCornerShape(
-                    topStart = 12.dp,
-                    topEnd = 12.dp,
-                    bottomStart = 12.dp,
-                    bottomEnd = 12.dp,
-                ),
-            )
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+    val colors = ChatTheme.colors
+    val typography = ChatTheme.typography
+
+    PollSection(
+        contentPadding = PaddingValues(StreamTokens.spacingMd),
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                modifier = Modifier.weight(1f),
-                text = answer.text,
-                color = ChatTheme.colors.textPrimary,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-            )
-        }
+        Text(
+            text = answer.text,
+            color = colors.textPrimary,
+            style = typography.bodyDefault,
+        )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+        ) {
             val user = answer.user?.takeIf { showAvatar }
             if (user != null) {
                 ChatTheme.componentFactory.UserAvatar(
@@ -216,21 +226,32 @@ internal fun PollAnswersItem(
                 )
 
                 Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 4.dp)
-                        .weight(1f),
+                    modifier = Modifier.weight(1f),
                     text = user.name,
-                    color = ChatTheme.colors.textPrimary,
-                    fontSize = 14.sp,
+                    color = colors.chatTextUsername,
+                    style = typography.captionDefault,
                 )
             }
 
             Text(
-                modifier = Modifier.padding(bottom = 2.dp),
                 text = ChatTheme.dateFormatter.formatDate(answer.createdAt),
-                color = ChatTheme.colors.textSecondary,
-                fontSize = 14.sp,
+                color = colors.textTertiary,
+                style = typography.captionDefault,
+            )
+        }
+
+        if (showUpdateButton) {
+            HorizontalDivider(
+                modifier = Modifier.padding(top = StreamTokens.spacingXs),
+                color = colors.borderCoreDefault,
+            )
+
+            StreamTextButton(
+                onClick = onUpdateClick,
+                text = stringResource(id = R.string.stream_compose_edit_answer),
+                style = StreamButtonStyleDefaults.secondaryGhost,
+                size = StreamButtonSize.Small,
+                modifier = Modifier.fillMaxWidth(),
             )
         }
     }
@@ -299,4 +320,41 @@ internal fun AddAnswerDialog(
         },
         containerColor = ChatTheme.colors.backgroundElevationElevation1,
     )
+}
+
+@Preview
+@Composable
+private fun PollAnswersDialogPreview() {
+    ChatTheme {
+        val now = Date()
+        val pollWithAnswers = PreviewPollData.poll1.copy(
+            answers = listOf(
+                Answer(
+                    id = "preview1",
+                    pollId = "",
+                    text = "I think we should go with option A, it makes the most sense.",
+                    createdAt = now,
+                    updatedAt = now,
+                    user = PreviewUserData.user1,
+                ),
+                Answer(
+                    id = "preview2",
+                    pollId = "",
+                    text = "This is my own comment on the poll.",
+                    createdAt = now,
+                    updatedAt = now,
+                    user = PreviewUserData.user2,
+                ),
+                Answer(
+                    id = "preview3",
+                    pollId = "",
+                    text = "Option B is clearly better!",
+                    createdAt = now,
+                    updatedAt = now,
+                    user = PreviewUserData.user3,
+                ),
+            ),
+        )
+        Content(poll = pollWithAnswers)
+    }
 }

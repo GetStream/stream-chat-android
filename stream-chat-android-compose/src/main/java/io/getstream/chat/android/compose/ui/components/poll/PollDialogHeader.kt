@@ -38,6 +38,7 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
 public fun PollDialogHeader(
     title: String,
     onBackPressed: () -> Unit,
+    trailingContent: @Composable () -> Unit = {},
 ) {
     Row(
         modifier = Modifier
@@ -51,12 +52,15 @@ public fun PollDialogHeader(
         )
 
         Text(
+            modifier = Modifier.weight(1f),
             text = title,
             style = ChatTheme.typography.headingMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             color = ChatTheme.colors.textPrimary,
         )
+
+        trailingContent()
     }
 }
 
