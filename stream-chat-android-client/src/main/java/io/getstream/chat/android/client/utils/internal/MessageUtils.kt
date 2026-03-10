@@ -20,9 +20,6 @@ import io.getstream.chat.android.client.extensions.internal.hasPendingAttachment
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
-import java.util.regex.Pattern
-
-private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
 
 /**
  * Updates the type of the [Message] based on its content.
@@ -39,7 +36,7 @@ public fun getMessageType(message: Message): String {
     val hasAttachments = message.attachments.isNotEmpty()
     val hasAttachmentsToUpload = message.hasPendingAttachments()
 
-    return if (COMMAND_PATTERN.matcher(message.text).find() || (hasAttachments && hasAttachmentsToUpload)) {
+    return if (hasAttachments && hasAttachmentsToUpload) {
         MessageType.EPHEMERAL
     } else if (message.type == MessageType.SYSTEM) {
         MessageType.SYSTEM
