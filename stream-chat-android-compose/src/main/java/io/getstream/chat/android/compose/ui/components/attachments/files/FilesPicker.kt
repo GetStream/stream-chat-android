@@ -21,14 +21,12 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -40,6 +38,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
+import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
+import io.getstream.chat.android.compose.ui.components.common.RadioButton
 import io.getstream.chat.android.compose.ui.components.common.RadioCheck
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -83,28 +83,28 @@ public fun FilesPicker(
     }
 
     Column(modifier = modifier) {
-        Row(Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .testTag("Stream_FindFilesButton")
+                .fillMaxWidth()
+                .clickable { fileSelectContract.launch(allowMultipleSelection) }
+                .padding(StreamTokens.spacingSm),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
             Text(
-                modifier = Modifier.padding(StreamTokens.spacingMd),
                 text = stringResource(id = R.string.stream_compose_recent_files),
-                style = ChatTheme.typography.bodyEmphasis,
+                style = ChatTheme.typography.bodyDefault,
                 color = ChatTheme.colors.textPrimary,
             )
-
-            Spacer(modifier = Modifier.weight(6f))
-
-            IconButton(
-                content = {
-                    Icon(
-                        modifier = Modifier.testTag("Stream_FindFilesButton"),
-                        painter = painterResource(id = R.drawable.stream_compose_ic_more_files),
-                        contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
-                        tint = ChatTheme.colors.accentPrimary,
-                    )
-                },
-                onClick = { fileSelectContract.launch(allowMultipleSelection) },
+            Icon(
+                painter = painterResource(id = R.drawable.stream_compose_ic_chevron_right),
+                contentDescription = null,
+                tint = ChatTheme.colors.textSecondary,
             )
         }
+
+        StreamHorizontalDivider()
 
         LazyColumn(modifier) {
             items(files) { fileItem -> itemContent(fileItem) }
@@ -142,7 +142,7 @@ internal fun DefaultFilesPickerItem(
         Column(
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
         ) {
             Text(
                 text = fileItem.attachmentMetaData.title ?: "",
@@ -156,10 +156,17 @@ internal fun DefaultFilesPickerItem(
             )
         }
 
-        RadioCheck(
-            checked = fileItem.isSelected,
-            onCheckedChange = null,
-        )
+        if (allowMultipleSelection) {
+            RadioCheck(
+                checked = fileItem.isSelected,
+                onCheckedChange = null,
+            )
+        } else {
+            RadioButton(
+                checked = fileItem.isSelected,
+                onCheckedChange = null,
+            )
+        }
     }
 }
 
