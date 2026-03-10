@@ -17,6 +17,7 @@
 package io.getstream.chat.android.state.plugin.logic.querychannels.internal
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
@@ -26,6 +27,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.test.TestCoroutineRule
+import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -65,6 +67,7 @@ internal class QueryChannelsLogicTest {
 
         whenever(queryChannelsStateLogic.getState()) doReturn queryChannelsState
         whenever(queryChannelsState.recoveryNeeded) doReturn MutableStateFlow(false)
+        whenever(queryChannelsState.currentRequest) doReturn MutableStateFlow(null)
         whenever(queryChannelsStateLogic.getQuerySpecs()) doReturn queryChannelsSpec
 
         logic = QueryChannelsLogic(
@@ -225,4 +228,59 @@ internal class QueryChannelsLogicTest {
         verify(queryChannelsStateLogic).addChannelsState(cachedChannels)
         verify(queryChannelsDatabaseLogic).insertQueryChannels(queryChannelsSpec)
     }
+
+    // region queryFirstPage
+
+    @Test
+    fun `queryFirstPage uses null messageLimit and memberLimit when no prior request exists`() = runTest {
+        // Given - currentRequest is null (default from setUp)
+        whenever(client.queryChannelsInternal(any()))
+            .thenReturn(emptyList<Channel>().asCall())
+
+        // When
+        logic.queryFirstPage()
+
+        // Then
+        val expectedRequest = QueryChannelsRequest(
+            filter = filter,
+            offset = 0,
+            limit = 30,
+            querySort = sort,
+            messageLimit = null,
+            memberLimit = null,
+        )
+        verify(client).queryChannelsInternal(expectedRequest)
+    }
+
+    @Test
+    fun `queryFirstPage uses messageLimit and memberLimit from prior request`() = runTest {
+        // Given
+        val priorRequest = QueryChannelsRequest(
+            filter = filter,
+            offset = 0,
+            limit = 30,
+            querySort = sort,
+            messageLimit = 5,
+            memberLimit = 50,
+        )
+        whenever(queryChannelsState.currentRequest) doReturn MutableStateFlow(priorRequest)
+        whenever(client.queryChannelsInternal(any()))
+            .thenReturn(emptyList<Channel>().asCall())
+
+        // When
+        logic.queryFirstPage()
+
+        // Then
+        val expectedRequest = QueryChannelsRequest(
+            filter = filter,
+            offset = 0,
+            limit = 30,
+            querySort = sort,
+            messageLimit = 5,
+            memberLimit = 50,
+        )
+        verify(client).queryChannelsInternal(expectedRequest)
+    }
+
+    // endregion
 }
