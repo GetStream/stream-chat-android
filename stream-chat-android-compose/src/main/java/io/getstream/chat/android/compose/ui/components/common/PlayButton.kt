@@ -52,7 +52,7 @@ internal fun PlayButton(
     Box(
         modifier = modifier
             .size(size.componentSize)
-            .background(colors.controlPlayControlBg, CircleShape)
+            .background(colors.controlPlayButtonBg, CircleShape)
             .ifNotNull(contentDescription) { description ->
                 semantics { this.contentDescription = description }
             },
@@ -62,7 +62,7 @@ internal fun PlayButton(
             modifier = Modifier.Companion.size(size.iconSize),
             painter = painterResource(id = R.drawable.stream_compose_ic_play),
             contentDescription = null,
-            tint = colors.controlPlayControlIcon,
+            tint = colors.controlPlayButtonIcon,
         )
     }
 }
