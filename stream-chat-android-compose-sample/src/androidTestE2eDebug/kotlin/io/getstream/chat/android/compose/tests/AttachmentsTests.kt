@@ -39,7 +39,7 @@ class AttachmentsTests : StreamTestCase() {
             userRobot.login().openChannel()
         }
         step("WHEN user attaches an image") {
-            userRobot.uploadAttachment(type = AttachmentType.IMAGE, send = false)
+            userRobot.attachFile(type = AttachmentType.IMAGE)
         }
         step("THEN image is displayed in preview") {
             userRobot.assertMediaAttachmentInPreview(isDisplayed = true)
@@ -59,7 +59,7 @@ class AttachmentsTests : StreamTestCase() {
             userRobot.login().openChannel()
         }
         step("WHEN user attaches multiple images") {
-            userRobot.uploadAttachment(type = AttachmentType.IMAGE, multiple = true, send = false)
+            userRobot.attachFile(type = AttachmentType.IMAGE, multiple = true)
         }
         step("THEN images are displayed in preview") {
             userRobot.assertMediaAttachmentInPreview(isDisplayed = true, count = 2)
@@ -79,7 +79,10 @@ class AttachmentsTests : StreamTestCase() {
             userRobot.login().openChannel()
         }
         step("WHEN user sends an image") {
-            userRobot.uploadAttachment(type = AttachmentType.IMAGE)
+            userRobot.attachFile(type = AttachmentType.IMAGE)
+        }
+        step("AND user sends the image") {
+            userRobot.tapOnSendButton()
         }
         step("AND user deletes an image") {
             userRobot.deleteMessage()
@@ -98,7 +101,7 @@ class AttachmentsTests : StreamTestCase() {
             userRobot.login().openChannel()
         }
         step("WHEN user sends a file") {
-            userRobot.uploadAttachment(type = AttachmentType.FILE, send = false)
+            userRobot.attachFile(type = AttachmentType.FILE)
         }
         step("THEN file is displayed in preview") {
             userRobot.assertFileAttachmentInPreview(isDisplayed = true)
@@ -118,7 +121,7 @@ class AttachmentsTests : StreamTestCase() {
             userRobot.login().openChannel()
         }
         step("WHEN user attaches multiple files") {
-            userRobot.uploadAttachment(type = AttachmentType.FILE, multiple = true, send = false)
+            userRobot.attachFile(type = AttachmentType.FILE, multiple = true)
         }
         step("THEN files are displayed in preview") {
             userRobot.assertFileAttachmentInPreview(isDisplayed = true, count = 2)
@@ -138,7 +141,10 @@ class AttachmentsTests : StreamTestCase() {
             userRobot.login().openChannel()
         }
         step("WHEN user sends a file") {
-            userRobot.uploadAttachment(type = AttachmentType.IMAGE)
+            userRobot.attachFile(type = AttachmentType.IMAGE)
+        }
+        step("AND user sends the file") {
+            userRobot.tapOnSendButton()
         }
         step("AND user deletes a file") {
             userRobot.deleteMessage()
