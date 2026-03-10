@@ -55,6 +55,7 @@ import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimerText
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
@@ -70,7 +71,9 @@ import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 import io.getstream.chat.android.extensions.isInt
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Attachment.UploadState
 import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
+import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import kotlin.random.Random
 
 /**
@@ -162,6 +165,7 @@ public fun AudioRecordAttachmentContentItem(
 ) {
     val currentAttachment by rememberUpdatedState(attachment)
     val colors = ChatTheme.colors
+    val isUploading = attachment.uploadState is UploadState.InProgress
     val outlineColor = if (isMine) colors.chatBorderOnChatOutgoing else colors.chatBorderOnChatIncoming
     val textColor = MessageStyling.textColor(isMine, colors)
 
@@ -177,7 +181,7 @@ public fun AudioRecordAttachmentContentItem(
         onThumbDragStop = onThumbDragStop,
         tailContent = {
             val speed = playerState.speeds.getOrDefault(attachment.audioHash, 1f)
-            SpeedButton(speed = speed, outlineColor = outlineColor) {
+            SpeedButton(speed = speed, outlineColor = outlineColor, enabled = !isUploading) {
                 onPlaySpeedClick(currentAttachment)
             }
         },
@@ -207,6 +211,7 @@ internal fun AudioRecordAttachmentContentItemBase(
         true -> playerState.current.waveform
         else -> attachment.waveformData
     } ?: emptyList()
+    val uploadProgress = attachment.uploadState as? UploadState.InProgress
 
     val currentAttachment by rememberUpdatedState(attachment)
     Row(
@@ -222,41 +227,48 @@ internal fun AudioRecordAttachmentContentItemBase(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {
-        PlaybackToggleButton(playing = playing, outlineColor = outlineColor) {
+        PlaybackToggleButton(playing = playing, outlineColor = outlineColor, enabled = uploadProgress == null) {
             onPlayToggleClick(currentAttachment)
         }
 
-        var currentProgress by remember { mutableFloatStateOf(trackProgress) }
-        LaunchedEffect(attachmentUrl, playing, trackProgress) { currentProgress = trackProgress }
+        if (uploadProgress != null) {
+            UploadProgressIndicator(
+                uploadState = uploadProgress,
+                modifier = Modifier.weight(1f),
+            )
+        } else {
+            var currentProgress by remember { mutableFloatStateOf(trackProgress) }
+            LaunchedEffect(attachmentUrl, playing, trackProgress) { currentProgress = trackProgress }
 
-        StaticWaveformSlider(
-            modifier = Modifier
-                .height(waveformHeight)
-                .weight(1f),
-            waveformData = waveform,
-            progress = currentProgress,
-            isPlaying = playing,
-            visibleBarLimit = 20,
-            onDragStart = {
-                currentProgress = it
-                onThumbDragStart(currentAttachment)
-            },
-            onDrag = {
-                currentProgress = it
-            },
-            onDragStop = {
-                currentProgress = it
-                onThumbDragStop(currentAttachment, it)
-            },
-        )
+            StaticWaveformSlider(
+                modifier = Modifier
+                    .height(waveformHeight)
+                    .weight(1f),
+                waveformData = waveform,
+                progress = currentProgress,
+                isPlaying = playing,
+                visibleBarLimit = 20,
+                onDragStart = {
+                    currentProgress = it
+                    onThumbDragStart(currentAttachment)
+                },
+                onDrag = {
+                    currentProgress = it
+                },
+                onDragStop = {
+                    currentProgress = it
+                    onThumbDragStop(currentAttachment, it)
+                },
+            )
 
-        val timerTextColor = if (playing) ChatTheme.colors.accentPrimary else textColor
-        PlaybackTimerText(
-            progress = currentProgress,
-            durationInMs = currentAttachment.durationInMs,
-            color = timerTextColor,
-            countdown = true,
-        )
+            val timerTextColor = if (playing) ChatTheme.colors.accentPrimary else textColor
+            PlaybackTimerText(
+                progress = currentProgress,
+                durationInMs = currentAttachment.durationInMs,
+                color = timerTextColor,
+                countdown = true,
+            )
+        }
 
         tailContent()
     }
@@ -271,6 +283,7 @@ internal fun AudioRecordAttachmentContentItemBase(
 internal fun PlaybackToggleButton(
     playing: Boolean,
     outlineColor: Color,
+    enabled: Boolean = true,
     onClick: () -> Unit = {},
 ) {
     val icon =
@@ -282,6 +295,7 @@ internal fun PlaybackToggleButton(
 
     StreamButton(
         onClick = onClick,
+        enabled = enabled,
         style = StreamButtonStyleDefaults.secondaryOutline.copy(borderColor = outlineColor),
         modifier = Modifier.padding(StreamTokens.spacing2xs),
     ) {
@@ -302,20 +316,83 @@ private val speedButtonShape = RoundedCornerShape(StreamTokens.radiusLg)
 private fun SpeedButton(
     speed: Float,
     outlineColor: Color,
+    enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
+    val colors = ChatTheme.colors
+    val textColor = if (enabled) colors.controlPlaybackToggleText else colors.textDisabled
+    val borderColor = if (enabled) outlineColor else colors.borderUtilityDisabled
     Text(
         text = when (speed.isInt()) {
             true -> "x${speed.toInt()}"
             else -> "x$speed"
         },
         style = ChatTheme.typography.metadataEmphasis,
-        color = ChatTheme.colors.controlPlaybackToggleText,
+        color = textColor,
         modifier = Modifier
-            .border(1.dp, outlineColor, speedButtonShape)
+            .border(1.dp, borderColor, speedButtonShape)
             .clip(speedButtonShape)
-            .clickable(onClick = onClick)
+            .applyIf(enabled) { clickable(onClick = onClick) }
             .padding(horizontal = StreamTokens.spacingXs, vertical = StreamTokens.spacing2xs),
+    )
+}
+
+@Composable
+private fun UploadProgressIndicator(
+    uploadState: UploadState.InProgress,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+    ) {
+        LoadingIndicator(
+            progress = progressFraction(uploadState),
+            modifier = Modifier.size(16.dp),
+        )
+        Text(
+            text = "${MediaStringUtil.convertFileSizeByteCount(uploadState.bytesUploaded)} / " +
+                MediaStringUtil.convertFileSizeByteCount(uploadState.totalBytes),
+            style = ChatTheme.typography.metadataDefault,
+            color = ChatTheme.colors.textSecondary,
+            maxLines = 1,
+        )
+    }
+}
+
+private fun progressFraction(state: UploadState.InProgress): Float =
+    if (state.totalBytes > 0) (state.bytesUploaded / state.totalBytes.toFloat()) else 0f
+
+@Composable
+internal fun AudioRecordAttachmentContentItemPlayback() {
+    val rand = Random(1)
+    val previewUri = "preview://audio"
+    AudioRecordAttachmentContentItem(
+        attachment = Attachment(type = "audio_recording", assetUrl = previewUri),
+        playerState = AudioPlayerState(
+            current = AudioPlayerState.CurrentAudioState(
+                isPlaying = true,
+                audioUri = previewUri,
+                waveform = List(size = 100) { rand.nextFloat() },
+            ),
+            getRecordingUri = Attachment::assetUrl,
+        ),
+    )
+}
+
+@Composable
+internal fun AudioRecordAttachmentContentItemUploading() {
+    AudioRecordAttachmentContentItem(
+        attachment = Attachment(
+            type = "audio_recording",
+            assetUrl = "preview://audio",
+            uploadState = UploadState.InProgress(
+                bytesUploaded = 2_400_000,
+                totalBytes = 4_000_000,
+            ),
+        ),
+        playerState = AudioPlayerState(getRecordingUri = Attachment::assetUrl),
     )
 }
 
@@ -323,21 +400,14 @@ private fun SpeedButton(
 @Composable
 internal fun AudioRecordAttachmentContentItemPreview() {
     ChatPreviewTheme {
-        val rand = Random(1)
-        val previewUri = "preview://audio"
+        AudioRecordAttachmentContentItemPlayback()
+    }
+}
 
-        AudioRecordAttachmentContentItem(
-            attachment = Attachment(type = "audio_recording", assetUrl = previewUri),
-            playerState = AudioPlayerState(
-                current = AudioPlayerState.CurrentAudioState(
-                    isPlaying = true,
-                    audioUri = previewUri,
-                    waveform = List(size = 100) { rand.nextFloat() },
-                ),
-                getRecordingUri = Attachment::assetUrl,
-            ),
-            onPlayToggleClick = {},
-            onPlaySpeedClick = {},
-        )
+@Preview(showBackground = true)
+@Composable
+internal fun AudioRecordAttachmentContentItemUploadingPreview() {
+    ChatPreviewTheme {
+        AudioRecordAttachmentContentItemUploading()
     }
 }

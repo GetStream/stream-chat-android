@@ -104,4 +104,18 @@ internal class AttachmentsContentTest : PaparazziComposeTest {
             MultipleMediaAttachmentContent()
         }
     }
+
+    @Test
+    fun `audio record attachment content`() {
+        snapshotWithDarkMode {
+            AudioRecordAttachmentContentItemPlayback()
+        }
+    }
+
+    @Test
+    fun `audio record upload content`() {
+        snapshotWithDarkMode {
+            AudioRecordAttachmentContentItemUploading()
+        }
+    }
 }

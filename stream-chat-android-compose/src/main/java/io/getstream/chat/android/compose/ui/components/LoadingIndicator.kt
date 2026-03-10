@@ -52,9 +52,9 @@ public fun LoadingIndicator(modifier: Modifier = Modifier) {
  * @param modifier Modifier for styling.
  */
 @Composable
-public fun LoadingIndicator(progress: () -> Float, modifier: Modifier = Modifier) {
+public fun LoadingIndicator(progress: Float, modifier: Modifier = Modifier) {
     val colors = ChatTheme.colors
-    val animatedProgress = animateFloatAsState(targetValue = progress(), label = "progress")
+    val animatedProgress = animateFloatAsState(targetValue = progress, label = "progress")
     Box(
         modifier,
         contentAlignment = Alignment.Center,

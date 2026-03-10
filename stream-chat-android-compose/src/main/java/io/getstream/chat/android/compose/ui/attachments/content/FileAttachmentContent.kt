@@ -219,7 +219,7 @@ private fun FileUploadProgressIndicator(state: UploadState.InProgress, textColor
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
     ) {
         LoadingIndicator(
-            progress = state::progressFraction,
+            progress = state.progressFraction(),
             modifier = Modifier.size(14.dp),
         )
         Text(

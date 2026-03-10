@@ -635,7 +635,7 @@ internal fun MediaAttachmentContentItem(
         val uploadState = attachment.uploadState
         if (uploadState is Attachment.UploadState.InProgress) {
             LoadingIndicator(
-                progress = uploadState::progressFraction,
+                progress = uploadState.progressFraction(),
                 modifier = Modifier
                     .border(
                         width = 2.dp,
