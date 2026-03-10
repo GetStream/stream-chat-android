@@ -37,6 +37,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
 private const val TAG = "Chat:UploadWorker"
+private const val PROGRESS_THROTTLE_MS = 200L
 
 @InternalStreamChatApi
 public class UploadAttachmentsWorker(
@@ -171,6 +172,9 @@ public class UploadAttachmentsWorker(
         private val channelStateLogic: ChannelMessagesUpdateLogic,
     ) :
         ProgressCallback {
+
+        private var lastProgressUpdateTime = 0L
+
         override fun onSuccess(url: String?) {
             StreamLog.i(TAG) { "[Progress.onSuccess] #uploader; url: $url" }
             updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Success)
@@ -182,6 +186,10 @@ public class UploadAttachmentsWorker(
         }
 
         override fun onProgress(bytesUploaded: Long, totalBytes: Long) {
+            val now = System.currentTimeMillis()
+            if (now - lastProgressUpdateTime < PROGRESS_THROTTLE_MS && bytesUploaded < totalBytes) return
+            lastProgressUpdateTime = now
+
             updateAttachmentUploadState(
                 messageId,
                 uploadId,
