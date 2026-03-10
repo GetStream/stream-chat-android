@@ -19,45 +19,51 @@ package io.getstream.chat.android.compose.ui.components.poll
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
 import io.getstream.chat.android.compose.ui.components.common.RadioCheck
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewPollData
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
@@ -132,114 +138,116 @@ private fun Content(
 
     BackHandler { onBackPressed.invoke() }
 
-    LazyColumn(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(ChatTheme.colors.backgroundCoreApp),
     ) {
-        item {
-            PollDialogHeader(
-                title = stringResource(id = R.string.stream_compose_poll_options),
-                onBackPressed = onBackPressed,
-            )
-        }
-
-        item { PollMoreOptionsTitle(title = poll.name) }
-
-        item { Spacer(modifier = Modifier.height(16.dp)) }
-
-        pollMoreOptionsContent(
-            poll = poll,
-            onCastVote = onCastVote,
-            onRemoveVote = onRemoveVote,
+        PollDialogHeader(
+            title = stringResource(id = R.string.stream_compose_poll_options),
+            onBackPressed = onBackPressed,
         )
 
-        item { Spacer(modifier = Modifier.height(16.dp)) }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = StreamTokens.spacingMd),
+        ) {
+            PollMoreOptionsTitle(title = poll.name)
+
+            PollMoreOptionsItemList(
+                poll = poll,
+                totalVoteCount = remember(poll.voteCountsByOption) { poll.voteCountsByOption.values.sum() },
+                onCastVote = onCastVote,
+                onRemoveVote = onRemoveVote,
+            )
+        }
     }
 }
 
 @Composable
 internal fun PollMoreOptionsTitle(title: String) {
-    Box(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-            .heightIn(min = 56.dp)
-            .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
-            .background(ChatTheme.colors.backgroundCoreSurface)
-            .padding(16.dp),
+    PollSection(
+        modifier = Modifier.padding(vertical = StreamTokens.spacing2xl),
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+        contentPadding = PaddingValues(StreamTokens.spacingMd),
     ) {
         Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.CenterStart),
-            text = title,
-            color = ChatTheme.colors.textPrimary,
-            fontWeight = FontWeight.Medium,
-            fontSize = 16.sp,
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(R.string.stream_compose_poll_question_label),
+            color = ChatTheme.colors.textTertiary,
+            style = ChatTheme.typography.headingExtraSmall,
         )
-    }
-}
 
-private fun LazyListScope.pollMoreOptionsContent(
-    poll: Poll,
-    onCastVote: (Option) -> Unit,
-    onRemoveVote: (Vote) -> Unit,
-) {
-    val options = poll.options
-    itemsIndexed(
-        items = options,
-        key = { _, option -> option.id },
-    ) { index, option ->
-        val voteCount = poll.voteCountsByOption[option.id] ?: 0
-        val isVotedByMine = poll.ownVotes.any { it.optionId == option.id }
-
-        PollMoreOptionItem(
-            index = index,
-            poll = poll,
-            option = option,
-            voteCount = voteCount,
-            checkedCount = poll.ownVotes.size,
-            checked = isVotedByMine,
-            onCastVote = { onCastVote.invoke(option) },
-            onRemoveVote = {
-                val vote = poll.votes.firstOrNull { it.optionId == option.id } ?: return@PollMoreOptionItem
-                onRemoveVote.invoke(vote)
-            },
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = title,
+            style = ChatTheme.typography.headingMedium,
+            color = ChatTheme.colors.textPrimary,
         )
     }
 }
 
 @Composable
+private fun PollMoreOptionsItemList(
+    poll: Poll,
+    totalVoteCount: Int,
+    onCastVote: (Option) -> Unit,
+    onRemoveVote: (Vote) -> Unit,
+) {
+    PollSection(
+        contentPadding = PaddingValues(
+            horizontal = StreamTokens.spacingXs,
+            vertical = StreamTokens.spacingMd
+        ),
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+    ) {
+        poll.options.forEach { option ->
+            val voteCount = poll.voteCountsByOption[option.id] ?: 0
+            val isVotedByMine = poll.ownVotes.any { it.optionId == option.id }
+            val users = remember(poll.votes, option) { poll.getVotes(option).mapNotNull(Vote::user) }
+
+            PollMoreOptionItem(
+                poll = poll,
+                option = option,
+                voteCount = voteCount,
+                totalVoteCount = totalVoteCount,
+                users = users,
+                checkedCount = poll.ownVotes.size,
+                checked = isVotedByMine,
+                onCastVote = { onCastVote(option) },
+                onRemoveVote = { poll.votes.find { it.optionId == option.id }?.let(onRemoveVote) },
+            )
+        }
+    }
+}
+
+@Suppress("LongParameterList")
+@Composable
 private fun PollMoreOptionItem(
-    index: Int,
     poll: Poll,
     option: Option,
     voteCount: Int,
+    totalVoteCount: Int,
+    users: List<User>,
     checkedCount: Int,
     checked: Boolean,
     onCastVote: () -> Unit,
     onRemoveVote: () -> Unit,
 ) {
-    val shape = if (index == 0) {
-        RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
-    } else if (index == poll.options.size - 1) {
-        RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)
-    } else {
-        RoundedCornerShape(0.dp)
-    }
+    val colors = ChatTheme.colors
+    val typography = ChatTheme.typography
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .background(color = ChatTheme.colors.backgroundCoreSurface, shape = shape)
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+            .padding(StreamTokens.spacingXs),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (!poll.closed) {
             RadioCheck(
-                modifier = Modifier.padding(end = 8.dp),
                 checked = checked,
                 onCheckedChange = { enabled ->
                     val canVote = poll.maxVotesAllowed?.let { checkedCount < it } ?: true
@@ -249,26 +257,63 @@ private fun PollMoreOptionItem(
                         onRemoveVote.invoke()
                     }
                 },
+                borderColor = colors.chatBorderOnChatIncoming,
             )
         }
 
-        Text(
-            modifier = Modifier.weight(1f),
-            text = option.text,
-            color = ChatTheme.colors.textPrimary,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            fontSize = 16.sp,
-        )
+        Column(verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs)) {
+            Row(Modifier.heightIn(min = AvatarSize.ExtraSmall)) {
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = option.text,
+                    style = typography.captionDefault,
+                    color = colors.chatTextIncoming,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
 
-        Text(
-            modifier = Modifier.padding(bottom = 2.dp),
-            text = voteCount.toString(),
-            color = ChatTheme.colors.textPrimary,
-            fontSize = 16.sp,
-        )
+                if (users.isNotEmpty() && poll.votingVisibility != VotingVisibility.ANONYMOUS) {
+                    UserAvatarStack(
+                        overlap = StreamTokens.spacingXs,
+                        users = users.take(MaxStackedAvatars),
+                        avatarSize = AvatarSize.ExtraSmall,
+                        modifier = Modifier.padding(start = StreamTokens.spacingXs, end = StreamTokens.spacing2xs),
+                    )
+                }
+
+                Text(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    text = voteCount.toString(),
+                    style = typography.metadataDefault,
+                    color = colors.chatTextIncoming,
+                )
+            }
+
+            val progress by animateFloatAsState(
+                targetValue = if (voteCount == 0 || totalVoteCount == 0) {
+                    0f
+                } else {
+                    voteCount / totalVoteCount.toFloat()
+                },
+            )
+
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp)
+                    .clip(RoundedCornerShape(4.dp)),
+                progress = { progress },
+                color = colors.chatPollProgressFillIncoming,
+                trackColor = colors.chatPollProgressTrackIncoming,
+                gapSize = 0.dp,
+                strokeCap = StrokeCap.Square,
+                drawStopIndicator = { /* Don't draw the stop indicator */ },
+            )
+        }
     }
 }
+
+private const val MaxStackedAvatars = 3
 
 @Preview
 @Composable

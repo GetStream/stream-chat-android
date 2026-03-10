@@ -232,7 +232,7 @@ private fun PollMessageContent(
                 poll = poll,
                 option = option,
                 voteCount = voteCount,
-                users = poll.getVotes(option).mapNotNull(Vote::user),
+                users = remember(poll.votes, option) { poll.getVotes(option).mapNotNull(Vote::user) },
                 totalVoteCount = poll.voteCountsByOption.values.sum(),
                 checkedCount = poll.ownVotes.size,
                 checked = poll.ownVotes.any { it.optionId == option.id },
@@ -438,7 +438,6 @@ private fun PollOptionItem(
                         overlap = StreamTokens.spacingXs,
                         users = users.take(MaxStackedAvatars),
                         avatarSize = AvatarSize.ExtraSmall,
-                        showBorder = true,
                         modifier = Modifier.padding(start = StreamTokens.spacingXs, end = StreamTokens.spacing2xs),
                     )
                 }
