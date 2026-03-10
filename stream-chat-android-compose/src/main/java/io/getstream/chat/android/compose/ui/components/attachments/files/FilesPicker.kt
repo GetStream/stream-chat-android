@@ -97,7 +97,7 @@ public fun FilesPicker(
             )
             Icon(
                 painter = painterResource(id = R.drawable.stream_compose_ic_chevron_right),
-                contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
+                contentDescription = null,
                 tint = ChatTheme.colors.textSecondary,
             )
         }

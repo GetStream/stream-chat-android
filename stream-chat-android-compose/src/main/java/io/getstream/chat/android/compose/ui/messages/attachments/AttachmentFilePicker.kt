@@ -173,7 +173,6 @@ private fun FilesAccessContent(
 private fun GrantVisualMediaAccessButton(onClick: () -> Unit) {
     RequestAdditionalAccessButton(
         textId = R.string.stream_ui_message_composer_permissions_files_allow_visual_media_access,
-        contentDescriptionId = R.string.stream_ui_message_composer_permissions_files_allow_visual_media_access,
         onClick = onClick,
     )
 }
@@ -182,7 +181,6 @@ private fun GrantVisualMediaAccessButton(onClick: () -> Unit) {
 private fun AllowMoreVisualMediaButton(onClick: () -> Unit) {
     RequestAdditionalAccessButton(
         textId = R.string.stream_ui_message_composer_permissions_files_allow_more_visual_media,
-        contentDescriptionId = R.string.stream_ui_message_composer_permissions_files_allow_more_visual_media,
         onClick = onClick,
     )
 }
@@ -191,7 +189,6 @@ private fun AllowMoreVisualMediaButton(onClick: () -> Unit) {
 private fun GrantAudioAccessButton(onClick: () -> Unit) {
     RequestAdditionalAccessButton(
         textId = R.string.stream_ui_message_composer_permissions_files_allow_audio_access,
-        contentDescriptionId = R.string.stream_ui_message_composer_permissions_files_allow_audio_access,
         onClick = onClick,
     )
 }
@@ -199,7 +196,6 @@ private fun GrantAudioAccessButton(onClick: () -> Unit) {
 @Composable
 private fun RequestAdditionalAccessButton(
     @StringRes textId: Int,
-    @StringRes contentDescriptionId: Int,
     onClick: () -> Unit,
 ) {
     Column {
@@ -218,7 +214,7 @@ private fun RequestAdditionalAccessButton(
             )
             Icon(
                 painter = painterResource(id = R.drawable.stream_compose_ic_chevron_right),
-                contentDescription = stringResource(id = contentDescriptionId),
+                contentDescription = null,
                 tint = ChatTheme.colors.textSecondary,
             )
         }
