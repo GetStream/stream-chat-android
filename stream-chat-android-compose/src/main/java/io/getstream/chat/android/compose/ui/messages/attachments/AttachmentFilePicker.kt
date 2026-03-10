@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -44,17 +43,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
+import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.components.attachments.files.FilesPicker
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredStoragePermission
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.filesAccessAsState
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
+import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.ui.common.model.MimeType
 import io.getstream.chat.android.ui.common.permissions.FilesAccess
 import io.getstream.chat.android.ui.common.permissions.Permissions
@@ -172,7 +173,6 @@ private fun FilesAccessContent(
 private fun GrantVisualMediaAccessButton(onClick: () -> Unit) {
     RequestAdditionalAccessButton(
         textId = R.string.stream_ui_message_composer_permissions_files_allow_visual_media_access,
-        contentDescriptionId = R.string.stream_ui_message_composer_permissions_files_allow_visual_media_access,
         onClick = onClick,
     )
 }
@@ -181,7 +181,6 @@ private fun GrantVisualMediaAccessButton(onClick: () -> Unit) {
 private fun AllowMoreVisualMediaButton(onClick: () -> Unit) {
     RequestAdditionalAccessButton(
         textId = R.string.stream_ui_message_composer_permissions_files_allow_more_visual_media,
-        contentDescriptionId = R.string.stream_ui_message_composer_permissions_files_allow_more_visual_media,
         onClick = onClick,
     )
 }
@@ -190,7 +189,6 @@ private fun AllowMoreVisualMediaButton(onClick: () -> Unit) {
 private fun GrantAudioAccessButton(onClick: () -> Unit) {
     RequestAdditionalAccessButton(
         textId = R.string.stream_ui_message_composer_permissions_files_allow_audio_access,
-        contentDescriptionId = R.string.stream_ui_message_composer_permissions_files_allow_audio_access,
         onClick = onClick,
     )
 }
@@ -198,33 +196,29 @@ private fun GrantAudioAccessButton(onClick: () -> Unit) {
 @Composable
 private fun RequestAdditionalAccessButton(
     @StringRes textId: Int,
-    @StringRes contentDescriptionId: Int,
     onClick: () -> Unit,
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
+    Column {
+        Row(
             modifier = Modifier
-                .padding(16.dp)
-                .weight(1f),
-            text = stringResource(id = textId),
-            style = ChatTheme.typography.bodyEmphasis,
-            color = ChatTheme.colors.textPrimary,
-        )
-
-        IconButton(
-            content = {
-                Icon(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_more_files),
-                    contentDescription = stringResource(id = contentDescriptionId),
-                    tint = ChatTheme.colors.accentPrimary,
-                )
-            },
-            onClick = onClick,
-        )
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(StreamTokens.spacingSm),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                text = stringResource(id = textId),
+                style = ChatTheme.typography.bodyDefault,
+                color = ChatTheme.colors.textPrimary,
+            )
+            Icon(
+                painter = painterResource(id = R.drawable.stream_compose_ic_chevron_right),
+                contentDescription = null,
+                tint = ChatTheme.colors.textSecondary,
+            )
+        }
+        StreamHorizontalDivider()
     }
 }
 
@@ -245,20 +239,14 @@ internal fun AttachmentFilePickerSingleSelection() {
         ),
         attachments = listOf(
             AttachmentPickerItemState(
-                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_PDF).apply {
-                    size = 10_000
-                },
+                attachmentMetaData = AttachmentMetaData1,
             ),
             AttachmentPickerItemState(
-                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_MP3).apply {
-                    size = 100_000
-                },
+                attachmentMetaData = AttachmentMetaData2,
                 isSelected = true,
             ),
             AttachmentPickerItemState(
-                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_MP4).apply {
-                    size = 1_000_000
-                },
+                attachmentMetaData = AttachmentMetaData3,
             ),
         ),
     )
@@ -279,22 +267,40 @@ internal fun AttachmentFilePickerMultipleSelection() {
         pickerMode = FilePickerMode(),
         attachments = listOf(
             AttachmentPickerItemState(
-                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_PDF).apply {
-                    size = 10_000
-                },
+                attachmentMetaData = AttachmentMetaData1,
                 isSelected = true,
             ),
             AttachmentPickerItemState(
-                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_MP3).apply {
-                    size = 100_000
-                },
+                attachmentMetaData = AttachmentMetaData2,
                 isSelected = true,
             ),
             AttachmentPickerItemState(
-                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_MP4).apply {
-                    size = 1_000_000
-                },
+                attachmentMetaData = AttachmentMetaData3,
             ),
         ),
     )
+}
+
+@Suppress("MagicNumber")
+private val AttachmentMetaData1 = AttachmentMetaData(
+    title = "PDF",
+    mimeType = MimeType.MIME_TYPE_PDF,
+).apply {
+    size = 10_000
+}
+
+@Suppress("MagicNumber")
+private val AttachmentMetaData2 = AttachmentMetaData(
+    title = "MP3",
+    mimeType = MimeType.MIME_TYPE_MP3,
+).apply {
+    size = 100_000
+}
+
+@Suppress("MagicNumber")
+private val AttachmentMetaData3 = AttachmentMetaData(
+    title = "MP4",
+    mimeType = MimeType.MIME_TYPE_MP4,
+).apply {
+    size = 1_000_000
 }
