@@ -602,6 +602,56 @@ internal class ChannelStateImplMessagesTest {
     }
 
     @Nested
+    inner class UpsertCachedLatestMessages {
+
+        @Test
+        fun `upsertCachedLatestMessages with empty list should not change cache`() = runTest {
+            // given
+            val messages = createMessages(3)
+            channelState.setMessages(messages)
+            channelState.cacheLatestMessages()
+            channelState.setMessages(emptyList())
+            val before = channelState.toChannel().cachedLatestMessages
+            // when
+            channelState.upsertCachedLatestMessages(emptyList())
+            // then
+            assertEquals(before, channelState.toChannel().cachedLatestMessages)
+        }
+
+        @Test
+        fun `upsertCachedLatestMessages with all filtered messages should not change cache`() = runTest {
+            // given
+            val regularMsg = createMessage(1, timestamp = 1000)
+            channelState.setMessages(listOf(regularMsg))
+            channelState.cacheLatestMessages()
+            channelState.setMessages(emptyList())
+            val before = channelState.toChannel().cachedLatestMessages
+            // when — thread reply not shown in channel is always filtered out
+            val threadReply = createMessage(2, parentId = "parent1", showInChannel = false)
+            channelState.upsertCachedLatestMessages(listOf(threadReply))
+            // then
+            assertEquals(before, channelState.toChannel().cachedLatestMessages)
+        }
+
+        @Test
+        fun `upsertCachedLatestMessages should merge incoming messages into the cache`() = runTest {
+            // given
+            val msg1 = createMessage(1, timestamp = 1000)
+            val msg5 = createMessage(5, timestamp = 5000)
+            channelState.setMessages(listOf(msg1, msg5))
+            channelState.cacheLatestMessages()
+            channelState.setMessages(emptyList())
+            // when
+            val msg3 = createMessage(3, timestamp = 3000)
+            channelState.upsertCachedLatestMessages(listOf(msg3))
+            // then
+            val cachedMessages = channelState.toChannel().cachedLatestMessages
+            assertEquals(3, cachedMessages.size)
+            assertEquals(listOf("message_1", "message_3", "message_5"), cachedMessages.map { it.id })
+        }
+    }
+
+    @Nested
     inner class GetMessageById {
 
         @Test

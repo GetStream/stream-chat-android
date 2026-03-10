@@ -24,7 +24,9 @@ import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
+import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
@@ -91,8 +93,8 @@ internal class ChannelLogicImpl(
         updateDataForChannel(
             channel = channel,
             messageLimit = query.messagesLimit(),
+            shouldRefreshMessages = true,
             // Note: The following arguments are NOT used. But they are kept for backwards compatibility.
-            shouldRefreshMessages = query.shouldRefresh,
             scrollUpdate = false,
             isNotificationUpdate = query.isNotificationUpdate,
             isChannelsStateUpdate = true,
@@ -302,13 +304,39 @@ internal class ChannelLogicImpl(
         state.setChannelConfig(channel.config)
         // Set pending messages
         state.setPendingMessages(channel.pendingMessages.map(PendingMessage::message))
-        // Reset messages (ensure they are sorted - when coming from DB)
+        // Update messages based on the relationship between the incoming page and existing state.
         if (messageLimit > 0) {
             val sortedMessages = withContext(Dispatchers.Default) {
                 channel.messages.sortedBy { it.getCreatedAtOrNull() }
             }
-            state.setMessages(sortedMessages)
-            state.setEndOfOlderMessages(channel.messages.size < messageLimit)
+            val currentMessages = state.messages.value
+            when {
+                shouldRefreshMessages || currentMessages.isEmpty() -> {
+                    // Initial load (DB seed or first fetch) or explicit refresh — full replace
+                    state.setMessages(sortedMessages)
+                    state.setEndOfOlderMessages(channel.messages.size < messageLimit)
+                }
+                state.insideSearch.value -> {
+                    // User's window was already trimmed away from the latest (insideSearch set by
+                    // trimNewestMessages, or a prior jump-to-message). Stay at current position;
+                    // refresh the "jump to latest" cache with the server's current latest page.
+                    state.upsertCachedLatestMessages(sortedMessages)
+                }
+                hasGap(currentMessages, sortedMessages) -> {
+                    // Incoming page is newer than the current window with no overlap. Inserting the
+                    // incoming messages would create a fragmented list. Instead, treat the user's
+                    // position as a mid-page: store the incoming as the "latest" cache and signal the UI.
+                    state.upsertCachedLatestMessages(sortedMessages)
+                    state.setInsideSearch(true)
+                    state.setEndOfNewerMessages(false)
+                }
+                else -> {
+                    // Incoming messages are contiguous with (or overlap) the current window.
+                    // Upsert preserves the user's scroll position while adding/updating messages.
+                    state.upsertMessages(sortedMessages)
+                    state.setEndOfOlderMessages(channel.messages.size < messageLimit)
+                }
+            }
         }
         // Add pinned messages
         state.addPinnedMessages(channel.pinnedMessages)
@@ -427,5 +455,15 @@ internal class ChannelLogicImpl(
             .selectMessagesForChannel(cid, request.toAnyChannelPaginationRequest())
         // Enrich the channel with messages
         return channel.copy(messages = messages)
+    }
+
+    private fun hasGap(currentMessages: List<Message>, incomingMessages: List<Message>): Boolean {
+        val currentNewest = currentMessages.maxByOrNull { it.getCreatedAtOrDefault(NEVER) }
+        val incomingOldest = incomingMessages.firstOrNull()
+        return currentMessages.isNotEmpty() &&
+            currentNewest != null &&
+            incomingOldest != null &&
+            currentMessages.none { it.id == incomingOldest.id } &&
+            incomingOldest.getCreatedAtOrDefault(NEVER).after(currentNewest.getCreatedAtOrDefault(NEVER))
     }
 }
