@@ -39,7 +39,6 @@ import io.getstream.chat.android.previewdata.PreviewUserData
  * @param users The list of users to display avatars for.
  * @param avatarSize The size of each avatar.
  * @param modifier Modifier for styling.
- * @param showBorder Whether to show a border around the first avatar.
  * @param trailingContent Optional composable rendered after the avatars.
  */
 @Composable
@@ -48,7 +47,6 @@ internal fun UserAvatarStack(
     users: List<User>,
     avatarSize: Dp,
     modifier: Modifier = Modifier,
-    showBorder: Boolean = false,
     trailingContent: @Composable (() -> Unit)? = null,
 ) {
     val componentFactory = ChatTheme.componentFactory
@@ -60,14 +58,14 @@ internal fun UserAvatarStack(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(-overlap),
     ) {
-        users.forEachIndexed { index, user ->
+        users.forEach { user ->
             componentFactory.UserAvatar(
                 modifier = Modifier
                     .size(avatarSize + borderSize)
                     .border(borderSize, colors.borderCoreInverse, CircleShape)
                     .padding(borderSize),
                 user = user,
-                showBorder = showBorder && index == 0,
+                showBorder = false,
                 showIndicator = false,
             )
         }
