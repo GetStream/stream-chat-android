@@ -335,10 +335,10 @@ class UserRobot {
         return this
     }
 
-    fun uploadAttachment(type: AttachmentType, multiple: Boolean = false, send: Boolean = true): UserRobot {
+    fun attachFile(type: AttachmentType, multiple: Boolean = false): UserRobot {
         val count = if (multiple) 2 else 1
+        Composer.attachmentsButton.waitToAppear().click()
         repeat(count) {
-            Composer.attachmentsButton.waitToAppear().click()
             AttachmentPicker.filesTab.waitToAppear().click()
             AttachmentPicker.findFilesButton.waitToAppear().click()
 
@@ -351,19 +351,12 @@ class UserRobot {
                     .click()
             }
 
-            if (type == AttachmentType.FILE) AttachmentPicker.pdf1 else AttachmentPicker.image1
-
-            if (it == 0) {
-                val attachment = if (type == AttachmentType.FILE) AttachmentPicker.pdf1 else AttachmentPicker.image1
-                attachment.waitToAppear().click()
+            val attachment = if (it == 0) {
+                if (type == AttachmentType.FILE) AttachmentPicker.pdf1 else AttachmentPicker.image1
             } else {
-                val attachment = if (type == AttachmentType.FILE) AttachmentPicker.pdf2 else AttachmentPicker.image2
-                attachment.waitToAppear().click()
+                if (type == AttachmentType.FILE) AttachmentPicker.pdf2 else AttachmentPicker.image2
             }
-        }
-
-        if (send) {
-            Composer.sendButton.waitToAppear().click()
+            attachment.waitToAppear().click()
         }
 
         return this
