@@ -200,7 +200,7 @@ private fun PollViewResultItem(
     index: Int,
     onShowAllClick: (option: Option) -> Unit,
 ) {
-    PollResultSection(modifier = Modifier.padding(top = StreamTokens.spacingMd)) {
+    PollSection(modifier = Modifier.padding(top = StreamTokens.spacingMd)) {
         Text(
             modifier = Modifier
                 .fillMaxWidth()
@@ -311,7 +311,7 @@ private fun PollViewResultTitle(
     title: String,
     modifier: Modifier,
 ) {
-    PollResultSection(
+    PollSection(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
         contentPadding = PaddingValues(StreamTokens.spacingMd),
@@ -333,7 +333,7 @@ private fun PollViewResultTitle(
 }
 
 @Composable
-private fun PollResultSection(
+internal fun PollSection(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
