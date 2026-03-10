@@ -47,7 +47,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -156,11 +158,30 @@ private fun Content(
         ) {
             PollMoreOptionsTitle(title = poll.name)
 
+            val totalVoteCount = remember(poll.voteCountsByOption) { poll.voteCountsByOption.values.sum() }
+
             PollMoreOptionsItemList(
                 poll = poll,
-                totalVoteCount = remember(poll.voteCountsByOption) { poll.voteCountsByOption.values.sum() },
+                totalVoteCount = totalVoteCount,
                 onCastVote = onCastVote,
                 onRemoveVote = onRemoveVote,
+            )
+
+            val context = LocalContext.current
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = StreamTokens.spacing2xl),
+                text = remember(totalVoteCount) {
+                    context.resources.getQuantityString(
+                        R.plurals.stream_compose_poll_total_vote_counts,
+                        totalVoteCount,
+                        totalVoteCount,
+                    )
+                },
+                style = ChatTheme.typography.bodyDefault,
+                color = ChatTheme.colors.textPrimary,
+                textAlign = TextAlign.Center,
             )
         }
     }
@@ -199,7 +220,7 @@ private fun PollMoreOptionsItemList(
     PollSection(
         contentPadding = PaddingValues(
             horizontal = StreamTokens.spacingXs,
-            vertical = StreamTokens.spacingMd
+            vertical = StreamTokens.spacingMd,
         ),
         verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {
@@ -223,7 +244,7 @@ private fun PollMoreOptionsItemList(
     }
 }
 
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 @Composable
 private fun PollMoreOptionItem(
     poll: Poll,
