@@ -34,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,6 +46,7 @@ import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
+import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.attachments.files.FileTypeIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
@@ -55,6 +57,7 @@ import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePreviewData
 import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Attachment.UploadState
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.model.MimeType
@@ -187,7 +190,13 @@ internal fun RowScope.FileAttachmentDescription(
             overflow = TextOverflow.Ellipsis,
         )
 
-        if (showFileSize(attachment)) {
+        val uploadState = attachment.uploadState
+        if (uploadState is UploadState.InProgress) {
+            FileUploadProgressIndicator(
+                state = uploadState,
+                textColor = textColor,
+            )
+        } else if (showFileSize(attachment)) {
             Text(
                 modifier = Modifier
                     .padding(top = StreamTokens.spacing2xs)
@@ -201,6 +210,35 @@ internal fun RowScope.FileAttachmentDescription(
         }
     }
 }
+
+@Composable
+private fun FileUploadProgressIndicator(state: UploadState.InProgress, textColor: Color) {
+    Row(
+        modifier = Modifier.padding(top = StreamTokens.spacing2xs),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+    ) {
+        LoadingIndicator(
+            progress = state::progressFraction,
+            modifier = Modifier.size(14.dp),
+        )
+        Text(
+            modifier = Modifier.testTag("Stream_FileAttachmentSize"),
+            text = "${MediaStringUtil.convertFileSizeByteCount(state.bytesUploaded)} / " +
+                MediaStringUtil.convertFileSizeByteCount(state.totalBytes),
+            style = ChatTheme.typography.metadataDefault,
+            color = textColor,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+/**
+ * Returns the upload progress as a fraction between 0f and 1f.
+ */
+internal fun UploadState.InProgress.progressFraction(): Float =
+    if (totalBytes > 0) (bytesUploaded / totalBytes.toFloat()).coerceIn(0f, 1f) else 0f
 
 /**
  * Represents the image that's shown in file attachments. This can be either an image/icon that represents the file type
@@ -272,12 +310,50 @@ private fun OtherFileAttachmentContentPreview() {
 }
 
 @Composable
-internal fun FileAttachmentContent(isMine: Boolean) {
-    val attachments = listOf(Attachment(mimeType = MimeType.MIME_TYPE_PDF, type = AttachmentType.FILE))
+internal fun FileAttachmentContent(isMine: Boolean, isUploading: Boolean = false) {
+    val attachments = listOf(
+        Attachment(
+            mimeType = MimeType.MIME_TYPE_PDF,
+            type = AttachmentType.FILE,
+            title = "test_document.pdf",
+            uploadState = if (isUploading) {
+                UploadState.InProgress(
+                    bytesUploaded = 512 * 1024,
+                    totalBytes = 1024 * 1024,
+                )
+            } else {
+                null
+            },
+        ),
+    )
     FileAttachmentContent(
         attachmentState = AttachmentState(
             message = Message(attachments = attachments),
             isMine = isMine,
         ),
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun UploadingFileAttachmentContentPreview() {
+    ChatTheme {
+        val attachments = listOf(
+            Attachment(
+                mimeType = MimeType.MIME_TYPE_PDF,
+                type = AttachmentType.FILE,
+                fileSize = 6_500_000,
+                uploadState = UploadState.InProgress(
+                    bytesUploaded = 2_500_000,
+                    totalBytes = 6_500_000,
+                ),
+            ),
+        )
+        FileAttachmentContent(
+            attachmentState = AttachmentState(
+                message = Message(attachments = attachments),
+                isMine = true,
+            ),
+        )
+    }
 }

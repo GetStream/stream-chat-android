@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentClickData
 import io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentClickData
-import io.getstream.chat.android.compose.ui.attachments.content.onFileUploadContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.content.onGiphyAttachmentContentClick
 import io.getstream.chat.android.compose.ui.attachments.content.onLinkAttachmentContentClick
 import io.getstream.chat.android.compose.ui.attachments.content.onMediaAttachmentContentItemClick
@@ -35,11 +34,8 @@ import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentF
 import io.getstream.chat.android.compose.ui.attachments.factory.LinkAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.MediaAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.UnsupportedAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.UploadAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
-import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
-import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
@@ -92,10 +88,6 @@ public object StreamAttachmentFactories {
         giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
         contentScale: ContentScale = ContentScale.Crop,
         skipEnrichUrl: Boolean = false,
-        onUploadContentItemClick: (
-            Attachment,
-            List<AttachmentPreviewHandler>,
-        ) -> Unit = ::onFileUploadContentItemClick,
         onLinkContentItemClick: (context: Context, previewUrl: String) -> Unit = ::onLinkAttachmentContentClick,
         onGiphyContentItemClick: (context: Context, url: String) -> Unit = ::onGiphyAttachmentContentClick,
         onMediaContentItemClick: (
@@ -110,9 +102,6 @@ public object StreamAttachmentFactories {
         ) -> Unit = ::onMediaAttachmentContentItemClick,
         skipTypes: List<AttachmentFactory.Type> = emptyList(),
     ): List<AttachmentFactory> = listOf(
-        UploadAttachmentFactory(
-            onContentItemClick = onUploadContentItemClick,
-        ),
         AudioRecordAttachmentFactory(
             viewModelFactory = AudioPlayerViewModelFactory(
                 getAudioPlayer = { getChatClient().audioPlayer },
@@ -141,10 +130,6 @@ public object StreamAttachmentFactories {
         giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
         giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
         contentScale: ContentScale = ContentScale.Crop,
-        onUploadContentItemClick: (
-            Attachment,
-            List<AttachmentPreviewHandler>,
-        ) -> Unit = ::onFileUploadContentItemClick,
         onLinkContentItemClick: (LinkAttachmentClickData) -> Unit = {
             onLinkAttachmentContentClick(it.context, it.url)
         },
@@ -153,9 +138,6 @@ public object StreamAttachmentFactories {
         },
         skipTypes: List<AttachmentFactory.Type> = emptyList(),
     ): List<AttachmentFactory> = listOf(
-        UploadAttachmentFactory(
-            onContentItemClick = onUploadContentItemClick,
-        ),
         AudioRecordAttachmentFactory(
             viewModelFactory = AudioPlayerViewModelFactory(
                 getAudioPlayer = { getChatClient().audioPlayer },
