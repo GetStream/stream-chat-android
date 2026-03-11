@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.ui.messages.attachments
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
-import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.test.TestCoroutineRule
 import org.junit.Rule
 import org.junit.Test
@@ -35,9 +34,7 @@ internal class AttachmentMediaPickerTest : PaparazziComposeTest {
     @Test
     fun `selection`() {
         snapshotWithDarkMode {
-            ViewModelStore {
-                AttachmentMediaPickerSelection()
-            }
+            AttachmentMediaPickerSelection()
         }
     }
 }
