@@ -17,35 +17,47 @@
 package io.getstream.chat.android.compose.ui.components.selectedmessage
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.state.messages.MessageReactionItemState
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
+import io.getstream.chat.android.compose.ui.components.LoadingIndicator
+import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.util.extensions.toSet
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.ViewModelStore
+import io.getstream.chat.android.compose.viewmodel.messages.ReactionsMenuViewModel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
@@ -103,7 +115,7 @@ public fun SelectedReactionsMenu(
  * Default content for the reactions menu bottom sheet.
  *
  * Composes the reaction count title, the reaction count row (chips), and the user reactions list
- * inside a scrollable column.
+ * inside a scrollable column with pagination support.
  *
  * @param message The selected message.
  * @param currentUser The currently logged in user.
@@ -122,86 +134,146 @@ internal fun ReactionsMenuContent(
     onShowMoreReactionsSelected: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val reactionGroups = buildReactionGroups(message)
-    val userReactions = buildUserReactionItems(
-        message = message,
-        currentUser = currentUser,
-    )
-    val resolver = ChatTheme.reactionResolver
-    val onAddReactionClick = onShowMoreReactionsSelected
-        .takeIf { ChannelCapabilities.SEND_REACTION in ownCapabilities }
-    val onReactionOptionSelected: (String) -> Unit = { type ->
-        onMessageAction(
-            React(
-                reaction = Reaction(
-                    messageId = message.id,
-                    type = type,
-                    emojiCode = resolver.emojiCode(type),
+    ViewModelStore(message.id) {
+        val viewModel = viewModel { ReactionsMenuViewModel(messageId = message.id) }
+
+        val state by viewModel.state.collectAsState()
+
+        val reactionGroups = buildReactionGroups(message)
+        val resolver = ChatTheme.reactionResolver
+        val onAddReactionClick = onShowMoreReactionsSelected
+            .takeIf { ChannelCapabilities.SEND_REACTION in ownCapabilities }
+        val onReactionOptionSelected: (String) -> Unit = { type ->
+            onMessageAction(
+                React(
+                    reaction = Reaction(
+                        messageId = message.id,
+                        type = type,
+                        emojiCode = resolver.emojiCode(type),
+                    ),
+                    message = message,
                 ),
-                message = message,
-            ),
+            )
+        }
+
+        val userReactions = buildUserReactionItems(
+            reactions = state.reactions,
+            currentUser = currentUser,
+        )
+
+        ReactionsMenuList(
+            reactionGroups = reactionGroups,
+            items = userReactions,
+            selectedReactionType = state.selectedReactionType,
+            isLoading = state.isLoading,
+            isLoadingMore = state.isLoadingMore,
+            onReactionSelected = viewModel::selectReaction,
+            onReactionOptionSelected = onReactionOptionSelected,
+            onAddReactionClick = onAddReactionClick,
+            onLoadMore = viewModel::loadMore,
+            modifier = modifier,
         )
     }
+}
 
-    var selectedReactionType by remember { mutableStateOf<String?>(null) }
-    val filteredUserReactions = remember(userReactions, selectedReactionType) {
-        selectedReactionType?.let { type -> userReactions.filter { it.type == type } } ?: userReactions
-    }
+@Suppress("LongParameterList")
+@Composable
+private fun ReactionsMenuList(
+    reactionGroups: List<MessageReactionItemState>,
+    items: List<UserReactionItemState>,
+    selectedReactionType: String?,
+    isLoading: Boolean,
+    isLoadingMore: Boolean,
+    onReactionSelected: (String) -> Unit,
+    onReactionOptionSelected: (String) -> Unit,
+    onAddReactionClick: (() -> Unit)?,
+    onLoadMore: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val listState = rememberLazyListState()
 
-    val reactionCountText = LocalResources.current.getQuantityString(
-        R.plurals.stream_compose_message_reactions,
-        filteredUserReactions.size,
-        filteredUserReactions.size,
+    LoadMoreHandler(
+        lazyListState = listState,
+        loadMore = onLoadMore,
     )
 
-    Column(
+    LazyColumn(
+        state = listState,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.backgroundElevationElevation1)
-            .verticalScroll(rememberScrollState()),
+            .background(ChatTheme.colors.backgroundElevationElevation1),
     ) {
-        Text(
-            text = reactionCountText,
-            style = ChatTheme.typography.headingMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textPrimary,
-        )
+        item(key = "Stream_header") {
+            val totalCount = reactionGroups.sumOf(MessageReactionItemState::count)
+            Text(
+                text = pluralStringResource(R.plurals.stream_compose_message_reactions, totalCount, totalCount),
+                style = ChatTheme.typography.headingMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = ChatTheme.colors.textPrimary,
+            )
+            ReactionCountRow(
+                reactionGroups = reactionGroups,
+                selectedReactionType = selectedReactionType,
+                onReactionSelected = onReactionSelected,
+                onAddReactionClick = onAddReactionClick,
+            )
+        }
 
-        ReactionCountRow(
-            reactionGroups = reactionGroups,
-            selectedReactionType = selectedReactionType,
-            onReactionSelected = { type ->
-                selectedReactionType = if (selectedReactionType == type) null else type
-            },
-            onAddReactionClick = onAddReactionClick,
-        )
+        if (isLoading) {
+            items(ShimmerItemCount, key = { "Stream_shimmer_$it" }) {
+                UserReactionShimmerItem()
+            }
+        } else {
+            items(
+                items = items,
+                key = { item -> "${item.user.id}_${item.type}" },
+            ) { item ->
+                UserReactionRow(
+                    modifier = Modifier.padding(bottom = StreamTokens.spacingXs),
+                    item = item,
+                    onClick = if (item.isMine) {
+                        { onReactionOptionSelected(item.type) }
+                    } else {
+                        null
+                    },
+                )
+            }
 
-        UserReactionsList(
-            userReactions = filteredUserReactions,
-            onReactionOptionSelected = onReactionOptionSelected,
-        )
+            if (isLoadingMore) {
+                item(key = "Stream_loading_more") {
+                    LoadingIndicator(modifier = Modifier.size(24.dp))
+                }
+            }
+        }
     }
 }
 
 @Composable
-private fun UserReactionsList(
-    userReactions: List<UserReactionItemState>,
-    onReactionOptionSelected: (String) -> Unit,
-) {
-    userReactions.forEach { item ->
-        UserReactionRow(
-            item = item,
-            onClick = if (item.isMine) {
-                { onReactionOptionSelected(item.type) }
-            } else {
-                null
-            },
+private fun UserReactionShimmerItem(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = StreamTokens.spacingSm, vertical = StreamTokens.spacingXs),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+    ) {
+        ShimmerProgressIndicator(
+            modifier = Modifier
+                .size(AvatarSize.Medium)
+                .clip(CircleShape),
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        ShimmerProgressIndicator(
+            modifier = Modifier
+                .width(200.dp)
+                .height(16.dp)
+                .clip(CircleShape),
+        )
     }
 }
+
+private const val ShimmerItemCount = 8
 
 /**
  * Builds a list of [MessageReactionItemState] from the message's reaction groups.
@@ -227,46 +299,52 @@ private fun buildReactionGroups(message: Message): List<MessageReactionItemState
 }
 
 /**
- * Builds a list of user reactions, based on the current user and the selected message.
+ * Builds a list of user reactions from the loaded reactions list.
  *
- * @param message The message the reactions were left for.
+ * @param reactions The list of reactions loaded from the API.
  * @param currentUser The currently logged in user.
  */
 @Composable
 private fun buildUserReactionItems(
-    message: Message,
+    reactions: List<Reaction>,
     currentUser: User?,
 ): List<UserReactionItemState> {
     val resolver = ChatTheme.reactionResolver
-    return message.latestReactions
-        .mapNotNull {
+    return remember(reactions, currentUser, resolver) {
+        reactions.mapNotNull {
             val user = it.user ?: return@mapNotNull null
-            val type = it.type
-
             UserReactionItemState(
                 user = user,
-                type = type,
+                type = it.type,
                 isMine = currentUser?.id == user.id,
-                emojiCode = resolver.emojiCode(type),
+                emojiCode = resolver.emojiCode(it.type),
             )
         }
+    }
 }
 
 @Composable
-private fun ReactionsMenuContentPreview(selectedMessage: Message) {
-    ReactionsMenuContent(
-        message = selectedMessage,
-        currentUser = PreviewUserData.user1,
-        onMessageAction = {},
-        onShowMoreReactionsSelected = {},
-        ownCapabilities = ChannelCapabilities.toSet(),
+private fun ReactionsMenuListPreview(message: Message) {
+    ReactionsMenuList(
+        reactionGroups = buildReactionGroups(message),
+        items = buildUserReactionItems(
+            reactions = message.latestReactions,
+            currentUser = PreviewUserData.user1,
+        ),
+        selectedReactionType = null,
+        isLoading = false,
+        isLoadingMore = false,
+        onReactionSelected = {},
+        onReactionOptionSelected = {},
+        onAddReactionClick = {},
+        onLoadMore = {},
     )
 }
 
 @Composable
 internal fun ReactionsMenuContentOneReaction() {
-    ReactionsMenuContentPreview(
-        selectedMessage = PreviewMessageData.message1.copy(
+    ReactionsMenuListPreview(
+        message = PreviewMessageData.message1.copy(
             latestReactions = PreviewReactionData.oneReaction,
             reactionGroups = PreviewReactionData.oneReactionGroup,
         ),
@@ -275,8 +353,8 @@ internal fun ReactionsMenuContentOneReaction() {
 
 @Composable
 internal fun ReactionsMenuContentManyReactions() {
-    ReactionsMenuContentPreview(
-        PreviewMessageData.message1.copy(
+    ReactionsMenuListPreview(
+        message = PreviewMessageData.message1.copy(
             latestReactions = PreviewReactionData.manyReaction,
             reactionGroups = PreviewReactionData.manyReactionGroups,
         ),
