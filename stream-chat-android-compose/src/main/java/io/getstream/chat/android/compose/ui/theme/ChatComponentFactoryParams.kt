@@ -19,8 +19,11 @@ package io.getstream.chat.android.compose.ui.theme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.state.messages.MessageReactionItemState
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 
 /**
@@ -72,5 +75,74 @@ public data class MessageFooterStatusIndicatorParams(
 public data class MessageComposerInputLeadingContentParams(
     val state: MessageComposerState,
     val onActiveCommandDismiss: () -> Unit,
+    val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for the [ChatComponentFactory.MessageComposerAttachments] component.
+ *
+ * @param attachments The attachments currently selected in the composer.
+ * @param onAttachmentRemoved Lambda invoked when an attachment is removed by the user.
+ * @param modifier Modifier for styling.
+ */
+public data class MessageComposerAttachmentsParams(
+    val attachments: List<Attachment>,
+    val onAttachmentRemoved: (Attachment) -> Unit,
+    val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for the [ChatComponentFactory.MessageComposerAttachmentAudioRecordItem] component.
+ *
+ * @param attachment The audio recording attachment to render.
+ * @param playerState Current state of the audio player.
+ * @param modifier Modifier for styling.
+ * @param onPlayToggleClick Called when the play/pause button is tapped.
+ * @param onThumbDragStart Called when the user starts dragging the waveform thumb.
+ * @param onThumbDragStop Called when the user stops dragging, with the target seek fraction.
+ * @param onAttachmentRemoved Called when the attachment is removed by the user.
+ */
+public data class MessageComposerAttachmentAudioRecordItemParams(
+    val attachment: Attachment,
+    val playerState: AudioPlayerState,
+    val modifier: Modifier = Modifier,
+    val onPlayToggleClick: (Attachment) -> Unit = {},
+    val onThumbDragStart: (Attachment) -> Unit = {},
+    val onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
+    val onAttachmentRemoved: (Attachment) -> Unit = {},
+)
+
+/**
+ * Parameters for the [ChatComponentFactory.MessageComposerAttachmentMediaItem] component.
+ *
+ * @param attachment The image or video attachment to render.
+ * @param onAttachmentRemoved Called when the attachment is removed by the user.
+ * @param modifier Modifier for styling.
+ */
+public data class MessageComposerAttachmentMediaItemParams(
+    val attachment: Attachment,
+    val onAttachmentRemoved: (Attachment) -> Unit,
+    val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for the [ChatComponentFactory.MessageComposerAttachmentMediaItemOverlay] component.
+ *
+ * @param attachmentType The MIME type of the attachment, e.g. [AttachmentType.VIDEO].
+ */
+public data class MessageComposerAttachmentMediaItemOverlayParams(
+    val attachmentType: String?,
+)
+
+/**
+ * Parameters for the [ChatComponentFactory.MessageComposerAttachmentFileItem] component.
+ *
+ * @param attachment The file attachment to render.
+ * @param onAttachmentRemoved Called when the attachment is removed by the user.
+ * @param modifier Modifier for styling.
+ */
+public data class MessageComposerAttachmentFileItemParams(
+    val attachment: Attachment,
+    val onAttachmentRemoved: (Attachment) -> Unit,
     val modifier: Modifier = Modifier,
 )
