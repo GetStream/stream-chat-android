@@ -36,6 +36,10 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.client.test.MockedChatClientTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -51,14 +55,10 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
         composable: @Composable () -> Unit,
     ) {
         paparazzi.snapshot {
-            CompositionLocalProvider(
-                LocalInspectionMode provides true,
-                LocalOnBackPressedDispatcherOwner provides FakeBackDispatcherOwner,
-                LocalActivityResultRegistryOwner provides NoOpRegistryOwner,
-            ) {
+            TestEnvironment {
                 ChatTheme(isInDarkMode = isInDarkMode) {
                     Box(modifier = Modifier.background(ChatTheme.colors.backgroundCoreApp)) {
-                        composable.invoke()
+                        composable()
                     }
                 }
             }
@@ -70,11 +70,7 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
         composable: @Composable () -> Unit,
     ) {
         paparazzi.snapshot {
-            CompositionLocalProvider(
-                LocalInspectionMode provides true,
-                LocalOnBackPressedDispatcherOwner provides FakeBackDispatcherOwner,
-                LocalActivityResultRegistryOwner provides NoOpRegistryOwner,
-            ) {
+            TestEnvironment {
                 Column {
                     ChatTheme(isInDarkMode = true) {
                         Box(
@@ -106,11 +102,7 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
         composable: @Composable () -> Unit,
     ) {
         paparazzi.snapshot {
-            CompositionLocalProvider(
-                LocalInspectionMode provides true,
-                LocalOnBackPressedDispatcherOwner provides FakeBackDispatcherOwner,
-                LocalActivityResultRegistryOwner provides NoOpRegistryOwner,
-            ) {
+            TestEnvironment {
                 Row {
                     ChatTheme(isInDarkMode = true) {
                         Box(
@@ -136,6 +128,24 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
             }
         }
     }
+}
+
+@Composable
+private fun TestEnvironment(content: @Composable () -> Unit) {
+    CompositionLocalProvider(
+        LocalInspectionMode provides true,
+        LocalViewModelStoreOwner provides FakeViewModelStoreOwner,
+        LocalOnBackPressedDispatcherOwner provides FakeBackDispatcherOwner,
+        LocalActivityResultRegistryOwner provides NoOpRegistryOwner,
+        content = content,
+    )
+}
+
+/**
+ * A fake [ViewModelStoreOwner] necessary for composable components that use [ViewModel].
+ */
+private val FakeViewModelStoreOwner = object : ViewModelStoreOwner {
+    override val viewModelStore: ViewModelStore = ViewModelStore()
 }
 
 /**
