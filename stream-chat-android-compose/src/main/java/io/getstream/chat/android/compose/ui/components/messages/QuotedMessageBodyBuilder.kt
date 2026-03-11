@@ -107,7 +107,9 @@ internal class QuotedMessageBodyBuilder(
             // Giphy attachment is shown as single image only if there are no files attached
             summary.giphyAttachment != null && summary.fileCount == 0 -> {
                 QuotedMessageBody(
-                    text = resources.getString(R.string.stream_compose_quoted_message_giphy_tag),
+                    text = messageText.ifBlank {
+                        resources.getString(R.string.stream_compose_quoted_message_giphy_tag)
+                    },
                     iconId = R.drawable.stream_compose_ic_file,
                     imagePreviewData = summary.giphyAttachment.imagePreviewUrl,
                 )

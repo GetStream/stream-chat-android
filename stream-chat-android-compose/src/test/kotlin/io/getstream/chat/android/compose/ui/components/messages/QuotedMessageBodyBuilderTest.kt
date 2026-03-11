@@ -186,11 +186,30 @@ internal class QuotedMessageBodyBuilderTest {
                     iconId = R.drawable.stream_compose_ic_link,
                 ),
             ),
-
             Arguments.of(
-                "Giphy attachment",
+                "Giphy with text",
                 Message(
                     text = "Feeling great!",
+                    attachments = listOf(
+                        Attachment(
+                            type = AttachmentType.GIPHY,
+                            name = "Happy Dance",
+                            imageUrl = "https://giphy.com/image.gif",
+                        ),
+                    ),
+                ),
+                null,
+                false,
+                QuotedMessageBody(
+                    text = "Feeling great!",
+                    iconId = R.drawable.stream_compose_ic_file,
+                    imagePreviewData = "https://giphy.com/image.gif",
+                ),
+            ),
+            Arguments.of(
+                "Giphy without text",
+                Message(
+                    text = "",
                     attachments = listOf(
                         Attachment(
                             type = AttachmentType.GIPHY,
@@ -207,7 +226,6 @@ internal class QuotedMessageBodyBuilderTest {
                     imagePreviewData = "https://giphy.com/image.gif",
                 ),
             ),
-
             Arguments.of(
                 "Single image with text",
                 Message(
