@@ -412,6 +412,7 @@ internal fun MessageComposerFixedStyleWithUserSuggestions() {
     MessageComposer(
         messageComposerState = PreviewMessageComposerState.copy(
             currentUser = PreviewUserData.userWithOnlineStatus,
+            inputValue = "@",
             mentionSuggestions = listOf(
                 PreviewUserData.userWithOnlineStatus,
                 PreviewUserData.user1,
@@ -434,6 +435,7 @@ private fun MessageComposerFixedStyleWithCommandSuggestionsPreview() {
 internal fun MessageComposerFixedStyleWithCommandSuggestions() {
     MessageComposer(
         messageComposerState = PreviewMessageComposerState.copy(
+            inputValue = "/",
             commandSuggestions = listOf(
                 PreviewCommandData.command1,
                 PreviewCommandData.command2,
@@ -498,6 +500,7 @@ internal fun MessageComposerFloatingStyleWithUserSuggestions() {
         MessageComposer(
             messageComposerState = PreviewMessageComposerState.copy(
                 currentUser = PreviewUserData.userWithOnlineStatus,
+                inputValue = "@",
                 mentionSuggestions = listOf(
                     PreviewUserData.userWithOnlineStatus,
                     PreviewUserData.user1,
@@ -523,6 +526,7 @@ internal fun MessageComposerFloatingStyleWithCommandSuggestions() {
     CompositionLocalProvider(LocalChatConfig provides config) {
         MessageComposer(
             messageComposerState = PreviewMessageComposerState.copy(
+                inputValue = "/",
                 commandSuggestions = listOf(
                     PreviewCommandData.command1,
                     PreviewCommandData.command2,
