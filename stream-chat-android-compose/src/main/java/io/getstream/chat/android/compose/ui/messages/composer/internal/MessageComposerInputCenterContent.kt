@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -43,6 +44,7 @@ import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
@@ -81,7 +83,9 @@ internal fun MessageComposerInputCenterContent(
     val canSendMessage = state.canSendMessage()
 
     BasicTextField(
-        modifier = modifier.testTag("Stream_ComposerInputField"),
+        modifier = modifier
+            .testTag("Stream_ComposerInputField")
+            .heightIn(min = 48.dp),
         value = textState,
         onValueChange = {
             textState = it
@@ -100,8 +104,8 @@ internal fun MessageComposerInputCenterContent(
                     } else {
                         StreamTokens.spacingMd
                     },
-                    top = StreamTokens.spacingMd,
-                    bottom = StreamTokens.spacingMd,
+                    top = StreamTokens.spacingSm,
+                    bottom = StreamTokens.spacingSm,
                 ),
                 contentAlignment = Alignment.CenterStart,
             ) {

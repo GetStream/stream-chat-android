@@ -38,7 +38,7 @@ internal fun SnackbarPopup(
     hostState: SnackbarHostState,
     snackbar: @Composable (SnackbarData) -> Unit = { StreamSnackbar(it) },
 ) {
-    Popup(popupPositionProvider = AboveAnchorPopupPositionProvider) {
+    Popup(popupPositionProvider = CenteredAboveAnchorPositionProvider) {
         StreamSnackbarHost(
             hostState = hostState,
             snackbar = snackbar,
@@ -46,14 +46,14 @@ internal fun SnackbarPopup(
     }
 }
 
-internal object AboveAnchorPopupPositionProvider : PopupPositionProvider {
+private object CenteredAboveAnchorPositionProvider : PopupPositionProvider {
     override fun calculatePosition(
         anchorBounds: IntRect,
         windowSize: IntSize,
         layoutDirection: LayoutDirection,
         popupContentSize: IntSize,
     ) = IntOffset(
-        x = 0,
+        x = (windowSize.width - popupContentSize.width) / 2,
         y = anchorBounds.top - popupContentSize.height,
     )
 }
