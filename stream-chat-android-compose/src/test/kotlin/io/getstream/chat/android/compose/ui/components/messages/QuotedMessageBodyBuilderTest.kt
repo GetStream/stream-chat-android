@@ -188,55 +188,13 @@ internal class QuotedMessageBodyBuilderTest {
             ),
 
             Arguments.of(
-                "Giphy with text",
+                "Giphy attachment",
                 Message(
                     text = "Feeling great!",
                     attachments = listOf(
                         Attachment(
                             type = AttachmentType.GIPHY,
                             name = "Happy Dance",
-                            imageUrl = "https://giphy.com/image.gif",
-                        ),
-                    ),
-                ),
-                null,
-                false,
-                QuotedMessageBody(
-                    text = "Feeling great!",
-                    imagePreviewData = "https://giphy.com/image.gif",
-                ),
-            ),
-            Arguments.of(
-                "Giphy without text uses name",
-                Message(
-                    text = "",
-                    attachments = listOf(
-                        Attachment(
-                            type = AttachmentType.GIPHY,
-                            name = "Happy Dance",
-                            text = null,
-                            title = null,
-                            imageUrl = "https://giphy.com/image.gif",
-                        ),
-                    ),
-                ),
-                null,
-                false,
-                QuotedMessageBody(
-                    text = "Happy Dance",
-                    imagePreviewData = "https://giphy.com/image.gif",
-                ),
-            ),
-            Arguments.of(
-                "Giphy without text uses fallback",
-                Message(
-                    text = "",
-                    attachments = listOf(
-                        Attachment(
-                            type = AttachmentType.GIPHY,
-                            name = null,
-                            text = null,
-                            title = null,
                             imageUrl = "https://giphy.com/image.gif",
                         ),
                     ),
@@ -245,6 +203,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = MOCK_GIPHY_TAG,
+                    iconId = R.drawable.stream_compose_ic_file,
                     imagePreviewData = "https://giphy.com/image.gif",
                 ),
             ),
