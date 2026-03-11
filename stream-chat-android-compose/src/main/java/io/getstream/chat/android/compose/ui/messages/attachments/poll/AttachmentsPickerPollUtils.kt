@@ -19,54 +19,42 @@ package io.getstream.chat.android.compose.ui.messages.attachments.poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.VotingVisibility
+import io.getstream.chat.android.ui.common.utils.PollsConstants
 
 /**
  * Builds a [PollConfig] from the provided poll creation data.
  *
  * @param pollQuestion The question of the poll.
  * @param pollOptions The list of poll options.
- * @param pollSwitches The list of poll switches.
+ * @param state The current poll creation view state.
  */
 internal fun pollConfigFrom(
     pollQuestion: String,
     pollOptions: List<PollOptionItem>,
-    pollSwitches: List<PollSwitchItem>,
+    state: CreatePollViewState,
 ): PollConfig {
     val options = pollOptions
         .filter { it.title.isNotEmpty() }
         .map { it.title }
-    val allowUserSuggestedOptions = pollSwitches.any {
-        it.key == PollSwitchItemKeys.ALLOW_USER_SUGGESTED_OPTIONS && it.enabled
-    }
-    val allowAnswers = pollSwitches.any {
-        it.key == PollSwitchItemKeys.ALLOW_ANSWERS && it.enabled
-    }
-    val anonymousPoll = pollSwitches.any {
-        it.key == PollSwitchItemKeys.VOTING_VISIBILITY && it.enabled
-    }
-    val votingVisibility = if (anonymousPoll) {
+    val votingVisibility = if (state.anonymousPoll.enabled) {
         VotingVisibility.ANONYMOUS
     } else {
         VotingVisibility.PUBLIC
     }
-    val maxVotesEnabled = pollSwitches.any {
-        it.key == PollSwitchItemKeys.MAX_VOTES_ALLOWED && it.enabled
-    }
-    val maxVotesAllowed = if (maxVotesEnabled) {
-        pollSwitches.first { it.key == PollSwitchItemKeys.MAX_VOTES_ALLOWED }.pollSwitchInput?.value.toString().toInt()
-    } else {
-        1
-    }
-    val enforceUniqueVotes = pollSwitches.none {
-        it.key == PollSwitchItemKeys.MAX_VOTES_ALLOWED && it.enabled
+    val maxVotesAllowed = when {
+        !state.multipleVotes.enabled -> 1
+        !state.limitVotesPerPerson.enabled -> null
+        else -> state.maxVotesPerPersonText.toIntOrNull()
+            ?.coerceIn(PollsConstants.MULTIPLE_ANSWERS_RANGE)
+            ?: PollsConstants.MULTIPLE_ANSWERS_RANGE.first
     }
     return PollConfig(
         name = pollQuestion,
         options = options.map { text -> PollOption(text = text) },
-        allowUserSuggestedOptions = allowUserSuggestedOptions,
-        allowAnswers = allowAnswers,
+        allowUserSuggestedOptions = state.suggestAnOption.enabled,
+        allowAnswers = state.allowComments.enabled,
         votingVisibility = votingVisibility,
         maxVotesAllowed = maxVotesAllowed,
-        enforceUniqueVote = enforceUniqueVotes,
+        enforceUniqueVote = !state.multipleVotes.enabled,
     )
 }

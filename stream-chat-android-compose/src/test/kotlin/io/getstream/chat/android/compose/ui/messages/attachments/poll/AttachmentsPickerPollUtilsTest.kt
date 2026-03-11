@@ -16,22 +16,16 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
-import android.content.Context
-import androidx.compose.ui.text.input.KeyboardType
-import io.getstream.chat.android.compose.ui.util.DefaultPollSwitchItemFactory
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.VotingVisibility
 import org.amshove.kluent.`should be equal to`
 import org.junit.Test
-import org.mockito.kotlin.any
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
 
 internal class AttachmentsPickerPollUtilsTest {
 
     @Test
-    fun testPollConfigWithoutSwitchOptions() {
+    fun testPollConfigWithAllDisabled() {
         // given
         val pollQuestion = "Poll question"
         val options = listOf(
@@ -39,11 +33,12 @@ internal class AttachmentsPickerPollUtilsTest {
             PollOptionItem(title = "Answer 2"),
             PollOptionItem(title = ""),
         )
-        val context = mock<Context>()
-        whenever(context.getString(any())).thenReturn("")
-        val switches = DefaultPollSwitchItemFactory(context).providePollSwitchItemList()
+        val state = CreatePollViewState(
+            question = pollQuestion,
+            optionItemList = options,
+        )
         // when
-        val pollConfig = pollConfigFrom(pollQuestion, options, switches)
+        val pollConfig = pollConfigFrom(pollQuestion, options, state)
         // then
         val expected = PollConfig(
             name = "Poll question",
@@ -59,7 +54,37 @@ internal class AttachmentsPickerPollUtilsTest {
     }
 
     @Test
-    fun testPollConfigWithSwitchOptions() {
+    fun testPollConfigWithMultipleVotesNoLimit() {
+        // given
+        val pollQuestion = "Poll question"
+        val options = listOf(
+            PollOptionItem(title = "Answer 1"),
+            PollOptionItem(title = "Answer 2"),
+        )
+        val state = CreatePollViewState(
+            question = pollQuestion,
+            optionItemList = options,
+            multipleVotes = switchEnabled(true),
+            limitVotesPerPerson = switchEnabled(false),
+        )
+        // when
+        val pollConfig = pollConfigFrom(pollQuestion, options, state)
+        // then
+        val expected = PollConfig(
+            name = "Poll question",
+            options = listOf(PollOption(text = "Answer 1"), PollOption(text = "Answer 2")),
+            description = "",
+            votingVisibility = VotingVisibility.PUBLIC,
+            enforceUniqueVote = false,
+            maxVotesAllowed = null,
+            allowUserSuggestedOptions = false,
+            allowAnswers = false,
+        )
+        pollConfig `should be equal to` expected
+    }
+
+    @Test
+    fun testPollConfigWithAllEnabled() {
         // given
         val pollQuestion = "Poll question"
         val options = listOf(
@@ -67,44 +92,19 @@ internal class AttachmentsPickerPollUtilsTest {
             PollOptionItem(title = "Answer 2"),
             PollOptionItem(title = ""),
         )
-        val context = mock<Context>()
-        whenever(context.getString(any())).thenReturn("")
-        val switches = listOf(
-            PollSwitchItem(
-                title = "Multiple answers",
-                description = "",
-                pollSwitchInput = PollSwitchInput(
-                    value = "2",
-                    description = "Enter an integer between 1 and 2",
-                    minValue = 1,
-                    maxValue = 2,
-                    keyboardType = KeyboardType.Number,
-                ),
-                key = PollSwitchItemKeys.MAX_VOTES_ALLOWED,
-                enabled = true,
-            ),
-            PollSwitchItem(
-                title = "Anonymous poll",
-                description = "",
-                key = PollSwitchItemKeys.VOTING_VISIBILITY,
-                enabled = true,
-            ),
-            PollSwitchItem(
-                title = "Suggest an option",
-                description = "",
-                key = PollSwitchItemKeys.ALLOW_USER_SUGGESTED_OPTIONS,
-                enabled = true,
-            ),
-            PollSwitchItem(
-                title = "Add a comment",
-                description = "",
-                key = PollSwitchItemKeys.ALLOW_ANSWERS,
-                enabled = true,
-            ),
+        val state = CreatePollViewState(
+            question = pollQuestion,
+            optionItemList = options,
+            multipleVotes = switchEnabled(true),
+            limitVotesPerPerson = switchEnabled(true),
+            maxVotesPerPersonText = "2",
+            anonymousPoll = switchEnabled(true),
+            suggestAnOption = switchEnabled(true),
+            allowComments = switchEnabled(true),
         )
 
         // when
-        val pollConfig = pollConfigFrom(pollQuestion, options, switches)
+        val pollConfig = pollConfigFrom(pollQuestion, options, state)
         // then
         val expected = PollConfig(
             name = "Poll question",
@@ -118,4 +118,7 @@ internal class AttachmentsPickerPollUtilsTest {
         )
         pollConfig `should be equal to` expected
     }
+
+    private fun switchEnabled(enabled: Boolean) =
+        PollSwitchItem(visible = true, enabled = enabled, onCheckedChange = {})
 }
