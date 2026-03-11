@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.attachments.content
+package io.getstream.chat.android.compose.ui.messages.composer.internal.attachments
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -33,57 +29,35 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.ColorImage
 import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
-import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
+import io.getstream.chat.android.compose.ui.util.extensions.internal.localPreviewData
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
-
-/**
- * UI for currently selected image attachments, within the [MessageInput].
- *
- * @param attachments Selected attachments.
- * @param onAttachmentRemoved Handler when the user removes an attachment from the list.
- * @param modifier Modifier for styling.
- */
-@Composable
-public fun ImageAttachmentPreviewContent(
-    attachments: List<Attachment>,
-    onAttachmentRemoved: (Attachment) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    LazyRow(
-        modifier = modifier.clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
-        contentPadding = PaddingValues(12.dp),
-    ) {
-        items(attachments) { attachment ->
-            ImageAttachmentPreviewContentItem(
-                attachment = attachment,
-                onAttachmentRemoved = onAttachmentRemoved,
-            )
-        }
-    }
-}
+import io.getstream.chat.android.previewdata.PreviewAttachmentData
 
 @Composable
-private fun ImageAttachmentPreviewContentItem(
+internal fun MessageComposerAttachmentMediaItem(
     attachment: Attachment,
-    onAttachmentRemoved: (Attachment) -> Unit,
+    modifier: Modifier = Modifier,
+    onAttachmentRemoved: (Attachment) -> Unit = {},
+    overlayContent: @Composable (attachmentType: String?) -> Unit = {},
 ) {
-    val data = attachment.upload ?: attachment.imagePreviewUrl
+    val data = attachment.localPreviewData
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .size(95.dp)
-            .clip(RoundedCornerShape(16.dp)),
+            .clip(RoundedCornerShape(StreamTokens.radiusLg))
+            .testTag("Stream_MediaAttachmentPreviewItem"),
+        contentAlignment = Alignment.Center,
     ) {
         StreamAsyncImage(
             modifier = Modifier.fillMaxSize(),
@@ -92,32 +66,34 @@ private fun ImageAttachmentPreviewContentItem(
             contentScale = ContentScale.Crop,
         )
 
+        overlayContent(attachment.type)
+
         ComposerCancelIcon(
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(4.dp),
+                .padding(4.dp)
+                .testTag("Stream_AttachmentCancelIcon"),
             onClick = { onAttachmentRemoved(attachment) },
         )
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-private fun ImageAttachmentContentPreview() {
+private fun MessageComposerAttachmentMediaItemPreview() {
     ChatTheme {
-        ImageAttachmentPreviewContent()
+        MessageComposerAttachmentMediaItem()
     }
 }
 
 @Composable
-internal fun ImageAttachmentPreviewContent() {
+internal fun MessageComposerAttachmentMediaItem() {
     val previewHandler = AsyncImagePreviewHandler {
-        ColorImage(color = Color.Red.toArgb(), width = 200, height = 150)
+        ColorImage(color = Color.Green.toArgb(), width = 200, height = 150)
     }
     CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
-        ImageAttachmentPreviewContentItem(
-            attachment = Attachment(imageUrl = "Image"),
-            onAttachmentRemoved = {},
+        MessageComposerAttachmentMediaItem(
+            attachment = PreviewAttachmentData.attachmentImage1,
         )
     }
 }
