@@ -32,8 +32,12 @@ import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.recover
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 
 private const val TAG = "Chat:UploadWorker"
+private const val PROGRESS_THROTTLE_MS = 200L
 
 @InternalStreamChatApi
 public class UploadAttachmentsWorker(
@@ -105,31 +109,37 @@ public class UploadAttachmentsWorker(
     @Suppress("TooGenericExceptionCaught")
     private suspend fun uploadAttachments(message: Message): List<Attachment> {
         return try {
-            message.attachments.map { attachment ->
-                if (attachment.uploadState != Attachment.UploadState.Success) {
-                    logger.d {
-                        "[uploadAttachments] #uploader; uploading attachment ${attachment.uploadId} " +
-                            "for message ${message.id}"
-                    }
-                    val progressCallback = channelStateLogic?.let { logic ->
-                        ProgressCallbackImpl(
-                            message.id,
-                            attachment.uploadId!!,
-                            logic,
-                        )
-                    }
+            coroutineScope {
+                message.attachments.map { attachment ->
+                    async {
+                        if (attachment.uploadState != Attachment.UploadState.Success) {
+                            logger.d {
+                                "[uploadAttachments] #uploader; uploading attachment ${attachment.uploadId} " +
+                                    "for message ${message.id}"
+                            }
+                            val progressCallback = channelStateLogic?.let { logic ->
+                                ProgressCallbackImpl(
+                                    message.id,
+                                    attachment.uploadId!!,
+                                    logic,
+                                )
+                            }
 
-                    attachmentUploader.uploadAttachment(channelType, channelId, attachment, progressCallback)
-                        .recover { error -> attachment.copy(uploadState = Attachment.UploadState.Failed(error)) }
-                        .value
-                } else {
-                    logger.i {
-                        "[uploadAttachments] #uploader; attachment ${attachment.uploadId}" +
-                            " for message ${message.id} already uploaded"
+                            attachmentUploader.uploadAttachment(channelType, channelId, attachment, progressCallback)
+                                .recover { error ->
+                                    attachment.copy(uploadState = Attachment.UploadState.Failed(error))
+                                }
+                                .value
+                        } else {
+                            logger.i {
+                                "[uploadAttachments] #uploader; attachment ${attachment.uploadId}" +
+                                    " for message ${message.id} already uploaded"
+                            }
+                            attachment
+                        }
                     }
-                    attachment
-                }
-            }.toMutableList()
+                }.awaitAll()
+            }
         } catch (e: Exception) {
             logger.e { "[uploadAttachments] #uploader; unable to upload attachments: ${e.message}" }
             message.attachments.map {
@@ -140,7 +150,7 @@ public class UploadAttachmentsWorker(
                             Error.ThrowableError(message = "Could not upload attachments.", cause = e),
                         ),
                 )
-            }.toMutableList()
+            }
         }
     }
 
@@ -162,6 +172,9 @@ public class UploadAttachmentsWorker(
         private val channelStateLogic: ChannelMessagesUpdateLogic,
     ) :
         ProgressCallback {
+
+        private var lastProgressUpdateTime = 0L
+
         override fun onSuccess(url: String?) {
             StreamLog.i(TAG) { "[Progress.onSuccess] #uploader; url: $url" }
             updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Success)
@@ -173,6 +186,10 @@ public class UploadAttachmentsWorker(
         }
 
         override fun onProgress(bytesUploaded: Long, totalBytes: Long) {
+            val now = System.currentTimeMillis()
+            if (now - lastProgressUpdateTime < PROGRESS_THROTTLE_MS && bytesUploaded < totalBytes) return
+            lastProgressUpdateTime = now
+
             updateAttachmentUploadState(
                 messageId,
                 uploadId,
