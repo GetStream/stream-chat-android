@@ -48,12 +48,6 @@ internal fun MessageComposerLeadingContent(
     isAttachmentPickerVisible: Boolean,
     onAttachmentsClick: () -> Unit,
 ) {
-    val hasCommandInput = messageInputState.inputValue.startsWith("/")
-    val hasCommandSuggestions = messageInputState.commandSuggestions.isNotEmpty()
-    val hasMentionSuggestions = messageInputState.mentionSuggestions.isNotEmpty()
-
-    val isAddButtonEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
-
     val canSendMessage = messageInputState.canSendMessage()
 
     val isRecording = messageInputState.recording !is RecordingState.Idle
@@ -73,7 +67,6 @@ internal fun MessageComposerLeadingContent(
                 targetValue = if (isAttachmentPickerVisible) OpenAttachmentPickerButtonRotation else 0f,
             )
             FilledIconButton(
-                enabled = isAddButtonEnabled,
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .border(

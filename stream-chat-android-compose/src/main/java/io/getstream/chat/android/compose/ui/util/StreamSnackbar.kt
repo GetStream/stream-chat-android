@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.ui.util
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.SnackbarData
@@ -54,12 +53,7 @@ internal fun StreamSnackbar(
     modifier: Modifier = Modifier,
 ) {
     val actionLabel = snackbarData.visuals.actionLabel
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(StreamTokens.spacingMd),
-        contentAlignment = Alignment.Center,
-    ) {
+    Box(modifier = Modifier.padding(StreamTokens.spacingMd)) {
         Surface(
             modifier = modifier.shadow(4.dp, shape = SnackbarShape),
             shape = SnackbarShape,
