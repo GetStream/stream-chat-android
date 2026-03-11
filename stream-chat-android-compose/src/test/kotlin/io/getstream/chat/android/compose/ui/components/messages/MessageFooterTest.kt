@@ -28,6 +28,7 @@ import org.junit.Rule
 import org.junit.Test
 import java.util.Calendar
 import java.util.Date
+import java.util.TimeZone
 
 internal class MessageFooterTest : PaparazziComposeTest {
 
@@ -178,4 +179,7 @@ internal class MessageFooterTest : PaparazziComposeTest {
     }
 }
 
-private val FixedDate: Date = Calendar.getInstance().apply { set(2022, 1, 1, 10, 30) }.time
+private val FixedDate: Date = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+    set(2022, 1, 1, 10, 30, 0)
+    set(Calendar.MILLISECOND, 0)
+}.time

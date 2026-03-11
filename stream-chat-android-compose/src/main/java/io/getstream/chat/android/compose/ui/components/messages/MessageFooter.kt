@@ -84,7 +84,7 @@ public fun MessageFooter(
 
         if (messageItem.showMessageFooter) {
             val showEditLabel = message.messageTextUpdatedAt != null && !message.isDeleted()
-            var showEditInfo by remember { mutableStateOf(false) }
+            var showEditInfo by remember(message.id, showEditLabel) { mutableStateOf(false) }
             val textStyle = MessageStyling.timestampStyle()
             Row(
                 modifier = Modifier
@@ -132,7 +132,7 @@ public fun MessageFooter(
                     )
                 }
             }
-            if (showEditInfo) {
+            if (showEditLabel && showEditInfo) {
                 Row(
                     modifier = Modifier
                         .padding(bottom = 4.dp)
