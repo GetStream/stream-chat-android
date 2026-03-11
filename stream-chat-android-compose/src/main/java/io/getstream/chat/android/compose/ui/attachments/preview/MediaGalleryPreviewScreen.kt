@@ -341,11 +341,13 @@ public fun MediaGalleryPreviewScreen(
         )
     },
 ) {
-    // Filters out any link attachments. Pass this value along to all children
+    // Filters out non-media and link attachments. Pass this value along to all children
     // Composable-s that read message attachments to prevent inconsistent state.
     val filteredAttachments by remember(message) {
         derivedStateOf {
-            message.attachments.filter { attachment -> !attachment.hasLink() }
+            message.attachments.filter { attachment ->
+                !attachment.hasLink() && (attachment.isImage() || attachment.isVideo())
+            }
         }
     }
     val startingPosition = if (initialPage !in filteredAttachments.indices) 0 else initialPage
