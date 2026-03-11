@@ -42,7 +42,7 @@ internal fun ExtendedReactionsOptions(
     ownReactions: List<Reaction>,
     onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
     modifier: Modifier = Modifier,
-    cells: GridCells = GridCells.Adaptive(minSize = 48.dp),
+    cells: GridCells = GridCells.Adaptive(minSize = 56.dp),
 ) {
     val resolver = ChatTheme.reactionResolver
     val options = resolver.supportedReactions.map { type ->

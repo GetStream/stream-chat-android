@@ -310,6 +310,7 @@ private fun SpeedButton(
             else -> "x$speed"
         },
         style = ChatTheme.typography.metadataEmphasis,
+        color = ChatTheme.colors.controlPlaybackToggleText,
         modifier = Modifier
             .border(1.dp, outlineColor, speedButtonShape)
             .clip(speedButtonShape)
