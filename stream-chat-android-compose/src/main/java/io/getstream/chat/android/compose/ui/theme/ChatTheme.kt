@@ -38,8 +38,6 @@ import coil3.ImageLoader
 import com.valentinilk.shimmer.LocalShimmerTheme
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
-import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
@@ -91,10 +89,6 @@ private val LocalUserPresence = compositionLocalOf<UserPresence> {
 public val LocalComponentFactory: ProvidableCompositionLocal<ChatComponentFactory> = compositionLocalOf {
     error("No ComponentFactory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-private val LocalAttachmentFactories = compositionLocalOf<List<AttachmentFactory>> {
-    error("No attachment factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
-
 private val LocalAttachmentPreviewHandlers = compositionLocalOf<List<AttachmentPreviewHandler>> {
     error("No attachment preview handlers provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -176,7 +170,6 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param rippleConfiguration Defines the appearance for ripples.
  * @param userPresence The user presence display configuration.
  * @param componentFactory Provide to customize the stateless components that are used throughout the UI
- * @param attachmentFactories Attachment factories that we provide.
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
  * @param reactionResolver Provides available reactions and resolves reaction types to emoji codes.
  * @param reactionOptionsTheme [ReactionOptionsTheme] Theme for the reaction option list in the selected message menu.
@@ -221,7 +214,6 @@ public fun ChatTheme(
     ),
     userPresence: UserPresence = UserPresence(),
     componentFactory: ChatComponentFactory = DefaultChatComponentFactory(),
-    attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaults(),
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
     reactionResolver: ReactionResolver = ReactionResolver.defaultResolver(),
@@ -235,7 +227,6 @@ public fun ChatTheme(
     messagePreviewFormatter: MessagePreviewFormatter = MessagePreviewFormatter.defaultFormatter(
         context = LocalContext.current,
         typography = typography,
-        attachmentFactories = attachmentFactories,
         autoTranslationEnabled = config.translation.enabled,
         colors = colors,
     ),
@@ -274,7 +265,6 @@ public fun ChatTheme(
         LocalShimmerTheme provides StreamShimmerTheme,
         LocalUserPresence provides userPresence,
         LocalComponentFactory provides componentFactory,
-        LocalAttachmentFactories provides attachmentFactories,
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
         LocalReactionResolver provides reactionResolver,
         LocalMessagePreviewIconFactory provides messagePreviewIconFactory,
@@ -354,14 +344,6 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalComponentFactory.current
-
-    /**
-     * Retrieves the current list of [AttachmentFactory] at the call site's position in the hierarchy.
-     */
-    public val attachmentFactories: List<AttachmentFactory>
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalAttachmentFactories.current
 
     /**
      * Retrieves the current list of [AttachmentPreviewHandler] at the call site's position in the hierarchy.

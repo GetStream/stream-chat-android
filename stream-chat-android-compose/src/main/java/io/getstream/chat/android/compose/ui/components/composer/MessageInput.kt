@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
@@ -41,6 +40,7 @@ import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecor
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.ui.theme.LocalChatConfig
+import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentsParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerInputLeadingContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.util.extensions.toSet
@@ -205,14 +205,11 @@ private fun MessageInputTop(
             }
 
             if (showAttachments) {
-                val previewFactory = ChatTheme.attachmentFactories.firstOrNull { it.canHandle(attachments) }
-
-                previewFactory?.previewContent?.invoke(
-                    Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                    attachments,
-                    onAttachmentRemoved,
+                ChatTheme.componentFactory.MessageComposerAttachments(
+                    params = MessageComposerAttachmentsParams(
+                        attachments = attachments,
+                        onAttachmentRemoved = onAttachmentRemoved,
+                    ),
                 )
             }
 
