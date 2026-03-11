@@ -15,14 +15,14 @@
     limitations under the License.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:viewportWidth="24"
-    android:viewportHeight="24"
-    >
-    <path
-        android:fillColor="#000000"
-        android:fillType="evenOdd"
-        android:pathData="M22 7.98V17C22 18.1 21.1 19 20 19H6L2 23V5C2 3.9 2.9 3 4 3H14.1C14.04 3.32 14 3.66 14 4C14 4.34 14.04 4.68 14.1 5H4V17H20V8.9C20.74 8.75 21.42 8.42 22 7.98ZM16 4C16 5.66 17.34 7 19 7C20.66 7 22 5.66 22 4C22 2.34 20.66 1 19 1C17.34 1 16 2.34 16 4Z"
-        />
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="20"
+    android:viewportHeight="20">
+  <path
+      android:pathData="M10.625,3.124H3.958C3.038,3.124 2.292,3.871 2.292,4.791V13.541C2.292,14.462 3.038,15.208 3.958,15.208H7.21C7.406,15.208 7.595,15.277 7.745,15.402L9.466,16.845C9.774,17.103 10.223,17.105 10.533,16.848L12.282,15.399C12.431,15.275 12.619,15.208 12.813,15.208H16.042C16.962,15.208 17.708,14.462 17.708,13.541V10.208M18.542,4.999C18.542,6.495 17.329,7.708 15.833,7.708C14.338,7.708 13.125,6.495 13.125,4.999C13.125,3.504 14.338,2.291 15.833,2.291C17.329,2.291 18.542,3.504 18.542,4.999Z"
+      android:strokeWidth="1.5"
+      android:fillColor="#00000000"
+      android:strokeColor="#000000"
+      android:strokeLineCap="round"/>
 </vector>
