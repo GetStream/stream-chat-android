@@ -118,6 +118,8 @@ import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatu
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
 import io.getstream.chat.android.compose.ui.components.common.CommandChip
 import io.getstream.chat.android.compose.ui.components.common.ContextualMenuItem
+import io.getstream.chat.android.compose.ui.components.common.PlayButton
+import io.getstream.chat.android.compose.ui.components.common.PlayButtonSize
 import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
@@ -143,6 +145,10 @@ import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicke
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordingButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerEditIndicator
+import io.getstream.chat.android.compose.ui.messages.composer.internal.attachments.MessageComposerAttachmentAudioRecordItem
+import io.getstream.chat.android.compose.ui.messages.composer.internal.attachments.MessageComposerAttachmentFileItem
+import io.getstream.chat.android.compose.ui.messages.composer.internal.attachments.MessageComposerAttachmentMediaItem
+import io.getstream.chat.android.compose.ui.messages.composer.internal.attachments.MessageComposerAttachments
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.CommandSuggestionItem
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultCommandSuggestionItemCenterContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultCommandSuggestionItemLeadingContent
@@ -187,6 +193,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.ConnectionState
@@ -2796,22 +2803,90 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the preview content of file attachments.
+     * Renders all selected attachments in the message composer as a single horizontal scrolling row.
      *
-     * @param modifier Modifier for styling.
-     * @param attachments List of file attachments to preview.
-     * @param onAttachmentRemoved Lambda invoked when an attachment is removed.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun FileAttachmentPreviewContent(
-        modifier: Modifier,
-        attachments: List<Attachment>,
-        onAttachmentRemoved: (Attachment) -> Unit,
-    ) {
-        io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentPreviewContent(
-            modifier = modifier,
-            attachments = attachments,
-            onAttachmentRemoved = onAttachmentRemoved,
+    public fun MessageComposerAttachments(params: MessageComposerAttachmentsParams) {
+        MessageComposerAttachments(
+            modifier = params.modifier,
+            attachments = params.attachments,
+            onAttachmentRemoved = params.onAttachmentRemoved,
+        )
+    }
+
+    /**
+     * Renders a single audio recording attachment item in the message composer tray.
+     *
+     * Used as part of [MessageComposerAttachments].
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun MessageComposerAttachmentAudioRecordItem(params: MessageComposerAttachmentAudioRecordItemParams) {
+        MessageComposerAttachmentAudioRecordItem(
+            modifier = params.modifier,
+            attachment = params.attachment,
+            playerState = params.playerState,
+            onPlayToggleClick = params.onPlayToggleClick,
+            onThumbDragStart = params.onThumbDragStart,
+            onThumbDragStop = params.onThumbDragStop,
+            onAttachmentRemoved = params.onAttachmentRemoved,
+        )
+    }
+
+    /**
+     * Renders a single media (image or video) attachment item in the message composer tray.
+     *
+     * Used as part of [MessageComposerAttachments].
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun MessageComposerAttachmentMediaItem(params: MessageComposerAttachmentMediaItemParams) {
+        MessageComposerAttachmentMediaItem(
+            modifier = params.modifier,
+            attachment = params.attachment,
+            onAttachmentRemoved = params.onAttachmentRemoved,
+            overlayContent = { attachmentType ->
+                MessageComposerAttachmentMediaItemOverlay(
+                    params = MessageComposerAttachmentMediaItemOverlayParams(attachmentType),
+                )
+            },
+        )
+    }
+
+    /**
+     * Renders the overlay content above a media attachment item in the message composer tray.
+     *
+     * Override to provide a custom overlay — for example, a branded play button above video
+     * previews. The default renders a standard play button for video attachments.
+     *
+     * Used as part of [MessageComposerAttachmentMediaItem].
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun MessageComposerAttachmentMediaItemOverlay(params: MessageComposerAttachmentMediaItemOverlayParams) {
+        if (params.attachmentType == AttachmentType.VIDEO) {
+            PlayButton(size = PlayButtonSize.Small)
+        }
+    }
+
+    /**
+     * Renders a single generic file attachment item in the message composer tray.
+     *
+     * Used as part of [MessageComposerAttachments].
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun MessageComposerAttachmentFileItem(params: MessageComposerAttachmentFileItemParams) {
+        MessageComposerAttachmentFileItem(
+            modifier = params.modifier,
+            attachment = params.attachment,
+            onAttachmentRemoved = params.onAttachmentRemoved,
         )
     }
 
