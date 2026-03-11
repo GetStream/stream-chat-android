@@ -21,19 +21,29 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
-import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.LinkAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.UnsupportedAttachmentFactory
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentMediaItemOverlayParams
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
-import io.getstream.chat.android.guides.catalog.compose.customizingimageandvideoattachments.factory.customMediaAttachmentFactory
+import io.getstream.chat.android.guides.catalog.compose.customizingimageandvideoattachments.ui.CustomPlayButton
+import io.getstream.chat.android.models.AttachmentType
+
+private const val PlayButtonWidthFraction = 0.35f
+private const val PlayButtonAspectRatio = 1.20f
 
 /**
  * An activity featuring a fully functional message list screen with a custom
- * media attachment factory.
+ * media attachment preview in the composer.
  */
 class MessagesActivity : ComponentActivity() {
 
@@ -45,25 +55,11 @@ class MessagesActivity : ComponentActivity() {
         )
     }
 
-    /**
-     * A list of attachment factories that mimics the order of those
-     * found in [StreamAttachmentFactories.defaults] while
-     * replacing the default media attachment factory with a
-     * custom one.
-     */
-    private val attachmentFactories = listOf(
-        LinkAttachmentFactory(linkDescriptionMaxLines = 5),
-        GiphyAttachmentFactory(),
-        customMediaAttachmentFactory,
-        FileAttachmentFactory(),
-        UnsupportedAttachmentFactory,
-    )
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ChatTheme(attachmentFactories = attachmentFactories) {
+            ChatTheme(componentFactory = CustomMediaChatComponentFactory) {
                 MessagesScreen(
                     viewModelFactory = messagesViewModelFactory,
                     onBackPressed = { finish() },
@@ -86,6 +82,33 @@ class MessagesActivity : ComponentActivity() {
             return Intent(context, MessagesActivity::class.java).apply {
                 putExtra(KEY_CHANNEL_ID, channelId)
             }
+        }
+    }
+}
+
+/**
+ * A custom [ChatComponentFactory] that renders a custom play button overlay
+ * above video attachments in the message composer preview.
+ *
+ * To customize the overlay in the message list, override [MediaAttachmentContent].
+ */
+object CustomMediaChatComponentFactory : ChatComponentFactory {
+
+    @Composable
+    override fun MessageComposerAttachmentMediaItemOverlay(
+        params: MessageComposerAttachmentMediaItemOverlayParams,
+    ) {
+        if (params.attachmentType == AttachmentType.VIDEO) {
+            CustomPlayButton(
+                modifier = Modifier
+                    .padding(2.dp)
+                    .background(
+                        color = Color(red = 255, blue = 255, green = 255, alpha = 220),
+                        shape = RoundedCornerShape(8.dp),
+                    )
+                    .fillMaxWidth(PlayButtonWidthFraction)
+                    .aspectRatio(PlayButtonAspectRatio),
+            )
         }
     }
 }
