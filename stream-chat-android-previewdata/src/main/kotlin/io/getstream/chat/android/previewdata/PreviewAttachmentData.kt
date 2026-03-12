@@ -17,6 +17,7 @@
 package io.getstream.chat.android.previewdata
 
 import io.getstream.chat.android.client.extensions.EXTRA_DURATION
+import io.getstream.chat.android.client.extensions.EXTRA_WAVEFORM_DATA
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
@@ -77,12 +78,12 @@ public object PreviewAttachmentData {
     public val attachmentAudioRecording1: Attachment = Attachment(
         type = AttachmentType.AUDIO_RECORDING,
         extraData = mutableMapOf(
-            "waveform" to listOf(
+            EXTRA_WAVEFORM_DATA to listOf(
                 0.1f, 0.3f, 0.6f, 0.8f, 1.0f, 0.9f, 0.7f, 0.5f, 0.4f, 0.6f,
                 0.8f, 0.7f, 0.5f, 0.3f, 0.4f, 0.6f, 0.9f, 1.0f, 0.8f, 0.6f,
                 0.4f, 0.3f, 0.5f, 0.7f, 0.9f, 0.8f, 0.6f, 0.4f, 0.2f, 0.3f,
             ),
-            "duration" to 15000,
+            EXTRA_DURATION to 1_500,
         ),
     )
 }

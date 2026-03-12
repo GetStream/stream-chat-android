@@ -2827,6 +2827,7 @@ public interface ChatComponentFactory {
             attachment = params.attachment,
             playerState = params.playerState,
             onPlayToggleClick = params.onPlayToggleClick,
+            onPlaySpeedClick = params.onPlaySpeedClick,
             onThumbDragStart = params.onThumbDragStart,
             onThumbDragStop = params.onThumbDragStop,
             onAttachmentRemoved = params.onAttachmentRemoved,

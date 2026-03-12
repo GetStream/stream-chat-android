@@ -85,6 +85,7 @@ internal fun MessageComposerAttachments(
             attachments = attachments,
             playerState = playerState,
             onPlayToggleClick = audioPlayerViewModel::playOrPause,
+            onPlaySpeedClick = audioPlayerViewModel::changeSpeed,
             onThumbDragStart = audioPlayerViewModel::startSeek,
             onThumbDragStop = audioPlayerViewModel::seekTo,
             onAttachmentRemoved = {
@@ -101,6 +102,7 @@ private fun MessageComposerAttachmentsContent(
     playerState: AudioPlayerState,
     modifier: Modifier = Modifier,
     onPlayToggleClick: (Attachment) -> Unit = {},
+    onPlaySpeedClick: (Attachment) -> Unit = {},
     onThumbDragStart: (Attachment) -> Unit = {},
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
     onAttachmentRemoved: (Attachment) -> Unit = {},
@@ -124,6 +126,7 @@ private fun MessageComposerAttachmentsContent(
                             attachment = attachment,
                             playerState = playerState,
                             onPlayToggleClick = onPlayToggleClick,
+                            onPlaySpeedClick = onPlaySpeedClick,
                             onThumbDragStart = onThumbDragStart,
                             onThumbDragStop = onThumbDragStop,
                             onAttachmentRemoved = onAttachmentRemoved,

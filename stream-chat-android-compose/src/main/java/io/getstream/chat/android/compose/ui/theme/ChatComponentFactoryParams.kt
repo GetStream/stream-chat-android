@@ -97,6 +97,7 @@ public data class MessageComposerAttachmentsParams(
  * @param playerState Current state of the audio player.
  * @param modifier Modifier for styling.
  * @param onPlayToggleClick Called when the play/pause button is tapped.
+ * @param onPlaySpeedClick Called when the playback speed button is tapped.
  * @param onThumbDragStart Called when the user starts dragging the waveform thumb.
  * @param onThumbDragStop Called when the user stops dragging, with the target seek fraction.
  * @param onAttachmentRemoved Called when the attachment is removed by the user.
@@ -106,6 +107,7 @@ public data class MessageComposerAttachmentAudioRecordItemParams(
     val playerState: AudioPlayerState,
     val modifier: Modifier = Modifier,
     val onPlayToggleClick: (Attachment) -> Unit = {},
+    val onPlaySpeedClick: (Attachment) -> Unit = {},
     val onThumbDragStart: (Attachment) -> Unit = {},
     val onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
     val onAttachmentRemoved: (Attachment) -> Unit = {},
