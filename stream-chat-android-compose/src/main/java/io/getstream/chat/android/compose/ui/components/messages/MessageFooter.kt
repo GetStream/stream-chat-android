@@ -36,6 +36,7 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isThreadStart
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.DateFormatType
@@ -82,8 +83,8 @@ public fun MessageFooter(
         }
 
         if (messageItem.showMessageFooter) {
-            val showEditLabel = message.messageTextUpdatedAt != null
-            var showEditInfo by remember { mutableStateOf(false) }
+            val showEditLabel = message.messageTextUpdatedAt != null && !message.isDeleted()
+            var showEditInfo by remember(message.id, showEditLabel) { mutableStateOf(false) }
             val textStyle = MessageStyling.timestampStyle()
             Row(
                 modifier = Modifier
@@ -131,7 +132,7 @@ public fun MessageFooter(
                     )
                 }
             }
-            if (showEditInfo) {
+            if (showEditLabel && showEditInfo) {
                 Row(
                     modifier = Modifier
                         .padding(bottom = 4.dp)
