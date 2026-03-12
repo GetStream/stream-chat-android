@@ -113,18 +113,10 @@ public fun AudioRecordAttachmentContent(
                 attachment = audioRecording,
                 playerState = playerState,
                 isMine = attachmentState.isMine,
-                onPlayToggleClick = { attachment ->
-                    viewModel.playOrPause(attachment)
-                },
-                onPlaySpeedClick = { attachment ->
-                    viewModel.changeSpeed(attachment)
-                },
-                onThumbDragStart = { attachment ->
-                    viewModel.startSeek(attachment)
-                },
-                onThumbDragStop = { attachment, progress ->
-                    viewModel.seekTo(attachment, progress)
-                },
+                onPlayToggleClick = viewModel::playOrPause,
+                onPlaySpeedClick = viewModel::changeSpeed,
+                onThumbDragStart = viewModel::startSeek,
+                onThumbDragStop = viewModel::seekTo,
             )
         }
     }
@@ -211,10 +203,7 @@ internal fun AudioRecordAttachmentContentItemBase(
     val trackProgress = playerState.current.playingProgress.takeIf { isCurrentAttachment }
         ?: attachmentUrl?.let { playerState.seekTo.getOrDefault(attachment.audioHash, 0f) } ?: 0f
     val playing = isCurrentAttachment && playerState.current.isPlaying
-    val waveform = when (playing) {
-        true -> playerState.current.waveform
-        else -> attachment.waveformData
-    } ?: emptyList()
+    val waveform = (if (playing) playerState.current.waveform else attachment.waveformData) ?: emptyList()
     val uploadProgress = attachment.uploadState as? UploadState.InProgress
 
     val currentAttachment by rememberUpdatedState(attachment)

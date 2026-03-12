@@ -70,7 +70,6 @@ internal fun MessageComposerAttachmentFileItem(
 
             Column(
                 modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
             ) {
                 Text(
