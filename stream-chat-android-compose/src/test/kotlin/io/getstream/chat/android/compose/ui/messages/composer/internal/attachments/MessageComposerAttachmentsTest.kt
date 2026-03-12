@@ -47,9 +47,16 @@ internal class MessageComposerAttachmentsTest : PaparazziComposeTest {
     }
 
     @Test
-    fun `media attachment item`() {
+    fun `image attachment item`() {
         snapshotWithDarkModeRow {
-            MessageComposerAttachmentMediaItem()
+            MessageComposerAttachmentImageItem()
+        }
+    }
+
+    @Test
+    fun `video attachment item`() {
+        snapshotWithDarkModeRow {
+            MessageComposerAttachmentVideoItem()
         }
     }
 

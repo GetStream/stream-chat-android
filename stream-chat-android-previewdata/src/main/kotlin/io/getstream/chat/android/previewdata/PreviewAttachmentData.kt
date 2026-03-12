@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.previewdata
 
+import io.getstream.chat.android.client.extensions.EXTRA_DURATION
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
@@ -46,6 +47,7 @@ public object PreviewAttachmentData {
         type = AttachmentType.IMAGE,
         mimeType = "image/png",
         imageUrl = "https://example.com/image3.png",
+        extraData = mapOf(EXTRA_DURATION to 8),
     )
 
     public val attachmentVideo1: Attachment = Attachment(
@@ -54,6 +56,7 @@ public object PreviewAttachmentData {
         type = AttachmentType.VIDEO,
         mimeType = "video/mp4",
         thumbUrl = "https://example.com/thumb1.jpg",
+        extraData = mapOf(EXTRA_DURATION to 8),
     )
 
     public val attachmentVideo2: Attachment = Attachment(

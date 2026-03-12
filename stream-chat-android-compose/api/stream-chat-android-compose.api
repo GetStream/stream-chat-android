@@ -2313,13 +2313,15 @@ public final class io/getstream/chat/android/compose/ui/messages/composer/intern
 
 public final class io/getstream/chat/android/compose/ui/messages/composer/internal/attachments/ComposableSingletons$MessageComposerAttachmentMediaItemKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/composer/internal/attachments/ComposableSingletons$MessageComposerAttachmentMediaItemKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function3;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
 	public static field lambda-2 Lkotlin/jvm/functions/Function2;
 	public static field lambda-3 Lkotlin/jvm/functions/Function2;
+	public static field lambda-4 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
-	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-3$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-4$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/composer/internal/attachments/ComposableSingletons$MessageComposerAttachmentsKt {
@@ -2669,7 +2671,6 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 	public abstract fun MessageComposerAttachmentAudioRecordItem (Lio/getstream/chat/android/compose/ui/theme/MessageComposerAttachmentAudioRecordItemParams;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun MessageComposerAttachmentFileItem (Lio/getstream/chat/android/compose/ui/theme/MessageComposerAttachmentFileItemParams;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun MessageComposerAttachmentMediaItem (Lio/getstream/chat/android/compose/ui/theme/MessageComposerAttachmentMediaItemParams;Landroidx/compose/runtime/Composer;I)V
-	public abstract fun MessageComposerAttachmentMediaItemOverlay (Lio/getstream/chat/android/compose/ui/theme/MessageComposerAttachmentMediaItemOverlayParams;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun MessageComposerAttachments (Lio/getstream/chat/android/compose/ui/theme/MessageComposerAttachmentsParams;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun MessageComposerAudioRecordingButton (Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState;Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun MessageComposerAudioRecordingFloatingLockIcon (ZILandroidx/compose/runtime/Composer;I)V
@@ -2859,7 +2860,6 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFacto
 	public static fun MessageComposerAttachmentAudioRecordItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MessageComposerAttachmentAudioRecordItemParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun MessageComposerAttachmentFileItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MessageComposerAttachmentFileItemParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun MessageComposerAttachmentMediaItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MessageComposerAttachmentMediaItemParams;Landroidx/compose/runtime/Composer;I)V
-	public static fun MessageComposerAttachmentMediaItemOverlay (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MessageComposerAttachmentMediaItemOverlayParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun MessageComposerAttachments (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MessageComposerAttachmentsParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun MessageComposerAudioRecordingButton (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState;Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions;Landroidx/compose/runtime/Composer;I)V
 	public static fun MessageComposerAudioRecordingFloatingLockIcon (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;ZILandroidx/compose/runtime/Composer;I)V
@@ -3309,18 +3309,6 @@ public final class io/getstream/chat/android/compose/ui/theme/MessageComposerAtt
 	public final fun getAttachment ()Lio/getstream/chat/android/models/Attachment;
 	public final fun getModifier ()Landroidx/compose/ui/Modifier;
 	public final fun getOnAttachmentRemoved ()Lkotlin/jvm/functions/Function1;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/compose/ui/theme/MessageComposerAttachmentMediaItemOverlayParams {
-	public static final field $stable I
-	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerAttachmentMediaItemOverlayParams;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/MessageComposerAttachmentMediaItemOverlayParams;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerAttachmentMediaItemOverlayParams;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getAttachmentType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

@@ -20,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.state.messages.MessageReactionItemState
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
@@ -123,15 +122,6 @@ public data class MessageComposerAttachmentMediaItemParams(
     val attachment: Attachment,
     val onAttachmentRemoved: (Attachment) -> Unit,
     val modifier: Modifier = Modifier,
-)
-
-/**
- * Parameters for the [ChatComponentFactory.MessageComposerAttachmentMediaItemOverlay] component.
- *
- * @param attachmentType The MIME type of the attachment, e.g. [AttachmentType.VIDEO].
- */
-public data class MessageComposerAttachmentMediaItemOverlayParams(
-    val attachmentType: String?,
 )
 
 /**
