@@ -22,18 +22,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentMediaItemOverlayParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentMediaItemParams
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.guides.catalog.compose.customizingimageandvideoattachments.ui.CustomPlayButton
 import io.getstream.chat.android.models.AttachmentType
@@ -95,20 +97,23 @@ class MessagesActivity : ComponentActivity() {
 object CustomMediaChatComponentFactory : ChatComponentFactory {
 
     @Composable
-    override fun MessageComposerAttachmentMediaItemOverlay(
-        params: MessageComposerAttachmentMediaItemOverlayParams,
+    override fun MessageComposerAttachmentMediaItem(
+        params: MessageComposerAttachmentMediaItemParams,
     ) {
-        if (params.attachmentType == AttachmentType.VIDEO) {
-            CustomPlayButton(
-                modifier = Modifier
-                    .padding(2.dp)
-                    .background(
-                        color = Color(red = 255, blue = 255, green = 255, alpha = 220),
-                        shape = RoundedCornerShape(8.dp),
-                    )
-                    .fillMaxWidth(PlayButtonWidthFraction)
-                    .aspectRatio(PlayButtonAspectRatio),
-            )
+        Box(contentAlignment = Alignment.Center) {
+            super.MessageComposerAttachmentMediaItem(params)
+            if (params.attachment.type == AttachmentType.VIDEO) {
+                CustomPlayButton(
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .background(
+                            color = Color(red = 255, blue = 255, green = 255, alpha = 220),
+                            shape = RoundedCornerShape(8.dp),
+                        )
+                        .fillMaxWidth(PlayButtonWidthFraction)
+                        .aspectRatio(PlayButtonAspectRatio),
+                )
+            }
         }
     }
 }

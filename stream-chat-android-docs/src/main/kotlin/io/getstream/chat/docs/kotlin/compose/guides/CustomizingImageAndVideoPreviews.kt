@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentMediaItemOverlayParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentMediaItemParams
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.docs.R
@@ -76,21 +76,24 @@ private object CustomizingImageAndVideoPreviewsSnippet {
         val CustomMediaComponentFactory = object : ChatComponentFactory {
 
             @Composable
-            override fun MessageComposerAttachmentMediaItemOverlay(
-                params: MessageComposerAttachmentMediaItemOverlayParams,
+            override fun MessageComposerAttachmentMediaItem(
+                params: MessageComposerAttachmentMediaItemParams,
             ) {
-                if (params.attachmentType == AttachmentType.VIDEO) {
-                    // Render a custom play button above video items in the composer
-                    CustomPlayButton(
-                        modifier = Modifier
-                            .padding(2.dp)
-                            .background(
-                                color = Color(red = 255, blue = 255, green = 255, alpha = 220),
-                                shape = RoundedCornerShape(8.dp),
-                            )
-                            .fillMaxWidth(0.35f)
-                            .aspectRatio(1.20f),
-                    )
+                Box(contentAlignment = Alignment.Center) {
+                    super.MessageComposerAttachmentMediaItem(params)
+                    if (params.attachment.type == AttachmentType.VIDEO) {
+                        // Render a custom play button above video items in the composer
+                        CustomPlayButton(
+                            modifier = Modifier
+                                .padding(2.dp)
+                                .background(
+                                    color = Color(red = 255, blue = 255, green = 255, alpha = 220),
+                                    shape = RoundedCornerShape(8.dp),
+                                )
+                                .fillMaxWidth(0.35f)
+                                .aspectRatio(1.20f),
+                        )
+                    }
                 }
             }
         }
