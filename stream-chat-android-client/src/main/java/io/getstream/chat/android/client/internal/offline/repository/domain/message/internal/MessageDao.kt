@@ -253,6 +253,18 @@ internal interface MessageDao {
     @Query("DELETE FROM $MESSAGE_ENTITY_TABLE_NAME")
     suspend fun deleteAll()
 
+    @Query(
+        "SELECT * FROM $MESSAGE_ENTITY_TABLE_NAME " +
+            "WHERE cid = :cid " +
+            "AND (syncStatus IN (:syncStatuses) OR type IN (:types))",
+    )
+    @Transaction
+    suspend fun selectLocalOnlyForChannel(
+        cid: String,
+        syncStatuses: List<Int>,
+        types: List<String>,
+    ): List<MessageEntity>
+
     private companion object {
         private const val SQLITE_MAX_VARIABLE_NUMBER: Int = 999
         private const val NO_LIMIT: Int = -1

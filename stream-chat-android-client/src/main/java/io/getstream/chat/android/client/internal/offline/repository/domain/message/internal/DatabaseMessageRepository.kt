@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
@@ -261,6 +262,21 @@ internal class DatabaseMessageRepository(
             replyMessageDao.deleteAll()
         }
     }
+
+    override suspend fun selectLocalOnlyMessagesForChannel(cid: String): List<Message> =
+        messageDao.selectLocalOnlyForChannel(
+            cid = cid,
+            syncStatuses = listOf(
+                SyncStatus.SYNC_NEEDED.status, // -1
+                SyncStatus.IN_PROGRESS.status, // 3
+                SyncStatus.AWAITING_ATTACHMENTS.status, // 4
+                SyncStatus.FAILED_PERMANENTLY.status, // 2
+            ),
+            types = listOf(
+                MessageType.EPHEMERAL, // "ephemeral"
+                MessageType.ERROR, // "error"
+            ),
+        ).map { entity -> entity.toMessage() }
 
     private suspend fun selectMessagesEntitiesForChannel(
         cid: String,
