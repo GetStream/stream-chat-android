@@ -40,6 +40,8 @@ import io.getstream.chat.android.compose.ui.attachments.preview.ConfirmShareLarg
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPager
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewShareIcon
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewSharingInProgressIndicator
+import io.getstream.chat.android.compose.ui.attachments.preview.internal.GalleryMediaEffect
+import io.getstream.chat.android.compose.ui.attachments.preview.internal.rememberMediaGalleryPlayerState
 import io.getstream.chat.android.compose.ui.theme.ChannelMediaAttachmentsPreviewBottomBarParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
@@ -141,6 +143,11 @@ private fun ChannelMediaAttachmentsPreviewContent(
         pageCount = items::size,
     )
     val snackbarHostState = remember { SnackbarHostState() }
+    val attachments = remember(items) {
+        items.map(ChannelAttachmentsViewState.Content.Item::attachment)
+    }
+    val playerState = rememberMediaGalleryPlayerState(onPlaybackError = onVideoPlaybackError)
+    GalleryMediaEffect(playerState, pagerState.currentPage, attachments)
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -166,10 +173,8 @@ private fun ChannelMediaAttachmentsPreviewContent(
                 .padding(padding)
                 .fillMaxSize(),
             pagerState = pagerState,
-            attachments = remember(items) {
-                items.map(ChannelAttachmentsViewState.Content.Item::attachment)
-            },
-            onPlaybackError = onVideoPlaybackError,
+            attachments = attachments,
+            player = playerState.player,
         )
         LoadMoreHandler(
             pagerState = pagerState,

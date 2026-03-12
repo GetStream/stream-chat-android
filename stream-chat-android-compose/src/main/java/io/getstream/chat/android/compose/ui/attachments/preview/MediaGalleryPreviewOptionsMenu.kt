@@ -16,22 +16,19 @@
 
 package io.getstream.chat.android.compose.ui.attachments.preview
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -40,7 +37,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.Delete
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewOption
@@ -50,18 +46,17 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.ShowInChat
 import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MediaGalleryOptionsConfig
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 
 /**
- * Composable rendering the options menu overlay for media gallery preview.
+ * Composable rendering the options menu as a bottom sheet for media gallery preview.
  *
- * Displays a dropdown menu in the top-right corner with available actions for the
- * currently displayed attachment. The menu appears as a floating surface with a
- * semi-transparent overlay covering the entire screen behind it. Clicking anywhere
- * outside the menu dismisses it.
+ * Displays a [ModalBottomSheet] with available actions for the currently displayed attachment.
+ * The sheet can be dismissed by swiping down, tapping outside, or tapping the scrim.
  *
  * Each option is rendered as a [MediaGalleryOptionItem] with dividers between items.
  *
@@ -69,8 +64,9 @@ import io.getstream.chat.android.models.User
  * @param options List of available options to display in the menu.
  * @param onOptionClick Callback invoked when an option is clicked, providing both the attachment and option.
  * @param onDismiss Callback invoked when the menu should be dismissed.
- * @param modifier Optional modifier applied to the Surface containing the options.
+ * @param modifier Optional modifier applied to the [ModalBottomSheet].
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MediaGalleryOptionsMenu(
     attachment: Attachment,
@@ -79,39 +75,25 @@ internal fun MediaGalleryOptionsMenu(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(ChatTheme.colors.backgroundCoreScrim)
-            .clickable(
-                indication = null,
-                interactionSource = null,
-                onClick = onDismiss,
-            ),
+    ModalBottomSheet(
+        modifier = modifier,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        containerColor = ChatTheme.colors.backgroundElevationElevation1,
+        scrimColor = ChatTheme.colors.backgroundCoreScrim,
+        onDismissRequest = onDismiss,
     ) {
-        Surface(
-            modifier = modifier
-                .padding(16.dp)
-                .width(150.dp)
-                .wrapContentHeight()
-                .align(Alignment.TopEnd),
-            shape = RoundedCornerShape(16.dp),
-            shadowElevation = 4.dp,
-            color = ChatTheme.colors.backgroundElevationElevation1,
-        ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                options.forEachIndexed { index, option ->
-                    MediaGalleryOptionItem(
-                        option = option,
-                        onClick = {
-                            onDismiss()
-                            onOptionClick(attachment, option)
-                        },
-                    )
+        Column(modifier = Modifier.fillMaxWidth()) {
+            options.forEachIndexed { index, option ->
+                MediaGalleryOptionItem(
+                    option = option,
+                    onClick = {
+                        onOptionClick(attachment, option)
+                        onDismiss()
+                    },
+                )
 
-                    if (index != options.lastIndex) {
-                        StreamHorizontalDivider()
-                    }
+                if (index != options.lastIndex) {
+                    StreamHorizontalDivider()
                 }
             }
         }
@@ -138,28 +120,27 @@ internal fun MediaGalleryOptionItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.backgroundElevationElevation1)
+            .padding(horizontal = StreamTokens.spacing2xs)
             .clickable(
                 interactionSource = null,
                 indication = ripple(),
                 enabled = option.isEnabled,
                 onClick = onClick,
             )
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(StreamTokens.spacingSm),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            modifier = Modifier.size(18.dp),
+            modifier = Modifier.size(20.dp),
             painter = option.iconPainter,
             tint = option.iconColor,
             contentDescription = option.title,
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(StreamTokens.spacingSm))
         Text(
             text = option.title,
             color = option.titleColor,
-            style = ChatTheme.typography.bodyEmphasis,
-            fontSize = 12.sp,
+            style = ChatTheme.typography.bodyDefault,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

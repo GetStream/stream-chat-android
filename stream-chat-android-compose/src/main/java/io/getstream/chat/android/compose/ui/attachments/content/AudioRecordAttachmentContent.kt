@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,7 +37,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -58,6 +56,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimerText
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
+import io.getstream.chat.android.compose.ui.components.button.SpeedButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
@@ -65,11 +64,9 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.applyIf
-import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
-import io.getstream.chat.android.extensions.isInt
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Attachment.UploadState
 import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
@@ -305,36 +302,6 @@ internal fun PlaybackToggleButton(
             contentDescription = null,
         )
     }
-}
-
-private val speedButtonShape = RoundedCornerShape(StreamTokens.radiusLg)
-
-/**
- * Represents the speed button.
- */
-@Composable
-private fun SpeedButton(
-    speed: Float,
-    outlineColor: Color,
-    enabled: Boolean = true,
-    onClick: () -> Unit,
-) {
-    val colors = ChatTheme.colors
-    val textColor = if (enabled) colors.controlPlaybackToggleText else colors.textDisabled
-    val borderColor = if (enabled) outlineColor else colors.borderUtilityDisabled
-    Text(
-        text = when (speed.isInt()) {
-            true -> "x${speed.toInt()}"
-            else -> "x$speed"
-        },
-        style = ChatTheme.typography.metadataEmphasis,
-        color = textColor,
-        modifier = Modifier
-            .border(1.dp, borderColor, speedButtonShape)
-            .clip(speedButtonShape)
-            .applyIf(enabled) { clickable(onClick = onClick) }
-            .padding(horizontal = StreamTokens.spacingXs, vertical = StreamTokens.spacing2xs),
-    )
 }
 
 @Composable
