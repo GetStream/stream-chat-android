@@ -107,7 +107,10 @@ internal class QuotedMessageBodyBuilder(
             // Giphy attachment is shown as single image only if there are no files attached
             summary.giphyAttachment != null && summary.fileCount == 0 -> {
                 QuotedMessageBody(
-                    text = messageText.ifBlank { textForGiphy(summary.giphyAttachment) },
+                    text = messageText.ifBlank {
+                        resources.getString(R.string.stream_compose_quoted_message_giphy_tag)
+                    },
+                    iconId = R.drawable.stream_compose_ic_file,
                     imagePreviewData = summary.giphyAttachment.imagePreviewUrl,
                 )
             }
@@ -166,9 +169,6 @@ internal class QuotedMessageBodyBuilder(
             }
         }
     }
-
-    private fun textForGiphy(giphyAttachment: Attachment): String = giphyAttachment.run { name ?: text ?: title }
-        ?: resources.getString(R.string.stream_compose_quoted_message_giphy_tag)
 
     private fun textForAudioRecording(audioRecordingAttachment: Attachment): String {
         val duration = durationFormatter.format(audioRecordingAttachment.durationInMs ?: 0)
