@@ -134,6 +134,7 @@ import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisi
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.ScrollToBottomButton
 import io.getstream.chat.android.compose.ui.components.messages.SegmentedMessageReactions
+import io.getstream.chat.android.compose.ui.components.messages.SwipeToReplyIcon
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleSize
@@ -2702,13 +2703,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun RowScope.SwipeToReplyContent() {
-        Box {
-            Icon(
-                painter = painterResource(id = R.drawable.stream_compose_ic_reply),
-                contentDescription = "",
-                tint = ChatTheme.colors.textSecondary,
-            )
-        }
+        SwipeToReplyIcon()
     }
 
     /**
