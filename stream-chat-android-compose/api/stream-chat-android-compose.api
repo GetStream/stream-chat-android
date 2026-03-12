@@ -610,7 +610,7 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/Unsu
 
 public final class io/getstream/chat/android/compose/ui/attachments/preview/ComposableSingletons$MediaGalleryPreviewScreenKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/preview/ComposableSingletons$MediaGalleryPreviewScreenKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function6;
+	public static field lambda-1 Lkotlin/jvm/functions/Function7;
 	public static field lambda-10 Lkotlin/jvm/functions/Function2;
 	public static field lambda-11 Lkotlin/jvm/functions/Function2;
 	public static field lambda-12 Lkotlin/jvm/functions/Function2;
@@ -621,7 +621,7 @@ public final class io/getstream/chat/android/compose/ui/attachments/preview/Comp
 	public static field lambda-17 Lkotlin/jvm/functions/Function2;
 	public static field lambda-18 Lkotlin/jvm/functions/Function2;
 	public static field lambda-19 Lkotlin/jvm/functions/Function2;
-	public static field lambda-2 Lkotlin/jvm/functions/Function6;
+	public static field lambda-2 Lkotlin/jvm/functions/Function7;
 	public static field lambda-20 Lkotlin/jvm/functions/Function2;
 	public static field lambda-21 Lkotlin/jvm/functions/Function2;
 	public static field lambda-22 Lkotlin/jvm/functions/Function2;
@@ -638,7 +638,7 @@ public final class io/getstream/chat/android/compose/ui/attachments/preview/Comp
 	public static field lambda-8 Lkotlin/jvm/functions/Function2;
 	public static field lambda-9 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
-	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function6;
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function7;
 	public final fun getLambda-10$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-11$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-12$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
@@ -649,7 +649,7 @@ public final class io/getstream/chat/android/compose/ui/attachments/preview/Comp
 	public final fun getLambda-17$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-18$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-19$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function6;
+	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function7;
 	public final fun getLambda-20$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-21$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-22$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
@@ -711,8 +711,8 @@ public final class io/getstream/chat/android/compose/ui/attachments/preview/Medi
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryPreviewScreenKt {
-	public static final fun MediaGalleryPreviewScreen (Lio/getstream/chat/android/compose/viewmodel/mediapreview/MediaGalleryPreviewViewModel;ILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/theme/MediaGalleryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function6;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;III)V
-	public static final fun MediaGalleryPreviewScreen (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/ConnectionState;Lio/getstream/chat/android/models/User;ILio/getstream/chat/android/models/Attachment;ZZZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/theme/MediaGalleryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function6;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;IIII)V
+	public static final fun MediaGalleryPreviewScreen (Lio/getstream/chat/android/compose/viewmodel/mediapreview/MediaGalleryPreviewViewModel;ILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/theme/MediaGalleryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function7;Lkotlin/jvm/functions/Function5;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;III)V
+	public static final fun MediaGalleryPreviewScreen (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/ConnectionState;Lio/getstream/chat/android/models/User;ILio/getstream/chat/android/models/Attachment;ZZZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/theme/MediaGalleryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function7;Lkotlin/jvm/functions/Function5;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;IIII)V
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/preview/MediaPreviewActivity : androidx/appcompat/app/AppCompatActivity {
@@ -2559,16 +2559,18 @@ public final class io/getstream/chat/android/compose/ui/theme/ChannelListConfig 
 
 public final class io/getstream/chat/android/compose/ui/theme/ChannelMediaAttachmentsPreviewBottomBarParams {
 	public static final field $stable I
-	public fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;)V
-	public synthetic fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lkotlin/jvm/functions/Function2;
 	public final fun component2 ()Lkotlin/jvm/functions/Function2;
 	public final fun component3 ()Lkotlin/jvm/functions/Function2;
-	public final fun copy (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/compose/ui/theme/ChannelMediaAttachmentsPreviewBottomBarParams;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/ChannelMediaAttachmentsPreviewBottomBarParams;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ChannelMediaAttachmentsPreviewBottomBarParams;
+	public final fun component4 ()Lkotlin/jvm/functions/Function2;
+	public final fun copy (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/compose/ui/theme/ChannelMediaAttachmentsPreviewBottomBarParams;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/ChannelMediaAttachmentsPreviewBottomBarParams;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ChannelMediaAttachmentsPreviewBottomBarParams;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCenterContent ()Lkotlin/jvm/functions/Function2;
 	public final fun getLeadingContent ()Lkotlin/jvm/functions/Function2;
+	public final fun getTopContent ()Lkotlin/jvm/functions/Function2;
 	public final fun getTrailingContent ()Lkotlin/jvm/functions/Function2;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -2644,7 +2646,6 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 	public abstract fun ChannelMediaAttachmentsLoadingIndicator (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ChannelMediaAttachmentsLoadingItem (Landroidx/compose/foundation/lazy/grid/LazyGridItemScope;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ChannelMediaAttachmentsPreviewBottomBar (Lio/getstream/chat/android/compose/ui/theme/ChannelMediaAttachmentsPreviewBottomBarParams;Landroidx/compose/runtime/Composer;I)V
-	public abstract fun ChannelMediaAttachmentsPreviewBottomBar (Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ChannelMediaAttachmentsPreviewTopBar (Lio/getstream/chat/android/ui/common/state/channel/attachments/ChannelAttachmentsViewState$Content$Item;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ChannelMediaAttachmentsPreviewTopBarTitle (Lio/getstream/chat/android/ui/common/state/channel/attachments/ChannelAttachmentsViewState$Content$Item;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ChannelMediaAttachmentsTopBar (Landroidx/compose/foundation/lazy/grid/LazyGridState;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
@@ -2833,7 +2834,6 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFacto
 	public static fun ChannelMediaAttachmentsLoadingIndicator (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelMediaAttachmentsLoadingItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/grid/LazyGridItemScope;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelMediaAttachmentsPreviewBottomBar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ChannelMediaAttachmentsPreviewBottomBarParams;Landroidx/compose/runtime/Composer;I)V
-	public static fun ChannelMediaAttachmentsPreviewBottomBar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelMediaAttachmentsPreviewTopBar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/ui/common/state/channel/attachments/ChannelAttachmentsViewState$Content$Item;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelMediaAttachmentsPreviewTopBarTitle (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/ui/common/state/channel/attachments/ChannelAttachmentsViewState$Content$Item;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelMediaAttachmentsTopBar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/grid/LazyGridState;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V

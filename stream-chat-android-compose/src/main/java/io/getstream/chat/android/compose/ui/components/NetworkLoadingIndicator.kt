@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -53,12 +52,10 @@ public fun NetworkLoadingIndicator(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {
-        CircularProgressIndicator(
+        LoadingIndicator(
             modifier = Modifier
                 .padding(horizontal = 8.dp)
                 .size(spinnerSize),
-            strokeWidth = 2.dp,
-            color = ChatTheme.colors.accentPrimary,
         )
 
         Text(

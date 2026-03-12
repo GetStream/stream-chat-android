@@ -21,7 +21,6 @@ package io.getstream.chat.android.compose.ui.attachments.preview
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,15 +29,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
@@ -46,9 +43,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,35 +52,38 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewOption
+import io.getstream.chat.android.compose.ui.attachments.preview.internal.GalleryMediaEffect
 import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGalleryImagePage
 import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGalleryPhotosMenu
 import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGalleryVideoPage
-import io.getstream.chat.android.compose.ui.attachments.preview.internal.createPlayer
+import io.getstream.chat.android.compose.ui.attachments.preview.internal.VideoPlaybackControls
+import io.getstream.chat.android.compose.ui.attachments.preview.internal.rememberMediaGalleryPlayerState
+import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.Timestamp
+import io.getstream.chat.android.compose.ui.components.button.StreamButton
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MediaGalleryConfig
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
+import io.getstream.chat.android.compose.ui.util.bottomBorder
+import io.getstream.chat.android.compose.ui.util.topBorder
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModel
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ConnectionState
@@ -152,9 +150,7 @@ public fun MediaGalleryPreviewScreen(
     onDismissGallery: () -> Unit = { viewModel.toggleGallery(false) },
     header: @Composable (attachments: List<Attachment>, currentPage: Int) -> Unit = { _, _ ->
         MediaGalleryPreviewHeader(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
+            modifier = Modifier.fillMaxWidth(),
             message = viewModel.message,
             connectionState = viewModel.connectionState,
             onLeadingContentClick = onHeaderLeadingContentClick,
@@ -165,29 +161,37 @@ public fun MediaGalleryPreviewScreen(
         padding: PaddingValues,
         pagerState: PagerState,
         attachments: List<Attachment>,
-        onPlaybackError: () -> Unit,
-    ) -> Unit = { padding, pagerState, attachments, onPlaybackError ->
+        player: Player?,
+        onMediaClick: () -> Unit,
+    ) -> Unit = { padding, pagerState, attachments, player, onMediaClick ->
         MediaGalleryPager(
             modifier = Modifier
                 .fillMaxSize()
-                .background(ChatTheme.colors.backgroundCoreApp)
                 .padding(padding),
+            player = player,
             pagerState = pagerState,
             attachments = attachments,
-            onPlaybackError = { onPlaybackError() },
+            onMediaClick = onMediaClick,
         )
     },
-    footer: @Composable (attachments: List<Attachment>, currentPage: Int) -> Unit = { attachments, currentPage ->
-        MediaGalleryPreviewFooter(
-            attachments = attachments,
-            currentPage = currentPage,
-            totalPages = attachments.size,
-            connectionState = viewModel.connectionState,
-            isSharingInProgress = viewModel.isSharingInProgress,
-            onLeadingContentClick = onFooterLeadingContentClick,
-            onTrailingContentClick = onFooterTrailingContentClick,
-        )
-    },
+    footer: @Composable (attachments: List<Attachment>, currentPage: Int, player: Player?) -> Unit =
+        { attachments, currentPage, player ->
+            MediaGalleryPreviewFooter(
+                attachments = attachments,
+                currentPage = currentPage,
+                totalPages = attachments.size,
+                connectionState = viewModel.connectionState,
+                isSharingInProgress = viewModel.isSharingInProgress,
+                onLeadingContentClick = onFooterLeadingContentClick,
+                onTrailingContentClick = onFooterTrailingContentClick,
+                topContent = {
+                    val currentAttachment = attachments.getOrNull(currentPage)
+                    if (player != null && currentAttachment?.isVideo() == true) {
+                        VideoPlaybackControls(player = player)
+                    }
+                },
+            )
+        },
     optionsMenu: @Composable (
         attachment: Attachment,
         options: List<MediaGalleryPreviewOption>,
@@ -293,9 +297,7 @@ public fun MediaGalleryPreviewScreen(
     onDismissGallery: () -> Unit = {},
     header: @Composable (attachments: List<Attachment>, currentPage: Int) -> Unit = { _, _ ->
         MediaGalleryPreviewHeader(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
+            modifier = Modifier.fillMaxWidth(),
             message = message,
             connectionState = connectionState,
             onLeadingContentClick = onHeaderLeadingContentClick,
@@ -306,29 +308,37 @@ public fun MediaGalleryPreviewScreen(
         padding: PaddingValues,
         pagerState: PagerState,
         attachments: List<Attachment>,
-        onPlaybackError: () -> Unit,
-    ) -> Unit = { padding, pagerState, attachments, onPlaybackError ->
+        player: Player?,
+        onMediaClick: () -> Unit,
+    ) -> Unit = { padding, pagerState, attachments, player, onMediaClick ->
         MediaGalleryPager(
             modifier = Modifier
                 .fillMaxSize()
-                .background(ChatTheme.colors.backgroundCoreApp)
                 .padding(padding),
+            player = player,
             pagerState = pagerState,
             attachments = attachments,
-            onPlaybackError = { onPlaybackError() },
+            onMediaClick = onMediaClick,
         )
     },
-    footer: @Composable (attachments: List<Attachment>, currentPage: Int) -> Unit = { attachments, currentPage ->
-        MediaGalleryPreviewFooter(
-            attachments = attachments,
-            currentPage = currentPage,
-            totalPages = attachments.size,
-            connectionState = connectionState,
-            isSharingInProgress = isSharingInProgress,
-            onLeadingContentClick = onFooterLeadingContentClick,
-            onTrailingContentClick = onFooterTrailingContentClick,
-        )
-    },
+    footer: @Composable (attachments: List<Attachment>, currentPage: Int, player: Player?) -> Unit =
+        { attachments, currentPage, player ->
+            MediaGalleryPreviewFooter(
+                attachments = attachments,
+                currentPage = currentPage,
+                totalPages = attachments.size,
+                connectionState = connectionState,
+                isSharingInProgress = isSharingInProgress,
+                onLeadingContentClick = onFooterLeadingContentClick,
+                onTrailingContentClick = onFooterTrailingContentClick,
+                topContent = {
+                    val currentAttachment = attachments.getOrNull(currentPage)
+                    if (player != null && currentAttachment?.isVideo() == true) {
+                        VideoPlaybackControls(player = player)
+                    }
+                },
+            )
+        },
     optionsMenu: @Composable (
         attachment: Attachment,
         options: List<MediaGalleryPreviewOption>,
@@ -343,11 +353,9 @@ public fun MediaGalleryPreviewScreen(
 ) {
     // Filters out non-media and link attachments. Pass this value along to all children
     // Composable-s that read message attachments to prevent inconsistent state.
-    val filteredAttachments by remember(message) {
-        derivedStateOf {
-            message.attachments.filter { attachment ->
-                !attachment.hasLink() && (attachment.isImage() || attachment.isVideo())
-            }
+    val filteredAttachments = remember(message) {
+        message.attachments.filter { attachment ->
+            !attachment.hasLink() && (attachment.isImage() || attachment.isVideo())
         }
     }
     val startingPosition = if (initialPage !in filteredAttachments.indices) 0 else initialPage
@@ -362,41 +370,64 @@ public fun MediaGalleryPreviewScreen(
         }
     }
 
+    val playbackErrorText = stringResource(R.string.stream_ui_message_list_video_display_error)
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+    var isImmersive by remember { mutableStateOf(false) }
+
+    // Hoisted player state shared between the pager content and the bottom bar.
+    val playerState = rememberMediaGalleryPlayerState(
+        onPlaybackError = {
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar(
+                    message = playbackErrorText,
+                    duration = SnackbarDuration.Short,
+                )
+            }
+        },
+    )
+    GalleryMediaEffect(playerState, pagerState.currentPage, filteredAttachments)
 
     // Full-size container holding the main scaffold and the overlay menus
     Box(modifier = modifier) {
+        // Scaffold padding is intentionally ignored to prevent content shifting when toggling immersive mode
+        @Suppress("UnusedMaterial3ScaffoldPaddingParameter")
         Scaffold(
             modifier = Modifier.fillMaxSize(),
+            containerColor = ChatTheme.colors.backgroundCoreApp,
             topBar = {
-                header(filteredAttachments, pagerState.currentPage)
-            },
-            bottomBar = {
-                if (message.id.isNotEmpty()) {
-                    footer(filteredAttachments, pagerState.currentPage)
+                AnimatedVisibility(
+                    visible = !isImmersive,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                ) {
+                    header(filteredAttachments, pagerState.currentPage)
                 }
             },
-        ) { padding ->
+            bottomBar = {
+                AnimatedVisibility(
+                    visible = !isImmersive && message.id.isNotEmpty(),
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                ) {
+                    footer(filteredAttachments, pagerState.currentPage, playerState.player)
+                }
+            },
+        ) { _ ->
             if (message.id.isNotEmpty()) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     // Main content
-                    val playbackErrorText = stringResource(R.string.stream_ui_message_list_video_display_error)
-                    content(padding, pagerState, filteredAttachments) {
-                        // Show snackbar when playback error occurs
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = playbackErrorText,
-                                duration = SnackbarDuration.Short,
-                            )
-                        }
-                    }
+                    content(
+                        PaddingValues(),
+                        pagerState,
+                        filteredAttachments,
+                        playerState.player,
+                        { isImmersive = !isImmersive },
+                    )
                     // Error snackbar
                     StreamSnackbarHost(
                         hostState = snackbarHostState,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(bottom = padding.calculateBottomPadding()),
+                        modifier = Modifier.align(Alignment.BottomCenter),
                     )
                 }
                 // Prompt the user to share a large file (if needed)
@@ -414,16 +445,10 @@ public fun MediaGalleryPreviewScreen(
         }
 
         // Attachment options
-        AnimatedVisibility(
-            visible = isShowingOptions,
-            enter = fadeIn(),
-            exit = fadeOut(),
-        ) {
-            if (pagerState.currentPage in filteredAttachments.indices) {
-                val attachment = filteredAttachments[pagerState.currentPage]
-                val options = defaultMediaOptions(currentUser, message, connectionState, config.optionsConfig)
-                optionsMenu(attachment, options)
-            }
+        if (isShowingOptions && pagerState.currentPage in filteredAttachments.indices) {
+            val attachment = filteredAttachments[pagerState.currentPage]
+            val options = defaultMediaOptions(currentUser, message, connectionState, config.optionsConfig)
+            optionsMenu(attachment, options)
         }
 
         // Gallery
@@ -460,7 +485,6 @@ public fun MediaGalleryPreviewScreen(
  * @param onLeadingContentClick Callback to be invoked when the leading content is clicked.
  * @param onTrailingContentClick Callback to be invoked when the trailing content is clicked.
  * @param modifier The [Modifier] to be applied to the header.
- * @param elevation The elevation of the header.
  * @param backgroundColor The background color of the header.
  * @param contentColor The content color of the header.
  * @param config The configuration for the media gallery.
@@ -478,7 +502,6 @@ internal fun MediaGalleryPreviewHeader(
     onLeadingContentClick: () -> Unit,
     onTrailingContentClick: () -> Unit,
     modifier: Modifier = Modifier,
-    elevation: Dp = 4.dp,
     backgroundColor: Color = ChatTheme.colors.backgroundElevationElevation1,
     contentColor: Color = ChatTheme.colors.textPrimary,
     config: MediaGalleryConfig = ChatTheme.config.mediaGallery,
@@ -512,17 +535,18 @@ internal fun MediaGalleryPreviewHeader(
     },
 ) {
     Surface(
-        modifier = modifier,
-        shadowElevation = elevation,
+        modifier = modifier
+            .wrapContentHeight()
+            .bottomBorder(ChatTheme.colors.borderCoreSubtle),
         color = backgroundColor,
         contentColor = contentColor,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp),
+                .padding(StreamTokens.spacingSm),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
         ) {
             leadingContent(Modifier)
             centerContent(Modifier.weight(1f))
@@ -538,79 +562,18 @@ internal fun MediaGalleryPreviewHeader(
  * @param pagerState The [PagerState] for managing the pager's state. (passed from outside, so it can be also used by
  * the adjacent components. For example, to show the current position of the pager in the footer)
  * @param attachments The list of [Attachment]s to be displayed in the pager.
- * @param onPlaybackError Callback to be invoked when an error during the playing of a video occurs.
  * @param modifier The [Modifier] to be applied to the pager.
+ * @param player The [Player] instance used for video playback.
+ * @param onMediaClick Callback to be invoked when the media is clicked (e.g., to toggle immersive mode).
  */
-@Suppress("LongMethod")
 @Composable
 internal fun MediaGalleryPager(
     pagerState: PagerState,
     attachments: List<Attachment>,
-    onPlaybackError: (error: Throwable) -> Unit,
+    player: Player?,
     modifier: Modifier = Modifier,
+    onMediaClick: () -> Unit = {},
 ) {
-    val context = LocalContext.current
-    val previewMode = LocalInspectionMode.current
-    var showBuffering by remember { mutableStateOf(true) }
-    // Create a single instance of the player for the pager,
-    // so it can be reused across pages,
-    // improving performance and preventing issues when switching between pages.
-    var player by remember { mutableStateOf<Player?>(null) }
-    // Saved playback state (pageIndex to position) for restoration after app resume.
-    var savedPlaybackState by remember { mutableStateOf<Pair<Int, Long>?>(null) }
-    val currentPage = pagerState.currentPage
-    LaunchedEffect(currentPage, player) {
-        player?.let { activePlayer ->
-            activePlayer.pause() // Pause the player when the page changes
-            val attachment = attachments[currentPage]
-            // Prepare the player with the media item if it's a video.
-            if (attachment.isVideo()) {
-                attachment.assetUrl?.let { assetUrl ->
-                    // Restore playback position if returning to the same page after app resume.
-                    val startPosition = savedPlaybackState
-                        ?.takeIf { (savedPage, _) -> savedPage == currentPage }
-                        ?.second
-                        ?: 0L
-                    savedPlaybackState = null
-                    activePlayer.setMediaItem(MediaItem.fromUri(assetUrl), startPosition)
-                    activePlayer.prepare()
-                }
-            }
-        }
-    }
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner, previewMode) {
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_START -> {
-                    // Player should not be created in preview mode to prevent exceptions.
-                    if (!previewMode && player == null) {
-                        player = createPlayer(
-                            context = context,
-                            onBuffering = { isBuffering -> showBuffering = isBuffering },
-                            onPlaybackError = onPlaybackError,
-                        )
-                    }
-                }
-                Lifecycle.Event.ON_PAUSE -> {
-                    player?.pause()
-                }
-                Lifecycle.Event.ON_STOP -> {
-                    // Save playback position before releasing the player.
-                    savedPlaybackState = pagerState.currentPage to (player?.currentPosition ?: 0L)
-                    player?.release()
-                    player = null
-                }
-                else -> Unit
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-            player?.release()
-            player = null
-        }
-    }
     HorizontalPager(
         modifier = modifier,
         state = pagerState,
@@ -622,6 +585,7 @@ internal fun MediaGalleryPager(
                     attachment = attachment,
                     pagerState = pagerState,
                     page = page,
+                    onTap = onMediaClick,
                 )
             }
 
@@ -631,8 +595,7 @@ internal fun MediaGalleryPager(
                         modifier = Modifier.fillMaxSize(),
                         player = it,
                         thumbnailUrl = attachment.thumbUrl,
-                        showBuffering = showBuffering,
-                        onPlaybackError = onPlaybackError,
+                        onClick = onMediaClick,
                     )
                 }
             }
@@ -678,10 +641,10 @@ internal fun MediaGalleryPreviewFooter(
     onLeadingContentClick: (Attachment) -> Unit,
     onTrailingContentClick: (Attachment) -> Unit,
     modifier: Modifier = Modifier,
-    elevation: Dp = 4.dp,
     backgroundColor: Color = ChatTheme.colors.backgroundElevationElevation1,
     contentColor: Color = ChatTheme.colors.textPrimary,
     config: MediaGalleryConfig = ChatTheme.config.mediaGallery,
+    topContent: @Composable (() -> Unit)? = null,
     leadingContent: @Composable (Modifier) -> Unit = {
         if (config.isShareVisible) {
             MediaGalleryPreviewShareIcon(
@@ -694,11 +657,12 @@ internal fun MediaGalleryPreviewFooter(
             Spacer(modifier = Modifier.minimumInteractiveComponentSize())
         }
     },
-    centerContent: @Composable (Modifier) -> Unit = {
+    centerContent: @Composable (Modifier) -> Unit = { modifier ->
         if (isSharingInProgress) {
-            MediaGalleryPreviewSharingInProgressIndicator()
+            MediaGalleryPreviewSharingInProgressIndicator(modifier = modifier)
         } else {
             MediaGalleryPreviewPageIndicator(
+                modifier = modifier,
                 currentPage = currentPage,
                 totalPages = totalPages,
             )
@@ -716,21 +680,25 @@ internal fun MediaGalleryPreviewFooter(
     },
 ) {
     Surface(
-        modifier = modifier,
-        shadowElevation = elevation,
+        modifier = modifier
+            .fillMaxWidth()
+            .topBorder(ChatTheme.colors.borderCoreDefault),
         color = backgroundColor,
         contentColor = contentColor,
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            leadingContent(Modifier)
-            centerContent(Modifier.weight(1f))
-            trailingContent(Modifier)
+        Column {
+            topContent?.invoke()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(StreamTokens.spacingSm),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
+            ) {
+                leadingContent(Modifier)
+                centerContent(Modifier.weight(1f))
+                trailingContent(Modifier)
+            }
         }
     }
 }
@@ -746,12 +714,14 @@ internal fun MediaGalleryPreviewCloseIcon(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    IconButton(
-        modifier = modifier,
+    StreamButton(
+        modifier = modifier.minimumInteractiveComponentSize(),
         onClick = onClick,
+        style = StreamButtonStyleDefaults.secondaryGhost,
+        size = StreamButtonSize.Medium,
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_close),
+            painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
             contentDescription = stringResource(id = R.string.stream_compose_cancel),
         )
     }
@@ -780,11 +750,11 @@ internal fun MediaGalleryPreviewTitle(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier.padding(vertical = StreamTokens.spacing2xs),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        val textStyle = ChatTheme.typography.headingMedium
+        val textStyle = ChatTheme.typography.headingSmall
 
         when (connectionState) {
             is ConnectionState.Connected -> Text(
@@ -808,7 +778,12 @@ internal fun MediaGalleryPreviewTitle(
 
         val timestamp = message.updatedAt ?: message.createdAt
         if (timestamp != null) {
-            Timestamp(date = timestamp)
+            Timestamp(
+                date = timestamp,
+                textStyle = ChatTheme.typography.captionDefault.copy(
+                    color = ChatTheme.colors.textSecondary,
+                ),
+            )
         }
     }
 }
@@ -828,10 +803,12 @@ internal fun MediaGalleryPreviewOptionsIcon(
     modifier: Modifier = Modifier,
 ) {
     val enabled = message.id.isNotEmpty()
-    IconButton(
-        modifier = modifier,
+    StreamButton(
+        modifier = modifier.minimumInteractiveComponentSize(),
         enabled = enabled,
         onClick = onClick,
+        style = StreamButtonStyleDefaults.secondaryGhost,
+        size = StreamButtonSize.Medium,
     ) {
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_menu_vertical),
@@ -863,10 +840,12 @@ internal fun MediaGalleryPreviewShareIcon(
     modifier: Modifier = Modifier,
 ) {
     val enabled = connectionState is ConnectionState.Connected
-    IconButton(
-        modifier = modifier,
+    StreamButton(
+        modifier = modifier.minimumInteractiveComponentSize(),
         enabled = enabled,
         onClick = onClick,
+        style = StreamButtonStyleDefaults.secondaryGhost,
+        size = StreamButtonSize.Medium,
     ) {
         val painter = if (isSharingInProgress) {
             R.drawable.stream_compose_ic_clear
@@ -898,12 +877,15 @@ internal fun MediaGalleryPreviewShareIcon(
 internal fun MediaGalleryPreviewPageIndicator(
     currentPage: Int,
     totalPages: Int,
+    modifier: Modifier = Modifier,
 ) {
     val text = stringResource(id = R.string.stream_compose_image_order, currentPage + 1, totalPages)
     Text(
+        modifier = modifier,
         text = text,
-        style = ChatTheme.typography.headingMedium,
+        style = ChatTheme.typography.captionEmphasis,
         color = ChatTheme.colors.textPrimary,
+        textAlign = TextAlign.Center,
         maxLines = 1,
     )
 }
@@ -915,18 +897,20 @@ internal fun MediaGalleryPreviewPageIndicator(
  * "Preparing..." text, indicating that a media sharing operation is in progress.
  */
 @Composable
-internal fun MediaGalleryPreviewSharingInProgressIndicator() {
-    Row {
-        CircularProgressIndicator(
+internal fun MediaGalleryPreviewSharingInProgressIndicator(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        LoadingIndicator(
             modifier = Modifier
                 .padding(horizontal = 12.dp)
                 .size(24.dp),
-            strokeWidth = 2.dp,
-            color = ChatTheme.colors.accentPrimary,
         )
         Text(
             text = stringResource(id = R.string.stream_compose_media_gallery_preview_preparing),
-            style = ChatTheme.typography.headingMedium,
+            style = ChatTheme.typography.captionEmphasis,
         )
     }
 }
@@ -942,9 +926,11 @@ internal fun MediaGalleryPreviewPhotosIcon(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    IconButton(
-        modifier = modifier,
+    StreamButton(
+        modifier = modifier.minimumInteractiveComponentSize(),
         onClick = onClick,
+        style = StreamButtonStyleDefaults.secondaryGhost,
+        size = StreamButtonSize.Medium,
     ) {
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_gallery),
