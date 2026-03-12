@@ -118,8 +118,6 @@ import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatu
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
 import io.getstream.chat.android.compose.ui.components.common.CommandChip
 import io.getstream.chat.android.compose.ui.components.common.ContextualMenuItem
-import io.getstream.chat.android.compose.ui.components.common.PlayButton
-import io.getstream.chat.android.compose.ui.components.common.PlayButtonSize
 import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
@@ -193,7 +191,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.ConnectionState
@@ -2849,29 +2846,7 @@ public interface ChatComponentFactory {
             modifier = params.modifier,
             attachment = params.attachment,
             onAttachmentRemoved = params.onAttachmentRemoved,
-            overlayContent = { attachmentType ->
-                MessageComposerAttachmentMediaItemOverlay(
-                    params = MessageComposerAttachmentMediaItemOverlayParams(attachmentType),
-                )
-            },
         )
-    }
-
-    /**
-     * Renders the overlay content above a media attachment item in the message composer tray.
-     *
-     * Override to provide a custom overlay — for example, a branded play button above video
-     * previews. The default renders a standard play button for video attachments.
-     *
-     * Used as part of [MessageComposerAttachmentMediaItem].
-     *
-     * @param params Parameters for this component.
-     */
-    @Composable
-    public fun MessageComposerAttachmentMediaItemOverlay(params: MessageComposerAttachmentMediaItemOverlayParams) {
-        if (params.attachmentType == AttachmentType.VIDEO) {
-            PlayButton(size = PlayButtonSize.Small)
-        }
     }
 
     /**

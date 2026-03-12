@@ -34,13 +34,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.ColorImage
 import coil3.compose.LocalAsyncImagePreviewHandler
+import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
+import io.getstream.chat.android.compose.ui.components.common.VideoBadge
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.extensions.internal.localPreviewData
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.previewdata.PreviewAttachmentData
 
 @Composable
@@ -48,52 +51,83 @@ internal fun MessageComposerAttachmentMediaItem(
     attachment: Attachment,
     modifier: Modifier = Modifier,
     onAttachmentRemoved: (Attachment) -> Unit = {},
-    overlayContent: @Composable (attachmentType: String?) -> Unit = {},
 ) {
     val data = attachment.localPreviewData
 
     Box(
-        modifier = modifier
-            .size(95.dp)
-            .clip(RoundedCornerShape(StreamTokens.radiusLg))
-            .testTag("Stream_MediaAttachmentPreviewItem"),
-        contentAlignment = Alignment.Center,
+        modifier = modifier.testTag("Stream_MessageComposerAttachmentMediaItem"),
     ) {
-        StreamAsyncImage(
-            modifier = Modifier.fillMaxSize(),
-            data = data,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-        )
+        Box(
+            modifier = Modifier
+                .padding(StreamTokens.spacing2xs)
+                .size(72.dp)
+                .clip(MediaItemImageShape),
+        ) {
+            StreamAsyncImage(
+                modifier = Modifier.fillMaxSize(),
+                data = data,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+            )
 
-        overlayContent(attachment.type)
+            if (attachment.type == AttachmentType.VIDEO) {
+                VideoBadge(
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(StreamTokens.spacing2xs),
+                    durationInSeconds = attachment.duration?.toLong() ?: 0,
+                    compact = true,
+                )
+            }
+        }
 
         ComposerCancelIcon(
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(4.dp)
-                .testTag("Stream_AttachmentCancelIcon"),
+                .testTag("Stream_MessageComposerAttachmentCancelIcon"),
             onClick = { onAttachmentRemoved(attachment) },
         )
     }
 }
 
+private val MediaItemImageShape = RoundedCornerShape(StreamTokens.radiusLg)
+
 @Preview
 @Composable
-private fun MessageComposerAttachmentMediaItemPreview() {
+private fun MessageComposerAttachmentImageItemPreview() {
     ChatTheme {
-        MessageComposerAttachmentMediaItem()
+        MessageComposerAttachmentImageItem()
     }
 }
 
 @Composable
-internal fun MessageComposerAttachmentMediaItem() {
+internal fun MessageComposerAttachmentImageItem() {
     val previewHandler = AsyncImagePreviewHandler {
         ColorImage(color = Color.Green.toArgb(), width = 200, height = 150)
     }
     CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
         MessageComposerAttachmentMediaItem(
             attachment = PreviewAttachmentData.attachmentImage1,
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun MessageComposerAttachmentVideoItemPreview() {
+    ChatTheme {
+        MessageComposerAttachmentVideoItem()
+    }
+}
+
+@Composable
+internal fun MessageComposerAttachmentVideoItem() {
+    val previewHandler = AsyncImagePreviewHandler {
+        ColorImage(color = Color.Green.toArgb(), width = 200, height = 150)
+    }
+    CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
+        MessageComposerAttachmentMediaItem(
+            attachment = PreviewAttachmentData.attachmentVideo1,
         )
     }
 }

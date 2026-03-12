@@ -72,10 +72,10 @@ open class MessageListPage {
             val attachmentsButton get() = By.res("Stream_ComposerAttachmentsButton")
             val quotedMessage get() = By.res("Stream_QuotedMessage")
             val cancelEditButton get() = By.res("Stream_ComposerCancelEditButton")
-            val attachmentCancelIcon get() = By.res("Stream_AttachmentCancelIcon")
+            val attachmentCancelIcon get() = By.res("Stream_MessageComposerAttachmentCancelIcon")
             val columnWithMultipleFileAttachments get() = By.res("Stream_MessageComposerAttachments")
             val columnWithMultipleMediaAttachments get() = By.res("Stream_MessageComposerAttachments")
-            val mediaAttachment get() = By.res("Stream_MediaAttachmentPreviewItem")
+            val mediaAttachment get() = By.res("Stream_MessageComposerAttachmentMediaItem")
             val fileSize get() = By.res("Stream_FileSizeInPreview")
             val fileName get() = By.res("Stream_FileNameInPreview")
             val fileImage = MessageList.Message.fileImage
