@@ -110,8 +110,6 @@ public object StreamDesign {
      * @param chatPollProgressTrackOutgoing Used for outgoing poll progress track color.
      * @param chatReplyIndicatorIncoming Used for the reply indicator color in incoming messages.
      * @param chatReplyIndicatorOutgoing Used for the reply indicator color in outgoing messages.
-     * @param controlRadioCheckBgSelected Used for selected radio/check background.
-     * @param controlRadioCheckIconSelected Used for selected radio/check icon.
      * @param controlRemoveBg Used for remove control background.
      * @param controlRemoveIcon Used for remove control icon.
      * @param presenceBorder Used for the outline around the presence dot.
@@ -189,8 +187,6 @@ public object StreamDesign {
         public val chatPollProgressTrackOutgoing: Color,
         public val chatReplyIndicatorIncoming: Color,
         public val chatReplyIndicatorOutgoing: Color,
-        public val controlRadioCheckBgSelected: Color,
-        public val controlRadioCheckIconSelected: Color,
         public val controlRemoveBg: Color,
         public val controlRemoveIcon: Color,
         public val controlPlaybackThumbBgDefault: Color,
@@ -257,6 +253,15 @@ public object StreamDesign {
 
         /** Radio/check background (unselected). */
         public val controlRadioCheckBg: Color = Color.Transparent
+
+        /** Selected radio/check background. */
+        public val controlRadioCheckBgSelected: Color = accentPrimary
+
+        /** Selected radio/check icon. */
+        public val controlRadioCheckIconSelected: Color = textOnAccent
+
+        /** Indicator dot inside a selected radio button. */
+        public val controlRadioButtonIndicator: Color = textOnAccent
 
         /** Toggle switch track background. */
         public val controlToggleSwitchBg: Color = accentNeutral
@@ -505,8 +510,6 @@ public object StreamDesign {
                 chatPollProgressTrackOutgoing = StreamPrimitiveColors.blue200,
                 chatReplyIndicatorIncoming = StreamPrimitiveColors.slate400,
                 chatReplyIndicatorOutgoing = StreamPrimitiveColors.blue400,
-                controlRadioCheckBgSelected = StreamPrimitiveColors.blue500,
-                controlRadioCheckIconSelected = StreamPrimitiveColors.baseWhite,
                 controlPlaybackThumbBgDefault = StreamPrimitiveColors.baseWhite,
                 controlRemoveBg = StreamPrimitiveColors.slate900,
                 controlRemoveIcon = StreamPrimitiveColors.baseWhite,
@@ -590,8 +593,6 @@ public object StreamDesign {
                 chatPollProgressTrackOutgoing = StreamPrimitiveColors.blue600,
                 chatReplyIndicatorIncoming = StreamPrimitiveColors.neutral500,
                 chatReplyIndicatorOutgoing = StreamPrimitiveColors.blue150,
-                controlRadioCheckBgSelected = StreamPrimitiveColors.blue400,
-                controlRadioCheckIconSelected = StreamPrimitiveColors.baseWhite,
                 controlPlaybackThumbBgDefault = StreamPrimitiveColors.neutral50,
                 controlRemoveBg = StreamPrimitiveColors.neutral50,
                 controlRemoveIcon = StreamPrimitiveColors.neutral900,

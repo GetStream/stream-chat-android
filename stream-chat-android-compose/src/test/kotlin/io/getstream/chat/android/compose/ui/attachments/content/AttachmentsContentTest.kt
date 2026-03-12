@@ -80,7 +80,7 @@ internal class AttachmentsContentTest : PaparazziComposeTest {
     @Test
     fun `file upload content`() {
         snapshotWithDarkModeRow {
-            FileUploadContent()
+            FileAttachmentContent(isMine = true, isUploading = true)
         }
     }
 
@@ -102,6 +102,20 @@ internal class AttachmentsContentTest : PaparazziComposeTest {
     fun `multiple media attachment content`() {
         snapshotWithDarkModeRow {
             MultipleMediaAttachmentContent()
+        }
+    }
+
+    @Test
+    fun `audio record attachment content`() {
+        snapshotWithDarkMode {
+            AudioRecordAttachmentContentItemPlayback()
+        }
+    }
+
+    @Test
+    fun `audio record upload content`() {
+        snapshotWithDarkMode {
+            AudioRecordAttachmentContentItemUploading()
         }
     }
 }

@@ -27,10 +27,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntRect
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupPositionProvider
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvider
 
 @Composable
 internal fun SuggestionsMenu(
@@ -38,7 +42,7 @@ internal fun SuggestionsMenu(
     content: @Composable () -> Unit,
 ) {
     if (ChatTheme.config.composer.floatingStyleEnabled) {
-        Popup(popupPositionProvider = AboveAnchorPopupPositionProvider) {
+        Popup(popupPositionProvider = AboveAnchorPositionProvider) {
             Card(
                 modifier = Modifier
                     .semantics { testTagsAsResourceId = true }
@@ -64,3 +68,15 @@ internal fun SuggestionsMenu(
 }
 
 private val SuggestionsShape = RoundedCornerShape(StreamTokens.radius3xl)
+
+private object AboveAnchorPositionProvider : PopupPositionProvider {
+    override fun calculatePosition(
+        anchorBounds: IntRect,
+        windowSize: IntSize,
+        layoutDirection: LayoutDirection,
+        popupContentSize: IntSize,
+    ) = IntOffset(
+        x = 0,
+        y = anchorBounds.top - popupContentSize.height,
+    )
+}
