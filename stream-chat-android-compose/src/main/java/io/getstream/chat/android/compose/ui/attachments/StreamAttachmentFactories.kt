@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentClickData
 import io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentClickData
-import io.getstream.chat.android.compose.ui.attachments.content.onGiphyAttachmentContentClick
 import io.getstream.chat.android.compose.ui.attachments.content.onLinkAttachmentContentClick
 import io.getstream.chat.android.compose.ui.attachments.content.onMediaAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.factory.AudioRecordAttachmentFactory
@@ -68,9 +67,9 @@ public object StreamAttachmentFactories {
      * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
      * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the
      * message by deleting an attachment contained within it. Set to false by default.
-     * @param onUploadContentItemClick Lambda called when a uploading attachment content item gets clicked.
      * @param onLinkContentItemClick Lambda called when a link attachment content item gets clicked.
-     * @param onGiphyContentItemClick Lambda called when a giphy attachment content item gets clicked.
+     * @param onGiphyContentItemClick Lambda called when a giphy attachment content item gets clicked (no-action by
+     * default).
      * @param onMediaContentItemClick Lambda called when a image or video attachment content item gets clicked.
      * @param skipTypes A list of [AttachmentFactory.Type] that should be skipped from the default factories.
      *
@@ -89,7 +88,7 @@ public object StreamAttachmentFactories {
         contentScale: ContentScale = ContentScale.Crop,
         skipEnrichUrl: Boolean = false,
         onLinkContentItemClick: (context: Context, previewUrl: String) -> Unit = ::onLinkAttachmentContentClick,
-        onGiphyContentItemClick: (context: Context, url: String) -> Unit = ::onGiphyAttachmentContentClick,
+        onGiphyContentItemClick: (context: Context, url: String) -> Unit = { _, _ -> },
         onMediaContentItemClick: (
             mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
             message: Message,
@@ -133,9 +132,7 @@ public object StreamAttachmentFactories {
         onLinkContentItemClick: (LinkAttachmentClickData) -> Unit = {
             onLinkAttachmentContentClick(it.context, it.url)
         },
-        onGiphyContentItemClick: (GiphyAttachmentClickData) -> Unit = {
-            onGiphyAttachmentContentClick(it.context, it.url)
-        },
+        onGiphyContentItemClick: (GiphyAttachmentClickData) -> Unit = {},
         skipTypes: List<AttachmentFactory.Type> = emptyList(),
     ): List<AttachmentFactory> = listOf(
         AudioRecordAttachmentFactory(

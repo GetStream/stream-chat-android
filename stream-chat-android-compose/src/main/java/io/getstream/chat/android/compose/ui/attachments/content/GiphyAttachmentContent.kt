@@ -17,8 +17,6 @@
 package io.getstream.chat.android.compose.ui.attachments.content
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -84,7 +82,7 @@ import io.getstream.chat.android.ui.common.utils.giphyInfo
  * the default Giphy width and height dimensions, however you can still clip maximum dimensions.
  * Setting it to fixed size mode will make it respect all given dimensions.
  * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
- * @param onItemClick Lambda called when an item gets clicked.
+ * @param onItemClick Lambda called when an item gets clicked (no-action by default).
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongMethod")
@@ -110,7 +108,7 @@ public fun GiphyAttachmentContent(
     giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
     giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
     contentScale: ContentScale = ContentScale.Crop,
-    onItemClick: (context: Context, previewUrl: String) -> Unit = ::onGiphyAttachmentContentClick,
+    onItemClick: (context: Context, previewUrl: String) -> Unit = { _, _ -> },
 ) {
     GiphyAttachmentContent(
         state = attachmentState,
@@ -141,7 +139,7 @@ public fun GiphyAttachmentContent(
  * the default Giphy width and height dimensions, however you can still clip maximum dimensions.
  * Setting it to fixed size mode will make it respect all given dimensions.
  * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
- * @param onItemClick Lambda called when an item gets clicked.
+ * @param onItemClick Lambda called when an item gets clicked (no-action by default).
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongMethod")
@@ -152,9 +150,7 @@ public fun GiphyAttachmentContent(
     giphyInfoType: GiphyInfoType = GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED,
     giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
     contentScale: ContentScale = ContentScale.Crop,
-    onItemClick: (GiphyAttachmentClickData) -> Unit = {
-        onGiphyAttachmentContentClick(it.context, it.url)
-    },
+    onItemClick: (GiphyAttachmentClickData) -> Unit = {},
 ) {
     val context = LocalContext.current
     val message = state.message
@@ -317,21 +313,6 @@ private fun calculateResultingDimensions(
     } else {
         DpSize((giphyWidth.value * resultingRatio).dp, maxHeight)
     }
-}
-
-/**
- * Handles clicks on Giphy attachment content.
- *
- * @param context Context needed to start the Activity.
- * @param previewUrl The url of the Giphy attachment being clicked.
- */
-internal fun onGiphyAttachmentContentClick(context: Context, previewUrl: String) {
-    context.startActivity(
-        Intent(
-            Intent.ACTION_VIEW,
-            Uri.parse(previewUrl),
-        ),
-    )
 }
 
 /**
