@@ -76,8 +76,8 @@ open class MessageListPage {
             val columnWithMultipleFileAttachments get() = By.res("Stream_MessageComposerAttachments")
             val columnWithMultipleMediaAttachments get() = By.res("Stream_MessageComposerAttachments")
             val mediaAttachment get() = By.res("Stream_MessageComposerAttachmentMediaItem")
-            val fileSize get() = By.res("Stream_FileSizeInPreview")
-            val fileName get() = By.res("Stream_FileNameInPreview")
+            val fileSize get() = By.res("Stream_MessageComposerAttachmentFileSize")
+            val fileName get() = By.res("Stream_MessageComposerAttachmentFileName")
             val fileImage = MessageList.Message.fileImage
             val linkPreviewImage get() = By.res("Stream_LinkPreviewImage")
             val linkPreviewTitle get() = By.res("Stream_LinkPreviewTitle")
