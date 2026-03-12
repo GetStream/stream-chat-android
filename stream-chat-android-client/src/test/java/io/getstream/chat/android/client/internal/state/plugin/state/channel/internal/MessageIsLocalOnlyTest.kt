@@ -19,62 +19,62 @@ package io.getstream.chat.android.client.internal.state.plugin.state.channel.int
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomMessage
-import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 /**
- * Stub tests for the [Message.isLocalOnly] predicate.
- * All tests are @Disabled — they will be enabled in Wave 1 once isLocalOnly() is implemented.
+ * Unit tests for the [Message.isLocalOnly] predicate.
  *
  * Requirements covered: PRES-05
  */
 internal class MessageIsLocalOnlyTest {
 
     @Test
-    @Disabled("Wave 1 — implement isLocalOnly() first")
     fun `isLocalOnly returns true for SyncStatus SYNC_NEEDED`() {
-        TODO("Implement after Wave 1")
+        val message = randomMessage(syncStatus = SyncStatus.SYNC_NEEDED, type = MessageType.REGULAR)
+        assertTrue(message.isLocalOnly())
     }
 
     @Test
-    @Disabled("Wave 1 — implement isLocalOnly() first")
     fun `isLocalOnly returns true for SyncStatus IN_PROGRESS`() {
-        TODO("Implement after Wave 1")
+        val message = randomMessage(syncStatus = SyncStatus.IN_PROGRESS, type = MessageType.REGULAR)
+        assertTrue(message.isLocalOnly())
     }
 
     @Test
-    @Disabled("Wave 1 — implement isLocalOnly() first")
     fun `isLocalOnly returns true for SyncStatus AWAITING_ATTACHMENTS`() {
-        TODO("Implement after Wave 1")
+        val message = randomMessage(syncStatus = SyncStatus.AWAITING_ATTACHMENTS, type = MessageType.REGULAR)
+        assertTrue(message.isLocalOnly())
     }
 
     @Test
-    @Disabled("Wave 1 — implement isLocalOnly() first")
     fun `isLocalOnly returns true for SyncStatus FAILED_PERMANENTLY`() {
-        TODO("Implement after Wave 1")
+        val message = randomMessage(syncStatus = SyncStatus.FAILED_PERMANENTLY, type = MessageType.REGULAR)
+        assertTrue(message.isLocalOnly())
     }
 
     @Test
-    @Disabled("Wave 1 — implement isLocalOnly() first")
     fun `isLocalOnly returns true for type ephemeral with COMPLETED syncStatus`() {
-        TODO("Implement after Wave 1")
+        val message = randomMessage(syncStatus = SyncStatus.COMPLETED, type = MessageType.EPHEMERAL)
+        assertTrue(message.isLocalOnly())
     }
 
     @Test
-    @Disabled("Wave 1 — implement isLocalOnly() first")
     fun `isLocalOnly returns true for type error with COMPLETED syncStatus`() {
-        TODO("Implement after Wave 1")
+        val message = randomMessage(syncStatus = SyncStatus.COMPLETED, type = MessageType.ERROR)
+        assertTrue(message.isLocalOnly())
     }
 
     @Test
-    @Disabled("Wave 1 — implement isLocalOnly() first")
     fun `isLocalOnly returns false for SyncStatus COMPLETED with type regular`() {
-        TODO("Implement after Wave 1")
+        val message = randomMessage(syncStatus = SyncStatus.COMPLETED, type = MessageType.REGULAR)
+        assertFalse(message.isLocalOnly())
     }
 
     @Test
-    @Disabled("Wave 1 — implement isLocalOnly() first")
     fun `isLocalOnly returns false for system message with COMPLETED`() {
-        TODO("Implement after Wave 1")
+        val message = randomMessage(syncStatus = SyncStatus.COMPLETED, type = MessageType.SYSTEM)
+        assertFalse(message.isLocalOnly())
     }
 }
