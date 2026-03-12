@@ -87,6 +87,7 @@ internal data class ChannelEntity(
     val membership: MemberEntity?,
     val activeLiveLocations: List<LocationEntity>,
     val messageCount: Int?,
+    val oldestLoadedDate: Date? = null, // Floor for local-only message window — written on onQueryChannelResult; read by Phase 2 DB-seed path
 ) {
     /**
      * The channel id in the format messaging:123.
