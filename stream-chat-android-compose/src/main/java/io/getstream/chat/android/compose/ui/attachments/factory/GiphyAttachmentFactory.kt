@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentClickData
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentContent
-import io.getstream.chat.android.compose.ui.attachments.content.onGiphyAttachmentContentClick
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
 import io.getstream.chat.android.ui.common.utils.GiphySizingMode
@@ -40,7 +39,7 @@ import io.getstream.chat.android.ui.common.utils.GiphySizingMode
  * the default Giphy width and height dimensions, however you can still clip maximum dimensions.
  * Setting it to fixed size mode will make it respect all given dimensions.
  * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
- * @param onContentItemClick Lambda called when an item gets clicked.
+ * @param onItemClick Lambda called when an item gets clicked.
  * @param canHandle Lambda that checks if the factory can handle the given attachments.
  *
  * @return Returns an instance of [AttachmentFactory] that is used to handle Giphys.
@@ -49,9 +48,7 @@ public class GiphyAttachmentFactory(
     giphyInfoType: GiphyInfoType = GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED,
     giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
     contentScale: ContentScale = ContentScale.Crop,
-    onItemClick: (GiphyAttachmentClickData) -> Unit = {
-        onGiphyAttachmentContentClick(it.context, it.url)
-    },
+    onItemClick: (GiphyAttachmentClickData) -> Unit = {},
     canHandle: (attachments: List<Attachment>) -> Boolean = { attachments -> attachments.any(Attachment::isGiphy) },
 ) : AttachmentFactory(
     type = Type.BuiltIn.GIPHY,
