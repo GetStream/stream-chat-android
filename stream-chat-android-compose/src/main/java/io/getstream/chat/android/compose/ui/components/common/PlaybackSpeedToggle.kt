@@ -44,10 +44,7 @@ internal fun PlaybackSpeedToggle(
     val textColor = if (enabled) colors.controlPlaybackToggleText else colors.textDisabled
     val borderColor = if (enabled) outlineColor else colors.borderUtilityDisabled
     Text(
-        text = when (speed.isInt()) {
-            true -> "x${speed.toInt()}"
-            else -> "x$speed"
-        },
+        text = if (speed.isInt()) "x${speed.toInt()}" else "x$speed",
         style = ChatTheme.typography.metadataEmphasis,
         color = textColor,
         modifier = Modifier
