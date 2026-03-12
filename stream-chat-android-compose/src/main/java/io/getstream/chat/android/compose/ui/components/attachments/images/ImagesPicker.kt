@@ -21,7 +21,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -49,13 +48,13 @@ import coil3.video.VideoFrameDecoder
 import coil3.video.videoFrameMillis
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
+import io.getstream.chat.android.compose.ui.components.common.VideoBadge
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
-import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 
 private const val DefaultNumberOfPicturesPerRow = 3
 private val ItemShape = RoundedCornerShape(2.dp)
@@ -156,11 +155,11 @@ internal fun DefaultImagesPickerItem(
         }
 
         if (isVideo) {
-            VideoThumbnailOverlay(
+            VideoBadge(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(StreamTokens.spacingXs),
-                videoLength = attachmentMetaData.videoLength,
+                durationInSeconds = attachmentMetaData.videoLength,
             )
         }
     }
@@ -205,39 +204,6 @@ private fun UnselectedIndicator(
                 color = ChatTheme.colors.borderCoreOnAccent,
             ),
     )
-}
-
-@Composable
-private fun VideoThumbnailOverlay(
-    videoLength: Long,
-    modifier: Modifier = Modifier,
-) {
-    val overlayShape = RoundedCornerShape(9.dp)
-
-    Row(
-        modifier = modifier
-            .background(
-                shape = overlayShape,
-                color = ChatTheme.colors.accentBlack,
-            )
-            .padding(
-                horizontal = StreamTokens.spacingXs,
-                vertical = StreamTokens.spacing2xs,
-            ),
-        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_video),
-            contentDescription = null,
-            tint = ChatTheme.colors.textOnAccent,
-        )
-        Text(
-            text = MediaStringUtil.convertVideoLength(videoLength),
-            style = ChatTheme.typography.numericMedium,
-            color = ChatTheme.colors.textOnAccent,
-        )
-    }
 }
 
 /**
