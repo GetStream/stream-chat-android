@@ -39,22 +39,18 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 @Composable
 internal fun SwipeToReplyIcon() {
     Box(
-        modifier = Modifier.minimumInteractiveComponentSize(),
+        modifier = Modifier
+            .minimumInteractiveComponentSize()
+            .size(32.dp)
+            .clip(CircleShape)
+            .background(ChatTheme.colors.buttonSecondaryBg, CircleShape),
         contentAlignment = Alignment.Center,
     ) {
-        Box(
-            modifier = Modifier
-                .size(32.dp)
-                .clip(CircleShape)
-                .background(ChatTheme.colors.buttonSecondaryBg, CircleShape),
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.stream_compose_ic_reply),
-                contentDescription = "",
-                tint = ChatTheme.colors.buttonSecondaryTextOnAccent,
-            )
-        }
+        Icon(
+            painter = painterResource(R.drawable.stream_compose_ic_reply),
+            contentDescription = "",
+            tint = ChatTheme.colors.buttonSecondaryTextOnAccent,
+        )
     }
 }
 
