@@ -104,10 +104,11 @@ internal class ComposerSessionRepository(private val savedStateHandle: SavedStat
 
     private fun jsonToAttachment(json: JSONObject): Attachment? {
         val uri = json.optString(KEY_URI).takeIf(String::isNotEmpty)
+        val name = json.optString(KEY_NAME).takeIf(String::isNotEmpty)
         val assetUrl = json.optString(KEY_ASSET_URL).takeIf(String::isNotEmpty)
         val imageUrl = json.optString(KEY_IMAGE_URL).takeIf(String::isNotEmpty)
         val thumbUrl = json.optString(KEY_THUMB_URL).takeIf(String::isNotEmpty)
-        val hasIdentifier = uri != null || assetUrl != null || imageUrl != null || thumbUrl != null
+        val hasIdentifier = uri != null || name != null || assetUrl != null || imageUrl != null || thumbUrl != null
         if (!hasIdentifier) return null
         val extraData = buildMap {
             json.optJSONObject(KEY_EXTRA_DATA)?.let { obj ->
@@ -152,7 +153,9 @@ internal class ComposerSessionRepository(private val savedStateHandle: SavedStat
      * Serializes [extraData] to a [JSONObject], excluding [EXTRA_SOURCE_URI] (stored separately).
      *
      * Only primitive types (String, Boolean, Int, Long, Double, Float) are included.
-     * Non-serializable values are silently skipped.
+     * Non-serializable values are silently skipped. Note that [Float] values are promoted to
+     * [Double] during serialization because JSON has no single-precision type; callers should
+     * read restored values as [Number] rather than casting directly to [Float].
      *
      * @return A [JSONObject], or `null` if there are no serializable entries.
      */
