@@ -716,8 +716,6 @@ internal class MessageComposerControllerTest {
         assertEquals(null, controller.state.value.activeCommand)
     }
 
-    // region sendMessage tests
-
     @Test
     fun `Given normal mode When sendMessage called Then chatClient sendMessage is invoked with correct message`() = runTest {
         // Given
@@ -1032,26 +1030,6 @@ internal class MessageComposerControllerTest {
         assertEquals("Fixed content", messageCaptor.firstValue.text)
     }
 
-    // endregion
-
-    // region loadNewestMessages tests
-    //
-    // Why we verify `inheritScope` instead of `queryChannel`:
-    //
-    // The `loadNewestMessages` extension function internally uses `logic.channel().watch()` which
-    // relies on the StatePlugin's LogicRegistry - a complex internal dependency that cannot be
-    // easily mocked in unit tests. However, `loadNewestMessages` creates a `CoroutineCall` using
-    // `chatClient.inheritScope()` as its very first operation:
-    //
-    //   fun ChatClient.loadNewestMessages(...): Call<Channel> {
-    //       return CoroutineCall(inheritScope { Job(it) }) { ... }
-    //   }
-    //
-    // Therefore, verifying whether `inheritScope` was called serves as a reliable proxy to confirm
-    // whether `loadNewestMessages` was invoked, without needing to mock the entire StatePlugin
-    // infrastructure.
-    //
-
     @Test
     fun `Given endOfNewerMessages is true When sendMessage called Then loadNewestMessages is not called`() = runTest {
         // Given
@@ -1130,7 +1108,97 @@ internal class MessageComposerControllerTest {
         verify(fixture.chatClient).inheritScope(any())
     }
 
-    // endregion
+    @Test
+    fun `Given URI-less attachments When addAttachments called Then all attachments are staged`() = runTest {
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val a1 = randomAttachment(name = "location.pin", type = "location")
+        val a2 = randomAttachment(name = "card.custom", type = "custom")
+
+        controller.addAttachments(listOf(a1, a2))
+
+        assertEquals(2, controller.state.value.attachments.size)
+    }
+
+    @Test
+    fun `Given URI-less attachment staged When removeAttachment called Then it is removed by fallback key`() = runTest {
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val attachment = randomAttachment(name = "location.pin", type = "location")
+        controller.addAttachments(listOf(attachment))
+
+        controller.removeAttachment(attachment)
+
+        assertTrue(controller.state.value.attachments.isEmpty())
+    }
+
+    @Test
+    fun `Given edit-mode attachment with URI When removeAttachment called Then edit-mode list is checked before picker`() =
+        runTest {
+            val controller = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState()
+                .get()
+            val remoteAttachment = randomAttachment()
+            controller.performMessageAction(Edit(randomMessage(cid = CID, attachments = listOf(remoteAttachment))))
+
+            controller.removeAttachment(remoteAttachment)
+
+            assertTrue(controller.state.value.attachments.isEmpty())
+        }
+
+    @Test
+    fun `Given picker attachments When syncAttachments called after recording completes Then recording attachment is preserved`() =
+        runTest {
+            val controller = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState()
+                .get()
+            val pickerAttachment = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+            controller.addAttachments(listOf(pickerAttachment))
+            assertEquals(1, controller.state.value.attachments.size)
+
+            // Simulate recording completion by adding another picker attachment
+            // (which triggers syncAttachments) — the existing attachment should survive
+            val pickerAttachment2 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:2"))
+            controller.addAttachments(listOf(pickerAttachment2))
+
+            assertEquals(2, controller.state.value.attachments.size)
+        }
+
+    @Test
+    fun `Given clearAttachments called When recording was completed Then recording attachment is also cleared`() =
+        runTest {
+            val controller = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState()
+                .get()
+            val pickerAttachment = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+            controller.addAttachments(listOf(pickerAttachment))
+
+            controller.clearAttachments()
+
+            assertTrue(controller.state.value.attachments.isEmpty())
+        }
 
     /**
      * Custom test implementation of [Mention] for testing purposes.
