@@ -430,24 +430,25 @@ internal class ChannelLogicImpl(
             }
 
             query.isFilteringNewerMessages() -> {
-                // Loading newer messages - upsert
-                state.upsertMessages(channel.messages)
-                state.trimOldestMessages()
+                // Loading newer messages — preserve local-only messages within the window
                 val endReached = query.messagesLimit() > channel.messages.size
                 if (endReached) {
-                    // Reached the latest messages — remove the ceiling
+                    // Reached the latest messages — no ceiling needed; pass null floor to include all local-only
+                    state.setMessagesPreservingLocalOnly(channel.messages, localOnlyFromDb, null)
                     state.clearCachedLatestMessages()
                     state.setInsideSearch(false)
                     state.setNewestLoadedDate(null)
                 } else {
-                    // Still paginating toward latest — advance ceiling to include newly loaded messages
+                    // Still paginating toward latest — advance ceiling; preserve local-only within floor
+                    state.setMessagesPreservingLocalOnly(channel.messages, localOnlyFromDb, windowFloor)
                     state.advanceNewestLoadedDate(channel.messages.lastOrNull()?.getCreatedAtOrNull())
                 }
+                state.trimOldestMessages()
             }
 
             query.filteringOlderMessages() -> {
-                // Loading older messages - prepend; ceiling does not change
-                state.upsertMessages(channel.messages)
+                // Loading older messages — preserve local-only messages at or above the new window floor
+                state.setMessagesPreservingLocalOnly(channel.messages, localOnlyFromDb, windowFloor)
                 state.trimNewestMessages()
             }
         }
