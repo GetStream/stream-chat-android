@@ -302,7 +302,7 @@ private fun PollViewResultItemFooter(
                 ),
         )
     } else {
-        Spacer(modifier = Modifier.height(StreamTokens.spacingMd))
+        Spacer(modifier = Modifier.height(StreamTokens.spacingXs))
     }
 }
 
