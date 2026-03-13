@@ -50,4 +50,6 @@ internal object NoOpChannelRepository : ChannelRepository {
     override suspend fun clear() { /* No-Op */ }
 
     override suspend fun updateOldestLoadedDateForChannel(cid: String, date: Date) = Unit
+
+    override suspend fun selectOldestLoadedDateForChannel(cid: String): Date? = null
 }

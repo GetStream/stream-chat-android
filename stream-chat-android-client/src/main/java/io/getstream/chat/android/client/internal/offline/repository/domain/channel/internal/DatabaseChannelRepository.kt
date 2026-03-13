@@ -303,4 +303,7 @@ internal class DatabaseChannelRepository(
     override suspend fun updateOldestLoadedDateForChannel(cid: String, date: Date) {
         channelDao.updateOldestLoadedDate(cid, date)
     }
+
+    override suspend fun selectOldestLoadedDateForChannel(cid: String): Date? =
+        channelDao.selectOldestLoadedDate(cid)
 }

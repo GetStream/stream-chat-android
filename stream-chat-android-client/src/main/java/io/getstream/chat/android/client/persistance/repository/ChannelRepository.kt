@@ -172,6 +172,12 @@ public interface ChannelRepository {
      */
     public suspend fun updateOldestLoadedDateForChannel(cid: String, date: Date)
 
+    /**
+     * Reads the persisted window floor (oldest loaded date) for [cid] from the channel entity.
+     * Returns null if the channel entity does not exist or no floor has been persisted yet.
+     */
+    public suspend fun selectOldestLoadedDateForChannel(cid: String): Date?
+
     private companion object {
         private const val NO_LIMIT: Int = -1
     }
