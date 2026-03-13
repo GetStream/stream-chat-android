@@ -537,10 +537,11 @@ public class MessageComposerController(
     }
 
     private fun restoreEditMode(message: Message, attachments: List<Attachment>) {
+        val fullMessage = channelState.value?.getMessageById(message.id) ?: message
         setMessageInputInternal(message.text, MessageInput.Source.Edit)
-        _editModeMessage.value = message
+        _editModeMessage.value = fullMessage
         _editModeAttachments.value = attachments
-        messageActions.value += Edit(message)
+        messageActions.value += Edit(fullMessage)
         syncAttachments()
     }
 
