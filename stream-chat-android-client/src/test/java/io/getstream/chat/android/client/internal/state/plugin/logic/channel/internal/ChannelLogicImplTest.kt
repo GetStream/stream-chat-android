@@ -1906,4 +1906,82 @@ internal class ChannelLogicImplTest {
     }
 
     // endregion
+
+    // region PaginationPreservation
+
+    @Nested
+    inner class PaginationPreservation {
+
+        @Test
+        fun `filteringOlderMessages calls setMessagesPreservingLocalOnly not upsertMessages`() {
+            // Given
+            val messages = listOf(randomMessage(id = "m1"), randomMessage(id = "m2"))
+            val channel = randomChannel(
+                id = "123", type = "messaging", messages = messages,
+                members = emptyList(), watchers = emptyList(), read = emptyList(),
+                memberCount = 0, watcherCount = 0,
+            )
+            val query = QueryChannelRequest().withMessages(Pagination.LESS_THAN, "m0", 30)
+            // When
+            sut.onQueryChannelResult(query, Result.Success(channel))
+            // Then
+            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
+            verify(stateImpl, never()).upsertMessages(any())
+            verify(stateImpl, never()).setMessages(any())
+        }
+
+        @Test
+        fun `filteringNewerMessages mid-page calls setMessagesPreservingLocalOnly not upsertMessages`() {
+            // Given: size == limit → not end-reached
+            val messages = List(30) { randomMessage(id = "m$it") }
+            val channel = randomChannel(
+                id = "123", type = "messaging", messages = messages,
+                members = emptyList(), watchers = emptyList(), read = emptyList(),
+                memberCount = 0, watcherCount = 0,
+            )
+            val query = QueryChannelRequest().withMessages(Pagination.GREATER_THAN, "m-1", 30)
+            // When
+            sut.onQueryChannelResult(query, Result.Success(channel))
+            // Then
+            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
+            verify(stateImpl, never()).upsertMessages(any())
+            verify(stateImpl, never()).setMessages(any())
+        }
+
+        @Test
+        fun `filteringNewerMessages end-reached calls setMessagesPreservingLocalOnly with null floor`() {
+            // Given: size < limit → end-reached
+            val messages = listOf(randomMessage(id = "m1"), randomMessage(id = "m2"))
+            val channel = randomChannel(
+                id = "123", type = "messaging", messages = messages,
+                members = emptyList(), watchers = emptyList(), read = emptyList(),
+                memberCount = 0, watcherCount = 0,
+            )
+            val query = QueryChannelRequest().withMessages(Pagination.GREATER_THAN, "m0", 30)
+            // When
+            sut.onQueryChannelResult(query, Result.Success(channel))
+            // Then: null windowFloor = no ceiling restriction (at latest messages)
+            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), isNull())
+            verify(stateImpl, never()).upsertMessages(any())
+            verify(stateImpl, never()).setMessages(any())
+        }
+
+        @Test
+        fun `filteringNewerMessages mid-page still advances newest loaded date`() {
+            // Given: size == limit → not end-reached
+            val messages = List(30) { randomMessage(id = "m$it") }
+            val channel = randomChannel(
+                id = "123", type = "messaging", messages = messages,
+                members = emptyList(), watchers = emptyList(), read = emptyList(),
+                memberCount = 0, watcherCount = 0,
+            )
+            val query = QueryChannelRequest().withMessages(Pagination.GREATER_THAN, "m-1", 30)
+            // When
+            sut.onQueryChannelResult(query, Result.Success(channel))
+            // Then: ceiling must still advance so pending messages above the page are hidden
+            verify(stateImpl).advanceNewestLoadedDate(anyOrNull())
+        }
+    }
+
+    // endregion
 }
