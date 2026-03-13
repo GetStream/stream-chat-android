@@ -43,9 +43,8 @@ import kotlinx.coroutines.flow.StateFlow
 /**
  * ViewModel responsible for handling the composing and sending of messages.
  *
- * It relays all its core actions to a shared data source, as a central place for all the Composer logic.
- * Additionally, all the core data that can be reused across our SDKs is available through shared data sources, while
- * implementation-specific data is stored in respective in the [ViewModel].
+ * Delegates all state management and business logic to [MessageComposerController],
+ * including persistence of picker selections and edit-mode state across process death.
  *
  * @param messageComposerController The controller used to relay all the actions and fetch all the state.
  * @param storageHelper Resolves deferred attachment files before sending.
@@ -153,31 +152,43 @@ public class MessageComposerViewModel(
     public fun dismissMessageActions(): Unit = messageComposerController.dismissMessageActions()
 
     /**
-     * @see [MessageComposerController.updateSelectedAttachments]
+     * Adds [attachments] to the staged attachment list.
+     *
+     * Attachments are keyed by URI string, preserving insertion order.
+     *
+     * @param attachments The attachments to add.
      */
-    public fun updateSelectedAttachments(attachments: List<Attachment>) {
-        messageComposerController.updateSelectedAttachments(attachments)
+    public fun addAttachments(attachments: List<Attachment>) {
+        messageComposerController.addAttachments(attachments)
     }
 
     /**
-     * Stores the selected attachments from the attachment picker. These will be shown in the UI,
-     * within the composer component. We upload and send these attachments once the user taps on the
-     * send button.
-     *
-     * @param attachments The attachments to store and show in the composer.
-     */
-    public fun addSelectedAttachments(attachments: List<Attachment>): Unit =
-        messageComposerController.addSelectedAttachments(attachments)
-
-    /**
-     * Removes a selected attachment from the list, when the user taps on the cancel/delete button.
-     *
-     * This will update the UI to remove it from the composer component.
+     * Removes [attachment] from the staged attachment list.
      *
      * @param attachment The attachment to remove.
      */
-    public fun removeSelectedAttachment(attachment: Attachment): Unit =
-        messageComposerController.removeSelectedAttachment(attachment)
+    public fun removeAttachment(attachment: Attachment) {
+        messageComposerController.removeAttachment(attachment)
+    }
+
+    /**
+     * Removes all staged attachments whose URI string key is contained in [uris].
+     *
+     * @param uris The URI string keys to remove.
+     */
+    internal fun removeAttachmentsByUris(uris: Set<String>) {
+        messageComposerController.removeAttachmentsByUris(uris)
+    }
+
+    /**
+     * Removes all staged attachments.
+     *
+     * Call this when the attachments are consumed — for example, after a message is sent,
+     * a poll is created, or a command is selected.
+     */
+    public fun clearAttachments() {
+        messageComposerController.clearAttachments()
+    }
 
     /**
      * Creates a poll with the given [pollConfig].
@@ -198,6 +209,7 @@ public class MessageComposerViewModel(
      * It also dismisses any current message actions.
      *
      * @param message The message to send.
+     * @param callback Invoked when the API call completes.
      */
     public fun sendMessage(
         message: Message,
@@ -271,6 +283,8 @@ public class MessageComposerViewModel(
 
     /**
      * Sets the typing updates buffer.
+     *
+     * @param buffer The buffer to use for typing updates.
      */
     public fun setTypingUpdatesBuffer(buffer: TypingUpdatesBuffer) {
         messageComposerController.typingUpdatesBuffer = buffer

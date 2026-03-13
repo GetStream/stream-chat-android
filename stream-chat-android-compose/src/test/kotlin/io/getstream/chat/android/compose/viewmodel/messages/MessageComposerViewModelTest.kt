@@ -46,6 +46,7 @@ import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Def
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.MentionType
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
@@ -129,10 +130,10 @@ internal class MessageComposerViewModelTest {
                 .givenSendMessage()
                 .get()
 
-            viewModel.addSelectedAttachments(
+            viewModel.addAttachments(
                 listOf(
-                    Attachment(imageUrl = "url1"),
-                    Attachment(imageUrl = "url2"),
+                    Attachment(imageUrl = "url1", extraData = mapOf(EXTRA_SOURCE_URI to "content://media/1")),
+                    Attachment(imageUrl = "url2", extraData = mapOf(EXTRA_SOURCE_URI to "content://media/2")),
                 ),
             )
             val state = viewModel.messageComposerState.value
@@ -164,17 +165,58 @@ internal class MessageComposerViewModelTest {
                 .givenChannelState()
                 .get()
 
-            viewModel.addSelectedAttachments(
+            viewModel.addAttachments(
                 listOf(
-                    Attachment(imageUrl = "url1"),
-                    Attachment(imageUrl = "url2"),
+                    Attachment(imageUrl = "url1", extraData = mapOf(EXTRA_SOURCE_URI to "content://media/1")),
+                    Attachment(imageUrl = "url2", extraData = mapOf(EXTRA_SOURCE_URI to "content://media/2")),
                 ),
             )
-            viewModel.removeSelectedAttachment(
-                Attachment(imageUrl = "url1"),
+            viewModel.removeAttachment(
+                Attachment(imageUrl = "url1", extraData = mapOf(EXTRA_SOURCE_URI to "content://media/1")),
             )
 
             viewModel.messageComposerState.value.attachments.size `should be equal to` 1
+        }
+
+    @Test
+    fun `Given staged attachments When removeAttachmentsByUris is called Then matching attachments are removed from state`() =
+        runTest {
+            val viewModel = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .get()
+
+            viewModel.addAttachments(
+                listOf(
+                    Attachment(extraData = mapOf(EXTRA_SOURCE_URI to "content://media/1")),
+                    Attachment(extraData = mapOf(EXTRA_SOURCE_URI to "content://media/2")),
+                    Attachment(extraData = mapOf(EXTRA_SOURCE_URI to "content://media/3")),
+                ),
+            )
+            viewModel.removeAttachmentsByUris(setOf("content://media/1", "content://media/3"))
+
+            viewModel.messageComposerState.value.attachments.size `should be equal to` 1
+        }
+
+    @Test
+    fun `Given staged attachments When clearAttachments is called Then all attachments are removed from state`() =
+        runTest {
+            val viewModel = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .get()
+
+            viewModel.addAttachments(
+                listOf(
+                    Attachment(extraData = mapOf(EXTRA_SOURCE_URI to "content://media/1")),
+                    Attachment(extraData = mapOf(EXTRA_SOURCE_URI to "content://media/2")),
+                ),
+            )
+            viewModel.clearAttachments()
+
+            viewModel.messageComposerState.value.attachments.size `should be equal to` 0
         }
 
     @Test

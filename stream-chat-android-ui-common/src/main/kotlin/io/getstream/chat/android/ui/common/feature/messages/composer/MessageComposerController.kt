@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.composer
 
+import androidx.lifecycle.SavedStateHandle
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.api.state.globalStateFlow
@@ -37,6 +38,7 @@ import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Men
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggester
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggestionOptions
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageInput
@@ -107,6 +109,8 @@ import java.util.regex.Pattern
  * @param fileToUri The function used to convert a file to a URI.
  * @param config The configuration for the message composer.
  * @param globalState A flow emitting the current [GlobalState].
+ * @param savedStateHandle Handle used to persist and restore picker selections and edit-mode state
+ * across process death (e.g. caused by opening the system file picker while editing a message).
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @InternalStreamChatApi
@@ -120,6 +124,7 @@ public class MessageComposerController(
     fileToUri: (File) -> String,
     private val config: Config = Config(),
     private val globalState: Flow<GlobalState> = chatClient.globalStateFlow,
+    savedStateHandle: SavedStateHandle = SavedStateHandle(),
 ) {
 
     private val channelType = channelCid.cidToTypeAndId().first
@@ -246,6 +251,23 @@ public class MessageComposerController(
      * Emits each time the message input field should request focus (e.g. after a command is selected).
      */
     public val inputFocusEvents: SharedFlow<Unit> = _inputFocusEvents.asSharedFlow()
+
+    // Insertion-ordered map keyed by attachment key (EXTRA_SOURCE_URI or fallback).
+    // Tracks picker selections independently of edit-mode attachments, so selections
+    // survive entering and exiting edit mode.
+    private val _selectedAttachments = MutableStateFlow(linkedMapOf<String, Attachment>())
+
+    // Holds the base attachments from the message being edited. Cleared when edit mode is dismissed.
+    private val _editModeAttachments = MutableStateFlow<List<Attachment>>(emptyList())
+
+    // Holds the message being edited, or null when not in edit mode.
+    private val _editModeMessage = MutableStateFlow<Message?>(null)
+
+    // Holds the attachment produced by a completed audio recording, if any.
+    // Cleared when the composer is reset (e.g. after sending).
+    private val _recordingAttachment = MutableStateFlow<Attachment?>(null)
+
+    private val sessionRepository = ComposerSessionRepository(savedStateHandle)
 
     /** Full message composer state holding all the required information. */
     public val state: MutableStateFlow<MessageComposerState> = MutableStateFlow(MessageComposerState())
@@ -388,6 +410,8 @@ public class MessageComposerController(
             }.launchIn(scope)
 
         setupComposerState()
+        restoreSession()
+        observeSessionChanges()
     }
 
     /**
@@ -459,13 +483,11 @@ public class MessageComposerController(
 
         audioRecordingController.recordingState.onEach { recording ->
             logger.d { "[onRecordingState] recording: $recording" }
-            state.update {
-                if (recording is RecordingState.Complete) {
-                    it.copy(recording = recording, attachments = it.attachments + recording.attachment)
-                } else {
-                    it.copy(recording = recording)
-                }
+            if (recording is RecordingState.Complete) {
+                _recordingAttachment.value = recording.attachment
             }
+            state.update { it.copy(recording = recording) }
+            syncAttachments()
         }.launchIn(scope)
 
         if (config.isDraftMessageEnabled) {
@@ -487,6 +509,40 @@ public class MessageComposerController(
                 }
             }.launchIn(scope)
         }
+    }
+
+    private fun restoreSession() {
+        val restoredAttachments = sessionRepository.restoreSelectedAttachments()
+        if (restoredAttachments.isNotEmpty()) {
+            addAttachments(restoredAttachments)
+        }
+        sessionRepository.restoreEditMode()?.let { editMode ->
+            restoreEditMode(editMode.message, editMode.attachments)
+        }
+    }
+
+    private fun observeSessionChanges() {
+        combine(
+            _selectedAttachments,
+            _editModeMessage,
+            _editModeAttachments,
+        ) { selected, editMessage, editAttachments ->
+            Triple(selected, editMessage, editAttachments)
+        }.onEach { (selected, editMessage, editAttachments) ->
+            sessionRepository.save(
+                selectedAttachments = selected.values.toList(),
+                editMode = editMessage?.let { ComposerSessionRepository.EditMode(it, editAttachments) },
+            )
+        }.launchIn(scope)
+    }
+
+    private fun restoreEditMode(message: Message, attachments: List<Attachment>) {
+        val fullMessage = channelState.value?.getMessageById(message.id) ?: message
+        setMessageInputInternal(message.text, MessageInput.Source.Edit)
+        _editModeMessage.value = fullMessage
+        _editModeAttachments.value = attachments
+        messageActions.value += Edit(fullMessage)
+        syncAttachments()
     }
 
     /**
@@ -577,8 +633,10 @@ public class MessageComposerController(
 
             is Edit -> {
                 setMessageInputInternal(messageAction.message.text, MessageInput.Source.Edit)
-                state.update { it.copy(attachments = messageAction.message.attachments) }
-                messageActions.value = messageActions.value + messageAction
+                _editModeMessage.value = messageAction.message
+                _editModeAttachments.value = messageAction.message.attachments
+                messageActions.value += messageAction
+                syncAttachments()
             }
 
             else -> Unit
@@ -591,52 +649,78 @@ public class MessageComposerController(
     public fun dismissMessageActions() {
         if (isInEditMode) {
             setMessageInputInternal("", MessageInput.Source.Default)
-            state.update { it.copy(attachments = emptyList()) }
+            _editModeMessage.value = null
+            _editModeAttachments.value = emptyList()
+            syncAttachments()
         }
 
         this.messageActions.value = emptySet()
     }
 
     /**
-     * Updates the selected attachments that are shown within the composer UI.
-     */
-    public fun updateSelectedAttachments(attachments: List<Attachment>) {
-        state.update { it.copy(attachments = attachments) }
-        handleValidationErrors()
-    }
-
-    /**
-     * Stores the selected attachments from the attachment picker. These will be shown in the UI,
-     * within the composer component. We upload and send these attachments once the user taps on the
-     * send button.
+     * Adds [attachments] to the staged list, preserving insertion order.
      *
-     * @param attachments The attachments to store and show in the composer.
+     * Each attachment is keyed by its [EXTRA_SOURCE_URI] if present, or by a deterministic
+     * fallback derived from [Attachment.name] and [Attachment.mimeType]. If a key is already
+     * present, its value is updated in place without changing its position.
+     *
+     * @param attachments The attachments to stage.
      */
-    public fun addSelectedAttachments(attachments: List<Attachment>) {
-        logger.d { "[addSelectedAttachments] attachments: $attachments" }
-        state.update { current ->
-            val merged = (current.attachments + attachments).distinctBy {
-                if (it.name != null && it.mimeType?.isNotEmpty() == true) {
-                    it.name
-                } else {
-                    it
+    public fun addAttachments(attachments: List<Attachment>) {
+        _selectedAttachments.update { current ->
+            LinkedHashMap(current).also { updated ->
+                attachments.forEach { attachment ->
+                    updated[attachment.attachmentKey()] = attachment
                 }
             }
-            current.copy(attachments = merged)
         }
-        handleValidationErrors()
+        syncAttachments()
     }
 
     /**
-     * Removes a selected attachment from the list, when the user taps on the cancel/delete button.
+     * Removes [attachment] from the staged list.
      *
-     * This will update the UI to remove it from the composer component.
+     * Searches picker selections first (by key), then edit-mode attachments, then the recording
+     * attachment. Removes from the first list that contains it.
      *
      * @param attachment The attachment to remove.
      */
-    public fun removeSelectedAttachment(attachment: Attachment) {
-        state.update { it.copy(attachments = it.attachments - attachment) }
-        handleValidationErrors()
+    public fun removeAttachment(attachment: Attachment) {
+        val key = attachment.attachmentKey()
+        when {
+            _selectedAttachments.value.containsKey(key) -> {
+                _selectedAttachments.update { LinkedHashMap(it).also { map -> map.remove(key) } }
+            }
+            _editModeAttachments.value.any(attachment::equals) -> {
+                _editModeAttachments.update { it.filterNot(attachment::equals) }
+            }
+            _recordingAttachment.value == attachment -> {
+                _recordingAttachment.value = null
+            }
+        }
+        syncAttachments()
+    }
+
+    /**
+     * Removes all staged attachments whose URI string key is contained in [uris].
+     *
+     * @param uris The URI string keys to remove.
+     */
+    public fun removeAttachmentsByUris(uris: Set<String>) {
+        if (uris.isEmpty()) return
+        _selectedAttachments.update { current -> LinkedHashMap(current).also { it.keys.removeAll(uris) } }
+        syncAttachments()
+    }
+
+    /**
+     * Removes all staged attachments and updates the composer state.
+     * Clears picker selections, edit-mode base attachments, and any completed recording attachment.
+     */
+    public fun clearAttachments() {
+        _editModeAttachments.value = emptyList()
+        _selectedAttachments.value = linkedMapOf()
+        _recordingAttachment.value = null
+        syncAttachments()
     }
 
     /**
@@ -662,7 +746,7 @@ public class MessageComposerController(
         dismissMessageActions()
         scope.launch { clearDraftMessage(messageMode.value) }
         messageInput.value = MessageInput()
-        state.update { it.copy(attachments = emptyList()) }
+        clearAttachments()
         clearActiveCommand()
         validationErrors.value = emptyList()
         if (!isInThread) {
@@ -857,6 +941,17 @@ public class MessageComposerController(
         }
     }
 
+    private fun syncAttachments() {
+        state.update {
+            it.copy(
+                attachments = _editModeAttachments.value +
+                    _selectedAttachments.value.values.toList() +
+                    listOfNotNull(_recordingAttachment.value),
+            )
+        }
+        handleValidationErrors()
+    }
+
     /**
      * Checks the current input for validation errors.
      */
@@ -999,8 +1094,9 @@ public class MessageComposerController(
     public fun sendRecording() {
         scope.launch {
             audioRecordingController.completeRecordingSync().onSuccess { recording ->
-                val attachments = state.value.attachments + recording
-                sendMessage(buildNewMessage(messageInput.value.text, attachments), callback = {})
+                _recordingAttachment.value = recording
+                syncAttachments()
+                sendMessage(buildNewMessage(messageInput.value.text, state.value.attachments), callback = {})
             }
         }
     }
@@ -1179,3 +1275,8 @@ public class MessageComposerController(
         linkPreviews.value = emptyList()
     }
 }
+
+private fun Attachment.sourceUriString(): String? = extraData[EXTRA_SOURCE_URI]?.toString()
+
+private fun Attachment.attachmentKey(): String =
+    sourceUriString() ?: "fallback:${name.orEmpty()}:${mimeType.orEmpty()}:$fileSize"

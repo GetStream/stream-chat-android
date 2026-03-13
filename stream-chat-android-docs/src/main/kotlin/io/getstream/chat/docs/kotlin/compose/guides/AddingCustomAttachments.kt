@@ -118,7 +118,7 @@ private object AddingCustomAttachmentsSnippet {
                             )
 
                             // 3
-                            composerViewModel.addSelectedAttachments(listOf(attachment))
+                            composerViewModel.addAttachments(listOf(attachment))
                         },
                     )
                 }

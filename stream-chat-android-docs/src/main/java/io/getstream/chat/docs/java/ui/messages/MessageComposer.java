@@ -31,7 +31,6 @@ import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Com
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler;
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserQueryFilter;
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler;
-import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.DefaultQueryFilter;
 import io.getstream.chat.android.ui.common.feature.messages.composer.transliteration.DefaultStreamTransliterator;
 import io.getstream.chat.android.ui.common.feature.messages.composer.transliteration.StreamTransliterator;
 import io.getstream.chat.android.ui.common.state.messages.Edit;
@@ -321,11 +320,11 @@ public class MessageComposer extends Fragment {
                 return Unit.INSTANCE;
             });
             messageComposerView.setAttachmentSelectionListener((attachments) -> {
-                messageComposerViewModel.addSelectedAttachments(attachments);
+                messageComposerViewModel.addAttachments(attachments);
                 return Unit.INSTANCE;
             });
             messageComposerView.setAttachmentRemovalListener((attachment) -> {
-                messageComposerViewModel.removeSelectedAttachment(attachment);
+                messageComposerViewModel.removeAttachment(attachment);
                 return Unit.INSTANCE;
             });
             messageComposerView.setMentionSelectionListener((user) -> {
@@ -429,7 +428,7 @@ public class MessageComposer extends Fragment {
                 return Unit.INSTANCE;
             });
             centerContent.setAttachmentRemovalListener((attachment -> {
-                messageComposerViewModel.removeSelectedAttachment(attachment);
+                messageComposerViewModel.removeAttachment(attachment);
                 return Unit.INSTANCE;
             }));
             messageComposerView.setCenterContent(centerContent);
