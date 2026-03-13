@@ -41,5 +41,5 @@ public object PollsConstants {
     /**
      * The maximum number of visible options in a poll message.
      */
-    public const val MAX_NUMBER_OF_VISIBLE_OPTIONS: Int = 10
+    public const val MAX_NUMBER_OF_VISIBLE_OPTIONS: Int = 5
 }
