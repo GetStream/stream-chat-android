@@ -434,7 +434,7 @@ internal class MessageComposerControllerTest {
     }
 
     @Test
-    fun `Given attachments added and cleared When selectedAttachments is collected Then it emits the updated lists`() = runTest {
+    fun `Given attachments added and cleared When state is collected Then it reflects the updated attachments`() = runTest {
         // Given
         val controller = Fixture()
             .givenAppSettings()
@@ -446,15 +446,15 @@ internal class MessageComposerControllerTest {
         val a1 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
         val a2 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:2"))
 
-        controller.selectedAttachments.test {
-            awaitItem() // initial empty emission from the underlying StateFlow
+        controller.state.test {
+            awaitItem() // initial empty emission
 
             // When
             controller.addAttachments(listOf(a1, a2))
-            assertEquals(2, awaitItem().size)
+            assertEquals(2, awaitItem().attachments.size)
 
             controller.clearAttachments()
-            assertTrue(awaitItem().isEmpty())
+            assertTrue(awaitItem().attachments.isEmpty())
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -480,6 +480,70 @@ internal class MessageComposerControllerTest {
         // Then
         assertEquals(1, controller.state.value.attachments.size)
         assertEquals("uri:1", controller.state.value.attachments.first().extraData[EXTRA_SOURCE_URI])
+    }
+
+    @Test
+    fun `Given edit mode with remote attachment When add picker attachment Then both are staged`() = runTest {
+        // Given
+        val remoteAttachment = randomAttachment()
+        val pickerAttachment = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:picker"))
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        controller.performMessageAction(Edit(randomMessage(cid = CID, attachments = listOf(remoteAttachment))))
+
+        // When
+        controller.addAttachments(listOf(pickerAttachment))
+
+        // Then
+        assertEquals(2, controller.state.value.attachments.size)
+    }
+
+    @Test
+    fun `Given edit mode with remote attachment When remove remote attachment Then it is removed`() = runTest {
+        // Given
+        val remoteAttachment = randomAttachment()
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        controller.performMessageAction(Edit(randomMessage(cid = CID, attachments = listOf(remoteAttachment))))
+
+        // When
+        controller.removeAttachment(remoteAttachment)
+
+        // Then
+        assertTrue(controller.state.value.attachments.isEmpty())
+    }
+
+    @Test
+    fun `Given edit mode When dismiss Then edit attachments are cleared and picker selections are preserved`() = runTest {
+        // Given
+        val remoteAttachment = randomAttachment()
+        val pickerAttachment = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:picker"))
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        controller.addAttachments(listOf(pickerAttachment))
+        controller.performMessageAction(Edit(randomMessage(cid = CID, attachments = listOf(remoteAttachment))))
+
+        // When
+        controller.dismissMessageActions()
+
+        // Then
+        assertEquals(1, controller.state.value.attachments.size)
+        assertEquals("uri:picker", controller.state.value.attachments.first().extraData[EXTRA_SOURCE_URI])
     }
 
     @Test
