@@ -90,6 +90,13 @@ internal interface ChannelDao {
     @Query("DELETE FROM $CHANNEL_ENTITY_TABLE_NAME")
     suspend fun deleteAll()
 
+    @Query(
+        "UPDATE $CHANNEL_ENTITY_TABLE_NAME " +
+            "SET oldestLoadedDate = :date " +
+            "WHERE cid = :cid",
+    )
+    suspend fun updateOldestLoadedDate(cid: String, date: Date)
+
     private companion object {
         private const val NO_LIMIT: Int = -1
     }

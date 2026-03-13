@@ -299,4 +299,8 @@ internal class DatabaseChannelRepository(
     override suspend fun clear() {
         dbMutex.withLock { channelDao.deleteAll() }
     }
+
+    override suspend fun updateOldestLoadedDateForChannel(cid: String, date: Date) {
+        channelDao.updateOldestLoadedDate(cid, date)
+    }
 }
