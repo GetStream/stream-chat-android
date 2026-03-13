@@ -1984,4 +1984,78 @@ internal class ChannelLogicImplTest {
     }
 
     // endregion
+
+    // region ReconnectPreservation
+
+    @Nested
+    inner class ReconnectPreservation {
+
+        @Test
+        fun `updateDataForChannel reconnect path calls setMessagesPreservingLocalOnly`() = runTest {
+            // Given: isChannelsStateUpdate=false (SyncManager reconnect), shouldRefreshMessages=true
+            val incomingMsg = randomMessage(id = "server1")
+            val channel = randomChannel(
+                id = "123", type = "messaging", messages = listOf(incomingMsg),
+                members = emptyList(), watchers = emptyList(), read = emptyList(),
+                memberCount = 0, watcherCount = 0,
+            )
+            // When: reconnect path — isChannelsStateUpdate defaults to false
+            sut.updateDataForChannel(
+                channel = channel,
+                messageLimit = 30,
+                shouldRefreshMessages = true,
+                isChannelsStateUpdate = false,
+            )
+            // Then
+            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
+            verify(stateImpl, never()).setMessages(any())
+        }
+
+        @Test
+        fun `updateDataForChannel DB-seed path calls setMessages not preservation`() = runTest {
+            // Given: isChannelsStateUpdate=true (updateStateFromDatabase DB-seed)
+            whenever(stateImpl.messages).thenReturn(MutableStateFlow(listOf(randomMessage(id = "existing"))))
+            val incomingMsg = randomMessage(id = "new")
+            val channel = randomChannel(
+                id = "123", type = "messaging", messages = listOf(incomingMsg),
+                members = emptyList(), watchers = emptyList(), read = emptyList(),
+                memberCount = 0, watcherCount = 0,
+            )
+            // When: DB-seed path — isChannelsStateUpdate=true
+            sut.updateDataForChannel(
+                channel = channel,
+                messageLimit = 30,
+                shouldRefreshMessages = true,
+                isChannelsStateUpdate = true,
+            )
+            // Then: full-replace required, local-only messages already in DB data
+            verify(stateImpl).setMessages(any())
+            verify(stateImpl, never()).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
+        }
+
+        @Test
+        fun `updateDataForChannel upsert else-branch calls setMessagesPreservingLocalOnly`() = runTest {
+            // Given: currentMessages non-empty, contiguous with incoming, shouldRefresh=false, not insideSearch, no gap
+            val existingMsg = randomMessage(id = "existing")
+            whenever(stateImpl.messages).thenReturn(MutableStateFlow(listOf(existingMsg)))
+            val incomingMsg = randomMessage(id = "incoming")
+            val channel = randomChannel(
+                id = "123", type = "messaging", messages = listOf(incomingMsg),
+                members = emptyList(), watchers = emptyList(), read = emptyList(),
+                memberCount = 0, watcherCount = 0,
+            )
+            // When: shouldRefreshMessages=false, currentMessages non-empty → falls to else branch
+            sut.updateDataForChannel(
+                channel = channel,
+                messageLimit = 30,
+                shouldRefreshMessages = false,
+                isChannelsStateUpdate = false,
+            )
+            // Then
+            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
+            verify(stateImpl, never()).upsertMessages(any())
+        }
+    }
+
+    // endregion
 }
