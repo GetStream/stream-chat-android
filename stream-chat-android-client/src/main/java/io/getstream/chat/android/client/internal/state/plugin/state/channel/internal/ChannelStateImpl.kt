@@ -292,6 +292,70 @@ internal class ChannelStateImpl(
     }
 
     /**
+     * Atomically merges [incoming] server messages with current local-only messages,
+     * applying the [windowFloor] filter, then writes to [_messages].
+     *
+     * Use instead of [setMessages] when the source is a server response (onQueryChannelResult).
+     * Do NOT use for the DB-seed path ([updateDataForChannel] calls [setMessages] — DB data
+     * already includes local-only messages stored by OfflinePlugin).
+     *
+     * @param incoming Server message list from the API response.
+     * @param localOnlyFromDb Local-only messages fetched from DB before this call.
+     *   Pass [emptyList()] when OfflinePlugin is absent — in-memory fallback is automatic.
+     * @param windowFloor Oldest [createdAt] in [incoming]; null when incoming is empty (no floor).
+     *   Local-only messages with [createdAt] < [windowFloor] are excluded.
+     *   TODO(Phase 2): When incoming is empty, read persisted floor from ChannelEntity instead.
+     */
+    internal fun setMessagesPreservingLocalOnly(
+        incoming: List<Message>,
+        localOnlyFromDb: List<Message>,
+        windowFloor: Date?,
+    ) {
+        val incomingIds = incoming.map { it.id }.toSet()
+
+        _messages.update { current ->
+            // Step 1: gather local-only from in-memory state (no-DB fallback path)
+            val fromState = current.filter { it.isLocalOnly() }
+
+            // Step 2: union with DB-sourced local-only; deduplicate by id
+            val allLocalOnly = (fromState + localOnlyFromDb).distinctBy { it.id }
+
+            // Step 3: server wins on ID collision — drop any local-only whose ID is
+            // already in the incoming list (server version in incoming replaces it)
+            val survivingLocalOnly = allLocalOnly.filter { localMsg ->
+                localMsg.id !in incomingIds
+            }
+
+            // Step 4: apply window floor — exclude below-floor local-only messages.
+            // Null floor = first-ever open or empty page → include all local-only.
+            val inWindowLocalOnly = if (windowFloor == null) {
+                survivingLocalOnly
+            } else {
+                survivingLocalOnly.filter { msg ->
+                    msg.getCreatedAtOrNull()?.let { d -> !d.before(windowFloor) } ?: true
+                }
+            }
+
+            // Step 5: filter incoming through the existing shouldIgnoreUpsertion guard
+            // (handles shadowed users, thread-only messages — same as setMessages)
+            val validIncoming = incoming.filterNot { shouldIgnoreUpsertion(it) }
+
+            // Step 6: merge and sort using the existing MESSAGE_COMPARATOR (createdAt asc)
+            (validIncoming + inWindowLocalOnly)
+                .distinctBy { it.id }
+                .sortedWith(MESSAGE_COMPARATOR)
+        }
+
+        // Step 7: sync quoted-message and poll indexes — mirrors setMessages lines 287-291.
+        // Must run AFTER _messages.update to operate on the final merged list.
+        for (message in _messages.value) {
+            message.replyTo?.let { addQuotedMessage(it.id, message.id) }
+            message.replyMessageId?.let { addQuotedMessage(it, message.id) }
+            message.poll?.let { registerPollForMessage(it, message.id) }
+        }
+    }
+
+    /**
      * Upserts a single message into the current state.
      * Uses optimized single-element upsert with binary search insertion.
      *
