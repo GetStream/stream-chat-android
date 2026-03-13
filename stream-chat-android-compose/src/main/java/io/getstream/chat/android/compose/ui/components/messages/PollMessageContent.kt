@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyle
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
@@ -546,6 +547,7 @@ private fun PollOptionButton(
         text = text,
         style = style,
         modifier = Modifier.fillMaxWidth(),
+        size = StreamButtonSize.Small,
     )
 }
 
@@ -587,18 +589,6 @@ private fun PollMessageContentPreview() {
                     ownCapabilities = ChannelCapabilities.toSet(),
                 ),
             )
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun PollOptionButtonPreview() {
-    ChatTheme {
-        val style = StreamButtonStyleDefaults.secondaryOutline
-        Column {
-            PollOptionButton("End Vote", style) {}
-            PollOptionButton("View Result", style) {}
         }
     }
 }
