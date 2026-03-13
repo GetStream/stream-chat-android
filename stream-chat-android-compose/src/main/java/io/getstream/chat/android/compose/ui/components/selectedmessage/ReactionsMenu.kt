@@ -135,7 +135,12 @@ internal fun ReactionsMenuContent(
     modifier: Modifier = Modifier,
 ) {
     ViewModelStore(message.id) {
-        val viewModel = viewModel { ReactionsMenuViewModel(messageId = message.id) }
+        val viewModel = viewModel {
+            ReactionsMenuViewModel(
+                messageId = message.id,
+                initialReactions = message.latestReactions,
+            )
+        }
 
         val state by viewModel.state.collectAsState()
 

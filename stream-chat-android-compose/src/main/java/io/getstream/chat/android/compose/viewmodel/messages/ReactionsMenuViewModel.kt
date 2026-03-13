@@ -36,14 +36,20 @@ import kotlinx.coroutines.launch
  */
 internal class ReactionsMenuViewModel(
     private val messageId: String,
+    initialReactions: List<Reaction>,
     private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(ReactionsMenuState())
+    private val _state = MutableStateFlow(
+        ReactionsMenuState(
+            reactions = initialReactions,
+            isLoading = initialReactions.isEmpty(),
+        ),
+    )
     val state: StateFlow<ReactionsMenuState> = _state.asStateFlow()
 
     /** Cached pages per reaction type filter (null key = all reactions). */
-    private val cache = mutableMapOf<String?, ReactionPages>()
+    private val cache = mutableMapOf<String?, ReactionPage>()
 
     init {
         viewModelScope.launch {
@@ -101,7 +107,7 @@ internal class ReactionsMenuViewModel(
             sort = QuerySortByField.descByName("created_at"),
         ).await()
             .onSuccess { result ->
-                val updated = ReactionPages(
+                val updated = ReactionPage(
                     reactions = (pages?.reactions.orEmpty()) + result.reactions,
                     nextCursor = result.next,
                     canLoadMore = result.next != null,
@@ -111,7 +117,7 @@ internal class ReactionsMenuViewModel(
             }
     }
 
-    private data class ReactionPages(
+    private data class ReactionPage(
         val reactions: List<Reaction> = emptyList(),
         val nextCursor: String? = null,
         val canLoadMore: Boolean = true,
