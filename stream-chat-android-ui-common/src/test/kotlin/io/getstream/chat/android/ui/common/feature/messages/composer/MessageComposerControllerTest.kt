@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.composer
 
+import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.GlobalState
@@ -59,6 +60,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -1200,6 +1202,72 @@ internal class MessageComposerControllerTest {
             assertTrue(controller.state.value.attachments.isEmpty())
         }
 
+    @Test
+    fun `Given persisted edit session When controller restores Then edit action uses full message from channel state`() =
+        runTest {
+            val fullMessage = randomMessage(
+                id = "msg-1",
+                cid = CID,
+                text = "original",
+                createdAt = Date(),
+            )
+            val editedText = "edited text"
+            val savedStateHandle = SavedStateHandle()
+            ComposerSessionRepository(savedStateHandle).save(
+                selectedAttachments = emptyList(),
+                editMode = ComposerSessionRepository.EditMode(
+                    message = fullMessage.copy(text = editedText),
+                    attachments = emptyList(),
+                ),
+            )
+
+            val controller = Fixture(savedStateHandle = savedStateHandle)
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState()
+                .givenMessageById(fullMessage)
+                .get()
+            advanceUntilIdle()
+
+            assertEquals(editedText, controller.messageInput.value.text)
+            val action = controller.state.value.action
+            assertTrue(action is Edit)
+            assertEquals(fullMessage.id, (action as Edit).message.id)
+            assertEquals(fullMessage.createdAt, action.message.createdAt)
+        }
+
+    @Test
+    fun `Given persisted edit session When channel state has no message Then edit action falls back to stripped message`() =
+        runTest {
+            val messageId = "msg-2"
+            val editedText = "edited text"
+            val savedStateHandle = SavedStateHandle()
+            ComposerSessionRepository(savedStateHandle).save(
+                selectedAttachments = emptyList(),
+                editMode = ComposerSessionRepository.EditMode(
+                    message = Message(id = messageId, cid = CID, text = editedText),
+                    attachments = emptyList(),
+                ),
+            )
+
+            val controller = Fixture(savedStateHandle = savedStateHandle)
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState()
+                .get()
+            advanceUntilIdle()
+
+            assertEquals(editedText, controller.messageInput.value.text)
+            val action = controller.state.value.action
+            assertTrue(action is Edit)
+            assertEquals(messageId, (action as Edit).message.id)
+            assertNull(action.message.createdAt)
+        }
+
     /**
      * Custom test implementation of [Mention] for testing purposes.
      */
@@ -1212,6 +1280,7 @@ internal class MessageComposerControllerTest {
     private class Fixture(
         val chatClient: ChatClient = mock(),
         private val cid: String = CID,
+        private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
     ) {
 
         private val clientState: ClientState = mock()
@@ -1287,6 +1356,10 @@ internal class MessageComposerControllerTest {
             whenever(chatClient.markMessageRead(any(), any(), any())) doReturn Unit.asCall()
         }
 
+        fun givenMessageById(message: Message) = apply {
+            whenever(channelState.getMessageById(eq(message.id))) doReturn message
+        }
+
         fun givenEditMessage(message: Message) = apply {
             whenever(chatClient.editMessage(any(), any(), any())) doReturn message.asCall()
         }
@@ -1315,6 +1388,7 @@ internal class MessageComposerControllerTest {
                 fileToUri = mock(),
                 config = config,
                 globalState = MutableStateFlow(globalState),
+                savedStateHandle = savedStateHandle,
             )
         }
     }
