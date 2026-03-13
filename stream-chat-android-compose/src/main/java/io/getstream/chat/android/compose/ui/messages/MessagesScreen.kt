@@ -33,12 +33,15 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
@@ -64,6 +67,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageListHeaderParams
 import io.getstream.chat.android.compose.ui.theme.MessageMenuParams
 import io.getstream.chat.android.compose.ui.theme.MessageReactionPickerParams
 import io.getstream.chat.android.compose.ui.theme.ReactionsMenuParams
+import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -93,6 +97,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageSt
 import io.getstream.chat.android.ui.common.state.messages.list.SendAnyway
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.state.messages.updateMessage
+import kotlinx.coroutines.launch
 
 /**
  * Default root Messages screen component, that provides the necessary ViewModels and
@@ -190,6 +195,10 @@ public fun MessagesScreen(
             }
         }
 
+    val snackbarHostState = remember(::SnackbarHostState)
+    val snackbarScope = rememberCoroutineScope()
+    val pollEndedMessage = stringResource(R.string.stream_compose_poll_ended_snackbar)
+
     BackHandler(enabled = true, onBack = backAction)
 
     MessagesScreenContentBox {
@@ -203,6 +212,7 @@ public fun MessagesScreen(
             bottomBar = {
                 bottomBarContent()
             },
+            snackbarHost = { StreamSnackbarHost(snackbarHostState) },
             containerColor = ChatTheme.colors.backgroundCoreApp,
         ) { contentPadding ->
             val currentState by listViewModel.currentMessagesState
@@ -232,6 +242,18 @@ public fun MessagesScreen(
                 onUserAvatarClick = onUserAvatarClick,
                 onMessageLinkClick = onMessageLinkClick,
                 onUserMentionClick = onUserMentionClick,
+                onClosePoll = remember(listViewModel) {
+                    {
+                            pollId: String ->
+                        listViewModel.closePoll(pollId)
+                        snackbarScope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = pollEndedMessage,
+                                duration = SnackbarDuration.Short,
+                            )
+                        }
+                    }
+                },
                 onReply = { message -> composerViewModel.performMessageAction(Reply(message)) },
                 onMediaGalleryPreviewResult = remember(listViewModel, composerViewModel) {
                     {
