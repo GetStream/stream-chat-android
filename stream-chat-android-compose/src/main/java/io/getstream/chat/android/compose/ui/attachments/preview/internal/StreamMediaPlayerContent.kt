@@ -44,6 +44,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.common.PlayButton
 import io.getstream.chat.android.compose.ui.components.common.PlayButtonSize
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.core.internal.StreamHandsOff
@@ -154,7 +155,7 @@ internal fun MediaThumbnail(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier.background(Color.Black),
+        modifier = modifier.background(ChatTheme.colors.backgroundCoreApp),
         contentAlignment = Alignment.Center,
     ) {
         if (thumbnailUrl != null) {
@@ -224,13 +225,7 @@ internal fun createPlayerView(context: Context, player: Player): PlayerView {
         .inflate(R.layout.stream_compose_player_view, null) as PlayerView
     return playerView.apply {
         this.player = player
-        controllerShowTimeoutMs = ControllerShowTimeout
-        controllerAutoShow = false
-        controllerHideOnTouch = true
-        setShowPreviousButton(false)
-        setShowNextButton(false)
+        useController = false
         setShowBuffering(PlayerView.SHOW_BUFFERING_NEVER)
     }
 }
-
-private const val ControllerShowTimeout = 2000
