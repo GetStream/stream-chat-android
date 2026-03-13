@@ -370,7 +370,6 @@ internal fun DefaultBottomBarContent(
                         skipEnrichUrl = skipEnrichUrl,
                     ),
                 )
-                composerViewModel.clearAttachments()
             },
         )
 
