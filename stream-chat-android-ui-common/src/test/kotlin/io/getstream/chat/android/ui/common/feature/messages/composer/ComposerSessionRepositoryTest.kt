@@ -260,6 +260,29 @@ internal class ComposerSessionRepositoryTest {
     }
 
     @Test
+    fun `Given edit-mode attachment with only name When saved Then it survives round-trip`() {
+        val repo = ComposerSessionRepository(SavedStateHandle())
+        val attachment = Attachment(
+            name = randomString(),
+            type = randomString(),
+            fileSize = 2048,
+            mimeType = randomString(),
+        )
+
+        repo.save(
+            emptyList(),
+            editMode = ComposerSessionRepository.EditMode(randomMessage(), listOf(attachment)),
+        )
+        val restored = repo.restoreEditMode()!!.attachments
+
+        assertEquals(1, restored.size)
+        assertEquals(attachment.name, restored.first().name)
+        assertEquals(attachment.type, restored.first().type)
+        assertEquals(attachment.fileSize, restored.first().fileSize)
+        assertEquals(attachment.mimeType, restored.first().mimeType)
+    }
+
+    @Test
     fun `Given both selected attachments and edit mode saved When restored Then both are returned independently`() {
         val repo = ComposerSessionRepository(SavedStateHandle())
         val pickerUri = randomString()
