@@ -41,6 +41,7 @@ import io.getstream.chat.android.models.toChannelData
 import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Date
 
@@ -143,7 +144,13 @@ internal class ChannelLogicImpl(
                 state.setChannelConfig(channel.config)
                 // Update messages
                 if (limit > 0) {
-                    updateMessages(query, channel)
+                    coroutineScope.launch {
+                        val localOnlyFromDb = repository.selectLocalOnlyMessagesForChannel(cid)
+                        val windowFloor: Date? = channel.messages
+                            .mapNotNull { it.getCreatedAtOrNull() }
+                            .minOrNull()
+                        updateMessages(query, channel, localOnlyFromDb, windowFloor)
+                    }
                 }
                 // Add pinned messages
                 state.addPinnedMessages(channel.pinnedMessages)
@@ -385,15 +392,20 @@ internal class ChannelLogicImpl(
         }
     }
 
-    private fun updateMessages(query: QueryChannelRequest, channel: Channel) {
+    private suspend fun updateMessages(
+        query: QueryChannelRequest,
+        channel: Channel,
+        localOnlyFromDb: List<Message>,
+        windowFloor: Date?,
+    ) {
         when {
             !query.isFilteringMessages() -> {
                 // Loading newest messages (no pagination):
                 // 1. Clear any cached latest messages (we are replacing the whole list)
-                // 2. Replace the active messages with the loaded ones
+                // 2. Replace the active messages with the loaded ones, preserving local-only messages
                 // 3. No pending messages ceiling — we are at the latest messages
                 state.clearCachedLatestMessages()
-                state.setMessages(channel.messages)
+                state.setMessagesPreservingLocalOnly(channel.messages, localOnlyFromDb, windowFloor)
                 state.setInsideSearch(false)
                 state.setNewestLoadedDate(null)
             }
@@ -401,17 +413,17 @@ internal class ChannelLogicImpl(
             query.isFilteringAroundIdMessages() -> {
                 // Loading messages around a specific message:
                 // 1. Cache the current messages (for access to latest messages) (unless already inside search)
-                // 2. Replace the active messages with the loaded ones
+                // 2. Replace the active messages with the loaded ones, preserving local-only messages
                 // 3. Set ceiling to newest in loaded page — pending messages newer than the page are hidden
                 if (state.insideSearch.value) {
                     // We are currently around a message, don't cache the latest messages, just replace the active set
                     // Otherwise, the cached message set will wrongly hold the previous "around" set, instead of the
                     // latest messages
-                    state.setMessages(channel.messages)
+                    state.setMessagesPreservingLocalOnly(channel.messages, localOnlyFromDb, windowFloor)
                 } else {
                     // We are currently showing the latest messages, cache them first, then replace the active set
                     state.cacheLatestMessages()
-                    state.setMessages(channel.messages)
+                    state.setMessagesPreservingLocalOnly(channel.messages, localOnlyFromDb, windowFloor)
                     state.setInsideSearch(true)
                 }
                 state.setNewestLoadedDate(channel.messages.lastOrNull()?.getCreatedAtOrNull())
@@ -443,6 +455,11 @@ internal class ChannelLogicImpl(
         // set this floor — updateDataForChannel (QueryChannels) must not, otherwise a channel-list
         // preview would incorrectly filter out older pending messages.
         state.advanceOldestLoadedDate(channel.messages)
+        // Persist window floor to DB for Phase 2 DB-seed path.
+        // TODO(Phase 2): when windowFloor is null, read persisted floor from ChannelEntity instead.
+        if (windowFloor != null) {
+            repository.updateOldestLoadedDateForChannel(cid, windowFloor)
+        }
         // Replace pending messages — server always returns the full latest set (up to 100, ASC).
         state.setPendingMessages(channel.pendingMessages.map { it.message })
     }

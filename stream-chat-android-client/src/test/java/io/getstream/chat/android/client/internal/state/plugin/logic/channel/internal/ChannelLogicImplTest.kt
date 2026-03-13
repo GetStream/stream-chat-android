@@ -48,6 +48,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -417,6 +418,7 @@ internal class ChannelLogicImplTest {
             sut.onQueryChannelResult(query, Result.Success(channel))
             // Then
             verify(stateImpl, never()).setMessages(any())
+            verify(stateImpl, never()).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
             verify(stateImpl, never()).upsertMessages(any())
             verify(stateImpl, never()).clearCachedLatestMessages()
             verify(stateImpl, never()).setInsideSearch(any())
@@ -565,7 +567,7 @@ internal class ChannelLogicImplTest {
             sut.onQueryChannelResult(query, Result.Success(channel))
             // Then
             verify(stateImpl).clearCachedLatestMessages()
-            verify(stateImpl).setMessages(messages)
+            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
             verify(stateImpl).setInsideSearch(false)
         }
 
@@ -589,7 +591,7 @@ internal class ChannelLogicImplTest {
             sut.onQueryChannelResult(query, Result.Success(channel))
             // Then
             verify(stateImpl).cacheLatestMessages()
-            verify(stateImpl).setMessages(messages)
+            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
             verify(stateImpl).setInsideSearch(true)
         }
 
@@ -613,7 +615,7 @@ internal class ChannelLogicImplTest {
             sut.onQueryChannelResult(query, Result.Success(channel))
             // Then
             verify(stateImpl, never()).cacheLatestMessages()
-            verify(stateImpl).setMessages(messages)
+            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
         }
 
         @Test
@@ -1664,6 +1666,104 @@ internal class ChannelLogicImplTest {
             sut.updateDataForChannel(channel = channel, messageLimit = 30)
             // Then — floor must only be set from queryChannel pagination, never from updateDataForChannel
             verify(stateImpl, never()).advanceOldestLoadedDate(any())
+        }
+    }
+
+    // endregion
+
+    // region PreservationCallSites
+
+    @Nested
+    inner class PreservationCallSites {
+
+        @Test
+        fun `onQueryChannelResult success with no filtering calls setMessagesPreservingLocalOnly`() {
+            // Given
+            val messages = listOf(randomMessage(id = "m1"), randomMessage(id = "m2"))
+            val channel = randomChannel(
+                id = "123",
+                type = "messaging",
+                messages = messages,
+                members = emptyList(),
+                watchers = emptyList(),
+                read = emptyList(),
+                memberCount = 0,
+                watcherCount = 0,
+            )
+            val query = QueryChannelRequest().withMessages(30)
+            // When
+            sut.onQueryChannelResult(query, Result.Success(channel))
+            // Then
+            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
+            verify(stateImpl, never()).setMessages(any())
+        }
+
+        @Test
+        fun `onQueryChannelResult success with aroundId filtering calls setMessagesPreservingLocalOnly`() {
+            // Given: insideSearch = false so we exercise the else branch
+            whenever(stateImpl.insideSearch).thenReturn(MutableStateFlow(false))
+            val messages = listOf(randomMessage(id = "m1"), randomMessage(id = "m2"))
+            val channel = randomChannel(
+                id = "123",
+                type = "messaging",
+                messages = messages,
+                members = emptyList(),
+                watchers = emptyList(),
+                read = emptyList(),
+                memberCount = 0,
+                watcherCount = 0,
+            )
+            val query = QueryChannelRequest().withMessages(Pagination.AROUND_ID, "m1", 30)
+            // When
+            sut.onQueryChannelResult(query, Result.Success(channel))
+            // Then
+            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
+            verify(stateImpl, never()).setMessages(any())
+        }
+
+        @Test
+        fun `onQueryChannelResult success inside search calls setMessagesPreservingLocalOnly`() {
+            // Given: insideSearch = true so we exercise the if branch (no caching)
+            whenever(stateImpl.insideSearch).thenReturn(MutableStateFlow(true))
+            val messages = listOf(randomMessage(id = "m1"), randomMessage(id = "m2"))
+            val channel = randomChannel(
+                id = "123",
+                type = "messaging",
+                messages = messages,
+                members = emptyList(),
+                watchers = emptyList(),
+                read = emptyList(),
+                memberCount = 0,
+                watcherCount = 0,
+            )
+            val query = QueryChannelRequest().withMessages(Pagination.AROUND_ID, "m1", 30)
+            // When
+            sut.onQueryChannelResult(query, Result.Success(channel))
+            // Then
+            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
+            verify(stateImpl, never()).setMessages(any())
+        }
+
+        @Test
+        fun `updateDataForChannel with shouldRefreshMessages true calls setMessages not preservation`() = runTest {
+            // Given: existing state messages to ensure shouldRefresh branch is taken
+            whenever(stateImpl.messages).thenReturn(MutableStateFlow(listOf(randomMessage(id = "existing"))))
+            val incomingMsg = randomMessage(id = "new", createdAt = Date(5000L), createdLocallyAt = null)
+            val channel = randomChannel(
+                id = "123",
+                type = "messaging",
+                messages = listOf(incomingMsg),
+                members = emptyList(),
+                watchers = emptyList(),
+                read = emptyList(),
+                memberCount = 0,
+                watcherCount = 0,
+            )
+            // When: shouldRefreshMessages=true triggers the DB-seed full-replace path
+            sut.updateDataForChannel(channel = channel, messageLimit = 30, shouldRefreshMessages = true)
+            // Then: DB-seed path must NOT use preservation — setMessages is required
+            verify(stateImpl).setMessages(any())
+            verify(stateImpl, never()).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
         }
     }
 
