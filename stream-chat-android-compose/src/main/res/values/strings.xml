@@ -336,7 +336,8 @@
     <string name="stream_compose_poll_options">Poll Options</string>
     <string name="stream_compose_poll_results">Poll Results</string>
     <string name="stream_compose_poll_answers">Poll Comments</string>
-    <string name="stream_compose_add_answer">Add a Comment</string>
+    <string name="stream_compose_add_answer">Add A Comment</string>
+    <string name="stream_compose_add_answer_placeholder">Your comment</string>
     <string name="stream_compose_edit_answer">Update Your Comment</string>
     <plurals name="stream_compose_poll_vote_counts">
         <item quantity="one">%d vote</item>

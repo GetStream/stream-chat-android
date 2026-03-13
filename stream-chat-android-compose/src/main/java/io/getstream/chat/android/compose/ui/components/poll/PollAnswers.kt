@@ -26,6 +26,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -43,6 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -278,17 +280,11 @@ internal fun AddAnswerDialog(
             )
         },
         text = {
-            InputField(
-                value = newOption.value,
-                onValueChange = { newOption.value = it },
+            AddAnswerDialogInput(
+                newOption = newOption,
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
-                decorationBox = { innerTextField ->
-                    Column {
-                        innerTextField()
-                    }
-                },
             )
             LaunchedEffect(Unit) {
                 focusRequester.requestFocus()
@@ -319,6 +315,27 @@ internal fun AddAnswerDialog(
             }
         },
         containerColor = ChatTheme.colors.backgroundElevationElevation1,
+    )
+}
+
+@Composable
+private fun AddAnswerDialogInput(newOption: MutableState<String>, modifier: Modifier) {
+    InputField(
+        value = newOption.value,
+        onValueChange = { newOption.value = it },
+        modifier = modifier,
+        decorationBox = { innerTextField ->
+            Box(contentAlignment = Alignment.CenterStart) {
+                if (newOption.value.isEmpty()) {
+                    Text(
+                        text = stringResource(R.string.stream_compose_add_answer_placeholder),
+                        style = ChatTheme.typography.bodyDefault,
+                        color = ChatTheme.colors.inputTextPlaceholder,
+                    )
+                }
+                innerTextField()
+            }
+        },
     )
 }
 
