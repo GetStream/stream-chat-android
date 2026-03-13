@@ -537,6 +537,7 @@ public class MessageComposerController(
     }
 
     private fun restoreEditMode(message: Message, attachments: List<Attachment>) {
+        setMessageInputInternal(message.text, MessageInput.Source.Edit)
         _editModeMessage.value = message
         _editModeAttachments.value = attachments
         messageActions.value += Edit(message)
