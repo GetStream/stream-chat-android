@@ -140,7 +140,6 @@ private fun ThreadParticipants(participants: List<User>) {
         overlap = StreamTokens.spacingXs,
         users = participants.take(MaxThreadParticipants),
         avatarSize = AvatarSize.Small,
-        showBorder = true,
     )
 }
 
