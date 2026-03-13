@@ -97,6 +97,12 @@ internal interface ChannelDao {
     )
     suspend fun updateOldestLoadedDate(cid: String, date: Date)
 
+    @Query(
+        "SELECT oldestLoadedDate FROM $CHANNEL_ENTITY_TABLE_NAME " +
+            "WHERE cid = :cid",
+    )
+    suspend fun selectOldestLoadedDate(cid: String): Date?
+
     private companion object {
         private const val NO_LIMIT: Int = -1
     }
