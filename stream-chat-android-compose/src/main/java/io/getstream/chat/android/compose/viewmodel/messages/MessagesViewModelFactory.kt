@@ -168,9 +168,9 @@ public class MessagesViewModelFactory(
                         isDraftMessageEnabled = isComposerDraftMessageEnabled,
                         isActiveCommandEnabled = true,
                     ),
+                    savedStateHandle = savedStateHandle ?: SavedStateHandle(),
                 ),
                 storageHelper = storageHelper,
-                savedStateHandle = savedStateHandle ?: SavedStateHandle(),
             )
             MessageListViewModel::class.java -> MessageListViewModel(
                 MessageListController(

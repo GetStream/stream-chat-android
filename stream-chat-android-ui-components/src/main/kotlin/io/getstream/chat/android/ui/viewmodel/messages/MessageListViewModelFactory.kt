@@ -18,8 +18,11 @@ package io.getstream.chat.android.ui.viewmodel.messages
 
 import android.content.Context
 import androidx.core.net.toUri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.CreationExtras
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.watchChannelAsState
 import io.getstream.chat.android.client.channel.state.ChannelState
@@ -107,10 +110,16 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
         )
     }
 
-    private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
-        MessageListHeaderViewModel::class.java to { MessageListHeaderViewModel(cid, messageId = messageId) },
-        MessageListViewModel::class.java to {
-            MessageListViewModel(
+    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T =
+        createInternal(modelClass, savedStateHandle = extras.createSavedStateHandle())
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T =
+        createInternal(modelClass, savedStateHandle = SavedStateHandle())
+
+    private fun <T : ViewModel> createInternal(modelClass: Class<T>, savedStateHandle: SavedStateHandle): T {
+        val viewModel: ViewModel = when (modelClass) {
+            MessageListHeaderViewModel::class.java -> MessageListHeaderViewModel(cid, messageId = messageId)
+            MessageListViewModel::class.java -> MessageListViewModel(
                 messageListController = MessageListController(
                     cid = cid,
                     clipboardHandler = {},
@@ -133,9 +142,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                 ),
                 chatClient = chatClient,
             )
-        },
-        MessageComposerViewModel::class.java to {
-            MessageComposerViewModel(
+            MessageComposerViewModel::class.java -> MessageComposerViewModel(
                 MessageComposerController(
                     channelCid = cid,
                     chatClient = chatClient,
@@ -147,14 +154,16 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                         maxAttachmentCount = maxAttachmentCount,
                         isDraftMessageEnabled = isComposerDraftMessagesEnabled,
                     ),
+                    savedStateHandle = savedStateHandle,
                 ),
             )
-        },
-    )
-
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val viewModel: ViewModel = factories[modelClass]?.invoke()
-            ?: throw IllegalArgumentException("MessageListViewModelFactory can only create instances of the following classes: ${factories.keys.joinToString { it.simpleName }}")
+            else -> throw IllegalArgumentException(
+                "MessageListViewModelFactory can only create instances of the following classes: " +
+                    "${MessageListHeaderViewModel::class.java.simpleName}, " +
+                    "${MessageListViewModel::class.java.simpleName}, or " +
+                    "${MessageComposerViewModel::class.java.simpleName}.",
+            )
+        }
 
         @Suppress("UNCHECKED_CAST")
         return viewModel as T

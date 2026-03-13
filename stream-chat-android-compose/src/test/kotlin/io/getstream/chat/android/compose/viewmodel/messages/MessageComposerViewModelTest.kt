@@ -54,7 +54,6 @@ import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -436,9 +435,7 @@ internal class MessageComposerViewModelTest {
 
     @Test
     fun `Given message composer When startRecording is called Then delegates to controller`() {
-        val controller: MessageComposerController = mock {
-            on { selectedAttachments } doReturn emptyFlow()
-        }
+        val controller: MessageComposerController = mock()
         val viewModel = MessageComposerViewModel(controller, mock())
 
         viewModel.startRecording()

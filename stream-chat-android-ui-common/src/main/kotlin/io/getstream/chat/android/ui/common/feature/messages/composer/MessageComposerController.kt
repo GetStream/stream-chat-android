@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.composer
 
+import androidx.lifecycle.SavedStateHandle
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.api.state.globalStateFlow
@@ -108,6 +109,8 @@ import java.util.regex.Pattern
  * @param fileToUri The function used to convert a file to a URI.
  * @param config The configuration for the message composer.
  * @param globalState A flow emitting the current [GlobalState].
+ * @param savedStateHandle Handle used to persist and restore picker selections and edit-mode state
+ * across process death (e.g. caused by opening the system file picker while editing a message).
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @InternalStreamChatApi
@@ -121,6 +124,7 @@ public class MessageComposerController(
     fileToUri: (File) -> String,
     private val config: Config = Config(),
     private val globalState: Flow<GlobalState> = chatClient.globalStateFlow,
+    savedStateHandle: SavedStateHandle = SavedStateHandle(),
 ) {
 
     private val channelType = channelCid.cidToTypeAndId().first
@@ -252,11 +256,13 @@ public class MessageComposerController(
     // independently of edit-mode attachments, so selections survive entering and exiting edit mode.
     private val _selectedAttachments = MutableStateFlow(linkedMapOf<String, Attachment>())
 
-    /**
-     * Emits the current list of attachments staged by the picker whenever the selection changes.
-     * Collected by the ViewModel layer to persist selections across process death.
-     */
-    public val selectedAttachments: Flow<List<Attachment>> = _selectedAttachments.map { it.values.toList() }
+    // Holds the base attachments from the message being edited. Cleared when edit mode is dismissed.
+    private val _editModeAttachments = MutableStateFlow<List<Attachment>>(emptyList())
+
+    // Holds the message being edited, or null when not in edit mode.
+    private val _editModeMessage = MutableStateFlow<Message?>(null)
+
+    private val sessionRepository = ComposerSessionRepository(savedStateHandle)
 
     /** Full message composer state holding all the required information. */
     public val state: MutableStateFlow<MessageComposerState> = MutableStateFlow(MessageComposerState())
@@ -399,6 +405,8 @@ public class MessageComposerController(
             }.launchIn(scope)
 
         setupComposerState()
+        restoreSession()
+        observeSessionChanges()
     }
 
     /**
@@ -500,6 +508,38 @@ public class MessageComposerController(
         }
     }
 
+    private fun restoreSession() {
+        val restoredAttachments = sessionRepository.restoreSelectedAttachments()
+        if (restoredAttachments.isNotEmpty()) {
+            addAttachments(restoredAttachments)
+        }
+        sessionRepository.restoreEditMode()?.let { editMode ->
+            restoreEditMode(editMode.message, editMode.attachments)
+        }
+    }
+
+    private fun observeSessionChanges() {
+        combine(
+            _selectedAttachments,
+            _editModeMessage,
+            _editModeAttachments,
+        ) { selected, editMessage, editAttachments ->
+            Triple(selected, editMessage, editAttachments)
+        }.onEach { (selected, editMessage, editAttachments) ->
+            sessionRepository.save(
+                selectedAttachments = selected.values.toList(),
+                editMode = editMessage?.let { ComposerSessionRepository.EditMode(it, editAttachments) },
+            )
+        }.launchIn(scope)
+    }
+
+    private fun restoreEditMode(message: Message, attachments: List<Attachment>) {
+        _editModeMessage.value = message
+        _editModeAttachments.value = attachments
+        messageActions.value += Edit(message)
+        syncAttachments()
+    }
+
     /**
      * Called when the input changes and the internal state needs to be updated.
      *
@@ -588,8 +628,10 @@ public class MessageComposerController(
 
             is Edit -> {
                 setMessageInputInternal(messageAction.message.text, MessageInput.Source.Edit)
-                state.update { it.copy(attachments = messageAction.message.attachments) }
-                messageActions.value = messageActions.value + messageAction
+                _editModeMessage.value = messageAction.message
+                _editModeAttachments.value = messageAction.message.attachments
+                messageActions.value += messageAction
+                syncAttachments()
             }
 
             else -> Unit
@@ -602,6 +644,8 @@ public class MessageComposerController(
     public fun dismissMessageActions() {
         if (isInEditMode) {
             setMessageInputInternal("", MessageInput.Source.Default)
+            _editModeMessage.value = null
+            _editModeAttachments.value = emptyList()
             syncAttachments()
         }
 
@@ -630,14 +674,19 @@ public class MessageComposerController(
     /**
      * Removes [attachment] from the staged list.
      *
-     * The attachment is identified by [EXTRA_SOURCE_URI] in its [Attachment.extraData].
-     * Has no effect if the attachment is not staged.
+     * If the attachment carries a [EXTRA_SOURCE_URI] in its [Attachment.extraData] it is removed from
+     * the picker selection ([_selectedAttachments]); otherwise it is removed from the edit-mode base
+     * attachments ([_editModeAttachments]). Has no effect if the attachment is not present in either list.
      *
      * @param attachment The attachment to remove.
      */
     public fun removeAttachment(attachment: Attachment) {
-        val key = attachment.sourceUriString() ?: return
-        _selectedAttachments.update { LinkedHashMap(it).also { map -> map.remove(key) } }
+        val key = attachment.sourceUriString()
+        if (key != null) {
+            _selectedAttachments.update { LinkedHashMap(it).also { map -> map.remove(key) } }
+        } else {
+            _editModeAttachments.update { it.filterNot(attachment::equals) }
+        }
         syncAttachments()
     }
 
@@ -654,8 +703,10 @@ public class MessageComposerController(
 
     /**
      * Removes all staged attachments and updates the composer state.
+     * Clears both picker selections and edit-mode base attachments.
      */
     public fun clearAttachments() {
+        _editModeAttachments.value = emptyList()
         _selectedAttachments.value = linkedMapOf()
         syncAttachments()
     }
@@ -879,7 +930,9 @@ public class MessageComposerController(
     }
 
     private fun syncAttachments() {
-        state.update { it.copy(attachments = _selectedAttachments.value.values.toList()) }
+        state.update {
+            it.copy(attachments = _editModeAttachments.value + _selectedAttachments.value.values.toList())
+        }
         handleValidationErrors()
     }
 

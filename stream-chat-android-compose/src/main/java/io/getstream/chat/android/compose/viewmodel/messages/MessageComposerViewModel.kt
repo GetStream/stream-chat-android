@@ -16,11 +16,7 @@
 
 package io.getstream.chat.android.compose.viewmodel.messages
 
-import android.os.Build
-import android.os.Bundle
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
@@ -31,7 +27,6 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
-import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -44,24 +39,19 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 
 /**
  * ViewModel responsible for handling the composing and sending of messages.
  *
- * Delegates all state management and business logic to [MessageComposerController].
- * Attachment selections are owned by the controller; this ViewModel persists them
- * via [savedStateHandle] so they survive Activity recreation.
+ * Delegates all state management and business logic to [MessageComposerController],
+ * including persistence of picker selections and edit-mode state across process death.
  *
  * @param messageComposerController The controller used to relay all the actions and fetch all the state.
  * @param storageHelper Resolves deferred attachment files before sending.
- * @param savedStateHandle Persists selected attachment state across Activity recreation.
  */
 public class MessageComposerViewModel(
     private val messageComposerController: MessageComposerController,
     private val storageHelper: AttachmentStorageHelper,
-    private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
 ) : ViewModel() {
 
     /**
@@ -123,16 +113,6 @@ public class MessageComposerViewModel(
      * For a full list @see [ChannelCapabilities].
      */
     public val ownCapabilities: StateFlow<Set<String>> = messageComposerController.ownCapabilities
-
-    init {
-        val initial = restoreAttachments()
-        if (initial.isNotEmpty()) {
-            messageComposerController.addAttachments(initial)
-        }
-        messageComposerController.selectedAttachments
-            .onEach(::persistAttachments)
-            .launchIn(viewModelScope)
-    }
 
     /**
      * Called when the input changes and the internal state needs to be updated.
@@ -349,61 +329,4 @@ public class MessageComposerViewModel(
         super.onCleared()
         messageComposerController.onCleared()
     }
-
-    private fun persistAttachments(attachments: List<Attachment>) {
-        if (attachments.isEmpty()) {
-            savedStateHandle.remove<Bundle>(KeySelectedAttachments)
-        } else {
-            savedStateHandle[KeySelectedAttachments] = Bundle().apply {
-                putParcelableArrayList(
-                    KeySelectedAttachmentItems,
-                    ArrayList(attachments.map(Attachment::toBundle)),
-                )
-            }
-        }
-    }
-
-    private fun restoreAttachments(): List<Attachment> =
-        savedStateHandle.get<Bundle>(KeySelectedAttachments)
-            ?.getBundleList(KeySelectedAttachmentItems)
-            ?.mapNotNull(Bundle::toAttachment)
-            ?: emptyList()
 }
-
-private const val KeySelectedAttachments = "stream_composer_selected_attachments"
-private const val KeySelectedAttachmentItems = "stream_composer_selected_attachment_items"
-private const val KeyBundleUri = "uri"
-private const val KeyBundleType = "type"
-private const val KeyBundleName = "name"
-private const val KeyBundleFileSize = "fileSize"
-private const val KeyBundleMimeType = "mimeType"
-private const val AttachmentBundleSize = 5
-
-private fun Attachment.toBundle(): Bundle = Bundle(AttachmentBundleSize).apply {
-    sourceUriString()?.let { putString(KeyBundleUri, it) }
-    type?.let { putString(KeyBundleType, it) }
-    putString(KeyBundleName, name)
-    putInt(KeyBundleFileSize, fileSize)
-    mimeType?.let { putString(KeyBundleMimeType, it) }
-}
-
-private fun Bundle.toAttachment(): Attachment? {
-    val uri = getString(KeyBundleUri) ?: return null
-    return Attachment(
-        type = getString(KeyBundleType),
-        name = getString(KeyBundleName) ?: "",
-        fileSize = getInt(KeyBundleFileSize),
-        mimeType = getString(KeyBundleMimeType),
-        extraData = mapOf(EXTRA_SOURCE_URI to uri),
-    )
-}
-
-@Suppress("DEPRECATION")
-private fun Bundle.getBundleList(key: String): List<Bundle> =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        getParcelableArrayList(key, Bundle::class.java) ?: emptyList()
-    } else {
-        getParcelableArrayList(key) ?: emptyList()
-    }
-
-private fun Attachment.sourceUriString(): String? = extraData[EXTRA_SOURCE_URI]?.toString()
