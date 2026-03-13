@@ -32,12 +32,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.material.datepicker.MaterialDatePicker
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentsParams
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Attachment
@@ -57,15 +56,9 @@ private object AddingCustomAttachmentsSnippet {
             super.onCreate(savedInstanceState)
             val channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID))
 
-            val customFactories = listOf(dateAttachmentFactory)
-            val defaultFactories = StreamAttachmentFactories.defaults()
-
             setContent {
-                // Pass in custom factories or combine them with the default ones
-                ChatTheme(
-                    componentFactory = CustomComponentFactory(),
-                    attachmentFactories = customFactories + defaultFactories,
-                ) {
+                // Pass a custom ChatComponentFactory to handle custom attachment types
+                ChatTheme(componentFactory = CustomComponentFactory()) {
                     CustomMessagesScreen(
                         channelId = channelId,
                         onBackPressed = { finish() },
@@ -114,14 +107,14 @@ private object AddingCustomAttachmentsSnippet {
                             val payload = SimpleDateFormat("MMMM dd, yyyy").format(Date(date))
                             val attachment = Attachment(
                                 type = "date",
-                                extraData = mutableMapOf("payload" to payload)
+                                extraData = mutableMapOf("payload" to payload),
                             )
 
                             // 3
                             composerViewModel.addSelectedAttachments(listOf(attachment))
                         },
                     )
-                }
+                },
             ) { _ ->
                 // Message list
             }
@@ -164,6 +157,30 @@ class CustomComponentFactory : ChatComponentFactory {
     }
 
     @Composable
+    override fun MessageComposerAttachments(params: MessageComposerAttachmentsParams) {
+        val dateAttachments = params.attachments.filter { it.type == "date" }
+        val otherAttachments = params.attachments.filter { it.type != "date" }
+
+        Column(modifier = params.modifier) {
+            if (dateAttachments.isNotEmpty()) {
+                DateAttachmentPreviewContent(
+                    modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                    attachments = dateAttachments,
+                    onAttachmentRemoved = params.onAttachmentRemoved,
+                )
+            }
+            if (otherAttachments.isNotEmpty()) {
+                super.MessageComposerAttachments(
+                    params = params.copy(
+                        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                        attachments = otherAttachments,
+                    ),
+                )
+            }
+        }
+    }
+
+    @Composable
     override fun MessageComposerLeadingContent(
         modifier: Modifier,
         state: MessageComposerState,
@@ -178,27 +195,13 @@ class CustomComponentFactory : ChatComponentFactory {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_calendar),
                     contentDescription = null,
-                    tint = ChatTheme.colors.textSecondary
+                    tint = ChatTheme.colors.textSecondary,
                 )
             },
             onClick = onAttachmentsClick,
         )
     }
 }
-
-val dateAttachmentFactory: AttachmentFactory = AttachmentFactory(
-    canHandle = { attachments -> attachments.any { it.type == "date" } },
-    previewContent = { modifier, attachments, onAttachmentRemoved ->
-        DateAttachmentPreviewContent(
-            modifier = modifier,
-            attachments = attachments,
-            onAttachmentRemoved = onAttachmentRemoved
-        )
-    },
-    textFormatter = { attachment ->
-        attachment.extraData["payload"].toString()
-    },
-)
 
 @Composable
 fun DateAttachmentContent(
@@ -214,11 +217,11 @@ fun DateAttachmentContent(
             .padding(4.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(ChatTheme.colors.accentSuccess)
-            .padding(8.dp)
+            .padding(8.dp),
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 modifier = Modifier.size(16.dp),
@@ -231,7 +234,7 @@ fun DateAttachmentContent(
                 text = formattedDate,
                 style = ChatTheme.typography.bodyDefault,
                 maxLines = 1,
-                color = ChatTheme.colors.textPrimary
+                color = ChatTheme.colors.textPrimary,
             )
         }
     }
@@ -250,7 +253,7 @@ fun DateAttachmentPreviewContent(
         modifier = modifier
             .wrapContentHeight()
             .clip(RoundedCornerShape(16.dp))
-            .background(color = ChatTheme.colors.backgroundElevationElevation1)
+            .background(color = ChatTheme.colors.backgroundElevationElevation1),
     ) {
         Text(
             modifier = Modifier
@@ -260,14 +263,14 @@ fun DateAttachmentPreviewContent(
             text = formattedDate,
             style = ChatTheme.typography.bodyDefault,
             maxLines = 1,
-            color = ChatTheme.colors.textPrimary
+            color = ChatTheme.colors.textPrimary,
         )
 
         ComposerCancelIcon(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(4.dp),
-            onClick = { onAttachmentRemoved(attachment) }
+            onClick = { onAttachmentRemoved(attachment) },
         )
     }
 }

@@ -32,7 +32,6 @@ import io.getstream.chat.android.client.utils.message.isPoll
 import io.getstream.chat.android.client.utils.message.isPollClosed
 import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
@@ -84,7 +83,7 @@ public interface MessagePreviewFormatter {
          * @param context The context to load string resources.
          * @param autoTranslationEnabled Whether the auto-translation is enabled.
          * @param typography The typography to use for styling.
-         * @param attachmentFactories The list of [AttachmentFactory] to use for formatting attachments.
+         * @param colors The color palette used for styling.
          * @return The default implementation of [MessagePreviewFormatter].
          *
          * @see [DefaultMessagePreviewFormatter]
@@ -94,7 +93,6 @@ public interface MessagePreviewFormatter {
             context: Context,
             autoTranslationEnabled: Boolean,
             typography: StreamDesign.Typography,
-            attachmentFactories: List<AttachmentFactory>,
             colors: StreamDesign.Colors,
         ): MessagePreviewFormatter {
             return DefaultMessagePreviewFormatter(
@@ -105,7 +103,6 @@ public interface MessagePreviewFormatter {
                 senderNameTextStyle = typography.bodyEmphasis,
                 // TODO: replace with a dedicated italic token once the design system provides one
                 attachmentTextFontStyle = typography.bodyDefault.copy(fontStyle = FontStyle.Italic),
-                attachmentFactories = attachmentFactories,
             )
         }
     }
@@ -117,7 +114,6 @@ public interface MessagePreviewFormatter {
  *
  * @param context The context to load string resources.
  */
-@Suppress("LongParameterList")
 private class DefaultMessagePreviewFormatter(
     private val context: Context,
     private val autoTranslationEnabled: Boolean,
@@ -125,7 +121,6 @@ private class DefaultMessagePreviewFormatter(
     private val messageTextStyle: TextStyle,
     private val senderNameTextStyle: TextStyle,
     private val attachmentTextFontStyle: TextStyle,
-    private val attachmentFactories: List<AttachmentFactory>,
 ) : MessagePreviewFormatter {
 
     private companion object {
@@ -295,7 +290,7 @@ private class DefaultMessagePreviewFormatter(
             else -> {
                 // No recognizable typed attachment — use default text + attachment formatting
                 appendMessageText(displayedText, messageTextStyle)
-                appendAttachmentText(attachments, attachmentFactories, attachmentTextFontStyle)
+                appendAttachmentText(attachments, attachmentTextFontStyle)
             }
         }
     }
@@ -399,37 +394,27 @@ private class DefaultMessagePreviewFormatter(
     }
 
     /**
-     * Appends a string representations of [attachments] to the [AnnotatedString].
+     * Appends a string representation of [attachments] to the [AnnotatedString].
+     * Falls back to the attachment's title, name, or fallback field for each item.
      */
     private fun AnnotatedString.Builder.appendAttachmentText(
         attachments: List<Attachment>,
-        attachmentFactories: List<AttachmentFactory>,
         attachmentTextStyle: TextStyle,
     ) {
-        if (attachments.isNotEmpty()) {
-            attachmentFactories
-                .firstOrNull { it.canHandle(attachments) }
-                ?.textFormatter
-                ?.let { textFormatter ->
-                    attachments.mapNotNull { attachment ->
-                        textFormatter.invoke(attachment)
-                            .let { previewText ->
-                                previewText.ifEmpty { null }
-                            }
-                    }.joinToString()
-                }?.let { attachmentText ->
-                    val startIndex = this.length
-                    append(attachmentText)
-
-                    addStyle(
-                        SpanStyle(
-                            fontStyle = attachmentTextStyle.fontStyle,
-                            fontFamily = attachmentTextStyle.fontFamily,
-                        ),
-                        start = startIndex,
-                        end = startIndex + attachmentText.length,
-                    )
-                }
-        }
+        if (attachments.isEmpty()) return
+        val attachmentText = attachments.mapNotNull { attachment ->
+            (attachment.title ?: attachment.name ?: attachment.fallback ?: "").ifEmpty { null }
+        }.joinToString()
+        if (attachmentText.isEmpty()) return
+        val startIndex = length
+        append(attachmentText)
+        addStyle(
+            SpanStyle(
+                fontStyle = attachmentTextStyle.fontStyle,
+                fontFamily = attachmentTextStyle.fontFamily,
+            ),
+            start = startIndex,
+            end = startIndex + attachmentText.length,
+        )
     }
 }
