@@ -442,25 +442,26 @@ internal class ChannelLogicImpl(
             }
 
             query.isFilteringNewerMessages() -> {
-                // Loading newer messages — preserve local-only messages within the window
+                // Loading newer messages — merge new page into existing, preserve local-only within window
                 val endReached = query.messagesLimit() > channel.messages.size
                 if (endReached) {
-                    // Reached the latest messages — no ceiling needed; pass null floor to include all local-only
-                    state.setMessagesPreservingLocalOnly(channel.messages, localOnlyFromDb, null)
+                    // Reached the latest messages — merge final page; keep the window floor (do NOT pass null,
+                    // passing null would include all local-only regardless of position; floor stays at oldest loaded)
+                    state.upsertMessagesPreservingLocalOnly(channel.messages, localOnlyFromDb, windowFloor)
                     state.clearCachedLatestMessages()
                     state.setInsideSearch(false)
                     state.setNewestLoadedDate(null)
                 } else {
-                    // Still paginating toward latest — advance ceiling; preserve local-only within floor
-                    state.setMessagesPreservingLocalOnly(channel.messages, localOnlyFromDb, windowFloor)
+                    // Still paginating toward latest — merge page, advance ceiling, preserve local-only within floor
+                    state.upsertMessagesPreservingLocalOnly(channel.messages, localOnlyFromDb, windowFloor)
                     state.advanceNewestLoadedDate(channel.messages.lastOrNull()?.getCreatedAtOrNull())
                 }
                 state.trimOldestMessages()
             }
 
             query.filteringOlderMessages() -> {
-                // Loading older messages — preserve local-only messages at or above the new window floor
-                state.setMessagesPreservingLocalOnly(channel.messages, localOnlyFromDb, windowFloor)
+                // Loading older messages — merge old page into existing, preserve local-only within new floor
+                state.upsertMessagesPreservingLocalOnly(channel.messages, localOnlyFromDb, windowFloor)
                 state.trimNewestMessages()
             }
         }

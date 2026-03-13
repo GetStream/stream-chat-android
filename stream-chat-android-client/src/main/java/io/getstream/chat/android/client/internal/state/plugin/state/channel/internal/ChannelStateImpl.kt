@@ -340,7 +340,8 @@ internal class ChannelStateImpl(
             // (handles shadowed users, thread-only messages — same as setMessages)
             val validIncoming = incoming.filterNot { shouldIgnoreUpsertion(it) }
 
-            // Step 6: merge and sort using the existing MESSAGE_COMPARATOR (createdAt asc)
+            // Step 6: replace — discard existing server messages, keep only incoming + local-only.
+            // Use upsertMessagesPreservingLocalOnly when merging a pagination page instead.
             (validIncoming + inWindowLocalOnly)
                 .distinctBy { it.id }
                 .sortedWith(MESSAGE_COMPARATOR)
@@ -348,6 +349,51 @@ internal class ChannelStateImpl(
 
         // Step 7: sync quoted-message and poll indexes — mirrors setMessages lines 287-291.
         // Must run AFTER _messages.update to operate on the final merged list.
+        for (message in _messages.value) {
+            message.replyTo?.let { addQuotedMessage(it.id, message.id) }
+            message.replyMessageId?.let { addQuotedMessage(it, message.id) }
+            message.poll?.let { registerPollForMessage(it, message.id) }
+        }
+    }
+
+    /**
+     * Merges [incoming] server messages into the current message state, preserving existing
+     * server messages from prior pages and local-only messages within the window.
+     *
+     * Use for pagination branches ([filteringOlderMessages], [isFilteringNewerMessages]) where
+     * existing pages must be retained. For initial loads and around-message jumps, use
+     * [setMessagesPreservingLocalOnly] instead.
+     *
+     * @param incoming New page of server messages from the API response.
+     * @param localOnlyFromDb Local-only messages fetched from DB before this call.
+     * @param windowFloor Oldest [createdAt] in [incoming]; null to include all local-only.
+     */
+    internal fun upsertMessagesPreservingLocalOnly(
+        incoming: List<Message>,
+        localOnlyFromDb: List<Message>,
+        windowFloor: Date?,
+    ) {
+        val incomingIds = incoming.map { it.id }.toSet()
+
+        _messages.update { current ->
+            val fromState = current.filter { it.isLocalOnly() }
+            val allLocalOnly = (fromState + localOnlyFromDb).distinctBy { it.id }
+            val survivingLocalOnly = allLocalOnly.filter { it.id !in incomingIds }
+            val inWindowLocalOnly = if (windowFloor == null) {
+                survivingLocalOnly
+            } else {
+                survivingLocalOnly.filter { msg ->
+                    msg.getCreatedAtOrNull()?.let { d -> !d.before(windowFloor) } ?: true
+                }
+            }
+            val validIncoming = incoming.filterNot { shouldIgnoreUpsertion(it) }
+            // Merge: keep existing server messages + add new page + surviving local-only
+            val existingServer = current.filterNot { it.isLocalOnly() }
+            (existingServer + validIncoming + inWindowLocalOnly)
+                .distinctBy { it.id }
+                .sortedWith(MESSAGE_COMPARATOR)
+        }
+
         for (message in _messages.value) {
             message.replyTo?.let { addQuotedMessage(it.id, message.id) }
             message.replyMessageId?.let { addQuotedMessage(it, message.id) }
