@@ -313,14 +313,26 @@ internal class ChannelLogicImpl(
         state.setPendingMessages(channel.pendingMessages.map(PendingMessage::message))
         // Update messages based on the relationship between the incoming page and existing state.
         if (messageLimit > 0) {
+            // Prefetch local-only messages and the persisted window floor so that preservation can
+            // re-inject any local-only messages that the server page does not include.
+            val localOnlyFromDb = repository.selectLocalOnlyMessagesForChannel(cid)
+            val persistedFloor: Date? = repository.selectOldestLoadedDateForChannel(cid)
             val sortedMessages = withContext(Dispatchers.Default) {
                 channel.messages.sortedBy { it.getCreatedAtOrNull() }
             }
             val currentMessages = state.messages.value
             when {
                 shouldRefreshMessages || currentMessages.isEmpty() -> {
-                    // Initial load (DB seed or first fetch) or explicit refresh — full replace
-                    state.setMessages(sortedMessages)
+                    if (isChannelsStateUpdate) {
+                        // DB-seed path (updateStateFromDatabase → isChannelsStateUpdate=true):
+                        // OfflinePlugin already includes local-only messages in the DB data.
+                        // Full-replace is intentional here — preservation would double-inject them.
+                        state.setMessages(sortedMessages)
+                    } else {
+                        // SyncManager reconnect path (isChannelsStateUpdate=false):
+                        // Local-only messages are NOT in the server page; they must survive.
+                        state.setMessagesPreservingLocalOnly(sortedMessages, localOnlyFromDb, persistedFloor)
+                    }
                     state.setEndOfOlderMessages(channel.messages.size < messageLimit)
                 }
                 state.insideSearch.value -> {
@@ -339,8 +351,8 @@ internal class ChannelLogicImpl(
                 }
                 else -> {
                     // Incoming messages are contiguous with (or overlap) the current window.
-                    // Upsert preserves the user's scroll position while adding/updating messages.
-                    state.upsertMessages(sortedMessages)
+                    // Preserve local-only messages that the server page does not include.
+                    state.setMessagesPreservingLocalOnly(sortedMessages, localOnlyFromDb, persistedFloor)
                     state.setEndOfOlderMessages(channel.messages.size < messageLimit)
                 }
             }
@@ -456,8 +468,7 @@ internal class ChannelLogicImpl(
         // set this floor — updateDataForChannel (QueryChannels) must not, otherwise a channel-list
         // preview would incorrectly filter out older pending messages.
         state.advanceOldestLoadedDate(channel.messages)
-        // Persist window floor to DB for Phase 2 DB-seed path.
-        // TODO(Phase 2): when windowFloor is null, read persisted floor from ChannelEntity instead.
+        // Persist window floor to DB so updateDataForChannel can read it on reconnect.
         if (windowFloor != null) {
             repository.updateOldestLoadedDateForChannel(cid, windowFloor)
         }
