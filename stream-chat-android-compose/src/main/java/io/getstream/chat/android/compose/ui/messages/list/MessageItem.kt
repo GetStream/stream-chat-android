@@ -316,7 +316,6 @@ internal fun DefaultMessageTypingIndicatorContent(state: TypingItemState) {
             overlap = StreamTokens.spacingXs,
             users = state.typingUsers.take(MaxTypingUsersAvatars),
             avatarSize = AvatarSize.Medium,
-            showBorder = true,
             trailingContent = if (overflowCount > 0) {
                 { CountBadge(text = "+$overflowCount", size = CountBadgeSize.Medium) }
             } else {
