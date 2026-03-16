@@ -18,11 +18,13 @@ package io.getstream.chat.android.ui.feature.messages.composer.internal
 
 import android.content.Context
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 internal fun AttachmentMetaData.toAttachment(context: Context): Attachment {
     val fileFromUri = StorageHelper().getCachedFileFromUri(context, this)
+    val extra = uri?.let { mapOf(EXTRA_SOURCE_URI to it.toString()) } ?: emptyMap()
     return Attachment(
         upload = fileFromUri,
         type = type,
@@ -30,5 +32,6 @@ internal fun AttachmentMetaData.toAttachment(context: Context): Attachment {
         fileSize = size.toInt(),
         mimeType = mimeType,
         title = title,
+        extraData = extra,
     )
 }

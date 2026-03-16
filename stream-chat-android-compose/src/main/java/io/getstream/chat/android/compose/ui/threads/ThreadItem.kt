@@ -176,7 +176,6 @@ internal fun ThreadItemParticipants(participants: List<User>) {
         overlap = StreamTokens.spacingXs,
         users = participants,
         avatarSize = AvatarSize.Small,
-        showBorder = true,
     )
 }
 
@@ -216,6 +215,8 @@ internal fun ThreadItemTimestamp(thread: Thread) {
         text = timestamp,
         style = ChatTheme.typography.captionDefault,
         color = ChatTheme.colors.chatTextTimestamp,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
     )
 }
 

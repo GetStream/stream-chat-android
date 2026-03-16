@@ -72,6 +72,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Flag
@@ -350,8 +351,10 @@ internal fun DefaultBottomBarContent(
             isAttachmentPickerVisible = attachmentsPickerViewModel.isPickerVisible,
             onAttachmentsClick = attachmentsPickerViewModel::togglePickerVisibility,
             onAttachmentRemoved = { attachment ->
-                composerViewModel.removeSelectedAttachment(attachment)
-                attachmentsPickerViewModel.deselectAttachment(attachment)
+                attachment.extraData[EXTRA_SOURCE_URI]
+                    ?.let { it as? String }
+                    ?.let(attachmentsPickerViewModel::removeFromSelection)
+                composerViewModel.removeAttachment(attachment)
             },
             onCancelAction = {
                 listViewModel.dismissAllMessageActions()
