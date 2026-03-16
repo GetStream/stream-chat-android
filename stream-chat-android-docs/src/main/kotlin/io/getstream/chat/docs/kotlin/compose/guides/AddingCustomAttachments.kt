@@ -107,6 +107,7 @@ private object AddingCustomAttachmentsSnippet {
                             val payload = SimpleDateFormat("MMMM dd, yyyy").format(Date(date))
                             val attachment = Attachment(
                                 type = "date",
+                                fallback = payload,
                                 extraData = mutableMapOf("payload" to payload),
                             )
 

@@ -123,7 +123,8 @@ class AddingCustomAttachments {
                             val payload = SimpleDateFormat("MMMM dd, yyyy").format(Date(date))
                             val attachment = Attachment(
                                 type = "date",
-                                extraData = mutableMapOf("payload" to payload)
+                                fallback = payload,
+                                extraData = mutableMapOf("payload" to payload),
                             )
                             messageComposerViewModel.addAttachments(listOf(attachment))
                         }
