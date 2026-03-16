@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.feature.messages.composer.attachment.picker
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.R
@@ -88,7 +88,7 @@ public class CreatePollViewModel : ViewModel() {
      * The poll configuration.
      * If the poll is not ready to be created, it will be null.
      */
-    public val pollConfig: StateFlow<PollConfig?> = createPoll
+    public val createPollParams: StateFlow<CreatePollParams?> = createPoll
         .flatMapLatest { pollIsReady.filter { it } }
         .flatMapLatest {
             combine(
@@ -97,7 +97,7 @@ public class CreatePollViewModel : ViewModel() {
                 allowMultipleVotes,
                 maxAnswers,
             ) { title, options, allowMultipleVotes, maxAnswers ->
-                PollConfig(
+                CreatePollParams(
                     name = title,
                     options = options.map { PollOption(text = it.text) },
                     votingVisibility = if (annonymousPoll) VotingVisibility.ANONYMOUS else VotingVisibility.PUBLIC,

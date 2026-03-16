@@ -21,8 +21,8 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.state.messages.Edit
@@ -164,8 +164,8 @@ public class MessageComposerViewModel(
      */
     public fun clearAttachments(): Unit = messageComposerController.clearAttachments()
 
-    public fun createPoll(pollConfig: PollConfig) {
-        messageComposerController.createPoll(pollConfig)
+    public fun createPoll(createPollParams: CreatePollParams) {
+        messageComposerController.createPoll(createPollParams)
     }
 
     /**

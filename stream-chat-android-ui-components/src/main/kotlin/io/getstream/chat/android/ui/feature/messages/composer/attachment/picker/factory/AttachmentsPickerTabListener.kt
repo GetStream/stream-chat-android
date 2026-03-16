@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory
 
-import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 /**
@@ -39,7 +39,7 @@ public interface AttachmentsPickerTabListener {
     /**
      * Called when a poll is submitted.
      *
-     * @param pollConfig The poll configuration.
+     * @param createPollParams The poll configuration.
      */
-    public fun onPollSubmitted(pollConfig: PollConfig?)
+    public fun onPollSubmitted(createPollParams: CreatePollParams?)
 }

@@ -194,12 +194,12 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.Thread
@@ -3840,7 +3840,7 @@ public interface ChatComponentFactory {
     public fun AttachmentPollPicker(
         pickerMode: PollPickerMode,
         onCreatePollClick: () -> Unit,
-        onCreatePoll: (PollConfig) -> Unit,
+        onCreatePoll: (CreatePollParams) -> Unit,
         onCreatePollDismissed: () -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPollPicker(

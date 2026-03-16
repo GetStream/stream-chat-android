@@ -22,7 +22,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Command
-import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.CreatePollParams
 
 /**
  * Actions that can be performed in the attachment picker.
@@ -49,7 +49,7 @@ public data class AttachmentPickerActions(
     val onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
     val onAttachmentsSelected: (List<Attachment>) -> Unit,
     val onCreatePollClick: () -> Unit,
-    val onCreatePoll: (PollConfig) -> Unit,
+    val onCreatePoll: (CreatePollParams) -> Unit,
     val onCreatePollDismissed: () -> Unit,
     val onCommandSelected: (Command) -> Unit,
     val onDismiss: () -> Unit,

@@ -123,7 +123,7 @@ public data class Option(
 )
 
 /**
- * The PollConfig object is used to configure a poll.
+ * The [CreatePollParams] object is used to configure a poll.
  *
  * @property name The name of the poll.
  * @property description The description of the poll.
@@ -136,7 +136,7 @@ public data class Option(
  * @property extraData Any additional data associated with the poll.
  * @property optionsWithExtraData The list of options for the poll.
  */
-public data class PollConfig internal constructor(
+public data class CreatePollParams internal constructor(
     val name: String,
     val description: String,
     val votingVisibility: VotingVisibility,
@@ -150,7 +150,7 @@ public data class PollConfig internal constructor(
 ) {
 
     /**
-     * Constructor to create a PollConfig with a list of option texts.
+     * Constructor to create a [CreatePollParams] with a list of option texts.
      *
      * @param name The name of the poll.
      * @param options The list of option texts for the poll.
@@ -187,7 +187,7 @@ public data class PollConfig internal constructor(
     )
 
     /**
-     * Alternative constructor to create a PollConfig with a list of options with extra data.
+     * Alternative constructor to create a [CreatePollParams] with a list of options with extra data.
      *
      * @param name The name of the poll.
      * @param options The list of options (with optional extra data) for the poll.

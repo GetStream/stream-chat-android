@@ -806,6 +806,34 @@ public final class io/getstream/chat/android/models/ContainsFilterObject : io/ge
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/models/CreatePollParams {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Lio/getstream/chat/android/models/VotingVisibility;ZLjava/lang/Integer;ZZ)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Lio/getstream/chat/android/models/VotingVisibility;ZLjava/lang/Integer;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Lio/getstream/chat/android/models/VotingVisibility;ZLjava/lang/Integer;ZZLjava/util/Map;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Lio/getstream/chat/android/models/VotingVisibility;ZLjava/lang/Integer;ZZLjava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Lio/getstream/chat/android/models/VotingVisibility;
+	public final fun component4 ()Z
+	public final fun component5 ()Ljava/lang/Integer;
+	public final fun component6 ()Z
+	public final fun component7 ()Z
+	public final fun component8 ()Ljava/util/Map;
+	public final fun component9 ()Ljava/util/List;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAllowAnswers ()Z
+	public final fun getAllowUserSuggestedOptions ()Z
+	public final fun getDescription ()Ljava/lang/String;
+	public final fun getEnforceUniqueVote ()Z
+	public final fun getExtraData ()Ljava/util/Map;
+	public final fun getMaxVotesAllowed ()Ljava/lang/Integer;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getOptions ()Ljava/util/List;
+	public final fun getVotingVisibility ()Lio/getstream/chat/android/models/VotingVisibility;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface class io/getstream/chat/android/models/CustomObject {
 	public abstract fun getExtraData ()Ljava/util/Map;
 	public abstract fun getExtraValue (Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
@@ -1766,34 +1794,6 @@ public final class io/getstream/chat/android/models/Poll : io/getstream/chat/and
 	public final fun getVoteCountsByOption ()Ljava/util/Map;
 	public final fun getVotes ()Ljava/util/List;
 	public final fun getVotes (Lio/getstream/chat/android/models/Option;)Ljava/util/List;
-	public final fun getVotingVisibility ()Lio/getstream/chat/android/models/VotingVisibility;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/models/PollConfig {
-	public fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Lio/getstream/chat/android/models/VotingVisibility;ZLjava/lang/Integer;ZZ)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Lio/getstream/chat/android/models/VotingVisibility;ZLjava/lang/Integer;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Lio/getstream/chat/android/models/VotingVisibility;ZLjava/lang/Integer;ZZLjava/util/Map;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Lio/getstream/chat/android/models/VotingVisibility;ZLjava/lang/Integer;ZZLjava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun component3 ()Lio/getstream/chat/android/models/VotingVisibility;
-	public final fun component4 ()Z
-	public final fun component5 ()Ljava/lang/Integer;
-	public final fun component6 ()Z
-	public final fun component7 ()Z
-	public final fun component8 ()Ljava/util/Map;
-	public final fun component9 ()Ljava/util/List;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getAllowAnswers ()Z
-	public final fun getAllowUserSuggestedOptions ()Z
-	public final fun getDescription ()Ljava/lang/String;
-	public final fun getEnforceUniqueVote ()Z
-	public final fun getExtraData ()Ljava/util/Map;
-	public final fun getMaxVotesAllowed ()Ljava/lang/Integer;
-	public final fun getName ()Ljava/lang/String;
-	public final fun getOptions ()Ljava/util/List;
 	public final fun getVotingVisibility ()Lio/getstream/chat/android/models/VotingVisibility;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;

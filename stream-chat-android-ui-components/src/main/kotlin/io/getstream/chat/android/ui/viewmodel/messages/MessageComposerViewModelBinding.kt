@@ -22,8 +22,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.alsoSendToChannelSelectionListener
@@ -88,7 +88,7 @@ public fun MessageComposerViewModel.bindView(
     textInputChangeListener: (String) -> Unit = this.textInputChangeListener,
     attachmentSelectionListener: (List<Attachment>) -> Unit = this.attachmentSelectionListener,
     attachmentRemovalListener: (Attachment) -> Unit = this.attachmentRemovalListener,
-    pollSubmissionListener: (PollConfig) -> Unit = this.pollSubmissionListener,
+    pollSubmissionListener: (CreatePollParams) -> Unit = this.pollSubmissionListener,
     mentionSelectionListener: (User) -> Unit = this.mentionSelectionListener,
     commandSelectionListener: (Command) -> Unit = this.commandSelectionListener,
     alsoSendToChannelSelectionListener: (Boolean) -> Unit = this.alsoSendToChannelSelectionListener,
@@ -173,7 +173,7 @@ public fun MessageComposerViewModel.bindViewDefaults(
     textInputChangeListener: ((String) -> Unit)? = null,
     attachmentSelectionListener: ((List<Attachment>) -> Unit)? = null,
     attachmentRemovalListener: ((Attachment) -> Unit)? = null,
-    pollSubmissionListener: ((PollConfig) -> Unit)? = null,
+    pollSubmissionListener: ((CreatePollParams) -> Unit)? = null,
     mentionSelectionListener: ((User) -> Unit)? = null,
     commandSelectionListener: ((Command) -> Unit)? = null,
     alsoSendToChannelSelectionListener: ((Boolean) -> Unit)? = null,
@@ -243,7 +243,7 @@ internal object MessageComposerViewModelDefaults {
     val MessageComposerViewModel.sendMessageButtonClickListener: (Message) -> Unit get() = ::sendMessage
     val MessageComposerViewModel.textInputChangeListener: (String) -> Unit get() = { setMessageInput(it) }
     val MessageComposerViewModel.attachmentSelectionListener: (List<Attachment>) -> Unit get() = ::addAttachments
-    val MessageComposerViewModel.pollSubmissionListener: (PollConfig) -> Unit get() = { createPoll(it) }
+    val MessageComposerViewModel.pollSubmissionListener: (CreatePollParams) -> Unit get() = { createPoll(it) }
     val MessageComposerViewModel.attachmentRemovalListener: (Attachment) -> Unit get() = ::removeAttachment
     val MessageComposerViewModel.mentionSelectionListener: (User) -> Unit get() = { selectMention(it) }
     val MessageComposerViewModel.commandSelectionListener: (Command) -> Unit get() = { selectCommand(it) }

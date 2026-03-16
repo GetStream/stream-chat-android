@@ -29,7 +29,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.card.MaterialCardView
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.databinding.StreamUiDialogAttachmentBinding
@@ -169,8 +169,8 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
                 dismiss()
             }
 
-            override fun onPollSubmitted(pollConfig: PollConfig?) {
-                pollConfig?.let { pollSubmissionListener?.onPollSubmitted(it) }
+            override fun onPollSubmitted(createPollParams: CreatePollParams?) {
+                createPollParams?.let { pollSubmissionListener?.onPollSubmitted(it) }
                 dismiss()
             }
         }
@@ -328,8 +328,8 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
         /**
          * Called when poll submission has been completed.
          *
-         * @param pollConfig The configuration of the submitted poll.
+         * @param createPollParams The configuration of the submitted poll.
          */
-        public fun onPollSubmitted(pollConfig: PollConfig)
+        public fun onPollSubmitted(createPollParams: CreatePollParams)
     }
 }
