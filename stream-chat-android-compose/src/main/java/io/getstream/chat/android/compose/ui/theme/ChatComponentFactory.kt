@@ -144,6 +144,10 @@ import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicke
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordingButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerEditIndicator
+import io.getstream.chat.android.compose.ui.messages.composer.internal.attachments.MessageComposerAttachmentAudioRecordItem
+import io.getstream.chat.android.compose.ui.messages.composer.internal.attachments.MessageComposerAttachmentFileItem
+import io.getstream.chat.android.compose.ui.messages.composer.internal.attachments.MessageComposerAttachmentMediaItem
+import io.getstream.chat.android.compose.ui.messages.composer.internal.attachments.MessageComposerAttachments
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.CommandSuggestionItem
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultCommandSuggestionItemCenterContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultCommandSuggestionItemLeadingContent
@@ -2791,22 +2795,69 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the preview content of file attachments.
+     * Renders all selected attachments in the message composer as a single horizontal scrolling row.
      *
-     * @param modifier Modifier for styling.
-     * @param attachments List of file attachments to preview.
-     * @param onAttachmentRemoved Lambda invoked when an attachment is removed.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun FileAttachmentPreviewContent(
-        modifier: Modifier,
-        attachments: List<Attachment>,
-        onAttachmentRemoved: (Attachment) -> Unit,
-    ) {
-        io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentPreviewContent(
-            modifier = modifier,
-            attachments = attachments,
-            onAttachmentRemoved = onAttachmentRemoved,
+    public fun MessageComposerAttachments(params: MessageComposerAttachmentsParams) {
+        MessageComposerAttachments(
+            modifier = params.modifier,
+            attachments = params.attachments,
+            onAttachmentRemoved = params.onAttachmentRemoved,
+        )
+    }
+
+    /**
+     * Renders a single audio recording attachment item in the message composer tray.
+     *
+     * Used as part of [MessageComposerAttachments].
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun MessageComposerAttachmentAudioRecordItem(params: MessageComposerAttachmentAudioRecordItemParams) {
+        MessageComposerAttachmentAudioRecordItem(
+            modifier = params.modifier,
+            attachment = params.attachment,
+            playerState = params.playerState,
+            onPlayToggleClick = params.onPlayToggleClick,
+            onPlaySpeedClick = params.onPlaySpeedClick,
+            onThumbDragStart = params.onThumbDragStart,
+            onThumbDragStop = params.onThumbDragStop,
+            onAttachmentRemoved = params.onAttachmentRemoved,
+        )
+    }
+
+    /**
+     * Renders a single media (image or video) attachment item in the message composer tray.
+     *
+     * Used as part of [MessageComposerAttachments].
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun MessageComposerAttachmentMediaItem(params: MessageComposerAttachmentMediaItemParams) {
+        MessageComposerAttachmentMediaItem(
+            modifier = params.modifier,
+            attachment = params.attachment,
+            onAttachmentRemoved = params.onAttachmentRemoved,
+        )
+    }
+
+    /**
+     * Renders a single generic file attachment item in the message composer tray.
+     *
+     * Used as part of [MessageComposerAttachments].
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun MessageComposerAttachmentFileItem(params: MessageComposerAttachmentFileItemParams) {
+        MessageComposerAttachmentFileItem(
+            modifier = params.modifier,
+            attachment = params.attachment,
+            onAttachmentRemoved = params.onAttachmentRemoved,
         )
     }
 
@@ -3823,7 +3874,7 @@ public interface ChatComponentFactory {
      *
      * Shows a row of buttons that launch system pickers (photo picker, file browser, camera).
      * This variant does not require storage permissions since it uses system intents.
-     * Used when [ChatTheme.attachmentPickerConfig.useSystemPicker] is `true`.
+     * Used when [ChatTheme.config.attachmentPicker.useSystemPicker] is `true`.
      *
      * @param channel Used to check channel capabilities for filtering available modes.
      * @param messageMode Used to filter modes (e.g., polls disabled in threads).

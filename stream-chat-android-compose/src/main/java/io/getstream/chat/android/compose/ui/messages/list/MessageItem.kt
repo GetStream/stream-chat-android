@@ -35,12 +35,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
@@ -49,6 +48,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.components.TypingIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
@@ -215,34 +215,31 @@ internal fun DefaultMessageUnreadSeparatorContent(unreadSeparatorItemState: Unre
  */
 @Composable
 internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadDateSeparatorItemState) {
-    val backgroundGradient = Brush.verticalGradient(
-        listOf(
-            ChatTheme.colors.backgroundCoreSurface,
-            ChatTheme.colors.backgroundCoreApp,
-        ),
-    )
     val replyCount = threadSeparator.replyCount
 
     Box(
         modifier = Modifier
             .semantics(mergeDescendants = true) {}
             .fillMaxWidth()
-            .padding(vertical = StreamTokens.spacingXs)
-            .background(brush = backgroundGradient),
-        contentAlignment = Alignment.Center,
+            .padding(vertical = StreamTokens.spacingXs),
     ) {
         Text(
             modifier = Modifier
-                .padding(vertical = StreamTokens.spacing3xs)
+                .fillMaxWidth()
+                .background(ChatTheme.colors.backgroundCoreSurfaceSubtle)
+                .padding(horizontal = StreamTokens.spacingMd, vertical = StreamTokens.spacingXs)
                 .testTag("Stream_RepliesCount"),
-            text = LocalContext.current.resources.getQuantityString(
+            text = pluralStringResource(
                 R.plurals.stream_compose_message_list_thread_separator,
                 replyCount,
                 replyCount,
             ),
-            color = ChatTheme.colors.textSecondary,
-            style = ChatTheme.typography.bodyDefault,
+            color = ChatTheme.colors.chatTextSystem,
+            style = ChatTheme.typography.metadataEmphasis,
+            textAlign = TextAlign.Center,
         )
+        StreamHorizontalDivider(modifier = Modifier.align(Alignment.TopCenter))
+        StreamHorizontalDivider(modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
 
@@ -319,7 +316,6 @@ internal fun DefaultMessageTypingIndicatorContent(state: TypingItemState) {
             overlap = StreamTokens.spacingXs,
             users = state.typingUsers.take(MaxTypingUsersAvatars),
             avatarSize = AvatarSize.Medium,
-            showBorder = true,
             trailingContent = if (overflowCount > 0) {
                 { CountBadge(text = "+$overflowCount", size = CountBadgeSize.Medium) }
             } else {

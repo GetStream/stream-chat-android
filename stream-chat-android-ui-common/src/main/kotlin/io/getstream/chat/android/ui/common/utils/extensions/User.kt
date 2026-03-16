@@ -19,9 +19,7 @@ package io.getstream.chat.android.ui.common.utils.extensions
 import android.content.Context
 import android.text.format.DateUtils
 import androidx.annotation.StringRes
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.model.UserPresence
 import java.util.Date
 
 /**
@@ -72,22 +70,6 @@ public fun User.getLastSeenText(
         }
     } ?: ""
 }
-
-/**
- * Determines if the online indicator should be shown for the user based on the user presence configuration.
- *
- * @param userPresence The user presence configuration.
- * @param currentUser The current user.
- */
-@InternalStreamChatApi
-public fun User.shouldShowOnlineIndicator(
-    userPresence: UserPresence,
-    currentUser: User?,
-): Boolean =
-    when {
-        id == currentUser?.id -> userPresence.currentUser.showOnlineIndicator
-        else -> userPresence.otherUsers.showOnlineIndicator
-    }
 
 private fun Date.isInLastMinute(): Boolean = (Date().time - ONE_MINUTE_IN_MILLIS < time)
 

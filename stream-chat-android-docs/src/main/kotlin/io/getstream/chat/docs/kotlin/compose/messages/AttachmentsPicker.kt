@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicker
@@ -47,18 +48,19 @@ private object AttachmentsPickerUsageSnippet {
                         val isPickerVisible = attachmentsPickerViewModel.isPickerVisible
 
                         if (isPickerVisible) {
-                            AttachmentPicker( // Add the picker to your UI
+                            AttachmentPicker(
+                                // Add the picker to your UI
                                 attachmentsPickerViewModel = attachmentsPickerViewModel,
-                                actions = AttachmentPickerActions.pickerDefaults(
-                                    attachmentsPickerViewModel,
-                                ).copy(
-                                    onAttachmentsSelected = {
-                                        // Handle selected attachments
-                                    },
-                                    onDismiss = {
-                                        // Handle dismiss
-                                    },
-                                ),
+                                actions = remember(attachmentsPickerViewModel) {
+                                    AttachmentPickerActions.pickerDefaults(attachmentsPickerViewModel).copy(
+                                        onAttachmentsSelected = {
+                                            // Handle selected attachments
+                                        },
+                                        onDismiss = {
+                                            // Handle dismiss
+                                        },
+                                    )
+                                },
                             )
                         }
                     }
@@ -101,10 +103,12 @@ private object AttachmentsPickerHandlingActionsSnippet {
                         if (isPickerVisible) {
                             AttachmentPicker(
                                 attachmentsPickerViewModel = attachmentsPickerViewModel,
-                                actions = AttachmentPickerActions.defaultActions(
-                                    attachmentsPickerViewModel,
-                                    composerViewModel,
-                                ),
+                                actions = remember(attachmentsPickerViewModel) {
+                                    AttachmentPickerActions.defaultActions(
+                                        attachmentsPickerViewModel,
+                                        composerViewModel,
+                                    )
+                                },
                             )
                         }
                     }
@@ -143,16 +147,16 @@ private object AttachmentsPickerCustomizationSnippet {
                         if (isPickerVisible) {
                             AttachmentPicker(
                                 attachmentsPickerViewModel = attachmentsPickerViewModel,
-                                actions = AttachmentPickerActions.pickerDefaults(
-                                    attachmentsPickerViewModel,
-                                ).copy(
-                                    onAttachmentsSelected = { attachments ->
-                                        // Handle selected attachments
-                                    },
-                                    onDismiss = {
-                                        // Handle dismiss
-                                    },
-                                ),
+                                actions = remember(attachmentsPickerViewModel) {
+                                    AttachmentPickerActions.pickerDefaults(attachmentsPickerViewModel).copy(
+                                        onAttachmentsSelected = { attachments ->
+                                            // Handle selected attachments
+                                        },
+                                        onDismiss = {
+                                            // Handle dismiss
+                                        },
+                                    )
+                                },
                             )
                         }
                     }

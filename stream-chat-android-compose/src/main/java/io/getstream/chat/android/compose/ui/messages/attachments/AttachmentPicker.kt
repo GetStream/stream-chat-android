@@ -23,15 +23,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
-import io.getstream.chat.android.compose.state.messages.attachments.CameraPickerMode
-import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
-import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
-import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -70,7 +66,9 @@ public fun AttachmentPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
     modifier: Modifier = Modifier,
     messageMode: MessageMode = MessageMode.Normal,
-    actions: AttachmentPickerActions = AttachmentPickerActions.pickerDefaults(attachmentsPickerViewModel),
+    actions: AttachmentPickerActions = remember(attachmentsPickerViewModel) {
+        AttachmentPickerActions.pickerDefaults(attachmentsPickerViewModel)
+    },
 ) {
     BackHandler(onBack = actions.onDismiss)
 
@@ -130,17 +128,3 @@ public fun AttachmentPicker(
         }
     }
 }
-
-/**
- * A helper property to check if the current [AttachmentPickerMode] supports multiple selections.
- *
- * This will return:
- * - `true` or `false` for [FilePickerMode] and [GalleryPickerMode], based on their `allowMultipleSelection` property.
- * - `null` for other modes like [CameraPickerMode] or [PollPickerMode] that do not support this concept.
- */
-internal val AttachmentPickerMode.allowMultipleSelection: Boolean?
-    get() = when (this) {
-        is FilePickerMode -> allowMultipleSelection
-        is GalleryPickerMode -> allowMultipleSelection
-        else -> null
-    }

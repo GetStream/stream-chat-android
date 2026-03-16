@@ -56,7 +56,6 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMembe
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewEvent
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
-import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -147,10 +146,7 @@ internal fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
         ChatTheme.componentFactory.UserAvatar(
             modifier = Modifier.size(AvatarSize.ExtraLarge),
             user = user,
-            showIndicator = user.shouldShowOnlineIndicator(
-                userPresence = ChatTheme.userPresence,
-                currentUser = null,
-            ),
+            showIndicator = true,
             showBorder = false,
         )
         Column(

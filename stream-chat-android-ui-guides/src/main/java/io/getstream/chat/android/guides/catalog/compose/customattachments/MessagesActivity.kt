@@ -38,7 +38,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.material.datepicker.MaterialDatePicker
-import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
@@ -63,14 +62,8 @@ class MessagesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID))
 
-        val customFactories = listOf(dateAttachmentFactory)
-        val defaultFactories = StreamAttachmentFactories.defaults()
-
         setContent {
-            ChatTheme(
-                componentFactory = CustomChatComponentFactory,
-                attachmentFactories = customFactories + defaultFactories,
-            ) {
+            ChatTheme(componentFactory = CustomChatComponentFactory) {
                 CustomMessagesScreen(
                     channelId = channelId,
                     onBackPressed = { finish() },
@@ -130,11 +123,12 @@ class MessagesActivity : AppCompatActivity() {
                             val payload = SimpleDateFormat("MMMM dd, yyyy").format(Date(date))
                             val attachment = Attachment(
                                 type = "date",
+                                fallback = payload,
                                 extraData = mutableMapOf("payload" to payload),
                             )
 
                             // 3
-                            composerViewModel.addSelectedAttachments(listOf(attachment))
+                            composerViewModel.addAttachments(listOf(attachment))
                         },
                     )
                 },

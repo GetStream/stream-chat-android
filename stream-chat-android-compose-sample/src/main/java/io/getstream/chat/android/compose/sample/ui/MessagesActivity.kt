@@ -110,7 +110,7 @@ class MessagesActivity : ComponentActivity() {
                     floatingStyleEnabled = settings.isComposerFloatingStyleEnabled,
                 ),
                 translation = TranslationConfig(enabled = ChatApp.autoTranslationEnabled),
-                attachmentPicker = AttachmentPickerConfig(useSystemPicker = false),
+                attachmentPicker = AttachmentPickerConfig(useSystemPicker = settings.isSystemAttachmentPickerEnabled),
             ),
             allowUIAutomationTest = true,
             messageComposerTheme = messageComposerTheme,

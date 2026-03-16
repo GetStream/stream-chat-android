@@ -125,10 +125,10 @@ internal class MessageComposerViewModelTest {
                 .givenSendMessage()
                 .get()
 
-            viewModel.addSelectedAttachments(
+            viewModel.addAttachments(
                 listOf(
-                    Attachment(imageUrl = "url1"),
-                    Attachment(imageUrl = "url2"),
+                    Attachment(imageUrl = "url1", extraData = mapOf("io.getstream.sourceUri" to "uri:1")),
+                    Attachment(imageUrl = "url2", extraData = mapOf("io.getstream.sourceUri" to "uri:2")),
                 ),
             )
             val state = viewModel.messageComposerState.value
@@ -160,14 +160,14 @@ internal class MessageComposerViewModelTest {
                 .givenChannelState()
                 .get()
 
-            viewModel.addSelectedAttachments(
+            viewModel.addAttachments(
                 listOf(
-                    Attachment(imageUrl = "url1"),
-                    Attachment(imageUrl = "url2"),
+                    Attachment(imageUrl = "url1", extraData = mapOf("io.getstream.sourceUri" to "uri:1")),
+                    Attachment(imageUrl = "url2", extraData = mapOf("io.getstream.sourceUri" to "uri:2")),
                 ),
             )
-            viewModel.removeSelectedAttachment(
-                Attachment(imageUrl = "url1"),
+            viewModel.removeAttachment(
+                Attachment(imageUrl = "url1", extraData = mapOf("io.getstream.sourceUri" to "uri:1")),
             )
 
             viewModel.messageComposerState.value.attachments.size `should be equal to` 1

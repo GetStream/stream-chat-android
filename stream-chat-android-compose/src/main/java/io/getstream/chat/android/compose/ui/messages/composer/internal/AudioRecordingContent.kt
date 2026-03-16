@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -63,9 +64,7 @@ import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlide
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.ComponentPadding
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import kotlin.math.abs
@@ -81,16 +80,19 @@ internal fun AudioRecordingContent(
             state = recordingState,
             modifier = modifier,
         )
+
         is RecordingState.Locked -> ChatTheme.componentFactory.MessageComposerAudioRecordingLockedContent(
             state = recordingState,
             recordingActions = recordingActions,
             modifier = modifier,
         )
+
         is RecordingState.Overview -> ChatTheme.componentFactory.MessageComposerAudioRecordingOverviewContent(
             state = recordingState,
             recordingActions = recordingActions,
             modifier = modifier,
         )
+
         is RecordingState.Complete,
         is RecordingState.Idle,
         -> Unit
@@ -184,7 +186,7 @@ internal fun MessageComposerAudioRecordingLockedContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .semantics { contentDescription = progressDescription }
-                    .padding(ComponentPadding(start = StreamTokens.spacingMd, top = 8.dp, bottom = 8.dp)),
+                    .padding(start = StreamTokens.spacingMd, top = 8.dp, bottom = 8.dp),
                 waveformData = state.waveform,
                 progress = 1f,
                 isPlaying = false,
@@ -246,7 +248,7 @@ internal fun MessageComposerAudioRecordingOverviewContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .semantics { contentDescription = progressDescription }
-                    .padding(ComponentPadding(start = StreamTokens.spacingMd, top = 8.dp, bottom = 8.dp)),
+                    .padding(start = StreamTokens.spacingMd, top = 8.dp, bottom = 8.dp),
                 waveformData = state.waveform,
                 progress = currentProgress,
                 isPlaying = state.isPlaying,
@@ -375,7 +377,7 @@ private val ControlIconSize = 20.dp
 private val RecordingBarModifier = Modifier
     .fillMaxWidth()
     .height(48.dp)
-    .padding(ComponentPadding(end = StreamTokens.spacingMd))
+    .padding(end = StreamTokens.spacingMd)
 
 private const val HoldContentEnterOffset = 0.3f
 private const val HoldContentEnterDurationMs = 200

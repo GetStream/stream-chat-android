@@ -37,6 +37,8 @@
     <string name="custom_login_flag_adaptive_layout_description">Adjust layout based on screen sizes</string>
     <string name="custom_login_flag_composer_floating_style_label">Message composer floating style</string>
     <string name="custom_login_flag_composer_floating_style_description">Message list scrolls behind some composer elements</string>
+    <string name="custom_login_flag_system_attachment_picker_label">System attachment picker</string>
+    <string name="custom_login_flag_system_attachment_picker_description">Use the system\'s native file/media picker</string>
 
     <!-- Pinned Messages -->
     <string name="pinned_messages_title">Pinned Messages</string>

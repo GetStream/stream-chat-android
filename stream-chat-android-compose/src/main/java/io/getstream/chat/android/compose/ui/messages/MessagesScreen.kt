@@ -55,7 +55,6 @@ import io.getstream.chat.android.compose.ui.components.moderatedmessage.Moderate
 import io.getstream.chat.android.compose.ui.components.poll.PollAnswersDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollMoreOptionsDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollViewResultDialog
-import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerMenu
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageBounds
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
@@ -72,6 +71,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Flag
@@ -350,8 +350,10 @@ internal fun DefaultBottomBarContent(
             isAttachmentPickerVisible = attachmentsPickerViewModel.isPickerVisible,
             onAttachmentsClick = attachmentsPickerViewModel::togglePickerVisibility,
             onAttachmentRemoved = { attachment ->
-                composerViewModel.removeSelectedAttachment(attachment)
-                attachmentsPickerViewModel.deselectAttachment(attachment)
+                attachment.extraData[EXTRA_SOURCE_URI]
+                    ?.let { it as? String }
+                    ?.let(attachmentsPickerViewModel::removeFromSelection)
+                composerViewModel.removeAttachment(attachment)
             },
             onCancelAction = {
                 listViewModel.dismissAllMessageActions()
@@ -370,7 +372,7 @@ internal fun DefaultBottomBarContent(
             },
         )
 
-        AttachmentPickerMenu(
+        ChatTheme.componentFactory.AttachmentPickerMenu(
             attachmentsPickerViewModel = attachmentsPickerViewModel,
             composerViewModel = composerViewModel,
         )
