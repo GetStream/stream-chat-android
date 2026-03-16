@@ -140,8 +140,8 @@ class AttachmentsTests : StreamTestCase() {
         step("GIVEN user opens the channel") {
             userRobot.login().openChannel()
         }
-        step("WHEN user sends a file") {
-            userRobot.attachFile(type = AttachmentType.IMAGE)
+        step("WHEN user attaches a file") {
+            userRobot.attachFile(type = AttachmentType.FILE)
         }
         step("AND user sends the file") {
             userRobot.tapOnSendButton()
@@ -151,7 +151,7 @@ class AttachmentsTests : StreamTestCase() {
         }
         step("THEN user can see deleted message") {
             userRobot
-                .assertImage(isDisplayed = false)
+                .assertFile(isDisplayed = false)
                 .assertDeletedMessage()
         }
     }
