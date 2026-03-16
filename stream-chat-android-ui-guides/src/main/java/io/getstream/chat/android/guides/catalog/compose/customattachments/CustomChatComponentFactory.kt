@@ -36,10 +36,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentsParams
 import io.getstream.chat.android.guides.R
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -52,6 +52,30 @@ object CustomChatComponentFactory : ChatComponentFactory {
     override fun CustomAttachmentContent(state: AttachmentState, modifier: Modifier) {
         if (state.message.attachments.any { it.type == "date" }) {
             DateAttachmentContent(state, modifier)
+        }
+    }
+
+    @Composable
+    override fun MessageComposerAttachments(params: MessageComposerAttachmentsParams) {
+        val dateAttachments = params.attachments.filter { it.type == "date" }
+        val otherAttachments = params.attachments.filter { it.type != "date" }
+
+        Column(modifier = params.modifier) {
+            if (dateAttachments.isNotEmpty()) {
+                DateAttachmentPreviewContent(
+                    modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                    attachments = dateAttachments,
+                    onAttachmentRemoved = params.onAttachmentRemoved,
+                )
+            }
+            if (otherAttachments.isNotEmpty()) {
+                super.MessageComposerAttachments(
+                    params = params.copy(
+                        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                        attachments = otherAttachments,
+                    ),
+                )
+            }
         }
     }
 
@@ -77,23 +101,6 @@ object CustomChatComponentFactory : ChatComponentFactory {
         )
     }
 }
-
-/**
- * A custom [AttachmentFactory] that adds support for date attachments.
- */
-val dateAttachmentFactory: AttachmentFactory = AttachmentFactory(
-    canHandle = { attachments -> attachments.any { it.type == "date" } },
-    previewContent = { modifier, attachments, onAttachmentRemoved ->
-        DateAttachmentPreviewContent(
-            modifier = modifier,
-            attachments = attachments,
-            onAttachmentRemoved = onAttachmentRemoved,
-        )
-    },
-    textFormatter = { attachment ->
-        attachment.extraData["payload"].toString()
-    },
-)
 
 /**
  * Represents the UI shown in the message input preview before sending.

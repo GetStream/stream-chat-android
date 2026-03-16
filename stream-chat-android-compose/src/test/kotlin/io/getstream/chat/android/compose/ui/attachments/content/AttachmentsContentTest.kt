@@ -33,13 +33,6 @@ internal class AttachmentsContentTest : PaparazziComposeTest {
     )
 
     @Test
-    fun `file attachment preview content`() {
-        snapshotWithDarkModeRow {
-            FileAttachmentPreviewContent()
-        }
-    }
-
-    @Test
     fun `file attachment content`() {
         snapshotWithDarkMode {
             Column {
@@ -60,20 +53,6 @@ internal class AttachmentsContentTest : PaparazziComposeTest {
     fun `compact link attachment content`() {
         snapshotWithDarkMode {
             LinkAttachmentContent(howMany = 2)
-        }
-    }
-
-    @Test
-    fun `image attachment preview content`() {
-        snapshotWithDarkModeRow {
-            ImageAttachmentPreviewContent()
-        }
-    }
-
-    @Test
-    fun `media attachment preview items`() {
-        snapshotWithDarkModeRow {
-            MediaAttachmentPreviewItems()
         }
     }
 

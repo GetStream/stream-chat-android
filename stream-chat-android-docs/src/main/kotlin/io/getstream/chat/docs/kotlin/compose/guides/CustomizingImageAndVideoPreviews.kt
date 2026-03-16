@@ -1,7 +1,6 @@
 package io.getstream.chat.docs.kotlin.compose.guides
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -19,13 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.LinkAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.MediaAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.UnsupportedAttachmentFactory
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentMediaItemParams
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.docs.R
@@ -43,60 +38,15 @@ private object CustomizingImageAndVideoPreviewsSnippet {
             )
         }
 
-        val customMediaAttachmentFactory = MediaAttachmentFactory(
-            // Increase the maximum number of previewed items to 5
-            maximumNumberOfPreviewedItems = 5,
-            // Render a custom item above attachments inside the message list
-            itemOverlayContent = { attachmentType ->
-                // Apply it only to video attachments
-                if (attachmentType == AttachmentType.VIDEO) {
-                    CustomPlayButton(
-                        modifier = Modifier
-                            .widthIn(10.dp)
-                            .padding(2.dp)
-                            .background(
-                                color = Color(red = 255, blue = 255, green = 255, alpha = 220),
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .fillMaxWidth(0.3f)
-                            .aspectRatio(1.20f),
-                    )
-                }
-            },
-            // Render a custom item above attachments inside the message composer
-            previewItemOverlayContent = { attachmentType ->
-                // Apply it only to video attachments
-                if (attachmentType == AttachmentType.VIDEO) {
-                    CustomPlayButton(
-                        modifier = Modifier
-                            .padding(2.dp)
-                            .background(
-                                color = Color(red = 255, blue = 255, green = 255, alpha = 220),
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .fillMaxWidth(0.35f)
-                            .aspectRatio(1.20f),
-                    )
-                }
-            })
-
-        val attachmentFactories = listOf(
-            LinkAttachmentFactory(linkDescriptionMaxLines = 5),
-            GiphyAttachmentFactory(),
-            customMediaAttachmentFactory,
-            FileAttachmentFactory(),
-            UnsupportedAttachmentFactory
-        )
-
-        override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-            super.onCreate(savedInstanceState, persistentState)
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
 
             setContent {
-                // Replace the default attachment factories
-                ChatTheme(attachmentFactories = attachmentFactories) {
+                // Override the default component factory to customize attachment previews
+                ChatTheme(componentFactory = CustomMediaComponentFactory) {
                     MessagesScreen(
                         viewModelFactory = messageListViewModelFactory,
-                        onBackPressed = { finish() }
+                        onBackPressed = { finish() },
                     )
                 }
             }
@@ -105,12 +55,45 @@ private object CustomizingImageAndVideoPreviewsSnippet {
         @Composable
         private fun CustomPlayButton(modifier: Modifier) {
             Box(modifier = modifier, contentAlignment = Alignment.Center) {
-                Icon(modifier = Modifier
-                    .padding(2.dp)
-                    .fillMaxSize(0.8f),
+                Icon(
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .fillMaxSize(0.8f),
                     painter = painterResource(id = R.drawable.stream_compose_ic_play),
                     tint = Color.White,
-                    contentDescription = null)
+                    contentDescription = null,
+                )
+            }
+        }
+
+        /**
+         * A [ChatComponentFactory] that renders a custom play button overlay above video
+         * attachments in the message composer preview.
+         *
+         * To customize the overlay in the message composer, override MessageComposerAttachmentMediaItemOverlay.
+         */
+        val CustomMediaComponentFactory = object : ChatComponentFactory {
+
+            @Composable
+            override fun MessageComposerAttachmentMediaItem(
+                params: MessageComposerAttachmentMediaItemParams,
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    super.MessageComposerAttachmentMediaItem(params)
+                    if (params.attachment.type == AttachmentType.VIDEO) {
+                        // Render a custom play button above video items in the composer
+                        CustomPlayButton(
+                            modifier = Modifier
+                                .padding(2.dp)
+                                .background(
+                                    color = Color(red = 255, blue = 255, green = 255, alpha = 220),
+                                    shape = RoundedCornerShape(8.dp),
+                                )
+                                .fillMaxWidth(0.35f)
+                                .aspectRatio(1.20f),
+                        )
+                    }
+                }
             }
         }
     }
