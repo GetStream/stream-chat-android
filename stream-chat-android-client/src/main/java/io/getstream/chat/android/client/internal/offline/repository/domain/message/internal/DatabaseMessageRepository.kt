@@ -21,10 +21,11 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.internal.offline.extensions.launchWithMutex
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
+import io.getstream.chat.android.client.utils.message.LocalOnlyMessageTypes
+import io.getstream.chat.android.client.utils.message.LocalOnlySyncStatuses
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
@@ -264,18 +265,10 @@ internal class DatabaseMessageRepository(
     }
 
     override suspend fun selectLocalOnlyMessagesForChannel(cid: String): List<Message> =
-        messageDao.selectLocalOnlyForChannel(
+        messageDao.selectBySyncStatusOrTypeForChannel(
             cid = cid,
-            syncStatuses = listOf(
-                SyncStatus.SYNC_NEEDED.status, // -1
-                SyncStatus.IN_PROGRESS.status, // 3
-                SyncStatus.AWAITING_ATTACHMENTS.status, // 4
-                SyncStatus.FAILED_PERMANENTLY.status, // 2
-            ),
-            types = listOf(
-                MessageType.EPHEMERAL, // "ephemeral"
-                MessageType.ERROR, // "error"
-            ),
+            syncStatuses = LocalOnlySyncStatuses.map(SyncStatus::status),
+            types = LocalOnlyMessageTypes.toList(),
         ).map { entity -> entity.toMessage() }
 
     private suspend fun selectMessagesEntitiesForChannel(

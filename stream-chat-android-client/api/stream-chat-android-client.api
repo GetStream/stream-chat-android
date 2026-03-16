@@ -3188,13 +3188,13 @@ public final class io/getstream/chat/android/client/internal/offline/repository/
 	public fun select (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectByCidAndUserId (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectBySyncStatus (Lio/getstream/chat/android/models/SyncStatus;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectBySyncStatusOrTypeForChannel (Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectByUserId (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectChunked (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectDraftMessageByCid (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectDraftMessageByParentId (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectDraftMessages (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectIdsBySyncStatus (Lio/getstream/chat/android/models/SyncStatus;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun selectLocalOnlyForChannel (Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectMessagesWithPoll (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectWaitForAttachments (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun updateMessageInnerEntity (Lio/getstream/chat/android/client/internal/offline/repository/domain/message/internal/MessageInnerEntity;)V

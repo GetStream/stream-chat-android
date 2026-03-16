@@ -100,6 +100,7 @@ internal class ChannelLogicImpl(
             isNotificationUpdate = query.isNotificationUpdate,
             isChannelsStateUpdate = true,
         )
+        // Set the currently known oldest message until online data is retrieved
         state.paginationManager.setOldestMessage(channel.messages.lastOrNull())
         state.setLocalOnlyMessages(localOnlyMessages)
     }
@@ -111,7 +112,7 @@ internal class ChannelLogicImpl(
     override fun onQueryChannelResult(query: QueryChannelRequest, result: Result<Channel>) {
         val limit = query.messagesLimit()
         val isNotificationUpdate = query.isNotificationUpdate
-        // Update pagination/recovery state only if it's not a notification update
+        // Update pagination state only if it's not a notification update and the call was made for fetching messages
         // (from LoadNotificationDataWorker) and a limit is set (otherwise we are not loading messages)
         if (!isNotificationUpdate && limit != 0) {
             state.paginationManager.end(query, result)

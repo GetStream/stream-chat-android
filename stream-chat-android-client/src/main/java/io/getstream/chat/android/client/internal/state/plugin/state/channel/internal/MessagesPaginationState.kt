@@ -78,8 +78,7 @@ internal data class MessagesPaginationState(
      * Returns true if [Message] falls within the currently loaded pagination window.
      *
      * The floor is [oldestMessageAt] (null = no floor). The ceiling is [newestMessageAt] (null = at
-     * the latest page, no ceiling). Both properties are null-when-unbounded, so no additional
-     * flag check is required.
+     * the latest page, no ceiling).
      */
     fun isInWindow(message: Message): Boolean {
         val date = message.getCreatedAtOrDefault(NEVER)

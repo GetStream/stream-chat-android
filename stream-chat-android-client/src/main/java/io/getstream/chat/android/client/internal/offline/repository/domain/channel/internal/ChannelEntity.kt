@@ -87,7 +87,6 @@ internal data class ChannelEntity(
     val membership: MemberEntity?,
     val activeLiveLocations: List<LocationEntity>,
     val messageCount: Int?,
-    val oldestLoadedDate: Date? = null,
 ) {
     /**
      * The channel id in the format messaging:123.

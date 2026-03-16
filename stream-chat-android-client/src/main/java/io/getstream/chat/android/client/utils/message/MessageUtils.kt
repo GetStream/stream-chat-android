@@ -240,10 +240,16 @@ internal fun fallbackMessageId(): String = UUID.randomUUID().toString().lowercas
  * DOES NOT include COMPLETED messages — those are already in the server response.
  */
 internal fun Message.isLocalOnly(): Boolean =
-    syncStatus in setOf(
-        SyncStatus.SYNC_NEEDED, // new message or pending edit/delete
-        SyncStatus.IN_PROGRESS, // send in flight
-        SyncStatus.AWAITING_ATTACHMENTS, // attachment upload pending
-        SyncStatus.FAILED_PERMANENTLY, // permanent failure — user must see to retry
-    ) || type == MessageType.EPHEMERAL || // Giphy preview etc. — not re-delivered by server
-        type == MessageType.ERROR // error type — not re-delivered by server
+    syncStatus in LocalOnlySyncStatuses || type in LocalOnlyMessageTypes
+
+internal val LocalOnlySyncStatuses = setOf(
+    SyncStatus.SYNC_NEEDED, // new message or pending edit/delete
+    SyncStatus.IN_PROGRESS, // send in flight
+    SyncStatus.AWAITING_ATTACHMENTS, // attachment upload pending
+    SyncStatus.FAILED_PERMANENTLY, // permanent failure — user must see to retry
+)
+
+internal val LocalOnlyMessageTypes = setOf(
+    MessageType.EPHEMERAL, // giphy preview etc. — not re-delivered by server
+    MessageType.ERROR, // error type — not re-delivered by server
+)
