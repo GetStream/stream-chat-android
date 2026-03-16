@@ -38,7 +38,6 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 
 /**
  * The basic search result item that show the message and the channel name in a list and expose click actions.
@@ -129,10 +128,7 @@ internal fun DefaultSearchResultItemLeadingContent(
                         bottom = StreamTokens.spacingMd,
                     )
                     .size(48.dp),
-                showIndicator = user.shouldShowOnlineIndicator(
-                    userPresence = ChatTheme.userPresence,
-                    currentUser = currentUser,
-                ),
+                showIndicator = true,
                 showBorder = false,
             )
         }

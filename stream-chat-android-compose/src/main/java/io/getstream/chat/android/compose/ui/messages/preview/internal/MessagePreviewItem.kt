@@ -41,7 +41,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 
 /**
  * Composable which represents a preview of a given message. It displays info about the channel in which it was typed,
@@ -114,10 +113,7 @@ internal fun DefaultMessagePreviewItemLeadingContent(message: Message, currentUs
                 bottom = StreamTokens.spacingSm,
             )
             .size(40.dp),
-        showIndicator = message.user.shouldShowOnlineIndicator(
-            userPresence = ChatTheme.userPresence,
-            currentUser = currentUser,
-        ),
+        showIndicator = true,
         showBorder = false,
     )
 }
