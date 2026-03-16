@@ -16,64 +16,103 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.ui.components.attachments.files.FileTypeIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
+import io.getstream.chat.android.compose.ui.util.applyIf
+import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.models.Message
 
 /**
  * Represents fallback content for unsupported attachments.
  *
+ * @param state The state of the attachment to show.
  * @param modifier Modifier for styling.
  */
 @Composable
-public fun UnsupportedAttachmentContent(modifier: Modifier = Modifier) {
-    Surface(
-        modifier = modifier
-            .padding(2.dp)
-            .fillMaxWidth(),
-        color = ChatTheme.colors.backgroundCoreApp,
-        shape = RoundedCornerShape(StreamTokens.radiusLg),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Image(
-                modifier = Modifier.size(height = 40.dp, width = 35.dp),
-                painter = painterResource(id = R.drawable.stream_compose_ic_file_generic),
-                contentDescription = null,
-                contentScale = ContentScale.Fit,
-            )
+public fun UnsupportedAttachmentContent(
+    state: AttachmentState,
+    modifier: Modifier = Modifier,
+) {
+    val shouldBeFullSize = state.message.shouldBeDisplayedAsFullSizeAttachment()
 
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 8.dp),
-                text = stringResource(id = R.string.stream_compose_message_list_unsupported_attachment),
-                style = ChatTheme.typography.bodyEmphasis,
-                overflow = TextOverflow.Ellipsis,
-                color = ChatTheme.colors.textPrimary,
-            )
+    Column(modifier = modifier) {
+        for (attachment in state.message.attachments) {
+            if (attachment.type !in supportedAttachmentTypes) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .applyIf(!shouldBeFullSize) {
+                            val color = MessageStyling.attachmentBackgroundColor(state.isMine)
+                            padding(MessageStyling.messageSectionPadding)
+                                .background(color, RoundedCornerShape(StreamTokens.radiusLg))
+                        }
+                        .padding(StreamTokens.spacingSm),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    FileTypeIcon(
+                        data = MimeTypeIconProvider.getIcon(attachment.mimeType),
+                        modifier = Modifier.size(height = 40.dp, width = 35.dp),
+                    )
+
+                    Text(
+                        text = stringResource(id = R.string.stream_compose_message_list_unsupported_attachment),
+                        style = ChatTheme.typography.captionEmphasis,
+                        color = MessageStyling.textColor(outgoing = state.isMine),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(horizontal = StreamTokens.spacingSm),
+                    )
+                }
+            }
         }
+    }
+}
+
+private val supportedAttachmentTypes = setOf(
+    AttachmentType.IMAGE,
+    AttachmentType.GIPHY,
+    AttachmentType.VIDEO,
+    AttachmentType.AUDIO,
+    AttachmentType.FILE,
+    AttachmentType.AUDIO_RECORDING,
+)
+
+@Preview(showBackground = true)
+@Composable
+private fun OwnUnsupportedAttachmentContentPreview() {
+    ChatTheme {
+        UnsupportedAttachmentContent(
+            state = AttachmentState(
+                message = Message(
+                    attachments = mutableListOf(
+                        Attachment(type = "unknown"),
+                        Attachment(type = "custom_type"),
+                    ),
+                ),
+                isMine = true,
+            ),
+        )
     }
 }
