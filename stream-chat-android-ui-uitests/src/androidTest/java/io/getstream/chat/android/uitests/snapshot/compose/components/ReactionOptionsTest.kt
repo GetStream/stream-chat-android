@@ -16,7 +16,8 @@
 
 package io.getstream.chat.android.uitests.snapshot.compose.components
 
-import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
+import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPickerContent
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import org.junit.Test
 
@@ -24,10 +25,9 @@ class ReactionOptionsTest : ComposeScreenshotTest() {
 
     @Test
     fun reactionOptions() = runScreenshotTest {
-        ReactionOptions(
-            ownReactions = emptyList(),
-            onReactionOptionSelected = {},
-            onShowMoreReactionsSelected = {},
+        ReactionsPickerContent(
+            message = Message(),
+            onMessageAction = {},
         )
     }
 }

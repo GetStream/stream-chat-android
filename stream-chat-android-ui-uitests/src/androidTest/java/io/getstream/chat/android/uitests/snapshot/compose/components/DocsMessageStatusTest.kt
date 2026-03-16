@@ -14,36 +14,29 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.snapshot.compose.messages
+package io.getstream.chat.android.uitests.snapshot.compose.components
 
 import io.getstream.chat.android.compose.ui.messages.list.MessageContainer
+import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.ReactionSortingByCount
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
 import org.junit.Test
 
-class MessageItemTest : ComposeScreenshotTest() {
+class DocsMessageStatusTest : ComposeScreenshotTest() {
+
+    private fun statusMessage(text: String = "Hey there!") = TestData.message1().copy(
+        text = text,
+        user = TestData.alex(),
+    )
 
     @Test
-    fun messageItemForTheirMessage() = runScreenshotTest {
+    fun statusPending() = runScreenshotTest {
         MessageContainer(
             messageItem = MessageItemState(
-                message = TestData.message1(),
-                isMine = false,
-                showMessageFooter = true,
-                ownCapabilities = emptySet(),
-            ),
-            reactionSorting = ReactionSortingByCount,
-            onLongItemClick = {},
-        )
-    }
-
-    @Test
-    fun messageItemForMineMessage() = runScreenshotTest {
-        MessageContainer(
-            messageItem = MessageItemState(
-                message = TestData.message1(),
+                message = statusMessage().copy(syncStatus = SyncStatus.IN_PROGRESS),
                 isMine = true,
                 showMessageFooter = true,
                 ownCapabilities = emptySet(),
@@ -54,10 +47,42 @@ class MessageItemTest : ComposeScreenshotTest() {
     }
 
     @Test
-    fun messageItemForReadMessage() = runScreenshotTest {
+    fun statusSent() = runScreenshotTest {
         MessageContainer(
             messageItem = MessageItemState(
-                message = TestData.message1(),
+                message = statusMessage().copy(syncStatus = SyncStatus.COMPLETED),
+                isMine = true,
+                isMessageRead = false,
+                isMessageDelivered = false,
+                showMessageFooter = true,
+                ownCapabilities = emptySet(),
+            ),
+            reactionSorting = ReactionSortingByCount,
+            onLongItemClick = {},
+        )
+    }
+
+    @Test
+    fun statusDelivered() = runScreenshotTest {
+        MessageContainer(
+            messageItem = MessageItemState(
+                message = statusMessage().copy(syncStatus = SyncStatus.COMPLETED),
+                isMine = true,
+                isMessageRead = false,
+                isMessageDelivered = true,
+                showMessageFooter = true,
+                ownCapabilities = emptySet(),
+            ),
+            reactionSorting = ReactionSortingByCount,
+            onLongItemClick = {},
+        )
+    }
+
+    @Test
+    fun statusRead() = runScreenshotTest {
+        MessageContainer(
+            messageItem = MessageItemState(
+                message = statusMessage().copy(syncStatus = SyncStatus.COMPLETED),
                 isMine = true,
                 isMessageRead = true,
                 showMessageFooter = true,
@@ -69,26 +94,29 @@ class MessageItemTest : ComposeScreenshotTest() {
     }
 
     @Test
-    fun messageItemForUserMentions() = runScreenshotTest {
+    fun statusReadGroup() = runScreenshotTest {
         MessageContainer(
             messageItem = MessageItemState(
-                message = TestData.message5(),
+                message = statusMessage().copy(syncStatus = SyncStatus.COMPLETED),
                 isMine = true,
+                isMessageRead = true,
                 showMessageFooter = true,
-                ownCapabilities = emptySet(),
-            ),
-            reactionSorting = ReactionSortingByCount,
-            onLongItemClick = {},
-        )
-    }
-
-    @Test
-    fun messageItemForUserMentionsWithoutUsername() = runScreenshotTest {
-        MessageContainer(
-            messageItem = MessageItemState(
-                message = TestData.message6(),
-                isMine = true,
-                showMessageFooter = true,
+                messageReadBy = listOf(
+                    ChannelUserRead(
+                        user = TestData.elena(),
+                        lastReceivedEventDate = TestData.date1(),
+                        unreadMessages = 0,
+                        lastRead = TestData.date1(),
+                        lastReadMessageId = "message1",
+                    ),
+                    ChannelUserRead(
+                        user = TestData.sarah(),
+                        lastReceivedEventDate = TestData.date1(),
+                        unreadMessages = 0,
+                        lastRead = TestData.date1(),
+                        lastReadMessageId = "message1",
+                    ),
+                ),
                 ownCapabilities = emptySet(),
             ),
             reactionSorting = ReactionSortingByCount,

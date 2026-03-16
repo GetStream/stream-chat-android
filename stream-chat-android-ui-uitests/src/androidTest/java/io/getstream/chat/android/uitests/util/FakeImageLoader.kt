@@ -49,6 +49,18 @@ class FakeImageLoader(
         AVATAR_ANAKIN to R.drawable.avatar_anakin,
         AVATAR_CHEWBACCA to R.drawable.avatar_chewbacca,
         AVATAR_HAN to R.drawable.avatar_han,
+        AVATAR_ALEX to R.drawable.avatar_alex,
+        AVATAR_SARAH to R.drawable.avatar_sarah,
+        AVATAR_ELENA to R.drawable.avatar_elena,
+        AVATAR_MARCO to R.drawable.avatar_marco,
+        AVATAR_PRIYA to R.drawable.avatar_priya,
+        AVATAR_JAMES to R.drawable.avatar_james,
+        AVATAR_AISHA to R.drawable.avatar_aisha,
+        AVATAR_LUCAS to R.drawable.avatar_lucas,
+        AVATAR_MAYA to R.drawable.avatar_maya,
+        AVATAR_OMAR to R.drawable.avatar_omar,
+        AVATAR_DAVID to R.drawable.avatar_david,
+        AVATAR_NINA to R.drawable.avatar_nina,
     ),
 ) : ImageLoader {
 
@@ -113,5 +125,17 @@ class FakeImageLoader(
         const val AVATAR_ANAKIN: String = "https://example.com/anakin.jpeg"
         const val AVATAR_CHEWBACCA: String = "https://example.com/chewbacca.jpeg"
         const val AVATAR_HAN: String = "https://example.com/belal.jpeg"
+        const val AVATAR_ALEX: String = "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&h=300&fit=crop&crop=top"
+        const val AVATAR_SARAH: String = "https://images.unsplash.com/photo-1548142813-c348350df52b?w=200&h=200&fit=crop&crop=face"
+        const val AVATAR_ELENA: String = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop&crop=top"
+        const val AVATAR_MARCO: String = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=top"
+        const val AVATAR_PRIYA: String = "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&h=200&fit=crop&crop=face"
+        const val AVATAR_JAMES: String = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face"
+        const val AVATAR_AISHA: String = "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=top"
+        const val AVATAR_LUCAS: String = "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&h=300&fit=crop&crop=top"
+        const val AVATAR_MAYA: String = "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=300&h=300&fit=crop&crop=top"
+        const val AVATAR_OMAR: String = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop&crop=top"
+        const val AVATAR_DAVID: String = "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=300&h=300&fit=crop&crop=top"
+        const val AVATAR_NINA: String = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face"
     }
 }

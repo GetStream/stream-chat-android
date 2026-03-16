@@ -67,6 +67,75 @@ object TestData {
         image = FakeImageLoader.AVATAR_LEIA,
     )
 
+    // --- New users (matching sample app PredefinedUserCredentials) ---
+
+    fun alex(): User = User().copy(
+        id = "alex",
+        name = "Alex Morgan",
+        image = FakeImageLoader.AVATAR_ALEX,
+        online = true,
+    )
+
+    fun sarah(): User = User().copy(
+        id = "sarah",
+        name = "Sarah Chen",
+        image = FakeImageLoader.AVATAR_SARAH,
+    )
+
+    fun elena(): User = User().copy(
+        id = "elena",
+        name = "Elena Rodriguez",
+        image = FakeImageLoader.AVATAR_ELENA,
+    )
+
+    fun marco(): User = User().copy(
+        id = "marco",
+        name = "Marco Silva",
+        image = FakeImageLoader.AVATAR_MARCO,
+    )
+
+    fun priya(): User = User().copy(
+        id = "priya",
+        name = "Priya Patel",
+        image = FakeImageLoader.AVATAR_PRIYA,
+    )
+
+    fun james(): User = User().copy(
+        id = "james",
+        name = "James Wilson",
+        image = FakeImageLoader.AVATAR_JAMES,
+    )
+
+    fun memberAlex() = Member(
+        user = alex(),
+        isInvited = false,
+    )
+
+    fun memberSarah() = Member(
+        user = sarah(),
+        isInvited = false,
+    )
+
+    fun memberElena() = Member(
+        user = elena(),
+        isInvited = false,
+    )
+
+    fun memberMarco() = Member(
+        user = marco(),
+        isInvited = false,
+    )
+
+    fun memberPriya() = Member(
+        user = priya(),
+        isInvited = false,
+    )
+
+    fun memberJames() = Member(
+        user = james(),
+        isInvited = false,
+    )
+
     fun member1() = Member(
         user = user1(),
         isInvited = false,
