@@ -70,7 +70,6 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewE
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
-import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 import kotlinx.coroutines.flow.collectLatest
 import java.util.Date
 
@@ -425,10 +424,7 @@ internal fun GroupChannelInfoMemberItem(
         ChatTheme.componentFactory.UserAvatar(
             modifier = Modifier.size(AvatarSize.Medium),
             user = user,
-            showIndicator = user.shouldShowOnlineIndicator(
-                userPresence = ChatTheme.userPresence,
-                currentUser = currentUser,
-            ),
+            showIndicator = true,
             showBorder = false,
         )
         Column(modifier = Modifier.weight(1f)) {
@@ -462,6 +458,7 @@ internal fun GroupChannelInfoMemberItem(
                 "channel_moderator" -> stringResource(
                     id = R.string.stream_ui_channel_info_member_moderator,
                 )
+
                 "channel_member" -> ""
                 else -> role.orEmpty()
             }

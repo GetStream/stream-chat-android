@@ -30,7 +30,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewUserData
-import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 
 /**
  * The UI component that shows a user avatar and user name, as a member of a channel.
@@ -54,10 +53,7 @@ internal fun ChannelMembersItem(
         ChatTheme.componentFactory.UserAvatar(
             modifier = Modifier.size(64.dp),
             user = member.user,
-            showIndicator = member.user.shouldShowOnlineIndicator(
-                userPresence = ChatTheme.userPresence,
-                currentUser = currentUser,
-            ),
+            showIndicator = true,
             showBorder = false,
         )
 
