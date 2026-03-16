@@ -63,7 +63,6 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewE
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
-import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 import kotlinx.coroutines.flow.collectLatest
 import java.util.Date
 
@@ -249,10 +248,7 @@ internal fun DirectChannelInfoAvatarContainer(user: User) {
         ChatTheme.componentFactory.UserAvatar(
             modifier = Modifier.size(96.dp),
             user = user,
-            showIndicator = user.shouldShowOnlineIndicator(
-                userPresence = ChatTheme.userPresence,
-                currentUser = null,
-            ),
+            showIndicator = true,
             showBorder = false,
         )
         Text(

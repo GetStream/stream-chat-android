@@ -52,7 +52,6 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewThreadData
-import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 
 /**
  * The basic Thread item, showing information about the thread title, parent message, latest reply
@@ -100,10 +99,7 @@ public fun ThreadItem(
         ChatTheme.componentFactory.UserAvatar(
             modifier = Modifier.size(AvatarSize.ExtraLarge),
             user = thread.parentMessage.user,
-            showIndicator = thread.parentMessage.user.shouldShowOnlineIndicator(
-                userPresence = ChatTheme.userPresence,
-                currentUser = currentUser,
-            ),
+            showIndicator = true,
             showBorder = false,
         )
         ThreadItemContentContainer(

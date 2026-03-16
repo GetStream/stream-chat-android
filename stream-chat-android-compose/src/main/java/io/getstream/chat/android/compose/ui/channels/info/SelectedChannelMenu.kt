@@ -152,7 +152,6 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
                 text = selectedChannel.getMembersStatusText(
                     context = LocalContext.current,
                     currentUser = currentUser,
-                    userPresence = ChatTheme.userPresence,
                 ),
                 style = ChatTheme.typography.captionDefault,
                 color = ChatTheme.colors.textSecondary,

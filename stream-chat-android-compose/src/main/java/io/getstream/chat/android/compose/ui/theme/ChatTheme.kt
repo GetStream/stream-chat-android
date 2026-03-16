@@ -58,7 +58,6 @@ import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.TimeProvider
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
-import io.getstream.chat.android.ui.common.model.UserPresence
 import io.getstream.chat.android.ui.common.utils.ChannelNameFormatter
 import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
@@ -78,9 +77,6 @@ private val LocalColors = compositionLocalOf<StreamDesign.Colors> {
 }
 private val LocalTypography = compositionLocalOf<StreamDesign.Typography> {
     error("No typography provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
-private val LocalUserPresence = compositionLocalOf<UserPresence> {
-    error("No UserPresence provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 
 /**
@@ -212,7 +208,6 @@ public fun ChatTheme(
         contentColor = LocalContentColor.current,
         lightTheme = !isInDarkMode,
     ),
-    userPresence: UserPresence = UserPresence(),
     componentFactory: ChatComponentFactory = DefaultChatComponentFactory(),
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
@@ -263,7 +258,6 @@ public fun ChatTheme(
         LocalTypography provides typography,
         LocalRippleConfiguration provides rippleConfiguration.toRippleConfiguration(),
         LocalShimmerTheme provides StreamShimmerTheme,
-        LocalUserPresence provides userPresence,
         LocalComponentFactory provides componentFactory,
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
         LocalReactionResolver provides reactionResolver,
@@ -328,14 +322,6 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalTypography.current
-
-    /**
-     * Retrieves the current [UserPresence] at the call site's position in the hierarchy.
-     */
-    public val userPresence: UserPresence
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalUserPresence.current
 
     /**
      * Retrieves the current [ChatComponentFactory] at the call site's position in the hierarchy.
