@@ -144,8 +144,8 @@ public class MessageComposerViewModel(
      *
      * @param attachments The attachments to store and show in the composer.
      */
-    public fun addSelectedAttachments(attachments: List<Attachment>): Unit =
-        messageComposerController.addSelectedAttachments(attachments)
+    public fun addAttachments(attachments: List<Attachment>): Unit =
+        messageComposerController.addAttachments(attachments)
 
     /**
      * Removes a selected attachment from the list, when the user taps on the cancel/delete button.
@@ -154,8 +154,15 @@ public class MessageComposerViewModel(
      *
      * @param attachment The attachment to remove.
      */
-    public fun removeSelectedAttachment(attachment: Attachment): Unit =
-        messageComposerController.removeSelectedAttachment(attachment)
+    public fun removeAttachment(attachment: Attachment): Unit =
+        messageComposerController.removeAttachment(attachment)
+
+    /**
+     * Removes all staged attachments.
+     *
+     * Call this when the attachments are consumed — for example, after a message is sent.
+     */
+    public fun clearAttachments(): Unit = messageComposerController.clearAttachments()
 
     public fun createPoll(pollConfig: PollConfig) {
         messageComposerController.createPoll(pollConfig)

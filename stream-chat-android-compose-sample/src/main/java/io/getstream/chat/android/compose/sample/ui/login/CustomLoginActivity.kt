@@ -127,6 +127,9 @@ class CustomLoginActivity : AppCompatActivity() {
                     var isComposerFloatingStyleEnabled by remember {
                         mutableStateOf(settings.isComposerFloatingStyleEnabled)
                     }
+                    var isSystemAttachmentPickerEnabled by remember {
+                        mutableStateOf(settings.isSystemAttachmentPickerEnabled)
+                    }
 
                     val isLoginButtonEnabled = apiKeyText.isNotEmpty() &&
                         userIdText.isNotEmpty() &&
@@ -151,6 +154,17 @@ class CustomLoginActivity : AppCompatActivity() {
                             onValueChange = {
                                 isComposerFloatingStyleEnabled = it
                                 settings.isComposerFloatingStyleEnabled = it
+                            },
+                        ),
+                        FeatureFlag(
+                            label = stringResource(R.string.custom_login_flag_system_attachment_picker_label),
+                            description = stringResource(
+                                R.string.custom_login_flag_system_attachment_picker_description,
+                            ),
+                            value = isSystemAttachmentPickerEnabled,
+                            onValueChange = {
+                                isSystemAttachmentPickerEnabled = it
+                                settings.isSystemAttachmentPickerEnabled = it
                             },
                         ),
                     )

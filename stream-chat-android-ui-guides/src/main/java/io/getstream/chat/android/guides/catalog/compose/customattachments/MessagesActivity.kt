@@ -134,7 +134,7 @@ class MessagesActivity : AppCompatActivity() {
                             )
 
                             // 3
-                            composerViewModel.addSelectedAttachments(listOf(attachment))
+                            composerViewModel.addAttachments(listOf(attachment))
                         },
                     )
                 },
