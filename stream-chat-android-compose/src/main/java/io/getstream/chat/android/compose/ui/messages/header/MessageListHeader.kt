@@ -199,7 +199,6 @@ public fun DefaultMessageListHeaderCenterContent(
         MessageMode.Normal -> channel.getMembersStatusText(
             context = LocalContext.current,
             currentUser = currentUser,
-            userPresence = ChatTheme.userPresence,
         )
 
         is MessageMode.MessageThread -> stringResource(

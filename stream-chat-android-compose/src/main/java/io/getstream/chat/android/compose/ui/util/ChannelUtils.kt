@@ -27,7 +27,6 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.model.UserPresence
 import io.getstream.chat.android.ui.common.utils.extensions.getMembersStatusText
 import io.getstream.chat.android.ui.common.utils.extensions.getPreviewMessage
 import java.util.Date
@@ -105,18 +104,14 @@ public fun Channel.isOneToOne(currentUser: User?): Boolean {
  *
  * @param context The context to load string resources.
  * @param currentUser The currently logged in user.
- * @param userPresence The user presence display configuration.
  */
 public fun Channel.getMembersStatusText(
     context: Context,
     currentUser: User?,
-    userPresence: UserPresence = UserPresence(),
 ): String {
     return getMembersStatusText(
         context = context,
         currentUser = currentUser,
-        countCurrentUserAsOnlineMember = userPresence.currentUser.countAsOnlineMember,
-        countOtherUsersAsOnlineMembers = userPresence.otherUsers.countAsOnlineMember,
         userOnlineResId = R.string.stream_compose_user_status_online,
         userLastSeenJustNowResId = R.string.stream_compose_user_status_last_seen_just_now,
         userLastSeenResId = R.string.stream_compose_user_status_last_seen,
