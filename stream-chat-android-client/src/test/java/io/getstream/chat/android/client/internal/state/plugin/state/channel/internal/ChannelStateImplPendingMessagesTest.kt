@@ -142,7 +142,7 @@ internal class ChannelStateImplPendingMessagesTest : ChannelStateImplTestBase() 
         fun `pending message above newest loaded date ceiling is not shown`() {
             enablePendingMessages()
             val pending = createMessage(1, timestamp = 3000L)
-            val ceiling = randomMessage(id = "floor", createdAt = Date(2000L), createdLocallyAt = null)
+            val ceiling = randomMessage(id = "ceiling", createdAt = Date(2000L), createdLocallyAt = null)
             channelState.setPendingMessages(listOf(pending))
             channelState.paginationManager.setNewestMessage(ceiling)
             assertFalse(channelState.messages.value.any { it.id == pending.id })

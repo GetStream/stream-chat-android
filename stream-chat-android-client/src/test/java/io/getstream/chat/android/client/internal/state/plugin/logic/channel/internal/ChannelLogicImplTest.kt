@@ -683,10 +683,9 @@ internal class ChannelLogicImplTest {
         fun `should set oldest message and local-only messages on state after loading from database`() = runTest {
             // Given
             val dbChannel = randomChannel(id = "123", type = "messaging", messages = emptyList())
-            val messages = listOf(
-                randomMessage(id = "m1", createdAt = Date(1000)),
-                randomMessage(id = "m2", createdAt = Date(2000)),
-            )
+            val olderMessage = randomMessage(id = "m1", createdAt = Date(1000))
+            val newerMessage = randomMessage(id = "m2", createdAt = Date(2000))
+            val messages = listOf(newerMessage, olderMessage)
             val localOnlyMessages = listOf(randomMessage(id = "lo1"), randomMessage(id = "lo2"))
             val query = QueryChannelRequest().withMessages(30)
             whenever(repository.selectChannel(cid)).thenReturn(dbChannel)
@@ -695,7 +694,7 @@ internal class ChannelLogicImplTest {
             // When
             sut.updateStateFromDatabase(query)
             // Then
-            verify(paginationManager).setOldestMessage(messages.last())
+            verify(paginationManager).setOldestMessage(olderMessage)
             verify(repository).selectLocalOnlyMessagesForChannel(cid)
             verify(stateImpl).setLocalOnlyMessages(localOnlyMessages)
         }
