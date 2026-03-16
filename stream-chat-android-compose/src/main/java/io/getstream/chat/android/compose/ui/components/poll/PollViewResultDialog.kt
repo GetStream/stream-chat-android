@@ -172,7 +172,7 @@ private fun Content(
                     item = item,
                     index = index,
                     onShowAllClick = onShowAllClick,
-                    modifier = Modifier.applyIf(index > 0) { padding(top = StreamTokens.spacingMd) }
+                    modifier = Modifier.applyIf(index > 0) { padding(top = StreamTokens.spacingMd) },
                 )
             }
 
