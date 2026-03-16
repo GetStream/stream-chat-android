@@ -3033,78 +3033,6 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatThemeKt {
 	public static final fun getLocalComponentFactory ()Landroidx/compose/runtime/ProvidableCompositionLocal;
 }
 
-public final class io/getstream/chat/android/compose/ui/theme/ComponentOffset {
-	public static final field $stable I
-	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/ComponentOffset$Companion;
-	public synthetic fun <init> (FFLkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1-D9Ej5fM ()F
-	public final fun component2-D9Ej5fM ()F
-	public final fun copy-YgX7TsA (FF)Lio/getstream/chat/android/compose/ui/theme/ComponentOffset;
-	public static synthetic fun copy-YgX7TsA$default (Lio/getstream/chat/android/compose/ui/theme/ComponentOffset;FFILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ComponentOffset;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getX-D9Ej5fM ()F
-	public final fun getY-D9Ej5fM ()F
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/compose/ui/theme/ComponentOffset$Companion {
-	public final fun getZero ()Lio/getstream/chat/android/compose/ui/theme/ComponentOffset;
-}
-
-public final class io/getstream/chat/android/compose/ui/theme/ComponentPadding {
-	public static final field $stable I
-	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/ComponentPadding$Companion;
-	public synthetic fun <init> (FFFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (FFFFLkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (FFILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (FFLkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1-D9Ej5fM ()F
-	public final fun component2-D9Ej5fM ()F
-	public final fun component3-D9Ej5fM ()F
-	public final fun component4-D9Ej5fM ()F
-	public final fun copy-a9UjIt4 (FFFF)Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;
-	public static synthetic fun copy-a9UjIt4$default (Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;FFFFILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getBottom-D9Ej5fM ()F
-	public final fun getEnd-D9Ej5fM ()F
-	public final fun getStart-D9Ej5fM ()F
-	public final fun getTop-D9Ej5fM ()F
-	public final fun getValues ()Landroidx/compose/foundation/layout/PaddingValues;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/compose/ui/theme/ComponentPadding$Companion {
-	public final fun all-0680j_4 (F)Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;
-	public final fun getZero ()Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;
-}
-
-public final class io/getstream/chat/android/compose/ui/theme/ComponentSize {
-	public static final field $stable I
-	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/ComponentSize$Companion;
-	public synthetic fun <init> (FFLkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1-D9Ej5fM ()F
-	public final fun component2-D9Ej5fM ()F
-	public final fun copy-YgX7TsA (FF)Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
-	public static synthetic fun copy-YgX7TsA$default (Lio/getstream/chat/android/compose/ui/theme/ComponentSize;FFILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getHeight-D9Ej5fM ()F
-	public final fun getWidth-D9Ej5fM ()F
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/compose/ui/theme/ComponentSize$Companion {
-	public final fun fillMaxHeight-0680j_4 (F)Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
-	public final fun fillMaxWidth-0680j_4 (F)Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
-	public final fun getFillMaxSize ()Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
-	public final fun getZero ()Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
-	public final fun height-0680j_4 (F)Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
-	public final fun square-0680j_4 (F)Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
-	public final fun width-0680j_4 (F)Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
-}
-
 public final class io/getstream/chat/android/compose/ui/theme/ComposableSingletons$ChatComponentFactoryKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/theme/ComposableSingletons$ChatComponentFactoryKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
@@ -3175,38 +3103,6 @@ public final class io/getstream/chat/android/compose/ui/theme/ComposerInputField
 
 public final class io/getstream/chat/android/compose/ui/theme/CompoundComponentFactoryKt {
 	public static final fun CompoundComponentFactory ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V
-}
-
-public final class io/getstream/chat/android/compose/ui/theme/IconContainerStyle {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/compose/ui/theme/ComponentSize;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;Lio/getstream/chat/android/compose/ui/theme/IconStyle;)V
-	public final fun component1 ()Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
-	public final fun component2 ()Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;
-	public final fun component3 ()Lio/getstream/chat/android/compose/ui/theme/IconStyle;
-	public final fun copy (Lio/getstream/chat/android/compose/ui/theme/ComponentSize;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;Lio/getstream/chat/android/compose/ui/theme/IconStyle;)Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/ComponentSize;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;Lio/getstream/chat/android/compose/ui/theme/IconStyle;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getIcon ()Lio/getstream/chat/android/compose/ui/theme/IconStyle;
-	public final fun getPadding ()Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;
-	public final fun getSize ()Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/compose/ui/theme/IconStyle {
-	public static final field $stable I
-	public synthetic fun <init> (Landroidx/compose/ui/graphics/painter/Painter;JLio/getstream/chat/android/compose/ui/theme/ComponentSize;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Landroidx/compose/ui/graphics/painter/Painter;
-	public final fun component2-0d7_KjU ()J
-	public final fun component3 ()Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
-	public final fun copy-bw27NRU (Landroidx/compose/ui/graphics/painter/Painter;JLio/getstream/chat/android/compose/ui/theme/ComponentSize;)Lio/getstream/chat/android/compose/ui/theme/IconStyle;
-	public static synthetic fun copy-bw27NRU$default (Lio/getstream/chat/android/compose/ui/theme/IconStyle;Landroidx/compose/ui/graphics/painter/Painter;JLio/getstream/chat/android/compose/ui/theme/ComponentSize;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/IconStyle;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getPainter ()Landroidx/compose/ui/graphics/painter/Painter;
-	public final fun getSize ()Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
-	public final fun getTint-0d7_KjU ()J
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/MediaGalleryConfig : android/os/Parcelable {
@@ -3828,24 +3724,6 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamRippleConfig
 
 public final class io/getstream/chat/android/compose/ui/theme/StreamRippleConfiguration$Companion {
 	public final fun defaultRippleConfiguration-Iv8Zu3U (JZLandroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/theme/StreamRippleConfiguration;
-}
-
-public final class io/getstream/chat/android/compose/ui/theme/TextContainerStyle {
-	public static final field $stable I
-	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/theme/ComponentSize;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;JLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
-	public final fun component2 ()Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;
-	public final fun component3-0d7_KjU ()J
-	public final fun component4 ()Landroidx/compose/ui/text/TextStyle;
-	public final fun copy-9LQNqLg (Lio/getstream/chat/android/compose/ui/theme/ComponentSize;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;JLandroidx/compose/ui/text/TextStyle;)Lio/getstream/chat/android/compose/ui/theme/TextContainerStyle;
-	public static synthetic fun copy-9LQNqLg$default (Lio/getstream/chat/android/compose/ui/theme/TextContainerStyle;Lio/getstream/chat/android/compose/ui/theme/ComponentSize;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;JLandroidx/compose/ui/text/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/TextContainerStyle;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getBackgroundColor-0d7_KjU ()J
-	public final fun getPadding ()Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;
-	public final fun getSize ()Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
-	public final fun getTextStyle ()Landroidx/compose/ui/text/TextStyle;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/TranslationConfig {
