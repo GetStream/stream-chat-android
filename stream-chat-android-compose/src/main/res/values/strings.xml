@@ -184,6 +184,7 @@
     <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
     <string name="stream_compose_message_composer_show_in_channel">Also send in Channel</string>
     <string name="stream_compose_message_composer_file_not_supported">File type is not supported</string>
+    <string name="stream_compose_message_composer_unsupported_attachment">Unsupported attachment</string>
     <string name="stream_compose_message_composer_send_button">Send</string>
     <string name="stream_compose_message_composer_save_button">Save</string>
 
