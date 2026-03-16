@@ -19,44 +19,10 @@ package io.getstream.chat.android.compose.ui.util
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ripple
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.Dp
-import io.getstream.chat.android.compose.ui.theme.ComponentPadding
-import io.getstream.chat.android.compose.ui.theme.ComponentSize
-import androidx.compose.foundation.layout.size as composeSize
-
-/**
- * Adds padding to the modifier.
- */
-internal fun Modifier.padding(padding: ComponentPadding): Modifier {
-    return this.padding(
-        start = padding.start,
-        top = padding.top,
-        end = padding.end,
-        bottom = padding.bottom,
-    )
-}
-
-/**
- * Adds size to the modifier.
- */
-internal fun Modifier.size(size: ComponentSize): Modifier = when {
-    size.width == Dp.Infinity && size.height == Dp.Infinity -> this.fillMaxSize()
-    size.width == Dp.Infinity -> this.fillMaxWidth().height(size.height)
-    size.height == Dp.Infinity -> this.fillMaxHeight().width(size.width)
-    size.width == Dp.Unspecified -> this.height(size.height)
-    size.height == Dp.Unspecified -> this.width(size.width)
-    else -> this.composeSize(width = size.width, height = size.height)
-}
 
 /**
  * Adds drag pointer input to the modifier.
@@ -70,22 +36,24 @@ internal fun Modifier.dragPointerInput(
     if (enabled.not()) {
         return this
     }
-    return this.pointerInput(Unit) {
-        detectDragGestures(
-            onDragStart = { onDrag(it) },
-            onDrag = { change, _ ->
-                change.consume()
-                onDrag(change.position)
-            },
-            onDragEnd = { onDragStop(null) },
-            onDragCancel = { onDragStop(null) },
-        )
-    }.pointerInput(Unit) {
-        detectTapGestures(
-            onPress = { onDragStart(it) },
-            onTap = { onDragStop(it) },
-        )
-    }
+    return this
+        .pointerInput(Unit) {
+            detectDragGestures(
+                onDragStart = { onDrag(it) },
+                onDrag = { change, _ ->
+                    change.consume()
+                    onDrag(change.position)
+                },
+                onDragEnd = { onDragStop(null) },
+                onDragCancel = { onDragStop(null) },
+            )
+        }
+        .pointerInput(Unit) {
+            detectTapGestures(
+                onPress = { onDragStart(it) },
+                onTap = { onDragStop(it) },
+            )
+        }
 }
 
 /**
