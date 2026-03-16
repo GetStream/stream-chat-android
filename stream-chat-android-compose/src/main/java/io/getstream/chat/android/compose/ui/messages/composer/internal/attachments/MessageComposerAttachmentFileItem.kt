@@ -32,9 +32,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentImage
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -74,7 +76,9 @@ internal fun MessageComposerAttachmentFileItem(
             ) {
                 Text(
                     modifier = Modifier.testTag("Stream_MessageComposerAttachmentFileName"),
-                    text = attachment.title ?: attachment.name ?: "",
+                    text = attachment.title
+                        ?: attachment.name
+                        ?: stringResource(R.string.stream_compose_message_composer_unsupported_attachment),
                     style = ChatTheme.typography.bodyEmphasis,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
