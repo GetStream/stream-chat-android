@@ -29,8 +29,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -39,8 +38,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.boundsInWindow
@@ -167,7 +166,6 @@ public fun SelectedMessageMenu(
                 .semantics { testTagsAsResourceId = true }
                 .fillMaxSize()
                 .clickable(onClick = animatedDismiss, indication = null, interactionSource = null)
-                .verticalScroll(rememberScrollState())
                 .systemBarsPadding()
                 .padding(StreamTokens.spacingXs),
             verticalArrangement = Arrangement.Center,
@@ -186,11 +184,12 @@ public fun SelectedMessageMenu(
             }
             Box(
                 modifier = Modifier
+                    .weight(1f, fill = false)
                     .padding(vertical = StreamTokens.spacingXs)
                     .then(animation.messageModifier),
             ) {
                 ChatTheme.componentFactory.MessageContainer(
-                    modifier = Modifier.clipToBounds(),
+                    modifier = Modifier.wrapContentHeight(align = Alignment.Top, unbounded = true),
                     messageItem = messageItemState,
                     reactionSorting = ReactionSortingByLastReactionAt,
                     onPollUpdated = { _, _ -> },
