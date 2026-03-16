@@ -678,6 +678,40 @@ internal class ChannelLogicImplTest {
             verify(repository).selectChannel(cid)
             verify(stateImpl).updateChannelData(any<(ChannelData?) -> ChannelData?>())
         }
+
+        @Test
+        fun `should set oldest message and local-only messages on state after loading from database`() = runTest {
+            // Given
+            val dbChannel = randomChannel(id = "123", type = "messaging", messages = emptyList())
+            val messages = listOf(
+                randomMessage(id = "m1", createdAt = Date(1000)),
+                randomMessage(id = "m2", createdAt = Date(2000)),
+            )
+            val localOnlyMessages = listOf(randomMessage(id = "lo1"), randomMessage(id = "lo2"))
+            val query = QueryChannelRequest().withMessages(30)
+            whenever(repository.selectChannel(cid)).thenReturn(dbChannel)
+            whenever(repository.selectMessagesForChannel(any(), any())).thenReturn(messages)
+            whenever(repository.selectLocalOnlyMessagesForChannel(cid)).thenReturn(localOnlyMessages)
+            // When
+            sut.updateStateFromDatabase(query)
+            // Then
+            verify(paginationManager).setOldestMessage(messages.last())
+            verify(repository).selectLocalOnlyMessagesForChannel(cid)
+            verify(stateImpl).setLocalOnlyMessages(localOnlyMessages)
+        }
+
+        @Test
+        fun `should set oldest message as null when no messages are loaded from database`() = runTest {
+            // Given
+            val dbChannel = randomChannel(id = "123", type = "messaging", messages = emptyList())
+            val query = QueryChannelRequest().withMessages(30)
+            whenever(repository.selectChannel(cid)).thenReturn(dbChannel)
+            whenever(repository.selectMessagesForChannel(any(), any())).thenReturn(emptyList())
+            // When
+            sut.updateStateFromDatabase(query)
+            // Then
+            verify(paginationManager).setOldestMessage(null)
+        }
     }
 
     // endregion
