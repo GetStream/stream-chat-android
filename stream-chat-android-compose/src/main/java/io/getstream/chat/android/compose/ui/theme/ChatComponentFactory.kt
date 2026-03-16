@@ -2971,7 +2971,7 @@ public interface ChatComponentFactory {
         state: AttachmentState,
         modifier: Modifier,
     ) {
-        UnsupportedAttachmentContent(modifier)
+        UnsupportedAttachmentContent(state = state, modifier = modifier)
     }
 
     /**

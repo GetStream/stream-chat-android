@@ -605,7 +605,7 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/Medi
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/UnsupportedAttachmentContentKt {
-	public static final fun UnsupportedAttachmentContent (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun UnsupportedAttachmentContent (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/preview/ComposableSingletons$MediaGalleryPreviewScreenKt {
