@@ -165,6 +165,11 @@ internal fun DefaultImagesPickerItem(
     }
 }
 
+/**
+ * The time code of the frame to extract from a video.
+ */
+private const val VideoFrameMillis = 1000L
+
 @Composable
 private fun SelectedIndicator(
     modifier: Modifier = Modifier,
@@ -239,10 +244,7 @@ private fun DefaultAddMoreItem(onPickMoreClick: () -> Unit) {
     }
 }
 
-/**
- * The time code of the frame to extract from a video.
- */
-private const val VideoFrameMillis: Long = 1000
+private const val VideoLengthInSeconds = 60L
 
 @Preview(showBackground = true)
 @Composable
@@ -265,7 +267,7 @@ internal fun ImagesPickerSelection() {
             ),
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(type = AttachmentType.VIDEO).apply {
-                    videoLength = VideoFrameMillis
+                    videoLength = VideoLengthInSeconds
                 },
             ),
         ),
@@ -294,7 +296,7 @@ internal fun ImagesPickerAddMore() {
             ),
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(type = AttachmentType.VIDEO).apply {
-                    videoLength = VideoFrameMillis
+                    videoLength = VideoLengthInSeconds
                 },
             ),
         ),
