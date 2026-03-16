@@ -1,7 +1,6 @@
 package io.getstream.chat.docs.kotlin.compose.guides
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
@@ -39,8 +38,8 @@ private object CustomizingImageAndVideoPreviewsSnippet {
             )
         }
 
-        override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-            super.onCreate(savedInstanceState, persistentState)
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
 
             setContent {
                 // Override the default component factory to customize attachment previews
@@ -71,7 +70,7 @@ private object CustomizingImageAndVideoPreviewsSnippet {
          * A [ChatComponentFactory] that renders a custom play button overlay above video
          * attachments in the message composer preview.
          *
-         * To customize the overlay in the message list, override MessageComposerAttachmentMediaItemOverlay.
+         * To customize the overlay in the message composer, override MessageComposerAttachmentMediaItemOverlay.
          */
         val CustomMediaComponentFactory = object : ChatComponentFactory {
 
