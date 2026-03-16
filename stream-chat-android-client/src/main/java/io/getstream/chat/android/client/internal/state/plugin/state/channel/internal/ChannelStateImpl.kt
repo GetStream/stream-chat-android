@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.internal.state.utils.internal.updateIf
 import io.getstream.chat.android.client.internal.state.utils.internal.upsertSorted
 import io.getstream.chat.android.client.internal.state.utils.internal.upsertSortedBounded
 import io.getstream.chat.android.client.utils.channel.calculateNewLastMessageAt
+import io.getstream.chat.android.client.utils.message.isEphemeral
 import io.getstream.chat.android.extensions.lastMessageAt
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
@@ -75,6 +76,7 @@ import kotlin.math.max
  * @property liveLocations A [StateFlow] providing the active live locations.
  * @property messageLimit The initial limit specifying how many of the visible messages should be kept in memory. If
  * null, no limit is enforced.
+ * @property paginationManager The [MessagesPaginationManager] handling the pagination state tracking.
  */
 @Suppress("LargeClass", "LongParameterList", "TooManyFunctions")
 internal class ChannelStateImpl(
@@ -85,6 +87,7 @@ internal class ChannelStateImpl(
     private val mutedUsers: StateFlow<List<Mute>>,
     private val liveLocations: StateFlow<List<Location>>,
     private val messageLimit: Int?,
+    val paginationManager: MessagesPaginationManager = MessagesPaginationManagerImpl(),
 ) : ChannelState {
 
     override val cid: String = "$channelType:$channelId"
@@ -93,8 +96,9 @@ internal class ChannelStateImpl(
     private val _repliedMessage = MutableStateFlow<Message?>(null)
     private val _quotedMessagesMap = MutableStateFlow<Map<String, Set<String>>>(emptyMap())
     private val _messages = MutableStateFlow<List<Message>>(emptyList())
-
-    private val pendingMessagesManager = PendingMessagesManager()
+    private val localOnlyMessages = MutableStateFlow<List<Message>>(emptyList())
+    private val _pendingEnabled = MutableStateFlow(false)
+    private val _pendingMessages = MutableStateFlow<List<Message>>(emptyList())
 
     /**
      * Keeps track of the latest messages in the channel, if `Jump to message` was called, and a different, non-latest
@@ -125,11 +129,7 @@ internal class ChannelStateImpl(
     private val _channelConfig = MutableStateFlow(Config())
 
     // Non-channel states
-    private val _loading = MutableStateFlow(false)
-    private val _loadingOlderMessages = MutableStateFlow(false)
-    private val _loadingNewerMessages = MutableStateFlow(false)
-    private val _endOfOlderMessages = MutableStateFlow(false)
-    private val _endOfNewerMessages = MutableStateFlow(true)
+    private val _loading = paginationManager.state.mapState(MessagesPaginationState::isLoadingMessages)
     private var _recoveryNeeded = false
     private val _insideSearch = MutableStateFlow(false)
     private var lastStartTypingEvent: Date? = null
@@ -146,6 +146,20 @@ internal class ChannelStateImpl(
     /* Keeps track of messages processed when updating the current user read state */
     private val processedMessageIds = LruCache<String, Boolean>(maxSize = 100)
 
+    /* The local-only messages fitting into the currently loaded range */
+    private val localOnlyMessagesInRange: StateFlow<List<Message>> =
+        combineStates(localOnlyMessages, paginationManager.state) { localOnly, pagination ->
+            if (localOnly.isEmpty()) return@combineStates emptyList()
+            localOnly.filter { pagination.isInWindow(it) }
+        }
+
+    /* The pending messages fitting into the currently loaded range */
+    private val pendingMessagesInRange: StateFlow<List<Message>> =
+        combineStates(_pendingEnabled, _pendingMessages, paginationManager.state) { enabled, pending, pagination ->
+            if (!enabled || pending.isEmpty()) return@combineStates emptyList()
+            pending.filter { pagination.isInWindow(it) }
+        }
+
     private val logger by taggedLogger("ChannelStateImpl")
 
     override val repliedMessage: StateFlow<Message?> = _repliedMessage.asStateFlow()
@@ -156,17 +170,30 @@ internal class ChannelStateImpl(
 
     override val messages: StateFlow<List<Message>> = combineStates(
         _messages,
-        pendingMessagesManager.pendingMessagesInRange,
-    ) { regular, pending ->
-        if (pending.isEmpty()) return@combineStates regular
-        regular.mergeSorted(pending, idSelector = Message::id, comparator = MESSAGE_COMPARATOR)
+        pendingMessagesInRange,
+        localOnlyMessagesInRange,
+    ) { regular, pending, localOnly ->
+        // Pending and local-only are most often empty — skip merge entirely
+        when {
+            pending.isEmpty() && localOnly.isEmpty() -> regular
+            // Only one extra list is non-empty — single merge with regular
+            pending.isEmpty() ->
+                localOnly.mergeSorted(regular, idSelector = Message::id, comparator = MESSAGE_COMPARATOR)
+            localOnly.isEmpty() ->
+                pending.mergeSorted(regular, idSelector = Message::id, comparator = MESSAGE_COMPARATOR)
+            // Both non-empty — merge pending+localOnly first, then with regular
+            else ->
+                pending
+                    .mergeSorted(localOnly, idSelector = Message::id, comparator = MESSAGE_COMPARATOR)
+                    .mergeSorted(regular, idSelector = Message::id, comparator = MESSAGE_COMPARATOR)
+        }
     }
 
     override val pinnedMessages: StateFlow<List<Message>> = _pinnedMessages.asStateFlow()
 
     override val messagesState: StateFlow<MessagesState> = combineStates(_loading, messages) { loading, messages ->
         when {
-            loading -> MessagesState.Loading
+            loading && messages.isEmpty() -> MessagesState.Loading
             messages.isEmpty() -> MessagesState.OfflineNoResults
             else -> MessagesState.Result(messages)
         }
@@ -216,15 +243,19 @@ internal class ChannelStateImpl(
 
     override val muted: StateFlow<Boolean> = _muted.asStateFlow()
 
-    override val loading: StateFlow<Boolean> = _loading.asStateFlow()
+    override val loading: StateFlow<Boolean> = _loading
 
-    override val loadingOlderMessages: StateFlow<Boolean> = _loadingOlderMessages.asStateFlow()
+    override val loadingOlderMessages: StateFlow<Boolean> =
+        paginationManager.state.mapState(MessagesPaginationState::isLoadingPreviousMessages)
 
-    override val loadingNewerMessages: StateFlow<Boolean> = _loadingNewerMessages.asStateFlow()
+    override val loadingNewerMessages: StateFlow<Boolean> =
+        paginationManager.state.mapState(MessagesPaginationState::isLoadingNextMessages)
 
-    override val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages.asStateFlow()
+    override val endOfOlderMessages: StateFlow<Boolean> =
+        paginationManager.state.mapState(MessagesPaginationState::hasLoadedAllPreviousMessages)
 
-    override val endOfNewerMessages: StateFlow<Boolean> = _endOfNewerMessages.asStateFlow()
+    override val endOfNewerMessages: StateFlow<Boolean> =
+        paginationManager.state.mapState(MessagesPaginationState::hasLoadedAllNextMessages)
 
     override val recoveryNeeded: Boolean
         get() = _recoveryNeeded
@@ -292,116 +323,6 @@ internal class ChannelStateImpl(
     }
 
     /**
-     * Atomically merges [incoming] server messages with current local-only messages,
-     * applying the [windowFloor] filter, then writes to [_messages].
-     *
-     * Use instead of [setMessages] when the source is a server response (onQueryChannelResult).
-     * Do NOT use for the DB-seed path ([updateDataForChannel] calls [setMessages] — DB data
-     * already includes local-only messages stored by OfflinePlugin).
-     *
-     * @param incoming Server message list from the API response.
-     * @param localOnlyFromDb Local-only messages fetched from DB before this call.
-     *   Pass [emptyList()] when OfflinePlugin is absent — in-memory fallback is automatic.
-     * @param windowFloor Oldest [createdAt] in [incoming]; null when incoming is empty (no floor).
-     *   Local-only messages with [createdAt] < [windowFloor] are excluded.
-     *   TODO(Phase 2): When incoming is empty, read persisted floor from ChannelEntity instead.
-     */
-    internal fun setMessagesPreservingLocalOnly(
-        incoming: List<Message>,
-        localOnlyFromDb: List<Message>,
-        windowFloor: Date?,
-    ) {
-        val incomingIds = incoming.map { it.id }.toSet()
-
-        _messages.update { current ->
-            // Step 1: gather local-only from in-memory state (no-DB fallback path)
-            val fromState = current.filter { it.isLocalOnly() }
-
-            // Step 2: union with DB-sourced local-only; deduplicate by id
-            val allLocalOnly = (fromState + localOnlyFromDb).distinctBy { it.id }
-
-            // Step 3: server wins on ID collision — drop any local-only whose ID is
-            // already in the incoming list (server version in incoming replaces it)
-            val survivingLocalOnly = allLocalOnly.filter { localMsg ->
-                localMsg.id !in incomingIds
-            }
-
-            // Step 4: apply window floor — exclude below-floor local-only messages.
-            // Null floor = first-ever open or empty page → include all local-only.
-            val inWindowLocalOnly = if (windowFloor == null) {
-                survivingLocalOnly
-            } else {
-                survivingLocalOnly.filter { msg ->
-                    msg.getCreatedAtOrNull()?.let { d -> !d.before(windowFloor) } ?: true
-                }
-            }
-
-            // Step 5: filter incoming through the existing shouldIgnoreUpsertion guard
-            // (handles shadowed users, thread-only messages — same as setMessages)
-            val validIncoming = incoming.filterNot { shouldIgnoreUpsertion(it) }
-
-            // Step 6: replace — discard existing server messages, keep only incoming + local-only.
-            // Use upsertMessagesPreservingLocalOnly when merging a pagination page instead.
-            (validIncoming + inWindowLocalOnly)
-                .distinctBy { it.id }
-                .sortedWith(MESSAGE_COMPARATOR)
-        }
-
-        // Step 7: sync quoted-message and poll indexes — mirrors setMessages lines 287-291.
-        // Must run AFTER _messages.update to operate on the final merged list.
-        for (message in _messages.value) {
-            message.replyTo?.let { addQuotedMessage(it.id, message.id) }
-            message.replyMessageId?.let { addQuotedMessage(it, message.id) }
-            message.poll?.let { registerPollForMessage(it, message.id) }
-        }
-    }
-
-    /**
-     * Merges [incoming] server messages into the current message state, preserving existing
-     * server messages from prior pages and local-only messages within the window.
-     *
-     * Use for pagination branches ([filteringOlderMessages], [isFilteringNewerMessages]) where
-     * existing pages must be retained. For initial loads and around-message jumps, use
-     * [setMessagesPreservingLocalOnly] instead.
-     *
-     * @param incoming New page of server messages from the API response.
-     * @param localOnlyFromDb Local-only messages fetched from DB before this call.
-     * @param windowFloor Oldest [createdAt] in [incoming]; null to include all local-only.
-     */
-    internal fun upsertMessagesPreservingLocalOnly(
-        incoming: List<Message>,
-        localOnlyFromDb: List<Message>,
-        windowFloor: Date?,
-    ) {
-        val incomingIds = incoming.map { it.id }.toSet()
-
-        _messages.update { current ->
-            val fromState = current.filter { it.isLocalOnly() }
-            val allLocalOnly = (fromState + localOnlyFromDb).distinctBy { it.id }
-            val survivingLocalOnly = allLocalOnly.filter { it.id !in incomingIds }
-            val inWindowLocalOnly = if (windowFloor == null) {
-                survivingLocalOnly
-            } else {
-                survivingLocalOnly.filter { msg ->
-                    msg.getCreatedAtOrNull()?.let { d -> !d.before(windowFloor) } ?: true
-                }
-            }
-            val validIncoming = incoming.filterNot { shouldIgnoreUpsertion(it) }
-            // Merge: keep existing server messages + add new page + surviving local-only
-            val existingServer = current.filterNot { it.isLocalOnly() }
-            (existingServer + validIncoming + inWindowLocalOnly)
-                .distinctBy { it.id }
-                .sortedWith(MESSAGE_COMPARATOR)
-        }
-
-        for (message in _messages.value) {
-            message.replyTo?.let { addQuotedMessage(it.id, message.id) }
-            message.replyMessageId?.let { addQuotedMessage(it, message.id) }
-            message.poll?.let { registerPollForMessage(it, message.id) }
-        }
-    }
-
-    /**
      * Upserts a single message into the current state.
      * Uses optimized single-element upsert with binary search insertion.
      *
@@ -418,6 +339,16 @@ internal class ChannelStateImpl(
                 idSelector = Message::id,
                 comparator = MESSAGE_COMPARATOR,
             )
+        }
+        // Update can be called for "ephemeral" messages (ex. Shuffle Giphy)
+        if (message.isEphemeral()) {
+            localOnlyMessages.update { current ->
+                current.upsertSorted(
+                    element = message,
+                    idSelector = Message::id,
+                    comparator = MESSAGE_COMPARATOR,
+                )
+            }
         }
     }
 
@@ -508,6 +439,9 @@ internal class ChannelStateImpl(
         _pinnedMessages.update { current ->
             current.filterNot { id == it.id }
         }
+        localOnlyMessages.update { current ->
+            current.filterNot { id == it.id }
+        }
     }
 
     /**
@@ -591,10 +525,19 @@ internal class ChannelStateImpl(
     }
 
     /**
-     * Retrieves the oldest (non-pending) message.
+     * Retrieves the oldest (non-pending, non-local-only) message.
      */
     fun getOldestMessage(): Message? {
         return _messages.value.firstOrNull()
+    }
+
+    /**
+     * Sets the state for the local-only messages.
+     *
+     * @param messages The local-only list of messages.
+     */
+    fun setLocalOnlyMessages(messages: List<Message>) {
+        localOnlyMessages.update { messages }
     }
 
     // endregion
@@ -606,33 +549,19 @@ internal class ChannelStateImpl(
      * channel response returns the latest 100 pending messages sorted by createdAt ASC, so we
      * always replace rather than merge.
      */
-    fun setPendingMessages(messages: List<Message>) = pendingMessagesManager.setPendingMessages(messages)
+    fun setPendingMessages(messages: List<Message>) {
+        _pendingMessages.value = messages
+    }
 
     /**
      * Removes a single pending message by [id]. Called when a pending message is promoted to a
      * regular message (message.new event) or deleted (message.deleted event).
      */
-    fun removePendingMessage(id: String) = pendingMessagesManager.removePendingMessage(id)
-
-    /**
-     * Advances the oldest-loaded-date floor to the oldest date in [messages] if it is earlier
-     * than the current floor. The floor only ever moves backward — must only be called from
-     * paginated channel queries, never from a full channel data update.
-     */
-    fun advanceOldestLoadedDate(messages: List<Message>) = pendingMessagesManager.advanceOldestLoadedDate(messages)
-
-    /**
-     * Sets the newest-loaded-date ceiling to [date]. Pass `null` to remove the ceiling, i.e.
-     * when the user is viewing the latest messages. Set to the newest message date when jumping
-     * to a specific message so that newer pending messages are hidden.
-     */
-    fun setNewestLoadedDate(date: Date?) = pendingMessagesManager.setNewestLoadedDate(date)
-
-    /**
-     * Advances the newest-loaded-date ceiling forward if [date] is more recent than the current
-     * ceiling. Used when paginating toward newer messages while still not at the latest page.
-     */
-    fun advanceNewestLoadedDate(date: Date?) = pendingMessagesManager.advanceNewestLoadedDate(date)
+    fun removePendingMessage(id: String) {
+        _pendingMessages.update { current ->
+            if (current.none { it.id == id }) current else current.filterNot { it.id == id }
+        }
+    }
 
     // endregion
 
@@ -1288,7 +1217,9 @@ internal class ChannelStateImpl(
      */
     fun setChannelConfig(config: Config) {
         _channelConfig.value = config
-        pendingMessagesManager.setEnabled(config.markMessagesPending)
+        val enabled = config.markMessagesPending
+        if (!enabled) _pendingMessages.value = emptyList()
+        _pendingEnabled.value = enabled
     }
 
     // endregion
@@ -1389,51 +1320,6 @@ internal class ChannelStateImpl(
     // region NonChannelStates
 
     /**
-     * Sets the loading state.
-     *
-     * @param loading `true` if loading, `false` otherwise.
-     */
-    fun setLoading(loading: Boolean) {
-        _loading.value = loading
-    }
-
-    /**
-     * Sets the loading older messages state.
-     *
-     * @param loadingOlderMessages `true` if loading older messages, `false` otherwise.
-     */
-    fun setLoadingOlderMessages(loadingOlderMessages: Boolean) {
-        _loadingOlderMessages.value = loadingOlderMessages
-    }
-
-    /**
-     * Sets the loading newer messages state.
-     *
-     * @param loadingNewerMessages `true` if loading newer messages, `false` otherwise.
-     */
-    fun setLoadingNewerMessages(loadingNewerMessages: Boolean) {
-        _loadingNewerMessages.value = loadingNewerMessages
-    }
-
-    /**
-     * Sets the end of older messages state.
-     *
-     * @param endOfOlderMessages `true` if there are no more older messages to load, `false` otherwise.
-     */
-    fun setEndOfOlderMessages(endOfOlderMessages: Boolean) {
-        _endOfOlderMessages.value = endOfOlderMessages
-    }
-
-    /**
-     * Sets the end of newer messages state.
-     *
-     * @param endOfNewerMessages `true` if there are no more newer messages to load, `false` otherwise.
-     */
-    fun setEndOfNewerMessages(endOfNewerMessages: Boolean) {
-        _endOfNewerMessages.value = endOfNewerMessages
-    }
-
-    /**
      * Trims messages from the oldest end if the limit is exceeded.
      * Call after loading newer messages or receiving new messages via WebSocket while at the end of the list.
      *
@@ -1471,14 +1357,16 @@ internal class ChannelStateImpl(
         when (direction) {
             TrimDirection.FROM_OLDEST -> {
                 _messages.update { it.takeLast(limit) }
-                _endOfOlderMessages.value = false
+                paginationManager.setEndOfOlderMessages(false)
+                paginationManager.setOldestMessage(_messages.value.firstOrNull())
             }
 
             TrimDirection.FROM_NEWEST -> {
                 // Cache the latest messages before trimming to preserve them for later
                 cacheLatestMessages()
                 _messages.update { it.take(limit) }
-                _endOfNewerMessages.value = false
+                paginationManager.setEndOfNewerMessages(false)
+                paginationManager.setNewestMessage(_messages.value.lastOrNull())
                 _insideSearch.value = true
             }
         }
@@ -1555,7 +1443,8 @@ internal class ChannelStateImpl(
         _repliedMessage.value = null
         _quotedMessagesMap.value = emptyMap()
         _messages.value = emptyList()
-        pendingMessagesManager.reset()
+        _pendingMessages.value = emptyList()
+        _pendingEnabled.value = false
         _cachedLatestMessages.value = emptyList()
         _pinnedMessages.value = emptyList()
         _oldMessages.value = emptyList()
@@ -1581,11 +1470,7 @@ internal class ChannelStateImpl(
         _channelConfig.value = Config()
 
         // Non-channel states
-        _loading.value = false
-        _loadingOlderMessages.value = false
-        _loadingNewerMessages.value = false
-        _endOfOlderMessages.value = false
-        _endOfNewerMessages.value = true
+        paginationManager.reset()
         _recoveryNeeded = false
         _insideSearch.value = false
         lastStartTypingEvent = null

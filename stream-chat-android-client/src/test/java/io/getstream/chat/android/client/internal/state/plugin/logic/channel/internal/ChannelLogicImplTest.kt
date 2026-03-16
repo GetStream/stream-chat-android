@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MessagesPaginationManager
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.models.ChannelData
@@ -48,9 +49,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
-import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.atLeastOnce
-import org.mockito.kotlin.isNull
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
@@ -66,6 +65,8 @@ internal class ChannelLogicImplTest {
         val testCoroutines = TestCoroutineExtension()
     }
 
+    private lateinit var paginationManager: MessagesPaginationManager
+
     private lateinit var stateImpl: ChannelStateImpl
     private lateinit var repository: RepositoryFacade
     private lateinit var mutableGlobalState: MutableGlobalState
@@ -77,6 +78,7 @@ internal class ChannelLogicImplTest {
 
     @BeforeEach
     fun setUp() {
+        paginationManager = mock()
         stateImpl = mock()
         repository = mock()
         mutableGlobalState = mock()
@@ -88,6 +90,7 @@ internal class ChannelLogicImplTest {
         whenever(stateImpl.channelConfig).thenReturn(MutableStateFlow(Config()))
         whenever(stateImpl.messages).thenReturn(MutableStateFlow(emptyList()))
         whenever(stateImpl.insideSearch).thenReturn(MutableStateFlow(false))
+        whenever(stateImpl.paginationManager).thenReturn(paginationManager)
 
         // Stub global state
         whenever(mutableGlobalState.channelMutes).thenReturn(MutableStateFlow(emptyList()))
@@ -129,36 +132,13 @@ internal class ChannelLogicImplTest {
     inner class SetPaginationDirection {
 
         @Test
-        fun `should set loading older messages when filtering older messages`() {
+        fun `setPaginationDirection delegates to MessagesPaginationManager`() {
             // Given
             val query = QueryChannelRequest().withMessages(Pagination.LESS_THAN, "msgId", 30)
             // When
             sut.setPaginationDirection(query)
             // Then
-            verify(stateImpl).setLoadingOlderMessages(true)
-            verify(stateImpl, never()).setLoadingNewerMessages(true)
-        }
-
-        @Test
-        fun `should set loading newer messages when filtering newer messages`() {
-            // Given
-            val query = QueryChannelRequest().withMessages(Pagination.GREATER_THAN, "msgId", 30)
-            // When
-            sut.setPaginationDirection(query)
-            // Then
-            verify(stateImpl).setLoadingNewerMessages(true)
-            verify(stateImpl, never()).setLoadingOlderMessages(true)
-        }
-
-        @Test
-        fun `should not set any loading state when not filtering messages`() {
-            // Given
-            val query = QueryChannelRequest().withMessages(30)
-            // When
-            sut.setPaginationDirection(query)
-            // Then
-            verify(stateImpl, never()).setLoadingOlderMessages(true)
-            verify(stateImpl, never()).setLoadingNewerMessages(true)
+            verify(paginationManager).begin(query)
         }
     }
 
@@ -393,11 +373,11 @@ internal class ChannelLogicImplTest {
                 watcherCount = 0,
             )
             val query = QueryChannelRequest().withMessages(30)
+            val result = Result.Success(channel)
             // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
+            sut.onQueryChannelResult(query, result)
             // Then
-            verify(stateImpl).setLoadingOlderMessages(false)
-            verify(stateImpl).setLoadingNewerMessages(false)
+            verify(paginationManager).end(query, result)
         }
 
         @Test
@@ -419,126 +399,9 @@ internal class ChannelLogicImplTest {
             sut.onQueryChannelResult(query, Result.Success(channel))
             // Then
             verify(stateImpl, never()).setMessages(any())
-            verify(stateImpl, never()).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
             verify(stateImpl, never()).upsertMessages(any())
             verify(stateImpl, never()).clearCachedLatestMessages()
             verify(stateImpl, never()).setInsideSearch(any())
-        }
-    }
-
-    // endregion
-
-    // region onQueryChannelResult - Success - Pagination end
-
-    @Nested
-    inner class OnQueryChannelResultPaginationEnd {
-
-        @Test
-        fun `should set end of older messages when loading latest and end reached`() {
-            // Given (limit=30, messages.size=10, so endReached=true)
-            val messages = (1..10).map { randomMessage(id = "m$it") }
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            val query = QueryChannelRequest().withMessages(30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).setEndOfOlderMessages(true)
-            verify(stateImpl).setEndOfNewerMessages(true)
-        }
-
-        @Test
-        fun `should not set end of older messages when loading latest and not reached`() {
-            // Given (limit=10, messages.size=10, so endReached=false)
-            val messages = (1..10).map { randomMessage(id = "m$it") }
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            val query = QueryChannelRequest().withMessages(10)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).setEndOfOlderMessages(false)
-            verify(stateImpl).setEndOfNewerMessages(true)
-        }
-
-        @Test
-        fun `should set both ends to false when filtering around id`() {
-            // Given
-            val messages = (1..5).map { randomMessage(id = "m$it") }
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.AROUND_ID, "m3", 30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).setEndOfOlderMessages(false)
-            verify(stateImpl).setEndOfNewerMessages(false)
-        }
-
-        @Test
-        fun `should set end of older messages when filtering older and end reached`() {
-            // Given (limit=30, messages.size=5, so endReached=true)
-            val messages = (1..5).map { randomMessage(id = "m$it") }
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.LESS_THAN, "m10", 30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).setEndOfOlderMessages(true)
-        }
-
-        @Test
-        fun `should set end of newer messages when filtering newer and end reached`() {
-            // Given (limit=30, messages.size=5, so endReached=true)
-            val messages = (1..5).map { randomMessage(id = "m$it") }
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.GREATER_THAN, "m1", 30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).setEndOfNewerMessages(true)
         }
     }
 
@@ -568,7 +431,7 @@ internal class ChannelLogicImplTest {
             sut.onQueryChannelResult(query, Result.Success(channel))
             // Then
             verify(stateImpl).clearCachedLatestMessages()
-            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
+            verify(stateImpl).setMessages(messages)
             verify(stateImpl).setInsideSearch(false)
         }
 
@@ -592,7 +455,7 @@ internal class ChannelLogicImplTest {
             sut.onQueryChannelResult(query, Result.Success(channel))
             // Then
             verify(stateImpl).cacheLatestMessages()
-            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
+            verify(stateImpl).setMessages(messages)
             verify(stateImpl).setInsideSearch(true)
         }
 
@@ -616,11 +479,11 @@ internal class ChannelLogicImplTest {
             sut.onQueryChannelResult(query, Result.Success(channel))
             // Then
             verify(stateImpl, never()).cacheLatestMessages()
-            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
+            verify(stateImpl).setMessages(messages)
         }
 
         @Test
-        fun `should preserve local-only and trim oldest when loading newer messages`() {
+        fun `should upsert messages and trim oldest when loading newer messages`() {
             // Given — limit=30, messages.size=30 → endReached=false
             val messages = (1..30).map { randomMessage(id = "m$it") }
             val channel = randomChannel(
@@ -636,8 +499,7 @@ internal class ChannelLogicImplTest {
             val query = QueryChannelRequest().withMessages(Pagination.GREATER_THAN, "m0", 30)
             // When
             sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then — pagination merges (not replaces); trim still applied
-            verify(stateImpl).upsertMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
+            verify(stateImpl).upsertMessages(messages)
             verify(stateImpl).trimOldestMessages()
         }
 
@@ -686,7 +548,7 @@ internal class ChannelLogicImplTest {
         }
 
         @Test
-        fun `should preserve local-only and trim newest when loading older messages`() {
+        fun `should upsert messages and trim newest when loading older messages`() {
             // Given
             val messages = (1..10).map { randomMessage(id = "m$it") }
             val channel = randomChannel(
@@ -702,8 +564,8 @@ internal class ChannelLogicImplTest {
             val query = QueryChannelRequest().withMessages(Pagination.LESS_THAN, "m20", 30)
             // When
             sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then — pagination merges (not replaces); trim still applied
-            verify(stateImpl).upsertMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
+            // Then
+            verify(stateImpl).upsertMessages(messages)
             verify(stateImpl).trimNewestMessages()
         }
     }
@@ -746,11 +608,11 @@ internal class ChannelLogicImplTest {
             // Given
             val error = Error.GenericError("Error")
             val query = QueryChannelRequest().withMessages(30)
+            val result = Result.Failure(error)
             // When
-            sut.onQueryChannelResult(query, Result.Failure(error))
+            sut.onQueryChannelResult(query, result)
             // Then
-            verify(stateImpl).setLoadingOlderMessages(false)
-            verify(stateImpl).setLoadingNewerMessages(false)
+            verify(paginationManager).end(query, result)
         }
     }
 
@@ -1245,9 +1107,8 @@ internal class ChannelLogicImplTest {
         }
 
         @Test
-        fun `should set messages sorted by createdAt when messageLimit is positive (DB-seed path)`() = runTest {
+        fun `should set messages sorted by createdAt when messageLimit is positive`() = runTest {
             // Given - messages in descending order (as returned by the DB query)
-            // isChannelsStateUpdate=true simulates the DB-seed path where setMessages is required
             val olderMessage = randomMessage(id = "m1", createdAt = Date(1000L), createdLocallyAt = null)
             val newerMessage = randomMessage(id = "m2", createdAt = Date(2000L), createdLocallyAt = null)
             val channel = randomChannel(
@@ -1261,7 +1122,7 @@ internal class ChannelLogicImplTest {
                 watcherCount = 0,
             )
             // When
-            sut.updateDataForChannel(channel = channel, messageLimit = 30, isChannelsStateUpdate = true)
+            sut.updateDataForChannel(channel = channel, messageLimit = 30)
             // Then - messages must be sorted ascending before being set into state
             verify(stateImpl).setMessages(listOf(olderMessage, newerMessage))
         }
@@ -1283,7 +1144,7 @@ internal class ChannelLogicImplTest {
             // When
             sut.updateDataForChannel(channel = channel, messageLimit = 30)
             // Then
-            verify(stateImpl).setEndOfOlderMessages(true)
+            verify(paginationManager).setEndOfOlderMessages(true)
         }
 
         @Test
@@ -1303,7 +1164,7 @@ internal class ChannelLogicImplTest {
             // When
             sut.updateDataForChannel(channel = channel, messageLimit = 2)
             // Then
-            verify(stateImpl).setEndOfOlderMessages(false)
+            verify(paginationManager).setEndOfOlderMessages(false)
         }
 
         @Test
@@ -1324,7 +1185,7 @@ internal class ChannelLogicImplTest {
             sut.updateDataForChannel(channel = channel, messageLimit = 0)
             // Then
             verify(stateImpl, never()).setMessages(any())
-            verify(stateImpl, never()).setEndOfOlderMessages(any())
+            verify(paginationManager, never()).setEndOfOlderMessages(any())
         }
 
         @Test
@@ -1345,26 +1206,6 @@ internal class ChannelLogicImplTest {
             sut.updateDataForChannel(channel = channel, messageLimit = 0)
             // Then
             verify(stateImpl).addPinnedMessages(pinnedMessages)
-        }
-
-        @Test
-        fun `should reset loading states`() = runTest {
-            // Given
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = emptyList(),
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            // When
-            sut.updateDataForChannel(channel = channel, messageLimit = 0)
-            // Then
-            verify(stateImpl).setLoadingOlderMessages(false)
-            verify(stateImpl).setLoadingNewerMessages(false)
         }
 
         @Test
@@ -1390,7 +1231,7 @@ internal class ChannelLogicImplTest {
         }
 
         @Test
-        fun `should preserve local-only when state has messages and incoming are contiguous`() = runTest {
+        fun `should upsert messages when state has messages and incoming are contiguous`() = runTest {
             val existingMsg = randomMessage(id = "existing", createdAt = Date(1000L), createdLocallyAt = null)
             whenever(stateImpl.messages).thenReturn(MutableStateFlow(listOf(existingMsg)))
             val incomingMsg = randomMessage(id = "new", createdAt = Date(500L), createdLocallyAt = null)
@@ -1405,12 +1246,10 @@ internal class ChannelLogicImplTest {
                 watcherCount = 0,
             )
             sut.updateDataForChannel(channel = channel, messageLimit = 30)
-            // else branch now uses preservation instead of plain upsert
-            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-            verify(stateImpl, never()).upsertMessages(any())
+            verify(stateImpl).upsertMessages(listOf(incomingMsg))
             verify(stateImpl, never()).setMessages(any())
             verify(stateImpl, never()).upsertCachedLatestMessages(any())
-            verify(stateImpl, never()).setEndOfNewerMessages(any())
+            verify(paginationManager, never()).setEndOfNewerMessages(any())
         }
 
         @Test
@@ -1431,10 +1270,10 @@ internal class ChannelLogicImplTest {
             sut.updateDataForChannel(channel = channel, messageLimit = 30)
             verify(stateImpl).upsertCachedLatestMessages(listOf(incomingMsg))
             verify(stateImpl).setInsideSearch(true)
-            verify(stateImpl).setEndOfNewerMessages(false)
+            verify(paginationManager).setEndOfNewerMessages(false)
             verify(stateImpl, never()).setMessages(any())
             verify(stateImpl, never()).upsertMessages(any())
-            verify(stateImpl, never()).setEndOfOlderMessages(any())
+            verify(paginationManager, never()).setEndOfOlderMessages(any())
         }
 
         @Test
@@ -1458,12 +1297,11 @@ internal class ChannelLogicImplTest {
             verify(stateImpl, never()).setMessages(any())
             verify(stateImpl, never()).upsertMessages(any())
             verify(stateImpl, never()).setInsideSearch(any())
-            verify(stateImpl, never()).setEndOfNewerMessages(any())
+            verify(paginationManager, never()).setEndOfNewerMessages(any())
         }
 
         @Test
-        fun `should replace messages when shouldRefreshMessages is true and isChannelsStateUpdate is true`() = runTest {
-            // DB-seed path: isChannelsStateUpdate=true means OfflinePlugin already includes local-only in DB data
+        fun `should replace messages when shouldRefreshMessages is true regardless of existing state`() = runTest {
             val existingMsg = randomMessage(id = "old", createdAt = Date(1000L), createdLocallyAt = null)
             whenever(stateImpl.messages).thenReturn(MutableStateFlow(listOf(existingMsg)))
             val incomingMsg = randomMessage(id = "new", createdAt = Date(5000L), createdLocallyAt = null)
@@ -1477,16 +1315,10 @@ internal class ChannelLogicImplTest {
                 memberCount = 0,
                 watcherCount = 0,
             )
-            sut.updateDataForChannel(
-                channel = channel,
-                messageLimit = 30,
-                shouldRefreshMessages = true,
-                isChannelsStateUpdate = true,
-            )
+            sut.updateDataForChannel(channel = channel, messageLimit = 30, shouldRefreshMessages = true)
             verify(stateImpl).setMessages(listOf(incomingMsg))
             verify(stateImpl, never()).upsertMessages(any())
             verify(stateImpl, never()).upsertCachedLatestMessages(any())
-            verify(stateImpl, never()).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
         }
     }
 
@@ -1517,551 +1349,6 @@ internal class ChannelLogicImplTest {
             sut.onQueryChannelResult(query, Result.Success(channel))
             // Then
             verify(stateImpl, atLeastOnce()).setPendingMessages(listOf(pendingMsg))
-        }
-
-        @Test
-        fun `should call setNewestLoadedDate with null when loading latest messages`() {
-            // Given
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = emptyList(),
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-                pendingMessages = emptyList(),
-            )
-            val query = QueryChannelRequest().withMessages(30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).setNewestLoadedDate(null)
-        }
-
-        @Test
-        fun `should call setNewestLoadedDate with newest message date when loading around id`() {
-            // Given
-            whenever(stateImpl.insideSearch).thenReturn(MutableStateFlow(false))
-            val newestDate = Date(2000L)
-            val messages = listOf(
-                randomMessage(id = "m1", createdAt = Date(1000L), createdLocallyAt = null),
-                randomMessage(id = "m2", createdAt = newestDate, createdLocallyAt = null),
-            )
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-                pendingMessages = emptyList(),
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.AROUND_ID, "m1", 30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).setNewestLoadedDate(newestDate)
-        }
-
-        @Test
-        fun `should call setNewestLoadedDate with null when paginating newer reaches the end`() {
-            // Given (limit=30, messages.size=5, so endReached=true)
-            val messages = (1..5).map { randomMessage(id = "m$it") }
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-                pendingMessages = emptyList(),
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.GREATER_THAN, "m0", 30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).setNewestLoadedDate(null)
-        }
-
-        @Test
-        fun `should call advanceNewestLoadedDate when paginating newer and not at end`() {
-            // Given (limit=5, messages.size=5, so endReached=false)
-            val newestDate = Date(5000L)
-            val messages = (1..5).map { i ->
-                randomMessage(id = "m$i", createdAt = Date(i * 1000L), createdLocallyAt = null)
-            }
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-                pendingMessages = emptyList(),
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.GREATER_THAN, "m0", 5)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).advanceNewestLoadedDate(newestDate)
-        }
-
-        @Test
-        fun `should call advanceOldestLoadedDate with channel messages when loading latest`() {
-            // Given
-            val messages = listOf(randomMessage(id = "m1"), randomMessage(id = "m2"))
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-                pendingMessages = emptyList(),
-            )
-            val query = QueryChannelRequest().withMessages(30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).advanceOldestLoadedDate(messages)
-        }
-
-        @Test
-        fun `should call advanceOldestLoadedDate with channel messages when loading older`() {
-            // Given
-            val messages = (1..10).map { randomMessage(id = "m$it") }
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-                pendingMessages = emptyList(),
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.LESS_THAN, "m20", 30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).advanceOldestLoadedDate(messages)
-        }
-
-        @Test
-        fun `should NOT call advanceOldestLoadedDate from updateDataForChannel`() = runTest {
-            // Given — updateDataForChannel is the QueryChannels path, not the paginated path
-            val messages = listOf(randomMessage(id = "m1"))
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-                pendingMessages = emptyList(),
-            )
-            // When
-            sut.updateDataForChannel(channel = channel, messageLimit = 30)
-            // Then — floor must only be set from queryChannel pagination, never from updateDataForChannel
-            verify(stateImpl, never()).advanceOldestLoadedDate(any())
-        }
-    }
-
-    // endregion
-
-    // region PreservationCallSites
-
-    @Nested
-    inner class PreservationCallSites {
-
-        @Test
-        fun `onQueryChannelResult success with no filtering calls setMessagesPreservingLocalOnly`() {
-            // Given
-            val messages = listOf(randomMessage(id = "m1"), randomMessage(id = "m2"))
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            val query = QueryChannelRequest().withMessages(30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-            verify(stateImpl, never()).setMessages(any())
-        }
-
-        @Test
-        fun `onQueryChannelResult success with aroundId filtering calls setMessagesPreservingLocalOnly`() {
-            // Given: insideSearch = false so we exercise the else branch
-            whenever(stateImpl.insideSearch).thenReturn(MutableStateFlow(false))
-            val messages = listOf(randomMessage(id = "m1"), randomMessage(id = "m2"))
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.AROUND_ID, "m1", 30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-            verify(stateImpl, never()).setMessages(any())
-        }
-
-        @Test
-        fun `onQueryChannelResult success inside search calls setMessagesPreservingLocalOnly`() {
-            // Given: insideSearch = true so we exercise the if branch (no caching)
-            whenever(stateImpl.insideSearch).thenReturn(MutableStateFlow(true))
-            val messages = listOf(randomMessage(id = "m1"), randomMessage(id = "m2"))
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.AROUND_ID, "m1", 30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-            verify(stateImpl, never()).setMessages(any())
-        }
-
-        @Test
-        fun `updateDataForChannel with shouldRefreshMessages true and isChannelsStateUpdate true calls setMessages not preservation`() = runTest {
-            // Given: existing state messages to ensure shouldRefresh branch is taken
-            // isChannelsStateUpdate=true is the DB-seed path (updateStateFromDatabase caller)
-            whenever(stateImpl.messages).thenReturn(MutableStateFlow(listOf(randomMessage(id = "existing"))))
-            val incomingMsg = randomMessage(id = "new", createdAt = Date(5000L), createdLocallyAt = null)
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = listOf(incomingMsg),
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            // When: DB-seed path — isChannelsStateUpdate=true means OfflinePlugin already includes local-only in DB data
-            sut.updateDataForChannel(
-                channel = channel,
-                messageLimit = 30,
-                shouldRefreshMessages = true,
-                isChannelsStateUpdate = true,
-            )
-            // Then: DB-seed path must NOT use preservation — setMessages full-replace is required
-            verify(stateImpl).setMessages(any())
-            verify(stateImpl, never()).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-        }
-
-        @Test
-        fun `onQueryChannelResult filteringOlderMessages calls upsertMessagesPreservingLocalOnly not setMessages`() {
-            // Given — LESS_THAN triggers filteringOlderMessages
-            val messages = (1..10).map { randomMessage(id = "m$it") }
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.LESS_THAN, "m20", 30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then — pagination merges; trimNewestMessages still called
-            verify(stateImpl).upsertMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-            verify(stateImpl, never()).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-            verify(stateImpl, never()).upsertMessages(any())
-            verify(stateImpl).trimNewestMessages()
-        }
-
-        @Test
-        fun `onQueryChannelResult isFilteringNewerMessages not end reached calls upsertMessagesPreservingLocalOnly`() {
-            // Given — GREATER_THAN + limit=5, messages.size=5 → endReached=false
-            val messages = (1..5).map { randomMessage(id = "m$it") }
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.GREATER_THAN, "m0", 5)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then — pagination merges; trimOldestMessages still called
-            verify(stateImpl).upsertMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-            verify(stateImpl, never()).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-            verify(stateImpl, never()).upsertMessages(any())
-            verify(stateImpl).trimOldestMessages()
-        }
-
-        @Test
-        fun `onQueryChannelResult isFilteringNewerMessages end reached calls upsertMessagesPreservingLocalOnly with page floor`() {
-            // Given — GREATER_THAN + limit=30, messages.size=5 → endReached=true
-            val messages = (1..5).map { randomMessage(id = "m$it") }
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.GREATER_THAN, "m0", 30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then — end reached: merge with the page's floor (not null); window floor is preserved
-            verify(stateImpl).upsertMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-            verify(stateImpl, never()).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-            verify(stateImpl, never()).upsertMessages(any())
-            // And exit-search state management still happens
-            verify(stateImpl).clearCachedLatestMessages()
-            verify(stateImpl).setInsideSearch(false)
-        }
-
-        @Test
-        fun `updateDataForChannel with shouldRefreshMessages true and isChannelsStateUpdate false calls preservation`() = runTest {
-            // Given: SyncManager reconnect path — shouldRefreshMessages=true but isChannelsStateUpdate=false
-            whenever(stateImpl.messages).thenReturn(MutableStateFlow(listOf(randomMessage(id = "existing"))))
-            val incomingMsg = randomMessage(id = "new", createdAt = Date(5000L), createdLocallyAt = null)
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = listOf(incomingMsg),
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            // When: reconnect path — isChannelsStateUpdate=false (default)
-            sut.updateDataForChannel(
-                channel = channel,
-                messageLimit = 30,
-                shouldRefreshMessages = true,
-                isChannelsStateUpdate = false,
-            )
-            // Then: SyncManager reconnect must use preservation to keep local-only messages
-            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-            verify(stateImpl, never()).setMessages(any())
-        }
-
-        @Test
-        fun `updateDataForChannel else upsert branch calls setMessagesPreservingLocalOnly`() = runTest {
-            // Given: contiguous incoming messages (no gap, no refresh, has existing messages)
-            val existingMsg = randomMessage(id = "existing", createdAt = Date(1000L), createdLocallyAt = null)
-            whenever(stateImpl.messages).thenReturn(MutableStateFlow(listOf(existingMsg)))
-            val incomingMsg = randomMessage(id = "new", createdAt = Date(500L), createdLocallyAt = null)
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = listOf(incomingMsg),
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            // When: else branch (contiguous, not refresh, not insideSearch, no gap)
-            sut.updateDataForChannel(channel = channel, messageLimit = 30)
-            // Then: else branch uses preservation not plain upsert
-            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-            verify(stateImpl, never()).upsertMessages(any())
-        }
-    }
-
-    // endregion
-
-    // region PaginationPreservation
-
-    @Nested
-    inner class PaginationPreservation {
-
-        @Test
-        fun `filteringOlderMessages calls upsertMessagesPreservingLocalOnly not setMessages`() {
-            // Given
-            val messages = listOf(randomMessage(id = "m1"), randomMessage(id = "m2"))
-            val channel = randomChannel(
-                id = "123", type = "messaging", messages = messages,
-                members = emptyList(), watchers = emptyList(), read = emptyList(),
-                memberCount = 0, watcherCount = 0,
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.LESS_THAN, "m0", 30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then — pagination must merge, not replace
-            verify(stateImpl).upsertMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-            verify(stateImpl, never()).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-            verify(stateImpl, never()).upsertMessages(any())
-            verify(stateImpl, never()).setMessages(any())
-        }
-
-        @Test
-        fun `filteringNewerMessages mid-page calls upsertMessagesPreservingLocalOnly not setMessages`() {
-            // Given: size == limit → not end-reached
-            val messages = List(30) { randomMessage(id = "m$it") }
-            val channel = randomChannel(
-                id = "123", type = "messaging", messages = messages,
-                members = emptyList(), watchers = emptyList(), read = emptyList(),
-                memberCount = 0, watcherCount = 0,
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.GREATER_THAN, "m-1", 30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then — pagination must merge, not replace
-            verify(stateImpl).upsertMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-            verify(stateImpl, never()).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-            verify(stateImpl, never()).upsertMessages(any())
-            verify(stateImpl, never()).setMessages(any())
-        }
-
-        @Test
-        fun `filteringNewerMessages end-reached calls upsertMessagesPreservingLocalOnly with page floor`() {
-            // Given: size < limit → end-reached
-            val messages = listOf(randomMessage(id = "m1"), randomMessage(id = "m2"))
-            val channel = randomChannel(
-                id = "123", type = "messaging", messages = messages,
-                members = emptyList(), watchers = emptyList(), read = emptyList(),
-                memberCount = 0, watcherCount = 0,
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.GREATER_THAN, "m0", 30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then: page's windowFloor passed (not null) — window floor stays at oldest loaded, not reset
-            verify(stateImpl).upsertMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-            verify(stateImpl, never()).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-            verify(stateImpl, never()).upsertMessages(any())
-            verify(stateImpl, never()).setMessages(any())
-        }
-
-        @Test
-        fun `filteringNewerMessages mid-page still advances newest loaded date`() {
-            // Given: size == limit → not end-reached
-            val messages = List(30) { randomMessage(id = "m$it") }
-            val channel = randomChannel(
-                id = "123", type = "messaging", messages = messages,
-                members = emptyList(), watchers = emptyList(), read = emptyList(),
-                memberCount = 0, watcherCount = 0,
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.GREATER_THAN, "m-1", 30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then: ceiling must still advance so pending messages above the page are hidden
-            verify(stateImpl).advanceNewestLoadedDate(anyOrNull())
-        }
-    }
-
-    // endregion
-
-    // region ReconnectPreservation
-
-    @Nested
-    inner class ReconnectPreservation {
-
-        @Test
-        fun `updateDataForChannel reconnect path calls setMessagesPreservingLocalOnly`() = runTest {
-            // Given: isChannelsStateUpdate=false (SyncManager reconnect), shouldRefreshMessages=true
-            val incomingMsg = randomMessage(id = "server1")
-            val channel = randomChannel(
-                id = "123", type = "messaging", messages = listOf(incomingMsg),
-                members = emptyList(), watchers = emptyList(), read = emptyList(),
-                memberCount = 0, watcherCount = 0,
-            )
-            // When: reconnect path — isChannelsStateUpdate defaults to false
-            sut.updateDataForChannel(
-                channel = channel,
-                messageLimit = 30,
-                shouldRefreshMessages = true,
-                isChannelsStateUpdate = false,
-            )
-            // Then
-            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-            verify(stateImpl, never()).setMessages(any())
-        }
-
-        @Test
-        fun `updateDataForChannel DB-seed path calls setMessages not preservation`() = runTest {
-            // Given: isChannelsStateUpdate=true (updateStateFromDatabase DB-seed)
-            whenever(stateImpl.messages).thenReturn(MutableStateFlow(listOf(randomMessage(id = "existing"))))
-            val incomingMsg = randomMessage(id = "new")
-            val channel = randomChannel(
-                id = "123", type = "messaging", messages = listOf(incomingMsg),
-                members = emptyList(), watchers = emptyList(), read = emptyList(),
-                memberCount = 0, watcherCount = 0,
-            )
-            // When: DB-seed path — isChannelsStateUpdate=true
-            sut.updateDataForChannel(
-                channel = channel,
-                messageLimit = 30,
-                shouldRefreshMessages = true,
-                isChannelsStateUpdate = true,
-            )
-            // Then: full-replace required, local-only messages already in DB data
-            verify(stateImpl).setMessages(any())
-            verify(stateImpl, never()).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-        }
-
-        @Test
-        fun `updateDataForChannel upsert else-branch calls setMessagesPreservingLocalOnly`() = runTest {
-            // Given: currentMessages non-empty, incoming overlaps with existing (same ID → hasGap = false)
-            // Using same ID guarantees no gap (ID overlap short-circuits the date check in hasGap)
-            val sharedId = "shared-msg"
-            val existingMsg = randomMessage(id = sharedId)
-            whenever(stateImpl.messages).thenReturn(MutableStateFlow(listOf(existingMsg)))
-            val incomingMsg = randomMessage(id = sharedId) // same ID = overlap → no gap
-            val channel = randomChannel(
-                id = "123", type = "messaging", messages = listOf(incomingMsg),
-                members = emptyList(), watchers = emptyList(), read = emptyList(),
-                memberCount = 0, watcherCount = 0,
-            )
-            // When: shouldRefreshMessages=false, currentMessages non-empty, no gap → falls to else branch
-            sut.updateDataForChannel(
-                channel = channel,
-                messageLimit = 30,
-                shouldRefreshMessages = false,
-                isChannelsStateUpdate = false,
-            )
-            // Then
-            verify(stateImpl).setMessagesPreservingLocalOnly(any(), anyOrNull(), anyOrNull())
-            verify(stateImpl, never()).upsertMessages(any())
         }
     }
 

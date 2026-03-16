@@ -37,6 +37,8 @@ import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.util.Date
 
@@ -579,6 +581,54 @@ internal class MessageUtilsTest {
         val draft = randomDraftMessage(id = "")
         val draftWithId = draft.ensureId()
         Assertions.assertTrue(UuidRegex.matches(draftWithId.id))
+    }
+
+    @Test
+    fun `isLocalOnly returns true for SyncStatus SYNC_NEEDED`() {
+        val message = randomMessage(syncStatus = SyncStatus.SYNC_NEEDED, type = MessageType.REGULAR)
+        assertTrue(message.isLocalOnly())
+    }
+
+    @Test
+    fun `isLocalOnly returns true for SyncStatus IN_PROGRESS`() {
+        val message = randomMessage(syncStatus = SyncStatus.IN_PROGRESS, type = MessageType.REGULAR)
+        assertTrue(message.isLocalOnly())
+    }
+
+    @Test
+    fun `isLocalOnly returns true for SyncStatus AWAITING_ATTACHMENTS`() {
+        val message = randomMessage(syncStatus = SyncStatus.AWAITING_ATTACHMENTS, type = MessageType.REGULAR)
+        assertTrue(message.isLocalOnly())
+    }
+
+    @Test
+    fun `isLocalOnly returns true for SyncStatus FAILED_PERMANENTLY`() {
+        val message = randomMessage(syncStatus = SyncStatus.FAILED_PERMANENTLY, type = MessageType.REGULAR)
+        assertTrue(message.isLocalOnly())
+    }
+
+    @Test
+    fun `isLocalOnly returns true for type ephemeral with COMPLETED syncStatus`() {
+        val message = randomMessage(syncStatus = SyncStatus.COMPLETED, type = MessageType.EPHEMERAL)
+        assertTrue(message.isLocalOnly())
+    }
+
+    @Test
+    fun `isLocalOnly returns true for type error with COMPLETED syncStatus`() {
+        val message = randomMessage(syncStatus = SyncStatus.COMPLETED, type = MessageType.ERROR)
+        assertTrue(message.isLocalOnly())
+    }
+
+    @Test
+    fun `isLocalOnly returns false for SyncStatus COMPLETED with type regular`() {
+        val message = randomMessage(syncStatus = SyncStatus.COMPLETED, type = MessageType.REGULAR)
+        assertFalse(message.isLocalOnly())
+    }
+
+    @Test
+    fun `isLocalOnly returns false for system message with COMPLETED`() {
+        val message = randomMessage(syncStatus = SyncStatus.COMPLETED, type = MessageType.SYSTEM)
+        assertFalse(message.isLocalOnly())
     }
 
     private companion object {

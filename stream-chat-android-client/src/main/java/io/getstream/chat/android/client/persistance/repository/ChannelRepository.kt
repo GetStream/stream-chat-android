@@ -165,19 +165,6 @@ public interface ChannelRepository {
      */
     public suspend fun clear()
 
-    /**
-     * Updates only the [oldestLoadedDate] field for [cid] in the channel entity.
-     * Used to persist the window floor after onQueryChannelResult completes.
-     * Phase 2 reads this value at DB-seed time to apply the floor without a network response.
-     */
-    public suspend fun updateOldestLoadedDateForChannel(cid: String, date: Date)
-
-    /**
-     * Reads the persisted window floor (oldest loaded date) for [cid] from the channel entity.
-     * Returns null if the channel entity does not exist or no floor has been persisted yet.
-     */
-    public suspend fun selectOldestLoadedDateForChannel(cid: String): Date?
-
     private companion object {
         private const val NO_LIMIT: Int = -1
     }
