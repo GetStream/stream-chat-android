@@ -24,8 +24,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,7 +52,6 @@ internal fun MessageComposerAttachmentAudioRecordItem(
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
     onAttachmentRemoved: (Attachment) -> Unit = {},
 ) {
-    val currentAttachment by rememberUpdatedState(attachment)
     Box(modifier = modifier) {
         AudioRecordAttachmentContentItemBase(
             modifier = Modifier
@@ -76,7 +73,7 @@ internal fun MessageComposerAttachmentAudioRecordItem(
                 val speed = playerState.speeds.getOrDefault(attachment.audioHash, 1f)
                 PlaybackSpeedToggle(
                     speed = speed,
-                    onClick = { onPlaySpeedClick(currentAttachment) },
+                    onClick = { onPlaySpeedClick(attachment) },
                 )
             },
         )
@@ -85,7 +82,7 @@ internal fun MessageComposerAttachmentAudioRecordItem(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .testTag("Stream_MessageComposerAttachmentCancelIcon"),
-            onClick = { onAttachmentRemoved(currentAttachment) },
+            onClick = { onAttachmentRemoved(attachment) },
         )
     }
 }
