@@ -1832,7 +1832,6 @@ public interface ChatComponentFactory {
         )
     }
 
-    // REGION: Message menu
     /**
      * Factory method for creating the full content of the SelectedMessageMenu.
      * This is the menu that appears when a message is long-pressed.
@@ -1903,8 +1902,6 @@ public interface ChatComponentFactory {
             onClick = { params.onMessageOptionSelected(params.option) },
         )
     }
-
-    // REGION: Reactions
 
     /**
      * Factory method for creating a reaction icon. By default, it only displays the emoji.
@@ -2025,7 +2022,6 @@ public interface ChatComponentFactory {
         )
     }
 
-    // REGION: Generic menu items
     /**
      * Factory method for creating a generic menu option item.
      *
@@ -2421,7 +2417,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun CustomAttachmentContent(params: CustomAttachmentContentParams) {
-        UnsupportedAttachmentContent(params.modifier)
+        UnsupportedAttachmentContent(state = params.state, modifier = params.modifier)
     }
 
     /**

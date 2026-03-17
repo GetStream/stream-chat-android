@@ -59,12 +59,12 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
@@ -2438,7 +2438,7 @@ public data class AttachmentFilePickerParams(
 public data class AttachmentPollPickerParams(
     val pickerMode: PollPickerMode,
     val onCreatePollClick: () -> Unit,
-    val onCreatePoll: (PollConfig) -> Unit,
+    val onCreatePoll: (CreatePollParams) -> Unit,
     val onCreatePollDismissed: () -> Unit,
 )
 
