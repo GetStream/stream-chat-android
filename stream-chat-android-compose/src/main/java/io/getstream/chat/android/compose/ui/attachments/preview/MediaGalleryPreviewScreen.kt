@@ -91,6 +91,7 @@ import io.getstream.chat.android.models.Constants
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
+import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import kotlinx.coroutines.launch
 import java.util.Date
 
@@ -108,7 +109,8 @@ import java.util.Date
  *   - Trailing content (photos/gallery icon)
  *
  * @param viewModel The [MediaGalleryPreviewViewModel] instance to use for managing the state of the screen.
- * @param initialPage The initial page to display in the pager.
+ * @param selectedAttachmentUrl The preview URL of the initially selected attachment. Used to resolve the starting
+ * page in the pager by matching against the filtered attachments list.
  * @param onHeaderLeadingContentClick Callback to be invoked when the leading content in the header is clicked. Usually
  * closes the screen.
  * @param onOptionClick Callback to be invoked when an option in the options menu is clicked.
@@ -135,7 +137,7 @@ import java.util.Date
 @Composable
 public fun MediaGalleryPreviewScreen(
     viewModel: MediaGalleryPreviewViewModel,
-    initialPage: Int,
+    selectedAttachmentUrl: String?,
     onHeaderLeadingContentClick: () -> Unit,
     onOptionClick: (Attachment, MediaGalleryPreviewOption) -> Unit,
     onRequestShareAttachment: (Attachment) -> Unit,
@@ -209,7 +211,7 @@ public fun MediaGalleryPreviewScreen(
         message = viewModel.message,
         connectionState = viewModel.connectionState,
         currentUser = user,
-        initialPage = initialPage,
+        selectedAttachmentUrl = selectedAttachmentUrl,
         promptedAttachment = viewModel.promptedAttachment,
         isSharingInProgress = viewModel.isSharingInProgress,
         isShowingOptions = viewModel.isShowingOptions,
@@ -249,7 +251,8 @@ public fun MediaGalleryPreviewScreen(
  * @param message The message containing the attachments to be previewed.
  * @param connectionState TThe network connection state.
  * @param currentUser The currently logged user.
- * @param initialPage The initial page to display in the pager.
+ * @param selectedAttachmentUrl The preview URL of the initially selected attachment. Used to resolve the starting
+ * page in the pager by matching against the filtered attachments list.
  * @param onHeaderLeadingContentClick Callback to be invoked when the leading content in the header is clicked. Usually
  * closes the screen.
  * @param onOptionClick Callback to be invoked when an option in the options menu is clicked.
@@ -278,7 +281,7 @@ public fun MediaGalleryPreviewScreen(
     message: Message,
     connectionState: ConnectionState,
     currentUser: User?,
-    initialPage: Int,
+    selectedAttachmentUrl: String?,
     promptedAttachment: Attachment?,
     isSharingInProgress: Boolean,
     isShowingOptions: Boolean,
@@ -353,12 +356,19 @@ public fun MediaGalleryPreviewScreen(
 ) {
     // Filters out non-media and link attachments. Pass this value along to all children
     // Composable-s that read message attachments to prevent inconsistent state.
-    val filteredAttachments = remember(message) {
+    val filteredAttachments = remember(message.attachments) {
         message.attachments.filter { attachment ->
             !attachment.hasLink() && (attachment.isImage() || attachment.isVideo())
         }
     }
-    val startingPosition = if (initialPage !in filteredAttachments.indices) 0 else initialPage
+    val startingPosition = if (selectedAttachmentUrl == null) {
+        0
+    } else {
+        filteredAttachments
+            .indexOfFirst { it.imagePreviewUrl == selectedAttachmentUrl }
+            .coerceAtLeast(0)
+    }
+
     val pagerState = rememberPagerState(
         initialPage = startingPosition,
         pageCount = { filteredAttachments.size },
@@ -1163,7 +1173,7 @@ private fun MediaGalleryPreviewScreenPreview() {
                 message = message,
                 connectionState = ConnectionState.Connected,
                 currentUser = user,
-                initialPage = 0,
+                selectedAttachmentUrl = null,
                 promptedAttachment = null,
                 isShowingOptions = true,
                 isShowingGallery = false,

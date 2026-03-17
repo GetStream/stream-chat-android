@@ -152,7 +152,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             }
         }
 
-        val attachmentPosition = intent?.getIntExtra(KeyAttachmentPosition, 0) ?: 0
+        val selectedAttachmentUrl = intent?.getStringExtra(KeySelectedAttachmentUrl)
 
         setContent {
             ChatTheme(
@@ -180,7 +180,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     MediaGalleryPreviewScreen(
                         modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
                         viewModel = mediaGalleryPreviewViewModel,
-                        initialPage = attachmentPosition,
+                        selectedAttachmentUrl = selectedAttachmentUrl,
                         onHeaderLeadingContentClick = ::finish,
                         onOptionClick = { attachment, option ->
                             handleMediaAction(
@@ -475,9 +475,9 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         private const val KeyStreamCdnResizeImageCropMode: String = "streamCdnResizeImageCropMode"
 
         /**
-         * Represents the key for the starting attachment position based on the clicked attachment.
+         * Represents the key for the preview URL of the selected attachment.
          */
-        private const val KeyAttachmentPosition: String = "attachmentPosition"
+        private const val KeySelectedAttachmentUrl: String = "selectedAttachmentUrl"
 
         /**
          * Represents the key for the result of the preview, like scrolling to the message.
@@ -511,7 +511,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
          *
          * @param context The context to start the activity with.
          * @param message The [Message] containing the attachments.
-         * @param attachmentPosition The initial position of the clicked media attachment.
+         * @param selectedAttachmentUrl The preview URL of the selected attachment to display first.
          * @param videoThumbnailsEnabled Whether video thumbnails will be displayed in previews or not.
          * @param downloadAttachmentUriGenerator Used to generate download URIs for attachments.
          * @param downloadRequestInterceptor Used to intercept download requests.
@@ -526,7 +526,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         public fun getIntent(
             context: Context,
             message: Message,
-            attachmentPosition: Int,
+            selectedAttachmentUrl: String?,
             videoThumbnailsEnabled: Boolean,
             downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
             downloadRequestInterceptor: DownloadRequestInterceptor,
@@ -540,7 +540,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 val mediaGalleryPreviewActivityState = message.toMediaGalleryPreviewActivityState()
 
                 putExtra(KeyMediaGalleryPreviewActivityState, mediaGalleryPreviewActivityState)
-                putExtra(KeyAttachmentPosition, attachmentPosition)
+                putExtra(KeySelectedAttachmentUrl, selectedAttachmentUrl)
                 putExtra(KeyVideoThumbnailsEnabled, videoThumbnailsEnabled)
 
                 // Image resizing options
