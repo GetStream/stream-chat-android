@@ -38,9 +38,6 @@ import java.io.File
 import java.util.Date
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.log10
-import kotlin.math.pow
-import kotlin.math.roundToInt
-import kotlin.math.sqrt
 
 /**
  * Controller responsible for recording audio messages.
@@ -509,21 +506,6 @@ internal class AudioRecordingController(
         return (decibels + NoiseFloor) / NoiseFloor
     }
 
-    private fun List<Float>.downsample(targetSamples: Int): List<Float> {
-        val sourceSamples = size
-        val sourceStep = sourceSamples / targetSamples
-        val target = ArrayList<Float>(targetSamples)
-        for (targetIndex in 0 until targetSamples) {
-            var sum = 0f
-            for (sourceIndex in 0 until sourceStep) {
-                val sourceSample = this[targetIndex * sourceStep + sourceIndex]
-                sum += sourceSample.pow(2)
-            }
-            target.add(sqrt(sum / sourceStep))
-        }
-        return target
-    }
-
     private fun List<Int>.downsampleMax(targetSamples: Int): List<Int> {
         val sourceSamples = size
         val sourceStep = sourceSamples / targetSamples
@@ -539,39 +521,7 @@ internal class AudioRecordingController(
         return target
     }
 
-    private fun FloatArray.downsampleRms(): Float {
-        var sumOfSquaredSamples = 0f
-        for (sample in this) {
-            sumOfSquaredSamples += sample.pow(n = 2)
-        }
-        return sqrt(sumOfSquaredSamples / size)
-    }
-
-    private fun FloatArray.downsampleAverage(): Float {
-        return sum() / size
-    }
-
-    private fun FloatArray.downsample(): Float {
-        return last()
-    }
-
-    private fun IntArray.downsampleRms(): Int {
-        var sumOfSquaredSamples = 0
-        for (sample in this) {
-            sumOfSquaredSamples += sample * sample
-        }
-        if (sumOfSquaredSamples == 0) {
-            return 0
-        }
-        return sqrt(sumOfSquaredSamples / size.toDouble()).roundToInt()
-    }
-
     private fun IntArray.downsampleMax(): Int {
-        return max()
-    }
-
-    private fun List<Int>.downsampleToSingleMax(): Int {
-        1 to 1
         return max()
     }
 
