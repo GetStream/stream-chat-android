@@ -28,6 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.AttachmentPickerContentParams
+import io.getstream.chat.android.compose.ui.theme.AttachmentSystemPickerParams
+import io.getstream.chat.android.compose.ui.theme.AttachmentTypePickerParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -61,6 +64,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMet
  * Use [AttachmentPickerActions.pickerDefaults] for standalone usage or
  * [AttachmentPickerActions.defaultActions] for full integration with the message composer.
  */
+@Suppress("LongMethod")
 @Composable
 public fun AttachmentPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
@@ -95,33 +99,39 @@ public fun AttachmentPicker(
     ) {
         if (ChatTheme.config.attachmentPicker.useSystemPicker) {
             ChatTheme.componentFactory.AttachmentSystemPicker(
-                channel = attachmentsPickerViewModel.channel,
-                messageMode = messageMode,
-                attachments = attachmentsPickerViewModel.attachments,
-                actions = actions,
-                onUrisSelected = attachmentsPickerViewModel::resolveAndSubmitUris,
-                onAttachmentsSubmitted = onAttachmentsSubmitted,
+                params = AttachmentSystemPickerParams(
+                    channel = attachmentsPickerViewModel.channel,
+                    messageMode = messageMode,
+                    attachments = attachmentsPickerViewModel.attachments,
+                    actions = actions,
+                    onUrisSelected = attachmentsPickerViewModel::resolveAndSubmitUris,
+                    onAttachmentsSubmitted = onAttachmentsSubmitted,
+                ),
             )
         } else {
             Column {
                 ChatTheme.componentFactory.AttachmentTypePicker(
-                    channel = attachmentsPickerViewModel.channel,
-                    messageMode = messageMode,
-                    selectedMode = attachmentsPickerViewModel.pickerMode,
-                    onModeSelected = attachmentsPickerViewModel::setPickerMode,
-                    trailingContent = {},
+                    params = AttachmentTypePickerParams(
+                        channel = attachmentsPickerViewModel.channel,
+                        messageMode = messageMode,
+                        selectedMode = attachmentsPickerViewModel.pickerMode,
+                        onModeSelected = attachmentsPickerViewModel::setPickerMode,
+                        trailingContent = {},
+                    ),
                 )
                 AnimatedContent(
                     targetState = attachmentsPickerViewModel.pickerMode,
                 ) { pickerMode ->
                     ChatTheme.componentFactory.AttachmentPickerContent(
-                        pickerMode = pickerMode,
-                        commands = attachmentsPickerViewModel.channel.config.commands,
-                        attachments = attachmentsPickerViewModel.attachments,
-                        onLoadAttachments = attachmentsPickerViewModel::loadAttachments,
-                        onUrisSelected = attachmentsPickerViewModel::resolveAndSubmitUris,
-                        actions = actions,
-                        onAttachmentsSubmitted = onAttachmentsSubmitted,
+                        params = AttachmentPickerContentParams(
+                            pickerMode = pickerMode,
+                            commands = attachmentsPickerViewModel.channel.config.commands,
+                            attachments = attachmentsPickerViewModel.attachments,
+                            onLoadAttachments = attachmentsPickerViewModel::loadAttachments,
+                            onUrisSelected = attachmentsPickerViewModel::resolveAndSubmitUris,
+                            actions = actions,
+                            onAttachmentsSubmitted = onAttachmentsSubmitted,
+                        ),
                     )
                 }
             }

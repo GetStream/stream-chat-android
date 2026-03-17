@@ -36,7 +36,9 @@ import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ReactionIconParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.ifNotNull
 
@@ -62,10 +64,12 @@ internal fun UserReactionRow(
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {
         ChatTheme.componentFactory.UserAvatar(
-            modifier = Modifier.size(AvatarSize.Medium),
-            user = item.user,
-            showIndicator = false,
-            showBorder = true,
+            params = UserAvatarParams(
+                modifier = Modifier.size(AvatarSize.Medium),
+                user = item.user,
+                showIndicator = false,
+                showBorder = true,
+            ),
         )
 
         Column(modifier = Modifier.weight(1f)) {
@@ -88,10 +92,11 @@ internal fun UserReactionRow(
         }
 
         ChatTheme.componentFactory.ReactionIcon(
-            type = item.type,
-            emoji = item.emojiCode,
-            size = ReactionIconSize.Medium,
-            modifier = Modifier,
+            params = ReactionIconParams(
+                type = item.type,
+                emoji = item.emojiCode,
+                size = ReactionIconSize.Medium,
+            ),
         )
     }
 }

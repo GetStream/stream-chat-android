@@ -60,17 +60,24 @@ import io.getstream.chat.android.compose.state.messages.MessageAlignment
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageBounds
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageContainerParams
+import io.getstream.chat.android.compose.ui.theme.MessageMenuHeaderContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageMenuOptionsParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -174,12 +181,14 @@ public fun SelectedMessageMenu(
             val canLeaveReaction = ChannelCapabilities.SEND_REACTION in ownCapabilities
             if (canLeaveReaction && ChatTheme.reactionOptionsTheme.areReactionOptionsVisible) {
                 ChatTheme.componentFactory.MessageMenuHeaderContent(
-                    modifier = bubbleAlignmentPadding.then(animation.peripheralModifier(slideY = (-24).dp)),
-                    message = message,
-                    messageOptions = messageOptions,
-                    onMessageAction = onMessageAction,
-                    ownCapabilities = ownCapabilities,
-                    onShowMore = onShowMoreReactionsSelected,
+                    params = MessageMenuHeaderContentParams(
+                        modifier = bubbleAlignmentPadding.then(animation.peripheralModifier(slideY = (-24).dp)),
+                        message = message,
+                        messageOptions = messageOptions,
+                        onMessageAction = onMessageAction,
+                        ownCapabilities = ownCapabilities,
+                        onShowMore = onShowMoreReactionsSelected,
+                    ),
                 )
             }
             Box(
@@ -189,26 +198,28 @@ public fun SelectedMessageMenu(
                     .then(animation.messageModifier),
             ) {
                 ChatTheme.componentFactory.MessageContainer(
-                    modifier = Modifier.wrapContentHeight(align = Alignment.Top, unbounded = true),
-                    messageItem = messageItemState,
-                    reactionSorting = ReactionSortingByLastReactionAt,
-                    onPollUpdated = { _, _ -> },
-                    onCastVote = { _, _, _ -> },
-                    onRemoveVote = { _, _, _ -> },
-                    selectPoll = { _, _, _ -> },
-                    onClosePoll = {},
-                    onAddPollOption = { _, _ -> },
-                    onLongItemClick = {},
-                    onThreadClick = {},
-                    onReactionsClick = {},
-                    onGiphyActionClick = {},
-                    onMediaGalleryPreviewResult = {},
-                    onQuotedMessageClick = {},
-                    onUserAvatarClick = null,
-                    onMessageLinkClick = null,
-                    onUserMentionClick = {},
-                    onAddAnswer = { _, _, _ -> },
-                    onReply = {},
+                    params = MessageContainerParams(
+                        modifier = Modifier.wrapContentHeight(align = Alignment.Top, unbounded = true),
+                        messageItem = messageItemState,
+                        reactionSorting = ReactionSortingByLastReactionAt,
+                        onPollUpdated = { _: Message, _: Poll -> },
+                        onCastVote = { _: Message, _: Poll, _: Option -> },
+                        onRemoveVote = { _: Message, _: Poll, _: Vote -> },
+                        selectPoll = { _: Message, _: Poll, _: PollSelectionType -> },
+                        onClosePoll = {},
+                        onAddPollOption = { _: Poll, _: String -> },
+                        onLongItemClick = {},
+                        onThreadClick = {},
+                        onReactionsClick = {},
+                        onGiphyActionClick = {},
+                        onMediaGalleryPreviewResult = {},
+                        onQuotedMessageClick = {},
+                        onUserAvatarClick = null,
+                        onMessageLinkClick = null,
+                        onUserMentionClick = {},
+                        onAddAnswer = { _: Message, _: Poll, _: String -> },
+                        onReply = {},
+                    ),
                 )
                 Spacer(
                     modifier = Modifier
@@ -218,10 +229,12 @@ public fun SelectedMessageMenu(
             }
 
             ChatTheme.componentFactory.MessageMenuOptions(
-                modifier = bubbleAlignmentPadding.then(animation.peripheralModifier(slideY = 24.dp)),
-                message = message,
-                options = messageOptions,
-                onMessageOptionSelected = { onMessageAction(it.action) },
+                params = MessageMenuOptionsParams(
+                    modifier = bubbleAlignmentPadding.then(animation.peripheralModifier(slideY = 24.dp)),
+                    message = message,
+                    options = messageOptions,
+                    onMessageOptionSelected = { option: MessageOptionItemState -> onMessageAction(option.action) },
+                ),
             )
         }
     }

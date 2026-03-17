@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageReactionsPickerContentParams
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
@@ -52,9 +53,11 @@ public fun ReactionsPicker(
         onDismissRequest = onDismiss,
     ) {
         ChatTheme.componentFactory.MessageReactionsPickerContent(
-            modifier = Modifier,
-            message = message,
-            onMessageAction = onMessageAction,
+            params = MessageReactionsPickerContentParams(
+                modifier = Modifier,
+                message = message,
+                onMessageAction = onMessageAction,
+            ),
         )
     }
 }

@@ -50,6 +50,10 @@ import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestio
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.ui.theme.LocalChatConfig
+import io.getstream.chat.android.compose.ui.theme.MessageComposerInputParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerLeadingContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerTrailingContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.SnackbarPopup
 import io.getstream.chat.android.compose.util.extensions.toSet
@@ -118,44 +122,47 @@ public fun MessageComposer(
         }
 
         ChatTheme.componentFactory.MessageComposerInput(
-            modifier = Modifier.weight(1f),
-            state = state,
-            onInputChanged = onValueChange,
-            onAttachmentRemoved = onAttachmentRemoved,
-            onLinkPreviewClick = onLinkPreviewClick,
-            onCancelLinkPreviewClick = onCancelLinkPreviewClick,
-            onCancel = onCancelAction,
-            onSendClick = { input, attachments ->
-                val message = viewModel.buildNewMessage(input, attachments)
-                onSendMessage(message)
-            },
-            onAlsoSendToChannelChange = onAlsoSendToChannelChange,
-            recordingActions = recordingActions,
-            onActiveCommandDismiss = onActiveCommandDismiss,
+            params = MessageComposerInputParams(
+                modifier = Modifier.weight(1f),
+                state = state,
+                onInputChanged = onValueChange,
+                onAttachmentRemoved = onAttachmentRemoved,
+                onLinkPreviewClick = onLinkPreviewClick,
+                onCancelLinkPreviewClick = onCancelLinkPreviewClick,
+                onCancel = onCancelAction,
+                onSendClick = { input, attachments ->
+                    val message = viewModel.buildNewMessage(input, attachments)
+                    onSendMessage(message)
+                },
+                onAlsoSendToChannelChange = onAlsoSendToChannelChange,
+                recordingActions = recordingActions,
+                onActiveCommandDismiss = onActiveCommandDismiss,
+            ),
         )
     },
 ) {
     val messageComposerState by viewModel.messageComposerState.collectAsState()
 
     ChatTheme.componentFactory.MessageComposer(
-        modifier = modifier,
-        isAttachmentPickerVisible = isAttachmentPickerVisible,
-        onSendMessage = { text, attachments ->
-            val messageWithData = viewModel.buildNewMessage(text, attachments)
-
-            onSendMessage(messageWithData)
-        },
-        onUserSelected = onUserSelected,
-        onCommandSelected = onCommandSelected,
-        onAlsoSendToChannelSelected = onAlsoSendToChannelChange,
-        recordingActions = recordingActions,
-        input = input,
-        messageComposerState = messageComposerState,
-        onCancelAction = onCancelAction,
-        onAttachmentsClick = onAttachmentsClick,
-        onValueChange = onValueChange,
-        onAttachmentRemoved = onAttachmentRemoved,
-        onLinkPreviewClick = onLinkPreviewClick,
+        params = MessageComposerParams(
+            modifier = modifier,
+            isAttachmentPickerVisible = isAttachmentPickerVisible,
+            onSendMessage = { text, attachments ->
+                val messageWithData = viewModel.buildNewMessage(text, attachments)
+                onSendMessage(messageWithData)
+            },
+            onUserSelected = onUserSelected,
+            onCommandSelected = onCommandSelected,
+            onAlsoSendToChannelSelected = onAlsoSendToChannelChange,
+            recordingActions = recordingActions,
+            input = input,
+            messageComposerState = messageComposerState,
+            onCancelAction = onCancelAction,
+            onAttachmentsClick = onAttachmentsClick,
+            onValueChange = onValueChange,
+            onAttachmentRemoved = onAttachmentRemoved,
+            onLinkPreviewClick = onLinkPreviewClick,
+        ),
     )
 }
 
@@ -180,6 +187,7 @@ public fun MessageComposer(
  * @param recordingActions The actions that can be performed on an audio recording.
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
  */
+@Suppress("LongMethod")
 @Composable
 public fun MessageComposer(
     messageComposerState: MessageComposerState,
@@ -199,17 +207,19 @@ public fun MessageComposer(
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
     input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
         ChatTheme.componentFactory.MessageComposerInput(
-            modifier = Modifier.weight(1f),
-            state = state,
-            onInputChanged = onValueChange,
-            onAttachmentRemoved = onAttachmentRemoved,
-            onCancel = onCancelAction,
-            onLinkPreviewClick = onLinkPreviewClick,
-            onCancelLinkPreviewClick = onCancelLinkPreviewClick,
-            onSendClick = onSendMessage,
-            onAlsoSendToChannelChange = onAlsoSendToChannelChange,
-            recordingActions = recordingActions,
-            onActiveCommandDismiss = onActiveCommandDismiss,
+            params = MessageComposerInputParams(
+                modifier = Modifier.weight(1f),
+                state = state,
+                onInputChanged = onValueChange,
+                onAttachmentRemoved = onAttachmentRemoved,
+                onCancel = onCancelAction,
+                onLinkPreviewClick = onLinkPreviewClick,
+                onCancelLinkPreviewClick = onCancelLinkPreviewClick,
+                onSendClick = onSendMessage,
+                onAlsoSendToChannelChange = onAlsoSendToChannelChange,
+                recordingActions = recordingActions,
+                onActiveCommandDismiss = onActiveCommandDismiss,
+            ),
         )
     },
 ) {
@@ -260,16 +270,19 @@ public fun MessageComposer(
             verticalAlignment = Bottom,
         ) {
             ChatTheme.componentFactory.MessageComposerLeadingContent(
-                modifier = Modifier,
-                state = messageComposerState,
-                isAttachmentPickerVisible = isAttachmentPickerVisible,
-                onAttachmentsClick = onAttachmentsClick,
+                params = MessageComposerLeadingContentParams(
+                    state = messageComposerState,
+                    isAttachmentPickerVisible = isAttachmentPickerVisible,
+                    onAttachmentsClick = onAttachmentsClick,
+                ),
             )
 
             input(messageComposerState)
 
             ChatTheme.componentFactory.MessageComposerTrailingContent(
-                state = messageComposerState,
+                params = MessageComposerTrailingContentParams(
+                    state = messageComposerState,
+                ),
             )
         }
 

@@ -29,13 +29,13 @@ import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageComposerInputCenterContentParams
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
-import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/message-composer/#usage)
@@ -174,15 +174,11 @@ private object MessageComposerCustomizationSnippet {
 
         object CustomComponentFactory : ChatComponentFactory {
             @Composable
-            override fun MessageComposerInputCenterContent(
-                state: MessageComposerState,
-                onValueChange: (String) -> Unit,
-                modifier: Modifier,
-            ) {
+            override fun MessageComposerInputCenterContent(params: MessageComposerInputCenterContentParams) {
                 OutlinedTextField(
-                    modifier = modifier,
-                    value = state.inputValue,
-                    onValueChange = onValueChange,
+                    modifier = params.modifier,
+                    value = params.state.inputValue,
+                    onValueChange = params.onValueChange,
                     placeholder = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
@@ -196,7 +192,7 @@ private object MessageComposerCustomizationSnippet {
                             )
                         }
                     },
-                    enabled = state.canSendMessage(),
+                    enabled = params.state.canSendMessage(),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color.Transparent,
                         unfocusedBorderColor = Color.Transparent,

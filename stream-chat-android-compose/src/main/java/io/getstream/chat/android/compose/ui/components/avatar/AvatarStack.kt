@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewUserData
 
@@ -60,13 +61,15 @@ internal fun UserAvatarStack(
     ) {
         users.forEach { user ->
             componentFactory.UserAvatar(
-                modifier = Modifier
-                    .size(avatarSize + borderSize)
-                    .border(borderSize, colors.borderCoreInverse, CircleShape)
-                    .padding(borderSize),
-                user = user,
-                showBorder = false,
-                showIndicator = false,
+                params = UserAvatarParams(
+                    modifier = Modifier
+                        .size(avatarSize + borderSize)
+                        .border(borderSize, colors.borderCoreInverse, CircleShape)
+                        .padding(borderSize),
+                    user = user,
+                    showBorder = false,
+                    showIndicator = false,
+                ),
             )
         }
         trailingContent?.invoke()

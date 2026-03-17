@@ -39,6 +39,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.GiphyAttachmentContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Attachment
@@ -99,8 +100,10 @@ public fun GiphyMessageContent(
             onMediaGalleryPreviewResult = {},
         )
         ChatTheme.componentFactory.GiphyAttachmentContent(
-            modifier = Modifier.fillMaxWidth(),
-            state = attachmentState,
+            params = GiphyAttachmentContentParams(
+                modifier = Modifier.fillMaxWidth(),
+                state = attachmentState,
+            ),
         )
 
         Row(

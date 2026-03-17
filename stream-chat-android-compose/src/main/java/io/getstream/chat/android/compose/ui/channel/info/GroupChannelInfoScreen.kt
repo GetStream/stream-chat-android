@@ -53,8 +53,17 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
+import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoAddMembersButtonParams
+import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoAvatarContainerParams
+import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoExpandMembersItemParams
+import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoMemberItemParams
+import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoMemberSectionParams
+import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoTopBarParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
@@ -124,11 +133,13 @@ private fun GroupChannelInfoScaffold(
         modifier = modifier,
         topBar = {
             ChatTheme.componentFactory.GroupChannelInfoTopBar(
-                headerState = headerState,
-                infoState = infoState,
-                listState = listState,
-                onNavigationIconClick = onNavigationIconClick,
-                onAddMembersClick = onAddMembersClick,
+                params = GroupChannelInfoTopBarParams(
+                    headerState = headerState,
+                    infoState = infoState,
+                    listState = listState,
+                    onNavigationIconClick = onNavigationIconClick,
+                    onAddMembersClick = onAddMembersClick,
+                ),
             )
         },
         containerColor = ChatTheme.colors.backgroundCoreApp,
@@ -158,11 +169,13 @@ private fun GroupChannelInfoScreenModal(viewModel: ChannelInfoViewModel) {
     }
 
     ChatTheme.componentFactory.ChannelInfoScreenModal(
-        modal = modal,
-        isGroupChannel = true,
-        onViewAction = viewModel::onViewAction,
-        onMemberViewEvent = viewModel::onMemberViewEvent,
-        onDismiss = { modal = null },
+        params = ChannelInfoScreenModalParams(
+            modal = modal,
+            isGroupChannel = true,
+            onViewAction = viewModel::onViewAction,
+            onMemberViewEvent = viewModel::onMemberViewEvent,
+            onDismiss = { modal = null },
+        ),
     )
 }
 
@@ -193,7 +206,7 @@ internal fun GroupChannelInfoTopBar(
                 infoState.options.contains(ChannelInfoViewState.Content.Option.AddMember)
             ) {
                 ChatTheme.componentFactory.GroupChannelInfoAddMembersButton(
-                    onClick = onAddMembersClick,
+                    params = GroupChannelInfoAddMembersButtonParams(onClick = onAddMembersClick),
                 )
             }
         },
@@ -248,9 +261,11 @@ private fun GroupChannelInfoContent(
             if (header != null) {
                 item {
                     ChatTheme.componentFactory.GroupChannelInfoAvatarContainer(
-                        channel = header.channel,
-                        currentUser = header.currentUser,
-                        members = content.members,
+                        params = GroupChannelInfoAvatarContainerParams(
+                            channel = header.channel,
+                            currentUser = header.currentUser,
+                            members = content.members,
+                        ),
                     )
                 }
             }
@@ -274,13 +289,15 @@ private fun GroupChannelInfoContent(
             if (content.members.isNotEmpty()) {
                 item {
                     ChatTheme.componentFactory.GroupChannelInfoMemberSection(
-                        members = content.members,
-                        currentUser = currentUser,
-                        owner = content.owner,
-                        totalMemberCount = totalMembers,
-                        showAddButton = showAddButton,
-                        onAddMembersClick = onAddMembersClick,
-                        onViewAction = onViewAction,
+                        params = GroupChannelInfoMemberSectionParams(
+                            members = content.members,
+                            currentUser = currentUser,
+                            owner = content.owner,
+                            totalMemberCount = totalMembers,
+                            showAddButton = showAddButton,
+                            onAddMembersClick = onAddMembersClick,
+                            onViewAction = onViewAction,
+                        ),
                     )
                 }
             }
@@ -316,11 +333,13 @@ internal fun GroupChannelInfoAvatarContainer(
         verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
     ) {
         ChatTheme.componentFactory.ChannelAvatar(
-            modifier = Modifier.size(96.dp),
-            channel = channel,
-            currentUser = currentUser,
-            showIndicator = false,
-            showBorder = false,
+            params = ChannelAvatarParams(
+                modifier = Modifier.size(96.dp),
+                channel = channel,
+                currentUser = currentUser,
+                showIndicator = false,
+                showBorder = false,
+            ),
         )
         Text(
             text = ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser),
@@ -387,22 +406,26 @@ internal fun GroupChannelInfoMemberSection(
         members.forEach { member ->
             val isCurrentUserMember = member.getUserId() == currentUser?.id
             ChatTheme.componentFactory.GroupChannelInfoMemberItem(
-                currentUser = currentUser,
-                member = member,
-                isOwner = owner.id == member.getUserId(),
-                onClick = if (isCurrentUserMember) {
-                    null
-                } else {
-                    { onViewAction(ChannelInfoViewAction.MemberClick(member = member)) }
-                },
+                params = GroupChannelInfoMemberItemParams(
+                    currentUser = currentUser,
+                    member = member,
+                    isOwner = owner.id == member.getUserId(),
+                    onClick = if (isCurrentUserMember) {
+                        null
+                    } else {
+                        { onViewAction(ChannelInfoViewAction.MemberClick(member = member)) }
+                    },
+                ),
             )
         }
 
         // "View all" footer
         if (members.canExpand && members.isCollapsed) {
             ChatTheme.componentFactory.GroupChannelInfoExpandMembersItem(
-                collapsedCount = members.collapsedCount,
-                onClick = { onViewAction(ChannelInfoViewAction.ExpandMembersClick) },
+                params = GroupChannelInfoExpandMembersItemParams(
+                    collapsedCount = members.collapsedCount,
+                    onClick = { onViewAction(ChannelInfoViewAction.ExpandMembersClick) },
+                ),
             )
         }
     }
@@ -422,31 +445,26 @@ internal fun GroupChannelInfoMemberItem(
     ) {
         val user = member.user
         ChatTheme.componentFactory.UserAvatar(
-            modifier = Modifier.size(AvatarSize.Medium),
-            user = user,
-            showIndicator = true,
-            showBorder = false,
+            params = UserAvatarParams(
+                modifier = Modifier.size(AvatarSize.Medium),
+                user = user,
+                showIndicator = true,
+                showBorder = false,
+            ),
         )
         Column(modifier = Modifier.weight(1f)) {
+            val errorColor = ChatTheme.colors.accentError
             Text(
                 text = user.name.takeIf(String::isNotBlank) ?: user.id,
                 style = ChatTheme.typography.bodyDefault,
-                color = if (member.banned) {
-                    ChatTheme.colors.accentError
-                } else {
-                    ChatTheme.colors.textPrimary
-                },
+                color = if (member.banned) errorColor else ChatTheme.colors.textPrimary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
                 text = user.getLastSeenText(LocalContext.current),
                 style = ChatTheme.typography.metadataDefault,
-                color = if (member.banned) {
-                    ChatTheme.colors.accentError
-                } else {
-                    ChatTheme.colors.textSecondary
-                },
+                color = if (member.banned) errorColor else ChatTheme.colors.textSecondary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )

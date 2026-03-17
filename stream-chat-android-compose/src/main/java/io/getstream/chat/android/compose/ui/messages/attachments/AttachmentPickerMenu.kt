@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.theme.AttachmentPickerParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.util.isKeyboardVisibleAsState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
@@ -127,10 +128,12 @@ public fun AttachmentPickerMenu(
         exit = shrinkVertically(shrinkTowards = Alignment.Top),
     ) {
         ChatTheme.componentFactory.AttachmentPicker(
-            modifier = Modifier.height(menuHeight),
-            attachmentsPickerViewModel = attachmentsPickerViewModel,
-            messageMode = messageMode,
-            actions = actions,
+            params = AttachmentPickerParams(
+                modifier = Modifier.height(menuHeight),
+                attachmentsPickerViewModel = attachmentsPickerViewModel,
+                messageMode = messageMode,
+                actions = actions,
+            ),
         )
     }
 }

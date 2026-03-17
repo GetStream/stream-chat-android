@@ -45,7 +45,11 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
+import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageListHeaderCenterContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageListHeaderLeadingContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageListHeaderTrailingContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
@@ -96,41 +100,35 @@ public fun MessageListHeader(
     leadingContent: @Composable RowScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             MessageListHeaderLeadingContent(
-                onBackPressed = onBackPressed,
+                params = MessageListHeaderLeadingContentParams(
+                    onBackPressed = onBackPressed,
+                ),
             )
         }
     },
     centerContent: @Composable RowScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
-            if (onHeaderTitleClick == null) {
-                MessageListHeaderCenterContent(
+            MessageListHeaderCenterContent(
+                params = MessageListHeaderCenterContentParams(
                     modifier = Modifier.weight(1f),
                     channel = channel,
                     currentUser = currentUser,
                     connectionState = connectionState,
                     typingUsers = typingUsers,
                     messageMode = messageMode,
-                    onClick = null,
-                )
-            } else {
-                MessageListHeaderCenterContent(
-                    modifier = Modifier.weight(1f),
-                    channel = channel,
-                    currentUser = currentUser,
-                    typingUsers = typingUsers,
-                    messageMode = messageMode,
-                    onHeaderTitleClick = onHeaderTitleClick,
-                    connectionState = connectionState,
-                )
-            }
+                    onClick = onHeaderTitleClick,
+                ),
+            )
         }
     },
     trailingContent: @Composable RowScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             MessageListHeaderTrailingContent(
-                channel = channel,
-                currentUser = currentUser,
-                onClick = onChannelAvatarClick,
+                params = MessageListHeaderTrailingContentParams(
+                    channel = channel,
+                    currentUser = currentUser,
+                    onClick = onChannelAvatarClick,
+                ),
             )
         }
     },
@@ -292,13 +290,15 @@ internal fun DefaultMessageListHeaderTrailingContent(
     onClick: ((Channel) -> Unit)?,
 ) {
     ChatTheme.componentFactory.ChannelAvatar(
-        modifier = Modifier
-            .size(40.dp)
-            .ifNotNull(onClick) { callback -> clickable { callback(channel) } },
-        channel = channel,
-        currentUser = currentUser,
-        showIndicator = false,
-        showBorder = false,
+        params = ChannelAvatarParams(
+            modifier = Modifier
+                .size(40.dp)
+                .ifNotNull(onClick) { callback -> clickable { callback(channel) } },
+            channel = channel,
+            currentUser = currentUser,
+            showIndicator = false,
+            showBorder = false,
+        ),
     )
 }
 
