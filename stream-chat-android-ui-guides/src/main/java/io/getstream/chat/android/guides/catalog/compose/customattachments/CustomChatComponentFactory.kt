@@ -83,7 +83,7 @@ object CustomChatComponentFactory : ChatComponentFactory {
     @Composable
     override fun MessageComposerLeadingContent(params: MessageComposerLeadingContentParams) {
         IconButton(
-            modifier = Modifier
+            modifier = params.modifier
                 .size(48.dp)
                 .padding(12.dp),
             content = {
