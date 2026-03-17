@@ -46,11 +46,13 @@ public data class MessageReactionsParams(
  * @param centerContent Composable lambda for center content in the bottom bar.
  * @param leadingContent Composable lambda for leading content in the bottom bar.
  * @param trailingContent Composable lambda for trailing content in the bottom bar.
+ * @param topContent Composable lambda for content above the bottom bar (e.g. video playback controls).
  */
 public data class ChannelMediaAttachmentsPreviewBottomBarParams(
     val centerContent: @Composable () -> Unit,
     val leadingContent: @Composable () -> Unit = {},
     val trailingContent: @Composable () -> Unit = {},
+    val topContent: @Composable (() -> Unit)? = null,
 )
 
 /**

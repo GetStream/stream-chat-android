@@ -16,8 +16,10 @@
 
 package io.getstream.chat.android.compose.ui.channel.attachments
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,20 +28,26 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.media3.common.Player
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.attachments.preview.ConfirmShareLargeFileDialog
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPager
+import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewPageIndicator
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewShareIcon
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewSharingInProgressIndicator
+import io.getstream.chat.android.compose.ui.attachments.preview.internal.GalleryMediaEffect
+import io.getstream.chat.android.compose.ui.attachments.preview.internal.VideoPlaybackControls
+import io.getstream.chat.android.compose.ui.attachments.preview.internal.rememberMediaGalleryPlayerState
 import io.getstream.chat.android.compose.ui.theme.ChannelMediaAttachmentsPreviewBottomBarParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
@@ -136,40 +144,55 @@ private fun ChannelMediaAttachmentsPreviewContent(
     onVideoPlaybackError: (error: Throwable) -> Unit = {},
     onShareClick: (attachment: Attachment) -> Unit = {},
 ) {
-    val pagerState = rememberPagerState(
-        initialPage = initialIndex,
-        pageCount = items::size,
-    )
+    val pagerState = rememberPagerState(initialPage = initialIndex, pageCount = items::size)
     val snackbarHostState = remember { SnackbarHostState() }
+    val attachments = remember(items) {
+        items.map(ChannelAttachmentsViewState.Content.Item::attachment)
+    }
+    val playerState = rememberMediaGalleryPlayerState(onPlaybackError = onVideoPlaybackError)
+    GalleryMediaEffect(playerState, pagerState.currentPage, attachments)
+    var isImmersive by remember { mutableStateOf(false) }
+    // Scaffold padding is intentionally ignored to prevent content shifting when toggling immersive mode
+    @Suppress("UnusedMaterial3ScaffoldPaddingParameter")
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            ChatTheme.componentFactory.ChannelMediaAttachmentsPreviewTopBar(
-                item = items[pagerState.currentPage],
-                onNavigationIconClick = onNavigationIconClick,
-            )
+            AnimatedVisibility(
+                visible = !isImmersive,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                ChatTheme.componentFactory.ChannelMediaAttachmentsPreviewTopBar(
+                    item = items[pagerState.currentPage],
+                    onNavigationIconClick = onNavigationIconClick,
+                )
+            }
         },
         bottomBar = {
-            ChannelMediaAttachmentsPreviewBottomBar(
-                items = items,
-                viewState = viewState,
-                connectionState = connectionState,
-                pagerState = pagerState,
-                onShareClick = onShareClick,
-            )
+            AnimatedVisibility(
+                visible = !isImmersive,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                ChannelMediaAttachmentsPreviewBottomBar(
+                    items = items,
+                    viewState = viewState,
+                    connectionState = connectionState,
+                    pagerState = pagerState,
+                    player = playerState.player,
+                    onShareClick = onShareClick,
+                )
+            }
         },
         snackbarHost = { StreamSnackbarHost(hostState = snackbarHostState) },
         containerColor = ChatTheme.colors.backgroundCoreApp,
-    ) { padding ->
+    ) { _ ->
         MediaGalleryPager(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             pagerState = pagerState,
-            attachments = remember(items) {
-                items.map(ChannelAttachmentsViewState.Content.Item::attachment)
-            },
-            onPlaybackError = onVideoPlaybackError,
+            attachments = attachments,
+            player = playerState.player,
+            onMediaClick = { isImmersive = !isImmersive },
         )
         LoadMoreHandler(
             pagerState = pagerState,
@@ -180,28 +203,32 @@ private fun ChannelMediaAttachmentsPreviewContent(
 }
 
 @Composable
+@Suppress("LongParameterList")
 private fun ChannelMediaAttachmentsPreviewBottomBar(
     items: List<ChannelAttachmentsViewState.Content.Item>,
     viewState: ChannelMediaAttachmentsPreviewViewState,
     connectionState: ConnectionState,
     pagerState: PagerState,
+    player: Player?,
     onShareClick: (Attachment) -> Unit,
 ) {
     val config = ChatTheme.config.mediaGallery
 
     ChatTheme.componentFactory.ChannelMediaAttachmentsPreviewBottomBar(
         params = ChannelMediaAttachmentsPreviewBottomBarParams(
+            topContent = {
+                val currentAttachment = items.getOrNull(pagerState.currentPage)?.attachment
+                if (player != null && currentAttachment?.isVideo() == true) {
+                    VideoPlaybackControls(player = player)
+                }
+            },
             centerContent = {
                 if (viewState.isPreparingToShare) {
                     MediaGalleryPreviewSharingInProgressIndicator()
                 } else {
-                    // TODO Use MediaGalleryPreviewPageIndicator when this deprecated component is removed
-                    ChatTheme.componentFactory.ChannelMediaAttachmentsPreviewBottomBar(
-                        text = stringResource(
-                            R.string.stream_ui_channel_attachments_media_preview_index,
-                            pagerState.currentPage + 1,
-                            items.size,
-                        ),
+                    MediaGalleryPreviewPageIndicator(
+                        currentPage = pagerState.currentPage,
+                        totalPages = items.size,
                     )
                 }
             },

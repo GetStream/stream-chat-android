@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -49,6 +48,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.runtime.Composable
@@ -113,6 +113,9 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
+import io.getstream.chat.android.compose.ui.components.button.StreamButton
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
@@ -134,6 +137,7 @@ import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisi
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.ScrollToBottomButton
 import io.getstream.chat.android.compose.ui.components.messages.SegmentedMessageReactions
+import io.getstream.chat.android.compose.ui.components.messages.SwipeToReplyIcon
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleSize
@@ -187,6 +191,8 @@ import io.getstream.chat.android.compose.ui.threads.ThreadItem
 import io.getstream.chat.android.compose.ui.threads.ThreadListBannerState
 import io.getstream.chat.android.compose.ui.util.ReactionResolver
 import io.getstream.chat.android.compose.ui.util.StreamSnackbar
+import io.getstream.chat.android.compose.ui.util.bottomBorder
+import io.getstream.chat.android.compose.ui.util.topBorder
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -2706,13 +2712,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun RowScope.SwipeToReplyContent() {
-        Box {
-            Icon(
-                painter = painterResource(id = R.drawable.stream_compose_ic_reply),
-                contentDescription = "",
-                tint = ChatTheme.colors.textSecondary,
-            )
-        }
+        SwipeToReplyIcon()
     }
 
     /**
@@ -3515,13 +3515,18 @@ public interface ChatComponentFactory {
         onNavigationIconClick: () -> Unit,
     ) {
         CenterAlignedTopAppBar(
+            modifier = Modifier.bottomBorder(ChatTheme.colors.borderCoreSubtle),
             title = { ChannelMediaAttachmentsPreviewTopBarTitle(item = item) },
             navigationIcon = {
-                IconButton(onClick = onNavigationIconClick) {
+                StreamButton(
+                    modifier = Modifier.minimumInteractiveComponentSize(),
+                    onClick = onNavigationIconClick,
+                    style = StreamButtonStyleDefaults.secondaryGhost,
+                    size = StreamButtonSize.Medium,
+                ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_close),
+                        painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
                         contentDescription = stringResource(id = R.string.stream_compose_cancel),
-                        tint = ChatTheme.colors.textPrimary,
                     )
                 }
             },
@@ -3548,45 +3553,14 @@ public interface ChatComponentFactory {
         ) {
             Text(
                 text = title,
-                style = ChatTheme.typography.headingMedium,
+                style = ChatTheme.typography.headingSmall,
                 color = ChatTheme.colors.textPrimary,
                 maxLines = 1,
             )
             Text(
                 text = subtitle,
-                style = ChatTheme.typography.metadataDefault,
+                style = ChatTheme.typography.captionDefault,
                 color = ChatTheme.colors.textSecondary,
-                maxLines = 1,
-            )
-        }
-    }
-
-    /**
-     * Factory method for creating the bottom bar of the channel media attachments preview screen.
-     *
-     * @param text The text to display in the bottom bar.
-     */
-    @Deprecated(
-        message = "Use ChannelMediaAttachmentsPreviewBottomBar(" +
-            "params: ChannelMediaAttachmentsPreviewBottomBarParams) instead.",
-        replaceWith = ReplaceWith(
-            "ChannelMediaAttachmentsPreviewBottomBar(ChannelMediaAttachmentsPreviewBottomBarParams(" +
-                "centerContent = { Text(text) }))",
-        ),
-    )
-    @Composable
-    public fun ChannelMediaAttachmentsPreviewBottomBar(text: String) {
-        Row(
-            modifier = Modifier
-                .background(ChatTheme.colors.backgroundElevationElevation1)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            Text(
-                text = text,
-                style = ChatTheme.typography.headingMedium,
-                color = ChatTheme.colors.textPrimary,
                 maxLines = 1,
             )
         }
@@ -3600,18 +3574,25 @@ public interface ChatComponentFactory {
     public fun ChannelMediaAttachmentsPreviewBottomBar(
         params: ChannelMediaAttachmentsPreviewBottomBarParams,
     ) {
-        CenterAlignedTopAppBar(
-            title = { params.centerContent() },
-            navigationIcon = { params.leadingContent() },
-            actions = { params.trailingContent() },
-            windowInsets = BottomAppBarDefaults.windowInsets,
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = ChatTheme.colors.backgroundElevationElevation1,
-                titleContentColor = ChatTheme.colors.textPrimary,
-                navigationIconContentColor = ChatTheme.colors.textPrimary,
-                actionIconContentColor = ChatTheme.colors.textPrimary,
-            ),
-        )
+        Column(
+            modifier = Modifier
+                .background(ChatTheme.colors.backgroundElevationElevation1)
+                .topBorder(ChatTheme.colors.borderCoreDefault),
+        ) {
+            params.topContent?.invoke()
+            CenterAlignedTopAppBar(
+                title = { params.centerContent() },
+                navigationIcon = { params.leadingContent() },
+                actions = { params.trailingContent() },
+                windowInsets = BottomAppBarDefaults.windowInsets,
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                    titleContentColor = ChatTheme.colors.textPrimary,
+                    navigationIconContentColor = ChatTheme.colors.textPrimary,
+                    actionIconContentColor = ChatTheme.colors.textPrimary,
+                ),
+            )
+        }
     }
 
     /**
