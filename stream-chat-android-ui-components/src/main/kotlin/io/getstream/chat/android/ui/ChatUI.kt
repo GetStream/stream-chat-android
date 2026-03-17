@@ -17,7 +17,6 @@
 package io.getstream.chat.android.ui
 
 import android.content.Context
-import io.getstream.chat.android.ui.ChatUI.attachmentFactoryManager
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.helper.DefaultDownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DefaultVideoHeadersProvider

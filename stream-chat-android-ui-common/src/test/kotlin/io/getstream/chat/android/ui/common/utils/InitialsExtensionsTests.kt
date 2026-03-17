@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.common.utils
 
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.utils.InitialsExtensionsTests.Companion.provideNames
 import io.getstream.chat.android.ui.common.utils.extensions.initials
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest

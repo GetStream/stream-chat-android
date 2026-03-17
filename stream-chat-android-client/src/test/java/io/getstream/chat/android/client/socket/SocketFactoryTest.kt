@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.ParserFactory
-import io.getstream.chat.android.client.socket.SocketFactoryTest.Companion.arguments
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.HeadersUtil
 import io.getstream.chat.android.models.User

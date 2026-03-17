@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.api.models
 
-import io.getstream.chat.android.client.api.models.QuerySortByFieldTest.Companion.generateQuerySortByFieldInput
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySortByField

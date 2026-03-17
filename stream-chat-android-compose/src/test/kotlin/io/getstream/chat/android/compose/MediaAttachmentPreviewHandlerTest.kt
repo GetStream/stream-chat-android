@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose
 
 import android.content.Context
-import io.getstream.chat.android.compose.MediaAttachmentPreviewHandlerTest.Companion.generateAttachmentsInput
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.MediaAttachmentPreviewHandler
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType

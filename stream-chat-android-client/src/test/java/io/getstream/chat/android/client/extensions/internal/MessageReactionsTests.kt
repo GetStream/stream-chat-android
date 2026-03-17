@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.client.extensions.internal
 
-import io.getstream.chat.android.client.extensions.internal.MessageReactionsTests.Companion.addMyReactionArguments
-import io.getstream.chat.android.client.extensions.internal.MessageReactionsTests.Companion.removeMyReactionArguments
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionGroup

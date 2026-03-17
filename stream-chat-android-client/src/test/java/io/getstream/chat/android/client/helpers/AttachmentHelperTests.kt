@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.client.helpers
 
-import io.getstream.chat.android.client.helpers.AttachmentHelperTests.Companion.nonValidUrls
-import io.getstream.chat.android.client.helpers.AttachmentHelperTests.Companion.streamUrlsInput
 import io.getstream.chat.android.client.utils.TimeProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.randomAttachment

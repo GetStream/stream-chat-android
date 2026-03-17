@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.api2.model.requests
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
-import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest.Companion.create
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySorter
 import java.util.Date

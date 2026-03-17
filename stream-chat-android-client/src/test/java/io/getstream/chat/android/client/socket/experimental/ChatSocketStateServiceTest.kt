@@ -22,17 +22,6 @@ import io.getstream.chat.android.client.socket.ChatSocketStateService
 import io.getstream.chat.android.client.socket.ChatSocketStateService.RestartReason
 import io.getstream.chat.android.client.socket.ChatSocketStateService.State
 import io.getstream.chat.android.client.socket.SocketFactory
-import io.getstream.chat.android.client.socket.experimental.ChatSocketStateServiceTest.Companion.onConnectArgs
-import io.getstream.chat.android.client.socket.experimental.ChatSocketStateServiceTest.Companion.onConnectionEstablishedArgs
-import io.getstream.chat.android.client.socket.experimental.ChatSocketStateServiceTest.Companion.onNetworkAvailableArgs
-import io.getstream.chat.android.client.socket.experimental.ChatSocketStateServiceTest.Companion.onNetworkErrorArgs
-import io.getstream.chat.android.client.socket.experimental.ChatSocketStateServiceTest.Companion.onNetworkNotAvailableArgs
-import io.getstream.chat.android.client.socket.experimental.ChatSocketStateServiceTest.Companion.onReconnectArgs
-import io.getstream.chat.android.client.socket.experimental.ChatSocketStateServiceTest.Companion.onRequiredDisconnectArgs
-import io.getstream.chat.android.client.socket.experimental.ChatSocketStateServiceTest.Companion.onResumeArgs
-import io.getstream.chat.android.client.socket.experimental.ChatSocketStateServiceTest.Companion.onStopArgs
-import io.getstream.chat.android.client.socket.experimental.ChatSocketStateServiceTest.Companion.onUnrecoverableErrorArgs
-import io.getstream.chat.android.client.socket.experimental.ChatSocketStateServiceTest.Companion.onWebSocketEventLostArgs
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomChatNetworkError
 import io.getstream.result.Error
