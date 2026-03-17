@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.client.extensions.isArchive
 import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChannelOptionsItemParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.isDistinct
@@ -79,9 +80,10 @@ public fun ChannelOptions(
         items(actions) { action ->
             with(ChatTheme.componentFactory) {
                 ChannelOptionsItem(
-                    modifier = Modifier,
-                    action = action,
-                    onClick = { onChannelOptionConfirm(action) },
+                    ChannelOptionsItemParams(
+                        action = action,
+                        onClick = { onChannelOptionConfirm(action) },
+                    ),
                 )
             }
         }

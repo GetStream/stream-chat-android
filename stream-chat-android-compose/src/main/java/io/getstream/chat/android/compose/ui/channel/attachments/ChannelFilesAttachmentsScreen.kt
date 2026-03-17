@@ -34,6 +34,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentDescription
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentImage
+import io.getstream.chat.android.compose.ui.theme.ChannelFilesAttachmentsTopBarParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModel
@@ -100,8 +101,10 @@ private fun ChannelFilesAttachmentsContent(
         modifier = modifier,
         topBar = {
             ChatTheme.componentFactory.ChannelFilesAttachmentsTopBar(
-                listState = listState,
-                onNavigationIconClick = onNavigationIconClick,
+                params = ChannelFilesAttachmentsTopBarParams(
+                    listState = listState,
+                    onNavigationIconClick = onNavigationIconClick,
+                ),
             )
         },
         containerColor = ChatTheme.colors.backgroundCoreApp,

@@ -56,6 +56,15 @@ import io.getstream.chat.android.compose.ui.components.common.CountBadgeSize
 import io.getstream.chat.android.compose.ui.components.messages.MessageBubble
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageContainerParams
+import io.getstream.chat.android.compose.ui.theme.MessageListDateSeparatorItemContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageListEmptyThreadPlaceholderItemContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageListModeratedItemContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageListStartOfTheChannelItemContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageListSystemItemContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageListThreadDateSeparatorItemContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageListTypingIndicatorItemContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageListUnreadSeparatorItemContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.bottomBorder
@@ -102,6 +111,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
  * @param onLinkClick Handler for clicking on a link in the message.
  * @param onMediaGalleryPreviewResult Handler when the user receives a result from the Media Gallery Preview.
  */
+@Suppress("LongMethod")
 @Composable
 public fun LazyItemScope.MessageItem(
     messageListItemState: MessageListItemState,
@@ -126,48 +136,70 @@ public fun LazyItemScope.MessageItem(
 ) {
     with(ChatTheme.componentFactory) {
         when (messageListItemState) {
-            is DateSeparatorItemState -> MessageListDateSeparatorItemContent(messageListItemState)
-            is ThreadDateSeparatorItemState -> MessageListThreadDateSeparatorItemContent(messageListItemState)
-            is SystemMessageItemState -> MessageListSystemItemContent(messageListItemState)
-            is ModeratedMessageItemState -> MessageListModeratedItemContent(messageListItemState)
+            is DateSeparatorItemState -> MessageListDateSeparatorItemContent(
+                params = MessageListDateSeparatorItemContentParams(dateSeparatorItem = messageListItemState),
+            )
+            is ThreadDateSeparatorItemState -> MessageListThreadDateSeparatorItemContent(
+                params = MessageListThreadDateSeparatorItemContentParams(
+                    threadDateSeparatorItem = messageListItemState,
+                ),
+            )
+            is SystemMessageItemState -> MessageListSystemItemContent(
+                params = MessageListSystemItemContentParams(systemMessageItem = messageListItemState),
+            )
+            is ModeratedMessageItemState -> MessageListModeratedItemContent(
+                params = MessageListModeratedItemContentParams(moderatedMessageItem = messageListItemState),
+            )
             is MessageItemState -> {
                 val selectedMessageBounds = LocalSelectedMessageBounds.current
                 var layoutCoords by remember { mutableStateOf<LayoutCoordinates?>(null) }
                 MessageContainer(
-                    messageItem = messageListItemState,
-                    reactionSorting = reactionSorting,
-                    modifier = Modifier.onGloballyPositioned { layoutCoords = it },
-                    onLongItemClick = { message ->
-                        layoutCoords?.let { coords ->
-                            if (coords.isAttached) {
-                                selectedMessageBounds?.value = coords.boundsInWindow()
+                    params = MessageContainerParams(
+                        messageItem = messageListItemState,
+                        reactionSorting = reactionSorting,
+                        modifier = Modifier.onGloballyPositioned { layoutCoords = it },
+                        onLongItemClick = { message ->
+                            layoutCoords?.let { coords ->
+                                if (coords.isAttached) {
+                                    selectedMessageBounds?.value = coords.boundsInWindow()
+                                }
                             }
-                        }
-                        onLongItemClick(message)
-                    },
-                    onReactionsClick = onReactionsClick,
-                    onThreadClick = onThreadClick,
-                    onPollUpdated = onPollUpdated,
-                    onCastVote = onCastVote,
-                    onRemoveVote = onRemoveVote,
-                    selectPoll = selectPoll,
-                    onClosePoll = onClosePoll,
-                    onAddPollOption = onAddPollOption,
-                    onGiphyActionClick = onGiphyActionClick,
-                    onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                    onQuotedMessageClick = onQuotedMessageClick,
-                    onUserAvatarClick = onUserAvatarClick,
-                    onMessageLinkClick = onLinkClick,
-                    onUserMentionClick = onUserMentionClick,
-                    onAddAnswer = onAddAnswer,
-                    onReply = onReply,
+                            onLongItemClick(message)
+                        },
+                        onReactionsClick = onReactionsClick,
+                        onThreadClick = onThreadClick,
+                        onPollUpdated = onPollUpdated,
+                        onCastVote = onCastVote,
+                        onRemoveVote = onRemoveVote,
+                        selectPoll = selectPoll,
+                        onClosePoll = onClosePoll,
+                        onAddPollOption = onAddPollOption,
+                        onGiphyActionClick = onGiphyActionClick,
+                        onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                        onQuotedMessageClick = onQuotedMessageClick,
+                        onUserAvatarClick = onUserAvatarClick,
+                        onMessageLinkClick = onLinkClick,
+                        onUserMentionClick = onUserMentionClick,
+                        onAddAnswer = onAddAnswer,
+                        onReply = onReply,
+                    ),
                 )
             }
 
-            is TypingItemState -> MessageListTypingIndicatorItemContent(messageListItemState)
-            is EmptyThreadPlaceholderItemState -> MessageListEmptyThreadPlaceholderItemContent(messageListItemState)
-            is UnreadSeparatorItemState -> MessageListUnreadSeparatorItemContent(messageListItemState)
-            is StartOfTheChannelItemState -> MessageListStartOfTheChannelItemContent(messageListItemState)
+            is TypingItemState -> MessageListTypingIndicatorItemContent(
+                params = MessageListTypingIndicatorItemContentParams(typingItem = messageListItemState),
+            )
+            is EmptyThreadPlaceholderItemState -> MessageListEmptyThreadPlaceholderItemContent(
+                params = MessageListEmptyThreadPlaceholderItemContentParams(
+                    emptyThreadPlaceholderItem = messageListItemState,
+                ),
+            )
+            is UnreadSeparatorItemState -> MessageListUnreadSeparatorItemContent(
+                params = MessageListUnreadSeparatorItemContentParams(unreadSeparatorItem = messageListItemState),
+            )
+            is StartOfTheChannelItemState -> MessageListStartOfTheChannelItemContent(
+                params = MessageListStartOfTheChannelItemContentParams(startOfTheChannelItem = messageListItemState),
+            )
         }
     }
 }

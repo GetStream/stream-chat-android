@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.models.User
 import io.getstream.chat.ui.sample.common.appThemeContext
 import io.getstream.chat.ui.sample.databinding.AddGroupChannelSelectNameMemberItemBinding
-import io.getstream.chat.ui.sample.feature.channel.add.group.selectname.AddGroupChannelSelectNameMembersAdapter.DeleteMemberClickListener
 
 class AddGroupChannelSelectNameMembersAdapter :
     ListAdapter<User, AddGroupChannelSelectNameMembersAdapter.MemberViewHolder>(

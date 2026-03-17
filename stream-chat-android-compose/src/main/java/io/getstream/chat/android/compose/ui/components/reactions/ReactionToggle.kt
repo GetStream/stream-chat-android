@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ReactionIconParams
 import io.getstream.chat.android.compose.ui.util.ReactionResolver
 import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -59,18 +60,20 @@ internal fun ReactionToggle(
     emoji?.let {
         val containerSize = size.toContainerSize()
         ChatTheme.componentFactory.ReactionIcon(
-            type = type,
-            emoji = emoji,
-            size = size.toIconSize(),
-            modifier = modifier
-                .applyIf(checked) {
-                    background(ChatTheme.colors.backgroundCoreSelected, CircleShape)
-                }
-                .ifNotNull(onCheckedChange) { onChange ->
-                    clip(CircleShape).clickable { onChange(!checked) }
-                }
-                .defaultMinSize(minWidth = containerSize, minHeight = containerSize)
-                .wrapContentSize(),
+            params = ReactionIconParams(
+                type = type,
+                emoji = emoji,
+                size = size.toIconSize(),
+                modifier = modifier
+                    .applyIf(checked) {
+                        background(ChatTheme.colors.backgroundCoreSelected, CircleShape)
+                    }
+                    .ifNotNull(onCheckedChange) { onChange ->
+                        clip(CircleShape).clickable { onChange(!checked) }
+                    }
+                    .defaultMinSize(minWidth = containerSize, minHeight = containerSize)
+                    .wrapContentSize(),
+            ),
         )
     }
 }

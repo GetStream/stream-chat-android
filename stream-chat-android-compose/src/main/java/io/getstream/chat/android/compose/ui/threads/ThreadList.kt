@@ -54,6 +54,11 @@ import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.theme.ThreadListBannerParams
+import io.getstream.chat.android.compose.ui.theme.ThreadListEmptyContentParams
+import io.getstream.chat.android.compose.ui.theme.ThreadListItemParams
+import io.getstream.chat.android.compose.ui.theme.ThreadListLoadingContentParams
+import io.getstream.chat.android.compose.ui.theme.ThreadListLoadingMoreContentParams
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
@@ -91,19 +96,27 @@ public fun ThreadList(
     onThreadClick: (Thread) -> Unit = {},
     onLoadMore: () -> Unit = { viewModel.loadNextPage() },
     banner: @Composable (ThreadListBannerState?) -> Unit = { state ->
-        state?.let { ChatTheme.componentFactory.ThreadListBanner(it, onBannerClick) }
+        state?.let {
+            ChatTheme.componentFactory.ThreadListBanner(
+                params = ThreadListBannerParams(state = it, onClick = onBannerClick),
+            )
+        }
     },
     itemContent: @Composable (Thread) -> Unit = {
-        ChatTheme.componentFactory.ThreadListItem(it, currentUser, onThreadClick)
+        ChatTheme.componentFactory.ThreadListItem(
+            params = ThreadListItemParams(thread = it, currentUser = currentUser, onThreadClick = onThreadClick),
+        )
     },
     emptyContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.ThreadListEmptyContent(modifier)
+        ChatTheme.componentFactory.ThreadListEmptyContent(params = ThreadListEmptyContentParams(modifier = modifier))
     },
     loadingContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.ThreadListLoadingContent(modifier)
+        ChatTheme.componentFactory.ThreadListLoadingContent(
+            params = ThreadListLoadingContentParams(modifier = modifier),
+        )
     },
     loadingMoreContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.ThreadListLoadingMoreContent()
+        ChatTheme.componentFactory.ThreadListLoadingMoreContent(params = ThreadListLoadingMoreContentParams())
     },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -153,19 +166,27 @@ public fun ThreadList(
     onThreadClick: (Thread) -> Unit,
     onLoadMore: () -> Unit,
     banner: @Composable (ThreadListBannerState?) -> Unit = { bannerState ->
-        bannerState?.let { ChatTheme.componentFactory.ThreadListBanner(it, onBannerClick) }
+        bannerState?.let {
+            ChatTheme.componentFactory.ThreadListBanner(
+                params = ThreadListBannerParams(state = it, onClick = onBannerClick),
+            )
+        }
     },
     itemContent: @Composable (Thread) -> Unit = {
-        ChatTheme.componentFactory.ThreadListItem(it, currentUser, onThreadClick)
+        ChatTheme.componentFactory.ThreadListItem(
+            params = ThreadListItemParams(thread = it, currentUser = currentUser, onThreadClick = onThreadClick),
+        )
     },
     emptyContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.ThreadListEmptyContent(modifier)
+        ChatTheme.componentFactory.ThreadListEmptyContent(params = ThreadListEmptyContentParams(modifier = modifier))
     },
     loadingContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.ThreadListLoadingContent(modifier)
+        ChatTheme.componentFactory.ThreadListLoadingContent(
+            params = ThreadListLoadingContentParams(modifier = modifier),
+        )
     },
     loadingMoreContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.ThreadListLoadingMoreContent()
+        ChatTheme.componentFactory.ThreadListLoadingMoreContent(params = ThreadListLoadingMoreContentParams())
     },
 ) {
     val bannerState: ThreadListBannerState? = when {

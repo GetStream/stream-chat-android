@@ -48,8 +48,12 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
+import io.getstream.chat.android.compose.ui.theme.ChannelListHeaderCenterContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelListHeaderLeadingContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelListHeaderTrailingContentParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.User
@@ -90,23 +94,29 @@ public fun ChannelListHeader(
     leadingContent: @Composable RowScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelListHeaderLeadingContent(
-                currentUser = currentUser,
-                onAvatarClick = onAvatarClick,
+                params = ChannelListHeaderLeadingContentParams(
+                    currentUser = currentUser,
+                    onAvatarClick = onAvatarClick,
+                ),
             )
         }
     },
     centerContent: @Composable RowScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelListHeaderCenterContent(
-                connectionState = connectionState,
-                title = title,
+                params = ChannelListHeaderCenterContentParams(
+                    connectionState = connectionState,
+                    title = title,
+                ),
             )
         }
     },
     trailingContent: @Composable RowScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelListHeaderTrailingContent(
-                onHeaderActionClick = onHeaderActionClick,
+                params = ChannelListHeaderTrailingContentParams(
+                    onHeaderActionClick = onHeaderActionClick,
+                ),
             )
         }
     },
@@ -159,12 +169,12 @@ internal fun DefaultChannelHeaderLeadingContent(
             contentAlignment = Alignment.Center,
         ) {
             ChatTheme.componentFactory.UserAvatar(
-                modifier = Modifier
-                    .size(AvatarSize.Large)
-                    .testTag("Stream_UserAvatar"),
-                user = currentUser,
-                showIndicator = false,
-                showBorder = false,
+                params = UserAvatarParams(
+                    modifier = Modifier
+                        .size(AvatarSize.Large)
+                        .testTag("Stream_UserAvatar"),
+                    user = currentUser,
+                ),
             )
         }
     } else {

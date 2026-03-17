@@ -3,15 +3,9 @@ package io.getstream.chat.android.ui.common.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.text.Layout;
-import android.text.Spannable;
-import android.text.method.LinkMovementMethod;
-import android.text.style.URLSpan;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 

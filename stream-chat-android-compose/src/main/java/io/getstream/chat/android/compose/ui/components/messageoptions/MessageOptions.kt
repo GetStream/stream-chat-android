@@ -24,6 +24,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.components.common.ContextualMenu
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageMenuOptionsItemParams
 import io.getstream.chat.android.compose.util.extensions.canBlockUser
 import io.getstream.chat.android.compose.util.extensions.canCopyMessage
 import io.getstream.chat.android.compose.util.extensions.canDeleteMessage
@@ -73,8 +74,10 @@ public fun MessageOptions(
     ContextualMenu(modifier) {
         options.forEach { option ->
             ChatTheme.componentFactory.MessageMenuOptionsItem(
-                option = option,
-                onMessageOptionSelected = onMessageOptionSelected,
+                params = MessageMenuOptionsItemParams(
+                    option = option,
+                    onMessageOptionSelected = onMessageOptionSelected,
+                ),
             )
         }
     }

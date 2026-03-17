@@ -9,8 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.getValue
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
