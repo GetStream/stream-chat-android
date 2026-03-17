@@ -904,8 +904,10 @@ public class SwipeToReplyContentParams
  * @param onUserSelected Action invoked when a user is selected.
  * @param onCommandSelected Action invoked when a command is selected.
  * @param onAlsoSendToChannelSelected Action invoked when also-send-to-channel is changed.
+ * @param onActiveCommandDismiss Action invoked when the active command is dismissed.
  * @param recordingActions The actions to control the audio recording.
  * @param onLinkPreviewClick Action invoked when a link preview is clicked.
+ * @param onCancelLinkPreviewClick Action invoked when the cancel link preview button is clicked.
  */
 public data class MessageComposerParams(
     val messageComposerState: MessageComposerState,
@@ -920,8 +922,10 @@ public data class MessageComposerParams(
     val onUserSelected: (User) -> Unit = {},
     val onCommandSelected: (Command) -> Unit = {},
     val onAlsoSendToChannelSelected: (Boolean) -> Unit = {},
+    val onActiveCommandDismiss: () -> Unit = {},
     val recordingActions: AudioRecordingActions = AudioRecordingActions.None,
     val onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
+    val onCancelLinkPreviewClick: (() -> Unit)? = null,
 )
 
 /**

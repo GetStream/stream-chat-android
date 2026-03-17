@@ -154,6 +154,7 @@ public fun MessageComposer(
             onUserSelected = onUserSelected,
             onCommandSelected = onCommandSelected,
             onAlsoSendToChannelSelected = onAlsoSendToChannelChange,
+            onActiveCommandDismiss = onActiveCommandDismiss,
             recordingActions = recordingActions,
             input = input,
             messageComposerState = messageComposerState,
@@ -162,6 +163,7 @@ public fun MessageComposer(
             onValueChange = onValueChange,
             onAttachmentRemoved = onAttachmentRemoved,
             onLinkPreviewClick = onLinkPreviewClick,
+            onCancelLinkPreviewClick = onCancelLinkPreviewClick,
         ),
     )
 }

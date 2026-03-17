@@ -1178,9 +1178,11 @@ public interface ChatComponentFactory {
             onAttachmentRemoved = params.onAttachmentRemoved,
             onCancelAction = params.onCancelAction,
             onLinkPreviewClick = params.onLinkPreviewClick,
+            onCancelLinkPreviewClick = params.onCancelLinkPreviewClick,
             onUserSelected = params.onUserSelected,
             onCommandSelected = params.onCommandSelected,
             onAlsoSendToChannelChange = params.onAlsoSendToChannelSelected,
+            onActiveCommandDismiss = params.onActiveCommandDismiss,
             recordingActions = params.recordingActions,
             input = params.input,
         )
