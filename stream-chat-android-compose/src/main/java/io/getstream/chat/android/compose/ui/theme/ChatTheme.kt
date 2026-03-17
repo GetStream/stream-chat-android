@@ -29,6 +29,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -39,6 +40,12 @@ import com.valentinilk.shimmer.LocalShimmerTheme
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
+import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
+import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
+import io.getstream.chat.android.compose.ui.util.DefaultPollSwitchItemFactory
+import io.getstream.chat.android.compose.ui.util.ImageHeadersInterceptor
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
@@ -47,6 +54,7 @@ import io.getstream.chat.android.compose.ui.util.MessageTextFormatter
 import io.getstream.chat.android.compose.ui.util.ReactionResolver
 import io.getstream.chat.android.compose.ui.util.SearchResultNameFormatter
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoaderFactory
+import io.getstream.chat.android.ui.common.helper.AsyncImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.helper.DefaultDownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DefaultImageAssetTransformer
@@ -118,6 +126,12 @@ private val LocalMessageTextFormatter = compositionLocalOf<MessageTextFormatter>
 private val LocalSearchResultNameFormatter = compositionLocalOf<SearchResultNameFormatter> {
     error("No SearchResultNameFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+
+@Deprecated(
+    message = "ImageHeadersProvider is deprecated. Use asyncImageHeadersProvider in ChatTheme instead. " +
+        "Headers are now injected via Coil's interceptor pipeline, which is thread-safe and supports " +
+        "blocking/suspending operations.",
+)
 private val LocalStreamImageHeadersProvider = compositionLocalOf<ImageHeadersProvider> {
     error("No ImageHeadersProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -178,9 +192,17 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param channelNameFormatter [ChannelNameFormatter] Used throughout the app for channel names.
  * @param messagePreviewFormatter [MessagePreviewFormatter] Used to generate a string preview for the given message.
  * @param searchResultNameFormatter [SearchResultNameFormatter] Used to format names in search results.
- * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances.
+ * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances. If used in combination with
+ * [asyncImageHeadersProvider] you must override the [StreamCoilImageLoaderFactory.imageLoader] method accepting the
+ * interceptors parameter.
  * @param imageAssetTransformer [ImageAssetTransformer] Used to transform image assets.
- * @param imageHeadersProvider [ImageHeadersProvider] Used to provide headers for image requests.
+ * @param imageHeadersProvider [ImageHeadersProvider] Deprecated. Use [asyncImageHeadersProvider] instead. Headers
+ * provided here are injected synchronously on the main thread, which blocks the UI for any non-trivial work.
+ * @param asyncImageHeadersProvider [AsyncImageHeadersProvider] Used to provide headers for image
+ * requests. Invoked on IO Dispatcher inside Coil's interceptor pipeline, making it safe for blocking or suspending
+ * operations such as reading an auth token. Prefer this over [imageHeadersProvider]. If you are using this in
+ * combination with a custom [StreamCoilImageLoaderFactory] you must override the
+ * [StreamCoilImageLoaderFactory.imageLoader] method accepting the interceptors parameter.
  * @param downloadAttachmentUriGenerator [DownloadAttachmentUriGenerator] Used to generate download URIs for
  * attachments.
  * @param downloadRequestInterceptor [DownloadRequestInterceptor] Used to intercept download requests.
@@ -228,6 +250,7 @@ public fun ChatTheme(
     searchResultNameFormatter: SearchResultNameFormatter = SearchResultNameFormatter.defaultFormatter(),
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
     imageHeadersProvider: ImageHeadersProvider = DefaultImageHeadersProvider,
+    asyncImageHeadersProvider: AsyncImageHeadersProvider? = null,
     downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator = DefaultDownloadAttachmentUriGenerator,
     downloadRequestInterceptor: DownloadRequestInterceptor = DownloadRequestInterceptor { },
     imageAssetTransformer: ImageAssetTransformer = DefaultImageAssetTransformer,
@@ -252,6 +275,19 @@ public fun ChatTheme(
         ChatClient.VERSION_PREFIX_HEADER = VersionPrefixHeader.Compose
     }
 
+    val context = LocalContext.current
+    val imageLoader = remember(imageLoaderFactory, asyncImageHeadersProvider) {
+        if (asyncImageHeadersProvider == null) {
+            imageLoaderFactory.imageLoader(context.applicationContext)
+        } else {
+            imageLoaderFactory.imageLoader(
+                context.applicationContext,
+                listOf(ImageHeadersInterceptor(asyncImageHeadersProvider)),
+            )
+        }
+    }
+
+    @Suppress("DEPRECATION")
     CompositionLocalProvider(
         LocalChatConfig provides config,
         LocalColors provides colors,
@@ -271,7 +307,7 @@ public fun ChatTheme(
         LocalMessageTextFormatter provides messageTextFormatter,
         LocalSearchResultNameFormatter provides searchResultNameFormatter,
         LocalMessageComposerTheme provides messageComposerTheme,
-        LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current.applicationContext),
+        LocalStreamImageLoader provides imageLoader,
         LocalStreamImageHeadersProvider provides imageHeadersProvider,
         LocalStreamDownloadAttachmentUriGenerator provides downloadAttachmentUriGenerator,
         LocalStreamDownloadRequestInterceptor provides downloadRequestInterceptor,
@@ -461,7 +497,15 @@ public object ChatTheme {
 
     /**
      * Retrieves the current [ImageHeadersProvider] at the call site's position in the hierarchy.
+     *
+     * @deprecated Use [asyncImageHeadersProvider] in [ChatTheme] for thread-safe header injection.
      */
+    @Deprecated(
+        message = "ImageHeadersProvider is deprecated. Pass asyncImageHeadersProvider to ChatTheme instead. " +
+            "Headers are now injected via Coil's interceptor pipeline, which is thread-safe and supports " +
+            "blocking/suspending operations.",
+    )
+    @Suppress("DEPRECATION")
     public val streamImageHeadersProvider: ImageHeadersProvider
         @Composable
         @ReadOnlyComposable

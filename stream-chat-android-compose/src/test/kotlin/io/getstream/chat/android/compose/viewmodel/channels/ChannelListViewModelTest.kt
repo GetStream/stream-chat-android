@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.api.state.QueryChannelsState
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
@@ -35,11 +36,20 @@ import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.OrFilterObject
+import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.state.plugin.internal.StatePlugin
+import io.getstream.chat.android.state.plugin.state.StateRegistry
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
+import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
+import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
@@ -48,10 +58,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import org.amshove.kluent.`should be equal to`
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertInstanceOf
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
@@ -76,8 +91,8 @@ internal class ChannelListViewModelTest {
             .get(this)
 
         val channelsState = viewModel.channelsState
-        channelsState.channelItems.size `should be equal to` 0
-        channelsState.isLoading `should be equal to` true
+        assertEquals(0, channelsState.channelItems.size)
+        assertTrue(channelsState.isLoading)
     }
 
     @Test
@@ -95,8 +110,8 @@ internal class ChannelListViewModelTest {
                 .get(this)
 
             val channelsState = viewModel.channelsState
-            channelsState.channelItems.size `should be equal to` 2
-            channelsState.isLoading `should be equal to` false
+            assertEquals(2, channelsState.channelItems.size)
+            assertFalse(channelsState.isLoading)
         }
 
     @Test
@@ -123,8 +138,8 @@ internal class ChannelListViewModelTest {
             ),
         )
 
-        viewModel.activeChannelAction `should be equal to` null
-        viewModel.selectedChannel.value `should be equal to` null
+        assertNull(viewModel.activeChannelAction)
+        assertNull(viewModel.selectedChannel.value)
         verify(channelClient).delete()
     }
 
@@ -145,8 +160,8 @@ internal class ChannelListViewModelTest {
         viewModel.selectChannel(channel1)
         viewModel.muteChannel(channel1)
 
-        viewModel.activeChannelAction `should be equal to` null
-        viewModel.selectedChannel.value `should be equal to` null
+        assertNull(viewModel.activeChannelAction)
+        assertNull(viewModel.selectedChannel.value)
         verify(chatClient).muteChannel("messaging", "channel1", null)
     }
 
@@ -176,9 +191,9 @@ internal class ChannelListViewModelTest {
             viewModel.selectChannel(channel1)
             viewModel.unmuteChannel(channel1)
 
-            (viewModel.channelsState.channelItems.first() as ItemState.ChannelItemState).isMuted `should be equal to` true
-            viewModel.activeChannelAction `should be equal to` null
-            viewModel.selectedChannel.value `should be equal to` null
+            assertTrue((viewModel.channelsState.channelItems.first() as ItemState.ChannelItemState).isMuted)
+            assertNull(viewModel.activeChannelAction)
+            assertNull(viewModel.selectedChannel.value)
             verify(chatClient).unmuteChannel("messaging", "channel1")
         }
 
@@ -198,8 +213,8 @@ internal class ChannelListViewModelTest {
             viewModel.selectChannel(channel1)
             viewModel.dismissChannelAction()
 
-            viewModel.activeChannelAction `should be equal to` null
-            viewModel.selectedChannel.value `should be equal to` null
+            assertNull(viewModel.activeChannelAction)
+            assertNull(viewModel.selectedChannel.value)
         }
 
     @Test
@@ -228,8 +243,8 @@ internal class ChannelListViewModelTest {
 
             val captor = argumentCaptor<QueryChannelsRequest>()
             verify(chatClient, times(2)).queryChannels(captor.capture())
-            captor.firstValue.offset `should be equal to` 0
-            captor.secondValue.offset `should be equal to` 30
+            assertEquals(0, captor.firstValue.offset)
+            assertEquals(30, captor.secondValue.offset)
         }
 
     @Test
@@ -251,7 +266,7 @@ internal class ChannelListViewModelTest {
 
             val captor = argumentCaptor<QueryChannelsRequest>()
             verify(chatClient, times(1)).queryChannels(captor.capture())
-            captor.firstValue.offset `should be equal to` 0
+            assertEquals(0, captor.firstValue.offset)
         }
 
     @Test
@@ -276,8 +291,8 @@ internal class ChannelListViewModelTest {
             val andFilterObject = captor.secondValue.filter as AndFilterObject
             val orFilterObject = andFilterObject.filterObjects.last() as OrFilterObject
             val autoCompleteFilterObject = orFilterObject.filterObjects.last() as AutocompleteFilterObject
-            autoCompleteFilterObject.fieldName `should be equal to` "name"
-            autoCompleteFilterObject.value `should be equal to` "Search query"
+            assertEquals("name", autoCompleteFilterObject.fieldName)
+            assertEquals("Search query", autoCompleteFilterObject.value)
         }
 
     @Test
@@ -306,8 +321,8 @@ internal class ChannelListViewModelTest {
             val andFilterObject = captor.secondValue.filter as AndFilterObject
             val orFilterObject = andFilterObject.filterObjects.last() as OrFilterObject
             val autoCompleteFilterObject = orFilterObject.filterObjects.last() as AutocompleteFilterObject
-            autoCompleteFilterObject.fieldName `should be equal to` "name"
-            autoCompleteFilterObject.value `should be equal to` "Search query"
+            assertEquals("name", autoCompleteFilterObject.fieldName)
+            assertEquals("Search query", autoCompleteFilterObject.value)
         }
 
     @Test
@@ -338,9 +353,189 @@ internal class ChannelListViewModelTest {
 
             val captor = argumentCaptor<QueryChannelsRequest>()
             verify(chatClient, times(2)).queryChannels(captor.capture())
-            captor.allValues.size `should be equal to` 2
-            captor.firstValue.offset `should be equal to` 0
-            captor.secondValue.offset `should be equal to` 30
+            assertEquals(2, captor.allValues.size)
+            assertEquals(0, captor.firstValue.offset)
+            assertEquals(30, captor.secondValue.offset)
+        }
+
+    @Test
+    fun `Given channel list When setting message search query Should search messages without offset or cursor`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val messages = listOf(randomMessage(cid = "messaging:channel1"))
+            val searchResult = SearchMessagesResult(messages = messages, next = "cursor_page2")
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1)),
+                    loading = false,
+                )
+                .givenChannelMutes()
+                .givenSearchMessagesResult(searchResult)
+                .givenRepositorySelectChannels(listOf(channel1))
+                .get(this)
+
+            viewModel.setSearchQuery(SearchQuery.Messages("hello"))
+            advanceUntilIdle()
+
+            verify(chatClient).searchMessages(
+                channelFilter = any(),
+                messageFilter = any(),
+                offset = eq(null),
+                limit = any(),
+                next = eq(null),
+                sort = eq(null),
+            )
+            val items = viewModel.channelsState.channelItems
+            assertEquals(1, items.size)
+            assertInstanceOf(ItemState.SearchResultItemState::class.java, items.first())
+        }
+
+    @Test
+    fun `Given message search results with next cursor When loading more Should pass the cursor`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val firstPageMessages = listOf(randomMessage(cid = "messaging:channel1"))
+            val firstPageResult = SearchMessagesResult(messages = firstPageMessages, next = "cursor_page2")
+            val secondPageMessages = listOf(randomMessage(cid = "messaging:channel1"))
+            val secondPageResult = SearchMessagesResult(messages = secondPageMessages, next = null)
+
+            whenever(
+                chatClient.searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()),
+            ).doReturn(
+                firstPageResult.asCall(),
+                secondPageResult.asCall(),
+            )
+
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1)),
+                    loading = false,
+                )
+                .givenChannelMutes()
+                .givenRepositorySelectChannels(listOf(channel1))
+                .get(this)
+
+            viewModel.setSearchQuery(SearchQuery.Messages("hello"))
+            advanceUntilIdle()
+
+            viewModel.loadMore()
+            advanceUntilIdle()
+
+            val captor = argumentCaptor<String>()
+            verify(chatClient, times(2)).searchMessages(
+                channelFilter = any(),
+                messageFilter = any(),
+                offset = anyOrNull(),
+                limit = anyOrNull(),
+                next = captor.capture(),
+                sort = anyOrNull(),
+            )
+            assertNull(captor.firstValue)
+            assertEquals("cursor_page2", captor.secondValue)
+        }
+
+    @Test
+    fun `Given message search results without next cursor When loading more Should not load more`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val messages = listOf(randomMessage(cid = "messaging:channel1"))
+            val searchResult = SearchMessagesResult(messages = messages, next = null)
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1)),
+                    loading = false,
+                )
+                .givenChannelMutes()
+                .givenSearchMessagesResult(searchResult)
+                .givenRepositorySelectChannels(listOf(channel1))
+                .get(this)
+
+            viewModel.setSearchQuery(SearchQuery.Messages("hello"))
+            advanceUntilIdle()
+
+            assertTrue(viewModel.channelsState.endOfChannels)
+
+            viewModel.loadMore()
+            advanceUntilIdle()
+
+            verify(chatClient, times(1)).searchMessages(
+                channelFilter = any(),
+                messageFilter = any(),
+                offset = anyOrNull(),
+                limit = anyOrNull(),
+                next = anyOrNull(),
+                sort = anyOrNull(),
+            )
+        }
+
+    @Test
+    fun `Given no messageSearchSort When searching messages Should pass null sort to searchMessages`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                    loading = false,
+                )
+                .givenChannelMutes()
+                .givenSearchMessagesResult(SearchMessagesResult())
+                .givenRepositorySelectChannels()
+                .get(this)
+
+            viewModel.setSearchQuery(SearchQuery.Messages("test"))
+            advanceUntilIdle()
+
+            val sortCaptor = argumentCaptor<QuerySorter<Message>>()
+            verify(chatClient).searchMessages(
+                channelFilter = any(),
+                messageFilter = any(),
+                offset = anyOrNull(),
+                limit = anyOrNull(),
+                next = anyOrNull(),
+                sort = sortCaptor.capture(),
+            )
+            assertNull(sortCaptor.firstValue)
+        }
+
+    @Test
+    fun `Given messageSearchSort is set When searching messages Should pass the sort to searchMessages`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val messageSearchSort = QuerySortByField.descByName<Message>("created_at")
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                    loading = false,
+                )
+                .givenChannelMutes()
+                .givenMessageSearchSort(messageSearchSort)
+                .givenSearchMessagesResult(SearchMessagesResult())
+                .givenRepositorySelectChannels()
+                .get(this)
+
+            viewModel.setSearchQuery(SearchQuery.Messages("test"))
+            advanceUntilIdle()
+
+            val sortCaptor = argumentCaptor<QuerySorter<Message>>()
+            verify(chatClient).searchMessages(
+                channelFilter = any(),
+                messageFilter = any(),
+                offset = anyOrNull(),
+                limit = anyOrNull(),
+                next = anyOrNull(),
+                sort = sortCaptor.capture(),
+            )
+            assertEquals(messageSearchSort, sortCaptor.firstValue)
         }
 
     private class Fixture(
@@ -352,6 +547,8 @@ internal class ChannelListViewModelTest {
         private val clientState: ClientState = mock()
         private val stateRegistry: StateRegistry = mock()
         private val globalState: GlobalState = mock()
+        private val repositoryFacade: RepositoryFacade = mock()
+        private var messageSearchSort: QuerySorter<Message>? = null
 
         init {
             val statePlugin: StatePlugin = mock()
@@ -364,6 +561,7 @@ internal class ChannelListViewModelTest {
             whenever(chatClient.channel(any())) doReturn channelClient
             whenever(chatClient.channel(any(), any())) doReturn channelClient
             whenever(chatClient.clientState) doReturn clientState
+            whenever(chatClient.repositoryFacade) doReturn repositoryFacade
             whenever(globalState.channelDraftMessages) doReturn MutableStateFlow(emptyMap())
         }
 
@@ -401,6 +599,20 @@ internal class ChannelListViewModelTest {
             whenever(chatClient.unmuteChannel(any(), any())) doReturn Unit.asCall()
         }
 
+        fun givenMessageSearchSort(sort: QuerySorter<Message>?) = apply {
+            messageSearchSort = sort
+        }
+
+        fun givenSearchMessagesResult(result: SearchMessagesResult) = apply {
+            whenever(
+                chatClient.searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()),
+            ) doReturn result.asCall()
+        }
+
+        suspend fun givenRepositorySelectChannels(channels: List<Channel> = emptyList()) = apply {
+            whenever(repositoryFacade.selectChannels(any<List<String>>())) doReturn channels
+        }
+
         fun givenChannelsState(
             channelsStateData: ChannelsStateData = ChannelsStateData.Loading,
             channels: List<Channel>? = null,
@@ -427,6 +639,7 @@ internal class ChannelListViewModelTest {
                 initialFilters = initialFilters,
                 isDraftMessageEnabled = false,
                 chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
+                messageSearchSort = messageSearchSort,
                 globalState = MutableStateFlow(globalState),
             )
             testScope.advanceUntilIdle()

@@ -210,4 +210,24 @@ public class MessagesViewModelFactory(
         @Suppress("UNCHECKED_CAST")
         return viewModel as T
     }
+
+    /**
+     * Creates the required [ViewModel] with access to [CreationExtras], which provides a
+     * [SavedStateHandle] for persisting state across process death.
+     *
+     * Called by Compose's `viewModel()` helper. Falls back to [create] for ViewModels
+     * that do not require a [SavedStateHandle].
+     */
+    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+        if (modelClass == AttachmentsPickerViewModel::class.java) {
+            val savedStateHandle = extras.createSavedStateHandle()
+            @Suppress("UNCHECKED_CAST")
+            return AttachmentsPickerViewModel(
+                storageHelper = StorageHelperWrapper(context),
+                channelState = channelStateFlow,
+                savedStateHandle = savedStateHandle,
+            ) as T
+        }
+        return create(modelClass)
+    }
 }

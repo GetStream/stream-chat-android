@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.internal.state.plugin.logic.channel.inte
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.utils.message.isModerationError
+import io.getstream.chat.android.client.utils.message.shouldDeleteRemote
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.result.Error
@@ -45,25 +45,19 @@ internal class DeleteMessageListenerState(
      * @param messageId The message id to be deleted.
      */
     override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> {
-        val channelLogic: ChannelLogic? = logic.channelFromMessageId(messageId)
-
-        return channelLogic?.getMessage(messageId)?.let { message ->
-            val isModerationFailed = message.isModerationError(clientState.user.value?.id)
-
-            if (isModerationFailed) {
-                deleteMessage(message)
-                Result.Failure(
-                    Error.ThrowableError(
-                        message = "Message with failed moderation has been deleted locally: $messageId",
-                        cause = MessageModerationDeletedException(
-                            "Message with failed moderation has been deleted locally: $messageId",
-                        ),
-                    ),
-                )
-            } else {
-                Result.Success(Unit)
-            }
-        } ?: Result.Success(Unit)
+        val localMessage = logic.channelFromMessageId(messageId)?.getMessage(messageId)
+        val currentUserId = clientState.user.value?.id
+        // We don't have the message locally, we must attempt to delete the message remotely
+        if (localMessage == null) {
+            return Result.Success(Unit)
+        }
+        // Check if the message is local-only (if attempting remote delete should be skipped)
+        val shouldDeleteRemote = localMessage.shouldDeleteRemote(currentUserId)
+        if (shouldDeleteRemote is Result.Failure) {
+            // Delete the message ONLY locally
+            deleteMessage(localMessage)
+        }
+        return shouldDeleteRemote
     }
 
     /**
@@ -75,19 +69,13 @@ internal class DeleteMessageListenerState(
         val channelLogic: ChannelLogic? = logic.channelFromMessageId(messageId)
 
         channelLogic?.getMessage(messageId)?.let { message ->
-            val isModerationFailed = message.isModerationError(clientState.user.value?.id)
+            val networkAvailable = clientState.isNetworkAvailable
+            val messageToBeDeleted = message.copy(
+                deletedAt = Date(),
+                syncStatus = if (!networkAvailable) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS,
+            )
 
-            if (isModerationFailed) {
-                deleteMessage(message)
-            } else {
-                val networkAvailable = clientState.isNetworkAvailable
-                val messageToBeDeleted = message.copy(
-                    deletedAt = Date(),
-                    syncStatus = if (!networkAvailable) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS,
-                )
-
-                updateMessage(messageToBeDeleted)
-            }
+            updateMessage(messageToBeDeleted)
         }
     }
 

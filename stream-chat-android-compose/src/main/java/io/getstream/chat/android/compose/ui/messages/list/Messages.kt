@@ -98,6 +98,8 @@ import kotlin.math.abs
  * @param loadingMoreContent Composable that represents the loading more content, when we're loading the next page.
  * @param itemModifier Modifier for styling the message item container.
  * @param itemContent Composable that represents the item that displays each message.
+ * @param headerContent The content shown at the top of the list of message items.
+ * @param footerContent The content shown at the bottom of the list of message items.
  */
 @Composable
 @Suppress("LongParameterList", "LongMethod", "ComplexMethod")
@@ -135,6 +137,8 @@ public fun Messages(
         }
     },
     itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit,
+    headerContent: (@Composable () -> Unit)? = null,
+    footerContent: (@Composable () -> Unit)? = null,
 ) {
     val lazyListState = messagesLazyListState.lazyListState
     val messages = messagesState.messageItems
@@ -176,6 +180,12 @@ public fun Messages(
             reverseLayout = true,
             contentPadding = contentPadding,
         ) {
+            footerContent?.let { content ->
+                item {
+                    content.invoke()
+                }
+            }
+
             if (isLoadingMoreNewMessages && !endOfNewMessages) {
                 item {
                     loadingMoreContent()
@@ -205,6 +215,12 @@ public fun Messages(
             if (isLoadingMoreOldMessages && !endOfOldMessages) {
                 item {
                     loadingMoreContent()
+                }
+            }
+
+            headerContent?.let { content ->
+                item {
+                    content.invoke()
                 }
             }
         }
@@ -330,7 +346,10 @@ internal fun BoxScope.DefaultMessagesHelperContent(
     // Keep track of the last new message state that triggered a scroll to bottom.
     // If a configuration change happens, we want to keep the same state
     // and not scroll to bottom again if the newMessageState is the same as before the configuration change.
-    var lastScrollToBottomOnNewMessage by rememberSaveable(saver = MutableStateNewMessageStateSaver) {
+    var lastScrollToBottomOnNewMessage by rememberSaveable(
+        isMessageInThread,
+        saver = MutableStateNewMessageStateSaver,
+    ) {
         mutableStateOf(newMessageState)
     }
 
@@ -374,9 +393,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
             count = messagesState.unreadCount,
             onClick = {
                 scrollToBottom {
-                    coroutineScope.launch {
-                        lazyListState.scrollToItem(0)
-                    }
+                    coroutineScope.launch { lazyListState.scrollToItem(0) }
                 }
             },
         )

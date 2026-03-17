@@ -16,6 +16,10 @@
 
 package io.getstream.chat.android.client.socket
 
+import io.getstream.chat.android.DeliveryReceipts
+import io.getstream.chat.android.PrivacySettings
+import io.getstream.chat.android.ReadReceipts
+import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.client.token.FakeTokenManager
@@ -94,7 +98,7 @@ internal class SocketFactoryTest {
         }
 
         @JvmStatic
-        @Suppress("MaxLineLength")
+        @Suppress("MaxLineLength", "LongMethod")
         fun arguments() = listOf(
             randomUser(image = randomString(), name = randomString(), language = randomString()).let {
                 Arguments.of(
@@ -138,26 +142,72 @@ internal class SocketFactoryTest {
                     "${endpoint}connect?json=${buildMinimumUserJson("anon")}&api_key=$apiKey&X-Stream-Client=${headersUtil.buildSdkTrackingHeaders()}&stream-auth-type=anonymous",
                 )
             },
+            randomUser(
+                image = randomString(),
+                name = randomString(),
+                language = randomString(),
+                privacySettings = PrivacySettings(
+                    typingIndicators = TypingIndicators(enabled = false),
+                    deliveryReceipts = DeliveryReceipts(enabled = false),
+                    readReceipts = ReadReceipts(enabled = true),
+                ),
+            ).let {
+                Arguments.of(
+                    false,
+                    SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, it),
+                    "${endpoint}connect?json=${buildFullUserJson(it, it.id)}&api_key=$apiKey&X-Stream-Client=${headersUtil.buildSdkTrackingHeaders()}&authorization=$token&stream-auth-type=jwt",
+                )
+            },
+            randomUser(
+                image = randomString(),
+                name = randomString(),
+                language = randomString(),
+                privacySettings = PrivacySettings(
+                    typingIndicators = null,
+                    deliveryReceipts = DeliveryReceipts(enabled = false),
+                    readReceipts = null,
+                ),
+            ).let {
+                Arguments.of(
+                    false,
+                    SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, it),
+                    "${endpoint}connect?json=${buildFullUserJson(it, it.id)}&api_key=$apiKey&X-Stream-Client=${headersUtil.buildSdkTrackingHeaders()}&authorization=$token&stream-auth-type=jwt",
+                )
+            },
         )
 
         private fun buildMinimumUserJson(userId: String): String = encode(
             defaultMap(userId, mapOf("id" to userId)),
         )
 
-        private fun buildFullUserJson(user: User, userId: String): String = encode(
-            defaultMap(
-                userId,
-                mapOf(
-                    "id" to userId,
-                    "role" to user.role,
-                    "banned" to user.isBanned,
-                    "invisible" to user.isInvisible,
-                    "language" to user.language,
-                    "image" to user.image,
-                    "name" to user.name,
-                ) + user.extraData,
-            ),
-        )
+        private fun buildFullUserJson(user: User, userId: String): String {
+            val ps = user.privacySettings
+            return encode(
+                defaultMap(
+                    userId,
+                    linkedMapOf(
+                        "id" to userId,
+                        "role" to user.role,
+                        "banned" to user.isBanned,
+                        "invisible" to user.isInvisible,
+                    ) + if (ps != null) {
+                        mapOf(
+                            "privacy_settings" to listOfNotNull(
+                                ps.typingIndicators?.let { "typing_indicators" to mapOf("enabled" to it.enabled) },
+                                ps.deliveryReceipts?.let { "delivery_receipts" to mapOf("enabled" to it.enabled) },
+                                ps.readReceipts?.let { "read_receipts" to mapOf("enabled" to it.enabled) },
+                            ).toMap(),
+                        )
+                    } else {
+                        emptyMap()
+                    } + mapOf(
+                        "language" to user.language,
+                        "image" to user.image,
+                        "name" to user.name,
+                    ) + user.extraData,
+                ),
+            )
+        }
 
         private fun defaultMap(userId: String, userDetails: Map<String, Any>): Map<String, Any> =
             mapOf(
