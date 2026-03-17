@@ -571,7 +571,10 @@ class QuotedReplyTests : StreamTestCase() {
                 messagesText = sampleText,
                 repliesCount = messagesCount,
             )
-            userRobot.login().openChannel()
+            userRobot
+                .login()
+                .openChannel()
+                .assertMessage(sampleText) // awit for the channel to be fully loaded
         }
         step("WHEN participant adds a quoted reply in thread and also in channel") {
             participantRobot.quoteMessageInThread(quoteReply, alsoSendInChannel = true)
