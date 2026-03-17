@@ -111,6 +111,8 @@ import io.getstream.chat.android.ui.common.state.messages.updateMessage
  * @param showAnonymousAvatar If the user avatar should be shown on comments for polls with anonymous voting visibility.
  * @param verticalArrangement Vertical arrangement of the regular message list.
  * Default: [Arrangement.Bottom].
+ * @param threadsVerticalArrangement Vertical arrangement of the thread message list.
+ * Default: [Arrangement.Bottom].
  * @param topBarContent custom top bar content to be displayed on top of the messages list.
  * @param bottomBarContent custom bottom bar content to be displayed at the bottom of the messages list.
  */
@@ -131,6 +133,7 @@ public fun MessagesScreen(
     skipEnrichUrl: Boolean = false,
     showAnonymousAvatar: Boolean = false,
     verticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
+    threadsVerticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
     topBarContent: @Composable (BackAction) -> Unit = {
         DefaultTopBarContent(
             viewModelFactory = viewModelFactory,
@@ -207,6 +210,7 @@ public fun MessagesScreen(
                 reactionSorting = reactionSorting,
                 messagesLazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
                 verticalArrangement = verticalArrangement,
+                threadsVerticalArrangement = threadsVerticalArrangement,
                 onThreadClick = remember(composerViewModel, listViewModel) {
                     {
                             message ->
