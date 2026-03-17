@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.internal.state.plugin.state.internal
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.event.ChatEventHandlerFactory
+import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
@@ -84,15 +85,27 @@ internal class ChatClientStateCalls(
     }
 
     /** Reference request of the watch channel query. */
-    internal suspend fun watchChannel(cid: String, messageLimit: Int, userPresence: Boolean): ChannelState {
-        logger.d { "[watchChannel] cid: $cid, messageLimit: $messageLimit, userPresence: $userPresence" }
+    internal suspend fun watchChannel(
+        cid: String,
+        messageLimit: Int,
+        userPresence: Boolean,
+        aroundMessageId: String? = null,
+    ): ChannelState {
+        logger.d {
+            "[watchChannel] cid: $cid, messageLimit: $messageLimit, userPresence: $userPresence, " +
+                "aroundMessageId: $aroundMessageId"
+        }
         val (channelType, channelId) = cid.cidToTypeAndId()
-        val request = QueryChannelPaginationRequest(messageLimit)
-            .toWatchChannelRequest(userPresence)
-            .apply {
-                this.shouldRefresh = false
-                this.isWatchChannel = true
+        val request = when (aroundMessageId) {
+            null -> QueryChannelPaginationRequest(messageLimit)
+            else -> QueryChannelPaginationRequest(messageLimit).apply {
+                messageFilterDirection = Pagination.AROUND_ID
+                messageFilterValue = aroundMessageId
             }
+        }.toWatchChannelRequest(userPresence).apply {
+            shouldRefresh = false
+            isWatchChannel = true
+        }
         return queryChannel(channelType, channelId, request)
     }
 

@@ -103,11 +103,13 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
 ) : ViewModelProvider.Factory {
 
     private val channelStateFlow: StateFlow<ChannelState?> by lazy {
-        chatClient.watchChannelAsState(
-            cid = cid,
-            messageLimit = messageLimit,
-            coroutineScope = chatClient.inheritScope { SupervisorJob(it) },
-        )
+        val scope = chatClient.inheritScope { SupervisorJob(it) }
+        when {
+            messageId != null && parentMessageId == null ->
+                chatClient.watchChannelAsState(cid, messageLimit, messageId, scope)
+            else ->
+                chatClient.watchChannelAsState(cid, messageLimit, scope)
+        }
     }
 
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T =
