@@ -68,16 +68,12 @@ import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.Option
-import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
-import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -202,21 +198,6 @@ public fun SelectedMessageMenu(
                         modifier = Modifier.wrapContentHeight(align = Alignment.Top, unbounded = true),
                         messageItem = messageItemState,
                         reactionSorting = ReactionSortingByLastReactionAt,
-                        onPollUpdated = { _: Message, _: Poll -> },
-                        onCastVote = { _: Message, _: Poll, _: Option -> },
-                        onRemoveVote = { _: Message, _: Poll, _: Vote -> },
-                        selectPoll = { _: Message, _: Poll, _: PollSelectionType -> },
-                        onClosePoll = {},
-                        onAddPollOption = { _: Poll, _: String -> },
-                        onLongItemClick = {},
-                        onThreadClick = {},
-                        onReactionsClick = {},
-                        onGiphyActionClick = {},
-                        onMediaGalleryPreviewResult = {},
-                        onQuotedMessageClick = {},
-                        onUserMentionClick = {},
-                        onAddAnswer = { _: Message, _: Poll, _: String -> },
-                        onReply = {},
                     ),
                 )
                 Spacer(

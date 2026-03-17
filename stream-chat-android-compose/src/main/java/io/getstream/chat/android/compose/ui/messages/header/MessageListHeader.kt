@@ -296,7 +296,6 @@ internal fun DefaultMessageListHeaderTrailingContent(
                 .ifNotNull(onClick) { callback -> clickable { callback(channel) } },
             channel = channel,
             currentUser = currentUser,
-            showIndicator = false,
         ),
     )
 }

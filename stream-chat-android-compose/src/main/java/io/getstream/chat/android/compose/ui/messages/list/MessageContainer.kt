@@ -332,8 +332,6 @@ internal fun RowScope.DefaultMessageAuthor(
                     .testTag("Stream_UserAvatar")
                     .ifNotNull(onUserAvatarClick) { clickable(onClick = it) },
                 user = messageItem.message.user,
-                showIndicator = false,
-                showBorder = false,
             ),
         )
     } else {

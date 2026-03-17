@@ -67,8 +67,6 @@ internal fun UserAvatarStack(
                         .border(borderSize, colors.borderCoreInverse, CircleShape)
                         .padding(borderSize),
                     user = user,
-                    showBorder = false,
-                    showIndicator = false,
                 ),
             )
         }

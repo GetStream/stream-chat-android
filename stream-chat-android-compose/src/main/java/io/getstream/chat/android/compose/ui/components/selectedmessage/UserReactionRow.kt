@@ -67,7 +67,6 @@ internal fun UserReactionRow(
             params = UserAvatarParams(
                 modifier = Modifier.size(AvatarSize.Medium),
                 user = item.user,
-                showIndicator = false,
                 showBorder = true,
             ),
         )

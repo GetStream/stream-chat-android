@@ -140,7 +140,6 @@ internal fun DefaultSearchResultItemLeadingContent(
                         )
                         .size(48.dp),
                     showIndicator = true,
-                    showBorder = false,
                 ),
             )
         }

@@ -102,7 +102,6 @@ public fun ThreadItem(
                 modifier = Modifier.size(AvatarSize.ExtraLarge),
                 user = thread.parentMessage.user,
                 showIndicator = true,
-                showBorder = false,
             ),
         )
         ThreadItemContentContainer(

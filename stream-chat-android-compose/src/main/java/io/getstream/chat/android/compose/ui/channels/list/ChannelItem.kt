@@ -203,7 +203,6 @@ internal fun DefaultChannelItemLeadingContent(
                 .size(AvatarSize.ExtraLarge),
             channel = channelItem.channel,
             currentUser = currentUser,
-            showIndicator = false,
         ),
     )
 }

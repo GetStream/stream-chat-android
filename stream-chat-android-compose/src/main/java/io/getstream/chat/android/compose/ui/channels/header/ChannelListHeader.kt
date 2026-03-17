@@ -174,8 +174,6 @@ internal fun DefaultChannelHeaderLeadingContent(
                         .size(AvatarSize.Large)
                         .testTag("Stream_UserAvatar"),
                     user = currentUser,
-                    showIndicator = false,
-                    showBorder = false,
                 ),
             )
         }
