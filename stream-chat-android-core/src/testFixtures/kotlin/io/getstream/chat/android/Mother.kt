@@ -31,6 +31,7 @@ import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FileUploadConfig
@@ -49,7 +50,6 @@ import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.QueryDraftsResult
@@ -854,7 +854,7 @@ public fun randomPollConfig(
     maxVotesAllowed: Int? = positiveRandomInt(),
     allowUserSuggestedOptions: Boolean = randomBoolean(),
     allowAnswers: Boolean = randomBoolean(),
-): PollConfig = PollConfig(
+): CreatePollParams = CreatePollParams(
     name = name,
     description = description,
     options = options.map { PollOption(text = it) },

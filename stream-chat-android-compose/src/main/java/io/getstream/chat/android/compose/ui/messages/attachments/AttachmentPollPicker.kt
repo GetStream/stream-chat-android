@@ -46,14 +46,14 @@ import io.getstream.chat.android.compose.ui.components.FullscreenDialog
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.CreatePollScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.CreatePollParams
 
 @Suppress("LongMethod")
 @Composable
 internal fun AttachmentPollPicker(
     pickerMode: PollPickerMode,
     onCreatePollClick: () -> Unit = {},
-    onCreatePoll: (PollConfig) -> Unit = {},
+    onCreatePoll: (CreatePollParams) -> Unit = {},
     onCreatePollDismissed: () -> Unit = {},
 ) {
     var showCreateDialog by rememberSaveable { mutableStateOf(false) }

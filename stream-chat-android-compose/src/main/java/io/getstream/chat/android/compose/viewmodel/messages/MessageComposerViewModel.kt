@@ -20,9 +20,9 @@ import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
@@ -191,12 +191,12 @@ public class MessageComposerViewModel(
     }
 
     /**
-     * Creates a poll with the given [pollConfig].
+     * Creates a poll with the given [createPollParams].
      *
-     * @param pollConfig Configuration for creating a poll.
+     * @param createPollParams Configuration for creating a poll.
      */
-    public fun createPoll(pollConfig: PollConfig) {
-        messageComposerController.createPoll(pollConfig = pollConfig)
+    public fun createPoll(createPollParams: CreatePollParams) {
+        messageComposerController.createPoll(createPollParams = createPollParams)
     }
 
     /**

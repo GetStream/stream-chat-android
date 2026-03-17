@@ -29,10 +29,10 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
@@ -724,15 +724,15 @@ public class MessageComposerController(
     }
 
     /**
-     * Creates a poll with the given [pollConfig].
+     * Creates a poll with the given [createPollParams].
      *
-     * @param pollConfig Configuration for creating a poll.
+     * @param createPollParams Configuration for creating a poll.
      */
-    public fun createPoll(pollConfig: PollConfig, onResult: (Result<Message>) -> Unit = {}) {
+    public fun createPoll(createPollParams: CreatePollParams, onResult: (Result<Message>) -> Unit = {}) {
         chatClient.sendPoll(
             channelType = channelType,
             channelId = channelId,
-            pollConfig = pollConfig,
+            createPollParams = createPollParams,
         ).enqueue { onResult(it) }
     }
 

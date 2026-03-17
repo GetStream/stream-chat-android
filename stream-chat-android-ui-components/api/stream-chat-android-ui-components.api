@@ -1327,7 +1327,7 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogFragment$PollSubmissionListener {
-	public abstract fun onPollSubmitted (Lio/getstream/chat/android/models/PollConfig;)V
+	public abstract fun onPollSubmitted (Lio/getstream/chat/android/models/CreatePollParams;)V
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogStyle : io/getstream/chat/android/ui/helper/ViewStyle {
@@ -1457,7 +1457,7 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/co
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/factory/AttachmentsPickerTabListener {
-	public abstract fun onPollSubmitted (Lio/getstream/chat/android/models/PollConfig;)V
+	public abstract fun onPollSubmitted (Lio/getstream/chat/android/models/CreatePollParams;)V
 	public abstract fun onSelectedAttachmentsChanged (Ljava/util/List;)V
 	public abstract fun onSelectedAttachmentsSubmitted ()V
 }
@@ -1507,7 +1507,7 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/CreatePollDialogFragment$CreatePollDialogListener {
-	public abstract fun onCreatePoll (Lio/getstream/chat/android/models/PollConfig;)V
+	public abstract fun onCreatePoll (Lio/getstream/chat/android/models/CreatePollParams;)V
 	public abstract fun onDismiss ()V
 }
 
@@ -1515,10 +1515,10 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 	public fun <init> ()V
 	public final fun createOption ()V
 	public final fun createPollConfig ()V
+	public final fun getCreatePollParams ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getMaxAnswerError ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getMultipleAnswersError ()Lkotlinx/coroutines/flow/SharedFlow;
 	public final fun getOptions ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun getPollConfig ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getPollIsReady ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun onOptionTextChanged (ILjava/lang/String;)V
 	public final fun onTitleChanged (Ljava/lang/String;)V
@@ -4520,7 +4520,7 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageCompos
 	public final fun clearAttachments ()V
 	public final fun clearData ()V
 	public final fun completeRecording ()V
-	public final fun createPoll (Lio/getstream/chat/android/models/PollConfig;)V
+	public final fun createPoll (Lio/getstream/chat/android/models/CreatePollParams;)V
 	public final fun dismissMessageActions ()V
 	public final fun dismissSuggestionsPopup ()V
 	public final fun getCommandSuggestions ()Lkotlinx/coroutines/flow/MutableStateFlow;

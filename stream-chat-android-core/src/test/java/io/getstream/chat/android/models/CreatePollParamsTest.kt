@@ -19,7 +19,7 @@ package io.getstream.chat.android.models
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-internal class PollConfigTest {
+internal class CreatePollParamsTest {
 
     @Test
     fun `deprecated constructor with List of Strings properly maps parameters to default constructor`() {
@@ -33,7 +33,7 @@ internal class PollConfigTest {
         val allowAnswers = true
 
         @Suppress("DEPRECATION")
-        val pollConfig = PollConfig(
+        val createPollParams = CreatePollParams(
             name = name,
             options = options,
             description = description,
@@ -44,18 +44,18 @@ internal class PollConfigTest {
             allowAnswers = allowAnswers,
         )
 
-        Assertions.assertEquals(name, pollConfig.name)
-        Assertions.assertEquals(description, pollConfig.description)
-        Assertions.assertEquals(votingVisibility, pollConfig.votingVisibility)
-        Assertions.assertEquals(enforceUniqueVote, pollConfig.enforceUniqueVote)
-        Assertions.assertEquals(maxVotesAllowed, pollConfig.maxVotesAllowed)
-        Assertions.assertEquals(allowUserSuggestedOptions, pollConfig.allowUserSuggestedOptions)
-        Assertions.assertEquals(allowAnswers, pollConfig.allowAnswers)
-        Assertions.assertEquals(options, pollConfig.options)
-        Assertions.assertEquals(emptyMap<String, Any>(), pollConfig.extraData)
+        Assertions.assertEquals(name, createPollParams.name)
+        Assertions.assertEquals(description, createPollParams.description)
+        Assertions.assertEquals(votingVisibility, createPollParams.votingVisibility)
+        Assertions.assertEquals(enforceUniqueVote, createPollParams.enforceUniqueVote)
+        Assertions.assertEquals(maxVotesAllowed, createPollParams.maxVotesAllowed)
+        Assertions.assertEquals(allowUserSuggestedOptions, createPollParams.allowUserSuggestedOptions)
+        Assertions.assertEquals(allowAnswers, createPollParams.allowAnswers)
+        Assertions.assertEquals(options, createPollParams.options)
+        Assertions.assertEquals(emptyMap<String, Any>(), createPollParams.extraData)
         Assertions.assertEquals(
             options.map { text -> PollOption(text = text) },
-            pollConfig.optionsWithExtraData,
+            createPollParams.optionsWithExtraData,
         )
     }
 
@@ -65,20 +65,20 @@ internal class PollConfigTest {
         val options = listOf("Yes", "No")
 
         @Suppress("DEPRECATION")
-        val pollConfig = PollConfig(
+        val createPollParams = CreatePollParams(
             name = name,
             options = options,
         )
 
-        Assertions.assertEquals(name, pollConfig.name)
-        Assertions.assertEquals("", pollConfig.description)
-        Assertions.assertEquals(VotingVisibility.PUBLIC, pollConfig.votingVisibility)
-        Assertions.assertEquals(true, pollConfig.enforceUniqueVote)
-        Assertions.assertEquals(1, pollConfig.maxVotesAllowed)
-        Assertions.assertEquals(false, pollConfig.allowUserSuggestedOptions)
-        Assertions.assertEquals(false, pollConfig.allowAnswers)
-        Assertions.assertEquals(options, pollConfig.options)
-        Assertions.assertEquals(emptyMap<String, Any>(), pollConfig.extraData)
+        Assertions.assertEquals(name, createPollParams.name)
+        Assertions.assertEquals("", createPollParams.description)
+        Assertions.assertEquals(VotingVisibility.PUBLIC, createPollParams.votingVisibility)
+        Assertions.assertEquals(true, createPollParams.enforceUniqueVote)
+        Assertions.assertEquals(1, createPollParams.maxVotesAllowed)
+        Assertions.assertEquals(false, createPollParams.allowUserSuggestedOptions)
+        Assertions.assertEquals(false, createPollParams.allowAnswers)
+        Assertions.assertEquals(options, createPollParams.options)
+        Assertions.assertEquals(emptyMap<String, Any>(), createPollParams.extraData)
     }
 
     @Test
@@ -95,7 +95,7 @@ internal class PollConfigTest {
         val allowAnswers = true
         val extraData = mapOf("priority" to "high", "category" to "survey")
 
-        val pollConfig = PollConfig(
+        val createPollParams = CreatePollParams(
             name = name,
             options = options,
             description = description,
@@ -107,16 +107,16 @@ internal class PollConfigTest {
             extraData = extraData,
         )
 
-        Assertions.assertEquals(name, pollConfig.name)
-        Assertions.assertEquals(description, pollConfig.description)
-        Assertions.assertEquals(votingVisibility, pollConfig.votingVisibility)
-        Assertions.assertEquals(enforceUniqueVote, pollConfig.enforceUniqueVote)
-        Assertions.assertEquals(maxVotesAllowed, pollConfig.maxVotesAllowed)
-        Assertions.assertEquals(allowUserSuggestedOptions, pollConfig.allowUserSuggestedOptions)
-        Assertions.assertEquals(allowAnswers, pollConfig.allowAnswers)
-        Assertions.assertEquals(options, pollConfig.optionsWithExtraData)
-        Assertions.assertEquals(extraData, pollConfig.extraData)
-        Assertions.assertEquals(listOf("Option A", "Option B"), pollConfig.options)
+        Assertions.assertEquals(name, createPollParams.name)
+        Assertions.assertEquals(description, createPollParams.description)
+        Assertions.assertEquals(votingVisibility, createPollParams.votingVisibility)
+        Assertions.assertEquals(enforceUniqueVote, createPollParams.enforceUniqueVote)
+        Assertions.assertEquals(maxVotesAllowed, createPollParams.maxVotesAllowed)
+        Assertions.assertEquals(allowUserSuggestedOptions, createPollParams.allowUserSuggestedOptions)
+        Assertions.assertEquals(allowAnswers, createPollParams.allowAnswers)
+        Assertions.assertEquals(options, createPollParams.optionsWithExtraData)
+        Assertions.assertEquals(extraData, createPollParams.extraData)
+        Assertions.assertEquals(listOf("Option A", "Option B"), createPollParams.options)
     }
 
     @Test
@@ -127,20 +127,20 @@ internal class PollConfigTest {
             PollOption(text = "Option 2"),
         )
 
-        val pollConfig = PollConfig(
+        val createPollParams = CreatePollParams(
             name = name,
             options = options,
         )
 
-        Assertions.assertEquals(name, pollConfig.name)
-        Assertions.assertEquals("", pollConfig.description)
-        Assertions.assertEquals(VotingVisibility.PUBLIC, pollConfig.votingVisibility)
-        Assertions.assertEquals(true, pollConfig.enforceUniqueVote)
-        Assertions.assertEquals(1, pollConfig.maxVotesAllowed)
-        Assertions.assertEquals(false, pollConfig.allowUserSuggestedOptions)
-        Assertions.assertEquals(false, pollConfig.allowAnswers)
-        Assertions.assertEquals(options, pollConfig.optionsWithExtraData)
-        Assertions.assertEquals(emptyMap<String, Any>(), pollConfig.extraData)
+        Assertions.assertEquals(name, createPollParams.name)
+        Assertions.assertEquals("", createPollParams.description)
+        Assertions.assertEquals(VotingVisibility.PUBLIC, createPollParams.votingVisibility)
+        Assertions.assertEquals(true, createPollParams.enforceUniqueVote)
+        Assertions.assertEquals(1, createPollParams.maxVotesAllowed)
+        Assertions.assertEquals(false, createPollParams.allowUserSuggestedOptions)
+        Assertions.assertEquals(false, createPollParams.allowAnswers)
+        Assertions.assertEquals(options, createPollParams.optionsWithExtraData)
+        Assertions.assertEquals(emptyMap<String, Any>(), createPollParams.extraData)
     }
 
     @Test
@@ -151,12 +151,12 @@ internal class PollConfigTest {
             PollOption("Third", mapOf("id" to 3)),
         )
 
-        val pollConfig = PollConfig(
+        val createPollParams = CreatePollParams(
             name = "Test",
             options = options,
         )
 
-        Assertions.assertEquals(listOf("First", "Second", "Third"), pollConfig.options)
+        Assertions.assertEquals(listOf("First", "Second", "Third"), createPollParams.options)
     }
 
     @Test
@@ -164,12 +164,12 @@ internal class PollConfigTest {
         val optionTexts = listOf("Choice 1", "Choice 2", "Choice 3")
 
         @Suppress("DEPRECATION")
-        val pollConfig = PollConfig(
+        val createPollParams = CreatePollParams(
             name = "Test",
             options = optionTexts,
         )
 
-        pollConfig.optionsWithExtraData.forEach { option ->
+        createPollParams.optionsWithExtraData.forEach { option ->
             Assertions.assertEquals(emptyMap<String, Any>(), option.extraData)
         }
     }
@@ -189,7 +189,7 @@ internal class PollConfigTest {
         val allowAnswers = false
         val extraData = mapOf("testKey" to "testValue")
 
-        val pollConfig = PollConfig(
+        val createPollParams = CreatePollParams(
             name = name,
             options = options,
             description = description,
@@ -202,20 +202,20 @@ internal class PollConfigTest {
         )
 
         // Verify all properties are correctly set
-        Assertions.assertEquals(name, pollConfig.name)
-        Assertions.assertEquals(description, pollConfig.description)
-        Assertions.assertEquals(votingVisibility, pollConfig.votingVisibility)
-        Assertions.assertEquals(enforceUniqueVote, pollConfig.enforceUniqueVote)
-        Assertions.assertEquals(maxVotesAllowed, pollConfig.maxVotesAllowed)
-        Assertions.assertEquals(allowUserSuggestedOptions, pollConfig.allowUserSuggestedOptions)
-        Assertions.assertEquals(allowAnswers, pollConfig.allowAnswers)
-        Assertions.assertEquals(options, pollConfig.optionsWithExtraData)
-        Assertions.assertEquals(extraData, pollConfig.extraData)
+        Assertions.assertEquals(name, createPollParams.name)
+        Assertions.assertEquals(description, createPollParams.description)
+        Assertions.assertEquals(votingVisibility, createPollParams.votingVisibility)
+        Assertions.assertEquals(enforceUniqueVote, createPollParams.enforceUniqueVote)
+        Assertions.assertEquals(maxVotesAllowed, createPollParams.maxVotesAllowed)
+        Assertions.assertEquals(allowUserSuggestedOptions, createPollParams.allowUserSuggestedOptions)
+        Assertions.assertEquals(allowAnswers, createPollParams.allowAnswers)
+        Assertions.assertEquals(options, createPollParams.optionsWithExtraData)
+        Assertions.assertEquals(extraData, createPollParams.extraData)
 
         // Verify derived properties
         Assertions.assertEquals(
             mapOf("Option 1" to "order:1", "Option 2" to "order:2"),
-            pollConfig.options.zip(options).associate { (text, option) ->
+            createPollParams.options.zip(options).associate { (text, option) ->
                 text to option.extraData.entries.joinToString(":") { "${it.key}:${it.value}" }
             },
         )

@@ -26,7 +26,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
@@ -170,8 +170,8 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
         binding.buttonPolls.setOnClickListener {
             context.getFragmentManager()?.let {
                 CreatePollDialogFragment.newInstance(object : CreatePollDialogFragment.CreatePollDialogListener {
-                    override fun onCreatePoll(pollConfig: PollConfig) {
-                        attachmentsPickerTabListener?.onPollSubmitted(pollConfig)
+                    override fun onCreatePoll(createPollParams: CreatePollParams) {
+                        attachmentsPickerTabListener?.onPollSubmitted(createPollParams)
                     }
 
                     override fun onDismiss() {

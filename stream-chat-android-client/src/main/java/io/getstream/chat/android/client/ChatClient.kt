@@ -179,6 +179,7 @@ import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionData
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
@@ -197,7 +198,6 @@ import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.PushPreference
@@ -1960,7 +1960,7 @@ internal constructor(
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
-     * @param pollConfig The poll configuration.
+     * @param createPollParams The poll configuration.
      *
      * @return Executable async [Call] responsible for sending a poll.
      */
@@ -1968,9 +1968,9 @@ internal constructor(
     public fun sendPoll(
         channelType: String,
         channelId: String,
-        pollConfig: PollConfig,
+        createPollParams: CreatePollParams,
     ): Call<Message> {
-        return api.createPoll(pollConfig)
+        return api.createPoll(createPollParams)
             .flatMap { poll ->
                 sendMessage(
                     channelType = channelType,
