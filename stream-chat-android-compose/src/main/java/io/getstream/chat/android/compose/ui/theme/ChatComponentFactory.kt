@@ -167,7 +167,6 @@ import io.getstream.chat.android.compose.ui.threads.ThreadItem
 import io.getstream.chat.android.compose.ui.util.StreamSnackbar
 import io.getstream.chat.android.compose.ui.util.bottomBorder
 import io.getstream.chat.android.compose.ui.util.topBorder
-import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message

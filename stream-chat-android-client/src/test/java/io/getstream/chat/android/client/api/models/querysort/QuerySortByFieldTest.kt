@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api.models.querysort
 
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByFieldTest.Companion.generateQuerySortInput
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.querysort.ComparableFieldProvider

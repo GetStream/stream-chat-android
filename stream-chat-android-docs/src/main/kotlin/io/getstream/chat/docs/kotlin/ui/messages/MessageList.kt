@@ -15,7 +15,6 @@ import androidx.fragment.app.viewModels
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
-import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.ReactionSortingByCount
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.helper.DateFormatter

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.internal.state.querychannels
 
+import io.getstream.chat.android.client.internal.state.querychannels.QueryChannelsSortTest.Companion.sortArguments
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.CustomObject
 import io.getstream.chat.android.models.querysort.QuerySortByField

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.parser
 
+import io.getstream.chat.android.client.parser.FilterObjectTypeAdapterTest.Companion.writeArguments
 import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters

@@ -18,6 +18,8 @@ package io.getstream.chat.android.ui.common.utils.typing.internal
 
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
+import io.getstream.chat.android.ui.common.utils.typing.internal.DefaultTypingUpdatesBuffer.Companion.DEFAULT_BUFFER_TYPING_UPDATES_INTERVAL
+import io.getstream.chat.android.ui.common.utils.typing.internal.DefaultTypingUpdatesBuffer.Companion.DEFAULT_SEND_TYPING_UPDATES_INTERVAL
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren

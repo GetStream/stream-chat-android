@@ -18,7 +18,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import io.getstream.chat.android.models.ReactionSortingByCount;
 import io.getstream.chat.android.ui.common.helper.DateFormatter;
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageItemViewHolder;

@@ -17,12 +17,8 @@ import java.util.Map;
 import java.util.Set;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.models.FilterObject;
-import io.getstream.chat.android.models.NeutralFilterObject;
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest;
-import io.getstream.chat.android.models.querysort.QuerySortByField;
-import io.getstream.chat.android.models.querysort.QuerySorter;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent;
 import io.getstream.chat.android.client.events.UserStartWatchingEvent;
@@ -31,10 +27,14 @@ import io.getstream.chat.android.client.extensions.ChannelExtensionKt;
 import io.getstream.chat.android.models.Channel;
 import io.getstream.chat.android.models.ChannelCapabilities;
 import io.getstream.chat.android.models.ChannelMute;
+import io.getstream.chat.android.models.FilterObject;
 import io.getstream.chat.android.models.Filters;
 import io.getstream.chat.android.models.Member;
 import io.getstream.chat.android.models.Message;
+import io.getstream.chat.android.models.NeutralFilterObject;
 import io.getstream.chat.android.models.User;
+import io.getstream.chat.android.models.querysort.QuerySortByField;
+import io.getstream.chat.android.models.querysort.QuerySorter;
 
 public class Channels {
     private ChatClient client;

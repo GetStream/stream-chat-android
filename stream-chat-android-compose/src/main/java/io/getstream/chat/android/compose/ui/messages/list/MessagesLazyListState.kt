@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.mapSaver
 import androidx.compose.ui.unit.IntSize
+import io.getstream.chat.android.compose.ui.messages.list.MessagesLazyListState.Companion.Saver
 import io.getstream.chat.android.models.Message
 import java.io.Serializable
 

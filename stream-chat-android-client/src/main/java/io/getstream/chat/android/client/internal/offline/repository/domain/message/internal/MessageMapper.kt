@@ -30,7 +30,6 @@ import io.getstream.chat.android.models.MessageReminderInfo
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
-import kotlin.collections.map
 
 internal suspend fun MessageEntity.toModel(
     getUser: suspend (userId: String) -> User,

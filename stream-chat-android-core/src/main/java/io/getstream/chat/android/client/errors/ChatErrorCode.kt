@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client.errors
 
+import io.getstream.chat.android.client.errors.ChatErrorCode.Companion.authenticationErrors
+
 private const val NETWORK_FAILED_ERROR_CODE = 1000
 private const val PARSER_ERROR_ERROR_CODE = 1001
 private const val SOCKET_CLOSED_ERROR_CODE = 1002

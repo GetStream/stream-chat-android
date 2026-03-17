@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.client.utils.internal
 
+import io.getstream.chat.android.client.utils.internal.ValidationKtTest.Companion.argumentsValidCidResult
+import io.getstream.chat.android.client.utils.internal.ValidationKtTest.Companion.argumentsValidateCid
+import io.getstream.chat.android.client.utils.internal.ValidationKtTest.Companion.argumentsValidateCidError
 import io.getstream.result.Error
 import io.getstream.result.Result
 import org.amshove.kluent.invoking

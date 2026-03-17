@@ -26,6 +26,7 @@ import io.getstream.chat.android.positiveRandomLong
 import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageValidatorTest.Companion.provideValidationData
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
