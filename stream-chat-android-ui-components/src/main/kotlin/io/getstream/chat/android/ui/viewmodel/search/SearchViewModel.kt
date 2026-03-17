@@ -23,9 +23,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.Event
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Filters
-import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SearchMessagesResult
-import io.getstream.chat.android.state.utils.Event
 import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error

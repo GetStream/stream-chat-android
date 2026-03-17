@@ -30,7 +30,6 @@ import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.ModerationAction
 import io.getstream.chat.android.models.SyncStatus
-import io.getstream.chat.android.models.User
 import io.getstream.result.Error
 import io.getstream.result.Result
 import java.util.UUID

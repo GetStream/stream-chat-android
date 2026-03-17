@@ -37,8 +37,8 @@ import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.util.Date
 
@@ -664,7 +664,6 @@ internal class MessageUtilsTest {
         val result = message.shouldDeleteRemote(randomString())
         assertTrue(result is Result.Success)
     }
-
 
     private companion object {
 

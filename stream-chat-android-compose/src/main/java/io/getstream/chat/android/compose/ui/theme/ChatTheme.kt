@@ -40,11 +40,6 @@ import com.valentinilk.shimmer.LocalShimmerTheme
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
-import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
-import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
-import io.getstream.chat.android.compose.ui.util.DefaultPollSwitchItemFactory
 import io.getstream.chat.android.compose.ui.util.ImageHeadersInterceptor
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
@@ -178,7 +173,6 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param colors The set of colors we provide, wrapped in [StreamDesign.Colors].
  * @param typography The set of typography styles we provide, wrapped in [StreamDesign.Typography].
  * @param rippleConfiguration Defines the appearance for ripples.
- * @param userPresence The user presence display configuration.
  * @param componentFactory Provide to customize the stateless components that are used throughout the UI
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
  * @param reactionResolver Provides available reactions and resolves reaction types to emoji codes.
@@ -498,7 +492,7 @@ public object ChatTheme {
     /**
      * Retrieves the current [ImageHeadersProvider] at the call site's position in the hierarchy.
      *
-     * @deprecated Use [asyncImageHeadersProvider] in [ChatTheme] for thread-safe header injection.
+     * @deprecated Use [AsyncImageHeadersProvider] in [ChatTheme] for thread-safe header injection.
      */
     @Deprecated(
         message = "ImageHeadersProvider is deprecated. Pass asyncImageHeadersProvider to ChatTheme instead. " +
