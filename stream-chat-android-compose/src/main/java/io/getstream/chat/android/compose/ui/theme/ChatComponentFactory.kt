@@ -169,11 +169,9 @@ import io.getstream.chat.android.compose.ui.util.bottomBorder
 import io.getstream.chat.android.compose.ui.util.topBorder
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
-import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
-import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.React
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
@@ -238,7 +236,7 @@ internal class DefaultChatComponentFactory : ChatComponentFactory
  * }
  * ```
  */
-@Suppress("TooManyFunctions", "LargeClass", "LongParameterList")
+@Suppress("TooManyFunctions", "LargeClass")
 public interface ChatComponentFactory {
 
     /**
@@ -622,49 +620,6 @@ public interface ChatComponentFactory {
     @Composable
     public fun RowScope.MessageListHeaderLeadingContent(params: MessageListHeaderLeadingContentParams) {
         DefaultMessageListHeaderLeadingContent(onBackPressed = params.onBackPressed)
-    }
-
-    /**
-     * The default center content of the message list header.
-     * Usually shows the channel title in the top and
-     * the channel information or the connection status in the bottom.
-     */
-    @Deprecated(
-        message = "Use the new version of MessageListHeaderCenterContent with a nullable onClick.",
-        replaceWith = ReplaceWith(
-            "MessageListHeaderCenterContent(\n" +
-                "modifier = modifier,\n" +
-                "channel = channel,\n" +
-                "currentUser = currentUser,\n" +
-                "connectionState = connectionState,\n" +
-                "typingUsers = typingUsers,\n" +
-                "messageMode = messageMode,\n" +
-                "onClick = onHeaderTitleClick,\n" +
-                ")",
-        ),
-        level = DeprecationLevel.WARNING,
-    )
-    @Composable
-    public fun RowScope.MessageListHeaderCenterContent(
-        modifier: Modifier,
-        channel: Channel,
-        currentUser: User?,
-        typingUsers: List<User>,
-        messageMode: MessageMode,
-        onHeaderTitleClick: (Channel) -> Unit,
-        connectionState: ConnectionState,
-    ) {
-        MessageListHeaderCenterContent(
-            params = MessageListHeaderCenterContentParams(
-                modifier = modifier,
-                channel = channel,
-                currentUser = currentUser,
-                connectionState = connectionState,
-                typingUsers = typingUsers,
-                messageMode = messageMode,
-                onClick = onHeaderTitleClick,
-            ),
-        )
     }
 
     /**
