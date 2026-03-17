@@ -336,7 +336,8 @@
     <string name="stream_compose_poll_end_confirmation_title">End this poll?</string>
     <string name="stream_compose_poll_end_confirmation_message">Do you want to end this poll now? Nobody will be able to vote in this poll anymore.</string>
     <string name="stream_compose_poll_end_confirmation_action">End Poll</string>
-    <string name="stream_compose_poll_ended_snackbar">Poll ended</string>
+    <string name="stream_compose_poll_ended_success">Poll ended</string>
+    <string name="stream_compose_poll_ended_failure">Failed to close the poll</string>
     <string name="stream_compose_poll_suggest_option">Suggest Option</string>
     <string name="stream_compose_poll_options">Poll Options</string>
     <string name="stream_compose_poll_results">Poll Results</string>

@@ -942,6 +942,7 @@ public final class io/getstream/chat/android/ui/common/feature/messages/list/Mes
 	public final fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getDeletedMessageVisibilityState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getErrorEvents ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getEvents ()Lkotlinx/coroutines/flow/SharedFlow;
 	public final fun getListState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getMessageActions ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getMessageFooterVisibilityState ()Lkotlinx/coroutines/flow/StateFlow;
@@ -1021,7 +1022,7 @@ public final class io/getstream/chat/android/ui/common/feature/messages/list/Mes
 public final class io/getstream/chat/android/ui/common/feature/messages/list/MessageListController$Companion {
 }
 
-public abstract class io/getstream/chat/android/ui/common/feature/messages/list/MessageListController$ErrorEvent {
+public abstract class io/getstream/chat/android/ui/common/feature/messages/list/MessageListController$ErrorEvent : io/getstream/chat/android/ui/common/feature/messages/list/MessageListController$Event {
 	public static final field $stable I
 	public synthetic fun <init> (Lio/getstream/result/Error;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun getStreamError ()Lio/getstream/result/Error;
@@ -1191,6 +1192,21 @@ public final class io/getstream/chat/android/ui/common/feature/messages/list/Mes
 	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController$ErrorEvent$UnpinMessageError;Lio/getstream/result/Error;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController$ErrorEvent$UnpinMessageError;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getStreamError ()Lio/getstream/result/Error;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/getstream/chat/android/ui/common/feature/messages/list/MessageListController$Event {
+}
+
+public final class io/getstream/chat/android/ui/common/feature/messages/list/MessageListController$Event$PollClosingSuccess : io/getstream/chat/android/ui/common/feature/messages/list/MessageListController$Event {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Poll;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Poll;
+	public final fun copy (Lio/getstream/chat/android/models/Poll;)Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController$Event$PollClosingSuccess;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController$Event$PollClosingSuccess;Lio/getstream/chat/android/models/Poll;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController$Event$PollClosingSuccess;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPoll ()Lio/getstream/chat/android/models/Poll;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

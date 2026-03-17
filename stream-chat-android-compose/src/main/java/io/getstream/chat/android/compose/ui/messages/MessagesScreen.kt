@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.messages
 
 import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,6 +38,7 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +47,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -79,6 +82,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
@@ -196,8 +200,7 @@ public fun MessagesScreen(
         }
 
     val snackbarHostState = remember(::SnackbarHostState)
-    val snackbarScope = rememberCoroutineScope()
-    val pollEndedMessage = stringResource(R.string.stream_compose_poll_ended_snackbar)
+    EventHandler(listViewModel, snackbarHostState)
 
     BackHandler(enabled = true, onBack = backAction)
 
@@ -242,18 +245,7 @@ public fun MessagesScreen(
                 onUserAvatarClick = onUserAvatarClick,
                 onMessageLinkClick = onMessageLinkClick,
                 onUserMentionClick = onUserMentionClick,
-                onClosePoll = remember(listViewModel) {
-                    {
-                            pollId: String ->
-                        listViewModel.closePoll(pollId)
-                        snackbarScope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = pollEndedMessage,
-                                duration = SnackbarDuration.Short,
-                            )
-                        }
-                    }
-                },
+                onClosePoll = listViewModel::closePoll,
                 onReply = { message -> composerViewModel.performMessageAction(Reply(message)) },
                 onMediaGalleryPreviewResult = remember(listViewModel, composerViewModel) {
                     {
@@ -321,6 +313,41 @@ private fun MessagesScreenContentBox(content: @Composable BoxScope.() -> Unit) {
                 .testTag("Stream_MessagesScreen"),
             content = content,
         )
+    }
+}
+
+/**
+ * Collects and reacts to events emitted by [MessageListViewModel].
+ *
+ * @param viewModel The [MessageListViewModel] whose events are observed.
+ * @param snackbarHostState The [SnackbarHostState] used to show snackbar messages.
+ */
+@Composable
+private fun EventHandler(viewModel: MessageListViewModel, snackbarHostState: SnackbarHostState) {
+    val snackbarScope = rememberCoroutineScope()
+    val resources = LocalResources.current
+
+    fun showSnackbar(@StringRes resId: Int) {
+        snackbarScope.launch {
+            snackbarHostState.showSnackbar(
+                message = resources.getString(resId),
+                duration = SnackbarDuration.Short,
+            )
+        }
+    }
+
+    LaunchedEffect(viewModel) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is MessageListController.Event.PollClosingSuccess ->
+                    showSnackbar(R.string.stream_compose_poll_ended_success)
+
+                is MessageListController.ErrorEvent.PollClosingError ->
+                    showSnackbar(R.string.stream_compose_poll_ended_failure)
+
+                else -> {}
+            }
+        }
     }
 }
 
