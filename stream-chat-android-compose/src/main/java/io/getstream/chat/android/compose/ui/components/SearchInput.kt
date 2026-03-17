@@ -149,7 +149,7 @@ public fun SearchInput(
                 Modifier
                     .fillMaxWidth()
                     .padding(
-                        start = StreamTokens.spacingXs,
+                        start = StreamTokens.spacingMd,
                         end = StreamTokens.spacingMd,
                         top = StreamTokens.spacingSm,
                         bottom = StreamTokens.spacingSm,
@@ -178,12 +178,7 @@ public fun SearchInput(
 @Composable
 internal fun DefaultSearchLeadingIcon() {
     Icon(
-        modifier = Modifier
-            .padding(
-                start = StreamTokens.spacingSm,
-                end = StreamTokens.spacingXs,
-            )
-            .size(16.dp),
+        modifier = Modifier.padding(end = StreamTokens.spacingXs),
         painter = painterResource(id = R.drawable.stream_compose_ic_search),
         contentDescription = null,
         tint = ChatTheme.colors.textTertiary,
@@ -209,8 +204,8 @@ internal fun DefaultSearchLabel() {
 internal fun DefaultSearchClearButton(onClick: () -> Unit) {
     IconButton(
         modifier = Modifier
-            .padding(horizontal = 4.dp)
-            .size(24.dp),
+            .padding(start = StreamTokens.spacingXs)
+            .size(20.dp),
         onClick = onClick,
     ) {
         Icon(
