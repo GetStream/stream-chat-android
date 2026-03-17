@@ -155,7 +155,7 @@ public fun ChannelsScreen(
                                 )
                                 .fillMaxWidth(),
                             query = searchQuery,
-                            onValueChange = remember(listViewModel) {
+                            onValueChange = remember(listViewModel, searchMode) {
                                 {
                                     searchQuery = it
                                     listViewModel.setSearchQuery(
