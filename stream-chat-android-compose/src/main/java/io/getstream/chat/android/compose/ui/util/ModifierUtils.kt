@@ -21,8 +21,13 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.material3.ripple
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 /**
  * Adds drag pointer input to the modifier.
@@ -83,3 +88,27 @@ internal inline fun Modifier.applyIf(condition: Boolean, block: Modifier.() -> M
 
 internal inline fun <T : Any> Modifier.ifNotNull(value: T?, block: Modifier.(T) -> Modifier) =
     if (value != null) this.block(value) else this
+
+internal fun Modifier.bottomBorder(color: Color, width: Dp = 1.dp): Modifier =
+    verticalBorder(color, width, yPosition = { size.height - it / 2 })
+
+internal fun Modifier.topBorder(color: Color, width: Dp = 1.dp): Modifier =
+    verticalBorder(color = color, width = width, yPosition = { it / 2 })
+
+/**
+ * Draws a full-width border at the position returned by [yPosition].
+ *
+ * @param color The color of the border.
+ * @param width The width of the border.
+ * @param yPosition A lambda that calculates the y position of the border based on the width in pixels.
+ */
+private inline fun Modifier.verticalBorder(
+    color: Color,
+    width: Dp,
+    crossinline yPosition: ContentDrawScope.(widthPx: Float) -> Float,
+): Modifier = drawWithContent {
+    drawContent()
+    val widthPx = width.toPx()
+    val y = yPosition(widthPx)
+    drawLine(color = color, start = Offset(0f, y), end = Offset(size.width, y), strokeWidth = widthPx)
+}
