@@ -63,10 +63,10 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.button.SpeedButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
+import io.getstream.chat.android.compose.ui.components.common.PlaybackSpeedToggle
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.dragPointerInput
@@ -133,7 +133,7 @@ internal fun VideoPlaybackControls(
             onDragStop = state::onDragStop,
         )
 
-        SpeedButton(
+        PlaybackSpeedToggle(
             speed = state.speed,
             onClick = state::cycleSpeed,
         )
