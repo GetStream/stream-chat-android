@@ -37,7 +37,6 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Date
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.math.abs
 import kotlin.math.log10
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -304,6 +303,7 @@ internal class AudioRecordingController(
                     AudioState.PLAYING,
                     AudioState.PAUSE,
                     -> state.playingProgress
+
                     else -> 0f
                 },
             ),
@@ -500,30 +500,13 @@ internal class AudioRecordingController(
     }
 
     private fun List<Int>.normalize(): List<Float> {
-        return map { amplitude ->
-            normalize(amplitude)
-        }
+        return map(::normalize)
     }
 
-    private fun normalize(maxAmplitude: Int): Float {
-        // val normalized = maxOf(maxAmplitude.toFloat() / 32767f, 0.2f)
-        val normalized = maxAmplitude.toFloat() / Short.MAX_VALUE
-
-        val MAX_AMPLITUDE = 32767f
-        val MAX_DB = 90.0 // Maximum decibel level for normalization
-
-        val decibels = 20 * log10(maxAmplitude / MAX_AMPLITUDE)
-        // val normalizedValue = maxOf(0.0, minOf(decibels / MAX_DB, 1.0))
-        val normalizedValue = abs((50 + decibels) / 50)
-        // logger.v { "[onRecorderMaxAmplitudeSampled] maxAmplitude: $maxAmplitude, decibels: $decibels, " +
-        //     "normalizedValue: $normalizedValue ($normalized)" }
-        if (maxAmplitude > 20_000) {
-            logger.w { "[normalize] normalizedValue: $normalizedValue, maxAmplitude: $maxAmplitude" }
-        }
-        if (normalizedValue == Float.NEGATIVE_INFINITY || normalizedValue == Float.POSITIVE_INFINITY) {
-            return 0f
-        }
-        return normalizedValue
+    private fun normalize(amplitude: Int): Float {
+        if (amplitude <= 0) return 0f
+        val decibels = (20 * log10(amplitude / MaxAmplitude)).coerceIn(-NoiseFloor, 0f)
+        return (decibels + NoiseFloor) / NoiseFloor
     }
 
     private fun List<Float>.downsample(targetSamples: Int): List<Float> {
@@ -590,5 +573,17 @@ internal class AudioRecordingController(
     private fun List<Int>.downsampleToSingleMax(): Int {
         1 to 1
         return max()
+    }
+
+    companion object {
+        /**
+         * Max value for 16-bit PCM audio, as returned by [android.media.MediaRecorder.getMaxAmplitude].
+         */
+        private val MaxAmplitude = Short.MAX_VALUE.toFloat()
+
+        /**
+         * Noise floor in dB. Amplitudes below this threshold are treated as silence.
+         */
+        private const val NoiseFloor = 50f
     }
 }
