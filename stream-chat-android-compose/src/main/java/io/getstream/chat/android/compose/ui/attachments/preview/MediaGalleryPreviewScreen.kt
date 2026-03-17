@@ -722,7 +722,7 @@ internal fun MediaGalleryPreviewCloseIcon(
     ) {
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
-            contentDescription = stringResource(id = R.string.stream_compose_back),
+            contentDescription = stringResource(id = R.string.stream_ui_back_button),
         )
     }
 }
