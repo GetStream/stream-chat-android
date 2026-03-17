@@ -63,11 +63,9 @@ import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
  * scroll state and focused message offset.
  * @param verticalArrangement Vertical arrangement of the regular message list.
- * Default: [Arrangement.Top].
+ * Default: [Arrangement.Bottom].
  * @param threadsVerticalArrangement Vertical arrangement of the thread message list.
  * Default: [Arrangement.Bottom].
- * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
- * Default: `null`.
  * @param onThreadClick Handler when the user taps on the message, while there's a thread going.
  * @param onLongItemClick Handler for when the user long taps on a message and selects it.
  * @param onReactionsClick Handler when the user taps on message reactions and selects them.
@@ -100,9 +98,8 @@ public fun MessageList(
     contentPadding: PaddingValues = PaddingValues(),
     messagesLazyListState: MessagesLazyListState =
         rememberMessageListState(parentMessageId = viewModel.currentMessagesState.value.parentMessageId),
-    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
     threadsVerticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
-    threadMessagesStart: ThreadMessagesStart? = null,
     onThreadClick: (Message) -> Unit = {
         if (viewModel.isInThread) {
             viewModel.leaveThread()
@@ -227,7 +224,6 @@ public fun MessageList(
         onMessagesPageStartReached = onMessagesPageStartReached,
         verticalArrangement = verticalArrangement,
         threadsVerticalArrangement = threadsVerticalArrangement,
-        threadMessagesStart = threadMessagesStart,
         onLastVisibleMessageChanged = onLastVisibleMessageChanged,
         onLongItemClick = onLongItemClick,
         onReactionsClick = onReactionsClick,
@@ -350,11 +346,9 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  *
  * @param currentState The state of the component, represented by [MessageListState].
  * @param verticalArrangement Vertical arrangement of the regular message list.
- * Default: [Arrangement.Top].
+ * Default: [Arrangement.Bottom].
  * @param threadsVerticalArrangement Vertical arrangement of the thread message list.
  * Default: [Arrangement.Bottom].
- * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
- * Default: `null`.
  * @param reactionSorting The sorting of the reactions.
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
@@ -387,9 +381,8 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
 @Composable
 public fun MessageList(
     currentState: MessageListState,
-    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
     threadsVerticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
-    threadMessagesStart: ThreadMessagesStart? = null,
     reactionSorting: ReactionSorting,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
@@ -491,7 +484,6 @@ public fun MessageList(
                     onMessagesStartReached = onMessagesPageStartReached,
                     verticalArrangement = verticalArrangement,
                     threadsVerticalArrangement = threadsVerticalArrangement,
-                    threadMessagesStart = threadMessagesStart,
                     onLastVisibleMessageChanged = onLastVisibleMessageChanged,
                     onScrolledToBottom = onScrolledToBottom,
                     helperContent = helperContent,

@@ -80,11 +80,9 @@ import kotlin.math.abs
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
  * scroll state and focused message offset.
  * @param verticalArrangement Vertical arrangement of the regular message list.
- * Default: [Arrangement.Top].
+ * Default: [Arrangement.Bottom].
  * @param threadsVerticalArrangement Vertical arrangement of the thread message list.
  * Default: [Arrangement.Bottom].
- * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
- * Default: `null`.
  * @param onMessagesStartReached Handler for pagination, when the user reaches chronologically the start of messages.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message
  * changes.
@@ -104,9 +102,8 @@ import kotlin.math.abs
 public fun Messages(
     messagesState: MessageListState,
     messagesLazyListState: MessagesLazyListState,
-    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
     threadsVerticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
-    threadMessagesStart: ThreadMessagesStart? = null,
     onMessagesStartReached: () -> Unit,
     onLastVisibleMessageChanged: (Message) -> Unit,
     onScrolledToBottom: () -> Unit,
@@ -171,7 +168,6 @@ public fun Messages(
             verticalArrangement = messagesState.getVerticalArrangement(
                 messagesVerticalArrangement = verticalArrangement,
                 threadsVerticalArrangement = threadsVerticalArrangement,
-                threadMessagesStart = threadMessagesStart,
             ),
             reverseLayout = true,
             contentPadding = contentPadding,
@@ -275,17 +271,8 @@ public fun Messages(
 private fun MessageListState.getVerticalArrangement(
     messagesVerticalArrangement: Arrangement.Vertical,
     threadsVerticalArrangement: Arrangement.Vertical,
-    threadMessagesStart: ThreadMessagesStart?,
 ): Arrangement.Vertical =
-    when (parentMessageId != null) {
-        true -> when (threadMessagesStart) {
-            ThreadMessagesStart.BOTTOM -> Arrangement.Bottom
-            ThreadMessagesStart.TOP -> Arrangement.Top
-            null -> threadsVerticalArrangement
-        }
-
-        false -> messagesVerticalArrangement
-    }
+    if (parentMessageId != null) threadsVerticalArrangement else messagesVerticalArrangement
 
 /**
  * Represents the default scrolling behavior and UI for [Messages], based on the state of messages and the scroll state.
