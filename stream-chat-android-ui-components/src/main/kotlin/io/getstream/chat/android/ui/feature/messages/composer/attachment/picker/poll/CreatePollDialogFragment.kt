@@ -29,7 +29,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.utils.PollsConstants
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentCreatePollBinding
@@ -113,7 +113,7 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
             }
         }
         lifecycleScope.launch {
-            createPollViewModel.pollConfig.collectLatest { pollConfig ->
+            createPollViewModel.createPollParams.collectLatest { pollConfig ->
                 pollConfig?.let {
                     createPollDialogListener?.onCreatePoll(it)
                     dismiss()
@@ -178,9 +178,9 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
         /**
          * Called when the user creates a poll.
          *
-         * @param pollConfig The configuration of the poll.
+         * @param createPollParams The configuration of the poll.
          */
-        public fun onCreatePoll(pollConfig: PollConfig)
+        public fun onCreatePoll(createPollParams: CreatePollParams)
 
         /**
          * Called when the dialog is dismissed without creating a poll.

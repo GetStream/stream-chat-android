@@ -120,6 +120,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
@@ -134,7 +135,6 @@ import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
@@ -1646,26 +1646,26 @@ constructor(
         return pollsApi.queryPolls(request).mapDomain { it.toDomain() }
     }
 
-    override fun createPoll(pollConfig: PollConfig): Call<Poll> {
+    override fun createPoll(createPollParams: CreatePollParams): Call<Poll> {
         return pollsApi.createPoll(
             CreatePollRequest(
-                allow_answers = pollConfig.allowAnswers,
-                allow_user_suggested_options = pollConfig.allowUserSuggestedOptions,
-                description = pollConfig.description,
-                enforce_unique_vote = pollConfig.enforceUniqueVote,
-                max_votes_allowed = pollConfig.maxVotesAllowed,
-                name = pollConfig.name,
-                options = pollConfig.optionsWithExtraData.map {
+                allow_answers = createPollParams.allowAnswers,
+                allow_user_suggested_options = createPollParams.allowUserSuggestedOptions,
+                description = createPollParams.description,
+                enforce_unique_vote = createPollParams.enforceUniqueVote,
+                max_votes_allowed = createPollParams.maxVotesAllowed,
+                name = createPollParams.name,
+                options = createPollParams.optionsWithExtraData.map {
                     UpstreamOptionDto(
                         text = it.text,
                         extraData = it.extraData,
                     )
                 },
-                voting_visibility = when (pollConfig.votingVisibility) {
+                voting_visibility = when (createPollParams.votingVisibility) {
                     VotingVisibility.PUBLIC -> CreatePollRequest.VOTING_VISIBILITY_PUBLIC
                     VotingVisibility.ANONYMOUS -> CreatePollRequest.VOTING_VISIBILITY_ANONYMOUS
                 },
-                extraData = pollConfig.extraData,
+                extraData = createPollParams.extraData,
             ),
         ).mapDomain { it.poll.toDomain() }
     }

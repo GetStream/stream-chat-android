@@ -32,6 +32,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
@@ -46,7 +47,6 @@ import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
@@ -587,7 +587,7 @@ internal interface ChatApi {
     ): Call<ThreadInfo>
 
     @CheckResult
-    fun createPoll(pollConfig: PollConfig): Call<Poll>
+    fun createPoll(createPollParams: CreatePollParams): Call<Poll>
 
     @CheckResult
     fun updatePoll(request: UpdatePollRequest): Call<Poll>

@@ -199,7 +199,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun sendImage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun sendMessage (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Z)Lio/getstream/result/call/Call;
 	public static synthetic fun sendMessage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;ZILjava/lang/Object;)Lio/getstream/result/call/Call;
-	public final fun sendPoll (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/PollConfig;)Lio/getstream/result/call/Call;
+	public final fun sendPoll (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/CreatePollParams;)Lio/getstream/result/call/Call;
 	public final fun sendReaction (Lio/getstream/chat/android/models/Reaction;Z)Lio/getstream/result/call/Call;
 	public final fun sendReaction (Lio/getstream/chat/android/models/Reaction;ZLjava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun sendReaction (Lio/getstream/chat/android/models/Reaction;ZLjava/lang/String;Z)Lio/getstream/result/call/Call;
