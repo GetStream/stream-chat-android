@@ -63,6 +63,8 @@ import io.getstream.chat.android.compose.ui.components.common.RadioCheck
 import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.components.poll.AddAnswerDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageBubbleParams
+import io.getstream.chat.android.compose.ui.theme.MessageFailedIconParams
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.MessageStyling.PollStyle
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -117,56 +119,61 @@ public fun PollMessageContent(
     val poll = message.poll
     if (!messageItem.isErrorOrFailed() && poll != null) {
         ChatTheme.componentFactory.MessageBubble(
-            modifier = modifier,
-            message = message,
-            shape = messageBubbleShape,
-            color = messageBubbleColor,
-            border = null,
-            content = {
-                PollMessageContent(
-                    message = message,
-                    poll = poll,
-                    isMine = ownsMessage,
-                    onCastVote = { option ->
-                        onCastVote.invoke(message, poll, option)
-                    },
-                    onRemoveVote = { vote ->
-                        onRemoveVote.invoke(message, poll, vote)
-                    },
-                    selectPoll = selectPoll,
-                    onAddAnswer = { answer ->
-                        onAddAnswer.invoke(message, poll, answer)
-                    },
-                    onClosePoll = onClosePoll,
-                    onAddPollOption = onAddPollOption,
-                )
-            },
+            params = MessageBubbleParams(
+                modifier = modifier,
+                message = message,
+                shape = messageBubbleShape,
+                color = messageBubbleColor,
+                content = {
+                    PollMessageContent(
+                        message = message,
+                        poll = poll,
+                        isMine = ownsMessage,
+                        onCastVote = { option ->
+                            onCastVote.invoke(message, poll, option)
+                        },
+                        onRemoveVote = { vote ->
+                            onRemoveVote.invoke(message, poll, vote)
+                        },
+                        selectPoll = selectPoll,
+                        onAddAnswer = { answer ->
+                            onAddAnswer.invoke(message, poll, answer)
+                        },
+                        onClosePoll = onClosePoll,
+                        onAddPollOption = onAddPollOption,
+                    )
+                },
+            ),
         )
     } else {
         Box(modifier = modifier) {
             ChatTheme.componentFactory.MessageBubble(
-                modifier = Modifier.padding(end = 12.dp),
-                message = message,
-                shape = messageBubbleShape,
-                color = messageBubbleColor,
-                border = BorderStroke(1.dp, ChatTheme.colors.borderCoreDefault),
-                content = {
-                    MessageContent(
-                        message = message,
-                        currentUser = messageItem.currentUser,
-                        onLongItemClick = onLongItemClick,
-                        onGiphyActionClick = {},
-                        onMediaGalleryPreviewResult = {},
-                        onQuotedMessageClick = {},
-                    )
-                },
+                params = MessageBubbleParams(
+                    modifier = Modifier.padding(end = 12.dp),
+                    message = message,
+                    shape = messageBubbleShape,
+                    color = messageBubbleColor,
+                    border = BorderStroke(1.dp, ChatTheme.colors.borderCoreDefault),
+                    content = {
+                        MessageContent(
+                            message = message,
+                            currentUser = messageItem.currentUser,
+                            onLongItemClick = onLongItemClick,
+                            onGiphyActionClick = {},
+                            onMediaGalleryPreviewResult = {},
+                            onQuotedMessageClick = {},
+                        )
+                    },
+                ),
             )
 
             ChatTheme.componentFactory.MessageFailedIcon(
-                modifier = Modifier
-                    .size(24.dp)
-                    .align(Alignment.BottomEnd),
-                message = message,
+                params = MessageFailedIconParams(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.BottomEnd),
+                    message = message,
+                ),
             )
         }
     }

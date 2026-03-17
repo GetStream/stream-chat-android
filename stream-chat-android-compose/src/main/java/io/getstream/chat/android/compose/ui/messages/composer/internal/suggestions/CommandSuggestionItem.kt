@@ -31,6 +31,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageComposerCommandSuggestionItemCenterContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerCommandSuggestionItemLeadingContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.extensions.internal.iconRes
@@ -52,13 +54,16 @@ internal fun CommandSuggestionItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ChatTheme.componentFactory.MessageComposerCommandSuggestionItemLeadingContent(
-            modifier = Modifier,
-            command = command,
+            params = MessageComposerCommandSuggestionItemLeadingContentParams(
+                command = command,
+            ),
         )
 
         ChatTheme.componentFactory.MessageComposerCommandSuggestionItemCenterContent(
-            modifier = Modifier.weight(1f),
-            command = command,
+            params = MessageComposerCommandSuggestionItemCenterContentParams(
+                modifier = Modifier.weight(1f),
+                command = command,
+            ),
         )
     }
 }

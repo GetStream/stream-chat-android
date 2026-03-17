@@ -25,6 +25,11 @@ import io.getstream.chat.android.compose.state.messages.attachments.CommandPicke
 import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
+import io.getstream.chat.android.compose.ui.theme.AttachmentCameraPickerParams
+import io.getstream.chat.android.compose.ui.theme.AttachmentCommandPickerParams
+import io.getstream.chat.android.compose.ui.theme.AttachmentFilePickerParams
+import io.getstream.chat.android.compose.ui.theme.AttachmentMediaPickerParams
+import io.getstream.chat.android.compose.ui.theme.AttachmentPollPickerParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
@@ -42,36 +47,46 @@ internal fun AttachmentPickerContent(
 ) {
     when (pickerMode) {
         is GalleryPickerMode -> ChatTheme.componentFactory.AttachmentMediaPicker(
-            pickerMode = pickerMode,
-            attachments = attachments,
-            onLoadAttachments = onLoadAttachments,
-            onAttachmentItemSelected = actions.onAttachmentItemSelected,
+            params = AttachmentMediaPickerParams(
+                pickerMode = pickerMode,
+                attachments = attachments,
+                onLoadAttachments = onLoadAttachments,
+                onAttachmentItemSelected = actions.onAttachmentItemSelected,
+            ),
         )
 
         is FilePickerMode -> ChatTheme.componentFactory.AttachmentFilePicker(
-            pickerMode = pickerMode,
-            attachments = attachments,
-            onLoadAttachments = onLoadAttachments,
-            onAttachmentItemSelected = actions.onAttachmentItemSelected,
-            onUrisSelected = onUrisSelected,
+            params = AttachmentFilePickerParams(
+                pickerMode = pickerMode,
+                attachments = attachments,
+                onLoadAttachments = onLoadAttachments,
+                onAttachmentItemSelected = actions.onAttachmentItemSelected,
+                onUrisSelected = onUrisSelected,
+            ),
         )
 
         is CameraPickerMode -> ChatTheme.componentFactory.AttachmentCameraPicker(
-            pickerMode = pickerMode,
-            onAttachmentsSubmitted = onAttachmentsSubmitted,
+            params = AttachmentCameraPickerParams(
+                pickerMode = pickerMode,
+                onAttachmentsSubmitted = onAttachmentsSubmitted,
+            ),
         )
 
         is PollPickerMode -> ChatTheme.componentFactory.AttachmentPollPicker(
-            pickerMode = pickerMode,
-            onCreatePollClick = actions.onCreatePollClick,
-            onCreatePoll = actions.onCreatePoll,
-            onCreatePollDismissed = actions.onCreatePollDismissed,
+            params = AttachmentPollPickerParams(
+                pickerMode = pickerMode,
+                onCreatePollClick = actions.onCreatePollClick,
+                onCreatePoll = actions.onCreatePoll,
+                onCreatePollDismissed = actions.onCreatePollDismissed,
+            ),
         )
 
         is CommandPickerMode -> ChatTheme.componentFactory.AttachmentCommandPicker(
-            pickerMode = pickerMode,
-            commands = commands,
-            onCommandSelected = actions.onCommandSelected,
+            params = AttachmentCommandPickerParams(
+                pickerMode = pickerMode,
+                commands = commands,
+                onCommandSelected = actions.onCommandSelected,
+            ),
         )
 
         else -> Unit

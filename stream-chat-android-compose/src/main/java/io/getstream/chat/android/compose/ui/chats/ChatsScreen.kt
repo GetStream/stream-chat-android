@@ -57,9 +57,15 @@ import io.getstream.chat.android.compose.ui.messages.BackAction
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
+import io.getstream.chat.android.compose.ui.theme.ChannelListHeaderParams
+import io.getstream.chat.android.compose.ui.theme.ChannelListItemContentParams
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.CompoundComponentFactory
+import io.getstream.chat.android.compose.ui.theme.MentionListItemParams
+import io.getstream.chat.android.compose.ui.theme.MessageListHeaderLeadingContentParams
+import io.getstream.chat.android.compose.ui.theme.SearchResultItemContentParams
+import io.getstream.chat.android.compose.ui.theme.ThreadListItemParams
 import io.getstream.chat.android.compose.ui.threads.ThreadList
 import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.AdaptiveLayoutConstraints
@@ -79,10 +85,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFactory
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import kotlin.math.abs
 
@@ -473,74 +476,42 @@ private class CompoundComponentFactory(
     private val currentSelection: ChatMessageSelection?,
 ) : ChatComponentFactory by currentComponentFactory {
     @Composable
-    override fun LazyItemScope.ChannelListItemContent(
-        channelItem: ItemState.ChannelItemState,
-        currentUser: User?,
-        onChannelClick: (Channel) -> Unit,
-        onChannelLongClick: (Channel) -> Unit,
-    ) {
+    override fun LazyItemScope.ChannelListItemContent(params: ChannelListItemContentParams) {
         EmphasisBox(
             modifier = Modifier.animateItem(),
-            isEmphasized = channelItem.key == currentSelection?.channelId,
+            isEmphasized = params.channelItem.key == currentSelection?.channelId,
         ) {
             with(currentComponentFactory) {
-                ChannelListItemContent(
-                    channelItem = channelItem,
-                    currentUser = currentUser,
-                    onChannelClick = onChannelClick,
-                    onChannelLongClick = onChannelLongClick,
-                )
+                ChannelListItemContent(params)
             }
         }
     }
 
     @Composable
-    override fun LazyItemScope.SearchResultItemContent(
-        searchResultItem: ItemState.SearchResultItemState,
-        currentUser: User?,
-        onSearchResultClick: (Message) -> Unit,
-    ) {
+    override fun LazyItemScope.SearchResultItemContent(params: SearchResultItemContentParams) {
         EmphasisBox(
             modifier = Modifier.animateItem(),
-            isEmphasized = searchResultItem.key == currentSelection?.messageId,
+            isEmphasized = params.searchResultItem.key == currentSelection?.messageId,
         ) {
             with(currentComponentFactory) {
-                SearchResultItemContent(
-                    searchResultItem = searchResultItem,
-                    currentUser = currentUser,
-                    onSearchResultClick = onSearchResultClick,
-                )
+                SearchResultItemContent(params)
             }
         }
     }
 
     @Composable
-    override fun LazyItemScope.MentionListItem(
-        mention: MessageResult,
-        modifier: Modifier,
-        currentUser: User?,
-        onClick: ((message: Message) -> Unit)?,
-    ) {
-        EmphasisBox(isEmphasized = mention.message.id == currentSelection?.messageId) {
+    override fun LazyItemScope.MentionListItem(params: MentionListItemParams) {
+        EmphasisBox(isEmphasized = params.mention.message.id == currentSelection?.messageId) {
             with(currentComponentFactory) {
-                MentionListItem(
-                    mention = mention,
-                    modifier = modifier,
-                    currentUser = currentUser,
-                    onClick = onClick,
-                )
+                MentionListItem(params)
             }
         }
     }
 
     @Composable
-    override fun ThreadListItem(thread: Thread, currentUser: User?, onThreadClick: (Thread) -> Unit) {
-        EmphasisBox(isEmphasized = thread.parentMessageId == currentSelection?.parentMessageId) {
-            currentComponentFactory.ThreadListItem(
-                thread = thread,
-                currentUser = currentUser,
-                onThreadClick = onThreadClick,
-            )
+    override fun ThreadListItem(params: ThreadListItemParams) {
+        EmphasisBox(isEmphasized = params.thread.parentMessageId == currentSelection?.parentMessageId) {
+            currentComponentFactory.ThreadListItem(params)
         }
     }
 }
@@ -678,12 +649,13 @@ private fun DefaultListTopBarContent(
     val connectionState by viewModel.connectionState.collectAsState()
 
     ChatTheme.componentFactory.ChannelListHeader(
-        modifier = Modifier,
-        title = title,
-        currentUser = user,
-        connectionState = connectionState,
-        onAvatarClick = onAvatarClick,
-        onHeaderActionClick = onActionClick,
+        params = ChannelListHeaderParams(
+            title = title,
+            currentUser = user,
+            connectionState = connectionState,
+            onAvatarClick = onAvatarClick,
+            onHeaderActionClick = onActionClick,
+        ),
     )
 }
 
@@ -710,7 +682,9 @@ private fun DefaultDetailTopBarContent(
             if (showNavigationIcon) {
                 with(ChatTheme.componentFactory) {
                     MessageListHeaderLeadingContent(
-                        onBackPressed = backAction,
+                        params = MessageListHeaderLeadingContentParams(
+                            onBackPressed = backAction,
+                        ),
                     )
                 }
             }

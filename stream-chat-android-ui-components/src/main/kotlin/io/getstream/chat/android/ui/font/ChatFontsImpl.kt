@@ -22,7 +22,6 @@ import android.widget.TextView
 import androidx.annotation.FontRes
 import androidx.core.content.res.ResourcesCompat
 import io.getstream.log.taggedLogger
-import java.util.HashMap
 
 internal class ChatFontsImpl(
     private val style: ChatStyle,

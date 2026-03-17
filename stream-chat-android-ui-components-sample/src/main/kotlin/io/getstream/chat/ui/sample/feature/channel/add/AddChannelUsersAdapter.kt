@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.ListAdapter
 import io.getstream.chat.ui.sample.common.appThemeContext
 import io.getstream.chat.ui.sample.databinding.AddChannelSeparatorItemBinding
 import io.getstream.chat.ui.sample.databinding.AddChannelUserItemBinding
-import io.getstream.chat.ui.sample.feature.channel.add.AddChannelUsersAdapter.UserClickListener
 
 class AddChannelUsersAdapter : ListAdapter<UserListItem, BaseViewHolder<*>>(
     object : DiffUtil.ItemCallback<UserListItem>() {

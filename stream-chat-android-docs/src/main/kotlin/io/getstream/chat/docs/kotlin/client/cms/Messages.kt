@@ -13,8 +13,8 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.docs.kotlin.client.helpers.MyFileUploader
-import io.getstream.result.Result
 import io.getstream.result.Error
+import io.getstream.result.Result
 import java.io.File
 import java.util.Calendar
 import java.util.Date

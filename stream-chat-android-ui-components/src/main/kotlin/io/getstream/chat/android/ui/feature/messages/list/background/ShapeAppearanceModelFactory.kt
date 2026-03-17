@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.feature.messages.list.background
 
 import android.content.Context
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat.setTint
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.ui.R
