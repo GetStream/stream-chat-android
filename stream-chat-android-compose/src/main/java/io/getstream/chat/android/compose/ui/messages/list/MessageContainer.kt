@@ -188,9 +188,11 @@ public fun MessageContainer(
         },
     )
 
-    val backgroundColor = when (focusState is MessageFocused || message.isPinned(ChatTheme.timeProvider)) {
-        true -> ChatTheme.colors.backgroundCoreHighlight
-        else -> ChatTheme.colors.backgroundCoreHighlight.copy(alpha = 0f)
+    val highlightColor = ChatTheme.colors.backgroundCoreHighlight
+    val backgroundColor = when {
+        messageItem.isPreviewMode -> highlightColor.copy(alpha = 0f)
+        focusState is MessageFocused || message.isPinned(ChatTheme.timeProvider) -> highlightColor
+        else -> highlightColor.copy(alpha = 0f)
     }
 
     val color by animateColorAsState(

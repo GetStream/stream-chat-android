@@ -72,6 +72,7 @@ public sealed class HasMessageListItemState : MessageListItemState() {
  * @param showOriginalText If the original text of the message should be shown in the UI instead of its translation (if
  * the message was auto-translated).
  * @param ownCapabilities The capabilities of the current user in the channel.
+ * @param isPreviewMode Whether the message is displayed as a preview (e.g. inside the selected message menu).
  */
 public data class MessageItemState(
     public override val message: Message = Message(),
@@ -88,6 +89,7 @@ public data class MessageItemState(
     public val messageReadBy: List<ChannelUserRead> = emptyList(),
     public val showOriginalText: Boolean = false,
     public val ownCapabilities: Set<String>,
+    public val isPreviewMode: Boolean = false,
 ) : HasMessageListItemState()
 
 /**

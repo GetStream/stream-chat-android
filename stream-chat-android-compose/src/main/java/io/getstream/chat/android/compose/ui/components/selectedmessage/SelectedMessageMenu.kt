@@ -113,6 +113,7 @@ public fun SelectedMessageMenu(
         currentUser = currentUser,
         ownCapabilities = ownCapabilities,
         showMessageFooter = false,
+        isPreviewMode = true,
     )
     val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItemState)
     val bubbleAlignmentPadding = when (messageAlignment) {
