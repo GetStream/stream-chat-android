@@ -2068,9 +2068,13 @@ public class MessageListController(
      */
     public fun clearNewMessageState() {
         logger.d { "[clearNewMessageState] no args" }
-        if (!messagesState.endOfNewMessagesReached) return
-        _threadListState.value = _threadListState.value.copy(newMessageState = null, unreadCount = 0)
-        setMessageListState(_messageListState.value.copy(newMessageState = null, unreadCount = 0))
+        if (isInThread) {
+            if (!_threadListState.value.endOfNewMessagesReached) return
+            _threadListState.value = _threadListState.value.copy(newMessageState = null, unreadCount = 0)
+        } else {
+            if (!_messageListState.value.endOfNewMessagesReached) return
+            setMessageListState(_messageListState.value.copy(newMessageState = null, unreadCount = 0))
+        }
     }
 
     /**
