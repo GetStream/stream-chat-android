@@ -52,6 +52,11 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.PinnedMessageListEmptyContentParams
+import io.getstream.chat.android.compose.ui.theme.PinnedMessageListItemDividerParams
+import io.getstream.chat.android.compose.ui.theme.PinnedMessageListItemParams
+import io.getstream.chat.android.compose.ui.theme.PinnedMessageListLoadingContentParams
+import io.getstream.chat.android.compose.ui.theme.PinnedMessageListLoadingMoreContentParams
 import io.getstream.chat.android.compose.ui.util.parseBoldTags
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModel
 import io.getstream.chat.android.models.Message
@@ -87,19 +92,31 @@ public fun PinnedMessageList(
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onPinnedMessageClick: (Message) -> Unit = {},
     itemContent: @Composable (Message) -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListItem(it, currentUser, onPinnedMessageClick)
+        ChatTheme.componentFactory.PinnedMessageListItem(
+            params = PinnedMessageListItemParams(
+                message = it,
+                currentUser = currentUser,
+                onClick = onPinnedMessageClick,
+            ),
+        )
     },
     itemDivider: @Composable (Int) -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListItemDivider()
+        ChatTheme.componentFactory.PinnedMessageListItemDivider(params = PinnedMessageListItemDividerParams())
     },
     emptyContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListEmptyContent(modifier)
+        ChatTheme.componentFactory.PinnedMessageListEmptyContent(
+            params = PinnedMessageListEmptyContentParams(modifier = modifier),
+        )
     },
     loadingContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListLoadingContent(modifier)
+        ChatTheme.componentFactory.PinnedMessageListLoadingContent(
+            params = PinnedMessageListLoadingContentParams(modifier = modifier),
+        )
     },
     loadingMoreContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListLoadingMoreContent()
+        ChatTheme.componentFactory.PinnedMessageListLoadingMoreContent(
+            params = PinnedMessageListLoadingMoreContentParams(),
+        )
     },
 ) {
     val state by viewModel.state.collectAsState()
@@ -154,19 +171,31 @@ internal fun PinnedMessageList(
     onPinnedMessageClick: (Message) -> Unit,
     onLoadMore: () -> Unit,
     itemContent: @Composable (Message) -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListItem(it, currentUser, onPinnedMessageClick)
+        ChatTheme.componentFactory.PinnedMessageListItem(
+            params = PinnedMessageListItemParams(
+                message = it,
+                currentUser = currentUser,
+                onClick = onPinnedMessageClick,
+            ),
+        )
     },
     itemDivider: @Composable (Int) -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListItemDivider()
+        ChatTheme.componentFactory.PinnedMessageListItemDivider(params = PinnedMessageListItemDividerParams())
     },
     emptyContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListEmptyContent(modifier)
+        ChatTheme.componentFactory.PinnedMessageListEmptyContent(
+            params = PinnedMessageListEmptyContentParams(modifier = modifier),
+        )
     },
     loadingContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListLoadingContent(modifier)
+        ChatTheme.componentFactory.PinnedMessageListLoadingContent(
+            params = PinnedMessageListLoadingContentParams(modifier = modifier),
+        )
     },
     loadingMoreContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListLoadingMoreContent()
+        ChatTheme.componentFactory.PinnedMessageListLoadingMoreContent(
+            params = PinnedMessageListLoadingMoreContentParams(),
+        )
     },
 ) {
     when {

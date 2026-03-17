@@ -49,6 +49,7 @@ import io.getstream.chat.android.compose.ui.attachments.preview.handler.Attachme
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.attachments.files.FileTypeIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.FileAttachmentItemParams
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
@@ -101,22 +102,24 @@ public fun FileAttachmentContent(
         for (attachment in message.attachments) {
             if (attachment.isFile() || attachment.isAudio()) {
                 ChatTheme.componentFactory.FileAttachmentItem(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .applyIf(!shouldBeFullSize) {
-                            val color = MessageStyling.attachmentBackgroundColor(attachmentState.isMine)
-                            padding(MessageStyling.messageSectionPadding)
-                                .background(color, fileAttachmentShape)
-                        }
-                        .combinedClickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() },
-                            onClick = { onItemClick(previewHandlers, attachment) },
-                            onLongClick = { attachmentState.onLongItemClick(message) },
-                        ),
-                    attachment = attachment,
-                    isMine = attachmentState.isMine,
-                    showFileSize = showFileSize,
+                    params = FileAttachmentItemParams(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .applyIf(!shouldBeFullSize) {
+                                val color = MessageStyling.attachmentBackgroundColor(attachmentState.isMine)
+                                padding(MessageStyling.messageSectionPadding)
+                                    .background(color, fileAttachmentShape)
+                            }
+                            .combinedClickable(
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() },
+                                onClick = { onItemClick(previewHandlers, attachment) },
+                                onLongClick = { attachmentState.onLongItemClick(message) },
+                            ),
+                        attachment = attachment,
+                        isMine = attachmentState.isMine,
+                        showFileSize = showFileSize,
+                    ),
                 )
             }
         }

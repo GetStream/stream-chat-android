@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.models.Vote
 
 @Composable
@@ -47,13 +48,15 @@ internal fun PollVoteItem(
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
     ) {
         ChatTheme.componentFactory.UserAvatar(
-            modifier = Modifier
-                .size(AvatarSize.Medium + borderSize * 2)
-                .background(ChatTheme.colors.borderCoreOpacity10, CircleShape)
-                .padding(borderSize),
-            user = user,
-            showIndicator = false,
-            showBorder = true,
+            params = UserAvatarParams(
+                modifier = Modifier
+                    .size(AvatarSize.Medium + borderSize * 2)
+                    .background(ChatTheme.colors.borderCoreOpacity10, CircleShape)
+                    .padding(borderSize),
+                user = user,
+                showIndicator = false,
+                showBorder = true,
+            ),
         )
 
         Text(

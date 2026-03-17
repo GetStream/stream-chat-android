@@ -23,14 +23,13 @@ import androidx.compose.ui.Modifier
 import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.compose.sample.ui.location.LocationComponentFactory
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
-import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.channels.list.LocalSwipeRevealCoordinator
 import io.getstream.chat.android.compose.ui.channels.list.SwipeableChannelItem
+import io.getstream.chat.android.compose.ui.theme.ChannelListItemContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelSwipeActionsParams
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.User
 
 class CustomChatComponentFactory(
     private val locationViewModelFactory: SharedLocationViewModelFactory? = null,
@@ -38,15 +37,10 @@ class CustomChatComponentFactory(
 ) : ChatComponentFactory by delegate {
 
     @Composable
-    override fun LazyItemScope.ChannelListItemContent(
-        channelItem: ItemState.ChannelItemState,
-        currentUser: User?,
-        onChannelClick: (Channel) -> Unit,
-        onChannelLongClick: (Channel) -> Unit,
-    ) {
+    override fun LazyItemScope.ChannelListItemContent(params: ChannelListItemContentParams) {
         val coordinator = LocalSwipeRevealCoordinator.current
         val swipeEnabled = ChatTheme.config.channelList.swipeActionsEnabled && coordinator != null
-        val pinnedModifier = if (channelItem.channel.isPinned()) {
+        val pinnedModifier = if (params.channelItem.channel.isPinned()) {
             Modifier.background(color = ChatTheme.colors.backgroundCoreHighlight)
         } else {
             Modifier
@@ -55,25 +49,25 @@ class CustomChatComponentFactory(
         if (swipeEnabled) {
             SwipeableChannelItem(
                 modifier = Modifier.animateItem(),
-                channelCid = channelItem.channel.cid,
+                channelCid = params.channelItem.channel.cid,
                 backgroundColor = ChatTheme.colors.backgroundCoreApp,
-                swipeActions = { ChannelSwipeActions(channelItem) },
+                swipeActions = { ChannelSwipeActions(ChannelSwipeActionsParams(params.channelItem)) },
             ) {
                 ChannelItem(
                     modifier = pinnedModifier,
-                    channelItem = channelItem,
-                    currentUser = currentUser,
-                    onChannelClick = onChannelClick,
-                    onChannelLongClick = onChannelLongClick,
+                    channelItem = params.channelItem,
+                    currentUser = params.currentUser,
+                    onChannelClick = params.onChannelClick,
+                    onChannelLongClick = params.onChannelLongClick,
                 )
             }
         } else {
             ChannelItem(
                 modifier = Modifier.animateItem().then(pinnedModifier),
-                channelItem = channelItem,
-                currentUser = currentUser,
-                onChannelClick = onChannelClick,
-                onChannelLongClick = onChannelLongClick,
+                channelItem = params.channelItem,
+                currentUser = params.currentUser,
+                onChannelClick = params.onChannelClick,
+                onChannelLongClick = params.onChannelLongClick,
             )
         }
     }

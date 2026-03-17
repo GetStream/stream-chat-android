@@ -41,6 +41,7 @@ import io.getstream.chat.android.compose.previewdata.PreviewReactionData
 import io.getstream.chat.android.compose.state.messages.MessageReactionItemState
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ReactionIconParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -92,10 +93,11 @@ internal fun ReactionCountRow(
                 count = reaction.count,
                 icon = {
                     ChatTheme.componentFactory.ReactionIcon(
-                        type = reaction.type,
-                        emoji = reaction.emoji,
-                        size = ReactionIconSize.Small,
-                        modifier = Modifier,
+                        params = ReactionIconParams(
+                            type = reaction.type,
+                            emoji = reaction.emoji,
+                            size = ReactionIconSize.Small,
+                        ),
                     )
                 },
             )

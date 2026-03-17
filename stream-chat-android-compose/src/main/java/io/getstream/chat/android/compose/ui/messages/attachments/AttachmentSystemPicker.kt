@@ -53,6 +53,8 @@ import io.getstream.chat.android.compose.ui.components.FullscreenDialog
 import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberCaptureMediaLauncher
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredCameraPermission
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.CreatePollScreen
+import io.getstream.chat.android.compose.ui.theme.AttachmentCommandPickerParams
+import io.getstream.chat.android.compose.ui.theme.AttachmentTypeSystemPickerParams
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Channel
@@ -119,39 +121,40 @@ internal fun AttachmentSystemPicker(
     val fileTypes = remember { AttachmentFilter().getSupportedMimeTypes().toTypedArray() }
 
     ChatTheme.componentFactory.AttachmentTypeSystemPicker(
-        channel = channel,
-        messageMode = messageMode,
-        onModeSelected = { attachmentPickerMode ->
-            when (attachmentPickerMode) {
-                is GalleryPickerMode -> {
-                    val mediaType = attachmentPickerMode.mediaType.toVisualMediaType()
-                    mediaPickerLauncher?.launch(PickVisualMediaRequest(mediaType))
-                }
-
-                is CameraPickerMode -> {
-                    if (cameraPermissionState == null || cameraPermissionState.status.isGranted) {
-                        captureMediaLauncher?.launch(Unit)
-                    } else if (cameraPermissionState.status.shouldShowRationale) {
-                        showCameraPermissionDialog = true
-                    } else {
-                        cameraPermissionState.launchPermissionRequest()
+        params = AttachmentTypeSystemPickerParams(
+            channel = channel,
+            messageMode = messageMode,
+            onModeSelected = { attachmentPickerMode ->
+                when (attachmentPickerMode) {
+                    is GalleryPickerMode -> {
+                        val mediaType = attachmentPickerMode.mediaType.toVisualMediaType()
+                        mediaPickerLauncher?.launch(PickVisualMediaRequest(mediaType))
                     }
+
+                    is CameraPickerMode -> {
+                        if (cameraPermissionState == null || cameraPermissionState.status.isGranted) {
+                            captureMediaLauncher?.launch(Unit)
+                        } else if (cameraPermissionState.status.shouldShowRationale) {
+                            showCameraPermissionDialog = true
+                        } else {
+                            cameraPermissionState.launchPermissionRequest()
+                        }
+                    }
+
+                    is FilePickerMode -> filePickerLauncher?.launch(fileTypes)
+
+                    is PollPickerMode -> {
+                        showCreatePollDialog = true
+                        actions.onCreatePollClick()
+                    }
+
+                    is CommandPickerMode -> showCommandsPickerDialog = true
+
+                    // Custom modes are handled by customers
+                    else -> Unit
                 }
-
-                is FilePickerMode -> filePickerLauncher?.launch(fileTypes)
-
-                is PollPickerMode -> {
-                    showCreatePollDialog = true
-                    actions.onCreatePollClick()
-                }
-
-                is CommandPickerMode -> showCommandsPickerDialog = true
-
-                // Custom modes are handled by customers
-                else -> Unit
-            }
-        },
-        trailingContent = {},
+            },
+        ),
     )
 
     if (showCameraPermissionDialog) {
@@ -187,12 +190,14 @@ internal fun AttachmentSystemPicker(
     if (showCommandsPickerDialog && commandPickerMode != null) {
         ModalBottomSheet(onDismissRequest = { showCommandsPickerDialog = false }) {
             ChatTheme.componentFactory.AttachmentCommandPicker(
-                pickerMode = commandPickerMode,
-                commands = commands,
-                onCommandSelected = { command ->
-                    showCommandsPickerDialog = false
-                    actions.onCommandSelected(command)
-                },
+                params = AttachmentCommandPickerParams(
+                    pickerMode = commandPickerMode,
+                    commands = commands,
+                    onCommandSelected = { command ->
+                        showCommandsPickerDialog = false
+                        actions.onCommandSelected(command)
+                    },
+                ),
             )
         }
     }

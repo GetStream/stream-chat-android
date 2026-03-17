@@ -55,6 +55,7 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ReactionsMenuContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.viewmodel.messages.ReactionsMenuViewModel
@@ -101,12 +102,14 @@ public fun SelectedReactionsMenu(
         dragHandle = { BottomSheetDefaults.DragHandle() },
     ) {
         ChatTheme.componentFactory.ReactionsMenuContent(
-            modifier = Modifier.fillMaxHeight(),
-            currentUser = currentUser,
-            message = message,
-            onMessageAction = onMessageAction,
-            onShowMoreReactionsSelected = onShowMoreReactionsSelected,
-            ownCapabilities = ownCapabilities,
+            params = ReactionsMenuContentParams(
+                modifier = Modifier.fillMaxHeight(),
+                currentUser = currentUser,
+                message = message,
+                onMessageAction = onMessageAction,
+                onShowMoreReactionsSelected = onShowMoreReactionsSelected,
+                ownCapabilities = ownCapabilities,
+            ),
         )
     }
 }
