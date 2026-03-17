@@ -860,6 +860,7 @@ internal fun MediaGalleryPreviewShareIcon(
         Icon(
             painter = painterResource(id = painter),
             contentDescription = stringResource(id = description),
+            modifier = Modifier.size(24.dp),
         )
     }
 }
