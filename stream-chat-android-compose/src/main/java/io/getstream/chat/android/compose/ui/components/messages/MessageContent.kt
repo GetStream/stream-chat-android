@@ -189,7 +189,6 @@ internal fun DefaultMessageContent(
         if (quotedMessage != null) {
             componentFactory.MessageQuotedContent(
                 params = MessageQuotedContentParams(
-                    modifier = Modifier,
                     message = quotedMessage,
                     currentUser = currentUser,
                     replyMessage = message,
@@ -210,7 +209,6 @@ internal fun DefaultMessageContent(
         if (info.hasMedia) {
             componentFactory.MediaAttachmentContent(
                 params = MediaAttachmentContentParams(
-                    modifier = Modifier,
                     state = attachmentState,
                 ),
             )
@@ -219,7 +217,6 @@ internal fun DefaultMessageContent(
         if (info.hasGiphys) {
             componentFactory.GiphyAttachmentContent(
                 params = GiphyAttachmentContentParams(
-                    modifier = Modifier,
                     state = attachmentState,
                 ),
             )
@@ -228,7 +225,6 @@ internal fun DefaultMessageContent(
         if (info.hasLinks) {
             componentFactory.LinkAttachmentContent(
                 params = LinkAttachmentContentParams(
-                    modifier = Modifier,
                     state = attachmentState,
                 ),
             )
@@ -238,7 +234,6 @@ internal fun DefaultMessageContent(
             componentFactory.FileAttachmentContent(
                 params = FileAttachmentContentParams(
                     state = attachmentState,
-                    modifier = Modifier,
                 ),
             )
         }
@@ -247,7 +242,6 @@ internal fun DefaultMessageContent(
             componentFactory.AudioRecordAttachmentContent(
                 params = AudioRecordAttachmentContentParams(
                     state = attachmentState,
-                    modifier = Modifier,
                 ),
             )
         }
@@ -255,7 +249,6 @@ internal fun DefaultMessageContent(
         if (info.hasUnknown) {
             componentFactory.CustomAttachmentContent(
                 params = CustomAttachmentContentParams(
-                    modifier = Modifier,
                     state = attachmentState,
                 ),
             )
@@ -264,7 +257,6 @@ internal fun DefaultMessageContent(
         if (message.text.isNotEmpty()) {
             componentFactory.MessageTextContent(
                 params = MessageTextContentParams(
-                    modifier = Modifier,
                     message = message,
                     currentUser = currentUser,
                     onLongItemClick = onLongItemClick,

@@ -81,7 +81,6 @@ public fun SelectedChannelMenu(
         with(ChatTheme.componentFactory) {
             ChannelMenuHeaderContent(
                 params = ChannelMenuHeaderContentParams(
-                    modifier = Modifier,
                     selectedChannel = selectedChannel,
                     currentUser = currentUser,
                 ),
@@ -92,7 +91,6 @@ public fun SelectedChannelMenu(
         with(ChatTheme.componentFactory) {
             ChannelMenuCenterContent(
                 params = ChannelMenuCenterContentParams(
-                    modifier = Modifier,
                     onChannelOptionConfirm = onChannelOptionConfirm,
                     channelActions = channelActions,
                 ),
@@ -138,7 +136,6 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
                 channel = selectedChannel,
                 currentUser = currentUser,
                 showIndicator = true,
-                showBorder = false,
             ),
         )
 

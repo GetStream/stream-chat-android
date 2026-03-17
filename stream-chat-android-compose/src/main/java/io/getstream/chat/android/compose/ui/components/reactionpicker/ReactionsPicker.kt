@@ -54,7 +54,6 @@ public fun ReactionsPicker(
     ) {
         ChatTheme.componentFactory.MessageReactionsPickerContent(
             params = MessageReactionsPickerContentParams(
-                modifier = Modifier,
                 message = message,
                 onMessageAction = onMessageAction,
             ),

@@ -297,7 +297,6 @@ internal fun DefaultMessageListHeaderTrailingContent(
             channel = channel,
             currentUser = currentUser,
             showIndicator = false,
-            showBorder = false,
         ),
     )
 }

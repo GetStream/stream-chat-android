@@ -132,7 +132,7 @@ public fun ChannelList(
     },
     emptyContent: @Composable () -> Unit = {
         ChatTheme.componentFactory.ChannelListEmptyContent(
-            params = ChannelListEmptyContentParams(modifier = modifier, onStartChatClick = null),
+            params = ChannelListEmptyContentParams(modifier = modifier),
         )
     },
     emptySearchContent: @Composable (String) -> Unit = { searchQuery ->
@@ -296,7 +296,7 @@ public fun ChannelList(
     },
     emptyContent: @Composable () -> Unit = {
         ChatTheme.componentFactory.ChannelListEmptyContent(
-            params = ChannelListEmptyContentParams(modifier = modifier, onStartChatClick = null),
+            params = ChannelListEmptyContentParams(modifier = modifier),
         )
     },
     emptySearchContent: @Composable (String) -> Unit = { searchQuery ->

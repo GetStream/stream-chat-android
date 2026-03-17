@@ -95,7 +95,6 @@ internal fun ChannelMediaAttachmentsGrid(
         with(ChatTheme.componentFactory) {
             ChannelMediaAttachmentsItem(
                 params = ChannelMediaAttachmentsItemParams(
-                    modifier = Modifier,
                     index = index,
                     item = item,
                     onClick = { onItemClick(item, onClick) },
@@ -116,28 +115,28 @@ internal fun ChannelMediaAttachmentsGrid(
     loadingIndicator: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMediaAttachmentsLoadingIndicator(
-                params = ChannelMediaAttachmentsLoadingIndicatorParams(modifier = Modifier),
+                params = ChannelMediaAttachmentsLoadingIndicatorParams(),
             )
         }
     },
     emptyContent: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMediaAttachmentsEmptyContent(
-                params = ChannelMediaAttachmentsEmptyContentParams(modifier = Modifier),
+                params = ChannelMediaAttachmentsEmptyContentParams(),
             )
         }
     },
     errorContent: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMediaAttachmentsErrorContent(
-                params = ChannelMediaAttachmentsErrorContentParams(modifier = Modifier),
+                params = ChannelMediaAttachmentsErrorContentParams(),
             )
         }
     },
     loadingItem: @Composable LazyGridItemScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMediaAttachmentsLoadingItem(
-                params = ChannelMediaAttachmentsLoadingItemParams(modifier = Modifier),
+                params = ChannelMediaAttachmentsLoadingItemParams(),
             )
         }
     },

@@ -650,7 +650,6 @@ private fun DefaultListTopBarContent(
 
     ChatTheme.componentFactory.ChannelListHeader(
         params = ChannelListHeaderParams(
-            modifier = Modifier,
             title = title,
             currentUser = user,
             connectionState = connectionState,

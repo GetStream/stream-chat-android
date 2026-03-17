@@ -116,7 +116,6 @@ public fun AttachmentPicker(
                         messageMode = messageMode,
                         selectedMode = attachmentsPickerViewModel.pickerMode,
                         onModeSelected = attachmentsPickerViewModel::setPickerMode,
-                        trailingContent = {},
                     ),
                 )
                 AnimatedContent(

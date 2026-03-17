@@ -126,7 +126,6 @@ public fun ChannelsScreen(
                 if (isShowingHeader) {
                     ChatTheme.componentFactory.ChannelListHeader(
                         params = ChannelListHeaderParams(
-                            modifier = Modifier,
                             onHeaderActionClick = onHeaderActionClick,
                             onAvatarClick = { onHeaderAvatarClick() },
                             currentUser = user,
@@ -156,7 +155,6 @@ public fun ChannelsScreen(
                                 )
                                 .fillMaxWidth(),
                             query = searchQuery,
-                            onSearchStarted = {},
                             onValueChange = remember(listViewModel) {
                                 {
                                     searchQuery = it

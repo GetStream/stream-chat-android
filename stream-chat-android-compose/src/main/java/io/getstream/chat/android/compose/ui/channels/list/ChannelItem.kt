@@ -204,7 +204,6 @@ internal fun DefaultChannelItemLeadingContent(
             channel = channelItem.channel,
             currentUser = currentUser,
             showIndicator = false,
-            showBorder = false,
         ),
     )
 }
@@ -310,7 +309,6 @@ private fun TitleRow(
                 ChatTheme.componentFactory.ChannelItemUnreadCountIndicator(
                     params = ChannelItemUnreadCountIndicatorParams(
                         unreadCount = unreadCount,
-                        modifier = Modifier,
                     ),
                 )
             }
@@ -343,7 +341,6 @@ private fun MessageRow(
                         channel = channel,
                         message = lastMessage,
                         currentUser = currentUser,
-                        modifier = Modifier,
                     ),
                 )
             }

@@ -81,7 +81,6 @@ public fun ChannelOptions(
             with(ChatTheme.componentFactory) {
                 ChannelOptionsItem(
                     ChannelOptionsItemParams(
-                        modifier = Modifier,
                         action = action,
                         onClick = { onChannelOptionConfirm(action) },
                     ),

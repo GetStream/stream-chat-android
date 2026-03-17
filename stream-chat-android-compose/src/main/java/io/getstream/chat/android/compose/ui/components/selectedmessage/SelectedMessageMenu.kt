@@ -214,8 +214,6 @@ public fun SelectedMessageMenu(
                         onGiphyActionClick = {},
                         onMediaGalleryPreviewResult = {},
                         onQuotedMessageClick = {},
-                        onUserAvatarClick = null,
-                        onMessageLinkClick = null,
                         onUserMentionClick = {},
                         onAddAnswer = { _: Message, _: Poll, _: String -> },
                         onReply = {},

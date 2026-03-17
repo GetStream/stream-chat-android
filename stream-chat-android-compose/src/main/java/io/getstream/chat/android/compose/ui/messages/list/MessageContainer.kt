@@ -757,7 +757,6 @@ public fun RegularMessageContent(
                 message = message,
                 shape = messageBubbleShape,
                 color = messageBubbleColor,
-                border = null,
                 content = content,
             ),
         )
@@ -769,7 +768,6 @@ public fun RegularMessageContent(
                     message = message,
                     shape = messageBubbleShape,
                     color = messageBubbleColor,
-                    border = null,
                     content = content,
                 ),
             )

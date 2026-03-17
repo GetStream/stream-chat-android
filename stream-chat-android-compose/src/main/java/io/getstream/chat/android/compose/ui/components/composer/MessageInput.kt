@@ -132,7 +132,6 @@ public fun MessageInput(
         ) {
             ChatTheme.componentFactory.MessageComposerInputLeadingContent(
                 params = MessageComposerInputLeadingContentParams(
-                    modifier = Modifier,
                     state = messageComposerState,
                     onActiveCommandDismiss = onActiveCommandDismiss,
                 ),
@@ -143,14 +142,12 @@ public fun MessageInput(
                 Column(modifier = Modifier.weight(1f)) {
                     ChatTheme.componentFactory.MessageComposerInputCenterContent(
                         params = MessageComposerInputCenterContentParams(
-                            modifier = Modifier,
                             state = messageComposerState,
                             onValueChange = onValueChange,
                         ),
                     )
                     ChatTheme.componentFactory.MessageComposerInputCenterBottomContent(
                         params = MessageComposerInputCenterBottomContentParams(
-                            modifier = Modifier,
                             state = messageComposerState,
                             onAlsoSendToChannelChange = onAlsoSendToChannelChange,
                         ),
@@ -201,7 +198,6 @@ private fun MessageInputTop(
             if (showEdit) {
                 ChatTheme.componentFactory.MessageComposerEditIndicator(
                     params = MessageComposerEditIndicatorParams(
-                        modifier = Modifier,
                         state = messageComposerState,
                         editMessage = activeAction.message,
                         onCancelClick = onCancelActionClick,
@@ -212,7 +208,6 @@ private fun MessageInputTop(
             if (showQuoted) {
                 ChatTheme.componentFactory.MessageComposerQuotedMessage(
                     params = MessageComposerQuotedMessageParams(
-                        modifier = Modifier,
                         state = messageComposerState,
                         quotedMessage = activeAction.message,
                         onCancelClick = onCancelActionClick,
@@ -232,7 +227,6 @@ private fun MessageInputTop(
             if (showLinkPreview) {
                 ChatTheme.componentFactory.MessageComposerLinkPreview(
                     params = MessageComposerLinkPreviewParams(
-                        modifier = Modifier,
                         linkPreview = linkPreviews.first(),
                         onContentClick = onLinkPreviewClick,
                         onCancelClick = onCancelLinkPreviewClick,

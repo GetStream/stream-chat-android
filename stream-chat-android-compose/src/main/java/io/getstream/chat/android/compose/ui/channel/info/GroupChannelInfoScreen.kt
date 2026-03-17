@@ -338,7 +338,6 @@ internal fun GroupChannelInfoAvatarContainer(
                 channel = channel,
                 currentUser = currentUser,
                 showIndicator = false,
-                showBorder = false,
             ),
         )
         Text(

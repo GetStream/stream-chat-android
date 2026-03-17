@@ -97,7 +97,6 @@ internal fun ReactionCountRow(
                             type = reaction.type,
                             emoji = reaction.emoji,
                             size = ReactionIconSize.Small,
-                            modifier = Modifier,
                         ),
                     )
                 },

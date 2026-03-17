@@ -87,7 +87,6 @@ internal fun ChannelFilesAttachmentsList(
             with(ChatTheme.componentFactory) {
                 ChannelFilesAttachmentsItem(
                     params = ChannelFilesAttachmentsItemParams(
-                        modifier = Modifier,
                         index = index,
                         item = item,
                         currentUser = currentUser,
@@ -100,7 +99,6 @@ internal fun ChannelFilesAttachmentsList(
         with(ChatTheme.componentFactory) {
             ChannelFilesAttachmentsHeaderItem(
                 params = ChannelFilesAttachmentsHeaderItemParams(
-                    modifier = Modifier,
                     label = label,
                 ),
             )
@@ -109,21 +107,21 @@ internal fun ChannelFilesAttachmentsList(
     loadingIndicator: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelFilesAttachmentsLoadingIndicator(
-                params = ChannelFilesAttachmentsLoadingIndicatorParams(modifier = Modifier),
+                params = ChannelFilesAttachmentsLoadingIndicatorParams(),
             )
         }
     },
     emptyContent: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelFilesAttachmentsEmptyContent(
-                params = ChannelFilesAttachmentsEmptyContentParams(modifier = Modifier),
+                params = ChannelFilesAttachmentsEmptyContentParams(),
             )
         }
     },
     errorContent: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelFilesAttachmentsErrorContent(
-                params = ChannelFilesAttachmentsErrorContentParams(modifier = Modifier),
+                params = ChannelFilesAttachmentsErrorContentParams(),
             )
         }
     },
@@ -131,7 +129,6 @@ internal fun ChannelFilesAttachmentsList(
         with(ChatTheme.componentFactory) {
             ChannelFilesAttachmentsItemDivider(
                 params = ChannelFilesAttachmentsItemDividerParams(
-                    modifier = Modifier,
                     index = index,
                 ),
             )
@@ -140,7 +137,7 @@ internal fun ChannelFilesAttachmentsList(
     loadingItem: @Composable LazyItemScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelFilesAttachmentsLoadingItem(
-                params = ChannelFilesAttachmentsLoadingItemParams(modifier = Modifier),
+                params = ChannelFilesAttachmentsLoadingItemParams(),
             )
         }
     },

@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
@@ -51,6 +52,7 @@ import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleS
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerActions
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.list.MessagesLazyListState
+import io.getstream.chat.android.compose.ui.threads.ThreadListBannerState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Attachment
@@ -100,20 +102,20 @@ import io.getstream.chat.android.ui.common.utils.ExpandableList
 /**
  * Parameters for [ChatComponentFactory.ChannelListHeader].
  *
+ * @param connectionState The current connection state.
+ * @param modifier Modifier for styling.
  * @param title The title to display in the header.
  * @param currentUser The currently logged in user.
- * @param connectionState The current connection state.
  * @param onAvatarClick Action invoked when the avatar is clicked.
  * @param onHeaderActionClick Action invoked when the header action is clicked.
- * @param modifier Modifier for styling.
  */
 public data class ChannelListHeaderParams(
-    val title: String,
-    val currentUser: User?,
     val connectionState: ConnectionState,
-    val onAvatarClick: (User?) -> Unit,
-    val onHeaderActionClick: () -> Unit,
     val modifier: Modifier = Modifier,
+    val title: String = "",
+    val currentUser: User? = null,
+    val onAvatarClick: (User?) -> Unit = {},
+    val onHeaderActionClick: () -> Unit = {},
 )
 
 /**
@@ -159,12 +161,12 @@ public data class ChannelListLoadingIndicatorParams(
 /**
  * Parameters for [ChatComponentFactory.ChannelListEmptyContent].
  *
- * @param onStartChatClick Optional callback for the "Start a chat" button.
  * @param modifier Modifier for styling.
+ * @param onStartChatClick Optional callback for the "Start a chat" button.
  */
 public data class ChannelListEmptyContentParams(
-    val onStartChatClick: (() -> Unit)? = null,
     val modifier: Modifier = Modifier,
+    val onStartChatClick: (() -> Unit)? = null,
 )
 
 /**
@@ -269,15 +271,15 @@ public data class ChannelItemReadStatusIndicatorParams(
  * Parameters for [ChatComponentFactory.ChannelListSearchInput].
  *
  * @param query Current query string.
- * @param onSearchStarted Action invoked when the search starts.
  * @param onValueChange Action invoked when the query value changes.
  * @param modifier Modifier for styling.
+ * @param onSearchStarted Action invoked when the search starts.
  */
 public data class ChannelListSearchInputParams(
     val query: String,
-    val onSearchStarted: () -> Unit,
     val onValueChange: (String) -> Unit,
     val modifier: Modifier = Modifier,
+    val onSearchStarted: () -> Unit = {},
 )
 
 /**
@@ -358,25 +360,25 @@ public data class SearchResultItemTrailingContentParams(
  * Parameters for [ChatComponentFactory.MessageListHeader].
  *
  * @param channel The channel to display header for.
- * @param currentUser The currently logged in user.
  * @param connectionState The current connection state.
+ * @param modifier Modifier for styling.
+ * @param currentUser The currently logged in user.
  * @param typingUsers The list of users currently typing.
  * @param messageMode The current message mode.
  * @param onBackPressed Action invoked when the back button is pressed.
  * @param onHeaderTitleClick Action invoked when the header title is clicked.
  * @param onChannelAvatarClick Action invoked when the channel avatar is clicked.
- * @param modifier Modifier for styling.
  */
 public data class MessageListHeaderParams(
     val channel: Channel,
-    val currentUser: User?,
     val connectionState: ConnectionState,
-    val typingUsers: List<User>,
-    val messageMode: MessageMode,
-    val onBackPressed: () -> Unit,
-    val onHeaderTitleClick: (Channel) -> Unit,
-    val onChannelAvatarClick: ((Channel) -> Unit)? = null,
     val modifier: Modifier = Modifier,
+    val currentUser: User? = null,
+    val typingUsers: List<User> = emptyList(),
+    val messageMode: MessageMode = MessageMode.Normal,
+    val onBackPressed: () -> Unit = {},
+    val onHeaderTitleClick: ((Channel) -> Unit)? = null,
+    val onChannelAvatarClick: ((Channel) -> Unit)? = null,
 )
 
 /**
@@ -392,21 +394,21 @@ public data class MessageListHeaderLeadingContentParams(
  * Parameters for [ChatComponentFactory.MessageListHeaderCenterContent].
  *
  * @param channel The channel to display.
- * @param currentUser The currently logged in user.
  * @param connectionState The current connection state.
+ * @param modifier Modifier for styling.
+ * @param currentUser The currently logged in user.
  * @param typingUsers The list of users currently typing.
  * @param messageMode The current message mode.
  * @param onClick Action invoked when the header is clicked.
- * @param modifier Modifier for styling.
  */
 public data class MessageListHeaderCenterContentParams(
     val channel: Channel,
-    val currentUser: User?,
     val connectionState: ConnectionState,
-    val typingUsers: List<User>,
-    val messageMode: MessageMode,
-    val onClick: ((Channel) -> Unit)? = null,
     val modifier: Modifier = Modifier,
+    val currentUser: User? = null,
+    val typingUsers: List<User> = emptyList(),
+    val messageMode: MessageMode = MessageMode.Normal,
+    val onClick: ((Channel) -> Unit)? = null,
 )
 
 /**
@@ -501,21 +503,21 @@ public data class ScrollToBottomButtonParams(
 public data class MessageItemParams(
     val messageListItem: MessageListItemState,
     val reactionSorting: ReactionSorting,
-    val onPollUpdated: (Message, Poll) -> Unit,
-    val onCastVote: (Message, Poll, Option) -> Unit,
-    val onRemoveVote: (Message, Poll, Vote) -> Unit,
-    val selectPoll: (Message, Poll, PollSelectionType) -> Unit,
-    val onClosePoll: (String) -> Unit,
-    val onAddPollOption: (Poll, String) -> Unit,
-    val onLongItemClick: (Message) -> Unit,
-    val onThreadClick: (Message) -> Unit,
-    val onReactionsClick: (Message) -> Unit,
-    val onGiphyActionClick: (GiphyAction) -> Unit,
-    val onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
-    val onQuotedMessageClick: (Message) -> Unit,
-    val onUserMentionClick: (User) -> Unit,
-    val onAddAnswer: (Message, Poll, String) -> Unit,
-    val onReply: (Message) -> Unit,
+    val onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
+    val onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
+    val onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
+    val selectPoll: (Message, Poll, PollSelectionType) -> Unit = { _, _, _ -> },
+    val onClosePoll: (String) -> Unit = {},
+    val onAddPollOption: (Poll, String) -> Unit = { _, _ -> },
+    val onLongItemClick: (Message) -> Unit = {},
+    val onThreadClick: (Message) -> Unit = {},
+    val onReactionsClick: (Message) -> Unit = {},
+    val onGiphyActionClick: (GiphyAction) -> Unit = {},
+    val onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
+    val onQuotedMessageClick: (Message) -> Unit = {},
+    val onUserMentionClick: (User) -> Unit = {},
+    val onAddAnswer: (Message, Poll, String) -> Unit = { _, _, _ -> },
+    val onReply: (Message) -> Unit = {},
     val onUserAvatarClick: ((User) -> Unit)? = null,
     val onMessageLinkClick: ((Message, String) -> Unit)? = null,
 )
@@ -621,32 +623,46 @@ public data class MessageListStartOfTheChannelItemContentParams(
  * @param onQuotedMessageClick Action invoked when a quoted message is clicked.
  * @param onUserMentionClick Action invoked when a user mention is clicked.
  * @param onAddAnswer Action invoked when an answer is added to a poll.
+ * @param modifier Modifier for styling.
+ * @param onPollUpdated Action invoked when a poll is updated.
+ * @param onCastVote Action invoked when a vote is cast.
+ * @param onRemoveVote Action invoked when a vote is removed.
+ * @param selectPoll Action invoked when a poll selection is made.
+ * @param onClosePoll Action invoked when a poll is closed.
+ * @param onAddPollOption Action invoked when a poll option is added.
+ * @param onLongItemClick Action invoked when a message is long-clicked.
+ * @param onThreadClick Action invoked when the thread is clicked.
+ * @param onReactionsClick Action invoked when reactions are clicked.
+ * @param onGiphyActionClick Action invoked when a Giphy action is clicked.
+ * @param onMediaGalleryPreviewResult Action invoked with the media gallery preview result.
+ * @param onQuotedMessageClick Action invoked when a quoted message is clicked.
+ * @param onUserMentionClick Action invoked when a user mention is clicked.
+ * @param onAddAnswer Action invoked when an answer is added to a poll.
  * @param onReply Action invoked when the reply button is clicked.
  * @param onUserAvatarClick Action invoked when a user avatar is clicked.
  * @param onMessageLinkClick Action invoked when a link in a message is clicked.
- * @param modifier Modifier for styling.
  */
 public data class MessageContainerParams(
     val messageItem: MessageItemState,
     val reactionSorting: ReactionSorting,
-    val onPollUpdated: (Message, Poll) -> Unit,
-    val onCastVote: (Message, Poll, Option) -> Unit,
-    val onRemoveVote: (Message, Poll, Vote) -> Unit,
-    val selectPoll: (Message, Poll, PollSelectionType) -> Unit,
-    val onClosePoll: (String) -> Unit,
-    val onAddPollOption: (Poll, String) -> Unit,
-    val onLongItemClick: (Message) -> Unit,
-    val onThreadClick: (Message) -> Unit,
-    val onReactionsClick: (Message) -> Unit,
-    val onGiphyActionClick: (GiphyAction) -> Unit,
-    val onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
-    val onQuotedMessageClick: (Message) -> Unit,
-    val onUserMentionClick: (User) -> Unit,
-    val onAddAnswer: (Message, Poll, String) -> Unit,
-    val onReply: (Message) -> Unit,
+    val modifier: Modifier = Modifier,
+    val onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
+    val onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
+    val onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
+    val selectPoll: (Message, Poll, PollSelectionType) -> Unit = { _, _, _ -> },
+    val onClosePoll: (String) -> Unit = {},
+    val onAddPollOption: (Poll, String) -> Unit = { _, _ -> },
+    val onLongItemClick: (Message) -> Unit = {},
+    val onThreadClick: (Message) -> Unit = {},
+    val onReactionsClick: (Message) -> Unit = {},
+    val onGiphyActionClick: (GiphyAction) -> Unit = {},
+    val onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
+    val onQuotedMessageClick: (Message) -> Unit = {},
+    val onUserMentionClick: (User) -> Unit = {},
+    val onAddAnswer: (Message, Poll, String) -> Unit = { _, _, _ -> },
+    val onReply: (Message) -> Unit = {},
     val onUserAvatarClick: ((User) -> Unit)? = null,
     val onMessageLinkClick: ((Message, String) -> Unit)? = null,
-    val modifier: Modifier = Modifier,
 )
 
 /**
@@ -656,16 +672,16 @@ public data class MessageContainerParams(
  * @param color The color of the message bubble.
  * @param shape The shape of the message bubble.
  * @param content The content shown inside the message bubble.
- * @param border The border of the message bubble.
  * @param modifier Modifier for styling.
+ * @param border The border of the message bubble.
  */
 public data class MessageBubbleParams(
     val message: Message,
     val color: Color,
     val shape: Shape,
     val content: @Composable () -> Unit,
-    val border: BorderStroke? = null,
     val modifier: Modifier = Modifier,
+    val border: BorderStroke? = null,
 )
 
 /**
@@ -730,18 +746,18 @@ public data class MessageAuthorParams(
  */
 public data class MessageContentParams(
     val messageItem: MessageItemState,
-    val onLongItemClick: (Message) -> Unit,
-    val onPollUpdated: (Message, Poll) -> Unit,
-    val onCastVote: (Message, Poll, Option) -> Unit,
-    val onRemoveVote: (Message, Poll, Vote) -> Unit,
-    val selectPoll: (Message, Poll, PollSelectionType) -> Unit,
-    val onAddAnswer: (Message, Poll, String) -> Unit,
-    val onClosePoll: (String) -> Unit,
-    val onAddPollOption: (Poll, String) -> Unit,
-    val onGiphyActionClick: (GiphyAction) -> Unit,
-    val onQuotedMessageClick: (Message) -> Unit,
-    val onUserMentionClick: (User) -> Unit,
-    val onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
+    val onLongItemClick: (Message) -> Unit = {},
+    val onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
+    val onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
+    val onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
+    val selectPoll: (Message, Poll, PollSelectionType) -> Unit = { _, _, _ -> },
+    val onAddAnswer: (Message, Poll, String) -> Unit = { _, _, _ -> },
+    val onClosePoll: (String) -> Unit = {},
+    val onAddPollOption: (Poll, String) -> Unit = { _, _ -> },
+    val onGiphyActionClick: (GiphyAction) -> Unit = {},
+    val onQuotedMessageClick: (Message) -> Unit = {},
+    val onUserMentionClick: (User) -> Unit = {},
+    val onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     val onLinkClick: ((Message, String) -> Unit)? = null,
 )
 
@@ -808,16 +824,16 @@ public data class MessageRegularContentParams(
  * @param currentUser The currently logged in user.
  * @param onLongItemClick Action invoked when a message is long-clicked.
  * @param onUserMentionClick Action invoked when a user mention is clicked.
- * @param onLinkClick Action invoked when a link in a message is clicked.
  * @param modifier Modifier for styling.
+ * @param onLinkClick Action invoked when a link in a message is clicked.
  */
 public data class MessageTextContentParams(
     val message: Message,
     val currentUser: User?,
     val onLongItemClick: (Message) -> Unit,
     val onUserMentionClick: (User) -> Unit,
-    val onLinkClick: ((Message, String) -> Unit)? = null,
     val modifier: Modifier = Modifier,
+    val onLinkClick: ((Message, String) -> Unit)? = null,
 )
 
 /**
@@ -877,6 +893,8 @@ public class SwipeToReplyContentParams
  * Parameters for [ChatComponentFactory.MessageComposer].
  *
  * @param messageComposerState The current state of the message composer.
+ * @param input The composable input content.
+ * @param modifier Modifier for styling.
  * @param isAttachmentPickerVisible Whether the attachment picker is visible.
  * @param onSendMessage Action invoked when a message is sent.
  * @param onAttachmentsClick Action invoked when attachments button is clicked.
@@ -887,40 +905,38 @@ public class SwipeToReplyContentParams
  * @param onCommandSelected Action invoked when a command is selected.
  * @param onAlsoSendToChannelSelected Action invoked when also-send-to-channel is changed.
  * @param recordingActions The actions to control the audio recording.
- * @param input The composable input content.
  * @param onLinkPreviewClick Action invoked when a link preview is clicked.
- * @param modifier Modifier for styling.
  */
 public data class MessageComposerParams(
     val messageComposerState: MessageComposerState,
-    val isAttachmentPickerVisible: Boolean,
-    val onSendMessage: (String, List<Attachment>) -> Unit,
-    val onAttachmentsClick: () -> Unit,
-    val onValueChange: (String) -> Unit,
-    val onAttachmentRemoved: (Attachment) -> Unit,
-    val onCancelAction: () -> Unit,
-    val onUserSelected: (User) -> Unit,
-    val onCommandSelected: (Command) -> Unit,
-    val onAlsoSendToChannelSelected: (Boolean) -> Unit,
-    val recordingActions: AudioRecordingActions,
     val input: @Composable RowScope.(MessageComposerState) -> Unit,
-    val onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     val modifier: Modifier = Modifier,
+    val isAttachmentPickerVisible: Boolean = false,
+    val onSendMessage: (String, List<Attachment>) -> Unit = { _, _ -> },
+    val onAttachmentsClick: () -> Unit = {},
+    val onValueChange: (String) -> Unit = {},
+    val onAttachmentRemoved: (Attachment) -> Unit = {},
+    val onCancelAction: () -> Unit = {},
+    val onUserSelected: (User) -> Unit = {},
+    val onCommandSelected: (Command) -> Unit = {},
+    val onAlsoSendToChannelSelected: (Boolean) -> Unit = {},
+    val recordingActions: AudioRecordingActions = AudioRecordingActions.None,
+    val onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
 )
 
 /**
  * Parameters for [ChatComponentFactory.MessageComposerLinkPreview].
  *
  * @param linkPreview The link preview to show.
+ * @param modifier Modifier for styling.
  * @param onContentClick Action invoked when the content is clicked.
  * @param onCancelClick Action invoked when the cancel button is clicked.
- * @param modifier Modifier for styling.
  */
 public data class MessageComposerLinkPreviewParams(
     val linkPreview: LinkPreview,
+    val modifier: Modifier = Modifier,
     val onContentClick: ((LinkPreview) -> Unit)? = null,
     val onCancelClick: (() -> Unit)? = null,
-    val modifier: Modifier = Modifier,
 )
 
 /**
@@ -1029,23 +1045,29 @@ public data class MessageComposerLeadingContentParams(
  * @param onSendClick Action invoked when the send button is clicked.
  * @param onAlsoSendToChannelChange Action invoked when also-send-to-channel is changed.
  * @param recordingActions The actions to control the audio recording.
+ * @param modifier Modifier for styling.
+ * @param onInputChanged Action invoked when the input is changed.
+ * @param onAttachmentRemoved Action invoked when an attachment is removed.
+ * @param onCancel Action invoked when the cancel button is clicked.
+ * @param onSendClick Action invoked when the send button is clicked.
+ * @param onAlsoSendToChannelChange Action invoked when also-send-to-channel is changed.
+ * @param recordingActions The actions to control the audio recording.
  * @param onActiveCommandDismiss Action invoked when the active command is dismissed.
  * @param onLinkPreviewClick Action invoked when a link preview is clicked.
  * @param onCancelLinkPreviewClick Action invoked when link preview cancel is clicked.
- * @param modifier Modifier for styling.
  */
 public data class MessageComposerInputParams(
     val state: MessageComposerState,
-    val onInputChanged: (String) -> Unit,
-    val onAttachmentRemoved: (Attachment) -> Unit,
-    val onCancel: () -> Unit,
-    val onSendClick: (String, List<Attachment>) -> Unit,
-    val onAlsoSendToChannelChange: (Boolean) -> Unit,
-    val recordingActions: AudioRecordingActions,
-    val onActiveCommandDismiss: () -> Unit,
+    val modifier: Modifier = Modifier,
+    val onInputChanged: (String) -> Unit = {},
+    val onAttachmentRemoved: (Attachment) -> Unit = {},
+    val onCancel: () -> Unit = {},
+    val onSendClick: (String, List<Attachment>) -> Unit = { _, _ -> },
+    val onAlsoSendToChannelChange: (Boolean) -> Unit = {},
+    val recordingActions: AudioRecordingActions = AudioRecordingActions.None,
+    val onActiveCommandDismiss: () -> Unit = {},
     val onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     val onCancelLinkPreviewClick: (() -> Unit)? = null,
-    val modifier: Modifier = Modifier,
 )
 
 /**
@@ -1238,14 +1260,14 @@ public data class MessageComposerAudioRecordingHintParams(
  * Parameters for [ChatComponentFactory.Avatar].
  *
  * @param imageUrl The URL of the image to display.
- * @param fallback The fallback content to display if the image is unavailable.
  * @param showBorder Whether to draw a border around the avatar.
+ * @param fallback The fallback content to display if the image is unavailable.
  * @param modifier Modifier for styling.
  */
 public data class AvatarParams(
     val imageUrl: String?,
-    val fallback: @Composable () -> Unit,
     val showBorder: Boolean,
+    val fallback: @Composable () -> Unit,
     val modifier: Modifier = Modifier,
 )
 
@@ -1253,32 +1275,32 @@ public data class AvatarParams(
  * Parameters for [ChatComponentFactory.UserAvatar].
  *
  * @param user The user whose avatar will be displayed.
+ * @param modifier Modifier for styling.
  * @param showIndicator Whether to overlay an online status indicator.
  * @param showBorder Whether to draw a border around the avatar.
- * @param modifier Modifier for styling.
  */
 public data class UserAvatarParams(
     val user: User,
-    val showIndicator: Boolean,
-    val showBorder: Boolean,
     val modifier: Modifier = Modifier,
+    val showIndicator: Boolean = false,
+    val showBorder: Boolean = false,
 )
 
 /**
  * Parameters for [ChatComponentFactory.ChannelAvatar].
  *
  * @param channel The channel whose avatar will be displayed.
+ * @param modifier Modifier for styling.
  * @param currentUser The user currently logged in.
  * @param showIndicator Whether to overlay an online status indicator.
  * @param showBorder Whether to draw a border around the avatar.
- * @param modifier Modifier for styling.
  */
 public data class ChannelAvatarParams(
     val channel: Channel,
-    val currentUser: User?,
-    val showIndicator: Boolean,
-    val showBorder: Boolean,
     val modifier: Modifier = Modifier,
+    val currentUser: User? = null,
+    val showIndicator: Boolean = false,
+    val showBorder: Boolean = false,
 )
 
 /**
@@ -1371,9 +1393,9 @@ public data class ChannelOptionsItemLeadingIconParams(
  * @param ownCapabilities The capabilities of the current user.
  * @param onMessageAction Action invoked when a message action is clicked.
  * @param onShowMore Action invoked when "show more" is clicked.
+ * @param modifier Modifier for styling.
  * @param onDismiss Action invoked when the menu is dismissed.
  * @param currentUser The currently logged in user.
- * @param modifier Modifier for styling.
  */
 public data class MessageMenuParams(
     val message: Message,
@@ -1381,9 +1403,9 @@ public data class MessageMenuParams(
     val ownCapabilities: Set<String>,
     val onMessageAction: (MessageAction) -> Unit,
     val onShowMore: () -> Unit,
-    val onDismiss: () -> Unit,
-    val currentUser: User?,
     val modifier: Modifier = Modifier,
+    val onDismiss: () -> Unit = {},
+    val currentUser: User? = null,
 )
 
 /**
@@ -1436,14 +1458,14 @@ public data class MessageMenuOptionsItemParams(
  *
  * @param message The message for which the reactions are displayed.
  * @param reactions The list of reaction options to display.
- * @param onClick Handler when the reaction list is clicked.
  * @param modifier Modifier for styling.
+ * @param onClick Handler when the reaction list is clicked.
  */
 public data class MessageReactionsParams(
     val message: Message,
     val reactions: List<MessageReactionItemState>,
-    val onClick: ((message: Message) -> Unit)? = null,
     val modifier: Modifier = Modifier,
+    val onClick: ((message: Message) -> Unit)? = null,
 )
 
 /**
@@ -1468,16 +1490,16 @@ public data class ReactionIconParams(
  * @param emoji The emoji character the type maps to, if any.
  * @param size The size of the reaction toggle.
  * @param checked Whether the toggle is checked.
- * @param onCheckedChange Callback when the checked state changes.
  * @param modifier Modifier for styling.
+ * @param onCheckedChange Callback when the checked state changes.
  */
 public data class ReactionToggleParams(
     val type: String,
     val emoji: String?,
     val size: ReactionToggleSize,
     val checked: Boolean,
-    val onCheckedChange: ((Boolean) -> Unit)? = null,
     val modifier: Modifier = Modifier,
+    val onCheckedChange: ((Boolean) -> Unit)? = null,
 )
 
 /**
@@ -1544,7 +1566,7 @@ public data class ReactionMenuOptionItemParams(
 public data class MessageReactionPickerParams(
     val message: Message,
     val onMessageAction: (MessageAction) -> Unit,
-    val onDismiss: () -> Unit,
+    val onDismiss: () -> Unit = {},
     val modifier: Modifier = Modifier,
 )
 
@@ -1565,25 +1587,25 @@ public data class MessageReactionsPickerContentParams(
  * Parameters for [ChatComponentFactory.MenuOptionItem].
  *
  * @param onClick Action invoked when the item is clicked.
- * @param leadingIcon The leading icon composable.
  * @param title The title of the menu item.
  * @param titleColor The color of the title.
  * @param style The text style.
+ * @param leadingIcon The leading icon composable.
+ * @param modifier Modifier for styling.
  * @param itemHeight The height of the item.
  * @param verticalAlignment The vertical alignment.
  * @param horizontalArrangement The horizontal arrangement.
- * @param modifier Modifier for styling.
  */
 public data class MenuOptionItemParams(
     val onClick: () -> Unit,
-    val leadingIcon: @Composable RowScope.() -> Unit,
     val title: String,
     val titleColor: Color,
     val style: TextStyle,
-    val itemHeight: Dp,
-    val verticalAlignment: Alignment.Vertical,
-    val horizontalArrangement: Arrangement.Horizontal,
+    val leadingIcon: @Composable RowScope.() -> Unit,
     val modifier: Modifier = Modifier,
+    val itemHeight: Dp = 56.dp,
+    val verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
+    val horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
 )
 
 /**
@@ -1593,7 +1615,7 @@ public data class MenuOptionItemParams(
  * @param onClick Action invoked when the banner is clicked.
  */
 public data class ThreadListBannerParams(
-    val state: io.getstream.chat.android.compose.ui.threads.ThreadListBannerState,
+    val state: ThreadListBannerState,
     val onClick: () -> Unit,
 )
 
@@ -1710,14 +1732,14 @@ public class PinnedMessageListLoadingMoreContentParams
  *
  * @param mention The mention result to display.
  * @param currentUser The currently logged in user.
- * @param onClick Action invoked when the mention is clicked.
  * @param modifier Modifier for styling.
+ * @param onClick Action invoked when the mention is clicked.
  */
 public data class MentionListItemParams(
     val mention: MessageResult,
     val currentUser: User?,
-    val onClick: ((message: Message) -> Unit)? = null,
     val modifier: Modifier = Modifier,
+    val onClick: ((message: Message) -> Unit)? = null,
 )
 
 /**
@@ -2239,22 +2261,22 @@ public data class MessageComposerAttachmentsParams(
  *
  * @param attachment The audio recording attachment to render.
  * @param playerState Current state of the audio player.
+ * @param modifier Modifier for styling.
  * @param onPlayToggleClick Called when the play/pause button is tapped.
  * @param onPlaySpeedClick Called when the playback speed button is tapped.
  * @param onThumbDragStart Called when the user starts dragging the waveform thumb.
  * @param onThumbDragStop Called when the user stops dragging, with the target seek fraction.
  * @param onAttachmentRemoved Called when the attachment is removed by the user.
- * @param modifier Modifier for styling.
  */
 public data class MessageComposerAttachmentAudioRecordItemParams(
     val attachment: Attachment,
     val playerState: AudioPlayerState,
+    val modifier: Modifier = Modifier,
     val onPlayToggleClick: (Attachment) -> Unit = {},
     val onPlaySpeedClick: (Attachment) -> Unit = {},
     val onThumbDragStart: (Attachment) -> Unit = {},
     val onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
     val onAttachmentRemoved: (Attachment) -> Unit = {},
-    val modifier: Modifier = Modifier,
 )
 
 /**
@@ -2323,7 +2345,7 @@ public data class AttachmentTypePickerParams(
     val messageMode: MessageMode,
     val selectedMode: AttachmentPickerMode?,
     val onModeSelected: (AttachmentPickerMode) -> Unit,
-    val trailingContent: @Composable RowScope.() -> Unit,
+    val trailingContent: @Composable RowScope.() -> Unit = {},
 )
 
 /**
@@ -2338,7 +2360,7 @@ public data class AttachmentTypeSystemPickerParams(
     val channel: Channel,
     val messageMode: MessageMode,
     val onModeSelected: (AttachmentPickerMode) -> Unit,
-    val trailingContent: @Composable RowScope.() -> Unit,
+    val trailingContent: @Composable RowScope.() -> Unit = {},
 )
 
 /**

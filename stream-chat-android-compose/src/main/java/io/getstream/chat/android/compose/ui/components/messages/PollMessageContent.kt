@@ -124,7 +124,6 @@ public fun PollMessageContent(
                 message = message,
                 shape = messageBubbleShape,
                 color = messageBubbleColor,
-                border = null,
                 content = {
                     PollMessageContent(
                         message = message,

@@ -154,7 +154,6 @@ internal fun AttachmentSystemPicker(
                     else -> Unit
                 }
             },
-            trailingContent = {},
         ),
     )
 
