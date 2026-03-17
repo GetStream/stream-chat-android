@@ -609,20 +609,6 @@ public data class MessageListStartOfTheChannelItemContentParams(
  *
  * @param messageItem The message item state.
  * @param reactionSorting The sorting for reactions.
- * @param onPollUpdated Action invoked when a poll is updated.
- * @param onCastVote Action invoked when a vote is cast.
- * @param onRemoveVote Action invoked when a vote is removed.
- * @param selectPoll Action invoked when a poll selection is made.
- * @param onClosePoll Action invoked when a poll is closed.
- * @param onAddPollOption Action invoked when a poll option is added.
- * @param onLongItemClick Action invoked when a message is long-clicked.
- * @param onThreadClick Action invoked when the thread is clicked.
- * @param onReactionsClick Action invoked when reactions are clicked.
- * @param onGiphyActionClick Action invoked when a Giphy action is clicked.
- * @param onMediaGalleryPreviewResult Action invoked with the media gallery preview result.
- * @param onQuotedMessageClick Action invoked when a quoted message is clicked.
- * @param onUserMentionClick Action invoked when a user mention is clicked.
- * @param onAddAnswer Action invoked when an answer is added to a poll.
  * @param modifier Modifier for styling.
  * @param onPollUpdated Action invoked when a poll is updated.
  * @param onCastVote Action invoked when a vote is cast.
@@ -1043,12 +1029,6 @@ public data class MessageComposerLeadingContentParams(
  * Parameters for [ChatComponentFactory.MessageComposerInput].
  *
  * @param state The current state of the message composer.
- * @param onInputChanged Action invoked when the input is changed.
- * @param onAttachmentRemoved Action invoked when an attachment is removed.
- * @param onCancel Action invoked when the cancel button is clicked.
- * @param onSendClick Action invoked when the send button is clicked.
- * @param onAlsoSendToChannelChange Action invoked when also-send-to-channel is changed.
- * @param recordingActions The actions to control the audio recording.
  * @param modifier Modifier for styling.
  * @param onInputChanged Action invoked when the input is changed.
  * @param onAttachmentRemoved Action invoked when an attachment is removed.
