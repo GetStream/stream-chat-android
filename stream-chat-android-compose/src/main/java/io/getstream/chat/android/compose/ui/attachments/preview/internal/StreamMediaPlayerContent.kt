@@ -44,6 +44,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.common.PlayButton
 import io.getstream.chat.android.compose.ui.components.common.PlayButtonSize
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.core.internal.StreamHandsOff
@@ -154,7 +155,7 @@ internal fun MediaThumbnail(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier.background(Color.Black),
+        modifier = modifier.background(ChatTheme.colors.backgroundCoreApp),
         contentAlignment = Alignment.Center,
     ) {
         if (thumbnailUrl != null) {
@@ -219,11 +220,16 @@ internal fun createPlayer(
         "we always use the correct layout for our version of the ExoPlayer library",
 )
 @OptIn(UnstableApi::class)
-internal fun createPlayerView(context: Context, player: Player): PlayerView {
+internal fun createPlayerView(
+    context: Context,
+    player: Player,
+    useController: Boolean = true,
+): PlayerView {
     val playerView = LayoutInflater.from(context)
         .inflate(R.layout.stream_compose_player_view, null) as PlayerView
     return playerView.apply {
         this.player = player
+        this.useController = useController
         controllerShowTimeoutMs = ControllerShowTimeout
         controllerAutoShow = false
         controllerHideOnTouch = true
