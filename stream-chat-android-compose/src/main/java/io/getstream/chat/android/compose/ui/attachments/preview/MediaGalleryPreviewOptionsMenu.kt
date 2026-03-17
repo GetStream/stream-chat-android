@@ -27,8 +27,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -77,7 +78,7 @@ internal fun MediaGalleryOptionsMenu(
 ) {
     ModalBottomSheet(
         modifier = modifier,
-        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        sheetState = rememberStandardBottomSheetState(initialValue = SheetValue.Expanded, skipHiddenState = false),
         containerColor = ChatTheme.colors.backgroundElevationElevation1,
         scrimColor = ChatTheme.colors.backgroundCoreScrim,
         onDismissRequest = onDismiss,
