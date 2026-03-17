@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ReactionMenuOptionItemParams
 import io.getstream.chat.android.models.Reaction
 
 /**
@@ -57,9 +58,11 @@ internal fun ExtendedReactionsOptions(
     LazyVerticalGrid(modifier = modifier, columns = cells) {
         items(options, key = ReactionOptionItemState::type) { item ->
             ChatTheme.componentFactory.ReactionMenuOptionItem(
-                modifier = Modifier.padding(vertical = 8.dp),
-                onReactionOptionSelected = onReactionOptionSelected,
-                option = item,
+                params = ReactionMenuOptionItemParams(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    onReactionOptionSelected = onReactionOptionSelected,
+                    option = item,
+                ),
             )
         }
     }

@@ -3,28 +3,28 @@ package io.getstream.chat.docs.kotlin.client.cms
 import android.os.Handler
 import android.os.Looper
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.models.FilterObject
-import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.Pagination.LESS_THAN
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.ascByName
-import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.subscribeFor
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.isMutedFor
+import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelMute
+import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.client.subscribeFor
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.ascByName
+import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.result.Result
 
 class Channels(val client: ChatClient, val channelClient: ChannelClient) {

@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.compose.sample.ui.location
 
-import android.net.Uri
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
@@ -33,24 +31,11 @@ import io.getstream.chat.android.client.utils.message.hasSharedLocation
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.sample.ui.component.SharedLocationItem
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
-import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
-import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerActions
+import io.getstream.chat.android.compose.ui.theme.AttachmentPickerContentParams
+import io.getstream.chat.android.compose.ui.theme.AttachmentTypePickerParams
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.Command
-import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.Option
-import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.User
-import io.getstream.chat.android.models.Vote
-import io.getstream.chat.android.ui.common.state.messages.MessageMode
-import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
-import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
-import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
-import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.compose.ui.theme.MessageContentParams
 
 /**
  * Factory for creating components related to location sharing.
@@ -60,107 +45,63 @@ class LocationComponentFactory(
 ) : ChatComponentFactory {
 
     @Composable
-    override fun AttachmentTypePicker(
-        channel: Channel,
-        messageMode: MessageMode,
-        selectedMode: AttachmentPickerMode?,
-        onModeSelected: (AttachmentPickerMode) -> Unit,
-        trailingContent: @Composable RowScope.() -> Unit,
-    ) {
-        super.AttachmentTypePicker(channel, messageMode, selectedMode, onModeSelected) {
-            val isSelected = selectedMode != null && selectedMode::class == LocationPickerMode
+    override fun AttachmentTypePicker(params: AttachmentTypePickerParams) {
+        super.AttachmentTypePicker(
+            params = AttachmentTypePickerParams(
+                channel = params.channel,
+                messageMode = params.messageMode,
+                selectedMode = params.selectedMode,
+                onModeSelected = params.onModeSelected,
+                trailingContent = {
+                    val isSelected = params.selectedMode is LocationPickerMode
 
-            FilledIconToggleButton(
-                modifier = Modifier.size(48.dp),
-                checked = isSelected,
-                onCheckedChange = { onModeSelected(LocationPickerMode) },
-                colors = IconButtonDefaults.filledIconToggleButtonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = ChatTheme.colors.buttonSecondaryText,
-                    checkedContainerColor = ChatTheme.colors.backgroundCoreSelected,
-                    checkedContentColor = ChatTheme.colors.buttonSecondaryText,
-                ),
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.LocationOn,
-                    contentDescription = "Share Location",
-                )
-            }
-        }
+                    FilledIconToggleButton(
+                        modifier = Modifier.size(48.dp),
+                        checked = isSelected,
+                        onCheckedChange = { params.onModeSelected(LocationPickerMode) },
+                        colors = IconButtonDefaults.filledIconToggleButtonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = ChatTheme.colors.buttonSecondaryText,
+                            checkedContainerColor = ChatTheme.colors.backgroundCoreSelected,
+                            checkedContentColor = ChatTheme.colors.buttonSecondaryText,
+                        ),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.LocationOn,
+                            contentDescription = "Share Location",
+                        )
+                    }
+                },
+            ),
+        )
     }
 
     @Composable
-    override fun AttachmentPickerContent(
-        pickerMode: AttachmentPickerMode?,
-        commands: List<Command>,
-        attachments: List<AttachmentPickerItemState>,
-        onLoadAttachments: () -> Unit,
-        onUrisSelected: (List<Uri>) -> Unit,
-        actions: AttachmentPickerActions,
-        onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
-    ) {
-        if (pickerMode == LocationPickerMode && locationViewModelFactory != null) {
+    override fun AttachmentPickerContent(params: AttachmentPickerContentParams) {
+        if (params.pickerMode == LocationPickerMode && locationViewModelFactory != null) {
             LocationPicker(
                 viewModelFactory = locationViewModelFactory,
-                onDismiss = actions.onDismiss,
+                onDismiss = params.actions.onDismiss,
             )
         } else {
-            super.AttachmentPickerContent(
-                pickerMode,
-                commands,
-                attachments,
-                onLoadAttachments,
-                onUrisSelected,
-                actions,
-                onAttachmentsSubmitted,
-            )
+            super.AttachmentPickerContent(params)
         }
     }
 
     @Composable
-    override fun MessageContent(
-        messageItem: MessageItemState,
-        onLongItemClick: (Message) -> Unit,
-        onPollUpdated: (Message, Poll) -> Unit,
-        onCastVote: (Message, Poll, Option) -> Unit,
-        onRemoveVote: (Message, Poll, Vote) -> Unit,
-        selectPoll: (Message, Poll, PollSelectionType) -> Unit,
-        onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit,
-        onClosePoll: (String) -> Unit,
-        onAddPollOption: (poll: Poll, option: String) -> Unit,
-        onGiphyActionClick: (GiphyAction) -> Unit,
-        onQuotedMessageClick: (Message) -> Unit,
-        onLinkClick: ((Message, String) -> Unit)?,
-        onUserMentionClick: (User) -> Unit,
-        onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
-    ) {
-        val message = messageItem.message
+    override fun MessageContent(params: MessageContentParams) {
+        val message = params.messageItem.message
         if (message.hasSharedLocation() && !message.isDeleted()) {
             val location = requireNotNull(message.sharedLocation)
             SharedLocationItem(
                 modifier = Modifier.widthIn(max = 250.dp),
                 message = message,
                 location = location,
-                onMapClick = { url -> onLinkClick?.invoke(message, url) },
-                onMapLongClick = { onLongItemClick(message) },
+                onMapClick = { url -> params.onLinkClick?.invoke(message, url) },
+                onMapLongClick = { params.onLongItemClick(message) },
             )
         } else {
-            super.MessageContent(
-                messageItem = messageItem,
-                onLongItemClick = onLongItemClick,
-                onGiphyActionClick = onGiphyActionClick,
-                onQuotedMessageClick = onQuotedMessageClick,
-                onLinkClick = onLinkClick,
-                onUserMentionClick = onUserMentionClick,
-                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                onPollUpdated = onPollUpdated,
-                onCastVote = onCastVote,
-                onRemoveVote = onRemoveVote,
-                selectPoll = selectPoll,
-                onAddAnswer = onAddAnswer,
-                onClosePoll = onClosePoll,
-                onAddPollOption = onAddPollOption,
-            )
+            super.MessageContent(params)
         }
     }
 }

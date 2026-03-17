@@ -44,6 +44,7 @@ import io.getstream.chat.android.compose.previewdata.PreviewReactionData
 import io.getstream.chat.android.compose.state.messages.MessageReactionItemState
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ReactionIconParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.ifNotNull
@@ -84,10 +85,12 @@ public fun ClusteredMessageReactions(
     ) {
         reactions.forEach {
             ChatTheme.componentFactory.ReactionIcon(
-                type = it.type,
-                emoji = it.emoji,
-                size = ReactionIconSize.Small,
-                modifier = Modifier.testTag("Stream_MessageReaction_${it.type}"),
+                params = ReactionIconParams(
+                    type = it.type,
+                    emoji = it.emoji,
+                    size = ReactionIconSize.Small,
+                    modifier = Modifier.testTag("Stream_MessageReaction_${it.type}"),
+                ),
             )
         }
         if (count > 1) {
@@ -139,10 +142,12 @@ public fun SegmentedMessageReactions(
             val reaction = reactions[i]
             ReactionChip(onClick = onClick) {
                 ChatTheme.componentFactory.ReactionIcon(
-                    type = reaction.type,
-                    emoji = reaction.emoji,
-                    size = ReactionIconSize.Small,
-                    modifier = Modifier.testTag("Stream_MessageReaction_${reaction.type}"),
+                    params = ReactionIconParams(
+                        type = reaction.type,
+                        emoji = reaction.emoji,
+                        size = ReactionIconSize.Small,
+                        modifier = Modifier.testTag("Stream_MessageReaction_${reaction.type}"),
+                    ),
                 )
                 if (shouldShowCounts) {
                     Text(

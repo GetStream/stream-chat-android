@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Color
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.utils.Utils
 import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerViewStyle
 import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.helper.StyleTransformer

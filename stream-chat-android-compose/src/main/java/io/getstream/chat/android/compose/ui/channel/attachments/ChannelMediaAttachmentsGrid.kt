@@ -41,6 +41,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.window.core.layout.WindowWidthSizeClass
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.ContentBox
+import io.getstream.chat.android.compose.ui.theme.ChannelMediaAttachmentsEmptyContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelMediaAttachmentsErrorContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelMediaAttachmentsFloatingHeaderParams
+import io.getstream.chat.android.compose.ui.theme.ChannelMediaAttachmentsItemParams
+import io.getstream.chat.android.compose.ui.theme.ChannelMediaAttachmentsLoadingIndicatorParams
+import io.getstream.chat.android.compose.ui.theme.ChannelMediaAttachmentsLoadingItemParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
@@ -88,46 +94,49 @@ internal fun ChannelMediaAttachmentsGrid(
     ) -> Unit = { index, item, onClick ->
         with(ChatTheme.componentFactory) {
             ChannelMediaAttachmentsItem(
-                modifier = Modifier,
-                index = index,
-                item = item,
-                onClick = { onItemClick(item, onClick) },
+                params = ChannelMediaAttachmentsItemParams(
+                    index = index,
+                    item = item,
+                    onClick = { onItemClick(item, onClick) },
+                ),
             )
         }
     },
     floatingHeader: @Composable BoxScope.(label: String) -> Unit = { label ->
         with(ChatTheme.componentFactory) {
             ChannelMediaAttachmentsFloatingHeader(
-                modifier = Modifier.align(Alignment.TopCenter),
-                label = label,
+                params = ChannelMediaAttachmentsFloatingHeaderParams(
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    label = label,
+                ),
             )
         }
     },
     loadingIndicator: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMediaAttachmentsLoadingIndicator(
-                modifier = Modifier,
+                params = ChannelMediaAttachmentsLoadingIndicatorParams(),
             )
         }
     },
     emptyContent: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMediaAttachmentsEmptyContent(
-                modifier = Modifier,
+                params = ChannelMediaAttachmentsEmptyContentParams(),
             )
         }
     },
     errorContent: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMediaAttachmentsErrorContent(
-                modifier = Modifier,
+                params = ChannelMediaAttachmentsErrorContentParams(),
             )
         }
     },
     loadingItem: @Composable LazyGridItemScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMediaAttachmentsLoadingItem(
-                modifier = Modifier,
+                params = ChannelMediaAttachmentsLoadingItemParams(),
             )
         }
     },

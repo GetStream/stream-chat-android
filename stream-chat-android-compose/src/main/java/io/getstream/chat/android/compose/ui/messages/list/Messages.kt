@@ -51,6 +51,10 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageListHelperContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageListItemModifierParams
+import io.getstream.chat.android.compose.ui.theme.MessageListLoadingMoreItemContentParams
+import io.getstream.chat.android.compose.ui.theme.ScrollToBottomButtonParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.util.isAppInForegroundAsState
 import io.getstream.chat.android.models.Message
@@ -114,21 +118,23 @@ public fun Messages(
     helperContent: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             MessageListHelperContent(
-                messageListState = messagesState,
-                messagesLazyListState = messagesLazyListState,
-                contentPadding = contentPadding,
-                onScrollToBottomClick = onScrollToBottom,
+                params = MessageListHelperContentParams(
+                    messageListState = messagesState,
+                    messagesLazyListState = messagesLazyListState,
+                    contentPadding = contentPadding,
+                    onScrollToBottomClick = onScrollToBottom,
+                ),
             )
         }
     },
     loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
-            MessageListLoadingMoreItemContent()
+            MessageListLoadingMoreItemContent(params = MessageListLoadingMoreItemContentParams())
         }
     },
     itemModifier: @Composable LazyItemScope.(index: Int, item: MessageListItemState) -> Modifier = { _, _ ->
         with(ChatTheme.componentFactory) {
-            messageListItemModifier()
+            messageListItemModifier(params = MessageListItemModifierParams())
         }
     },
     itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit,
@@ -347,25 +353,27 @@ internal fun BoxScope.DefaultMessagesHelperContent(
 
     with(ChatTheme.componentFactory) {
         ScrollToBottomButton(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(contentPadding)
-                .then(
-                    if (ChatTheme.config.composer.floatingStyleEnabled) {
-                        Modifier.padding(horizontal = StreamTokens.spacingMd)
-                    } else {
-                        Modifier.padding(StreamTokens.spacingMd)
-                    },
-                ),
-            visible = scrollToBottomButtonVisible,
-            count = messagesState.unreadCount,
-            onClick = {
-                scrollToBottom {
-                    coroutineScope.launch {
-                        lazyListState.scrollToItem(0)
+            params = ScrollToBottomButtonParams(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(contentPadding)
+                    .then(
+                        if (ChatTheme.config.composer.floatingStyleEnabled) {
+                            Modifier.padding(horizontal = StreamTokens.spacingMd)
+                        } else {
+                            Modifier.padding(StreamTokens.spacingMd)
+                        },
+                    ),
+                visible = scrollToBottomButtonVisible,
+                count = messagesState.unreadCount,
+                onClick = {
+                    scrollToBottom {
+                        coroutineScope.launch {
+                            lazyListState.scrollToItem(0)
+                        }
                     }
-                }
-            },
+                },
+            ),
         )
     }
 }
