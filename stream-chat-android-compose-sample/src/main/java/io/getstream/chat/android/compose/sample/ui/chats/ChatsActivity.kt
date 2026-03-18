@@ -215,7 +215,7 @@ class ChatsActivity : ComponentActivity() {
                 }
             },
             onListTopBarActionClick = ::openAddChannel,
-            onDetailTopBarTitleClick = navigator::navigateToChannelInfo,
+            onDetailTopBarAvatarClick = navigator::navigateToChannelInfo,
             onViewChannelInfoClick = navigator::navigateToChannelInfo,
             listBottomBarContent = {
                 ListFooterContent(
