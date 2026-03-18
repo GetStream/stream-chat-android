@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 
@@ -25,7 +26,9 @@ import androidx.compose.ui.text.font.FontFamily
  * The Stream Chat Design System namespace.
  *
  * Provides all design tokens for theming Chat SDK components:
- * - [Colors] -- semantic color tokens
+ * - [ColorScale] -- the brand (accent) color ramp
+ * - [ChromeScale] -- the chrome (neutral gray) color ramp
+ * - [Colors] -- semantic color tokens derived from the scales above
  * - [Typography] -- text styles
  *
  * Use via [ChatTheme]:
@@ -693,6 +696,218 @@ public object StreamDesign {
                 chrome800 = StreamPrimitiveColors.neutral100,
                 chrome900 = StreamPrimitiveColors.neutral50,
                 chrome1000 = StreamPrimitiveColors.baseWhite,
+            )
+        }
+    }
+
+    /**
+     * An 11-stop color ramp representing the **brand** (accent) palette.
+     *
+     * In the Stream design system the brand scale maps to `blue` by default.
+     * Light themes use the natural order (s50 = lightest, s900 = darkest);
+     * dark themes invert the mapping so that perceptual intensity stays
+     * consistent (s50 is still the faintest tint suitable for backgrounds).
+     *
+     * Re-brand the entire Chat UI from a single color:
+     * ```
+     * val purple = StreamDesign.ColorScale.from(Color(0xFF6200EE))
+     * ChatTheme(colors = StreamDesign.Colors.default(brand = purple))
+     * ```
+     *
+     * For pixel-perfect branding, provide an explicit scale:
+     * ```
+     * ChatTheme(
+     *     colors = StreamDesign.Colors.default(
+     *         brand = StreamDesign.ColorScale(
+     *             s50 = Color(0xFFF3E8FF),
+     *             // …
+     *             s900 = Color(0xFF3B0764),
+     *         ),
+     *     ),
+     * )
+     * ```
+     *
+     * @param s50  Faintest tint — backgrounds, subtle fills.
+     * @param s100 Light tint — outgoing bubble background.
+     * @param s150 Light-mid tint — attachment backgrounds, thread connectors.
+     * @param s200 Mid-light tint — primary button border, poll track.
+     * @param s300 Mid-tint — outgoing bubble on-chat border.
+     * @param s400 Mid-strong — interactive accent (dark theme default).
+     * @param s500 Core brand — interactive accent (light theme default).
+     * @param s600 Strong — link text (dark theme).
+     * @param s700 Darker — reply indicator (dark theme).
+     * @param s800 Deep — brand depth.
+     * @param s900 Deepest — outgoing text, chip text.
+     */
+    @Immutable
+    public data class ColorScale(
+        public val s50: Color,
+        public val s100: Color,
+        public val s150: Color,
+        public val s200: Color,
+        public val s300: Color,
+        public val s400: Color,
+        public val s500: Color,
+        public val s600: Color,
+        public val s700: Color,
+        public val s800: Color,
+        public val s900: Color,
+    ) {
+        public companion object {
+            /**
+             * Default brand scale for light themes.
+             *
+             * Maps brand stops 50..900 → blue 50..900 (natural order).
+             */
+            public fun defaultLight(): ColorScale = ColorScale(
+                s50 = StreamPrimitiveColors.blue50,
+                s100 = StreamPrimitiveColors.blue100,
+                s150 = StreamPrimitiveColors.blue150,
+                s200 = StreamPrimitiveColors.blue200,
+                s300 = StreamPrimitiveColors.blue300,
+                s400 = StreamPrimitiveColors.blue400,
+                s500 = StreamPrimitiveColors.blue500,
+                s600 = StreamPrimitiveColors.blue600,
+                s700 = StreamPrimitiveColors.blue700,
+                s800 = StreamPrimitiveColors.blue800,
+                s900 = StreamPrimitiveColors.blue900,
+            )
+
+            /**
+             * Default brand scale for dark themes.
+             *
+             * Inverts the mapping: brand 50 → blue 900, brand 900 → blue 50,
+             * so that perceptual intensity is preserved on dark backgrounds.
+             */
+            public fun defaultDark(): ColorScale = ColorScale(
+                s50 = StreamPrimitiveColors.blue900,
+                s100 = StreamPrimitiveColors.blue800,
+                s150 = StreamPrimitiveColors.blue700,
+                s200 = StreamPrimitiveColors.blue600,
+                s300 = StreamPrimitiveColors.blue500,
+                s400 = StreamPrimitiveColors.blue400,
+                s500 = StreamPrimitiveColors.blue300,
+                s600 = StreamPrimitiveColors.blue200,
+                s700 = StreamPrimitiveColors.blue150,
+                s800 = StreamPrimitiveColors.blue100,
+                s900 = StreamPrimitiveColors.blue50,
+            )
+
+            /**
+             * Generates a brand scale from a single [brandColor].
+             *
+             * The input is placed at [s500] (the core brand stop). Lighter
+             * stops are interpolated toward white and darker stops toward
+             * black using Oklab perceptual color space.
+             *
+             * This is an approximation intended for quick re-branding.
+             * For pixel-perfect results, provide an explicit [ColorScale].
+             *
+             * @param brandColor The core brand color (maps to [s500]).
+             */
+            @Suppress("MagicNumber")
+            public fun from(brandColor: Color): ColorScale = ColorScale(
+                s50 = lerp(Color.White, brandColor, 0.04f),
+                s100 = lerp(Color.White, brandColor, 0.08f),
+                s150 = lerp(Color.White, brandColor, 0.16f),
+                s200 = lerp(Color.White, brandColor, 0.26f),
+                s300 = lerp(Color.White, brandColor, 0.42f),
+                s400 = lerp(Color.White, brandColor, 0.65f),
+                s500 = brandColor,
+                s600 = lerp(brandColor, Color.Black, 0.25f),
+                s700 = lerp(brandColor, Color.Black, 0.42f),
+                s800 = lerp(brandColor, Color.Black, 0.58f),
+                s900 = lerp(brandColor, Color.Black, 0.75f),
+            )
+        }
+    }
+
+    /**
+     * A 13-stop neutral ramp representing the **chrome** (structural gray) palette.
+     *
+     * Chrome defines the visual canvas: text, backgrounds, borders, surfaces.
+     * Light themes map to the **slate** foundation (cool grays);
+     * dark themes switch to **neutral** (warm grays) and invert the direction,
+     * so that [s0] is always the base surface and [s900] is always the
+     * strongest foreground.
+     *
+     * [s0] and [s1000] are the absolute endpoints (white/black in light,
+     * black/white in dark). They absorb the light↔dark polarity, allowing
+     * all downstream tokens to reference chrome stops with identical
+     * expressions regardless of theme.
+     *
+     * @param s0    Base surface — white in light, black in dark.
+     * @param s50   Faintest tint — subtle surfaces, elevation-1 (dark).
+     * @param s100  Light — standard surface, disabled states.
+     * @param s150  Light-mid — surface-strong, default border, avatar placeholder bg.
+     * @param s200  Mid-light — elevation-3 border (dark), border default (dark).
+     * @param s300  Mid — border strong, disabled text, elevation-4 (dark).
+     * @param s400  Mid-neutral — neutral accent.
+     * @param s500  Core neutral — tertiary text, accent neutral.
+     * @param s600  Strong — secondary metadata (not used in default themes).
+     * @param s700  Darker — secondary text.
+     * @param s800  Deep — not used in default themes.
+     * @param s900  Deepest foreground — primary text, inverse background.
+     * @param s1000 Absolute endpoint — black in light, white in dark.
+     */
+    @Immutable
+    public data class ChromeScale(
+        public val s0: Color,
+        public val s50: Color,
+        public val s100: Color,
+        public val s150: Color,
+        public val s200: Color,
+        public val s300: Color,
+        public val s400: Color,
+        public val s500: Color,
+        public val s600: Color,
+        public val s700: Color,
+        public val s800: Color,
+        public val s900: Color,
+        public val s1000: Color,
+    ) {
+        public companion object {
+            /**
+             * Default chrome scale for light themes.
+             *
+             * Maps chrome 0 → white, 50..900 → slate 50..900, 1000 → black.
+             */
+            public fun defaultLight(): ChromeScale = ChromeScale(
+                s0 = StreamPrimitiveColors.baseWhite,
+                s50 = StreamPrimitiveColors.slate50,
+                s100 = StreamPrimitiveColors.slate100,
+                s150 = StreamPrimitiveColors.slate150,
+                s200 = StreamPrimitiveColors.slate200,
+                s300 = StreamPrimitiveColors.slate300,
+                s400 = StreamPrimitiveColors.slate400,
+                s500 = StreamPrimitiveColors.slate500,
+                s600 = StreamPrimitiveColors.slate600,
+                s700 = StreamPrimitiveColors.slate700,
+                s800 = StreamPrimitiveColors.slate800,
+                s900 = StreamPrimitiveColors.slate900,
+                s1000 = StreamPrimitiveColors.baseBlack,
+            )
+
+            /**
+             * Default chrome scale for dark themes.
+             *
+             * Switches to the **neutral** palette and inverts the direction:
+             * chrome 0 → black, 50 → neutral 900, …, 900 → neutral 50, 1000 → white.
+             */
+            public fun defaultDark(): ChromeScale = ChromeScale(
+                s0 = StreamPrimitiveColors.baseBlack,
+                s50 = StreamPrimitiveColors.neutral900,
+                s100 = StreamPrimitiveColors.neutral800,
+                s150 = StreamPrimitiveColors.neutral700,
+                s200 = StreamPrimitiveColors.neutral600,
+                s300 = StreamPrimitiveColors.neutral500,
+                s400 = StreamPrimitiveColors.neutral400,
+                s500 = StreamPrimitiveColors.neutral300,
+                s600 = StreamPrimitiveColors.neutral200,
+                s700 = StreamPrimitiveColors.neutral150,
+                s800 = StreamPrimitiveColors.neutral100,
+                s900 = StreamPrimitiveColors.neutral50,
+                s1000 = StreamPrimitiveColors.baseWhite,
             )
         }
     }
