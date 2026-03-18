@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyle
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
@@ -195,6 +196,7 @@ private fun PollMessageContent(
     val context = LocalContext.current
     val showDialog = remember { mutableStateOf(false) }
     val showAddAnswerDialog = remember { mutableStateOf(false) }
+    val showEndPollDialog = remember { mutableStateOf(false) }
     val typography = ChatTheme.typography
     val style = MessageStyling.pollStyle(outgoing = isMine)
 
@@ -210,6 +212,16 @@ private fun PollMessageContent(
         NewOptionDialog(
             onDismiss = { showDialog.value = false },
             onNewOption = { newOption -> onAddPollOption.invoke(poll, newOption) },
+        )
+    }
+
+    if (showEndPollDialog.value) {
+        EndPollConfirmationDialog(
+            onConfirm = {
+                showEndPollDialog.value = false
+                onClosePoll(poll.id)
+            },
+            onDismiss = { showEndPollDialog.value = false },
         )
     }
 
@@ -260,7 +272,7 @@ private fun PollMessageContent(
             showDialog = showDialog,
             showAddAnswerDialog = showAddAnswerDialog,
             isMine = isMine,
-            onClosePoll = onClosePoll,
+            onClosePoll = { showEndPollDialog.value = true },
         )
     }
 }
@@ -481,6 +493,47 @@ private fun PollOptionItem(
     }
 }
 
+@Composable
+private fun EndPollConfirmationDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = stringResource(R.string.stream_compose_poll_end_confirmation_title),
+                style = ChatTheme.typography.headingMedium,
+            )
+        },
+        text = {
+            Text(
+                text = stringResource(R.string.stream_compose_poll_end_confirmation_message),
+                style = ChatTheme.typography.bodyDefault,
+            )
+        },
+        confirmButton = {
+            TextButton(
+                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.accentError),
+                onClick = onConfirm,
+            ) {
+                Text(text = stringResource(R.string.stream_compose_poll_end_confirmation_action))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.textPrimary),
+                onClick = onDismiss,
+            ) {
+                Text(text = stringResource(R.string.stream_compose_cancel))
+            }
+        },
+        titleContentColor = ChatTheme.colors.textPrimary,
+        textContentColor = ChatTheme.colors.textPrimary,
+        containerColor = ChatTheme.colors.backgroundElevationElevation1,
+    )
+}
+
 private const val MaxStackedAvatars = 3
 
 @Composable
@@ -494,6 +547,7 @@ private fun PollOptionButton(
         text = text,
         style = style,
         modifier = Modifier.fillMaxWidth(),
+        size = StreamButtonSize.Small,
     )
 }
 
@@ -535,18 +589,6 @@ private fun PollMessageContentPreview() {
                     ownCapabilities = ChannelCapabilities.toSet(),
                 ),
             )
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun PollOptionButtonPreview() {
-    ChatTheme {
-        val style = StreamButtonStyleDefaults.secondaryOutline
-        Column {
-            PollOptionButton("End Vote", style) {}
-            PollOptionButton("View Result", style) {}
         }
     }
 }

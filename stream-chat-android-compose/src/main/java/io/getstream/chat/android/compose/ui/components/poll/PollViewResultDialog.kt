@@ -67,6 +67,7 @@ import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.ViewModelStore
+import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.viewmodel.messages.PollResultsViewModel
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.previewdata.PreviewPollData
@@ -171,6 +172,7 @@ private fun Content(
                     item = item,
                     index = index,
                     onShowAllClick = onShowAllClick,
+                    modifier = Modifier.applyIf(index > 0) { padding(top = StreamTokens.spacingMd) },
                 )
             }
 
@@ -199,8 +201,9 @@ private fun PollViewResultItem(
     item: ResultItem,
     index: Int,
     onShowAllClick: (option: Option) -> Unit,
+    modifier: Modifier,
 ) {
-    PollSection(modifier = Modifier.padding(top = StreamTokens.spacingMd)) {
+    PollSection(modifier) {
         Text(
             modifier = Modifier
                 .fillMaxWidth()
@@ -302,7 +305,7 @@ private fun PollViewResultItemFooter(
                 ),
         )
     } else {
-        Spacer(modifier = Modifier.height(StreamTokens.spacingMd))
+        Spacer(modifier = Modifier.height(StreamTokens.spacingXs))
     }
 }
 
