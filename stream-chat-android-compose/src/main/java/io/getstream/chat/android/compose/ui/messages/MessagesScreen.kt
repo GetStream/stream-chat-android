@@ -138,7 +138,7 @@ public fun MessagesScreen(
     showHeader: Boolean = true,
     reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
     onBackPressed: () -> Unit = {},
-    onHeaderTitleClick: (channel: Channel) -> Unit = {},
+    onHeaderTitleClick: ((channel: Channel) -> Unit)? = null,
     onChannelAvatarClick: ((Channel) -> Unit)? = null,
     onComposerLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onMessageLinkClick: ((Message, String) -> Unit)? = null,
@@ -360,7 +360,7 @@ public typealias BackAction = () -> Unit
 internal fun DefaultTopBarContent(
     viewModelFactory: MessagesViewModelFactory,
     backAction: BackAction,
-    onHeaderTitleClick: (channel: Channel) -> Unit,
+    onHeaderTitleClick: ((channel: Channel) -> Unit)?,
     onChannelAvatarClick: ((Channel) -> Unit)?,
 ) {
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = viewModelFactory)

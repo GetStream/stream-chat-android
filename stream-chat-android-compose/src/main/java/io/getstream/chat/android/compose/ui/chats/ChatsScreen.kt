@@ -112,6 +112,7 @@ import kotlin.math.abs
  * @param onListTopBarAvatarClick Callback invoked when the user clicks on the avatar in the list pane top bar.
  * @param onListTopBarActionClick Callback invoked when the user clicks on the action icon in the list pane top bar.
  * @param onDetailTopBarTitleClick Callback invoked when the user clicks on the title in the detail pane top bar.
+ * @param onDetailTopBarAvatarClick Callback invoked when the user clicks on the avatar in the detail pane top bar.
  * @param onViewChannelInfoClick Callback invoked when the user long presses a channel and clicks "View Info".
  * @param listTopBarContent The content to display at the top of the list pane.
  * @param listBottomBarContent The content to display at the bottom of the list pane.
@@ -135,7 +136,8 @@ public fun ChatsScreen(
     onBackPress: () -> Unit = {},
     onListTopBarAvatarClick: (User?) -> Unit = {},
     onListTopBarActionClick: () -> Unit = {},
-    onDetailTopBarTitleClick: (channel: Channel) -> Unit = {},
+    onDetailTopBarTitleClick: ((channel: Channel) -> Unit)? = null,
+    onDetailTopBarAvatarClick: ((channel: Channel) -> Unit)? = null,
     onViewChannelInfoClick: (channel: Channel) -> Unit = {},
     listTopBarContent: @Composable () -> Unit = {
         DefaultListTopBarContent(
@@ -152,6 +154,7 @@ public fun ChatsScreen(
                 viewModelFactory = viewModelFactory,
                 backAction = backAction,
                 onTitleClick = onDetailTopBarTitleClick,
+                onAvatarClick = onDetailTopBarAvatarClick,
             )
         },
     detailBottomBarContent: @Composable (viewModelFactory: MessagesViewModelFactory) -> Unit = { viewModelFactory ->
@@ -663,7 +666,8 @@ private fun DefaultListTopBarContent(
 private fun DefaultDetailTopBarContent(
     viewModelFactory: MessagesViewModelFactory,
     backAction: BackAction,
-    onTitleClick: (channel: Channel) -> Unit,
+    onTitleClick: ((channel: Channel) -> Unit)?,
+    onAvatarClick: ((channel: Channel) -> Unit)?,
 ) {
     val viewModel = viewModel(MessageListViewModel::class.java, factory = viewModelFactory)
     val connectionState by viewModel.connectionState.collectAsState()
@@ -677,6 +681,7 @@ private fun DefaultDetailTopBarContent(
         typingUsers = viewModel.typingUsers,
         messageMode = messageMode,
         onHeaderTitleClick = onTitleClick,
+        onChannelAvatarClick = onAvatarClick,
         leadingContent = {
             val showNavigationIcon = AdaptiveLayoutInfo.singlePaneWindow() || messageMode is MessageMode.MessageThread
             if (showNavigationIcon) {
