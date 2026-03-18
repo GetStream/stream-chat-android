@@ -24,9 +24,8 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,7 +42,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.BackButton
+import io.getstream.chat.android.compose.ui.components.button.StreamButton
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+
 /**
  * Poll's creation header (toolbar) Composable that consist of several components.
  *
@@ -130,17 +132,15 @@ internal fun DefaultPollOptionsHeaderTrailingContent(
     enabled: Boolean,
     onPollCreateClicked: () -> Unit,
 ) {
-    IconButton(
-        enabled = enabled,
-        colors = IconButtonDefaults.iconButtonColors(
-            contentColor = ChatTheme.colors.accentPrimary,
-            disabledContentColor = ChatTheme.colors.textSecondary,
-        ),
+    StreamButton(
         onClick = onPollCreateClicked,
+        enabled = enabled,
+        style = StreamButtonStyleDefaults.primarySolid,
     ) {
         Icon(
-            painter = painterResource(R.drawable.stream_compose_ic_send),
-            contentDescription = stringResource(R.string.stream_compose_message_composer_send_button),
+            painter = painterResource(R.drawable.stream_compose_ic_checkmark),
+            contentDescription = stringResource(R.string.stream_compose_poll_title),
+            modifier = Modifier.size(20.dp),
         )
     }
 }

@@ -31,6 +31,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
+import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController.Event
 import io.getstream.chat.android.ui.common.feature.messages.list.MessagePositionHandler
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -44,6 +45,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollState
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -155,6 +157,13 @@ public class MessageListViewModel(
      */
     public val deletedMessageVisibilityState: DeletedMessageVisibility by messageListController
         .deletedMessageVisibilityState.asState(viewModelScope)
+
+    /**
+     * Flow of one-shot events such as action successes and errors.
+     *
+     * @see [Event]
+     */
+    public val events: SharedFlow<Event> = messageListController.events
 
     /**
      * Attempts to update the last seen message in the channel or thread. We only update the last seen message the first
