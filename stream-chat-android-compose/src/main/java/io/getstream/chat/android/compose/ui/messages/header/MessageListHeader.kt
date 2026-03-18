@@ -180,7 +180,7 @@ internal fun DefaultMessageListHeaderLeadingContent(onBackPressed: () -> Unit) {
  */
 @Suppress("LongMethod")
 @Composable
-public fun DefaultMessageListHeaderCenterContent(
+internal fun DefaultMessageListHeaderCenterContent(
     channel: Channel,
     currentUser: User?,
     connectionState: ConnectionState,
