@@ -28,6 +28,8 @@ plugins {
 }
 
 streamProject {
+    repositoryName = "stream-chat-android"
+
     spotless {
         ignoredModules = setOf("stream-chat-android-docs")
     }

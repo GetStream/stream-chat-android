@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.api.event.ChatEventHandler
 import io.getstream.chat.android.client.api.event.ChatEventHandlerFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 
@@ -39,6 +40,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  * @param messageLimit How many messages are fetched for each channel item when loading channels.
  * When `null`, the server-side default is used.
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
+ * @param messageSearchSort Optional sorting for message search results. When `null`, the server-side default is used.
  */
 public class ChannelViewModelFactory(
     private val chatClient: ChatClient = ChatClient.instance(),
@@ -49,6 +51,7 @@ public class ChannelViewModelFactory(
     private val messageLimit: Int? = null,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
     private val isDraftMessageEnabled: Boolean = false,
+    private val messageSearchSort: QuerySorter<Message>? = null,
 ) : ViewModelProvider.Factory {
 
     /**
@@ -68,6 +71,7 @@ public class ChannelViewModelFactory(
             memberLimit = memberLimit,
             chatEventHandlerFactory = chatEventHandlerFactory,
             isDraftMessageEnabled = isDraftMessageEnabled,
+            messageSearchSort = messageSearchSort,
         ) as T
     }
 }

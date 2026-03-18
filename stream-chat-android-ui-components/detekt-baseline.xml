@@ -8,7 +8,6 @@
     <ID>ComplexCondition:FootnoteDecorator.kt$FootnoteDecorator$!isGiphy &amp;&amp; !isDeleted &amp;&amp; userLanguage != i18nLanguage &amp;&amp; translatedText != data.message.text</ID>
     <ID>ComplexCondition:MediaAttachmentView.kt$MediaAttachmentView$attachment.isImage() || (attachment.isVideo() &amp;&amp; ChatUI.videoThumbnailsEnabled &amp;&amp; attachment.thumbUrl != null)</ID>
     <ID>ForbiddenComment:MediaAttachmentGridView.kt$MediaAttachmentGridView.SharedMediaSpaceItemDecorator$// TODO: leaves empty space after pagination</ID>
-    <ID>ForbiddenComment:SearchViewModel.kt$SearchViewModel$// TODO: use the pagination based on "limit" nad "next" params here</ID>
     <ID>IteratorNotThrowingNoSuchElementException:MessageComposerView.kt$&lt;no name provided>$&lt;no name provided> : Iterator</ID>
     <ID>LargeClass:MessageComposerViewStyle.kt$MessageComposerViewStyle$Companion</ID>
     <ID>LargeClass:MessageListView.kt$MessageListView : ConstraintLayout</ID>
