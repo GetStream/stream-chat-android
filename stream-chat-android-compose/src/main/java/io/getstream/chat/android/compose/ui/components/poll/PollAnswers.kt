@@ -66,6 +66,7 @@ import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.Poll
@@ -219,10 +220,12 @@ internal fun PollAnswersItem(
             val user = answer.user?.takeIf { showAvatar }
             if (user != null) {
                 ChatTheme.componentFactory.UserAvatar(
-                    modifier = Modifier.size(AvatarSize.ExtraSmall),
-                    user = user,
-                    showIndicator = false,
-                    showBorder = false,
+                    params = UserAvatarParams(
+                        modifier = Modifier.size(AvatarSize.ExtraSmall),
+                        user = user,
+                        showIndicator = false,
+                        showBorder = false,
+                    ),
                 )
 
                 Text(

@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageComposerUserSuggestionItemParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewUserData
@@ -47,9 +48,11 @@ internal fun UserSuggestionList(
             key = User::id,
         ) { user ->
             ChatTheme.componentFactory.MessageComposerUserSuggestionItem(
-                user = user,
-                currentUser = currentUser,
-                onUserSelected = onUserSelected,
+                params = MessageComposerUserSuggestionItemParams(
+                    user = user,
+                    currentUser = currentUser,
+                    onUserSelected = onUserSelected,
+                ),
             )
         }
     }

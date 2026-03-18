@@ -38,6 +38,7 @@ import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ReactionToggleParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Reaction
 
@@ -77,12 +78,14 @@ public fun MessageMenuHeader(
     ) {
         options.forEach { option ->
             componentFactory.ReactionToggle(
-                type = option.type,
-                emoji = option.emojiCode,
-                size = ReactionToggleSize.Large,
-                checked = option.isSelected,
-                onCheckedChange = { onReactionOptionSelected(option) },
-                modifier = Modifier.testTag("Stream_Reaction_${option.type}"),
+                params = ReactionToggleParams(
+                    type = option.type,
+                    emoji = option.emojiCode,
+                    size = ReactionToggleSize.Large,
+                    checked = option.isSelected,
+                    onCheckedChange = { _ -> onReactionOptionSelected(option) },
+                    modifier = Modifier.testTag("Stream_Reaction_${option.type}"),
+                ),
             )
         }
 

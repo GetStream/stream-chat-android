@@ -35,6 +35,11 @@ import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.LazyPagingColumn
 import io.getstream.chat.android.compose.ui.components.PullToRefreshBox
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MentionListEmptyContentParams
+import io.getstream.chat.android.compose.ui.theme.MentionListItemParams
+import io.getstream.chat.android.compose.ui.theme.MentionListLoadingIndicatorParams
+import io.getstream.chat.android.compose.ui.theme.MentionListLoadingItemParams
+import io.getstream.chat.android.compose.ui.theme.MentionListPullToRefreshIndicatorParams
 import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModel
 import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModelFactory
 import io.getstream.chat.android.models.Message
@@ -76,32 +81,27 @@ public fun MentionList(
     itemContent: @Composable LazyItemScope.(MessageResult) -> Unit = { mention ->
         with(ChatTheme.componentFactory) {
             MentionListItem(
-                mention = mention,
-                modifier = Modifier,
-                currentUser = currentUser,
-                onClick = onItemClick,
+                params = MentionListItemParams(
+                    mention = mention,
+                    currentUser = currentUser,
+                    onClick = onItemClick,
+                ),
             )
         }
     },
     loadingIndicator: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
-            MentionListLoadingIndicator(
-                modifier = Modifier,
-            )
+            MentionListLoadingIndicator(params = MentionListLoadingIndicatorParams())
         }
     },
     emptyContent: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
-            MentionListEmptyContent(
-                modifier = Modifier,
-            )
+            MentionListEmptyContent(params = MentionListEmptyContentParams())
         }
     },
     loadingItemContent: @Composable LazyItemScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
-            MentionListLoadingItem(
-                modifier = Modifier,
-            )
+            MentionListLoadingItem(params = MentionListLoadingItemParams())
         }
     },
     pullToRefreshIndicator: @Composable BoxScope.(
@@ -111,9 +111,10 @@ public fun MentionList(
         if (pullToRefreshEnabled) {
             with(ChatTheme.componentFactory) {
                 MentionListPullToRefreshIndicator(
-                    modifier = Modifier,
-                    pullToRefreshState = pullToRefreshState,
-                    isRefreshing = isRefreshing,
+                    MentionListPullToRefreshIndicatorParams(
+                        pullToRefreshState = pullToRefreshState,
+                        isRefreshing = isRefreshing,
+                    ),
                 )
             }
         }
@@ -169,32 +170,27 @@ public fun MentionList(
     itemContent: @Composable LazyItemScope.(MessageResult) -> Unit = { mention ->
         with(ChatTheme.componentFactory) {
             MentionListItem(
-                mention = mention,
-                modifier = Modifier,
-                currentUser = currentUser,
-                onClick = onItemClick,
+                params = MentionListItemParams(
+                    mention = mention,
+                    currentUser = currentUser,
+                    onClick = onItemClick,
+                ),
             )
         }
     },
     loadingIndicator: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
-            MentionListLoadingIndicator(
-                modifier = Modifier,
-            )
+            MentionListLoadingIndicator(params = MentionListLoadingIndicatorParams())
         }
     },
     emptyContent: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
-            MentionListEmptyContent(
-                modifier = Modifier,
-            )
+            MentionListEmptyContent(params = MentionListEmptyContentParams())
         }
     },
     loadingItemContent: @Composable LazyItemScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
-            MentionListLoadingItem(
-                modifier = Modifier,
-            )
+            MentionListLoadingItem(params = MentionListLoadingItemParams())
         }
     },
     pullToRefreshIndicator: @Composable BoxScope.(
@@ -204,9 +200,10 @@ public fun MentionList(
         if (pullToRefreshEnabled) {
             with(ChatTheme.componentFactory) {
                 MentionListPullToRefreshIndicator(
-                    modifier = Modifier,
-                    pullToRefreshState = pullToRefreshState,
-                    isRefreshing = isRefreshing,
+                    params = MentionListPullToRefreshIndicatorParams(
+                        pullToRefreshState = pullToRefreshState,
+                        isRefreshing = isRefreshing,
+                    ),
                 )
             }
         }

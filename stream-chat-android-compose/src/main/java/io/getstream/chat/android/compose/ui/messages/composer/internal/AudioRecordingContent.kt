@@ -64,6 +64,9 @@ import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlide
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageComposerAudioRecordingHoldContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerAudioRecordingLockedContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerAudioRecordingOverviewContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
@@ -77,20 +80,26 @@ internal fun AudioRecordingContent(
 ) {
     when (recordingState) {
         is RecordingState.Hold -> ChatTheme.componentFactory.MessageComposerAudioRecordingHoldContent(
-            state = recordingState,
-            modifier = modifier,
+            params = MessageComposerAudioRecordingHoldContentParams(
+                state = recordingState,
+                modifier = modifier,
+            ),
         )
 
         is RecordingState.Locked -> ChatTheme.componentFactory.MessageComposerAudioRecordingLockedContent(
-            state = recordingState,
-            recordingActions = recordingActions,
-            modifier = modifier,
+            params = MessageComposerAudioRecordingLockedContentParams(
+                state = recordingState,
+                recordingActions = recordingActions,
+                modifier = modifier,
+            ),
         )
 
         is RecordingState.Overview -> ChatTheme.componentFactory.MessageComposerAudioRecordingOverviewContent(
-            state = recordingState,
-            recordingActions = recordingActions,
-            modifier = modifier,
+            params = MessageComposerAudioRecordingOverviewContentParams(
+                state = recordingState,
+                recordingActions = recordingActions,
+                modifier = modifier,
+            ),
         )
 
         is RecordingState.Complete,

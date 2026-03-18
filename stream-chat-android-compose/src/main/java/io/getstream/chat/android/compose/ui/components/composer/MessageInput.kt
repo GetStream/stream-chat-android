@@ -41,7 +41,13 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.ui.theme.LocalChatConfig
 import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentsParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerEditIndicatorParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerInputCenterBottomContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerInputCenterContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerInputLeadingContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerInputTrailingContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerLinkPreviewParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerQuotedMessageParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.Attachment
@@ -126,7 +132,6 @@ public fun MessageInput(
         ) {
             ChatTheme.componentFactory.MessageComposerInputLeadingContent(
                 params = MessageComposerInputLeadingContentParams(
-                    modifier = Modifier,
                     state = messageComposerState,
                     onActiveCommandDismiss = onActiveCommandDismiss,
                 ),
@@ -136,14 +141,16 @@ public fun MessageInput(
             if (!isRecording) {
                 Column(modifier = Modifier.weight(1f)) {
                     ChatTheme.componentFactory.MessageComposerInputCenterContent(
-                        modifier = Modifier,
-                        state = messageComposerState,
-                        onValueChange = onValueChange,
+                        params = MessageComposerInputCenterContentParams(
+                            state = messageComposerState,
+                            onValueChange = onValueChange,
+                        ),
                     )
                     ChatTheme.componentFactory.MessageComposerInputCenterBottomContent(
-                        modifier = Modifier,
-                        state = messageComposerState,
-                        onAlsoSendToChannelChange = onAlsoSendToChannelChange,
+                        params = MessageComposerInputCenterBottomContentParams(
+                            state = messageComposerState,
+                            onAlsoSendToChannelChange = onAlsoSendToChannelChange,
+                        ),
                     )
                 }
             } else {
@@ -151,9 +158,11 @@ public fun MessageInput(
             }
 
             ChatTheme.componentFactory.MessageComposerInputTrailingContent(
-                state = messageComposerState,
-                recordingActions = recordingActions,
-                onSendClick = onSendClick,
+                params = MessageComposerInputTrailingContentParams(
+                    state = messageComposerState,
+                    recordingActions = recordingActions,
+                    onSendClick = onSendClick,
+                ),
             )
         }
     }
@@ -188,19 +197,21 @@ private fun MessageInputTop(
         ) {
             if (showEdit) {
                 ChatTheme.componentFactory.MessageComposerEditIndicator(
-                    modifier = Modifier,
-                    state = messageComposerState,
-                    editMessage = activeAction.message,
-                    onCancelClick = onCancelActionClick,
+                    params = MessageComposerEditIndicatorParams(
+                        state = messageComposerState,
+                        editMessage = activeAction.message,
+                        onCancelClick = onCancelActionClick,
+                    ),
                 )
             }
 
             if (showQuoted) {
                 ChatTheme.componentFactory.MessageComposerQuotedMessage(
-                    modifier = Modifier,
-                    state = messageComposerState,
-                    quotedMessage = activeAction.message,
-                    onCancelClick = onCancelActionClick,
+                    params = MessageComposerQuotedMessageParams(
+                        state = messageComposerState,
+                        quotedMessage = activeAction.message,
+                        onCancelClick = onCancelActionClick,
+                    ),
                 )
             }
 
@@ -215,10 +226,11 @@ private fun MessageInputTop(
 
             if (showLinkPreview) {
                 ChatTheme.componentFactory.MessageComposerLinkPreview(
-                    modifier = Modifier,
-                    linkPreview = linkPreviews.first(),
-                    onContentClick = onLinkPreviewClick,
-                    onCancelClick = onCancelLinkPreviewClick,
+                    params = MessageComposerLinkPreviewParams(
+                        linkPreview = linkPreviews.first(),
+                        onContentClick = onLinkPreviewClick,
+                        onCancelClick = onCancelLinkPreviewClick,
+                    ),
                 )
             }
         }

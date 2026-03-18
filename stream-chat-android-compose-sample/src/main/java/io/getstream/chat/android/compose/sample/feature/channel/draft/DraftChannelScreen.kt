@@ -30,6 +30,7 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageListEmptyContentParams
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -81,9 +82,11 @@ private fun DraftChannelContent(
             containerColor = ChatTheme.colors.backgroundCoreApp,
         ) { padding ->
             ChatTheme.componentFactory.MessageListEmptyContent(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize(),
+                params = MessageListEmptyContentParams(
+                    modifier = Modifier
+                        .padding(padding)
+                        .fillMaxSize(),
+                ),
             )
         }
     }

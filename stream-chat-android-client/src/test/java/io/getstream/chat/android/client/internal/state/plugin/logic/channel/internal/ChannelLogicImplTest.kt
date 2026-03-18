@@ -1384,6 +1384,97 @@ internal class ChannelLogicImplTest {
             // Then
             verify(stateImpl).setPendingMessages(listOf(pendingMsg))
         }
+
+        @Test
+        fun `should upsert messages when state has messages and incoming are contiguous`() = runTest {
+            val existingMsg = randomMessage(id = "existing", createdAt = Date(1000L), createdLocallyAt = null)
+            whenever(stateImpl.messages).thenReturn(MutableStateFlow(listOf(existingMsg)))
+            val incomingMsg = randomMessage(id = "new", createdAt = Date(500L), createdLocallyAt = null)
+            val channel = randomChannel(
+                id = "123",
+                type = "messaging",
+                messages = listOf(incomingMsg),
+                members = emptyList(),
+                watchers = emptyList(),
+                read = emptyList(),
+                memberCount = 0,
+                watcherCount = 0,
+            )
+            sut.updateDataForChannel(channel = channel, messageLimit = 30)
+            verify(stateImpl).upsertMessages(listOf(incomingMsg))
+            verify(stateImpl, never()).setMessages(any())
+            verify(stateImpl, never()).upsertCachedLatestMessages(any())
+            verify(stateImpl, never()).setEndOfNewerMessages(any())
+        }
+
+        @Test
+        fun `should cache incoming and signal newer messages when gap is detected`() = runTest {
+            val existingMsg = randomMessage(id = "old", createdAt = Date(1000L), createdLocallyAt = null)
+            whenever(stateImpl.messages).thenReturn(MutableStateFlow(listOf(existingMsg)))
+            val incomingMsg = randomMessage(id = "new", createdAt = Date(5000L), createdLocallyAt = null)
+            val channel = randomChannel(
+                id = "123",
+                type = "messaging",
+                messages = listOf(incomingMsg),
+                members = emptyList(),
+                watchers = emptyList(),
+                read = emptyList(),
+                memberCount = 0,
+                watcherCount = 0,
+            )
+            sut.updateDataForChannel(channel = channel, messageLimit = 30)
+            verify(stateImpl).upsertCachedLatestMessages(listOf(incomingMsg))
+            verify(stateImpl).setInsideSearch(true)
+            verify(stateImpl).setEndOfNewerMessages(false)
+            verify(stateImpl, never()).setMessages(any())
+            verify(stateImpl, never()).upsertMessages(any())
+            verify(stateImpl, never()).setEndOfOlderMessages(any())
+        }
+
+        @Test
+        fun `should refresh cached latest messages when already inside search`() = runTest {
+            val existingMsg = randomMessage(id = "mid", createdAt = Date(1000L), createdLocallyAt = null)
+            whenever(stateImpl.messages).thenReturn(MutableStateFlow(listOf(existingMsg)))
+            whenever(stateImpl.insideSearch).thenReturn(MutableStateFlow(true))
+            val incomingMsg = randomMessage(id = "latest", createdAt = Date(5000L), createdLocallyAt = null)
+            val channel = randomChannel(
+                id = "123",
+                type = "messaging",
+                messages = listOf(incomingMsg),
+                members = emptyList(),
+                watchers = emptyList(),
+                read = emptyList(),
+                memberCount = 0,
+                watcherCount = 0,
+            )
+            sut.updateDataForChannel(channel = channel, messageLimit = 30)
+            verify(stateImpl).upsertCachedLatestMessages(listOf(incomingMsg))
+            verify(stateImpl, never()).setMessages(any())
+            verify(stateImpl, never()).upsertMessages(any())
+            verify(stateImpl, never()).setInsideSearch(any())
+            verify(stateImpl, never()).setEndOfNewerMessages(any())
+        }
+
+        @Test
+        fun `should replace messages when shouldRefreshMessages is true regardless of existing state`() = runTest {
+            val existingMsg = randomMessage(id = "old", createdAt = Date(1000L), createdLocallyAt = null)
+            whenever(stateImpl.messages).thenReturn(MutableStateFlow(listOf(existingMsg)))
+            val incomingMsg = randomMessage(id = "new", createdAt = Date(5000L), createdLocallyAt = null)
+            val channel = randomChannel(
+                id = "123",
+                type = "messaging",
+                messages = listOf(incomingMsg),
+                members = emptyList(),
+                watchers = emptyList(),
+                read = emptyList(),
+                memberCount = 0,
+                watcherCount = 0,
+            )
+            sut.updateDataForChannel(channel = channel, messageLimit = 30, shouldRefreshMessages = true)
+            verify(stateImpl).setMessages(listOf(incomingMsg))
+            verify(stateImpl, never()).upsertMessages(any())
+            verify(stateImpl, never()).upsertCachedLatestMessages(any())
+        }
     }
 
     // endregion

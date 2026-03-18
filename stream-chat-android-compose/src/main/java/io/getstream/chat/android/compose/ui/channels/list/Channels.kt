@@ -34,6 +34,9 @@ import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.LoadingFooter
+import io.getstream.chat.android.compose.ui.theme.ChannelListDividerItemParams
+import io.getstream.chat.android.compose.ui.theme.ChannelListHelperContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelListLoadingMoreItemContentParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -61,18 +64,18 @@ public fun Channels(
     contentPadding: PaddingValues = PaddingValues(),
     helperContent: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
-            ChannelListHelperContent()
+            ChannelListHelperContent(params = ChannelListHelperContentParams())
         }
     },
     loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
-            ChannelListLoadingMoreItemContent()
+            ChannelListLoadingMoreItemContent(params = ChannelListLoadingMoreItemContentParams())
         }
     },
     itemContent: @Composable LazyItemScope.(ItemState) -> Unit,
     divider: @Composable LazyItemScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
-            ChannelListDividerItem()
+            ChannelListDividerItem(params = ChannelListDividerItemParams())
         }
     },
 ) {

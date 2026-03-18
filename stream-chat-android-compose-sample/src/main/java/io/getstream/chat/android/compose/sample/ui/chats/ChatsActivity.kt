@@ -75,6 +75,9 @@ import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatConfig
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.CompoundComponentFactory
+import io.getstream.chat.android.compose.ui.theme.DirectChannelInfoTopBarParams
+import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoAddMembersButtonParams
+import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoTopBarParams
 import io.getstream.chat.android.compose.ui.theme.TranslationConfig
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.AdaptiveLayoutInfo
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneDestination
@@ -350,14 +353,10 @@ class ChatsActivity : ComponentActivity() {
                     object : ChatComponentFactory by it {
                         @OptIn(ExperimentalMaterial3Api::class)
                         @Composable
-                        override fun DirectChannelInfoTopBar(
-                            headerState: ChannelHeaderViewState,
-                            listState: LazyListState,
-                            onNavigationIconClick: () -> Unit,
-                        ) {
+                        override fun DirectChannelInfoTopBar(params: DirectChannelInfoTopBarParams) {
                             TopAppBar(
                                 title = {},
-                                navigationIcon = { CloseButton(onClick = onNavigationIconClick) },
+                                navigationIcon = { CloseButton(onClick = params.onNavigationIconClick) },
                                 colors = TopAppBarDefaults.topAppBarColors(
                                     containerColor = ChatTheme.colors.backgroundElevationElevation1,
                                 ),
@@ -411,19 +410,13 @@ class ChatsActivity : ComponentActivity() {
                 factory = {
                     object : ChatComponentFactory by it {
                         @Composable
-                        override fun GroupChannelInfoTopBar(
-                            headerState: ChannelHeaderViewState,
-                            infoState: ChannelInfoViewState,
-                            listState: LazyListState,
-                            onNavigationIconClick: () -> Unit,
-                            onAddMembersClick: () -> Unit,
-                        ) {
+                        override fun GroupChannelInfoTopBar(params: GroupChannelInfoTopBarParams) {
                             GroupChannelInfoTopBar(
-                                headerState = headerState,
-                                infoState = infoState,
-                                listState = listState,
-                                navigationIcon = { CloseButton(onClick = onNavigationIconClick) },
-                                onAddMembersClick = onAddMembersClick,
+                                headerState = params.headerState,
+                                infoState = params.infoState,
+                                listState = params.listState,
+                                navigationIcon = { CloseButton(onClick = params.onNavigationIconClick) },
+                                onAddMembersClick = params.onAddMembersClick,
                             )
                         }
                     }
@@ -525,7 +518,7 @@ class ChatsActivity : ComponentActivity() {
                         infoState.options.contains(ChannelInfoViewState.Content.Option.AddMember)
                     ) {
                         ChatTheme.componentFactory.GroupChannelInfoAddMembersButton(
-                            onClick = onAddMembersClick,
+                            params = GroupChannelInfoAddMembersButtonParams(onClick = onAddMembersClick),
                         )
                     }
                 },
