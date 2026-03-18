@@ -16,10 +16,12 @@
 
 package io.getstream.chat.android.client.api2.mapping
 
+import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
+import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
@@ -207,6 +209,7 @@ internal class DtoMapping(
     internal fun PrivacySettings.toDto(): PrivacySettingsDto = PrivacySettingsDto(
         typing_indicators = typingIndicators?.toDto(),
         read_receipts = readReceipts?.toDto(),
+        delivery_receipts = deliveryReceipts?.toDto(),
     )
 
     /**
@@ -220,6 +223,13 @@ internal class DtoMapping(
      * Maps the domain [ReadReceipts] model to a network [ReadReceiptsDto] model.
      */
     internal fun ReadReceipts.toDto(): ReadReceiptsDto = ReadReceiptsDto(
+        enabled = enabled,
+    )
+
+    /**
+     * Maps the domain [DeliveryReceipts] model to a network [DeliveryReceiptsDto] model.
+     */
+    internal fun DeliveryReceipts.toDto(): DeliveryReceiptsDto = DeliveryReceiptsDto(
         enabled = enabled,
     )
 

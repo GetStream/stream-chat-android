@@ -64,7 +64,7 @@ import kotlinx.coroutines.channels.Channel as CoroutineChannel
  * @param channelState Provides the current [ChannelState] for channel-specific configuration.
  * @param savedStateHandle Persists picker tab and selection state across process death.
  */
-public class AttachmentsPickerViewModel(
+public class AttachmentsPickerViewModel @JvmOverloads constructor(
     private val storageHelper: AttachmentStorageHelper,
     channelState: StateFlow<ChannelState?>,
     private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
