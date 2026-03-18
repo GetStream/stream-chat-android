@@ -119,7 +119,7 @@ public open class DefaultMessageComposerCommandSuggestionsContent :
         binding.commandsTitleTextView.setTextStyle(style.commandSuggestionsTitleTextStyle)
         binding.commandsTitleTextView.setStartDrawable(
             style.commandSuggestionsTitleIconDrawable.applyTint(
-                tintColor = style.commandSuggestionsTitleIconDrawableTintColor ?: style.buttonIconDrawableTintColor,
+                tintColor = style.commandSuggestionsTitleIconDrawableTintColor,
             ),
         )
     }

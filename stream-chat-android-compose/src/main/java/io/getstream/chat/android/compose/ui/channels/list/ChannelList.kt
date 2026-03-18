@@ -50,7 +50,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.EmptyContent
-import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.theme.ChannelListDividerItemParams
@@ -467,18 +466,6 @@ internal fun DefaultChannelSearchEmptyContent(
         painter = painterResource(id = R.drawable.stream_compose_empty_search_results),
         text = stringResource(R.string.stream_compose_channel_list_empty_search_results, searchQuery),
     )
-}
-
-/**
- * Represents the default item divider in channel items.
- */
-@Deprecated(
-    message = "This function is deprecated and will be removed in the future.",
-    level = DeprecationLevel.WARNING,
-)
-@Composable
-public fun DefaultChannelItemDivider() {
-    StreamHorizontalDivider()
 }
 
 /**

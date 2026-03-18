@@ -86,11 +86,6 @@ internal class ChatNotificationHandler(
         showNotificationInternal(notification)
     }
 
-    override fun showNotification(channel: Channel, message: Message) {
-        // Only possible type is message.new
-        showNotificationInternal(ChatNotification.MessageNew(channel, message))
-    }
-
     override fun onPushMessage(message: PushMessage): Boolean = onNewPushMessage(message)
 
     private fun showNotificationInternal(notification: ChatNotification) {

@@ -82,25 +82,6 @@ internal class DraftMessageListenerDatabase(
      * Method called when a request to query draft messages in the API happens
      *
      * @param result The result of the query draft messages request
-     * @param offset The offset of the query
-     * @param limit The limit of the query
-     */
-    override suspend fun onQueryDraftMessagesResult(
-        result: Result<List<DraftMessage>>,
-        offset: Int?,
-        limit: Int?,
-    ) {
-        result.onSuccessSuspend { draftMessages ->
-            draftMessages.forEach { draftMessage ->
-                messageRepository.insertDraftMessage(draftMessage)
-            }
-        }
-    }
-
-    /**
-     * Method called when a request to query draft messages in the API happens
-     *
-     * @param result The result of the query draft messages request
      * @param filter The filter object used in the query
      * @param limit The limit of the query
      * @param next The next page token

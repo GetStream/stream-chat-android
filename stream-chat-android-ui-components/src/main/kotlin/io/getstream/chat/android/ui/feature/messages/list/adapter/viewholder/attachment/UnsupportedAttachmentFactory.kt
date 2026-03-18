@@ -27,7 +27,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 import io.getstream.chat.android.ui.databinding.StreamUiUnsupportedAttachmentViewBinding
 import io.getstream.chat.android.ui.feature.messages.list.UnsupportedAttachmentViewStyle
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListeners
 import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
@@ -52,7 +51,7 @@ public class UnsupportedAttachmentFactory : AttachmentFactory {
      * Creates fallback UI that represents unsupported attachments.
      *
      * @param message The message containing custom attachments that we are going to render.
-     * @param listeners [MessageListListenerContainer] with listeners for the message list.
+     * @param listeners [MessageListListeners] with listeners for the message list.
      * @param parent The parent View where the attachment content view is supposed to be placed.
      * @return An inner ViewHolder with the fallback attachment content view.
      */

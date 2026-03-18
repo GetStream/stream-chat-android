@@ -30,7 +30,6 @@ import io.getstream.chat.android.client.api.state.ChannelsStateData
 import io.getstream.chat.android.client.api.state.Event
 import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.api.state.QueryChannelsState
-import io.getstream.chat.android.client.api.state.globalState
 import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.client.api.state.queryChannelsAsState
 import io.getstream.chat.android.client.errors.extractCause
@@ -97,46 +96,6 @@ public class ChannelListViewModel(
     private val chatClient: ChatClient = ChatClient.instance(),
     private val globalState: Flow<GlobalState> = chatClient.globalStateFlow,
 ) : ViewModel() {
-
-    /**
-     * ViewModel class for [ChannelListView].
-     * Responsible for keeping the channels list up to date.
-     * Can be bound to the view using [ChannelListViewModel.bindView] function.
-     *
-     * @param filter Filter for querying channels, should never be empty.
-     * @param sort Defines the ordering of the channels.
-     * @param limit The maximum number of channels to fetch.
-     * @param messageLimit The number of messages to fetch for each channel.
-     * When `null`, the server-side default is used.
-     * @param memberLimit The number of members to fetch per channel.
-     * When `null`, the server-side default is used.
-     * @param isDraftMessagesEnabled Enables or disables draft messages.
-     * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] that will be used to create [ChatEventHandler].
-     * @param chatClient Entry point for all low-level operations.
-     * @param globalState The current [GlobalState].
-     */
-    @Deprecated("Use the constructor which accepts a Flow<GlobalState> for the globalState instead.")
-    public constructor(
-        filter: FilterObject? = null,
-        sort: QuerySorter<Channel> = DEFAULT_SORT,
-        limit: Int = DEFAULT_CHANNEL_LIMIT,
-        messageLimit: Int? = null,
-        memberLimit: Int? = null,
-        isDraftMessagesEnabled: Boolean = true,
-        chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
-        chatClient: ChatClient = ChatClient.instance(),
-        globalState: GlobalState = chatClient.globalState,
-    ) : this(
-        filter = filter,
-        sort = sort,
-        limit = limit,
-        messageLimit = messageLimit,
-        memberLimit = memberLimit,
-        isDraftMessagesEnabled = isDraftMessagesEnabled,
-        chatEventHandlerFactory = chatEventHandlerFactory,
-        chatClient = chatClient,
-        globalState = MutableStateFlow(globalState),
-    )
 
     private var queryJob: Job? = null
 

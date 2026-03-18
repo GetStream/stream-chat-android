@@ -105,10 +105,10 @@ class Push {
                 }
             }
 
-            override fun showNotification(channel: Channel, message: Message) {
-                val notification = NotificationCompat.Builder(context, notificationChannelId)
+            override fun showNotification(notification: ChatNotification) {
+                val androidNotification = NotificationCompat.Builder(context, notificationChannelId)
                     .build()
-                notificationManager.notify(notificationId, notification)
+                notificationManager.notify(notificationId, androidNotification)
             }
 
             override fun dismissChannelNotifications(channelType: String, channelId: String) {

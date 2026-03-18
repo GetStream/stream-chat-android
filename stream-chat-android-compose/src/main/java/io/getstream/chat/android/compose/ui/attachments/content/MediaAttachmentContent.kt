@@ -104,78 +104,6 @@ import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 /**
  * Displays a preview of single or multiple video or attachments.
  *
- * @param attachmentState The state of the attachment, holding the root modifier, the message
- * and the onLongItemClick handler.
- * @param modifier The modifier used for styling.
- * @param maximumNumberOfPreviewedItems The maximum number of thumbnails that can be displayed
- * in a group when previewing Media attachments in the message list.
- * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the message
- * by deleting an attachment contained within it. Set to false by default.
- * @param onItemClick Lambda called when an item gets clicked.
- * @param itemOverlayContent Represents the content overlaid above individual items.
- * By default it is used to display a play button over video previews.
- */
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-@Deprecated(
-    message = "Use the overload that takes onItemClick as a single parameter of type MediaAttachmentClickData.",
-    replaceWith = ReplaceWith(
-        "MediaAttachmentContent(" +
-            "state = attachmentState, " +
-            "modifier = modifier, " +
-            "maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems, " +
-            "skipEnrichUrl = skipEnrichUrl, " +
-            "onItemClick = onItemClick, " +
-            "itemOverlayContent = itemOverlayContent" +
-            ")",
-    ),
-    level = DeprecationLevel.WARNING,
-)
-public fun MediaAttachmentContent(
-    attachmentState: AttachmentState,
-    modifier: Modifier = Modifier,
-    maximumNumberOfPreviewedItems: Int = 4,
-    skipEnrichUrl: Boolean = false,
-    onItemClick: (
-        mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<Input, MediaGalleryPreviewResult?>,
-        message: Message,
-        attachmentPosition: Int,
-        videoThumbnailsEnabled: Boolean,
-        downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
-        downloadRequestInterceptor: DownloadRequestInterceptor,
-        streamCdnImageResizing: StreamCdnImageResizing,
-        skipEnrichUrl: Boolean,
-    ) -> Unit = ::onMediaAttachmentContentItemClick,
-    itemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
-        if (attachmentType == AttachmentType.VIDEO) {
-            PlayButton(PlayButtonSize.Medium)
-        }
-    },
-) {
-    MediaAttachmentContent(
-        state = attachmentState,
-        modifier = modifier,
-        maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
-        skipEnrichUrl = skipEnrichUrl,
-        onItemClick = {
-            onItemClick(
-                it.mediaGalleryPreviewLauncher,
-                it.message,
-                it.attachmentPosition,
-                it.videoThumbnailsEnabled,
-                it.downloadAttachmentUriGenerator,
-                it.downloadRequestInterceptor,
-                it.streamCdnImageResizing,
-                it.skipEnrichUrl,
-            )
-        },
-        itemOverlayContent = itemOverlayContent,
-    )
-}
-
-/**
- * Displays a preview of single or multiple video or attachments.
- *
  * @param state The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
  * @param modifier The modifier used for styling.
@@ -791,7 +719,7 @@ internal fun SingleMediaAttachmentContent() {
     }
     CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
         MediaAttachmentContent(
-            attachmentState = AttachmentState(
+            state = AttachmentState(
                 message = Message(
                     text = "Hello",
                     attachments = listOf(
@@ -842,7 +770,7 @@ internal fun MultipleMediaAttachmentContent() {
             ),
         )
         MediaAttachmentContent(
-            attachmentState = AttachmentState(
+            state = AttachmentState(
                 message = Message(attachments = attachments),
             ),
         )

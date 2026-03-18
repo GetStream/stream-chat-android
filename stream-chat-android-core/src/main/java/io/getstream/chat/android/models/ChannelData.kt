@@ -81,68 +81,6 @@ public data class ChannelData(
         }
 
     /**
-     * Creates a [ChannelData] entity from a [Channel] object.
-     * Keeps existing [ChannelData.ownCapabilities] if the [Channel] object comes with an empty set of capabilities.
-     *
-     * @param channel The [Channel] object to convert.
-     * @param currentOwnCapabilities Set of existing own capabilities stored for the Channel.
-     */
-    @Deprecated(
-        message = "Use Channel.toChannelData instead",
-        replaceWith = ReplaceWith("Channel.toChannelData()"),
-    )
-    public constructor(channel: Channel, currentOwnCapabilities: Set<String>) : this(
-        type = channel.type,
-        id = channel.id,
-        name = channel.name,
-        image = channel.image,
-        frozen = channel.frozen,
-        cooldown = channel.cooldown,
-        createdAt = channel.createdAt,
-        updatedAt = channel.updatedAt,
-        deletedAt = channel.deletedAt,
-        memberCount = channel.memberCount,
-        extraData = channel.extraData,
-        createdBy = channel.createdBy,
-        team = channel.team,
-        ownCapabilities = channel.ownCapabilities.takeIf { ownCapabilities -> ownCapabilities.isNotEmpty() }
-            ?: currentOwnCapabilities,
-        membership = channel.membership,
-        draft = channel.draftMessage,
-        messageCount = channel.messageCount,
-        pushPreference = channel.pushPreference,
-        filterTags = channel.filterTags,
-        lastMessageAt = channel.lastMessageAt,
-    )
-
-    @Deprecated(
-        message = "Use Channel.toChannelData instead",
-        replaceWith = ReplaceWith(
-            "Channel.toChannelData(messages, cachedLatestMessages, members, reads, " +
-                "watchers, watcherCount, insideSearch)",
-        ),
-    )
-    @Suppress("LongParameterList")
-    public fun toChannel(
-        messages: List<Message>,
-        cachedLatestMessages: List<Message>,
-        members: List<Member>,
-        reads: List<ChannelUserRead>,
-        watchers: List<User>,
-        watcherCount: Int,
-        insideSearch: Boolean,
-        channelLastMessageAt: Date?,
-    ): Channel = toChannel(
-        messages = messages,
-        cachedLatestMessages = cachedLatestMessages,
-        members = members,
-        reads = reads,
-        watchers = watchers,
-        watcherCount = watcherCount,
-        insideSearch = insideSearch,
-    )
-
-    /**
      * Converts a [ChannelData] entity to a [Channel] based on additional information.
      *
      * @param messages The list of channel's messages.

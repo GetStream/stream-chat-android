@@ -34,31 +34,6 @@ public interface CreateChannelListener {
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
-     * @param memberIds The list of members' ids.
-     * @param extraData Map of key-value pairs that let you store extra data
-     * @param currentUser The currently logged in user.
-     */
-    @Deprecated(
-        "Use CreateChannelListener.onCreateChannelRequest(channelType, channelId, request, currentUser) instead",
-        replaceWith = ReplaceWith(
-            "onCreateChannelRequest(String, String, CreateChannelParams, User)",
-            "io.getstream.chat.android.client.plugin.listeners.CreateChannelListener",
-        ),
-        level = DeprecationLevel.WARNING,
-    )
-    public suspend fun onCreateChannelRequest(
-        channelType: String,
-        channelId: String,
-        memberIds: List<String>,
-        extraData: Map<String, Any>,
-        currentUser: User,
-    )
-
-    /**
-     * A method called before making an API call to create a channel.
-     *
-     * @param channelType The channel type. ie messaging.
-     * @param channelId The channel id. ie 123.
      * @param params The request holding the required data for creating a channel.
      * @param currentUser The currently logged in user.
      */

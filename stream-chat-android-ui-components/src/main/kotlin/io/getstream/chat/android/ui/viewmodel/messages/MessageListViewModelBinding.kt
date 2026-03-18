@@ -60,7 +60,7 @@ public fun MessageListViewModel.bindView(
     }
 
     channel.observe(lifecycleOwner) {
-        view.init(it)
+        view.updateChannel(it)
     }
     view.setEndRegionReachedHandler { onEvent(EndRegionReached) }
     view.setBottomEndRegionReachedHandler { messageId -> onEvent(BottomEndRegionReached(messageId)) }
@@ -98,14 +98,24 @@ public fun MessageListViewModel.bindView(
             onEvent(DownloadAttachment(downloadAttachmentCall))
         }
     }
-    view.setReplyMessageClickListener { replyTo ->
+    view.setOnReplyMessageClickListener { replyTo ->
         onEvent(
             MessageListViewModel.Event.ShowMessage(
                 messageId = replyTo.id,
                 parentMessageId = replyTo.parentId,
             ),
         )
+        true
     }
+    // TODO check
+    // view.setReplyMessageClickListener { replyTo ->
+    //     onEvent(
+    //         MessageListViewModel.Event.ShowMessage(
+    //             messageId = replyTo.id,
+    //             parentMessageId = replyTo.parentId,
+    //         ),
+    //     )
+    // }
     view.setOnScrollToBottomHandler { scrollToBottom { view.scrollToBottom() } }
     view.setMessageUserBlockHandler { message ->
         onEvent(

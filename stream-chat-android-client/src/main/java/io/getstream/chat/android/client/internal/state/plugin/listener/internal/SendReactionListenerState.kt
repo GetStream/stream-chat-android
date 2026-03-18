@@ -41,30 +41,6 @@ internal class SendReactionListenerState(
     private val clientState: ClientState,
 ) : SendReactionListener {
 
-    /**
-     * A method called before making an API call to send the reaction.
-     * runs optimistic update if the message and channel can be found in memory.
-     *
-     * @param cid The full channel id, i.e. "messaging:123".
-     * @param reaction The [Reaction] to send.
-     * @param enforceUnique Flag to determine whether the reaction should replace other ones added by the current user.
-     * @param currentUser The currently logged in user.
-     */
-    @Deprecated(
-        "This method will be removed in the future. " +
-            "Use SendReactionListener#onSendReactionRequest(cid, reaction, enforceUnique, skipPush, currentUser) " +
-            "instead. For backwards compatibility, this method is still called internally by the new, non-deprecated " +
-            "method.",
-    )
-    override suspend fun onSendReactionRequest(
-        cid: String?,
-        reaction: Reaction,
-        enforceUnique: Boolean,
-        currentUser: User,
-    ) {
-        saveReactionInState(cid, reaction, enforceUnique, null, currentUser)
-    }
-
     override suspend fun onSendReactionRequest(
         cid: String?,
         reaction: Reaction,
@@ -107,35 +83,6 @@ internal class SendReactionListenerState(
                     result = result,
                 ),
             )
-        }
-    }
-
-    /**
-     * Checks if current user is set and reaction contains required data.
-     *
-     * @param currentUser The currently logged in user.
-     * @param reaction The [Reaction] to send.
-     */
-    @Deprecated(
-        "This method will be removed in the future. " +
-            "Use SendReactionListener#onSendReactionPrecondition(cid, currentUser, reaction) instead." +
-            "For backwards compatibility, this method is still called internally by the new, non-deprecated method.",
-    )
-    override suspend fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> {
-        return when {
-            currentUser == null -> {
-                Result.Failure(Error.GenericError(message = "Current user is null!"))
-            }
-            reaction.messageId.isBlank() || reaction.type.isBlank() -> {
-                Result.Failure(
-                    Error.GenericError(
-                        message = "Reaction::messageId and Reaction::type cannot be empty!",
-                    ),
-                )
-            }
-            else -> {
-                Result.Success(Unit)
-            }
         }
     }
 

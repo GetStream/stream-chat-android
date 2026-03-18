@@ -86,7 +86,7 @@ import io.getstream.chat.android.ui.feature.gallery.toAttachment
 import io.getstream.chat.android.ui.feature.messages.dialog.ModeratedMessageDialogFragment
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewHolderFactory
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainerImpl
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenersImpl
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.MessageListItemAdapter
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.feature.messages.list.background.MessageBackgroundFactory
@@ -483,7 +483,7 @@ public class MessageListView : ConstraintLayout {
     /**
      * Handles attachment clicks which by default open the attachment preview.
      *
-     * Can be customized by [setAttachmentClickListener].
+     * Can be customized by [setOnAttachmentClickListener].
      *
      * In case the attachments are being uploaded, they cannot be opened for preview until all of the attachments within
      * a message are uploaded.
@@ -619,7 +619,7 @@ public class MessageListView : ConstraintLayout {
         } ?: false
     }
 
-    private val listenerContainer = MessageListListenerContainerImpl(
+    private val listenerContainer = MessageListListenersImpl(
         messageClickListener = defaultMessageClickListener,
         messageLongClickListener = defaultMessageLongClickListener,
         messageRetryListener = defaultMessageRetryListener,
@@ -878,21 +878,6 @@ public class MessageListView : ConstraintLayout {
      * @param channel The channel object.
      */
     public fun updateChannel(channel: Channel) {
-        this.channel = channel
-        initAdapter()
-    }
-
-    /**
-     * Initializes the message list view with the [Channel] object.
-     *
-     * @param channel The channel object.
-     */
-    @Deprecated(
-        message = "Use updateChannel instead",
-        replaceWith = ReplaceWith("updateChannel(channel)"),
-        level = DeprecationLevel.WARNING,
-    )
-    public fun init(channel: Channel) {
         this.channel = channel
         initAdapter()
     }
@@ -1306,7 +1291,7 @@ public class MessageListView : ConstraintLayout {
                         isThreadStart = isThreadStart,
                         hasNewMessages = listItem.hasNewMessages,
                         isInitialList = isOldListEmpty && filteredList.isNotEmpty(),
-                        endOfNewMessagesReached = listItem.areNewestMessagesLoaded,
+                        endOfNewMessagesReached = listItem.endOfNewMessagesReached,
                     )
                 }
             }
@@ -1357,25 +1342,6 @@ public class MessageListView : ConstraintLayout {
     }
 
     //region Listener setters
-    /**
-     * Sets the message click listener to be used by MessageListView.
-     *
-     * @param messageClickListener The listener to use. If null, the default will be used instead.
-     */
-    @Deprecated(
-        message = "Use setOnMessageClickListener instead",
-        replaceWith = ReplaceWith("setOnMessageClickListener(listener)"),
-        level = DeprecationLevel.WARNING,
-    )
-    public fun setMessageClickListener(messageClickListener: MessageClickListener?) {
-        val adapter = messageClickListener?.let {
-            OnMessageClickListener { message ->
-                it.onMessageClick(message)
-                true
-            }
-        }
-        setOnMessageClickListener(adapter)
-    }
 
     /**
      * Sets the message click listener to be used by MessageListView.
@@ -1440,26 +1406,6 @@ public class MessageListView : ConstraintLayout {
     /**
      * Sets the message long click listener to be used by MessageListView.
      *
-     * @param messageLongClickListener The listener to use. If null, the default will be used instead.
-     */
-    @Deprecated(
-        message = "Use setOnMessageLongClickListener instead",
-        replaceWith = ReplaceWith("setOnMessageLongClickListener(listener)"),
-        level = DeprecationLevel.WARNING,
-    )
-    public fun setMessageLongClickListener(messageLongClickListener: MessageLongClickListener?) {
-        val adapter = messageLongClickListener?.let {
-            OnMessageLongClickListener { message ->
-                it.onMessageLongClick(message)
-                true
-            }
-        }
-        setOnMessageLongClickListener(adapter)
-    }
-
-    /**
-     * Sets the message long click listener to be used by MessageListView.
-     *
      * @param listener The listener to use. If null, the default will be used instead.
      */
     public fun setOnMessageLongClickListener(listener: OnMessageLongClickListener?) {
@@ -1475,52 +1421,10 @@ public class MessageListView : ConstraintLayout {
     /**
      * Sets the moderated message long click listener to be used by MessageListView.
      *
-     * @param moderatedMessageLongClickListener The listener to use. If null, the default will be used instead.
-     */
-    @Deprecated(
-        message = "Use setOnModeratedMessageLongClickListener instead",
-        replaceWith = ReplaceWith("setOnModeratedMessageLongClickListener(listener)"),
-        level = DeprecationLevel.WARNING,
-    )
-    public fun setModeratedMessageLongClickListener(
-        moderatedMessageLongClickListener: ModeratedMessageLongClickListener?,
-    ) {
-        val adapter = moderatedMessageLongClickListener?.let {
-            OnModeratedMessageLongClickListener { message ->
-                it.onModeratedMessageLongClick(message)
-                true
-            }
-        }
-        setOnModeratedMessageLongClickListener(adapter)
-    }
-
-    /**
-     * Sets the moderated message long click listener to be used by MessageListView.
-     *
      * @param listener The listener to use. If null, the default will be used instead.
      */
     public fun setOnModeratedMessageLongClickListener(listener: OnModeratedMessageLongClickListener?) {
         this.moderatedMessageLongClickListener = listener
-    }
-
-    /**
-     * Sets the message retry listener to be used by MessageListView.
-     *
-     * @param messageRetryListener The listener to use. If null, the default will be used instead.
-     */
-    @Deprecated(
-        message = "Use setOnMessageRetryListener instead",
-        replaceWith = ReplaceWith("setOnMessageRetryListener(listener)"),
-        level = DeprecationLevel.WARNING,
-    )
-    public fun setMessageRetryListener(messageRetryListener: MessageRetryListener?) {
-        val adapter = messageRetryListener?.let {
-            OnMessageRetryListener { message ->
-                it.onRetryMessage(message)
-                true
-            }
-        }
-        setOnMessageRetryListener(adapter)
     }
 
     /**
@@ -1541,26 +1445,6 @@ public class MessageListView : ConstraintLayout {
     /**
      * Sets the thread click listener to be used by MessageListView.
      *
-     * @param threadClickListener The listener to use. If null, the default will be used instead.
-     */
-    @Deprecated(
-        message = "Use setOnThreadClickListener instead",
-        replaceWith = ReplaceWith("setOnThreadClickListener(listener)"),
-        level = DeprecationLevel.WARNING,
-    )
-    public fun setThreadClickListener(threadClickListener: ThreadClickListener?) {
-        val adapter = threadClickListener?.let {
-            OnThreadClickListener { message ->
-                it.onThreadClick(message)
-                true
-            }
-        }
-        setOnThreadClickListener(adapter)
-    }
-
-    /**
-     * Sets the thread click listener to be used by MessageListView.
-     *
      * @param listener The listener to use. If null, the default will be used instead.
      */
     public fun setOnThreadClickListener(listener: OnThreadClickListener?) {
@@ -1571,26 +1455,6 @@ public class MessageListView : ConstraintLayout {
                 listener.onThreadClick(message) || defaultThreadClickListener.onThreadClick(message)
             }
         }
-    }
-
-    /**
-     * Sets the attachment click listener to be used by MessageListView.
-     *
-     * @param attachmentClickListener The listener to use. If null, the default will be used instead.
-     */
-    @Deprecated(
-        message = "Use setOnAttachmentClickListener instead",
-        replaceWith = ReplaceWith("setOnAttachmentClickListener(listener)"),
-        level = DeprecationLevel.WARNING,
-    )
-    public fun setAttachmentClickListener(attachmentClickListener: AttachmentClickListener?) {
-        val adapter = attachmentClickListener?.let {
-            OnAttachmentClickListener { message, attachment ->
-                it.onAttachmentClick(message, attachment)
-                true
-            }
-        }
-        setOnAttachmentClickListener(adapter)
     }
 
     /**
@@ -1612,26 +1476,6 @@ public class MessageListView : ConstraintLayout {
     /**
      * Sets the attachment download click listener to be used by MessageListView.
      *
-     * @param attachmentDownloadClickListener The listener to use. If null, the default will be used instead.
-     */
-    @Deprecated(
-        message = "Use setOnAttachmentDownloadClickListener instead",
-        replaceWith = ReplaceWith("setOnAttachmentDownloadClickListener(listener)"),
-        level = DeprecationLevel.WARNING,
-    )
-    public fun setAttachmentDownloadClickListener(attachmentDownloadClickListener: AttachmentDownloadClickListener?) {
-        val adapter = attachmentDownloadClickListener?.let {
-            OnAttachmentDownloadClickListener { attachment ->
-                it.onAttachmentDownloadClick(attachment)
-                true
-            }
-        }
-        setOnAttachmentDownloadClickListener(adapter)
-    }
-
-    /**
-     * Sets the attachment download click listener to be used by MessageListView.
-     *
      * @param listener The listener to use. If null, the default will be used instead.
      */
     public fun setOnAttachmentDownloadClickListener(listener: OnAttachmentDownloadClickListener?) {
@@ -1648,26 +1492,6 @@ public class MessageListView : ConstraintLayout {
     /**
      * Sets the reaction view click listener to be used by MessageListView.
      *
-     * @param reactionViewClickListener The listener to use. If null, the default will be used instead.
-     */
-    @Deprecated(
-        message = "Use setOnReactionViewClickListener instead",
-        replaceWith = ReplaceWith("setOnReactionViewClickListener(listener)"),
-        level = DeprecationLevel.WARNING,
-    )
-    public fun setReactionViewClickListener(reactionViewClickListener: ReactionViewClickListener?) {
-        val adapter = reactionViewClickListener?.let {
-            OnReactionViewClickListener { message ->
-                it.onReactionViewClick(message)
-                true
-            }
-        }
-        setOnReactionViewClickListener(adapter)
-    }
-
-    /**
-     * Sets the reaction view click listener to be used by MessageListView.
-     *
      * @param listener The listener to use. If null, the default will be used instead.
      */
     public fun setOnReactionViewClickListener(listener: OnReactionViewClickListener?) {
@@ -1678,26 +1502,6 @@ public class MessageListView : ConstraintLayout {
                 listener.onReactionViewClick(message) || defaultReactionViewClickListener.onReactionViewClick(message)
             }
         }
-    }
-
-    /**
-     * Sets the user click listener to be used by MessageListView.
-     *
-     * @param userClickListener The listener to use. If null, the default will be used instead.
-     */
-    @Deprecated(
-        message = "Use setOnUserClickListener instead",
-        replaceWith = ReplaceWith("setOnUserClickListener(listener)"),
-        level = DeprecationLevel.WARNING,
-    )
-    public fun setUserClickListener(userClickListener: UserClickListener?) {
-        val adapter = userClickListener?.let {
-            OnUserClickListener { user ->
-                it.onUserClick(user)
-                true
-            }
-        }
-        setOnUserClickListener(adapter)
     }
 
     /**
@@ -1733,21 +1537,6 @@ public class MessageListView : ConstraintLayout {
     /**
      * Sets the link click listener to be used by MessageListView.
      *
-     * @param linkClickListener The listener to use. If null, the default will be used instead.
-     */
-    public fun setLinkClickListener(linkClickListener: LinkClickListener?) {
-        val adapter = linkClickListener?.let {
-            OnLinkClickListener { url ->
-                it.onLinkClick(url)
-                true
-            }
-        }
-        setOnLinkClickListener(adapter)
-    }
-
-    /**
-     * Sets the link click listener to be used by MessageListView.
-     *
      * @param listener The listener to use. If null, the default will be used instead.
      */
     public fun setOnLinkClickListener(listener: OnLinkClickListener?) {
@@ -1758,26 +1547,6 @@ public class MessageListView : ConstraintLayout {
                 listener.onLinkClick(url) || defaultLinkClickListener.onLinkClick(url)
             }
         }
-    }
-
-    /**
-     * Sets the thread click listener to be used by MessageListView.
-     *
-     * @param enterThreadListener The listener to use. If null, the default will be used instead.
-     */
-    @Deprecated(
-        message = "Use setOnEnterThreadListener instead",
-        replaceWith = ReplaceWith("setOnEnterThreadListener(listener)"),
-        level = DeprecationLevel.WARNING,
-    )
-    public fun setEnterThreadListener(enterThreadListener: EnterThreadListener?) {
-        val adapter = enterThreadListener?.let {
-            OnEnterThreadListener { message ->
-                it.onThreadEntered(message)
-                true
-            }
-        }
-        setOnEnterThreadListener(adapter)
     }
 
     /**
@@ -1799,50 +1568,10 @@ public class MessageListView : ConstraintLayout {
     /**
      * Sets the click listener to be used when a reaction left by a user is clicked on the message options overlay.
      *
-     * @param userReactionClickListener The listener to use. If null, the default will be used instead.
-     */
-    @Deprecated(
-        message = "Use setOnUserReactionClickListener instead",
-        replaceWith = ReplaceWith("setOnUserReactionClickListener(listener)"),
-        level = DeprecationLevel.WARNING,
-    )
-    public fun setUserReactionClickListener(userReactionClickListener: UserReactionClickListener?) {
-        val adapter = userReactionClickListener?.let {
-            OnUserReactionClickListener { message, user, reaction ->
-                it.onUserReactionClick(message, user, reaction)
-                true
-            }
-        }
-        setOnUserReactionClickListener(adapter)
-    }
-
-    /**
-     * Sets the click listener to be used when a reaction left by a user is clicked on the message options overlay.
-     *
      * @param listener The listener to use. If null, the default will be used instead.
      */
     public fun setOnUserReactionClickListener(listener: OnUserReactionClickListener?) {
         this.userReactionClickListener = listener ?: defaultUserReactionClickListener
-    }
-
-    /**
-     * Sets the click listener to be used when a message that is a reply is clicked.
-     *
-     * @param replyMessageClickListener The listener to use. If null, no behaviour is added.
-     */
-    @Deprecated(
-        message = "Use setOnReplyMessageClickListener instead",
-        replaceWith = ReplaceWith("setOnReplyMessageClickListener(listener)"),
-        level = DeprecationLevel.WARNING,
-    )
-    public fun setReplyMessageClickListener(replyMessageClickListener: ReplyMessageClickListener) {
-        val adapter = replyMessageClickListener.let {
-            OnReplyMessageClickListener { message ->
-                it.onReplyClick(message)
-                true
-            }
-        }
-        setOnReplyMessageClickListener(adapter)
     }
 
     /** Sets the click listener to be used when a message that is a reply is clicked.
@@ -2280,24 +2009,9 @@ public class MessageListView : ConstraintLayout {
     //endregion
 
     //region Listener declarations
-    @Deprecated(
-        message = "Use OnEnterThreadListener instead",
-        replaceWith = ReplaceWith("OnEnterThreadListener"),
-    )
-    public fun interface EnterThreadListener {
-        public fun onThreadEntered(message: Message)
-    }
 
     public fun interface OnEnterThreadListener {
         public fun onThreadEntered(message: Message): Boolean
-    }
-
-    @Deprecated(
-        message = "Use OnMessageClickListener instead",
-        replaceWith = ReplaceWith("OnMessageClickListener"),
-    )
-    public fun interface MessageClickListener {
-        public fun onMessageClick(message: Message)
     }
 
     public fun interface OnMessageClickListener {
@@ -2320,60 +2034,20 @@ public class MessageListView : ConstraintLayout {
         public fun onViewPollResultClick(poll: Poll): Boolean
     }
 
-    @Deprecated(
-        message = "Use ReplyMessageClickListener instead",
-        replaceWith = ReplaceWith("ReplyMessageClickListener"),
-    )
-    public fun interface ReplyMessageClickListener {
-        public fun onReplyClick(replyTo: Message)
-    }
-
     public fun interface OnReplyMessageClickListener {
         public fun onReplyClick(replyTo: Message): Boolean
-    }
-
-    @Deprecated(
-        message = "Use MessageRetryListener instead",
-        replaceWith = ReplaceWith("MessageRetryListener"),
-    )
-    public fun interface MessageRetryListener {
-        public fun onRetryMessage(message: Message)
     }
 
     public fun interface OnMessageRetryListener {
         public fun onRetryMessage(message: Message): Boolean
     }
 
-    @Deprecated(
-        message = "Use OnMessageLongClickListener instead",
-        replaceWith = ReplaceWith("OnMessageLongClickListener"),
-    )
-    public fun interface MessageLongClickListener {
-        public fun onMessageLongClick(message: Message)
-    }
-
     public fun interface OnMessageLongClickListener {
         public fun onMessageLongClick(message: Message): Boolean
     }
 
-    @Deprecated(
-        message = "Use OnModeratedMessageLongClickListener instead",
-        replaceWith = ReplaceWith("OnModeratedMessageLongClickListener"),
-    )
-    public fun interface ModeratedMessageLongClickListener {
-        public fun onModeratedMessageLongClick(message: Message)
-    }
-
     public fun interface OnModeratedMessageLongClickListener {
         public fun onModeratedMessageLongClick(message: Message): Boolean
-    }
-
-    @Deprecated(
-        message = "Use OnThreadClickListener instead",
-        replaceWith = ReplaceWith("OnThreadClickListener"),
-    )
-    public fun interface ThreadClickListener {
-        public fun onThreadClick(message: Message)
     }
 
     public fun interface OnThreadClickListener {
@@ -2384,48 +2058,16 @@ public class MessageListView : ConstraintLayout {
         public fun onTranslatedLabelClick(message: Message): Boolean
     }
 
-    @Deprecated(
-        message = "Use OnAttachmentClickListener instead",
-        replaceWith = ReplaceWith("OnAttachmentClickListener"),
-    )
-    public fun interface AttachmentClickListener {
-        public fun onAttachmentClick(message: Message, attachment: Attachment)
-    }
-
     public fun interface OnAttachmentClickListener {
         public fun onAttachmentClick(message: Message, attachment: Attachment): Boolean
-    }
-
-    @Deprecated(
-        message = "Use OnAttachmentDownloadClickListener instead",
-        replaceWith = ReplaceWith("OnAttachmentDownloadClickListener"),
-    )
-    public fun interface AttachmentDownloadClickListener {
-        public fun onAttachmentDownloadClick(attachment: Attachment)
     }
 
     public fun interface OnAttachmentDownloadClickListener {
         public fun onAttachmentDownloadClick(attachment: Attachment): Boolean
     }
 
-    @Deprecated(
-        message = "Use OnGiphySendListener instead",
-        replaceWith = ReplaceWith("OnGiphySendListener"),
-    )
-    public fun interface GiphySendListener {
-        public fun onGiphySend(action: GiphyAction)
-    }
-
     public fun interface OnGiphySendListener {
         public fun onGiphySend(action: GiphyAction): Boolean
-    }
-
-    @Deprecated(
-        message = "Use OnLinkClickListener instead",
-        replaceWith = ReplaceWith("OnLinkClickListener"),
-    )
-    public fun interface LinkClickListener {
-        public fun onLinkClick(url: String)
     }
 
     public fun interface OnLinkClickListener {
@@ -2440,14 +2082,6 @@ public class MessageListView : ConstraintLayout {
         public fun onUnreadLabelReached()
     }
 
-    @Deprecated(
-        message = "Use OnUserClickListener instead",
-        replaceWith = ReplaceWith("OnUserClickListener"),
-    )
-    public fun interface UserClickListener {
-        public fun onUserClick(user: User)
-    }
-
     public fun interface OnUserClickListener {
         public fun onUserClick(user: User): Boolean
     }
@@ -2456,35 +2090,8 @@ public class MessageListView : ConstraintLayout {
         public fun onMentionClick(user: User): Boolean
     }
 
-    @Deprecated(
-        message = "Use OnReactionViewClickListener instead",
-        replaceWith = ReplaceWith("OnReactionViewClickListener"),
-    )
-    public fun interface ReactionViewClickListener {
-        public fun onReactionViewClick(message: Message)
-    }
-
     public fun interface OnReactionViewClickListener {
         public fun onReactionViewClick(message: Message): Boolean
-    }
-
-    /**
-     * Interface definition for a callback to be invoked when a user reaction is clicked on the message
-     * options overlay.
-     */
-    @Deprecated(
-        message = "Use OnUserReactionClickListener instead",
-        replaceWith = ReplaceWith("OnUserReactionClickListener"),
-    )
-    public fun interface UserReactionClickListener {
-        /**
-         * Called when a reaction left by a user is clicked.
-         *
-         * @param message The message the reaction was left for.
-         * @param user The user who reacted to the message.
-         * @param reaction The reaction object.
-         */
-        public fun onUserReactionClick(message: Message, user: User, reaction: Reaction)
     }
 
     /**
