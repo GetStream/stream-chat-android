@@ -129,6 +129,19 @@ public object StreamDesign {
      * @param borderUtilitySuccess Used for success state borders.
      * @param badgeBgInverse Used for inverse badge background.
      * @param chipBg Used for chip background color.
+     * @param chrome0 Chrome neutral scale — base level (white in light, black in dark).
+     * @param chrome50 Chrome neutral scale — 50 level.
+     * @param chrome100 Chrome neutral scale — 100 level.
+     * @param chrome150 Chrome neutral scale — 150 level.
+     * @param chrome200 Chrome neutral scale — 200 level.
+     * @param chrome300 Chrome neutral scale — 300 level.
+     * @param chrome400 Chrome neutral scale — 400 level.
+     * @param chrome500 Chrome neutral scale — 500 level.
+     * @param chrome600 Chrome neutral scale — 600 level.
+     * @param chrome700 Chrome neutral scale — 700 level.
+     * @param chrome800 Chrome neutral scale — 800 level.
+     * @param chrome900 Chrome neutral scale — 900 level.
+     * @param chrome1000 Chrome neutral scale — max level (black in light, white in dark).
      */
     @Immutable
     public data class Colors(
@@ -217,6 +230,19 @@ public object StreamDesign {
         public val borderUtilitySuccess: Color = accentSuccess,
         public val badgeBgInverse: Color = Color.Unspecified,
         public val chipBg: Color = brand100,
+        public val chrome0: Color = backgroundElevationElevation0,
+        public val chrome50: Color = backgroundCoreSurfaceSubtle,
+        public val chrome100: Color = backgroundCoreSurface,
+        public val chrome150: Color = backgroundCoreSurfaceStrong,
+        public val chrome200: Color = borderCoreDefault,
+        public val chrome300: Color = borderCoreStrong,
+        public val chrome400: Color = accentNeutral,
+        public val chrome500: Color = textTertiary,
+        public val chrome600: Color = Color.Unspecified,
+        public val chrome700: Color = textSecondary,
+        public val chrome800: Color = Color.Unspecified,
+        public val chrome900: Color = textPrimary,
+        public val chrome1000: Color = backgroundCoreInverse,
     ) {
 
         /** Badge background for error states. */
@@ -547,6 +573,19 @@ public object StreamDesign {
                 borderUtilityWarning = StreamPrimitiveColors.yellow400,
                 borderUtilitySuccess = StreamPrimitiveColors.green400,
                 badgeBgInverse = StreamPrimitiveColors.baseBlack,
+                chrome0 = StreamPrimitiveColors.baseWhite,
+                chrome50 = StreamPrimitiveColors.slate50,
+                chrome100 = StreamPrimitiveColors.slate100,
+                chrome150 = StreamPrimitiveColors.slate150,
+                chrome200 = StreamPrimitiveColors.slate200,
+                chrome300 = StreamPrimitiveColors.slate300,
+                chrome400 = StreamPrimitiveColors.slate400,
+                chrome500 = StreamPrimitiveColors.slate500,
+                chrome600 = StreamPrimitiveColors.slate600,
+                chrome700 = StreamPrimitiveColors.slate700,
+                chrome800 = StreamPrimitiveColors.slate800,
+                chrome900 = StreamPrimitiveColors.slate900,
+                chrome1000 = StreamPrimitiveColors.baseBlack,
             )
 
             /**
@@ -641,6 +680,19 @@ public object StreamDesign {
                 borderUtilitySuccess = StreamPrimitiveColors.green300,
                 badgeBgInverse = StreamPrimitiveColors.baseWhite,
                 chipBg = StreamPrimitiveColors.blue600,
+                chrome0 = StreamPrimitiveColors.baseBlack,
+                chrome50 = StreamPrimitiveColors.neutral900,
+                chrome100 = StreamPrimitiveColors.neutral800,
+                chrome150 = StreamPrimitiveColors.neutral700,
+                chrome200 = StreamPrimitiveColors.neutral600,
+                chrome300 = StreamPrimitiveColors.neutral500,
+                chrome400 = StreamPrimitiveColors.neutral400,
+                chrome500 = StreamPrimitiveColors.neutral300,
+                chrome600 = StreamPrimitiveColors.neutral200,
+                chrome700 = StreamPrimitiveColors.neutral150,
+                chrome800 = StreamPrimitiveColors.neutral100,
+                chrome900 = StreamPrimitiveColors.neutral50,
+                chrome1000 = StreamPrimitiveColors.baseWhite,
             )
         }
     }

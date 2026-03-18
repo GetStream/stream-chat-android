@@ -50,6 +50,7 @@ internal object StreamPrimitiveColors {
     val neutral50 = Color(0xFFF8F8F8)
     val neutral100 = Color(0xFFEFEFEF)
     val neutral150 = Color(0xFFD8D8D8)
+    val neutral200 = Color(0xFFC4C4C4)
     val neutral300 = Color(0xFFABABAB)
     val neutral400 = Color(0xFF8F8F8F)
     val neutral500 = Color(0xFF6A6A6A)
