@@ -4764,7 +4764,6 @@ internal constructor(
         private var debugRequests: Boolean = false
         private var offlineConfig: OfflineConfig = OfflineConfig()
         private var stateConfig: StateConfig = StateConfig()
-        private var repositoryFactoryProvider: RepositoryFactory.Provider? = null
         private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.CONNECTED
         private var fileTransformer: FileTransformer = NoOpFileTransformer
         private var apiModelTransformers: ApiModelTransformers = ApiModelTransformers()
@@ -4985,13 +4984,6 @@ internal constructor(
         }
 
         /**
-         * Inject a [RepositoryFactory.Provider] to use your own DB Persistence mechanism.
-         */
-        public fun withRepositoryFactoryProvider(provider: RepositoryFactory.Provider): Builder = apply {
-            repositoryFactoryProvider = provider
-        }
-
-        /**
          * Configures the offline support for the ChatClient.
          *
          * @param offlineConfig The offline configuration to be used.
@@ -5169,10 +5161,9 @@ internal constructor(
                 appSettingsManager = appSettingsManager,
                 chatSocket = module.chatSocket,
                 pluginFactories = allPluginFactories,
-                repositoryFactoryProvider = repositoryFactoryProvider
-                    ?: allPluginFactories
-                        .filterIsInstance<RepositoryFactory.Provider>()
-                        .firstOrNull()
+                repositoryFactoryProvider = allPluginFactories
+                    .filterIsInstance<RepositoryFactory.Provider>()
+                    .firstOrNull()
                     ?: NoOpRepositoryFactory.Provider,
                 mutableClientState = MutableClientState(module.networkStateProvider),
                 currentUserFetcher = module.currentUserFetcher,

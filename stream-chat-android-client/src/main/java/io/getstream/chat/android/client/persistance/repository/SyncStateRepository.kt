@@ -17,10 +17,12 @@
 package io.getstream.chat.android.client.persistance.repository
 
 import io.getstream.chat.android.client.sync.SyncState
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
  * Repository to read and write data about the sync state of the SDK.
  */
+@InternalStreamChatApi
 public interface SyncStateRepository {
 
     /**
