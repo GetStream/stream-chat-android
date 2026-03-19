@@ -81,17 +81,7 @@ public object StreamDesign {
      * @param borderCoreSubtle Used for subtle/very light separators.
      * @param borderUtilitySelected Used for selected or active state border (focus ring).
      * @param borderUtilityDisabled Used for disabled state borders.
-     * @param brand50 Brand color at 50 intensity level.
-     * @param brand100 Brand color at 100 intensity level.
-     * @param brand150 Brand color at 150 intensity level.
-     * @param brand200 Brand color at 200 intensity level.
-     * @param brand300 Brand color at 300 intensity level.
-     * @param brand400 Brand color at 400 intensity level.
-     * @param brand500 Brand color at 500 intensity level.
-     * @param brand600 Brand color at 600 intensity level.
-     * @param brand700 Brand color at 700 intensity level.
-     * @param brand800 Brand color at 800 intensity level.
-     * @param brand900 Brand color at 900 intensity level.
+     * @param brand The brand (accent) color scale. See [ColorScale].
      * @param textOnAccent Used for text displayed on accent/colored backgrounds.
      * @param textInverse Used for text displayed on dark/inverse backgrounds.
      * @param textPrimary Used for main text color.
@@ -131,20 +121,8 @@ public object StreamDesign {
      * @param borderUtilityWarning Used for warning state borders.
      * @param borderUtilitySuccess Used for success state borders.
      * @param badgeBgInverse Used for inverse badge background.
+     * @param chrome The chrome (neutral gray) color scale. See [ChromeScale].
      * @param chipBg Used for chip background color.
-     * @param chrome0 Chrome neutral scale — base level (white in light, black in dark).
-     * @param chrome50 Chrome neutral scale — 50 level.
-     * @param chrome100 Chrome neutral scale — 100 level.
-     * @param chrome150 Chrome neutral scale — 150 level.
-     * @param chrome200 Chrome neutral scale — 200 level.
-     * @param chrome300 Chrome neutral scale — 300 level.
-     * @param chrome400 Chrome neutral scale — 400 level.
-     * @param chrome500 Chrome neutral scale — 500 level.
-     * @param chrome600 Chrome neutral scale — 600 level.
-     * @param chrome700 Chrome neutral scale — 700 level.
-     * @param chrome800 Chrome neutral scale — 800 level.
-     * @param chrome900 Chrome neutral scale — 900 level.
-     * @param chrome1000 Chrome neutral scale — max level (black in light, white in dark).
      */
     @Immutable
     public data class Colors(
@@ -182,17 +160,7 @@ public object StreamDesign {
         public val borderCoreSubtle: Color,
         public val borderUtilitySelected: Color,
         public val borderUtilityDisabled: Color,
-        public val brand50: Color,
-        public val brand100: Color,
-        public val brand150: Color,
-        public val brand200: Color,
-        public val brand300: Color,
-        public val brand400: Color,
-        public val brand500: Color,
-        public val brand600: Color,
-        public val brand700: Color,
-        public val brand800: Color,
-        public val brand900: Color,
+        public val brand: ColorScale,
         public val textOnAccent: Color,
         public val textInverse: Color,
         public val textPrimary: Color,
@@ -232,20 +200,8 @@ public object StreamDesign {
         public val borderUtilityWarning: Color = Color.Unspecified,
         public val borderUtilitySuccess: Color = accentSuccess,
         public val badgeBgInverse: Color = Color.Unspecified,
-        public val chipBg: Color = brand100,
-        public val chrome0: Color = backgroundElevationElevation0,
-        public val chrome50: Color = backgroundCoreSurfaceSubtle,
-        public val chrome100: Color = backgroundCoreSurface,
-        public val chrome150: Color = backgroundCoreSurfaceStrong,
-        public val chrome200: Color = borderCoreDefault,
-        public val chrome300: Color = borderCoreStrong,
-        public val chrome400: Color = accentNeutral,
-        public val chrome500: Color = textTertiary,
-        public val chrome600: Color = Color.Unspecified,
-        public val chrome700: Color = textSecondary,
-        public val chrome800: Color = Color.Unspecified,
-        public val chrome900: Color = textPrimary,
-        public val chrome1000: Color = backgroundCoreInverse,
+        public val chrome: ChromeScale,
+        public val chipBg: Color = brand.s100,
     ) {
 
         /** Badge background for error states. */
@@ -267,7 +223,7 @@ public object StreamDesign {
         public val chatBorderIncoming: Color = borderCoreSubtle
 
         /** Border for outgoing message bubbles. */
-        public val chatBorderOutgoing: Color = brand100
+        public val chatBorderOutgoing: Color = brand.s100
 
         /** Reaction text color in chat. */
         public val chatTextReaction: Color = textSecondary
@@ -282,7 +238,7 @@ public object StreamDesign {
         public val chatThreadConnectorIncoming: Color = borderCoreDefault
 
         /** Thread connector line for outgoing messages. */
-        public val chatThreadConnectorOutgoing: Color = brand150
+        public val chatThreadConnectorOutgoing: Color = brand.s150
 
         /** Composer background color. */
         public val composerBg: Color = backgroundElevationElevation1
@@ -393,7 +349,7 @@ public object StreamDesign {
         public val buttonPrimaryBg: Color = accentPrimary
 
         /** Primary button border. */
-        public val buttonPrimaryBorder: Color = brand200
+        public val buttonPrimaryBorder: Color = brand.s200
 
         /** Primary button text. */
         public val buttonPrimaryText: Color = textLink
@@ -414,16 +370,16 @@ public object StreamDesign {
         public val buttonSecondaryTextOnAccent: Color = textPrimary
 
         /** Outgoing message bubble background. */
-        public val chatBgOutgoing: Color = brand100
+        public val chatBgOutgoing: Color = brand.s100
 
         /** Border on outgoing message bubbles. */
-        public val chatBorderOnChatOutgoing: Color = brand300
+        public val chatBorderOnChatOutgoing: Color = brand.s300
 
         /** Incoming message text color. */
         public val chatTextIncoming: Color = textPrimary
 
         /** Outgoing message text color. */
-        public val chatTextOutgoing: Color = brand900
+        public val chatTextOutgoing: Color = brand.s900
 
         /** Link text color in chat messages. */
         public val chatTextLink: Color = textLink
@@ -444,7 +400,7 @@ public object StreamDesign {
         public val chatWaveformBarPlaying: Color = accentPrimary
 
         /** Chip text color. */
-        public val chipText: Color = brand900
+        public val chipText: Color = brand.s900
 
         /** Play button background. */
         public val controlPlayButtonBg: Color = accentBlack
@@ -519,17 +475,7 @@ public object StreamDesign {
                 borderUtilitySelected = StreamPrimitiveColors.blue500,
                 borderCoreSubtle = StreamPrimitiveColors.slate100,
                 borderUtilityDisabled = StreamPrimitiveColors.slate100,
-                brand50 = StreamPrimitiveColors.blue50,
-                brand100 = StreamPrimitiveColors.blue100,
-                brand150 = StreamPrimitiveColors.blue150,
-                brand200 = StreamPrimitiveColors.blue200,
-                brand300 = StreamPrimitiveColors.blue300,
-                brand400 = StreamPrimitiveColors.blue400,
-                brand500 = StreamPrimitiveColors.blue500,
-                brand600 = StreamPrimitiveColors.blue600,
-                brand700 = StreamPrimitiveColors.blue700,
-                brand800 = StreamPrimitiveColors.blue800,
-                brand900 = StreamPrimitiveColors.blue900,
+                brand = ColorScale.defaultLight(),
                 textDisabled = StreamPrimitiveColors.slate300,
                 textOnAccent = StreamPrimitiveColors.baseWhite,
                 textInverse = StreamPrimitiveColors.baseWhite,
@@ -576,19 +522,7 @@ public object StreamDesign {
                 borderUtilityWarning = StreamPrimitiveColors.yellow400,
                 borderUtilitySuccess = StreamPrimitiveColors.green400,
                 badgeBgInverse = StreamPrimitiveColors.baseBlack,
-                chrome0 = StreamPrimitiveColors.baseWhite,
-                chrome50 = StreamPrimitiveColors.slate50,
-                chrome100 = StreamPrimitiveColors.slate100,
-                chrome150 = StreamPrimitiveColors.slate150,
-                chrome200 = StreamPrimitiveColors.slate200,
-                chrome300 = StreamPrimitiveColors.slate300,
-                chrome400 = StreamPrimitiveColors.slate400,
-                chrome500 = StreamPrimitiveColors.slate500,
-                chrome600 = StreamPrimitiveColors.slate600,
-                chrome700 = StreamPrimitiveColors.slate700,
-                chrome800 = StreamPrimitiveColors.slate800,
-                chrome900 = StreamPrimitiveColors.slate900,
-                chrome1000 = StreamPrimitiveColors.baseBlack,
+                chrome = ChromeScale.defaultLight(),
             )
 
             /**
@@ -624,17 +558,7 @@ public object StreamDesign {
                 borderUtilitySelected = StreamPrimitiveColors.blue400,
                 borderCoreSubtle = StreamPrimitiveColors.neutral800,
                 borderUtilityDisabled = StreamPrimitiveColors.neutral800,
-                brand50 = StreamPrimitiveColors.blue900,
-                brand100 = StreamPrimitiveColors.blue800,
-                brand150 = StreamPrimitiveColors.blue700,
-                brand200 = StreamPrimitiveColors.blue600,
-                brand300 = StreamPrimitiveColors.blue500,
-                brand400 = StreamPrimitiveColors.blue400,
-                brand500 = StreamPrimitiveColors.blue300,
-                brand600 = StreamPrimitiveColors.blue200,
-                brand700 = StreamPrimitiveColors.blue150,
-                brand800 = StreamPrimitiveColors.blue100,
-                brand900 = StreamPrimitiveColors.blue50,
+                brand = ColorScale.defaultDark(),
                 textDisabled = StreamPrimitiveColors.neutral500,
                 textOnAccent = StreamPrimitiveColors.baseWhite,
                 textInverse = StreamPrimitiveColors.baseBlack,
@@ -682,20 +606,8 @@ public object StreamDesign {
                 borderUtilityWarning = StreamPrimitiveColors.yellow300,
                 borderUtilitySuccess = StreamPrimitiveColors.green300,
                 badgeBgInverse = StreamPrimitiveColors.baseWhite,
+                chrome = ChromeScale.defaultDark(),
                 chipBg = StreamPrimitiveColors.blue600,
-                chrome0 = StreamPrimitiveColors.baseBlack,
-                chrome50 = StreamPrimitiveColors.neutral900,
-                chrome100 = StreamPrimitiveColors.neutral800,
-                chrome150 = StreamPrimitiveColors.neutral700,
-                chrome200 = StreamPrimitiveColors.neutral600,
-                chrome300 = StreamPrimitiveColors.neutral500,
-                chrome400 = StreamPrimitiveColors.neutral400,
-                chrome500 = StreamPrimitiveColors.neutral300,
-                chrome600 = StreamPrimitiveColors.neutral200,
-                chrome700 = StreamPrimitiveColors.neutral150,
-                chrome800 = StreamPrimitiveColors.neutral100,
-                chrome900 = StreamPrimitiveColors.neutral50,
-                chrome1000 = StreamPrimitiveColors.baseWhite,
             )
         }
     }
