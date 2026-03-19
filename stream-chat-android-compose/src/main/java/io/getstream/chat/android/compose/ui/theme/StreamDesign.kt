@@ -50,79 +50,80 @@ public object StreamDesign {
      *
      * @param brand The brand (accent) color scale. See [ColorScale].
      * @param chrome The chrome (neutral gray) color scale. See [ChromeScale].
-     * @param accentPrimary Used for main brand accent for interactive elements.
-     * @param accentError Used for destructive actions and error states.
-     * @param accentSuccess Used for success states and positive actions.
-     * @param accentWarning Used for warning or caution states.
-     * @param accentNeutral Used for neutral accent for low-priority badges.
-     * @param textPrimary Used for main text color.
-     * @param textSecondary Used for secondary text color with lower emphasis.
-     * @param textTertiary Used for tertiary text color with lowest emphasis.
-     * @param textDisabled Used for disabled text and icon color.
-     * @param textOnAccent Used for text displayed on accent/colored backgrounds.
-     * @param textInverse Used for text displayed on dark/inverse backgrounds.
-     * @param textLink Used for hyperlinks and inline action text.
-     * @param backgroundCoreElevation0 Used for base elevation surface backgrounds.
-     * @param backgroundCoreElevation1 Slightly elevated surface backgrounds.
-     * @param backgroundCoreElevation2 Used for elevated surface backgrounds at elevation level 2.
-     * @param backgroundCoreElevation3 Popover surface backgrounds.
-     * @param backgroundCoreElevation4 Dialog and modal surface backgrounds.
-     * @param backgroundCoreSurface Used for surface background in components like buttons.
-     * @param backgroundCoreSurfaceSubtle Used for subtle surface backgrounds.
-     * @param backgroundCoreSurfaceStrong Stronger section background for prominent surface areas.
+     * @param accentPrimary Main brand accent for interactive elements.
+     * @param accentError Destructive actions and error states.
+     * @param accentSuccess Success states and positive actions.
+     * @param accentWarning Warning or caution messages.
+     * @param accentNeutral Neutral accent for low-priority badges.
+     * @param textPrimary Main text color.
+     * @param textSecondary Secondary metadata text.
+     * @param textTertiary Lowest priority text.
+     * @param textDisabled Disabled text.
+     * @param textOnAccent Text on dark or accent backgrounds.
+     * @param textInverse Text on dark or accent backgrounds.
+     * @param textLink Hyperlinks and inline actions.
+     * @param backgroundCoreElevation0 Flat surfaces.
+     * @param backgroundCoreElevation1 Slightly elevated surfaces.
+     * @param backgroundCoreElevation2 Card-like elements.
+     * @param backgroundCoreElevation3 Popovers.
+     * @param backgroundCoreElevation4 Dialogs, modals.
+     * @param backgroundCoreSurface Standard section background.
+     * @param backgroundCoreSurfaceSubtle Very light section background.
+     * @param backgroundCoreSurfaceStrong Stronger section background.
      * @param backgroundCoreSurfaceCard Card surface backgrounds (e.g. link previews, attachments).
-     * @param backgroundCoreInverse Elevated, transient, or high-attention UI surfaces that sit on
-     * top of the default app background.
+     * @param backgroundCoreInverse Inverse background for elevated, transient, or high-attention UI
+     * surfaces that sit on top of the default app background.
      * @param backgroundCoreOnAccent Surfaces that must remain white across themes
-     * (e.g., media controls over video).
-     * @param backgroundCoreScrim Used for dimmed scrim backgrounds (e.g. behind modals).
-     * @param backgroundCoreOverlayDark Used for dark overlay backgrounds on media/badges.
-     * @param backgroundCoreOverlayLight Used for light overlay backgrounds.
-     * @param backgroundCoreHighlight Used for highlight backgrounds (e.g. message focus/pin).
-     * @param backgroundUtilitySelected Selected state overlay background.
-     * @param backgroundUtilityDisabled Used for disabled utility backgrounds.
-     * @param borderCoreDefault Used for default border color.
-     * @param borderCoreStrong Stronger surface border with higher contrast.
-     * @param borderCoreSubtle Used for subtle/very light separators.
-     * @param borderCoreOpacitySubtle Subtle translucent border (e.g. image frames, avatars).
-     * @param borderCoreOpacityStrong Stronger translucent border (e.g. waveforms, playback thumbs).
-     * @param borderCoreOnAccent Used for borders on accent backgrounds.
-     * @param borderCoreInverse Used for borders on dark/inverse backgrounds.
-     * @param borderUtilitySelected Used for selected or active state border (focus ring).
-     * @param borderUtilityActive Used for active/selected state border.
-     * @param borderUtilityDisabled Used for disabled state borders.
-     * @param borderUtilityError Used for error state borders.
-     * @param borderUtilityWarning Used for warning state borders.
-     * @param borderUtilitySuccess Used for success state borders.
-     * @param badgeBgOverlay Used for badge background when displayed as an overlay.
-     * @param badgeBgInverse Used for inverse badge background.
-     * @param chatBgIncoming Used for incoming message bubble background.
-     * @param chatBgAttachmentIncoming Used for incoming message attachment background.
-     * @param chatBgAttachmentOutgoing Used for outgoing message attachment background.
-     * @param chatBorderOnChatIncoming Used for border on incoming message bubbles.
-     * @param chatPollProgressFillIncoming Used for incoming poll progress fill color.
-     * @param chatPollProgressTrackIncoming Used for incoming poll progress track color.
-     * @param chatPollProgressFillOutgoing Used for outgoing poll progress fill color.
-     * @param chatPollProgressTrackOutgoing Used for outgoing poll progress track color.
-     * @param chatReplyIndicatorIncoming Reply indicator color in incoming messages.
-     * @param chatReplyIndicatorOutgoing Reply indicator color in outgoing messages.
-     * @param controlRemoveBg Used for remove control background.
-     * @param controlRemoveIcon Used for remove control icon.
-     * @param controlPlaybackThumbBgDefault Default background for the playback thumb control.
-     * @param avatarBgPlaceholder Used for avatar placeholder background color.
-     * @param avatarPaletteBg1 Used for avatar background color (slot 1).
-     * @param avatarPaletteBg2 Used for avatar background color (slot 2).
-     * @param avatarPaletteBg3 Used for avatar background color (slot 3).
-     * @param avatarPaletteBg4 Used for avatar background color (slot 4).
-     * @param avatarPaletteBg5 Used for avatar background color (slot 5).
-     * @param avatarPaletteText1 Used for avatar text color (slot 1).
-     * @param avatarPaletteText2 Used for avatar text color (slot 2).
-     * @param avatarPaletteText3 Used for avatar text color (slot 3).
-     * @param avatarPaletteText4 Used for avatar text color (slot 4).
-     * @param avatarPaletteText5 Used for avatar text color (slot 5).
-     * @param avatarTextPlaceholder Used for avatar placeholder text color.
-     * @param avatarPresenceBorder Used for the outline around the presence dot.
-     * @param skeletonLoadingHighlight Shimmer highlight color for skeleton loading gradients.
+     * (e.g., media controls over video). Do not use for general UI surfaces.
+     * @param backgroundCoreScrim Dimmed overlay for modals.
+     * @param backgroundCoreOverlayDark Selected overlay (dark variant).
+     * @param backgroundCoreOverlayLight Selected overlay (light variant).
+     * @param backgroundCoreHighlight Highlight background (e.g. message focus/pin).
+     * @param backgroundUtilitySelected Selected overlay.
+     * @param backgroundUtilityDisabled Disabled backgrounds.
+     * @param borderCoreDefault Standard surface border.
+     * @param borderCoreStrong Stronger surface border.
+     * @param borderCoreSubtle Very light separators.
+     * @param borderCoreOpacitySubtle Image frame border treatment (subtle).
+     * @param borderCoreOpacityStrong Image frame border treatment (strong).
+     * @param borderCoreOnAccent Borders on accent backgrounds.
+     * @param borderCoreInverse Used on dark backgrounds.
+     * @param borderUtilitySelected Selected overlay border.
+     * @param borderUtilityActive Focus ring or focus border.
+     * @param borderUtilityDisabled Optional disabled border for inputs, buttons, or chips.
+     * @param borderUtilityError Error state border.
+     * @param borderUtilityWarning Warning state border.
+     * @param borderUtilitySuccess Success state border.
+     * @param badgeBgOverlay Badge background when displayed as an overlay.
+     * @param badgeBgInverse Inverse badge background.
+     * @param chatBgIncoming Incoming bubble background.
+     * @param chatBgAttachmentIncoming Attachment card in incoming bubble.
+     * @param chatBgAttachmentOutgoing Attachment card in outgoing bubble.
+     * @param chatBorderOnChatIncoming Border on incoming message bubbles.
+     * @param chatPollProgressFillIncoming Incoming poll progress fill.
+     * @param chatPollProgressTrackIncoming Incoming poll progress track.
+     * @param chatPollProgressFillOutgoing Outgoing poll progress fill.
+     * @param chatPollProgressTrackOutgoing Outgoing poll progress track.
+     * @param chatReplyIndicatorIncoming Reply indicator shading for incoming messages.
+     * @param chatReplyIndicatorOutgoing Reply indicator shading for outgoing messages.
+     * @param controlRemoveBg Remove control background.
+     * @param controlRemoveIcon Remove control icon.
+     * @param controlPlaybackThumbBgDefault Playback thumb background in default state.
+     * @param avatarBgPlaceholder Avatar placeholder background.
+     * @param avatarPaletteBg1 Avatar background (slot 1).
+     * @param avatarPaletteBg2 Avatar background (slot 2).
+     * @param avatarPaletteBg3 Avatar background (slot 3).
+     * @param avatarPaletteBg4 Avatar background (slot 4).
+     * @param avatarPaletteBg5 Avatar background (slot 5).
+     * @param avatarPaletteText1 Avatar text (slot 1).
+     * @param avatarPaletteText2 Avatar text (slot 2).
+     * @param avatarPaletteText3 Avatar text (slot 3).
+     * @param avatarPaletteText4 Avatar text (slot 4).
+     * @param avatarPaletteText5 Avatar text (slot 5).
+     * @param avatarTextPlaceholder Avatar placeholder text.
+     * @param avatarPresenceBorder The thin outline around the presence dot. Matches the local
+     * surface behind the avatar; in high-contrast it uses the base surface.
+     * @param skeletonLoadingHighlight Highlight for the skeleton loading gradient (moving shimmer).
      */
     @Immutable
     public data class Colors(
@@ -213,7 +214,7 @@ public object StreamDesign {
         /** Badge outer border. */
         public val badgeBorder: Color = borderCoreInverse
 
-        /** Typing indicator text color. */
+        /** Typing indicator chip text. */
         public val chatTextTypingIndicator: Color = textPrimary
 
         /** Border for incoming message bubbles. */
@@ -222,13 +223,13 @@ public object StreamDesign {
         /** Border for outgoing message bubbles. */
         public val chatBorderOutgoing: Color = brand.s100
 
-        /** Reaction text color in chat. */
+        /** Reaction count text in chat. */
         public val chatTextReaction: Color = textSecondary
 
         /** Read receipt text color. */
         public val chatTextRead: Color = accentPrimary
 
-        /** Username text color in chat. */
+        /** Username label in chat. */
         public val chatTextUsername: Color = textSecondary
 
         /** Thread connector line for incoming messages. */
@@ -273,40 +274,40 @@ public object StreamDesign {
         /** Toggle switch knob color. */
         public val controlToggleSwitchKnob: Color = backgroundCoreElevation4
 
-        /** Send icon color. */
+        /** Default send icon color in the input. Uses the brand accent. */
         public val inputSendIcon: Color = accentPrimary
 
-        /** Send icon color when disabled. */
+        /** Send icon when disabled (e.g. empty input). */
         public val inputSendIconDisabled: Color = textDisabled
 
-        /** Input field default text color. */
+        /** Main text inside the chat input. */
         public val inputTextDefault: Color = textPrimary
 
         /** Input field disabled text color. */
         public val inputTextDisabled: Color = textDisabled
 
-        /** Input field icon color. */
+        /** Icons inside the input area (attach, emoji, camera, send when idle). */
         public val inputTextIcon: Color = textTertiary
 
-        /** Input field placeholder text color. */
+        /** Placeholder text for the input. Lower emphasis than main text. */
         public val inputTextPlaceholder: Color = textTertiary
 
-        /** Reaction background color. */
+        /** Reaction bar background. */
         public val reactionBg: Color = backgroundCoreElevation3
 
-        /** Reaction border color. */
+        /** Border around unselected reaction chips. Subtle in normal modes, strong in high-contrast. */
         public val reactionBorder: Color = borderCoreDefault
 
-        /** Reaction emoji color. */
+        /** Emoji color inside reaction chips. Uses primary text to stay clearly legible. */
         public val reactionEmoji: Color = textPrimary
 
-        /** Reaction text color. */
+        /** Count label next to the emoji inside the reaction chip. */
         public val reactionText: Color = textPrimary
 
-        /** Skeleton loading gradient base color. */
+        /** Base color for the skeleton loading gradient. Background tone for placeholder surfaces. */
         public val skeletonLoadingBase: Color = Color.Transparent
 
-        /** Default app background color. */
+        /** Global application background. */
         public val backgroundCoreApp: Color = backgroundCoreElevation0
 
         /** Default badge background. */
@@ -366,16 +367,16 @@ public object StreamDesign {
         /** Outgoing message text color. */
         public val chatTextOutgoing: Color = brand.s900
 
-        /** Link text color in chat messages. */
+        /** Links inside message bubbles. */
         public val chatTextLink: Color = textLink
 
-        /** Mention text color in chat messages. */
+        /** Mention styling in chat messages. */
         public val chatTextMention: Color = chatTextLink
 
-        /** System messages like date separators and unread dividers. */
+        /** System messages like date separators. */
         public val chatTextSystem: Color = textSecondary
 
-        /** Timestamp text color in chat messages. */
+        /** Time labels in chat messages. */
         public val chatTextTimestamp: Color = textTertiary
 
         /** Audio waveform bar color. */
