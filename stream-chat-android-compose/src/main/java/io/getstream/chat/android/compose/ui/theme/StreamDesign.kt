@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("MagicNumber", "LongMethod")
+
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.runtime.Immutable
@@ -79,6 +81,7 @@ public object StreamDesign {
      * @param backgroundCoreOverlayDark Selected overlay (dark variant).
      * @param backgroundCoreOverlayLight Selected overlay (light variant).
      * @param backgroundCoreHighlight Highlight background (e.g. message focus/pin).
+     * @param backgroundCoreApp Global application background.
      * @param backgroundUtilitySelected Selected overlay.
      * @param backgroundUtilityDisabled Disabled backgrounds.
      * @param borderCoreDefault Standard surface border.
@@ -94,21 +97,6 @@ public object StreamDesign {
      * @param borderUtilityError Error state border.
      * @param borderUtilityWarning Warning state border.
      * @param borderUtilitySuccess Success state border.
-     * @param badgeBgOverlay Badge background when displayed as an overlay.
-     * @param badgeBgInverse Inverse badge background.
-     * @param chatBgIncoming Incoming bubble background.
-     * @param chatBgAttachmentIncoming Attachment card in incoming bubble.
-     * @param chatBgAttachmentOutgoing Attachment card in outgoing bubble.
-     * @param chatBorderOnChatIncoming Border on incoming message bubbles.
-     * @param chatPollProgressFillIncoming Incoming poll progress fill.
-     * @param chatPollProgressTrackIncoming Incoming poll progress track.
-     * @param chatPollProgressFillOutgoing Outgoing poll progress fill.
-     * @param chatPollProgressTrackOutgoing Outgoing poll progress track.
-     * @param chatReplyIndicatorIncoming Reply indicator shading for incoming messages.
-     * @param chatReplyIndicatorOutgoing Reply indicator shading for outgoing messages.
-     * @param controlRemoveBg Remove control background.
-     * @param controlRemoveIcon Remove control icon.
-     * @param controlPlaybackThumbBgDefault Playback thumb background in default state.
      * @param avatarBgPlaceholder Avatar placeholder background.
      * @param avatarPaletteBg1 Avatar background (slot 1).
      * @param avatarPaletteBg2 Avatar background (slot 2).
@@ -123,7 +111,16 @@ public object StreamDesign {
      * @param avatarTextPlaceholder Avatar placeholder text.
      * @param avatarPresenceBorder The thin outline around the presence dot. Matches the local
      * surface behind the avatar; in high-contrast it uses the base surface.
+     * @param skeletonLoadingBase Base color for the skeleton loading gradient (placeholder surfaces).
      * @param skeletonLoadingHighlight Highlight for the skeleton loading gradient (moving shimmer).
+     *
+     * The following component tokens alias **different** semantic tokens in light vs dark themes
+     * and therefore cannot be expressed as a single derived expression:
+     *
+     * @param chatPollProgressFillOutgoing Outgoing poll progress fill.
+     * @param chatReplyIndicatorIncoming Reply indicator shading for incoming messages.
+     * @param chatReplyIndicatorOutgoing Reply indicator shading for outgoing messages.
+     * @param controlPlaybackThumbBgDefault Playback thumb background in default state.
      */
     @Immutable
     public data class Colors(
@@ -156,6 +153,7 @@ public object StreamDesign {
         public val backgroundCoreOverlayDark: Color,
         public val backgroundCoreOverlayLight: Color,
         public val backgroundCoreHighlight: Color,
+        public val backgroundCoreApp: Color,
         public val backgroundUtilitySelected: Color,
         public val backgroundUtilityDisabled: Color,
         public val borderCoreDefault: Color,
@@ -171,20 +169,9 @@ public object StreamDesign {
         public val borderUtilityError: Color,
         public val borderUtilityWarning: Color,
         public val borderUtilitySuccess: Color,
-        public val badgeBgOverlay: Color,
-        public val badgeBgInverse: Color,
-        public val chatBgIncoming: Color,
-        public val chatBgAttachmentIncoming: Color,
-        public val chatBgAttachmentOutgoing: Color,
-        public val chatBorderOnChatIncoming: Color,
-        public val chatPollProgressFillIncoming: Color,
-        public val chatPollProgressTrackIncoming: Color,
         public val chatPollProgressFillOutgoing: Color,
-        public val chatPollProgressTrackOutgoing: Color,
         public val chatReplyIndicatorIncoming: Color,
         public val chatReplyIndicatorOutgoing: Color,
-        public val controlRemoveBg: Color,
-        public val controlRemoveIcon: Color,
         public val controlPlaybackThumbBgDefault: Color,
         public val avatarBgPlaceholder: Color,
         public val avatarPaletteBg1: Color,
@@ -199,119 +186,30 @@ public object StreamDesign {
         public val avatarPaletteText5: Color,
         public val avatarTextPlaceholder: Color,
         public val avatarPresenceBorder: Color,
+        public val skeletonLoadingBase: Color,
         public val skeletonLoadingHighlight: Color,
     ) {
+
+        /** Default badge background. */
+        public val badgeBgDefault: Color = backgroundCoreElevation3
 
         /** Badge background for error states. */
         public val badgeBgError: Color = accentError
 
+        /** Inverse badge background. */
+        public val badgeBgInverse: Color = chrome.s1000
+
         /** Badge background for neutral states. */
         public val badgeBgNeutral: Color = accentNeutral
+
+        /** Badge background when displayed as an overlay. */
+        public val badgeBgOverlay: Color = StreamPrimitiveColors.baseBlack.copy(alpha = .75f)
 
         /** Badge background for primary brand states. */
         public val badgeBgPrimary: Color = accentPrimary
 
         /** Badge outer border. */
         public val badgeBorder: Color = borderCoreInverse
-
-        /** Typing indicator chip text. */
-        public val chatTextTypingIndicator: Color = textPrimary
-
-        /** Border for incoming message bubbles. */
-        public val chatBorderIncoming: Color = borderCoreSubtle
-
-        /** Border for outgoing message bubbles. */
-        public val chatBorderOutgoing: Color = brand.s100
-
-        /** Reaction count text in chat. */
-        public val chatTextReaction: Color = textSecondary
-
-        /** Read receipt text color. */
-        public val chatTextRead: Color = accentPrimary
-
-        /** Username label in chat. */
-        public val chatTextUsername: Color = textSecondary
-
-        /** Thread connector line for incoming messages. */
-        public val chatThreadConnectorIncoming: Color = borderCoreDefault
-
-        /** Thread connector line for outgoing messages. */
-        public val chatThreadConnectorOutgoing: Color = brand.s150
-
-        /** Playback toggle border color. */
-        public val controlPlaybackToggleBorder: Color = borderCoreDefault
-
-        /** Playback toggle text color. */
-        public val controlPlaybackToggleText: Color = textPrimary
-
-        /** Progress bar fill color. */
-        public val controlProgressBarFill: Color = accentNeutral
-
-        /** Progress bar track color. */
-        public val controlProgressBarTrack: Color = backgroundCoreSurfaceStrong
-
-        /** Radio/check background (unselected). */
-        public val controlRadioCheckBg: Color = Color.Transparent
-
-        /** Selected radio/check background. */
-        public val controlRadioCheckBgSelected: Color = accentPrimary
-
-        /** Selected radio/check icon. */
-        public val controlRadioCheckIcon: Color = textOnAccent
-
-        /** Indicator dot inside a selected radio button. */
-        public val controlRadioButtonIndicator: Color = textOnAccent
-
-        /** Toggle switch track background. */
-        public val controlToggleSwitchBg: Color = accentNeutral
-
-        /** Toggle switch track background when disabled. */
-        public val controlToggleSwitchBgDisabled: Color = backgroundUtilityDisabled
-
-        /** Toggle switch track background when selected. */
-        public val controlToggleSwitchBgSelected: Color = accentPrimary
-
-        /** Toggle switch knob color. */
-        public val controlToggleSwitchKnob: Color = backgroundCoreElevation4
-
-        /** Default send icon color in the input. Uses the brand accent. */
-        public val inputSendIcon: Color = accentPrimary
-
-        /** Send icon when disabled (e.g. empty input). */
-        public val inputSendIconDisabled: Color = textDisabled
-
-        /** Main text inside the chat input. */
-        public val inputTextDefault: Color = textPrimary
-
-        /** Input field disabled text color. */
-        public val inputTextDisabled: Color = textDisabled
-
-        /** Icons inside the input area (attach, emoji, camera, send when idle). */
-        public val inputTextIcon: Color = textTertiary
-
-        /** Placeholder text for the input. Lower emphasis than main text. */
-        public val inputTextPlaceholder: Color = textTertiary
-
-        /** Reaction bar background. */
-        public val reactionBg: Color = backgroundCoreElevation3
-
-        /** Border around unselected reaction chips. Subtle in normal modes, strong in high-contrast. */
-        public val reactionBorder: Color = borderCoreDefault
-
-        /** Emoji color inside reaction chips. Uses primary text to stay clearly legible. */
-        public val reactionEmoji: Color = textPrimary
-
-        /** Count label next to the emoji inside the reaction chip. */
-        public val reactionText: Color = textPrimary
-
-        /** Base color for the skeleton loading gradient. Background tone for placeholder surfaces. */
-        public val skeletonLoadingBase: Color = Color.Transparent
-
-        /** Global application background. */
-        public val backgroundCoreApp: Color = backgroundCoreElevation0
-
-        /** Default badge background. */
-        public val badgeBgDefault: Color = backgroundCoreElevation3
 
         /** Badge text color. */
         public val badgeText: Color = textPrimary
@@ -355,11 +253,38 @@ public object StreamDesign {
         /** Secondary button text on accent backgrounds. */
         public val buttonSecondaryTextOnAccent: Color = textPrimary
 
+        /** Incoming bubble background. */
+        public val chatBgIncoming: Color = backgroundCoreSurface
+
         /** Outgoing message bubble background. */
         public val chatBgOutgoing: Color = brand.s100
 
+        /** Attachment card in incoming bubble. */
+        public val chatBgAttachmentIncoming: Color = backgroundCoreSurfaceStrong
+
+        /** Attachment card in outgoing bubble. */
+        public val chatBgAttachmentOutgoing: Color = brand.s150
+
+        /** Border for incoming message bubbles. */
+        public val chatBorderIncoming: Color = borderCoreSubtle
+
+        /** Border for outgoing message bubbles. */
+        public val chatBorderOutgoing: Color = brand.s100
+
+        /** Border on incoming message bubbles. */
+        public val chatBorderOnChatIncoming: Color = borderCoreStrong
+
         /** Border on outgoing message bubbles. */
         public val chatBorderOnChatOutgoing: Color = brand.s300
+
+        /** Incoming poll progress fill. */
+        public val chatPollProgressFillIncoming: Color = accentNeutral
+
+        /** Incoming poll progress track. */
+        public val chatPollProgressTrackIncoming: Color = backgroundCoreSurfaceStrong
+
+        /** Outgoing poll progress track. */
+        public val chatPollProgressTrackOutgoing: Color = brand.s200
 
         /** Incoming message text color. */
         public val chatTextIncoming: Color = textPrimary
@@ -373,11 +298,29 @@ public object StreamDesign {
         /** Mention styling in chat messages. */
         public val chatTextMention: Color = chatTextLink
 
+        /** Reaction count text in chat. */
+        public val chatTextReaction: Color = textSecondary
+
+        /** Read receipt text color. */
+        public val chatTextRead: Color = accentPrimary
+
         /** System messages like date separators. */
         public val chatTextSystem: Color = textSecondary
 
         /** Time labels in chat messages. */
         public val chatTextTimestamp: Color = textTertiary
+
+        /** Typing indicator chip text. */
+        public val chatTextTypingIndicator: Color = textPrimary
+
+        /** Username label in chat. */
+        public val chatTextUsername: Color = textSecondary
+
+        /** Thread connector line for incoming messages. */
+        public val chatThreadConnectorIncoming: Color = borderCoreDefault
+
+        /** Thread connector line for outgoing messages. */
+        public val chatThreadConnectorOutgoing: Color = brand.s150
 
         /** Audio waveform bar color. */
         public val chatWaveformBar: Color = borderCoreOpacityStrong
@@ -385,32 +328,23 @@ public object StreamDesign {
         /** Audio waveform bar color when playing. */
         public val chatWaveformBarPlaying: Color = accentPrimary
 
-        /** Chip text color. */
-        public val controlChipText: Color = textPrimary
-
-        /** Chip border color. */
-        public val controlChipBorder: Color = borderCoreDefault
-
-        /** Play button background. */
-        public val controlPlayButtonBg: Color = chrome.s1000
-
-        /** Play button icon. */
-        public val controlPlayButtonIcon: Color = textOnAccent
-
         /** Checkbox background (unselected). */
         public val controlCheckboxBg: Color = Color.Transparent
-
-        /** Checkbox border. */
-        public val controlCheckboxBorder: Color = borderCoreDefault
 
         /** Checkbox background when selected. */
         public val controlCheckboxBgSelected: Color = accentPrimary
 
+        /** Checkbox border. */
+        public val controlCheckboxBorder: Color = borderCoreDefault
+
         /** Checkbox icon when selected. */
         public val controlCheckboxIcon: Color = textOnAccent
 
-        /** Playback thumb border in default state. */
-        public val controlPlaybackThumbBorderDefault: Color = borderCoreOpacityStrong
+        /** Chip border color. */
+        public val controlChipBorder: Color = borderCoreDefault
+
+        /** Chip text color. */
+        public val controlChipText: Color = textPrimary
 
         /** Playback thumb background in active state. */
         public val controlPlaybackThumbBgActive: Color = accentPrimary
@@ -418,17 +352,98 @@ public object StreamDesign {
         /** Playback thumb border in active state. */
         public val controlPlaybackThumbBorderActive: Color = borderCoreOnAccent
 
+        /** Playback thumb border in default state. */
+        public val controlPlaybackThumbBorderDefault: Color = borderCoreOpacityStrong
+
+        /** Playback toggle border color. */
+        public val controlPlaybackToggleBorder: Color = borderCoreDefault
+
+        /** Playback toggle text color. */
+        public val controlPlaybackToggleText: Color = textPrimary
+
+        /** Play button background. */
+        public val controlPlayButtonBg: Color = chrome.s1000
+
+        /** Play button icon. */
+        public val controlPlayButtonIcon: Color = textOnAccent
+
+        /** Progress bar fill color. */
+        public val controlProgressBarFill: Color = accentNeutral
+
+        /** Progress bar track color. */
+        public val controlProgressBarTrack: Color = backgroundCoreSurfaceStrong
+
+        /** Indicator dot inside a selected radio button. */
+        public val controlRadioButtonIndicator: Color = textOnAccent
+
+        /** Radio/check background (unselected). */
+        public val controlRadioCheckBg: Color = Color.Transparent
+
         /** Radio/check border. */
         public val controlRadioCheckBorder: Color = borderCoreDefault
+
+        /** Selected radio/check background. */
+        public val controlRadioCheckBgSelected: Color = accentPrimary
+
+        /** Selected radio/check icon. */
+        public val controlRadioCheckIcon: Color = textOnAccent
+
+        /** Remove control background. */
+        public val controlRemoveBg: Color = backgroundCoreInverse
 
         /** Remove control border. */
         public val controlRemoveBorder: Color = borderCoreInverse
 
-        /** Online presence indicator. */
-        public val avatarPresenceBgOnline: Color = accentSuccess
+        /** Remove control icon. */
+        public val controlRemoveIcon: Color = textInverse
+
+        /** Toggle switch track background. */
+        public val controlToggleSwitchBg: Color = accentNeutral
+
+        /** Toggle switch track background when disabled. */
+        public val controlToggleSwitchBgDisabled: Color = backgroundUtilityDisabled
+
+        /** Toggle switch track background when selected. */
+        public val controlToggleSwitchBgSelected: Color = accentPrimary
+
+        /** Toggle switch knob color. */
+        public val controlToggleSwitchKnob: Color = backgroundCoreElevation4
+
+        /** Default send icon color in the input. Uses the brand accent. */
+        public val inputSendIcon: Color = accentPrimary
+
+        /** Send icon when disabled (e.g. empty input). */
+        public val inputSendIconDisabled: Color = textDisabled
+
+        /** Main text inside the chat input. */
+        public val inputTextDefault: Color = textPrimary
+
+        /** Input field disabled text color. */
+        public val inputTextDisabled: Color = textDisabled
+
+        /** Icons inside the input area (attach, emoji, camera, send when idle). */
+        public val inputTextIcon: Color = textTertiary
+
+        /** Placeholder text for the input. Lower emphasis than main text. */
+        public val inputTextPlaceholder: Color = textTertiary
+
+        /** Reaction bar background. */
+        public val reactionBg: Color = backgroundCoreElevation3
+
+        /** Border around unselected reaction chips. Subtle in normal modes, strong in high-contrast. */
+        public val reactionBorder: Color = borderCoreDefault
+
+        /** Emoji color inside reaction chips. Uses primary text to stay clearly legible. */
+        public val reactionEmoji: Color = textPrimary
+
+        /** Count label next to the emoji inside the reaction chip. */
+        public val reactionText: Color = textPrimary
 
         /** Offline presence indicator. */
         public val avatarPresenceBgOffline: Color = accentNeutral
+
+        /** Online presence indicator. */
+        public val avatarPresenceBgOnline: Color = accentSuccess
 
         public companion object {
             /**
@@ -436,7 +451,6 @@ public object StreamDesign {
              *
              * @return A [Colors] instance holding our color palette.
              */
-            @Suppress("LongMethod", "MagicNumber")
             public fun default(): Colors = Colors(
                 brand = ColorScale.defaultLight(),
                 chrome = ChromeScale.defaultLight(),
@@ -467,6 +481,7 @@ public object StreamDesign {
                 backgroundCoreOverlayDark = StreamPrimitiveColors.slate900.copy(alpha = 0.25f),
                 backgroundCoreOverlayLight = Color(0xBFFFFFFF),
                 backgroundCoreHighlight = StreamPrimitiveColors.yellow50,
+                backgroundCoreApp = StreamPrimitiveColors.baseWhite,
                 backgroundUtilitySelected = StreamPrimitiveColors.slate900.copy(alpha = 0.2f),
                 backgroundUtilityDisabled = StreamPrimitiveColors.slate100,
                 borderCoreDefault = StreamPrimitiveColors.slate150,
@@ -482,20 +497,9 @@ public object StreamDesign {
                 borderUtilityError = StreamPrimitiveColors.red500,
                 borderUtilityWarning = StreamPrimitiveColors.yellow400,
                 borderUtilitySuccess = StreamPrimitiveColors.green400,
-                badgeBgOverlay = StreamPrimitiveColors.baseBlack.copy(alpha = .75f),
-                badgeBgInverse = StreamPrimitiveColors.baseBlack,
-                chatBgIncoming = StreamPrimitiveColors.slate100,
-                chatBgAttachmentIncoming = StreamPrimitiveColors.slate150,
-                chatBgAttachmentOutgoing = StreamPrimitiveColors.blue150,
-                chatBorderOnChatIncoming = StreamPrimitiveColors.slate300,
-                chatPollProgressFillIncoming = StreamPrimitiveColors.slate500,
-                chatPollProgressTrackIncoming = StreamPrimitiveColors.slate150,
                 chatPollProgressFillOutgoing = StreamPrimitiveColors.blue500,
-                chatPollProgressTrackOutgoing = StreamPrimitiveColors.blue200,
                 chatReplyIndicatorIncoming = StreamPrimitiveColors.slate400,
                 chatReplyIndicatorOutgoing = StreamPrimitiveColors.blue400,
-                controlRemoveBg = StreamPrimitiveColors.slate900,
-                controlRemoveIcon = StreamPrimitiveColors.baseWhite,
                 controlPlaybackThumbBgDefault = StreamPrimitiveColors.baseWhite,
                 avatarBgPlaceholder = StreamPrimitiveColors.slate150,
                 avatarPaletteBg1 = StreamPrimitiveColors.blue150,
@@ -510,6 +514,7 @@ public object StreamDesign {
                 avatarPaletteText5 = StreamPrimitiveColors.yellow900,
                 avatarTextPlaceholder = StreamPrimitiveColors.slate500,
                 avatarPresenceBorder = StreamPrimitiveColors.baseWhite,
+                skeletonLoadingBase = Color.Transparent,
                 skeletonLoadingHighlight = StreamPrimitiveColors.baseWhite,
             )
 
@@ -518,7 +523,6 @@ public object StreamDesign {
              *
              * @return A [Colors] instance holding our color palette.
              */
-            @Suppress("LongMethod", "MagicNumber")
             public fun defaultDark(): Colors = Colors(
                 brand = ColorScale.defaultDark(),
                 chrome = ChromeScale.defaultDark(),
@@ -549,6 +553,7 @@ public object StreamDesign {
                 backgroundCoreOverlayDark = StreamPrimitiveColors.baseBlack.copy(alpha = 0.5f),
                 backgroundCoreOverlayLight = Color(0xBF000000),
                 backgroundCoreHighlight = StreamPrimitiveColors.yellow800,
+                backgroundCoreApp = StreamPrimitiveColors.baseBlack,
                 backgroundUtilitySelected = StreamPrimitiveColors.baseWhite.copy(alpha = 0.25f),
                 backgroundUtilityDisabled = StreamPrimitiveColors.neutral800,
                 borderCoreDefault = StreamPrimitiveColors.neutral600,
@@ -564,20 +569,9 @@ public object StreamDesign {
                 borderUtilityError = StreamPrimitiveColors.red400,
                 borderUtilityWarning = StreamPrimitiveColors.yellow300,
                 borderUtilitySuccess = StreamPrimitiveColors.green300,
-                badgeBgOverlay = StreamPrimitiveColors.baseBlack.copy(alpha = .75f),
-                badgeBgInverse = StreamPrimitiveColors.baseWhite,
-                chatBgIncoming = StreamPrimitiveColors.neutral800,
-                chatBgAttachmentIncoming = StreamPrimitiveColors.neutral700,
-                chatBgAttachmentOutgoing = StreamPrimitiveColors.blue700,
-                chatBorderOnChatIncoming = StreamPrimitiveColors.neutral500,
-                chatPollProgressFillIncoming = StreamPrimitiveColors.neutral300,
-                chatPollProgressTrackIncoming = StreamPrimitiveColors.neutral700,
                 chatPollProgressFillOutgoing = StreamPrimitiveColors.baseWhite,
-                chatPollProgressTrackOutgoing = StreamPrimitiveColors.blue600,
                 chatReplyIndicatorIncoming = StreamPrimitiveColors.neutral500,
                 chatReplyIndicatorOutgoing = StreamPrimitiveColors.blue150,
-                controlRemoveBg = StreamPrimitiveColors.neutral50,
-                controlRemoveIcon = StreamPrimitiveColors.baseBlack,
                 controlPlaybackThumbBgDefault = StreamPrimitiveColors.neutral50,
                 avatarBgPlaceholder = StreamPrimitiveColors.neutral700,
                 avatarPaletteBg1 = StreamPrimitiveColors.blue600,
@@ -592,6 +586,7 @@ public object StreamDesign {
                 avatarPaletteText5 = StreamPrimitiveColors.yellow100,
                 avatarTextPlaceholder = StreamPrimitiveColors.neutral300,
                 avatarPresenceBorder = StreamPrimitiveColors.baseBlack,
+                skeletonLoadingBase = Color.Transparent,
                 skeletonLoadingHighlight = StreamPrimitiveColors.baseWhite.copy(alpha = 0.2f),
             )
         }
@@ -702,7 +697,6 @@ public object StreamDesign {
              *
              * @param brandColor The core brand color (maps to [s500]).
              */
-            @Suppress("MagicNumber")
             public fun from(brandColor: Color): ColorScale = ColorScale(
                 s50 = lerp(Color.White, brandColor, 0.04f),
                 s100 = lerp(Color.White, brandColor, 0.08f),
@@ -851,7 +845,6 @@ public object StreamDesign {
              * @param fontFamily The font that the users want to use for the app.
              * @return [Typography] that holds all the default text styles that we support.
              */
-            @Suppress("LongMethod")
             public fun default(fontFamily: FontFamily? = null): Typography = Typography(
                 bodyDefault = TextStyle(
                     fontFamily = fontFamily,
