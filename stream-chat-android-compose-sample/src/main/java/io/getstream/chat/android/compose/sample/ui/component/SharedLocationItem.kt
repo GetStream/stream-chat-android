@@ -135,9 +135,9 @@ private fun LiveLocationSharing(
             .clip(RoundedCornerShape(12.dp))
             .background(
                 color = if (isOwnMessage) {
-                    ChatTheme.colors.chatBgOutgoing
+                    ChatTheme.colors.brand.s100
                 } else {
-                    ChatTheme.colors.chatBgIncoming
+                    ChatTheme.colors.backgroundCoreSurface
                 },
             ),
     ) {

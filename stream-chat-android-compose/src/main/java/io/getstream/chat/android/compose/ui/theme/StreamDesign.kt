@@ -191,259 +191,259 @@ public object StreamDesign {
     ) {
 
         /** Default badge background. */
-        public val badgeBgDefault: Color = backgroundCoreElevation3
+        internal val badgeBgDefault: Color = backgroundCoreElevation3
 
         /** Badge background for error states. */
-        public val badgeBgError: Color = accentError
+        internal val badgeBgError: Color = accentError
 
         /** Inverse badge background. */
-        public val badgeBgInverse: Color = chrome.s1000
+        internal val badgeBgInverse: Color = chrome.s1000
 
         /** Badge background for neutral states. */
-        public val badgeBgNeutral: Color = accentNeutral
+        internal val badgeBgNeutral: Color = accentNeutral
 
         /** Badge background when displayed as an overlay. */
-        public val badgeBgOverlay: Color = StreamPrimitiveColors.baseBlack.copy(alpha = .75f)
+        internal val badgeBgOverlay: Color = StreamPrimitiveColors.baseBlack.copy(alpha = .75f)
 
         /** Badge background for primary brand states. */
-        public val badgeBgPrimary: Color = accentPrimary
+        internal val badgeBgPrimary: Color = accentPrimary
 
         /** Badge outer border. */
-        public val badgeBorder: Color = borderCoreInverse
+        internal val badgeBorder: Color = borderCoreInverse
 
         /** Badge text color. */
-        public val badgeText: Color = textPrimary
+        internal val badgeText: Color = textPrimary
 
         /** Badge text color on accent backgrounds. */
-        public val badgeTextOnAccent: Color = textOnAccent
+        internal val badgeTextOnAccent: Color = textOnAccent
 
         /** Destructive button background. */
-        public val buttonDestructiveBg: Color = accentError
+        internal val buttonDestructiveBg: Color = accentError
 
         /** Destructive button border. */
-        public val buttonDestructiveBorder: Color = accentError
+        internal val buttonDestructiveBorder: Color = accentError
 
         /** Destructive button text. */
-        public val buttonDestructiveText: Color = accentError
+        internal val buttonDestructiveText: Color = accentError
 
         /** Destructive button text on accent backgrounds. */
-        public val buttonDestructiveTextOnAccent: Color = textOnAccent
+        internal val buttonDestructiveTextOnAccent: Color = textOnAccent
 
         /** Primary button background. */
-        public val buttonPrimaryBg: Color = accentPrimary
+        internal val buttonPrimaryBg: Color = accentPrimary
 
         /** Primary button border. */
-        public val buttonPrimaryBorder: Color = brand.s200
+        internal val buttonPrimaryBorder: Color = brand.s200
 
         /** Primary button text. */
-        public val buttonPrimaryText: Color = textLink
+        internal val buttonPrimaryText: Color = textLink
 
         /** Primary button text on accent backgrounds. */
-        public val buttonPrimaryTextOnAccent: Color = textOnAccent
+        internal val buttonPrimaryTextOnAccent: Color = textOnAccent
 
         /** Secondary button background. */
-        public val buttonSecondaryBg: Color = backgroundCoreSurface
+        internal val buttonSecondaryBg: Color = backgroundCoreSurface
 
         /** Secondary button border. */
-        public val buttonSecondaryBorder: Color = borderCoreDefault
+        internal val buttonSecondaryBorder: Color = borderCoreDefault
 
         /** Secondary button text. */
-        public val buttonSecondaryText: Color = textPrimary
+        internal val buttonSecondaryText: Color = textPrimary
 
         /** Secondary button text on accent backgrounds. */
-        public val buttonSecondaryTextOnAccent: Color = textPrimary
+        internal val buttonSecondaryTextOnAccent: Color = textPrimary
 
         /** Incoming bubble background. */
-        public val chatBgIncoming: Color = backgroundCoreSurface
+        internal val chatBgIncoming: Color = backgroundCoreSurface
 
         /** Outgoing message bubble background. */
-        public val chatBgOutgoing: Color = brand.s100
+        internal val chatBgOutgoing: Color = brand.s100
 
         /** Attachment card in incoming bubble. */
-        public val chatBgAttachmentIncoming: Color = backgroundCoreSurfaceStrong
+        internal val chatBgAttachmentIncoming: Color = backgroundCoreSurfaceStrong
 
         /** Attachment card in outgoing bubble. */
-        public val chatBgAttachmentOutgoing: Color = brand.s150
+        internal val chatBgAttachmentOutgoing: Color = brand.s150
 
         /** Border for incoming message bubbles. */
-        public val chatBorderIncoming: Color = borderCoreSubtle
+        internal val chatBorderIncoming: Color = borderCoreSubtle
 
         /** Border for outgoing message bubbles. */
-        public val chatBorderOutgoing: Color = brand.s100
+        internal val chatBorderOutgoing: Color = brand.s100
 
         /** Border on incoming message bubbles. */
-        public val chatBorderOnChatIncoming: Color = borderCoreStrong
+        internal val chatBorderOnChatIncoming: Color = borderCoreStrong
 
         /** Border on outgoing message bubbles. */
-        public val chatBorderOnChatOutgoing: Color = brand.s300
+        internal val chatBorderOnChatOutgoing: Color = brand.s300
 
         /** Incoming poll progress fill. */
-        public val chatPollProgressFillIncoming: Color = accentNeutral
+        internal val chatPollProgressFillIncoming: Color = accentNeutral
 
         /** Incoming poll progress track. */
-        public val chatPollProgressTrackIncoming: Color = backgroundCoreSurfaceStrong
+        internal val chatPollProgressTrackIncoming: Color = backgroundCoreSurfaceStrong
 
         /** Outgoing poll progress track. */
-        public val chatPollProgressTrackOutgoing: Color = brand.s200
+        internal val chatPollProgressTrackOutgoing: Color = brand.s200
 
         /** Incoming message text color. */
-        public val chatTextIncoming: Color = textPrimary
+        internal val chatTextIncoming: Color = textPrimary
 
         /** Outgoing message text color. */
-        public val chatTextOutgoing: Color = brand.s900
+        internal val chatTextOutgoing: Color = brand.s900
 
         /** Links inside message bubbles. */
-        public val chatTextLink: Color = textLink
+        internal val chatTextLink: Color = textLink
 
         /** Mention styling in chat messages. */
-        public val chatTextMention: Color = chatTextLink
+        internal val chatTextMention: Color = chatTextLink
 
         /** Reaction count text in chat. */
-        public val chatTextReaction: Color = textSecondary
+        internal val chatTextReaction: Color = textSecondary
 
         /** Read receipt text color. */
-        public val chatTextRead: Color = accentPrimary
+        internal val chatTextRead: Color = accentPrimary
 
         /** System messages like date separators. */
-        public val chatTextSystem: Color = textSecondary
+        internal val chatTextSystem: Color = textSecondary
 
         /** Time labels in chat messages. */
-        public val chatTextTimestamp: Color = textTertiary
+        internal val chatTextTimestamp: Color = textTertiary
 
         /** Typing indicator chip text. */
-        public val chatTextTypingIndicator: Color = textPrimary
+        internal val chatTextTypingIndicator: Color = textPrimary
 
         /** Username label in chat. */
-        public val chatTextUsername: Color = textSecondary
+        internal val chatTextUsername: Color = textSecondary
 
         /** Thread connector line for incoming messages. */
-        public val chatThreadConnectorIncoming: Color = borderCoreDefault
+        internal val chatThreadConnectorIncoming: Color = borderCoreDefault
 
         /** Thread connector line for outgoing messages. */
-        public val chatThreadConnectorOutgoing: Color = brand.s150
+        internal val chatThreadConnectorOutgoing: Color = brand.s150
 
         /** Audio waveform bar color. */
-        public val chatWaveformBar: Color = borderCoreOpacityStrong
+        internal val chatWaveformBar: Color = borderCoreOpacityStrong
 
         /** Audio waveform bar color when playing. */
-        public val chatWaveformBarPlaying: Color = accentPrimary
+        internal val chatWaveformBarPlaying: Color = accentPrimary
 
         /** Checkbox background (unselected). */
-        public val controlCheckboxBg: Color = Color.Transparent
+        internal val controlCheckboxBg: Color = Color.Transparent
 
         /** Checkbox background when selected. */
-        public val controlCheckboxBgSelected: Color = accentPrimary
+        internal val controlCheckboxBgSelected: Color = accentPrimary
 
         /** Checkbox border. */
-        public val controlCheckboxBorder: Color = borderCoreDefault
+        internal val controlCheckboxBorder: Color = borderCoreDefault
 
         /** Checkbox icon when selected. */
-        public val controlCheckboxIcon: Color = textOnAccent
+        internal val controlCheckboxIcon: Color = textOnAccent
 
         /** Chip border color. */
-        public val controlChipBorder: Color = borderCoreDefault
+        internal val controlChipBorder: Color = borderCoreDefault
 
         /** Chip text color. */
-        public val controlChipText: Color = textPrimary
+        internal val controlChipText: Color = textPrimary
 
         /** Playback thumb background in active state. */
-        public val controlPlaybackThumbBgActive: Color = accentPrimary
+        internal val controlPlaybackThumbBgActive: Color = accentPrimary
 
         /** Playback thumb border in active state. */
-        public val controlPlaybackThumbBorderActive: Color = borderCoreOnAccent
+        internal val controlPlaybackThumbBorderActive: Color = borderCoreOnAccent
 
         /** Playback thumb border in default state. */
-        public val controlPlaybackThumbBorderDefault: Color = borderCoreOpacityStrong
+        internal val controlPlaybackThumbBorderDefault: Color = borderCoreOpacityStrong
 
         /** Playback toggle border color. */
-        public val controlPlaybackToggleBorder: Color = borderCoreDefault
+        internal val controlPlaybackToggleBorder: Color = borderCoreDefault
 
         /** Playback toggle text color. */
-        public val controlPlaybackToggleText: Color = textPrimary
+        internal val controlPlaybackToggleText: Color = textPrimary
 
         /** Play button background. */
-        public val controlPlayButtonBg: Color = chrome.s1000
+        internal val controlPlayButtonBg: Color = chrome.s1000
 
         /** Play button icon. */
-        public val controlPlayButtonIcon: Color = textOnAccent
+        internal val controlPlayButtonIcon: Color = textOnAccent
 
         /** Progress bar fill color. */
-        public val controlProgressBarFill: Color = accentNeutral
+        internal val controlProgressBarFill: Color = accentNeutral
 
         /** Progress bar track color. */
-        public val controlProgressBarTrack: Color = backgroundCoreSurfaceStrong
+        internal val controlProgressBarTrack: Color = backgroundCoreSurfaceStrong
 
         /** Indicator dot inside a selected radio button. */
-        public val controlRadioButtonIndicator: Color = textOnAccent
+        internal val controlRadioButtonIndicator: Color = textOnAccent
 
         /** Radio/check background (unselected). */
-        public val controlRadioCheckBg: Color = Color.Transparent
+        internal val controlRadioCheckBg: Color = Color.Transparent
 
         /** Radio/check border. */
-        public val controlRadioCheckBorder: Color = borderCoreDefault
+        internal val controlRadioCheckBorder: Color = borderCoreDefault
 
         /** Selected radio/check background. */
-        public val controlRadioCheckBgSelected: Color = accentPrimary
+        internal val controlRadioCheckBgSelected: Color = accentPrimary
 
         /** Selected radio/check icon. */
-        public val controlRadioCheckIcon: Color = textOnAccent
+        internal val controlRadioCheckIcon: Color = textOnAccent
 
         /** Remove control background. */
-        public val controlRemoveBg: Color = backgroundCoreInverse
+        internal val controlRemoveBg: Color = backgroundCoreInverse
 
         /** Remove control border. */
-        public val controlRemoveBorder: Color = borderCoreInverse
+        internal val controlRemoveBorder: Color = borderCoreInverse
 
         /** Remove control icon. */
-        public val controlRemoveIcon: Color = textInverse
+        internal val controlRemoveIcon: Color = textInverse
 
         /** Toggle switch track background. */
-        public val controlToggleSwitchBg: Color = accentNeutral
+        internal val controlToggleSwitchBg: Color = accentNeutral
 
         /** Toggle switch track background when disabled. */
-        public val controlToggleSwitchBgDisabled: Color = backgroundUtilityDisabled
+        internal val controlToggleSwitchBgDisabled: Color = backgroundUtilityDisabled
 
         /** Toggle switch track background when selected. */
-        public val controlToggleSwitchBgSelected: Color = accentPrimary
+        internal val controlToggleSwitchBgSelected: Color = accentPrimary
 
         /** Toggle switch knob color. */
-        public val controlToggleSwitchKnob: Color = backgroundCoreElevation4
+        internal val controlToggleSwitchKnob: Color = backgroundCoreElevation4
 
         /** Default send icon color in the input. Uses the brand accent. */
-        public val inputSendIcon: Color = accentPrimary
+        internal val inputSendIcon: Color = accentPrimary
 
         /** Send icon when disabled (e.g. empty input). */
-        public val inputSendIconDisabled: Color = textDisabled
+        internal val inputSendIconDisabled: Color = textDisabled
 
         /** Main text inside the chat input. */
-        public val inputTextDefault: Color = textPrimary
+        internal val inputTextDefault: Color = textPrimary
 
         /** Input field disabled text color. */
-        public val inputTextDisabled: Color = textDisabled
+        internal val inputTextDisabled: Color = textDisabled
 
         /** Icons inside the input area (attach, emoji, camera, send when idle). */
-        public val inputTextIcon: Color = textTertiary
+        internal val inputTextIcon: Color = textTertiary
 
         /** Placeholder text for the input. Lower emphasis than main text. */
-        public val inputTextPlaceholder: Color = textTertiary
+        internal val inputTextPlaceholder: Color = textTertiary
 
         /** Reaction bar background. */
-        public val reactionBg: Color = backgroundCoreElevation3
+        internal val reactionBg: Color = backgroundCoreElevation3
 
         /** Border around unselected reaction chips. Subtle in normal modes, strong in high-contrast. */
-        public val reactionBorder: Color = borderCoreDefault
+        internal val reactionBorder: Color = borderCoreDefault
 
         /** Emoji color inside reaction chips. Uses primary text to stay clearly legible. */
-        public val reactionEmoji: Color = textPrimary
+        internal val reactionEmoji: Color = textPrimary
 
         /** Count label next to the emoji inside the reaction chip. */
-        public val reactionText: Color = textPrimary
+        internal val reactionText: Color = textPrimary
 
         /** Offline presence indicator. */
-        public val avatarPresenceBgOffline: Color = accentNeutral
+        internal val avatarPresenceBgOffline: Color = accentNeutral
 
         /** Online presence indicator. */
-        public val avatarPresenceBgOnline: Color = accentSuccess
+        internal val avatarPresenceBgOnline: Color = accentSuccess
 
         public companion object {
             /**
