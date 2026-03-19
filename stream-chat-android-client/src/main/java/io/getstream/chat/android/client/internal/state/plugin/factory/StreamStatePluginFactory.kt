@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.internal.state.plugin.factory
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.StateConfig
+import io.getstream.chat.android.client.api.ChatCoreConfig
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.internal.state.errorhandler.StateErrorHandlerFactory
@@ -49,12 +49,12 @@ import kotlin.reflect.KClass
 /**
  * Implementation of [PluginFactory] that provides [StatePlugin].
  *
- * @param config [StateConfig] Configuration of persistence of the SDK.
+ * @param config [ChatCoreConfig] Configuration of persistence of the SDK.
  * @param appContext [Context]
  */
 @InternalStreamChatApi
 public class StreamStatePluginFactory(
-    private val config: StateConfig,
+    private val config: ChatCoreConfig,
     private val appContext: Context,
 ) : PluginFactory {
     private val logger by taggedLogger("Chat:StatePluginFactory")
@@ -62,7 +62,7 @@ public class StreamStatePluginFactory(
     @InternalStreamChatApi
     override fun <T : Any> resolveDependency(klass: KClass<T>): T? {
         return when (klass) {
-            StateConfig::class -> config as T
+            ChatCoreConfig::class -> config as T
             else -> null
         }
     }
@@ -179,7 +179,7 @@ public class StreamStatePluginFactory(
             eventHandler = eventHandler,
             mutableGlobalState = mutableGlobalState,
             queryingChannelsFree = isQueryingFree,
-            stateConfig = config,
+            chatCoreConfig = config,
         )
     }
 

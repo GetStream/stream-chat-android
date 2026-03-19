@@ -29,7 +29,7 @@ import io.getstream.chat.android.compose.ui.channels.list.ChannelItemMutedTraili
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemNoMessages
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemUnreadMessages
 import io.getstream.chat.android.compose.ui.theme.ChannelListConfig
-import io.getstream.chat.android.compose.ui.theme.ChatConfig
+import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MuteIndicatorPosition
 import org.junit.Rule
@@ -58,7 +58,7 @@ internal class ChannelItemTest : PaparazziComposeTest {
     fun `muted channel trailing bottom`() {
         snapshotWithDarkMode {
             ChatTheme(
-                config = ChatConfig(
+                config = ChatUiConfig(
                     channelList = ChannelListConfig(
                         muteIndicatorPosition = MuteIndicatorPosition.TrailingBottom,
                     ),

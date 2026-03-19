@@ -24,7 +24,7 @@ import android.net.Uri
 import android.os.Environment
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.StateConfig
+import io.getstream.chat.android.client.api.ChatCoreConfig
 import io.getstream.chat.android.client.api.event.ChatEventHandler
 import io.getstream.chat.android.client.api.event.ChatEventHandlerFactory
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -103,12 +103,12 @@ public val ChatClient.globalStateFlow: Flow<GlobalState>
         .map { globalState }
 
 /**
- * [StateConfig] instance used to configure the [StatePlugin].
+ * [ChatCoreConfig] instance used to configure the [StatePlugin].
  *
  * @throws IllegalArgumentException If the StatePluginConfig was not initialized yet.
  */
-internal val ChatClient.stateConfig: StateConfig
-    get() = resolveDependency<StreamStatePluginFactory, StateConfig>()
+internal val ChatClient.chatCoreConfig: ChatCoreConfig
+    get() = resolveDependency<StreamStatePluginFactory, ChatCoreConfig>()
 
 /**
  * Performs [ChatClient.queryChannels] under the hood and returns [QueryChannelsState] associated with the query.
@@ -160,7 +160,7 @@ public fun ChatClient.watchChannelAsState(
 ): StateFlow<ChannelState?> {
     StreamLog.i(TAG) { "[watchChannelAsState] cid: $cid, messageLimit: $messageLimit" }
     return getStateOrNull(coroutineScope) {
-        requestsAsState(coroutineScope).watchChannel(cid, messageLimit, stateConfig.userPresence)
+        requestsAsState(coroutineScope).watchChannel(cid, messageLimit, chatCoreConfig.userPresence)
     }
 }
 

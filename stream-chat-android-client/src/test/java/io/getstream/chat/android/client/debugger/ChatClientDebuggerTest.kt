@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.ChatApiConfig
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.attachment.AttachmentsSender
 import io.getstream.chat.android.client.clientstate.UserStateService
@@ -86,7 +86,7 @@ internal class ChatClientDebuggerTest {
         val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
         val apiKey = "api-key"
         val wssUrl = "socket.url"
-        val config = ChatClientConfig(
+        val config = ChatApiConfig(
             apiKey,
             "hello.http",
             "cdn.http",

@@ -20,7 +20,7 @@ import android.content.Context
 import android.util.Log
 import io.getstream.android.push.firebase.FirebasePushDeviceGenerator
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.StateConfig
+import io.getstream.chat.android.client.api.ChatCoreConfig
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
@@ -80,7 +80,7 @@ object ChatHelper {
             },
         )
 
-        val stateConfig = StateConfig(
+        val chatCoreConfig = ChatCoreConfig(
             backgroundSyncEnabled = false,
             userPresence = true,
             useLegacyChannelLogic = false,
@@ -90,7 +90,7 @@ object ChatHelper {
 
         ChatClient.Builder(apiKey, context)
             .notifications(notificationConfig, notificationHandler)
-            .stateConfig(stateConfig)
+            .config(chatCoreConfig)
             .logLevel(logLevel)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .appName("Chat Sample Compose")

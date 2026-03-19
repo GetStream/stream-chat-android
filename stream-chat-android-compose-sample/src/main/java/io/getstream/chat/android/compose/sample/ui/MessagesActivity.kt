@@ -36,7 +36,7 @@ import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactor
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.AttachmentPickerConfig
-import io.getstream.chat.android.compose.ui.theme.ChatConfig
+import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
@@ -103,7 +103,7 @@ class MessagesActivity : ComponentActivity() {
             typography = typography,
             componentFactory = CustomChatComponentFactory(locationViewModelFactory = locationViewModelFactory),
             dateFormatter = ChatApp.dateFormatter,
-            config = ChatConfig(
+            config = ChatUiConfig(
                 composer = ComposerConfig(
                     audioRecordingEnabled = true,
                     linkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,

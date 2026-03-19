@@ -36,7 +36,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
  * @param notificationConfig A notification config to be used by the client.
  */
 @Suppress("LongParameterList")
-public class ChatClientConfig @JvmOverloads constructor(
+public class ChatApiConfig @JvmOverloads constructor(
     public val apiKey: String,
     public var httpUrl: String,
     public var cdnHttpUrl: String,

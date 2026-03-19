@@ -80,8 +80,13 @@ import io.getstream.chat.android.models.TimeDuration
  * handling channel updates and events. This may be necessary for compatibility with existing implementations.
  * When set to false, the SDK employs the new channel state management logic, which includes optimizations and
  * performance improvements. Default is true.
+ *
+ * @param offlineEnabled Flag to enable or disable offline support. Default is `true`.
+ *
+ * @param ignoredOfflineChannelTypes Set of channel types to be ignored by offline support. Default is
+ *   an empty set.
  */
-public data class StateConfig @JvmOverloads constructor(
+public data class ChatCoreConfig @JvmOverloads constructor(
     @Deprecated(
         "The background sync on push notification is no longer needed to keep the state in sync and " +
             "will be removed in the future. If you are using the default UI components, or building your own UI " +
@@ -89,6 +94,8 @@ public data class StateConfig @JvmOverloads constructor(
             "up-to-date. We recommend disabling it to avoid unnecessary background work.",
     )
     public val backgroundSyncEnabled: Boolean = true,
+    public val offlineEnabled: Boolean = true,
+    public val ignoredOfflineChannelTypes: Set<String> = emptySet(),
     public val userPresence: Boolean = true,
     public val isAutomaticSyncOnReconnectEnabled: Boolean = true,
     public val syncMaxThreshold: TimeDuration = TimeDuration.hours(hours = 12),

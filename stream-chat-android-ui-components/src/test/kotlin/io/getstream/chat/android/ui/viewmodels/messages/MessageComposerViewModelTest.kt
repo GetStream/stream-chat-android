@@ -17,7 +17,7 @@
 package io.getstream.chat.android.ui.viewmodels.messages
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.StateConfig
+import io.getstream.chat.android.client.api.ChatCoreConfig
 import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.channel.state.ChannelState
@@ -360,7 +360,7 @@ internal class MessageComposerViewModelTest {
         private val chatClient: ChatClient = mock(),
         private val channelId: String = "messaging:123",
         private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
-        stateConfig: StateConfig = StateConfig(),
+        chatCoreConfig: ChatCoreConfig = ChatCoreConfig(),
     ) {
         private val stateRegistry: StateRegistry = mock()
         private val globalState: GlobalState = mock()
@@ -390,7 +390,7 @@ internal class MessageComposerViewModelTest {
             val statePlugin: StatePlugin = mock()
             val statePluginFactory: StreamStatePluginFactory = mock()
             whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
-            whenever(statePluginFactory.resolveDependency(eq(StateConfig::class))) doReturn stateConfig
+            whenever(statePluginFactory.resolveDependency(eq(ChatCoreConfig::class))) doReturn chatCoreConfig
             whenever(globalState.channelDraftMessages) doReturn MutableStateFlow(emptyMap())
             whenever(globalState.threadDraftMessages) doReturn MutableStateFlow(emptyMap())
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
