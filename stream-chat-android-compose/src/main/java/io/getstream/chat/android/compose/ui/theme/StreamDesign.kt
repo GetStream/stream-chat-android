@@ -120,7 +120,6 @@ public object StreamDesign {
      * @param borderUtilitySuccess Used for success state borders.
      * @param badgeBgInverse Used for inverse badge background.
      * @param chrome The chrome (neutral gray) color scale. See [ChromeScale].
-     * @param chipBg Used for chip background color.
      */
     @Immutable
     public data class Colors(
@@ -197,7 +196,6 @@ public object StreamDesign {
         public val borderUtilitySuccess: Color = accentSuccess,
         public val badgeBgInverse: Color = Color.Unspecified,
         public val chrome: ChromeScale,
-        public val chipBg: Color = brand.s100,
     ) {
 
         /** Badge background for error states. */
@@ -235,9 +233,6 @@ public object StreamDesign {
 
         /** Thread connector line for outgoing messages. */
         public val chatThreadConnectorOutgoing: Color = brand.s150
-
-        /** Composer background color. */
-        public val composerBg: Color = backgroundCoreElevation1
 
         /** Playback toggle border color. */
         public val controlPlaybackToggleBorder: Color = borderCoreDefault
@@ -590,7 +585,6 @@ public object StreamDesign {
                 borderUtilitySuccess = StreamPrimitiveColors.green300,
                 badgeBgInverse = StreamPrimitiveColors.baseWhite,
                 chrome = ChromeScale.defaultDark(),
-                chipBg = StreamPrimitiveColors.blue600,
             )
         }
     }
