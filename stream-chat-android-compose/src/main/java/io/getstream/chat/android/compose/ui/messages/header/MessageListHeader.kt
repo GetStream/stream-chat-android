@@ -180,7 +180,7 @@ internal fun DefaultMessageListHeaderLeadingContent(onBackPressed: () -> Unit) {
  */
 @Suppress("LongMethod")
 @Composable
-public fun DefaultMessageListHeaderCenterContent(
+internal fun DefaultMessageListHeaderCenterContent(
     channel: Channel,
     currentUser: User?,
     connectionState: ConnectionState,
@@ -293,7 +293,9 @@ internal fun DefaultMessageListHeaderTrailingContent(
         params = ChannelAvatarParams(
             modifier = Modifier
                 .size(40.dp)
-                .ifNotNull(onClick) { callback -> clickable { callback(channel) } },
+                .ifNotNull(onClick) { callback ->
+                    clickable(bounded = false) { callback(channel) }
+                },
             channel = channel,
             currentUser = currentUser,
         ),

@@ -565,18 +565,18 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/Medi
 	public static final field $stable I
 	public final fun component1 ()Landroidx/activity/compose/ManagedActivityResultLauncher;
 	public final fun component2 ()Lio/getstream/chat/android/models/Message;
-	public final fun component3 ()I
+	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Z
 	public final fun component5 ()Lio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;
 	public final fun component6 ()Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;
 	public final fun component7 ()Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;
 	public final fun component8 ()Z
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getAttachmentPosition ()I
 	public final fun getDownloadAttachmentUriGenerator ()Lio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;
 	public final fun getDownloadRequestInterceptor ()Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;
 	public final fun getMediaGalleryPreviewLauncher ()Landroidx/activity/compose/ManagedActivityResultLauncher;
 	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public final fun getSelectedAttachmentUrl ()Ljava/lang/String;
 	public final fun getSkipEnrichUrl ()Z
 	public final fun getStreamCdnImageResizing ()Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;
 	public final fun getVideoThumbnailsEnabled ()Z
@@ -666,8 +666,8 @@ public final class io/getstream/chat/android/compose/ui/attachments/preview/Medi
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryPreviewActivity$Companion {
-	public final fun getIntent (Landroid/content/Context;Lio/getstream/chat/android/models/Message;IZLio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;ZLio/getstream/chat/android/compose/ui/theme/MediaGalleryConfig;)Landroid/content/Intent;
-	public static synthetic fun getIntent$default (Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryPreviewActivity$Companion;Landroid/content/Context;Lio/getstream/chat/android/models/Message;IZLio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;ZLio/getstream/chat/android/compose/ui/theme/MediaGalleryConfig;ILjava/lang/Object;)Landroid/content/Intent;
+	public final fun getIntent (Landroid/content/Context;Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZLio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;ZLio/getstream/chat/android/compose/ui/theme/MediaGalleryConfig;)Landroid/content/Intent;
+	public static synthetic fun getIntent$default (Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryPreviewActivity$Companion;Landroid/content/Context;Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZLio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;ZLio/getstream/chat/android/compose/ui/theme/MediaGalleryConfig;ILjava/lang/Object;)Landroid/content/Intent;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryPreviewContract : androidx/activity/result/contract/ActivityResultContract {
@@ -683,20 +683,20 @@ public final class io/getstream/chat/android/compose/ui/attachments/preview/Medi
 
 public final class io/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryPreviewContract$Input {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/models/Message;IZLio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;Z)V
-	public synthetic fun <init> (Lio/getstream/chat/android/models/Message;IZLio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZLio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;Z)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZLio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getDownloadAttachmentUriGenerator ()Lio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;
 	public final fun getDownloadRequestInterceptor ()Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;
-	public final fun getInitialPosition ()I
 	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public final fun getSelectedAttachmentUrl ()Ljava/lang/String;
 	public final fun getSkipEnrichUrl ()Z
 	public final fun getStreamCdnImageResizing ()Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;
 	public final fun getVideoThumbnailsEnabled ()Z
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryPreviewScreenKt {
-	public static final fun MediaGalleryPreviewScreen (Lio/getstream/chat/android/compose/viewmodel/mediapreview/MediaGalleryPreviewViewModel;ILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/theme/MediaGalleryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function7;Lkotlin/jvm/functions/Function5;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;III)V
-	public static final fun MediaGalleryPreviewScreen (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/ConnectionState;Lio/getstream/chat/android/models/User;ILio/getstream/chat/android/models/Attachment;ZZZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/theme/MediaGalleryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function7;Lkotlin/jvm/functions/Function5;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;IIII)V
+	public static final fun MediaGalleryPreviewScreen (Lio/getstream/chat/android/compose/viewmodel/mediapreview/MediaGalleryPreviewViewModel;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/theme/MediaGalleryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function7;Lkotlin/jvm/functions/Function5;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;III)V
+	public static final fun MediaGalleryPreviewScreen (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/ConnectionState;Lio/getstream/chat/android/models/User;Ljava/lang/String;Lio/getstream/chat/android/models/Attachment;ZZZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/theme/MediaGalleryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function7;Lkotlin/jvm/functions/Function5;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;IIII)V
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/preview/MediaPreviewActivity : androidx/appcompat/app/AppCompatActivity {
@@ -1124,7 +1124,7 @@ public final class io/getstream/chat/android/compose/ui/chats/ChatMessageSelecti
 }
 
 public final class io/getstream/chat/android/compose/ui/chats/ChatsScreenKt {
-	public static final fun ChatsScreen (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneNavigator;Lio/getstream/chat/android/compose/viewmodel/channels/ChannelViewModelFactory;Lio/getstream/chat/android/compose/viewmodel/mentions/MentionListViewModelFactory;Lio/getstream/chat/android/compose/viewmodel/threads/ThreadsViewModelFactory;Lkotlin/jvm/functions/Function2;Ljava/lang/String;Lio/getstream/chat/android/compose/ui/channels/SearchMode;Lio/getstream/chat/android/compose/ui/chats/ChatListContentMode;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
+	public static final fun ChatsScreen (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneNavigator;Lio/getstream/chat/android/compose/viewmodel/channels/ChannelViewModelFactory;Lio/getstream/chat/android/compose/viewmodel/mentions/MentionListViewModelFactory;Lio/getstream/chat/android/compose/viewmodel/threads/ThreadsViewModelFactory;Lkotlin/jvm/functions/Function2;Ljava/lang/String;Lio/getstream/chat/android/compose/ui/channels/SearchMode;Lio/getstream/chat/android/compose/ui/chats/ChatListContentMode;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/getstream/chat/android/compose/ui/chats/ComposableSingletons$ChatsScreenKt {
@@ -2359,7 +2359,6 @@ public final class io/getstream/chat/android/compose/ui/messages/header/Composab
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/header/MessageListHeaderKt {
-	public static final fun DefaultMessageListHeaderCenterContent (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ui/common/state/messages/MessageMode;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 	public static final fun MessageListHeader-LIL5028 (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Landroidx/compose/ui/Modifier;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageMode;JLandroidx/compose/ui/graphics/Shape;FLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
 }
 
@@ -6157,8 +6156,8 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign {
 public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Colors {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors$Companion;
-	public synthetic fun <init> (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-0d7_KjU ()J
 	public final fun component10-0d7_KjU ()J
 	public final fun component11-0d7_KjU ()J
@@ -6231,16 +6230,28 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Color
 	public final fun component72-0d7_KjU ()J
 	public final fun component73-0d7_KjU ()J
 	public final fun component74-0d7_KjU ()J
+	public final fun component75-0d7_KjU ()J
+	public final fun component76-0d7_KjU ()J
+	public final fun component77-0d7_KjU ()J
+	public final fun component78-0d7_KjU ()J
+	public final fun component79-0d7_KjU ()J
 	public final fun component8-0d7_KjU ()J
+	public final fun component80-0d7_KjU ()J
+	public final fun component81-0d7_KjU ()J
+	public final fun component82-0d7_KjU ()J
+	public final fun component83-0d7_KjU ()J
+	public final fun component84-0d7_KjU ()J
+	public final fun component85-0d7_KjU ()J
 	public final fun component9-0d7_KjU ()J
-	public final fun copy-PluTXJ0 (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
-	public static synthetic fun copy-PluTXJ0$default (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIIILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
+	public final fun copy-zl9OniE (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
+	public static synthetic fun copy-zl9OniE$default (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIIILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAccentBlack-0d7_KjU ()J
 	public final fun getAccentError-0d7_KjU ()J
 	public final fun getAccentNeutral-0d7_KjU ()J
 	public final fun getAccentPrimary-0d7_KjU ()J
 	public final fun getAccentSuccess-0d7_KjU ()J
+	public final fun getAccentWarning-0d7_KjU ()J
 	public final fun getAvatarBgPlaceholder-0d7_KjU ()J
 	public final fun getAvatarPaletteBg1-0d7_KjU ()J
 	public final fun getAvatarPaletteBg2-0d7_KjU ()J
@@ -6259,9 +6270,11 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Color
 	public final fun getBackgroundCoreInverse-0d7_KjU ()J
 	public final fun getBackgroundCoreOnAccent-0d7_KjU ()J
 	public final fun getBackgroundCoreOverlayDark-0d7_KjU ()J
+	public final fun getBackgroundCoreOverlayLight-0d7_KjU ()J
 	public final fun getBackgroundCoreScrim-0d7_KjU ()J
 	public final fun getBackgroundCoreSelected-0d7_KjU ()J
 	public final fun getBackgroundCoreSurface-0d7_KjU ()J
+	public final fun getBackgroundCoreSurfaceCard-0d7_KjU ()J
 	public final fun getBackgroundCoreSurfaceStrong-0d7_KjU ()J
 	public final fun getBackgroundCoreSurfaceSubtle-0d7_KjU ()J
 	public final fun getBackgroundElevationElevation0-0d7_KjU ()J
@@ -6269,8 +6282,10 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Color
 	public final fun getBackgroundElevationElevation2-0d7_KjU ()J
 	public final fun getBackgroundElevationElevation3-0d7_KjU ()J
 	public final fun getBackgroundElevationElevation4-0d7_KjU ()J
+	public final fun getBackgroundUtilityDisabled-0d7_KjU ()J
 	public final fun getBadgeBgDefault-0d7_KjU ()J
 	public final fun getBadgeBgError-0d7_KjU ()J
+	public final fun getBadgeBgInverse-0d7_KjU ()J
 	public final fun getBadgeBgNeutral-0d7_KjU ()J
 	public final fun getBadgeBgOverlay-0d7_KjU ()J
 	public final fun getBadgeBgPrimary-0d7_KjU ()J
@@ -6284,8 +6299,12 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Color
 	public final fun getBorderCoreOpacity25-0d7_KjU ()J
 	public final fun getBorderCoreStrong-0d7_KjU ()J
 	public final fun getBorderCoreSubtle-0d7_KjU ()J
+	public final fun getBorderUtilityActive-0d7_KjU ()J
 	public final fun getBorderUtilityDisabled-0d7_KjU ()J
+	public final fun getBorderUtilityError-0d7_KjU ()J
 	public final fun getBorderUtilitySelected-0d7_KjU ()J
+	public final fun getBorderUtilitySuccess-0d7_KjU ()J
+	public final fun getBorderUtilityWarning-0d7_KjU ()J
 	public final fun getBrand100-0d7_KjU ()J
 	public final fun getBrand150-0d7_KjU ()J
 	public final fun getBrand200-0d7_KjU ()J
@@ -6386,6 +6405,7 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Color
 	public final fun getSkeletonLoadingHighlight-0d7_KjU ()J
 	public final fun getTextDisabled-0d7_KjU ()J
 	public final fun getTextInverse-0d7_KjU ()J
+	public final fun getTextLink-0d7_KjU ()J
 	public final fun getTextOnAccent-0d7_KjU ()J
 	public final fun getTextPrimary-0d7_KjU ()J
 	public final fun getTextSecondary-0d7_KjU ()J

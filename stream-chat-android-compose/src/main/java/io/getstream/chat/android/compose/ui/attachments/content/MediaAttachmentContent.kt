@@ -100,6 +100,7 @@ import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
+import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 
 /**
  * Displays a preview of single or multiple video or attachments.
@@ -126,7 +127,7 @@ public fun MediaAttachmentContent(
         onMediaAttachmentContentItemClick(
             it.mediaGalleryPreviewLauncher,
             it.message,
-            it.attachmentPosition,
+            it.selectedAttachmentUrl,
             it.videoThumbnailsEnabled,
             it.downloadAttachmentUriGenerator,
             it.downloadRequestInterceptor,
@@ -242,7 +243,6 @@ internal fun SingleMediaAttachment(
             ),
         shape = if (shouldBeFullSize) null else RoundedCornerShape(StreamTokens.radiusLg),
         message = message,
-        attachmentPosition = 0,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         onLongItemClick = onLongItemClick,
         skipEnrichUrl = skipEnrichUrl,
@@ -308,7 +308,6 @@ internal fun RowScope.MultipleMediaAttachmentsColumns(
                 shape = shape,
                 message = message,
                 skipEnrichUrl = skipEnrichUrl,
-                attachmentPosition = positionInColumn,
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onLongItemClick = onLongItemClick,
                 onItemClick = onContentItemClick,
@@ -346,7 +345,6 @@ internal fun RowScope.MultipleMediaAttachmentsColumns(
                         shape = shape,
                         message = message,
                         skipEnrichUrl = skipEnrichUrl,
-                        attachmentPosition = attachmentIndex,
                         forceShimmer = anyOverflowUploading,
                         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                         onLongItemClick = onLongItemClick,
@@ -368,7 +366,6 @@ internal fun RowScope.MultipleMediaAttachmentsColumns(
                     shape = shape,
                     message = message,
                     skipEnrichUrl = skipEnrichUrl,
-                    attachmentPosition = attachmentIndex,
                     onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                     onLongItemClick = onLongItemClick,
                     onItemClick = onContentItemClick,
@@ -402,9 +399,6 @@ private fun attachmentShape(
  * Displays previews of image and video attachments.
  *
  * @param message The original message containing the attachments.
- * @param attachmentPosition The position of the attachment in the list
- * of attachments. Used to remember the item position when viewing it in a separate
- * activity.
  * @param attachment The attachment that is previewed.
  * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the message
  * by deleting an attachment contained within it. Set to false by default.
@@ -422,7 +416,6 @@ private fun attachmentShape(
 @Composable
 internal fun MediaAttachmentContentItem(
     message: Message,
-    attachmentPosition: Int,
     attachment: Attachment,
     skipEnrichUrl: Boolean,
     shape: Shape?,
@@ -486,14 +479,14 @@ internal fun MediaAttachmentContentItem(
                     if (message.syncStatus == SyncStatus.COMPLETED) {
                         onItemClick(
                             MediaAttachmentClickData(
-                                mixedMediaPreviewLauncher,
-                                message,
-                                attachmentPosition,
-                                videoThumbnailsEnabled,
-                                downloadAttachmentUriGenerator,
-                                downloadRequestInterceptor,
-                                streamCdnImageResizing,
-                                skipEnrichUrl,
+                                mediaGalleryPreviewLauncher = mixedMediaPreviewLauncher,
+                                message = message,
+                                selectedAttachmentUrl = attachment.imagePreviewUrl,
+                                videoThumbnailsEnabled = videoThumbnailsEnabled,
+                                downloadAttachmentUriGenerator = downloadAttachmentUriGenerator,
+                                downloadRequestInterceptor = downloadRequestInterceptor,
+                                streamCdnImageResizing = streamCdnImageResizing,
+                                skipEnrichUrl = skipEnrichUrl,
                             ),
                         )
                     } else {
@@ -624,7 +617,7 @@ internal fun MediaAttachmentShowMoreOverlay(
  *
  * @param mediaGalleryPreviewLauncher The [ManagedActivityResultLauncher] to launch the media gallery.
  * @param message The message that holds the clicked attachment.
- * @param attachmentPosition The position of the clicked attachment in the message's attachments list.
+ * @param selectedAttachmentUrl The preview URL of the clicked attachment.
  * @param videoThumbnailsEnabled Whether video thumbnails are enabled.
  * @param downloadAttachmentUriGenerator The [DownloadAttachmentUriGenerator] used to generate URIs for downloading
  * attachments.
@@ -637,7 +630,7 @@ internal fun MediaAttachmentShowMoreOverlay(
 public data class MediaAttachmentClickData internal constructor(
     val mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<Input, MediaGalleryPreviewResult?>,
     val message: Message,
-    val attachmentPosition: Int,
+    val selectedAttachmentUrl: String?,
     val videoThumbnailsEnabled: Boolean,
     val downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
     val downloadRequestInterceptor: DownloadRequestInterceptor,
@@ -674,7 +667,7 @@ private const val EqualDimensionsRatio = 1f
  * @param mediaGalleryPreviewLauncher The launcher used for launching the media gallery after
  * clicking on an attachment.
  * @param message The message which contains the attachment.
- * @param attachmentPosition The position (inside the message) of the attachment being clicked on.
+ * @param selectedAttachmentUrl The preview URL of the attachment being clicked on.
  * @param skipEnrichUrl Whether the URL should skip being enriched, i.e. rendered as
  * a link attachment. Used when updating the message from the gallery by doing actions
  * such as deleting an attachment.
@@ -683,7 +676,7 @@ private const val EqualDimensionsRatio = 1f
 internal fun onMediaAttachmentContentItemClick(
     mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<Input, MediaGalleryPreviewResult?>,
     message: Message,
-    attachmentPosition: Int,
+    selectedAttachmentUrl: String?,
     videoThumbnailsEnabled: Boolean,
     downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
     downloadRequestInterceptor: DownloadRequestInterceptor,
@@ -693,7 +686,7 @@ internal fun onMediaAttachmentContentItemClick(
     mediaGalleryPreviewLauncher.launch(
         Input(
             message = message,
-            initialPosition = attachmentPosition,
+            selectedAttachmentUrl = selectedAttachmentUrl,
             videoThumbnailsEnabled = videoThumbnailsEnabled,
             downloadAttachmentUriGenerator = downloadAttachmentUriGenerator,
             downloadRequestInterceptor = downloadRequestInterceptor,
