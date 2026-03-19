@@ -64,23 +64,6 @@ public interface DraftMessageListener {
      * Side effect to be invoked when the original request is completed with a response.
      *
      * @param result [Result] response from the original request.
-     * @param offset The offset of the query.
-     * @param limit The limit of the query.
-     */
-    @Deprecated(
-        message = "The offset param in the onQueryDraftMessagesResult method is not used. Use the " +
-            "onQueryDraftMessagesResult(Result, FilterObject, Int, String?, QuerySorter) method instead.",
-    )
-    public suspend fun onQueryDraftMessagesResult(
-        result: Result<List<DraftMessage>>,
-        offset: Int?,
-        limit: Int?,
-    )
-
-    /**
-     * Side effect to be invoked when the original request is completed with a response.
-     *
-     * @param result [Result] response from the original request.
      * @param filter The filter object used in the query.
      * @param limit The limit of the query.
      * @param next The next page token.

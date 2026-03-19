@@ -32,7 +32,6 @@ import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
 import io.getstream.chat.android.client.api2.endpoint.RemindersApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
-import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
@@ -2766,7 +2765,6 @@ internal class MoshiChatApiTest {
         private var moderationApi: ModerationApi = mock()
         private var generalApi: GeneralApi = mock()
         private var configApi: ConfigApi = mock()
-        private var callApi: VideoCallApi = mock()
         private var fileDownloadApi: FileDownloadApi = mock()
         private var ogApi: OpenGraphApi = mock()
         private var threadsApi: ThreadsApi = mock()
@@ -2866,7 +2864,6 @@ internal class MoshiChatApiTest {
                 moderationApi = moderationApi,
                 generalApi = generalApi,
                 configApi = configApi,
-                callApi = callApi,
                 fileDownloadApi = fileDownloadApi,
                 ogApi = ogApi,
                 threadsApi = threadsApi,

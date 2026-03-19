@@ -35,7 +35,7 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUser
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnViewPollResultClickListener
 import io.getstream.chat.android.ui.utils.ListenerDelegate
 
-internal class MessageListListenerContainerImpl(
+internal class MessageListListenersImpl(
     messageClickListener: OnMessageClickListener = OnMessageClickListener(EmptyFunctions.ONE_PARAM),
     messageLongClickListener: OnMessageLongClickListener = OnMessageLongClickListener(EmptyFunctions.ONE_PARAM),
     messageRetryListener: OnMessageRetryListener = OnMessageRetryListener(EmptyFunctions.ONE_PARAM),

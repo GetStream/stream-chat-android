@@ -64,8 +64,6 @@ import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
-import io.getstream.chat.android.models.VideoCallInfo
-import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.result.call.Call
@@ -527,20 +525,6 @@ internal interface ChatApi {
         createdAtBefore: Date?,
         createdAtBeforeOrEqual: Date?,
     ): Call<List<BannedUser>>
-
-    @Deprecated(
-        "This third-party library integration is deprecated. Contact the support team for more information.",
-        level = DeprecationLevel.WARNING,
-    )
-    @CheckResult
-    fun createVideoCall(channelId: String, channelType: String, callId: String, callType: String): Call<VideoCallInfo>
-
-    @Deprecated(
-        "This third-party library integration is deprecated. Contact the support team for more information.",
-        level = DeprecationLevel.WARNING,
-    )
-    @CheckResult
-    fun getVideoCallToken(callId: String): Call<VideoCallToken>
 
     @CheckResult
     fun sendEvent(

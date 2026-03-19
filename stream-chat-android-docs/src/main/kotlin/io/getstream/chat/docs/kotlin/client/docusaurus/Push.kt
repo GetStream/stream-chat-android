@@ -20,6 +20,7 @@ import io.getstream.android.push.permissions.NotificationPermissionStatus
 import io.getstream.android.push.xiaomi.XiaomiMessagingDelegate
 import io.getstream.android.push.xiaomi.XiaomiPushDeviceGenerator
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.notifications.handler.ChatNotification
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
@@ -105,10 +106,10 @@ class Push {
                 }
             }
 
-            override fun showNotification(channel: Channel, message: Message) {
-                val notification = NotificationCompat.Builder(context, notificationChannelId)
+            override fun showNotification(notification: ChatNotification) {
+                val androidNotification = NotificationCompat.Builder(context, notificationChannelId)
                     .build()
-                notificationManager.notify(notificationId, notification)
+                notificationManager.notify(notificationId, androidNotification)
             }
 
             override fun dismissChannelNotifications(channelType: String, channelId: String) {

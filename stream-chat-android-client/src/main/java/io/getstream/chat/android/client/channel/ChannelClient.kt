@@ -495,22 +495,6 @@ public class ChannelClient internal constructor(
         return client.markThreadUnread(channelType, channelId, threadId = threadId)
     }
 
-    /**
-     * Marks a given thread in the channel starting from the given message as unread.
-     *
-     * @param messageId Id of the message from where the thread should be marked as unread.
-     * @param threadId Id of the thread to mark as unread.
-     */
-    @Deprecated(
-        "Marking a thread as unread from a given message is currently not supported. " +
-            "Passing messageId has no effect and the whole thread is marked as unread." +
-            "Use markThreadUnread(channelType, channelId, threadId) instead.",
-    )
-    @CheckResult
-    public fun markThreadUnread(threadId: String, messageId: String): Call<Unit> {
-        return client.markThreadUnread(channelType, channelId, threadId = threadId, messageId = messageId)
-    }
-
     @CheckResult
     public fun markRead(): Call<Unit> {
         return client.markRead(channelType, channelId)
@@ -673,19 +657,6 @@ public class ChannelClient internal constructor(
     @CheckResult
     public fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>> {
         return client.getReactions(messageId, offset, limit)
-    }
-
-    @Deprecated(
-        message = "This operation is not supported. " +
-            "Use ChannelClient.getReactions(messageId: String, offset: Int, limit: Int) instead.",
-    )
-    @CheckResult
-    public fun getReactions(
-        messageId: String,
-        firstReactionId: String,
-        limit: Int,
-    ): Call<List<Message>> {
-        return client.getRepliesMore(messageId, firstReactionId, limit)
     }
 
     /**

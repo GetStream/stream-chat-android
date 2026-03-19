@@ -19,30 +19,16 @@ package io.getstream.chat.android.ui.utils.extensions
 import android.content.Context
 import android.text.SpannableString
 import io.getstream.chat.android.client.utils.message.isEphemeral
-import io.getstream.chat.android.client.utils.message.isError
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionGroup
-import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.helper.CurrentUserProvider
 import java.util.Date
-
-@Deprecated(
-    message = "Use the `isErrorOrFailed()` from `stream-chat-android-client` module instead.",
-    replaceWith = ReplaceWith(
-        expression = "Message.isErrorOrFailed()",
-        imports = ["io.getstream.chat.android.client.utils.message.isErrorOrFailed"],
-    ),
-    level = DeprecationLevel.WARNING,
-)
-public fun Message.isFailed(): Boolean {
-    return this.syncStatus == SyncStatus.FAILED_PERMANENTLY || isError()
-}
 
 public fun Message.hasNoAttachments(): Boolean = attachments.isEmpty()
 
