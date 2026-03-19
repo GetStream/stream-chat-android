@@ -48,7 +48,7 @@ public object StreamDesign {
      * changed to customize the app design style.
      *
      * Parameters are organized by domain:
-     * scales → accent → text → background → border → badge → chat → control → avatar → skeleton.
+     * scales → accent → text → background → border → avatar → skeleton → component exceptions.
      *
      * @param brand The brand (accent) color scale. See [ColorScale].
      * @param chrome The chrome (neutral gray) color scale. See [ChromeScale].
@@ -169,10 +169,6 @@ public object StreamDesign {
         public val borderUtilityError: Color,
         public val borderUtilityWarning: Color,
         public val borderUtilitySuccess: Color,
-        public val chatPollProgressFillOutgoing: Color,
-        public val chatReplyIndicatorIncoming: Color,
-        public val chatReplyIndicatorOutgoing: Color,
-        public val controlPlaybackThumbBgDefault: Color,
         public val avatarBgPlaceholder: Color,
         public val avatarPaletteBg1: Color,
         public val avatarPaletteBg2: Color,
@@ -188,6 +184,10 @@ public object StreamDesign {
         public val avatarPresenceBorder: Color,
         public val skeletonLoadingBase: Color,
         public val skeletonLoadingHighlight: Color,
+        public val chatPollProgressFillOutgoing: Color,
+        public val chatReplyIndicatorIncoming: Color,
+        public val chatReplyIndicatorOutgoing: Color,
+        public val controlPlaybackThumbBgDefault: Color,
     ) {
 
         /** Default badge background. */
@@ -500,10 +500,6 @@ public object StreamDesign {
                     borderUtilityError = StreamPrimitiveColors.red500,
                     borderUtilityWarning = StreamPrimitiveColors.yellow400,
                     borderUtilitySuccess = StreamPrimitiveColors.green400,
-                    chatPollProgressFillOutgoing = brand.s500,
-                    chatReplyIndicatorIncoming = StreamPrimitiveColors.slate400,
-                    chatReplyIndicatorOutgoing = brand.s400,
-                    controlPlaybackThumbBgDefault = chrome.s0,
                     avatarBgPlaceholder = chrome.s150,
                     avatarPaletteBg1 = StreamPrimitiveColors.blue150,
                     avatarPaletteBg2 = StreamPrimitiveColors.cyan150,
@@ -519,6 +515,10 @@ public object StreamDesign {
                     avatarPresenceBorder = chrome.s0,
                     skeletonLoadingBase = Color.Transparent,
                     skeletonLoadingHighlight = StreamPrimitiveColors.baseWhite,
+                    chatPollProgressFillOutgoing = brand.s500,
+                    chatReplyIndicatorIncoming = StreamPrimitiveColors.slate400,
+                    chatReplyIndicatorOutgoing = brand.s400,
+                    controlPlaybackThumbBgDefault = chrome.s0,
                 )
             }
 
@@ -576,10 +576,6 @@ public object StreamDesign {
                     borderUtilityError = StreamPrimitiveColors.red400,
                     borderUtilityWarning = StreamPrimitiveColors.yellow300,
                     borderUtilitySuccess = StreamPrimitiveColors.green300,
-                    chatPollProgressFillOutgoing = StreamPrimitiveColors.baseWhite,
-                    chatReplyIndicatorIncoming = StreamPrimitiveColors.neutral500,
-                    chatReplyIndicatorOutgoing = brand.s700,
-                    controlPlaybackThumbBgDefault = chrome.s900,
                     avatarBgPlaceholder = chrome.s150,
                     avatarPaletteBg1 = StreamPrimitiveColors.blue600,
                     avatarPaletteBg2 = StreamPrimitiveColors.cyan600,
@@ -595,6 +591,10 @@ public object StreamDesign {
                     avatarPresenceBorder = chrome.s0,
                     skeletonLoadingBase = Color.Transparent,
                     skeletonLoadingHighlight = StreamPrimitiveColors.baseWhite.copy(alpha = 0.2f),
+                    chatPollProgressFillOutgoing = StreamPrimitiveColors.baseWhite,
+                    chatReplyIndicatorIncoming = StreamPrimitiveColors.neutral500,
+                    chatReplyIndicatorOutgoing = brand.s700,
+                    controlPlaybackThumbBgDefault = chrome.s900,
                 )
             }
         }
