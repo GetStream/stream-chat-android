@@ -107,15 +107,6 @@ public fun MessageListViewModel.bindView(
         )
         true
     }
-    // TODO check
-    // view.setReplyMessageClickListener { replyTo ->
-    //     onEvent(
-    //         MessageListViewModel.Event.ShowMessage(
-    //             messageId = replyTo.id,
-    //             parentMessageId = replyTo.parentId,
-    //         ),
-    //     )
-    // }
     view.setOnScrollToBottomHandler { scrollToBottom { view.scrollToBottom() } }
     view.setMessageUserBlockHandler { message ->
         onEvent(
