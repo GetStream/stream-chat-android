@@ -102,7 +102,6 @@ internal class ChannelStateImpl(
      */
     private val _cachedLatestMessages = MutableStateFlow<List<Message>>(emptyList())
     private val _pinnedMessages = MutableStateFlow<List<Message>>(emptyList())
-    private val _oldMessages = MutableStateFlow<List<Message>>(emptyList())
 
     // Watchers
     private val _watcherCount = MutableStateFlow(0)
@@ -171,9 +170,6 @@ internal class ChannelStateImpl(
             else -> MessagesState.Result(messages)
         }
     }
-
-    @Deprecated("This property is not used anymore and will be removed in future versions.")
-    override val oldMessages: StateFlow<List<Message>> = _oldMessages.asStateFlow()
 
     override val watcherCount: StateFlow<Int> = _watcherCount.asStateFlow()
 
@@ -1448,7 +1444,6 @@ internal class ChannelStateImpl(
         pendingMessagesManager.reset()
         _cachedLatestMessages.value = emptyList()
         _pinnedMessages.value = emptyList()
-        _oldMessages.value = emptyList()
 
         // Watchers
         _watcherCount.value = 0

@@ -90,7 +90,7 @@ internal class SendReactionListenerStateTest {
 
         whenever(clientState.isNetworkAvailable) doReturn true
 
-        sendReactionListenerState.onSendReactionRequest(randomCID(), testReaction, false, currentUser)
+        sendReactionListenerState.onSendReactionRequest(randomCID(), testReaction, false, false, currentUser)
 
         verify(channelLogic).upsertMessage(
             argThat { message ->

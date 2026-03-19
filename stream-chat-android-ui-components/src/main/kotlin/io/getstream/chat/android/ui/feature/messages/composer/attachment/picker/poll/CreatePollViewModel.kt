@@ -57,17 +57,6 @@ public class CreatePollViewModel : ViewModel() {
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     /**
-     * The error message for the maximum number of answers allowed.
-     */
-    @Deprecated(
-        "Use multipleAnswersError instead. This property will be removed in future versions.",
-        ReplaceWith("multipleAnswersError"),
-        level = DeprecationLevel.WARNING,
-    )
-    public val maxAnswerError: StateFlow<Int?> =
-        multipleAnswersErrorFlow().stateIn(viewModelScope, SharingStarted.Lazily, null)
-
-    /**
      * A shared flow that emits an error when the range of multiple answers is invalid.
      */
     public val multipleAnswersError: SharedFlow<Int?> =

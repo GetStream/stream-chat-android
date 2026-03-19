@@ -63,7 +63,7 @@ public class MessageDeletedViewHolder internal constructor(
             when (data.isTheirs) {
                 true -> style.textStyleMessageDeletedTheirs
                 else -> style.textStyleMessageDeletedMine
-            } ?: style.textStyleMessageDeleted,
+            },
         )
 
         binding.messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {

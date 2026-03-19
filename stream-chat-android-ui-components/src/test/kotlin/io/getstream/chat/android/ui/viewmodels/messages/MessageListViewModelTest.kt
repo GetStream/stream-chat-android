@@ -109,7 +109,7 @@ internal class MessageListViewModelTest {
                 hasNewMessages = true,
                 isTyping = false,
                 isThread = false,
-                areNewestMessagesLoaded = true,
+                endOfNewMessagesReached = true,
                 newMessageState = Other(messages.last().createdAt?.time),
             ),
         )

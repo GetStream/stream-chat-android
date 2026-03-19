@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api.state
 
 import io.getstream.chat.android.client.api.MessageLimitConfig
-import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
@@ -163,15 +162,6 @@ public class StateRegistry @JvmOverloads constructor(
             channels.containsKey(channelType to channelId)
         }
     }
-
-    /**
-     * Returns a [QueryThreadsState] holding the current state of the threads data.
-     */
-    @Deprecated(
-        "This method is no longer used internally. " +
-            "Use queryThreads(filter: FilterObject?, sort: QuerySorter<Thread>) instead.",
-    )
-    public fun queryThreads(): QueryThreadsState = queryThreads(filter = null, sort = QueryThreadsRequest.DefaultSort)
 
     /**
      * Returns a [QueryThreadsState] holding the current state of the threads data.

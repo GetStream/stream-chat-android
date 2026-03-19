@@ -111,17 +111,7 @@ internal class ChannelStateLogic(
      */
     fun writeChannelState(): ChannelStateLegacyImpl = mutableState
 
-    /**
-     * Updates the channel data of the state of the SDK.
-     *
-     * @param channel the data of [Channel] to be updated.
-     */
-    @Deprecated(
-        message = "This method will become private in the future. " +
-            "Use updateChannelData((ChannelData?) -> ChannelData?) instead.",
-        replaceWith = ReplaceWith("updateChannelData((ChannelData?) -> ChannelData?)"),
-    )
-    fun updateChannelData(channel: Channel) {
+    private fun updateChannelData(channel: Channel) {
         val newChannelData = channel.toChannelData().let {
             when (it.ownCapabilities.isEmpty()) {
                 true -> it.copy(ownCapabilities = mutableState.channelData.value.ownCapabilities)

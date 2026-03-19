@@ -20,10 +20,8 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canUploadFile
-import io.getstream.chat.android.ui.common.internal.getColorList
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
@@ -32,7 +30,6 @@ import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerCon
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
-import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.setBorderlessRipple
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
@@ -112,24 +109,12 @@ public open class DefaultMessageComposerLeadingContent : FrameLayout, MessageCom
         binding.commandsButton.setImageDrawable(style.commandsButtonIconDrawable)
         binding.commandsButton.setBorderlessRipple(style.commandsButtonRippleColor)
 
-        val getStateListColor = { tintColor: Int ->
-            getColorList(
-                normalColor = context.getColorCompat(R.color.stream_ui_grey),
-                selectedColor = tintColor,
-                disabledColor = context.getColorCompat(R.color.stream_ui_grey_gainsboro),
-            )
-        }
-
         style.attachmentsButtonIconTintList?.also { tintList ->
             binding.attachmentsButton.imageTintList = tintList
-        } ?: style.buttonIconDrawableTintColor?.let { tintColor ->
-            binding.attachmentsButton.imageTintList = getStateListColor(tintColor)
         }
 
         style.commandsButtonIconTintList?.also { tintList ->
             binding.commandsButton.imageTintList = tintList
-        } ?: style.buttonIconDrawableTintColor?.let { tintColor ->
-            binding.commandsButton.imageTintList = getStateListColor(tintColor)
         }
     }
 

@@ -189,7 +189,7 @@ private class MentionsViewHolder(
         binding.mentionNameTextView.setTextStyle(style.mentionSuggestionItemMentionTextStyle)
         binding.mentionsIcon.setImageDrawable(
             style.mentionSuggestionItemIconDrawable.applyTint(
-                tintColor = style.mentionSuggestionItemIconDrawableTintColor ?: style.buttonIconDrawableTintColor,
+                tintColor = style.mentionSuggestionItemIconDrawableTintColor,
             ),
         )
     }

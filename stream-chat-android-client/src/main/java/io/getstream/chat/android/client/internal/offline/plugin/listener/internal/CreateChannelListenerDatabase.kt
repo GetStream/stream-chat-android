@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.channel.generateChannelIdIfNeeded
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
-import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.result.Error
@@ -47,43 +46,6 @@ internal class CreateChannelListenerDatabase(
     private val channelRepository: ChannelRepository,
     private val userRepository: UserRepository,
 ) : CreateChannelListener {
-
-    /**
-     * A method called before making an API call to create the channel.
-     * Creates the channel based on provided data and updates the database.
-     * Channel's id will be automatically generated based on the members list if provided id is empty.
-     *
-     * @param channelType The channel type. ie messaging.
-     * @param channelId The channel id. ie 123.
-     * @param memberIds The list of members' ids.
-     * @param extraData Map of key-value pairs that let you store extra data
-     * @param currentUser The currently logged in user.
-     */
-    @Deprecated(
-        "Use CreateChannelListener.onCreateChannelRequest(channelType, channelId, request, currentUser) instead",
-        replaceWith = ReplaceWith(
-            "onCreateChannelRequest(String, String, CreateChannelParams, User)",
-            "io.getstream.chat.android.client.plugin.listeners.CreateChannelListener",
-        ),
-        level = DeprecationLevel.WARNING,
-    )
-    override suspend fun onCreateChannelRequest(
-        channelType: String,
-        channelId: String,
-        memberIds: List<String>,
-        extraData: Map<String, Any>,
-        currentUser: User,
-    ) {
-        onCreateChannelRequest(
-            channelType = channelType,
-            channelId = channelId,
-            params = CreateChannelParams(
-                members = memberIds.map(::MemberData),
-                extraData = extraData,
-            ),
-            currentUser = currentUser,
-        )
-    }
 
     /**
      * A method called before making an API call to create the channel.

@@ -306,14 +306,6 @@ public data class Channel(
         public fun withLastMessageAt(lastMessageAt: Date?): Builder = apply { this.lastMessageAt = lastMessageAt }
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
 
-        @Deprecated(
-            message = "channelLastMessageAt is no longer supported.",
-            replaceWith = ReplaceWith(
-                expression = "",
-            ),
-        )
-        public fun withChannelLastMessageAt(channelLastMessageAt: Date?): Builder = this
-
         public fun build(): Channel = Channel(
             id = id,
             type = type,

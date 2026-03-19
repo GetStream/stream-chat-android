@@ -84,7 +84,6 @@ internal class ChannelStateLegacyImpl(
     private var _rawReads: MutableStateFlow<Map<String, ChannelUserRead>>? = MutableStateFlow(emptyMap())
     private var rawReads: StateFlow<Map<String, ChannelUserRead>> = _rawReads!!
     private var _members: MutableStateFlow<Map<String, Member>>? = MutableStateFlow(emptyMap())
-    private var _oldMessages: MutableStateFlow<Map<String, Message>>? = MutableStateFlow(emptyMap())
     private var _watchers: MutableStateFlow<Map<String, User>>? = MutableStateFlow(emptyMap())
     private var _watcherCount: MutableStateFlow<Int>? = MutableStateFlow(0)
     private var _endOfNewerMessages: MutableStateFlow<Boolean>? = MutableStateFlow(true)
@@ -209,8 +208,6 @@ internal class ChannelStateLegacyImpl(
 
     override val pinnedMessages: StateFlow<List<Message>> = sortedVisiblePinnedMessages
 
-    @Deprecated("This property is not used anymore and will be removed in future versions.")
-    override val oldMessages: StateFlow<List<Message>> = messagesTransformation(_oldMessages!!.mapState { it.values })
     override val watcherCount: StateFlow<Int> = _watcherCount!!
 
     override val watchers: StateFlow<List<User>> =
@@ -697,7 +694,6 @@ internal class ChannelStateLegacyImpl(
         _typing = null
         _rawReads = null
         _members = null
-        _oldMessages = null
         _watchers = null
         _watcherCount = null
         _endOfNewerMessages = null

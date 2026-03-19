@@ -150,43 +150,6 @@ public data class CreatePollParams internal constructor(
 ) {
 
     /**
-     * Constructor to create a [CreatePollParams] with a list of option texts.
-     *
-     * @param name The name of the poll.
-     * @param options The list of option texts for the poll.
-     * @param description The description of the poll. Default: empty.
-     * @param votingVisibility The visibility of the votes. Default: [VotingVisibility.PUBLIC].
-     * @param enforceUniqueVote If set to true, a user can only vote once. Default: true.
-     * @param maxVotesAllowed The maximum number of votes a user can cast, or null for unlimited votes. Default: 1.
-     * @param allowUserSuggestedOptions If set to true, users can suggest new options. Default: false.
-     * @param allowAnswers If set to true, users can send answers. Default: false.
-     */
-    @Deprecated(
-        "This constructor doesn't allow passing extra data for options. " +
-            "Use the constructor with List<PollOption> instead.",
-    )
-    public constructor(
-        name: String,
-        options: List<String>,
-        description: String = "",
-        votingVisibility: VotingVisibility = VotingVisibility.PUBLIC,
-        enforceUniqueVote: Boolean = true,
-        maxVotesAllowed: Int? = 1,
-        allowUserSuggestedOptions: Boolean = false,
-        allowAnswers: Boolean = false,
-    ) : this(
-        name = name,
-        optionsWithExtraData = options.map { text -> PollOption(text = text) },
-        description = description,
-        votingVisibility = votingVisibility,
-        enforceUniqueVote = enforceUniqueVote,
-        maxVotesAllowed = maxVotesAllowed,
-        allowUserSuggestedOptions = allowUserSuggestedOptions,
-        allowAnswers = allowAnswers,
-        extraData = emptyMap(),
-    )
-
-    /**
      * Alternative constructor to create a [CreatePollParams] with a list of options with extra data.
      *
      * @param name The name of the poll.

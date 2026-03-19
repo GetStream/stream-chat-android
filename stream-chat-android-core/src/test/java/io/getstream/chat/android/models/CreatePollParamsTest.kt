@@ -22,66 +22,6 @@ import org.junit.jupiter.api.Test
 internal class CreatePollParamsTest {
 
     @Test
-    fun `deprecated constructor with List of Strings properly maps parameters to default constructor`() {
-        val name = "Test Poll"
-        val options = listOf("Option 1", "Option 2", "Option 3")
-        val description = "Test Description"
-        val votingVisibility = VotingVisibility.ANONYMOUS
-        val enforceUniqueVote = false
-        val maxVotesAllowed = 5
-        val allowUserSuggestedOptions = true
-        val allowAnswers = true
-
-        @Suppress("DEPRECATION")
-        val createPollParams = CreatePollParams(
-            name = name,
-            options = options,
-            description = description,
-            votingVisibility = votingVisibility,
-            enforceUniqueVote = enforceUniqueVote,
-            maxVotesAllowed = maxVotesAllowed,
-            allowUserSuggestedOptions = allowUserSuggestedOptions,
-            allowAnswers = allowAnswers,
-        )
-
-        Assertions.assertEquals(name, createPollParams.name)
-        Assertions.assertEquals(description, createPollParams.description)
-        Assertions.assertEquals(votingVisibility, createPollParams.votingVisibility)
-        Assertions.assertEquals(enforceUniqueVote, createPollParams.enforceUniqueVote)
-        Assertions.assertEquals(maxVotesAllowed, createPollParams.maxVotesAllowed)
-        Assertions.assertEquals(allowUserSuggestedOptions, createPollParams.allowUserSuggestedOptions)
-        Assertions.assertEquals(allowAnswers, createPollParams.allowAnswers)
-        Assertions.assertEquals(options, createPollParams.options)
-        Assertions.assertEquals(emptyMap<String, Any>(), createPollParams.extraData)
-        Assertions.assertEquals(
-            options.map { text -> PollOption(text = text) },
-            createPollParams.optionsWithExtraData,
-        )
-    }
-
-    @Test
-    fun `deprecated constructor with defaults applies default values correctly`() {
-        val name = "Simple Poll"
-        val options = listOf("Yes", "No")
-
-        @Suppress("DEPRECATION")
-        val createPollParams = CreatePollParams(
-            name = name,
-            options = options,
-        )
-
-        Assertions.assertEquals(name, createPollParams.name)
-        Assertions.assertEquals("", createPollParams.description)
-        Assertions.assertEquals(VotingVisibility.PUBLIC, createPollParams.votingVisibility)
-        Assertions.assertEquals(true, createPollParams.enforceUniqueVote)
-        Assertions.assertEquals(1, createPollParams.maxVotesAllowed)
-        Assertions.assertEquals(false, createPollParams.allowUserSuggestedOptions)
-        Assertions.assertEquals(false, createPollParams.allowAnswers)
-        Assertions.assertEquals(options, createPollParams.options)
-        Assertions.assertEquals(emptyMap<String, Any>(), createPollParams.extraData)
-    }
-
-    @Test
     fun `new constructor with List of PollOptions properly maps parameters to default constructor`() {
         val name = "Poll With Extra Data"
         val option1 = PollOption("Option A", mapOf("color" to "red"))
@@ -157,21 +97,6 @@ internal class CreatePollParamsTest {
         )
 
         Assertions.assertEquals(listOf("First", "Second", "Third"), createPollParams.options)
-    }
-
-    @Test
-    fun `deprecated constructor creates PollOption objects with empty extra data`() {
-        val optionTexts = listOf("Choice 1", "Choice 2", "Choice 3")
-
-        @Suppress("DEPRECATION")
-        val createPollParams = CreatePollParams(
-            name = "Test",
-            options = optionTexts,
-        )
-
-        createPollParams.optionsWithExtraData.forEach { option ->
-            Assertions.assertEquals(emptyMap<String, Any>(), option.extraData)
-        }
     }
 
     @Test
