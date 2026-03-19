@@ -45,52 +45,57 @@ public object StreamDesign {
      * Contains all the colors in our palette. Each color is used for various things and can be
      * changed to customize the app design style.
      *
-     * @param accentError Used for destructive actions and error states.
-     * @param accentNeutral Used for neutral accent for low-priority badges.
-     * @param accentSuccess Used for success states and positive actions.
-     * @param accentPrimary Used for main brand accent for interactive elements.
-     * @param avatarBgPlaceholder Used for avatar placeholder background color.
-     * @param avatarPaletteBg1 Used for avatar background color.
-     * @param avatarPaletteBg2 Used for avatar background color.
-     * @param avatarPaletteBg3 Used for avatar background color.
-     * @param avatarPaletteBg4 Used for avatar background color.
-     * @param avatarPaletteBg5 Used for avatar background color.
-     * @param avatarPaletteText1 Used for avatar text color.
-     * @param avatarPaletteText2 Used for avatar text color.
-     * @param avatarPaletteText3 Used for avatar text color.
-     * @param avatarPaletteText4 Used for avatar text color.
-     * @param avatarPaletteText5 Used for avatar text color.
-     * @param avatarTextPlaceholder Used for avatar placeholder text color.
-     * @param backgroundCoreSurface Used for surface background in components like buttons.
-     * @param backgroundCoreSurfaceSubtle Used for subtle surface backgrounds.
-     * @param backgroundCoreSurfaceStrong Stronger section background for prominent surface areas.
-     * @param backgroundCoreInverse Used for elevated, transient, or high-attention UI surfaces that
-     * sit on top of the default app background.
-     * @param backgroundCoreOnAccent Used for surfaces that must remain white across themes
-     * (e.g., media controls over video).
-     * @param backgroundCoreElevation0 Used for base elevation surface backgrounds.
-     * @param backgroundCoreElevation1 Slightly elevated surface backgrounds.
-     * @param borderCoreOpacitySubtle Subtle translucent border (e.g. image frames, avatars).
-     * @param borderCoreDefault Used for default border color.
-     * @param borderCoreStrong Stronger surface border with higher contrast.
-     * @param borderCoreOnAccent Used for borders on accent backgrounds.
-     * @param borderCoreInverse Used for borders on dark/inverse backgrounds.
-     * @param borderCoreOpacityStrong Stronger translucent border (e.g. waveforms, playback thumbs).
-     * @param borderCoreSubtle Used for subtle/very light separators.
-     * @param borderUtilitySelected Used for selected or active state border (focus ring).
-     * @param borderUtilityDisabled Used for disabled state borders.
+     * Parameters are organized by domain:
+     * scales → accent → text → background → border → badge → chat → control → avatar → skeleton.
+     *
      * @param brand The brand (accent) color scale. See [ColorScale].
-     * @param textOnAccent Used for text displayed on accent/colored backgrounds.
-     * @param textInverse Used for text displayed on dark/inverse backgrounds.
+     * @param chrome The chrome (neutral gray) color scale. See [ChromeScale].
+     * @param accentPrimary Used for main brand accent for interactive elements.
+     * @param accentError Used for destructive actions and error states.
+     * @param accentSuccess Used for success states and positive actions.
+     * @param accentWarning Used for warning or caution states.
+     * @param accentNeutral Used for neutral accent for low-priority badges.
      * @param textPrimary Used for main text color.
      * @param textSecondary Used for secondary text color with lower emphasis.
      * @param textTertiary Used for tertiary text color with lowest emphasis.
      * @param textDisabled Used for disabled text and icon color.
-     * @param backgroundUtilitySelected Selected state overlay background.
+     * @param textOnAccent Used for text displayed on accent/colored backgrounds.
+     * @param textInverse Used for text displayed on dark/inverse backgrounds.
+     * @param textLink Used for hyperlinks and inline action text.
+     * @param backgroundCoreElevation0 Used for base elevation surface backgrounds.
+     * @param backgroundCoreElevation1 Slightly elevated surface backgrounds.
      * @param backgroundCoreElevation2 Used for elevated surface backgrounds at elevation level 2.
      * @param backgroundCoreElevation3 Popover surface backgrounds.
      * @param backgroundCoreElevation4 Dialog and modal surface backgrounds.
+     * @param backgroundCoreSurface Used for surface background in components like buttons.
+     * @param backgroundCoreSurfaceSubtle Used for subtle surface backgrounds.
+     * @param backgroundCoreSurfaceStrong Stronger section background for prominent surface areas.
+     * @param backgroundCoreSurfaceCard Card surface backgrounds (e.g. link previews, attachments).
+     * @param backgroundCoreInverse Elevated, transient, or high-attention UI surfaces that sit on
+     * top of the default app background.
+     * @param backgroundCoreOnAccent Surfaces that must remain white across themes
+     * (e.g., media controls over video).
+     * @param backgroundCoreScrim Used for dimmed scrim backgrounds (e.g. behind modals).
+     * @param backgroundCoreOverlayDark Used for dark overlay backgrounds on media/badges.
+     * @param backgroundCoreOverlayLight Used for light overlay backgrounds.
+     * @param backgroundCoreHighlight Used for highlight backgrounds (e.g. message focus/pin).
+     * @param backgroundUtilitySelected Selected state overlay background.
+     * @param backgroundUtilityDisabled Used for disabled utility backgrounds.
+     * @param borderCoreDefault Used for default border color.
+     * @param borderCoreStrong Stronger surface border with higher contrast.
+     * @param borderCoreSubtle Used for subtle/very light separators.
+     * @param borderCoreOpacitySubtle Subtle translucent border (e.g. image frames, avatars).
+     * @param borderCoreOpacityStrong Stronger translucent border (e.g. waveforms, playback thumbs).
+     * @param borderCoreOnAccent Used for borders on accent backgrounds.
+     * @param borderCoreInverse Used for borders on dark/inverse backgrounds.
+     * @param borderUtilitySelected Used for selected or active state border (focus ring).
+     * @param borderUtilityActive Used for active/selected state border.
+     * @param borderUtilityDisabled Used for disabled state borders.
+     * @param borderUtilityError Used for error state borders.
+     * @param borderUtilityWarning Used for warning state borders.
+     * @param borderUtilitySuccess Used for success state borders.
      * @param badgeBgOverlay Used for badge background when displayed as an overlay.
+     * @param badgeBgInverse Used for inverse badge background.
      * @param chatBgIncoming Used for incoming message bubble background.
      * @param chatBgAttachmentIncoming Used for incoming message attachment background.
      * @param chatBgAttachmentOutgoing Used for outgoing message attachment background.
@@ -99,74 +104,74 @@ public object StreamDesign {
      * @param chatPollProgressTrackIncoming Used for incoming poll progress track color.
      * @param chatPollProgressFillOutgoing Used for outgoing poll progress fill color.
      * @param chatPollProgressTrackOutgoing Used for outgoing poll progress track color.
-     * @param chatReplyIndicatorIncoming Used for the reply indicator color in incoming messages.
-     * @param chatReplyIndicatorOutgoing Used for the reply indicator color in outgoing messages.
+     * @param chatReplyIndicatorIncoming Reply indicator color in incoming messages.
+     * @param chatReplyIndicatorOutgoing Reply indicator color in outgoing messages.
      * @param controlRemoveBg Used for remove control background.
      * @param controlRemoveIcon Used for remove control icon.
-     * @param avatarPresenceBorder Used for the outline around the presence dot.
-     * @param backgroundCoreScrim Used for dimmed scrim backgrounds (e.g. behind modals).
-     * @param backgroundCoreOverlayDark Used for dark overlay backgrounds on media/badges.
-     * @param backgroundCoreHighlight Used for highlight backgrounds (e.g. message focus/pin).
      * @param controlPlaybackThumbBgDefault Default background for the playback thumb control.
+     * @param avatarBgPlaceholder Used for avatar placeholder background color.
+     * @param avatarPaletteBg1 Used for avatar background color (slot 1).
+     * @param avatarPaletteBg2 Used for avatar background color (slot 2).
+     * @param avatarPaletteBg3 Used for avatar background color (slot 3).
+     * @param avatarPaletteBg4 Used for avatar background color (slot 4).
+     * @param avatarPaletteBg5 Used for avatar background color (slot 5).
+     * @param avatarPaletteText1 Used for avatar text color (slot 1).
+     * @param avatarPaletteText2 Used for avatar text color (slot 2).
+     * @param avatarPaletteText3 Used for avatar text color (slot 3).
+     * @param avatarPaletteText4 Used for avatar text color (slot 4).
+     * @param avatarPaletteText5 Used for avatar text color (slot 5).
+     * @param avatarTextPlaceholder Used for avatar placeholder text color.
+     * @param avatarPresenceBorder Used for the outline around the presence dot.
      * @param skeletonLoadingHighlight Shimmer highlight color for skeleton loading gradients.
-     * @param accentWarning Used for warning or caution states.
-     * @param backgroundCoreSurfaceCard Used for card surface backgrounds (e.g. link previews, attachments).
-     * @param backgroundCoreOverlayLight Used for light overlay backgrounds.
-     * @param backgroundUtilityDisabled Used for disabled utility backgrounds.
-     * @param textLink Used for hyperlinks and inline action text.
-     * @param borderUtilityActive Used for active/selected state border.
-     * @param borderUtilityError Used for error state borders.
-     * @param borderUtilityWarning Used for warning state borders.
-     * @param borderUtilitySuccess Used for success state borders.
-     * @param badgeBgInverse Used for inverse badge background.
-     * @param chrome The chrome (neutral gray) color scale. See [ChromeScale].
      */
     @Immutable
     public data class Colors(
-        public val accentError: Color,
-        public val accentNeutral: Color,
-        public val accentSuccess: Color,
-        public val accentPrimary: Color,
-        public val avatarBgPlaceholder: Color,
-        public val avatarPaletteBg1: Color,
-        public val avatarPaletteBg2: Color,
-        public val avatarPaletteBg3: Color,
-        public val avatarPaletteBg4: Color,
-        public val avatarPaletteBg5: Color,
-        public val avatarPaletteText1: Color,
-        public val avatarPaletteText2: Color,
-        public val avatarPaletteText3: Color,
-        public val avatarPaletteText4: Color,
-        public val avatarPaletteText5: Color,
-        public val avatarTextPlaceholder: Color,
-        public val backgroundCoreSurface: Color,
-        public val backgroundCoreSurfaceSubtle: Color,
-        public val backgroundCoreSurfaceStrong: Color,
-        public val backgroundCoreInverse: Color,
-        public val backgroundCoreOnAccent: Color,
-        public val backgroundCoreElevation0: Color,
-        public val backgroundCoreElevation1: Color,
-        public val borderCoreOpacitySubtle: Color,
-        public val borderCoreDefault: Color,
-        public val borderCoreStrong: Color,
-        public val borderCoreOnAccent: Color,
-        public val borderCoreInverse: Color,
-        public val borderCoreOpacityStrong: Color,
-        public val borderCoreSubtle: Color,
-        public val borderUtilitySelected: Color,
-        public val borderUtilityDisabled: Color,
         public val brand: ColorScale,
-        public val textOnAccent: Color,
-        public val textInverse: Color,
+        public val chrome: ChromeScale,
+        public val accentPrimary: Color,
+        public val accentError: Color,
+        public val accentSuccess: Color,
+        public val accentWarning: Color,
+        public val accentNeutral: Color,
         public val textPrimary: Color,
         public val textSecondary: Color,
         public val textTertiary: Color,
         public val textDisabled: Color,
-        public val backgroundUtilitySelected: Color,
+        public val textOnAccent: Color,
+        public val textInverse: Color,
+        public val textLink: Color,
+        public val backgroundCoreElevation0: Color,
+        public val backgroundCoreElevation1: Color,
         public val backgroundCoreElevation2: Color,
         public val backgroundCoreElevation3: Color,
         public val backgroundCoreElevation4: Color,
+        public val backgroundCoreSurface: Color,
+        public val backgroundCoreSurfaceSubtle: Color,
+        public val backgroundCoreSurfaceStrong: Color,
+        public val backgroundCoreSurfaceCard: Color,
+        public val backgroundCoreInverse: Color,
+        public val backgroundCoreOnAccent: Color,
+        public val backgroundCoreScrim: Color,
+        public val backgroundCoreOverlayDark: Color,
+        public val backgroundCoreOverlayLight: Color,
+        public val backgroundCoreHighlight: Color,
+        public val backgroundUtilitySelected: Color,
+        public val backgroundUtilityDisabled: Color,
+        public val borderCoreDefault: Color,
+        public val borderCoreStrong: Color,
+        public val borderCoreSubtle: Color,
+        public val borderCoreOpacitySubtle: Color,
+        public val borderCoreOpacityStrong: Color,
+        public val borderCoreOnAccent: Color,
+        public val borderCoreInverse: Color,
+        public val borderUtilitySelected: Color,
+        public val borderUtilityActive: Color,
+        public val borderUtilityDisabled: Color,
+        public val borderUtilityError: Color,
+        public val borderUtilityWarning: Color,
+        public val borderUtilitySuccess: Color,
         public val badgeBgOverlay: Color,
+        public val badgeBgInverse: Color,
         public val chatBgIncoming: Color,
         public val chatBgAttachmentIncoming: Color,
         public val chatBgAttachmentOutgoing: Color,
@@ -180,22 +185,20 @@ public object StreamDesign {
         public val controlRemoveBg: Color,
         public val controlRemoveIcon: Color,
         public val controlPlaybackThumbBgDefault: Color,
+        public val avatarBgPlaceholder: Color,
+        public val avatarPaletteBg1: Color,
+        public val avatarPaletteBg2: Color,
+        public val avatarPaletteBg3: Color,
+        public val avatarPaletteBg4: Color,
+        public val avatarPaletteBg5: Color,
+        public val avatarPaletteText1: Color,
+        public val avatarPaletteText2: Color,
+        public val avatarPaletteText3: Color,
+        public val avatarPaletteText4: Color,
+        public val avatarPaletteText5: Color,
+        public val avatarTextPlaceholder: Color,
         public val avatarPresenceBorder: Color,
-        public val backgroundCoreScrim: Color,
-        public val backgroundCoreOverlayDark: Color,
-        public val backgroundCoreHighlight: Color,
         public val skeletonLoadingHighlight: Color,
-        public val accentWarning: Color,
-        public val backgroundCoreSurfaceCard: Color,
-        public val backgroundCoreOverlayLight: Color,
-        public val backgroundUtilityDisabled: Color,
-        public val textLink: Color,
-        public val borderUtilityActive: Color,
-        public val borderUtilityError: Color,
-        public val borderUtilityWarning: Color,
-        public val borderUtilitySuccess: Color,
-        public val badgeBgInverse: Color,
-        public val chrome: ChromeScale,
     ) {
 
         /** Badge background for error states. */
@@ -431,39 +434,65 @@ public object StreamDesign {
              */
             @Suppress("LongMethod", "MagicNumber")
             public fun default(): Colors = Colors(
-                accentError = StreamPrimitiveColors.red500,
-                accentNeutral = StreamPrimitiveColors.slate500,
+                brand = ColorScale.defaultLight(),
+                chrome = ChromeScale.defaultLight(),
                 accentPrimary = StreamPrimitiveColors.blue500,
+                accentError = StreamPrimitiveColors.red500,
                 accentSuccess = StreamPrimitiveColors.green400,
-                backgroundUtilityDisabled = StreamPrimitiveColors.slate100,
-                backgroundCoreSurface = StreamPrimitiveColors.slate100,
-                backgroundCoreSurfaceSubtle = StreamPrimitiveColors.slate50,
-                backgroundCoreSurfaceStrong = StreamPrimitiveColors.slate150,
-                backgroundCoreInverse = StreamPrimitiveColors.slate900,
-                backgroundCoreOnAccent = StreamPrimitiveColors.baseWhite,
-                backgroundUtilitySelected = StreamPrimitiveColors.slate900.copy(alpha = 0.2f),
+                accentWarning = StreamPrimitiveColors.yellow400,
+                accentNeutral = StreamPrimitiveColors.slate500,
+                textPrimary = StreamPrimitiveColors.slate900,
+                textSecondary = StreamPrimitiveColors.slate700,
+                textTertiary = StreamPrimitiveColors.slate500,
+                textDisabled = StreamPrimitiveColors.slate300,
+                textOnAccent = StreamPrimitiveColors.baseWhite,
+                textInverse = StreamPrimitiveColors.baseWhite,
+                textLink = StreamPrimitiveColors.blue500,
                 backgroundCoreElevation0 = StreamPrimitiveColors.baseWhite,
                 backgroundCoreElevation1 = StreamPrimitiveColors.baseWhite,
                 backgroundCoreElevation2 = StreamPrimitiveColors.baseWhite,
                 backgroundCoreElevation3 = StreamPrimitiveColors.baseWhite,
                 backgroundCoreElevation4 = StreamPrimitiveColors.baseWhite,
-                badgeBgOverlay = StreamPrimitiveColors.baseBlack.copy(alpha = .75f),
+                backgroundCoreSurface = StreamPrimitiveColors.slate100,
+                backgroundCoreSurfaceSubtle = StreamPrimitiveColors.slate50,
+                backgroundCoreSurfaceStrong = StreamPrimitiveColors.slate150,
+                backgroundCoreSurfaceCard = StreamPrimitiveColors.slate50,
+                backgroundCoreInverse = StreamPrimitiveColors.slate900,
+                backgroundCoreOnAccent = StreamPrimitiveColors.baseWhite,
+                backgroundCoreScrim = StreamPrimitiveColors.slate900.copy(alpha = 0.5f),
+                backgroundCoreOverlayDark = StreamPrimitiveColors.slate900.copy(alpha = 0.25f),
+                backgroundCoreOverlayLight = Color(0xBFFFFFFF),
+                backgroundCoreHighlight = StreamPrimitiveColors.yellow50,
+                backgroundUtilitySelected = StreamPrimitiveColors.slate900.copy(alpha = 0.2f),
+                backgroundUtilityDisabled = StreamPrimitiveColors.slate100,
                 borderCoreDefault = StreamPrimitiveColors.slate150,
                 borderCoreStrong = StreamPrimitiveColors.slate300,
+                borderCoreSubtle = StreamPrimitiveColors.slate100,
                 borderCoreOpacitySubtle = StreamPrimitiveColors.slate900.copy(alpha = 0.1f),
+                borderCoreOpacityStrong = StreamPrimitiveColors.slate900.copy(alpha = 0.25f),
                 borderCoreOnAccent = StreamPrimitiveColors.baseWhite,
                 borderCoreInverse = StreamPrimitiveColors.baseWhite,
-                borderCoreOpacityStrong = StreamPrimitiveColors.slate900.copy(alpha = 0.25f),
                 borderUtilitySelected = StreamPrimitiveColors.blue500,
-                borderCoreSubtle = StreamPrimitiveColors.slate100,
+                borderUtilityActive = StreamPrimitiveColors.blue500,
                 borderUtilityDisabled = StreamPrimitiveColors.slate100,
-                brand = ColorScale.defaultLight(),
-                textDisabled = StreamPrimitiveColors.slate300,
-                textOnAccent = StreamPrimitiveColors.baseWhite,
-                textInverse = StreamPrimitiveColors.baseWhite,
-                textPrimary = StreamPrimitiveColors.slate900,
-                textSecondary = StreamPrimitiveColors.slate700,
-                textTertiary = StreamPrimitiveColors.slate500,
+                borderUtilityError = StreamPrimitiveColors.red500,
+                borderUtilityWarning = StreamPrimitiveColors.yellow400,
+                borderUtilitySuccess = StreamPrimitiveColors.green400,
+                badgeBgOverlay = StreamPrimitiveColors.baseBlack.copy(alpha = .75f),
+                badgeBgInverse = StreamPrimitiveColors.baseBlack,
+                chatBgIncoming = StreamPrimitiveColors.slate100,
+                chatBgAttachmentIncoming = StreamPrimitiveColors.slate150,
+                chatBgAttachmentOutgoing = StreamPrimitiveColors.blue150,
+                chatBorderOnChatIncoming = StreamPrimitiveColors.slate300,
+                chatPollProgressFillIncoming = StreamPrimitiveColors.slate500,
+                chatPollProgressTrackIncoming = StreamPrimitiveColors.slate150,
+                chatPollProgressFillOutgoing = StreamPrimitiveColors.blue500,
+                chatPollProgressTrackOutgoing = StreamPrimitiveColors.blue200,
+                chatReplyIndicatorIncoming = StreamPrimitiveColors.slate400,
+                chatReplyIndicatorOutgoing = StreamPrimitiveColors.blue400,
+                controlRemoveBg = StreamPrimitiveColors.slate900,
+                controlRemoveIcon = StreamPrimitiveColors.baseWhite,
+                controlPlaybackThumbBgDefault = StreamPrimitiveColors.baseWhite,
                 avatarBgPlaceholder = StreamPrimitiveColors.slate150,
                 avatarPaletteBg1 = StreamPrimitiveColors.blue150,
                 avatarPaletteBg2 = StreamPrimitiveColors.cyan150,
@@ -476,34 +505,8 @@ public object StreamDesign {
                 avatarPaletteText4 = StreamPrimitiveColors.purple900,
                 avatarPaletteText5 = StreamPrimitiveColors.yellow900,
                 avatarTextPlaceholder = StreamPrimitiveColors.slate500,
-                chatBgIncoming = StreamPrimitiveColors.slate100,
-                chatBgAttachmentIncoming = StreamPrimitiveColors.slate150,
-                chatBgAttachmentOutgoing = StreamPrimitiveColors.blue150,
-                chatBorderOnChatIncoming = StreamPrimitiveColors.slate300,
-                chatPollProgressFillIncoming = StreamPrimitiveColors.slate500,
-                chatPollProgressTrackIncoming = StreamPrimitiveColors.slate150,
-                chatPollProgressFillOutgoing = StreamPrimitiveColors.blue500,
-                chatPollProgressTrackOutgoing = StreamPrimitiveColors.blue200,
-                chatReplyIndicatorIncoming = StreamPrimitiveColors.slate400,
-                chatReplyIndicatorOutgoing = StreamPrimitiveColors.blue400,
-                controlPlaybackThumbBgDefault = StreamPrimitiveColors.baseWhite,
-                controlRemoveBg = StreamPrimitiveColors.slate900,
-                controlRemoveIcon = StreamPrimitiveColors.baseWhite,
                 avatarPresenceBorder = StreamPrimitiveColors.baseWhite,
-                backgroundCoreScrim = StreamPrimitiveColors.slate900.copy(alpha = 0.5f),
-                backgroundCoreOverlayDark = StreamPrimitiveColors.slate900.copy(alpha = 0.25f),
-                backgroundCoreHighlight = StreamPrimitiveColors.yellow50,
                 skeletonLoadingHighlight = StreamPrimitiveColors.baseWhite,
-                accentWarning = StreamPrimitiveColors.yellow400,
-                backgroundCoreSurfaceCard = StreamPrimitiveColors.slate50,
-                backgroundCoreOverlayLight = Color(0xBFFFFFFF),
-                textLink = StreamPrimitiveColors.blue500,
-                borderUtilityActive = StreamPrimitiveColors.blue500,
-                borderUtilityError = StreamPrimitiveColors.red500,
-                borderUtilityWarning = StreamPrimitiveColors.yellow400,
-                borderUtilitySuccess = StreamPrimitiveColors.green400,
-                badgeBgInverse = StreamPrimitiveColors.baseBlack,
-                chrome = ChromeScale.defaultLight(),
             )
 
             /**
@@ -513,39 +516,65 @@ public object StreamDesign {
              */
             @Suppress("LongMethod", "MagicNumber")
             public fun defaultDark(): Colors = Colors(
-                accentError = StreamPrimitiveColors.red400,
-                accentNeutral = StreamPrimitiveColors.neutral300,
+                brand = ColorScale.defaultDark(),
+                chrome = ChromeScale.defaultDark(),
                 accentPrimary = StreamPrimitiveColors.blue400,
+                accentError = StreamPrimitiveColors.red400,
                 accentSuccess = StreamPrimitiveColors.green300,
-                backgroundUtilityDisabled = StreamPrimitiveColors.neutral800,
-                backgroundCoreSurface = StreamPrimitiveColors.neutral800,
-                backgroundCoreSurfaceSubtle = StreamPrimitiveColors.neutral900,
-                backgroundCoreSurfaceStrong = StreamPrimitiveColors.neutral700,
-                backgroundCoreInverse = StreamPrimitiveColors.neutral50,
-                backgroundCoreOnAccent = StreamPrimitiveColors.baseBlack,
-                backgroundUtilitySelected = StreamPrimitiveColors.baseWhite.copy(alpha = 0.25f),
+                accentWarning = StreamPrimitiveColors.yellow300,
+                accentNeutral = StreamPrimitiveColors.neutral300,
+                textPrimary = StreamPrimitiveColors.neutral50,
+                textSecondary = StreamPrimitiveColors.neutral150,
+                textTertiary = StreamPrimitiveColors.neutral300,
+                textDisabled = StreamPrimitiveColors.neutral500,
+                textOnAccent = StreamPrimitiveColors.baseWhite,
+                textInverse = StreamPrimitiveColors.baseBlack,
+                textLink = StreamPrimitiveColors.blue200,
                 backgroundCoreElevation0 = StreamPrimitiveColors.baseBlack,
                 backgroundCoreElevation1 = StreamPrimitiveColors.neutral900,
                 backgroundCoreElevation2 = StreamPrimitiveColors.neutral800,
                 backgroundCoreElevation3 = StreamPrimitiveColors.neutral600,
                 backgroundCoreElevation4 = StreamPrimitiveColors.neutral500,
+                backgroundCoreSurface = StreamPrimitiveColors.neutral800,
+                backgroundCoreSurfaceSubtle = StreamPrimitiveColors.neutral900,
+                backgroundCoreSurfaceStrong = StreamPrimitiveColors.neutral700,
+                backgroundCoreSurfaceCard = StreamPrimitiveColors.neutral800,
+                backgroundCoreInverse = StreamPrimitiveColors.neutral50,
+                backgroundCoreOnAccent = StreamPrimitiveColors.baseBlack,
+                backgroundCoreScrim = StreamPrimitiveColors.baseBlack.copy(alpha = 0.75f),
+                backgroundCoreOverlayDark = StreamPrimitiveColors.baseBlack.copy(alpha = 0.5f),
+                backgroundCoreOverlayLight = Color(0xBF000000),
+                backgroundCoreHighlight = StreamPrimitiveColors.yellow800,
+                backgroundUtilitySelected = StreamPrimitiveColors.baseWhite.copy(alpha = 0.25f),
+                backgroundUtilityDisabled = StreamPrimitiveColors.neutral800,
                 borderCoreDefault = StreamPrimitiveColors.neutral600,
                 borderCoreStrong = StreamPrimitiveColors.neutral500,
+                borderCoreSubtle = StreamPrimitiveColors.neutral800,
                 borderCoreOpacitySubtle = StreamPrimitiveColors.baseWhite.copy(alpha = .2f),
+                borderCoreOpacityStrong = StreamPrimitiveColors.baseWhite.copy(alpha = 0.25f),
                 borderCoreOnAccent = StreamPrimitiveColors.baseWhite,
                 borderCoreInverse = StreamPrimitiveColors.baseBlack,
-                borderCoreOpacityStrong = StreamPrimitiveColors.baseWhite.copy(alpha = 0.25f),
                 borderUtilitySelected = StreamPrimitiveColors.blue400,
-                borderCoreSubtle = StreamPrimitiveColors.neutral800,
+                borderUtilityActive = StreamPrimitiveColors.blue400,
                 borderUtilityDisabled = StreamPrimitiveColors.neutral800,
-                brand = ColorScale.defaultDark(),
-                textDisabled = StreamPrimitiveColors.neutral500,
-                textOnAccent = StreamPrimitiveColors.baseWhite,
-                textInverse = StreamPrimitiveColors.baseBlack,
-                textPrimary = StreamPrimitiveColors.neutral50,
-                textSecondary = StreamPrimitiveColors.neutral150,
-                textTertiary = StreamPrimitiveColors.neutral300,
+                borderUtilityError = StreamPrimitiveColors.red400,
+                borderUtilityWarning = StreamPrimitiveColors.yellow300,
+                borderUtilitySuccess = StreamPrimitiveColors.green300,
                 badgeBgOverlay = StreamPrimitiveColors.baseBlack.copy(alpha = .75f),
+                badgeBgInverse = StreamPrimitiveColors.baseWhite,
+                chatBgIncoming = StreamPrimitiveColors.neutral800,
+                chatBgAttachmentIncoming = StreamPrimitiveColors.neutral700,
+                chatBgAttachmentOutgoing = StreamPrimitiveColors.blue700,
+                chatBorderOnChatIncoming = StreamPrimitiveColors.neutral500,
+                chatPollProgressFillIncoming = StreamPrimitiveColors.neutral300,
+                chatPollProgressTrackIncoming = StreamPrimitiveColors.neutral700,
+                chatPollProgressFillOutgoing = StreamPrimitiveColors.baseWhite,
+                chatPollProgressTrackOutgoing = StreamPrimitiveColors.blue600,
+                chatReplyIndicatorIncoming = StreamPrimitiveColors.neutral500,
+                chatReplyIndicatorOutgoing = StreamPrimitiveColors.blue150,
+                controlRemoveBg = StreamPrimitiveColors.neutral50,
+                controlRemoveIcon = StreamPrimitiveColors.baseBlack,
+                controlPlaybackThumbBgDefault = StreamPrimitiveColors.neutral50,
                 avatarBgPlaceholder = StreamPrimitiveColors.neutral700,
                 avatarPaletteBg1 = StreamPrimitiveColors.blue600,
                 avatarPaletteBg2 = StreamPrimitiveColors.cyan600,
@@ -558,34 +587,8 @@ public object StreamDesign {
                 avatarPaletteText4 = StreamPrimitiveColors.purple100,
                 avatarPaletteText5 = StreamPrimitiveColors.yellow100,
                 avatarTextPlaceholder = StreamPrimitiveColors.neutral300,
-                chatBgIncoming = StreamPrimitiveColors.neutral800,
-                chatBgAttachmentIncoming = StreamPrimitiveColors.neutral700,
-                chatBgAttachmentOutgoing = StreamPrimitiveColors.blue700,
-                chatBorderOnChatIncoming = StreamPrimitiveColors.neutral500,
-                chatPollProgressFillIncoming = StreamPrimitiveColors.neutral300,
-                chatPollProgressTrackIncoming = StreamPrimitiveColors.neutral700,
-                chatPollProgressFillOutgoing = StreamPrimitiveColors.baseWhite,
-                chatPollProgressTrackOutgoing = StreamPrimitiveColors.blue600,
-                chatReplyIndicatorIncoming = StreamPrimitiveColors.neutral500,
-                chatReplyIndicatorOutgoing = StreamPrimitiveColors.blue150,
-                controlPlaybackThumbBgDefault = StreamPrimitiveColors.neutral50,
-                controlRemoveBg = StreamPrimitiveColors.neutral50,
-                controlRemoveIcon = StreamPrimitiveColors.baseBlack,
                 avatarPresenceBorder = StreamPrimitiveColors.baseBlack,
-                backgroundCoreScrim = StreamPrimitiveColors.baseBlack.copy(alpha = 0.75f),
-                backgroundCoreOverlayDark = StreamPrimitiveColors.baseBlack.copy(alpha = 0.5f),
-                backgroundCoreHighlight = StreamPrimitiveColors.yellow800,
                 skeletonLoadingHighlight = StreamPrimitiveColors.baseWhite.copy(alpha = 0.2f),
-                accentWarning = StreamPrimitiveColors.yellow300,
-                backgroundCoreSurfaceCard = StreamPrimitiveColors.neutral800,
-                backgroundCoreOverlayLight = Color(0xBF000000),
-                textLink = StreamPrimitiveColors.blue200,
-                borderUtilityActive = StreamPrimitiveColors.blue400,
-                borderUtilityError = StreamPrimitiveColors.red400,
-                borderUtilityWarning = StreamPrimitiveColors.yellow300,
-                borderUtilitySuccess = StreamPrimitiveColors.green300,
-                badgeBgInverse = StreamPrimitiveColors.baseWhite,
-                chrome = ChromeScale.defaultDark(),
             )
         }
     }
