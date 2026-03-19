@@ -6153,12 +6153,92 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/theme/StreamDesign;
 }
 
+public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale {
+	public static final field $stable I
+	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale$Companion;
+	public synthetic fun <init> (JJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-0d7_KjU ()J
+	public final fun component10-0d7_KjU ()J
+	public final fun component11-0d7_KjU ()J
+	public final fun component12-0d7_KjU ()J
+	public final fun component13-0d7_KjU ()J
+	public final fun component2-0d7_KjU ()J
+	public final fun component3-0d7_KjU ()J
+	public final fun component4-0d7_KjU ()J
+	public final fun component5-0d7_KjU ()J
+	public final fun component6-0d7_KjU ()J
+	public final fun component7-0d7_KjU ()J
+	public final fun component8-0d7_KjU ()J
+	public final fun component9-0d7_KjU ()J
+	public final fun copy-daRQuJA (JJJJJJJJJJJJJ)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;
+	public static synthetic fun copy-daRQuJA$default (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;JJJJJJJJJJJJJILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getS0-0d7_KjU ()J
+	public final fun getS100-0d7_KjU ()J
+	public final fun getS1000-0d7_KjU ()J
+	public final fun getS150-0d7_KjU ()J
+	public final fun getS200-0d7_KjU ()J
+	public final fun getS300-0d7_KjU ()J
+	public final fun getS400-0d7_KjU ()J
+	public final fun getS50-0d7_KjU ()J
+	public final fun getS500-0d7_KjU ()J
+	public final fun getS600-0d7_KjU ()J
+	public final fun getS700-0d7_KjU ()J
+	public final fun getS800-0d7_KjU ()J
+	public final fun getS900-0d7_KjU ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale$Companion {
+	public final fun defaultDark ()Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;
+	public final fun defaultLight ()Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;
+}
+
+public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale {
+	public static final field $stable I
+	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale$Companion;
+	public synthetic fun <init> (JJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-0d7_KjU ()J
+	public final fun component10-0d7_KjU ()J
+	public final fun component11-0d7_KjU ()J
+	public final fun component2-0d7_KjU ()J
+	public final fun component3-0d7_KjU ()J
+	public final fun component4-0d7_KjU ()J
+	public final fun component5-0d7_KjU ()J
+	public final fun component6-0d7_KjU ()J
+	public final fun component7-0d7_KjU ()J
+	public final fun component8-0d7_KjU ()J
+	public final fun component9-0d7_KjU ()J
+	public final fun copy-KpyCeHw (JJJJJJJJJJJ)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;
+	public static synthetic fun copy-KpyCeHw$default (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;JJJJJJJJJJJILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getS100-0d7_KjU ()J
+	public final fun getS150-0d7_KjU ()J
+	public final fun getS200-0d7_KjU ()J
+	public final fun getS300-0d7_KjU ()J
+	public final fun getS400-0d7_KjU ()J
+	public final fun getS50-0d7_KjU ()J
+	public final fun getS500-0d7_KjU ()J
+	public final fun getS600-0d7_KjU ()J
+	public final fun getS700-0d7_KjU ()J
+	public final fun getS800-0d7_KjU ()J
+	public final fun getS900-0d7_KjU ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale$Companion {
+	public final fun defaultDark ()Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;
+	public final fun defaultLight ()Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;
+	public final fun from-8_81llA (J)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;
+}
+
 public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Colors {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors$Companion;
-	public synthetic fun <init> (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1-0d7_KjU ()J
+	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;
 	public final fun component10-0d7_KjU ()J
 	public final fun component11-0d7_KjU ()J
 	public final fun component12-0d7_KjU ()J
@@ -6169,7 +6249,7 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Color
 	public final fun component17-0d7_KjU ()J
 	public final fun component18-0d7_KjU ()J
 	public final fun component19-0d7_KjU ()J
-	public final fun component2-0d7_KjU ()J
+	public final fun component2 ()Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;
 	public final fun component20-0d7_KjU ()J
 	public final fun component21-0d7_KjU ()J
 	public final fun component22-0d7_KjU ()J
@@ -6219,47 +6299,12 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Color
 	public final fun component62-0d7_KjU ()J
 	public final fun component63-0d7_KjU ()J
 	public final fun component64-0d7_KjU ()J
-	public final fun component65-0d7_KjU ()J
-	public final fun component66-0d7_KjU ()J
-	public final fun component67-0d7_KjU ()J
-	public final fun component68-0d7_KjU ()J
-	public final fun component69-0d7_KjU ()J
 	public final fun component7-0d7_KjU ()J
-	public final fun component70-0d7_KjU ()J
-	public final fun component71-0d7_KjU ()J
-	public final fun component72-0d7_KjU ()J
-	public final fun component73-0d7_KjU ()J
-	public final fun component74-0d7_KjU ()J
-	public final fun component75-0d7_KjU ()J
-	public final fun component76-0d7_KjU ()J
-	public final fun component77-0d7_KjU ()J
-	public final fun component78-0d7_KjU ()J
-	public final fun component79-0d7_KjU ()J
 	public final fun component8-0d7_KjU ()J
-	public final fun component80-0d7_KjU ()J
-	public final fun component81-0d7_KjU ()J
-	public final fun component82-0d7_KjU ()J
-	public final fun component83-0d7_KjU ()J
-	public final fun component84-0d7_KjU ()J
-	public final fun component85-0d7_KjU ()J
-	public final fun component86-0d7_KjU ()J
-	public final fun component87-0d7_KjU ()J
-	public final fun component88-0d7_KjU ()J
-	public final fun component89-0d7_KjU ()J
 	public final fun component9-0d7_KjU ()J
-	public final fun component90-0d7_KjU ()J
-	public final fun component91-0d7_KjU ()J
-	public final fun component92-0d7_KjU ()J
-	public final fun component93-0d7_KjU ()J
-	public final fun component94-0d7_KjU ()J
-	public final fun component95-0d7_KjU ()J
-	public final fun component96-0d7_KjU ()J
-	public final fun component97-0d7_KjU ()J
-	public final fun component98-0d7_KjU ()J
-	public final fun copy-255qoDo (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
-	public static synthetic fun copy-255qoDo$default (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIIIILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
+	public final fun copy-xoxRo9Q (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
+	public static synthetic fun copy-xoxRo9Q$default (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getAccentBlack-0d7_KjU ()J
 	public final fun getAccentError-0d7_KjU ()J
 	public final fun getAccentNeutral-0d7_KjU ()J
 	public final fun getAccentPrimary-0d7_KjU ()J
@@ -6276,40 +6321,31 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Color
 	public final fun getAvatarPaletteText3-0d7_KjU ()J
 	public final fun getAvatarPaletteText4-0d7_KjU ()J
 	public final fun getAvatarPaletteText5-0d7_KjU ()J
+	public final fun getAvatarPresenceBorder-0d7_KjU ()J
 	public final fun getAvatarTextPlaceholder-0d7_KjU ()J
 	public final fun getBackgroundCoreApp-0d7_KjU ()J
-	public final fun getBackgroundCoreDisabled-0d7_KjU ()J
+	public final fun getBackgroundCoreElevation0-0d7_KjU ()J
+	public final fun getBackgroundCoreElevation1-0d7_KjU ()J
+	public final fun getBackgroundCoreElevation2-0d7_KjU ()J
+	public final fun getBackgroundCoreElevation3-0d7_KjU ()J
+	public final fun getBackgroundCoreElevation4-0d7_KjU ()J
 	public final fun getBackgroundCoreHighlight-0d7_KjU ()J
 	public final fun getBackgroundCoreInverse-0d7_KjU ()J
 	public final fun getBackgroundCoreOnAccent-0d7_KjU ()J
 	public final fun getBackgroundCoreOverlayDark-0d7_KjU ()J
 	public final fun getBackgroundCoreOverlayLight-0d7_KjU ()J
 	public final fun getBackgroundCoreScrim-0d7_KjU ()J
-	public final fun getBackgroundCoreSelected-0d7_KjU ()J
 	public final fun getBackgroundCoreSurface-0d7_KjU ()J
 	public final fun getBackgroundCoreSurfaceCard-0d7_KjU ()J
 	public final fun getBackgroundCoreSurfaceStrong-0d7_KjU ()J
 	public final fun getBackgroundCoreSurfaceSubtle-0d7_KjU ()J
-	public final fun getBackgroundElevationElevation0-0d7_KjU ()J
-	public final fun getBackgroundElevationElevation1-0d7_KjU ()J
-	public final fun getBackgroundElevationElevation2-0d7_KjU ()J
-	public final fun getBackgroundElevationElevation3-0d7_KjU ()J
-	public final fun getBackgroundElevationElevation4-0d7_KjU ()J
 	public final fun getBackgroundUtilityDisabled-0d7_KjU ()J
-	public final fun getBadgeBgDefault-0d7_KjU ()J
-	public final fun getBadgeBgError-0d7_KjU ()J
-	public final fun getBadgeBgInverse-0d7_KjU ()J
-	public final fun getBadgeBgNeutral-0d7_KjU ()J
-	public final fun getBadgeBgOverlay-0d7_KjU ()J
-	public final fun getBadgeBgPrimary-0d7_KjU ()J
-	public final fun getBadgeBorder-0d7_KjU ()J
-	public final fun getBadgeText-0d7_KjU ()J
-	public final fun getBadgeTextOnAccent-0d7_KjU ()J
+	public final fun getBackgroundUtilitySelected-0d7_KjU ()J
 	public final fun getBorderCoreDefault-0d7_KjU ()J
 	public final fun getBorderCoreInverse-0d7_KjU ()J
 	public final fun getBorderCoreOnAccent-0d7_KjU ()J
-	public final fun getBorderCoreOpacity10-0d7_KjU ()J
-	public final fun getBorderCoreOpacity25-0d7_KjU ()J
+	public final fun getBorderCoreOpacityStrong-0d7_KjU ()J
+	public final fun getBorderCoreOpacitySubtle-0d7_KjU ()J
 	public final fun getBorderCoreStrong-0d7_KjU ()J
 	public final fun getBorderCoreSubtle-0d7_KjU ()J
 	public final fun getBorderUtilityActive-0d7_KjU ()J
@@ -6318,115 +6354,12 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Color
 	public final fun getBorderUtilitySelected-0d7_KjU ()J
 	public final fun getBorderUtilitySuccess-0d7_KjU ()J
 	public final fun getBorderUtilityWarning-0d7_KjU ()J
-	public final fun getBrand100-0d7_KjU ()J
-	public final fun getBrand150-0d7_KjU ()J
-	public final fun getBrand200-0d7_KjU ()J
-	public final fun getBrand300-0d7_KjU ()J
-	public final fun getBrand400-0d7_KjU ()J
-	public final fun getBrand50-0d7_KjU ()J
-	public final fun getBrand500-0d7_KjU ()J
-	public final fun getBrand600-0d7_KjU ()J
-	public final fun getBrand700-0d7_KjU ()J
-	public final fun getBrand800-0d7_KjU ()J
-	public final fun getBrand900-0d7_KjU ()J
-	public final fun getButtonDestructiveBg-0d7_KjU ()J
-	public final fun getButtonDestructiveBorder-0d7_KjU ()J
-	public final fun getButtonDestructiveText-0d7_KjU ()J
-	public final fun getButtonDestructiveTextOnAccent-0d7_KjU ()J
-	public final fun getButtonPrimaryBg-0d7_KjU ()J
-	public final fun getButtonPrimaryBorder-0d7_KjU ()J
-	public final fun getButtonPrimaryText-0d7_KjU ()J
-	public final fun getButtonPrimaryTextOnAccent-0d7_KjU ()J
-	public final fun getButtonSecondaryBg-0d7_KjU ()J
-	public final fun getButtonSecondaryBorder-0d7_KjU ()J
-	public final fun getButtonSecondaryText-0d7_KjU ()J
-	public final fun getButtonSecondaryTextOnAccent-0d7_KjU ()J
-	public final fun getChatBgAttachmentIncoming-0d7_KjU ()J
-	public final fun getChatBgAttachmentOutgoing-0d7_KjU ()J
-	public final fun getChatBgIncoming-0d7_KjU ()J
-	public final fun getChatBgOutgoing-0d7_KjU ()J
-	public final fun getChatBorderIncoming-0d7_KjU ()J
-	public final fun getChatBorderOnChatIncoming-0d7_KjU ()J
-	public final fun getChatBorderOnChatOutgoing-0d7_KjU ()J
-	public final fun getChatBorderOutgoing-0d7_KjU ()J
-	public final fun getChatPollProgressFillIncoming-0d7_KjU ()J
+	public final fun getBrand ()Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;
 	public final fun getChatPollProgressFillOutgoing-0d7_KjU ()J
-	public final fun getChatPollProgressTrackIncoming-0d7_KjU ()J
-	public final fun getChatPollProgressTrackOutgoing-0d7_KjU ()J
 	public final fun getChatReplyIndicatorIncoming-0d7_KjU ()J
 	public final fun getChatReplyIndicatorOutgoing-0d7_KjU ()J
-	public final fun getChatTextIncoming-0d7_KjU ()J
-	public final fun getChatTextLink-0d7_KjU ()J
-	public final fun getChatTextMention-0d7_KjU ()J
-	public final fun getChatTextOutgoing-0d7_KjU ()J
-	public final fun getChatTextReaction-0d7_KjU ()J
-	public final fun getChatTextRead-0d7_KjU ()J
-	public final fun getChatTextSystem-0d7_KjU ()J
-	public final fun getChatTextTimestamp-0d7_KjU ()J
-	public final fun getChatTextTypingIndicator-0d7_KjU ()J
-	public final fun getChatTextUsername-0d7_KjU ()J
-	public final fun getChatThreadConnectorIncoming-0d7_KjU ()J
-	public final fun getChatThreadConnectorOutgoing-0d7_KjU ()J
-	public final fun getChatWaveformBar-0d7_KjU ()J
-	public final fun getChatWaveformBarPlaying-0d7_KjU ()J
-	public final fun getChipBg-0d7_KjU ()J
-	public final fun getChipText-0d7_KjU ()J
-	public final fun getChrome0-0d7_KjU ()J
-	public final fun getChrome100-0d7_KjU ()J
-	public final fun getChrome1000-0d7_KjU ()J
-	public final fun getChrome150-0d7_KjU ()J
-	public final fun getChrome200-0d7_KjU ()J
-	public final fun getChrome300-0d7_KjU ()J
-	public final fun getChrome400-0d7_KjU ()J
-	public final fun getChrome50-0d7_KjU ()J
-	public final fun getChrome500-0d7_KjU ()J
-	public final fun getChrome600-0d7_KjU ()J
-	public final fun getChrome700-0d7_KjU ()J
-	public final fun getChrome800-0d7_KjU ()J
-	public final fun getChrome900-0d7_KjU ()J
-	public final fun getComposerBg-0d7_KjU ()J
-	public final fun getControlCheckboxBg-0d7_KjU ()J
-	public final fun getControlCheckboxBgSelected-0d7_KjU ()J
-	public final fun getControlCheckboxBorder-0d7_KjU ()J
-	public final fun getControlCheckboxIconSelected-0d7_KjU ()J
-	public final fun getControlPlayButtonBg-0d7_KjU ()J
-	public final fun getControlPlayButtonIcon-0d7_KjU ()J
-	public final fun getControlPlaybackThumbBgActive-0d7_KjU ()J
+	public final fun getChrome ()Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;
 	public final fun getControlPlaybackThumbBgDefault-0d7_KjU ()J
-	public final fun getControlPlaybackThumbBorderActive-0d7_KjU ()J
-	public final fun getControlPlaybackThumbBorderDefault-0d7_KjU ()J
-	public final fun getControlPlaybackToggleBorder-0d7_KjU ()J
-	public final fun getControlPlaybackToggleText-0d7_KjU ()J
-	public final fun getControlProgressBarFill-0d7_KjU ()J
-	public final fun getControlProgressBarTrack-0d7_KjU ()J
-	public final fun getControlRadioButtonIndicator-0d7_KjU ()J
-	public final fun getControlRadioCheckBg-0d7_KjU ()J
-	public final fun getControlRadioCheckBgSelected-0d7_KjU ()J
-	public final fun getControlRadioCheckBorder-0d7_KjU ()J
-	public final fun getControlRadioCheckIconSelected-0d7_KjU ()J
-	public final fun getControlRemoveBg-0d7_KjU ()J
-	public final fun getControlRemoveBorder-0d7_KjU ()J
-	public final fun getControlRemoveIcon-0d7_KjU ()J
-	public final fun getControlToggleSwitchBg-0d7_KjU ()J
-	public final fun getControlToggleSwitchBgDisabled-0d7_KjU ()J
-	public final fun getControlToggleSwitchBgSelected-0d7_KjU ()J
-	public final fun getControlToggleSwitchKnob-0d7_KjU ()J
-	public final fun getInputBorderDefault-0d7_KjU ()J
-	public final fun getInputBorderHover-0d7_KjU ()J
-	public final fun getInputBorderSelected-0d7_KjU ()J
-	public final fun getInputSendIcon-0d7_KjU ()J
-	public final fun getInputSendIconDisabled-0d7_KjU ()J
-	public final fun getInputTextDefault-0d7_KjU ()J
-	public final fun getInputTextDisabled-0d7_KjU ()J
-	public final fun getInputTextIcon-0d7_KjU ()J
-	public final fun getInputTextPlaceholder-0d7_KjU ()J
-	public final fun getPresenceBgOffline-0d7_KjU ()J
-	public final fun getPresenceBgOnline-0d7_KjU ()J
-	public final fun getPresenceBorder-0d7_KjU ()J
-	public final fun getReactionBg-0d7_KjU ()J
-	public final fun getReactionBorder-0d7_KjU ()J
-	public final fun getReactionEmoji-0d7_KjU ()J
-	public final fun getReactionText-0d7_KjU ()J
 	public final fun getSkeletonLoadingBase-0d7_KjU ()J
 	public final fun getSkeletonLoadingHighlight-0d7_KjU ()J
 	public final fun getTextDisabled-0d7_KjU ()J
