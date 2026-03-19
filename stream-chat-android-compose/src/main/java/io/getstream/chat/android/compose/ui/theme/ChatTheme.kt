@@ -69,7 +69,7 @@ import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
  * The local composition containing the current [ChatUiConfig].
  */
 public val LocalChatUiConfig: ProvidableCompositionLocal<ChatUiConfig> = compositionLocalOf {
-    error("No ChatConfig provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+    error("No ChatUiConfig provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 
 /**
