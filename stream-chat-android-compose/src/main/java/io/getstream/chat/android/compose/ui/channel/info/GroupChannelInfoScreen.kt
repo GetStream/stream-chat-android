@@ -53,6 +53,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.theme.AddMembersBottomSheetParams
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -65,6 +66,7 @@ import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoTopBarParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
+import io.getstream.chat.android.compose.viewmodel.channel.AddMembersViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
@@ -90,7 +92,7 @@ import java.util.Date
  * @param modifier The [Modifier] to be applied to this screen.
  * @param currentUser The current logged-in user. Defaults to the current user from the [ChatClient].
  * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
- * @param onAddMembersClick Callback invoked when the "Add Members" button is clicked.
+ * @param onAddMembersClick Deprecated. The screen now manages the "Add Members" bottom sheet internally.
  */
 @Composable
 public fun GroupChannelInfoScreen(
@@ -98,12 +100,16 @@ public fun GroupChannelInfoScreen(
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onNavigationIconClick: () -> Unit = {},
+    @Suppress("UNUSED_PARAMETER")
     onAddMembersClick: () -> Unit = {},
 ) {
     val headerViewModel = viewModel<ChannelHeaderViewModel>(factory = viewModelFactory)
     val infoViewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
+    val addMembersViewModel = viewModel<AddMembersViewModel>(factory = viewModelFactory)
     val headerState by headerViewModel.state.collectAsStateWithLifecycle()
     val infoState by infoViewModel.state.collectAsStateWithLifecycle()
+
+    var showAddMembers by remember { mutableStateOf(false) }
 
     GroupChannelInfoScaffold(
         modifier = modifier,
@@ -111,11 +117,19 @@ public fun GroupChannelInfoScreen(
         headerState = headerState,
         infoState = infoState,
         onNavigationIconClick = onNavigationIconClick,
-        onAddMembersClick = onAddMembersClick,
+        onAddMembersClick = { showAddMembers = true },
         onViewAction = infoViewModel::onViewAction,
     )
 
     GroupChannelInfoScreenModal(infoViewModel)
+    if (showAddMembers) {
+        ChatTheme.componentFactory.AddMembersBottomSheet(
+            params = AddMembersBottomSheetParams(
+                viewModel = addMembersViewModel,
+                onDismiss = { showAddMembers = false },
+            ),
+        )
+    }
 }
 
 @Composable

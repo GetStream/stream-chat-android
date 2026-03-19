@@ -41,6 +41,52 @@ public final class io/getstream/chat/android/ui/common/feature/channel/attachmen
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class io/getstream/chat/android/ui/common/feature/channel/info/AddMembersViewAction {
+}
+
+public final class io/getstream/chat/android/ui/common/feature/channel/info/AddMembersViewAction$ConfirmClick : io/getstream/chat/android/ui/common/feature/channel/info/AddMembersViewAction {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/AddMembersViewAction$ConfirmClick;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/channel/info/AddMembersViewAction$QueryChanged : io/getstream/chat/android/ui/common/feature/channel/info/AddMembersViewAction {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/feature/channel/info/AddMembersViewAction$QueryChanged;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/channel/info/AddMembersViewAction$QueryChanged;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/channel/info/AddMembersViewAction$QueryChanged;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getQuery ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/channel/info/AddMembersViewAction$UserClick : io/getstream/chat/android/ui/common/feature/channel/info/AddMembersViewAction {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/User;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/User;
+	public final fun copy (Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/ui/common/feature/channel/info/AddMembersViewAction$UserClick;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/channel/info/AddMembersViewAction$UserClick;Lio/getstream/chat/android/models/User;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/channel/info/AddMembersViewAction$UserClick;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getUser ()Lio/getstream/chat/android/models/User;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/getstream/chat/android/ui/common/feature/channel/info/AddMembersViewEvent {
+}
+
+public final class io/getstream/chat/android/ui/common/feature/channel/info/AddMembersViewEvent$MembersAdded : io/getstream/chat/android/ui/common/feature/channel/info/AddMembersViewEvent {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/AddMembersViewEvent$MembersAdded;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewAction {
 }
 
@@ -1593,6 +1639,26 @@ public final class io/getstream/chat/android/ui/common/state/channel/attachments
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/attachments/ChannelAttachmentsViewState$Loading;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/channel/info/AddMembersViewState {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (ZLjava/lang/String;Ljava/util/List;Ljava/util/List;)V
+	public synthetic fun <init> (ZLjava/lang/String;Ljava/util/List;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/util/List;
+	public final fun component4 ()Ljava/util/List;
+	public final fun copy (ZLjava/lang/String;Ljava/util/List;Ljava/util/List;)Lio/getstream/chat/android/ui/common/state/channel/info/AddMembersViewState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/AddMembersViewState;ZLjava/lang/String;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/AddMembersViewState;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getQuery ()Ljava/lang/String;
+	public final fun getSearchResult ()Ljava/util/List;
+	public final fun getSelectedUsers ()Ljava/util/List;
+	public fun hashCode ()I
+	public final fun isLoading ()Z
 	public fun toString ()Ljava/lang/String;
 }
 

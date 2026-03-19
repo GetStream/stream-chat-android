@@ -25,10 +25,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.feature.channel.draft.DraftChannelActivity
@@ -75,20 +71,12 @@ class GroupChannelInfoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            var showAddMembers by remember { mutableStateOf(false) }
             ChatTheme {
                 GroupChannelInfoScreen(
                     modifier = Modifier.statusBarsPadding(),
                     viewModelFactory = viewModelFactory,
                     onNavigationIconClick = ::finish,
-                    onAddMembersClick = { showAddMembers = true },
                 )
-                if (showAddMembers) {
-                    AddMembersDialog(
-                        cid = channelId,
-                        onDismiss = { showAddMembers = false },
-                    )
-                }
             }
             LaunchedEffect(viewModel) {
                 viewModel.events.collectLatest { event ->

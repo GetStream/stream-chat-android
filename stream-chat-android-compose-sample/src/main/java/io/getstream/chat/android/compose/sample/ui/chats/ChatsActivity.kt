@@ -55,7 +55,6 @@ import io.getstream.chat.android.compose.sample.feature.channel.ChannelConstants
 import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.feature.channel.list.CustomChatEventHandlerFactory
-import io.getstream.chat.android.compose.sample.ui.channel.AddMembersDialog
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
@@ -397,13 +396,10 @@ class ChatsActivity : ComponentActivity() {
             onNavigateToChannel = onNavigateToChannel,
         )
 
-        var showAddMembers by remember { mutableStateOf(false) }
-
         if (AdaptiveLayoutInfo.singlePaneWindow()) {
             GroupChannelInfoScreen(
                 viewModelFactory = viewModelFactory,
                 onNavigationIconClick = onNavigationIconClick,
-                onAddMembersClick = { showAddMembers = true },
             )
         } else {
             CompoundComponentFactory(
@@ -425,16 +421,8 @@ class ChatsActivity : ComponentActivity() {
                 GroupChannelInfoScreen(
                     viewModelFactory = viewModelFactory,
                     onNavigationIconClick = onNavigationIconClick,
-                    onAddMembersClick = { showAddMembers = true },
                 )
             }
-        }
-
-        if (showAddMembers) {
-            AddMembersDialog(
-                cid = channelId,
-                onDismiss = { showAddMembers = false },
-            )
         }
     }
 

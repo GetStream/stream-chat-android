@@ -2468,6 +2468,21 @@ public interface ChatComponentFactory {
      *
      * @param params Parameters for this component.
      */
+    /**
+     * Factory method for creating the "Add Members" bottom sheet.
+     *
+     * Override this method to provide a custom implementation of the "Add Members" bottom sheet.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun AddMembersBottomSheet(params: AddMembersBottomSheetParams) {
+        io.getstream.chat.android.compose.ui.channel.info.AddMembersBottomSheet(
+            viewModel = params.viewModel,
+            onDismiss = params.onDismiss,
+        )
+    }
+
     @Composable
     public fun GroupChannelInfoAddMembersButton(params: GroupChannelInfoAddMembersButtonParams) {
         IconButton(onClick = params.onClick) {

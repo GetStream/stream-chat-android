@@ -53,6 +53,7 @@ import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicke
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.list.MessagesLazyListState
 import io.getstream.chat.android.compose.ui.threads.ThreadListBannerState
+import io.getstream.chat.android.compose.viewmodel.channel.AddMembersViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Attachment
@@ -1847,6 +1848,17 @@ public data class GroupChannelInfoTopBarParams(
  */
 public data class GroupChannelInfoAddMembersButtonParams(
     val onClick: () -> Unit,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.AddMembersBottomSheet].
+ *
+ * @param viewModel The [AddMembersViewModel] managing the state and actions.
+ * @param onDismiss Action invoked when the bottom sheet is dismissed.
+ */
+public data class AddMembersBottomSheetParams(
+    val viewModel: AddMembersViewModel,
+    val onDismiss: () -> Unit,
 )
 
 /**

@@ -372,6 +372,10 @@
     <string name="stream_compose_confirm">Confirm</string>
     <string name="stream_compose_dismiss">Dismiss</string>
 
+    <!--  Add Members  -->
+    <string name="stream_compose_add_members_title">Add Members</string>
+    <string name="stream_compose_add_members_no_results">No user found</string>
+
     <!--  Threads  -->
     <string name="stream_compose_thread_list_empty_title">Reply to a message to start a thread</string>
     <string name="stream_compose_in">" in "</string>
