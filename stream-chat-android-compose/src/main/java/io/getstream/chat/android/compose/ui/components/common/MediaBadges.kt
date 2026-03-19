@@ -75,7 +75,7 @@ private fun MediaBadge(
         modifier = modifier
             .background(
                 shape = MediaBadgeShape,
-                color = ChatTheme.colors.accentBlack,
+                color = ChatTheme.colors.badgeBgOverlay,
             )
             .padding(
                 horizontal = StreamTokens.spacingXs,

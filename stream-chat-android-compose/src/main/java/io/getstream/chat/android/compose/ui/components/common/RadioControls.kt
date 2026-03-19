@@ -76,7 +76,7 @@ internal fun RadioCheck(
         Icon(
             modifier = Modifier.size(12.dp),
             painter = painterResource(R.drawable.stream_compose_ic_checkmark),
-            tint = ChatTheme.colors.controlRadioCheckIconSelected,
+            tint = ChatTheme.colors.controlRadioCheckIcon,
             contentDescription = null,
         )
     }
@@ -100,7 +100,7 @@ private fun RadioControlBase(
                     !checked && enabled -> border(1.dp, borderColor, CircleShape)
                     !checked -> border(1.dp, colors.borderUtilityDisabled, CircleShape)
                     enabled -> background(colors.controlRadioCheckBgSelected, CircleShape)
-                    else -> background(colors.backgroundCoreDisabled, CircleShape)
+                    else -> background(colors.backgroundUtilityDisabled, CircleShape)
                 }
             }
             .ifNotNull(onCheckedChange) { onChange ->

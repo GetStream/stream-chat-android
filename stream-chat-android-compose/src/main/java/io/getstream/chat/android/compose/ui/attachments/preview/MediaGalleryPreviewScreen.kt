@@ -512,7 +512,7 @@ internal fun MediaGalleryPreviewHeader(
     onLeadingContentClick: () -> Unit,
     onTrailingContentClick: () -> Unit,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = ChatTheme.colors.backgroundElevationElevation1,
+    backgroundColor: Color = ChatTheme.colors.backgroundCoreElevation1,
     contentColor: Color = ChatTheme.colors.textPrimary,
     config: MediaGalleryConfig = ChatTheme.config.mediaGallery,
     leadingContent: @Composable (Modifier) -> Unit = {
@@ -651,7 +651,7 @@ internal fun MediaGalleryPreviewFooter(
     onLeadingContentClick: (Attachment) -> Unit,
     onTrailingContentClick: (Attachment) -> Unit,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = ChatTheme.colors.backgroundElevationElevation1,
+    backgroundColor: Color = ChatTheme.colors.backgroundCoreElevation1,
     contentColor: Color = ChatTheme.colors.textPrimary,
     config: MediaGalleryConfig = ChatTheme.config.mediaGallery,
     topContent: @Composable (() -> Unit)? = null,

@@ -2220,7 +2220,7 @@ public interface ChatComponentFactory {
             state = params.pullToRefreshState,
             isRefreshing = params.isRefreshing,
             modifier = params.modifier.align(Alignment.TopCenter),
-            containerColor = ChatTheme.colors.backgroundElevationElevation1,
+            containerColor = ChatTheme.colors.backgroundCoreElevation1,
             color = ChatTheme.colors.accentPrimary,
         )
     }
@@ -2590,7 +2590,7 @@ public interface ChatComponentFactory {
             },
             navigationIcon = { ChannelInfoNavigationIcon(onClick = params.onNavigationIconClick) },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                containerColor = ChatTheme.colors.backgroundCoreElevation1,
                 titleContentColor = ChatTheme.colors.textPrimary,
             ),
         )
@@ -2704,7 +2704,7 @@ public interface ChatComponentFactory {
             },
             navigationIcon = { ChannelInfoNavigationIcon(onClick = params.onNavigationIconClick) },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                containerColor = ChatTheme.colors.backgroundCoreElevation1,
                 titleContentColor = ChatTheme.colors.textPrimary,
             ),
         )
@@ -2832,7 +2832,7 @@ public interface ChatComponentFactory {
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                containerColor = ChatTheme.colors.backgroundCoreElevation1,
                 titleContentColor = ChatTheme.colors.textPrimary,
             ),
         )
@@ -2877,7 +2877,7 @@ public interface ChatComponentFactory {
     ) {
         Column(
             modifier = Modifier
-                .background(ChatTheme.colors.backgroundElevationElevation1)
+                .background(ChatTheme.colors.backgroundCoreElevation1)
                 .topBorder(ChatTheme.colors.borderCoreDefault),
         ) {
             params.topContent?.invoke()
@@ -2887,7 +2887,7 @@ public interface ChatComponentFactory {
                 actions = { params.trailingContent() },
                 windowInsets = BottomAppBarDefaults.windowInsets,
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                    containerColor = ChatTheme.colors.backgroundCoreElevation1,
                     titleContentColor = ChatTheme.colors.textPrimary,
                     navigationIconContentColor = ChatTheme.colors.textPrimary,
                     actionIconContentColor = ChatTheme.colors.textPrimary,

@@ -150,7 +150,7 @@ internal fun MessageComposerSaveButton(
         colors = IconButtonDefaults.filledIconButtonColors(
             containerColor = ChatTheme.colors.accentPrimary,
             contentColor = ChatTheme.colors.textOnAccent,
-            disabledContainerColor = ChatTheme.colors.backgroundCoreDisabled,
+            disabledContainerColor = ChatTheme.colors.backgroundUtilityDisabled,
             disabledContentColor = ChatTheme.colors.textDisabled,
         ),
         onClick = onClick,

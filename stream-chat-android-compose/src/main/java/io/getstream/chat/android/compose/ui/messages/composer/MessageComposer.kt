@@ -312,7 +312,7 @@ private fun MessageComposerSurface(
         Surface(
             modifier = modifier,
             shadowElevation = 24.dp,
-            color = ChatTheme.colors.backgroundElevationElevation1,
+            color = ChatTheme.colors.backgroundCoreElevation1,
         ) {
             Column(modifier = Modifier.animateContentSize(alignment = Alignment.BottomCenter)) {
                 content()

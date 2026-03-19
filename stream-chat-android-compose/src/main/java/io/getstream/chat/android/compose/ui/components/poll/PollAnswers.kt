@@ -317,7 +317,7 @@ internal fun AddAnswerDialog(
                 Text(stringResource(R.string.stream_compose_dismiss))
             }
         },
-        containerColor = ChatTheme.colors.backgroundElevationElevation1,
+        containerColor = ChatTheme.colors.backgroundCoreElevation1,
     )
 }
 

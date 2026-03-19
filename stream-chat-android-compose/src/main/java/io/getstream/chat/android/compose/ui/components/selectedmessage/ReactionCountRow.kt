@@ -115,7 +115,7 @@ private fun ReactionChip(
     val colors = ChatTheme.colors
     Row(
         modifier = Modifier
-            .applyIf(checked) { background(colors.backgroundCoreSelected, CircleShape) }
+            .applyIf(checked) { background(colors.backgroundUtilitySelected, CircleShape) }
             .border(1.dp, color = colors.borderCoreDefault, shape = CircleShape)
             .clip(CircleShape)
             .clickable(onClick = onClick)
