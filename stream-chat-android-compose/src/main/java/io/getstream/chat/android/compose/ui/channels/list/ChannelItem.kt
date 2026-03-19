@@ -70,8 +70,8 @@ import io.getstream.chat.android.compose.ui.theme.ChannelItemReadStatusIndicator
 import io.getstream.chat.android.compose.ui.theme.ChannelItemTrailingContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelItemUnreadCountIndicatorParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListConfig
-import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.MuteIndicatorPosition
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.applyIf

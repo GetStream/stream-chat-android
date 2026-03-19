@@ -29,8 +29,8 @@ import androidx.media3.exoplayer.ExoPlayer
 import io.getstream.chat.android.client.ChatClient.Companion.MAX_COOLDOWN_TIME_SECONDS
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatApiConfig
-import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.ChatCoreConfig
+import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
