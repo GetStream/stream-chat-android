@@ -187,7 +187,7 @@ private object MessageListCustomizationSnippet {
                                     }
 
                                     MessageBubble(
-                                        color = ChatTheme.colors.backgroundElevationElevation1,
+                                        color = ChatTheme.colors.backgroundCoreElevation1,
                                         modifier = Modifier.padding(top = 4.dp),
                                         shape = RoundedCornerShape(
                                             topEnd = 16.dp,

@@ -118,7 +118,7 @@ fun DateAttachmentPreviewContent(
         modifier = modifier
             .wrapContentHeight()
             .clip(RoundedCornerShape(16.dp))
-            .background(color = ChatTheme.colors.backgroundElevationElevation1),
+            .background(color = ChatTheme.colors.backgroundCoreElevation1),
     ) {
         Text(
             modifier = Modifier

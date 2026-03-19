@@ -249,7 +249,7 @@ class UserLoginActivity : AppCompatActivity() {
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(40.dp)
-                    .background(ChatTheme.colors.backgroundCoreDisabled)
+                    .background(ChatTheme.colors.backgroundUtilityDisabled)
                     .padding(8.dp),
                 painter = painterResource(id = R.drawable.ic_settings),
                 contentDescription = null,
