@@ -385,7 +385,10 @@ public object StreamDesign {
         public val chatWaveformBarPlaying: Color = accentPrimary
 
         /** Chip text color. */
-        public val chipText: Color = brand.s900
+        public val controlChipText: Color = textPrimary
+
+        /** Chip border color. */
+        public val controlChipBorder: Color = borderCoreDefault
 
         /** Play button background. */
         public val controlPlayButtonBg: Color = chrome.s1000
@@ -630,7 +633,7 @@ public object StreamDesign {
      * @param s600 Strong — link text (dark theme).
      * @param s700 Darker — reply indicator (dark theme).
      * @param s800 Deep — brand depth.
-     * @param s900 Deepest — outgoing text, chip text.
+     * @param s900 Deepest — outgoing text.
      */
     @Immutable
     public data class ColorScale(
