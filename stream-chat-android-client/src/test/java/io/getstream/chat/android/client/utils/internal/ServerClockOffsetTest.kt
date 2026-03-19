@@ -341,4 +341,59 @@ internal class ServerClockOffsetTest {
         val expected = 28_820_000L - skew
         assertEquals(Date(expected), sut.estimatedServerTime())
     }
+
+    // ── maxOffsetMs: implausibly large offsets are rejected ──────────────
+
+    @Test
+    fun `onConnected naive falls back to local time when offset exceeds maxOffsetMs`() {
+        // Simulates a mock server with a stale static timestamp (e.g. 155 days in the past)
+        val localTime = 10_000L
+        val sut = ServerClockOffset(localTimeMs = { localTime }, maxOffsetMs = 1_000L)
+
+        sut.onConnected(serverTime = Date(localTime - 5_000L)) // offset = 5_000 > 1_000
+
+        // offset rejected → estimatedServerTime == local time
+        assertEquals(Date(localTime), sut.estimatedServerTime())
+    }
+
+    @Test
+    fun `onConnected NTP falls back to local time when offset exceeds maxOffsetMs`() {
+        var localTime = 0L
+        val sut = ServerClockOffset(localTimeMs = { localTime }, maxOffsetMs = 1_000L)
+
+        sut.onConnectionStarted()
+        localTime = 200L
+        sut.onConnected(serverTime = Date(localTime - 5_000L)) // offset = 5_000 > 1_000
+
+        localTime = 1_000L
+        assertEquals(Date(1_000L), sut.estimatedServerTime())
+    }
+
+    @Test
+    fun `onConnected accepts offset exactly at maxOffsetMs boundary`() {
+        val localTime = 10_000L
+        val sut = ServerClockOffset(localTimeMs = { localTime }, maxOffsetMs = 1_000L)
+
+        sut.onConnected(serverTime = Date(localTime - 1_000L)) // offset = 1_000 == maxOffsetMs
+
+        assertEquals(Date(9_000L), sut.estimatedServerTime())
+    }
+
+    @Test
+    fun `onHealthCheck falls back to prior offset when new offset exceeds maxOffsetMs`() {
+        var localTime = 10_000L
+        val skew = 500L
+        val sut = ServerClockOffset(localTimeMs = { localTime }, maxOffsetMs = 1_000L)
+        sut.onConnected(serverTime = Date(localTime - skew)) // valid offset = 500
+
+        // Health check producing an implausibly large offset
+        localTime = 20_000L
+        sut.onHealthCheckSent()
+        localTime = 20_200L
+        sut.onHealthCheck(serverTime = Date(localTime - 5_000L)) // would-be offset = 5_000 > 1_000
+
+        // Offset unchanged from onConnected (= 500)
+        localTime = 30_000L
+        assertEquals(Date(30_000L - skew), sut.estimatedServerTime())
+    }
 }

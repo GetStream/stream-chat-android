@@ -37,11 +37,17 @@ import java.util.Date
  * @param maxRttMs Upper bound on plausible RTT. Samples exceeding this are
  *   discarded as stale or mismatched. Defaults to the health check cycle
  *   interval (MONITOR_INTERVAL + HEALTH_CHECK_INTERVAL = 11 000 ms).
+ * @param maxOffsetMs Upper bound on the absolute value of the computed clock offset.
+ *   If the derived offset exceeds this threshold the sample is considered unreliable
+ *   (e.g. a stale / static server timestamp in a test environment) and the offset is
+ *   reset to zero so that [estimatedServerTime] falls back to the raw local time.
+ *   Defaults to 1 hour, which is already far beyond any real-world NTP drift.
  */
 @InternalStreamChatApi
 public class ServerClockOffset(
     private val localTimeMs: () -> Long = { System.currentTimeMillis() },
     private val maxRttMs: Long = DEFAULT_MAX_RTT_MS,
+    private val maxOffsetMs: Long = DEFAULT_MAX_OFFSET_MS,
 ) {
 
     private val lock = Any()
@@ -90,6 +96,7 @@ public class ServerClockOffset(
         synchronized(lock) {
             bestRttMs = Long.MAX_VALUE
             healthCheckSentAtMs = 0L
+            offsetMs = 0L
 
             val receivedAtMs = localTimeMs()
             val startedAtMs = connectionStartedAtMs
@@ -98,12 +105,12 @@ public class ServerClockOffset(
             if (startedAtMs > 0L) {
                 val rtt = receivedAtMs - startedAtMs
                 if (rtt in 1..maxRttMs) {
-                    offsetMs = (startedAtMs + receivedAtMs) / 2 - serverTime.time
+                    acceptOffset((startedAtMs + receivedAtMs) / 2 - serverTime.time)
                     bestRttMs = rtt
                     return
                 }
             }
-            offsetMs = receivedAtMs - serverTime.time
+            acceptOffset(receivedAtMs - serverTime.time)
         }
     }
 
@@ -134,7 +141,7 @@ public class ServerClockOffset(
 
             if (rtt < bestRttMs) {
                 bestRttMs = rtt
-                offsetMs = (sentAtMs + receivedAtMs) / 2 - serverTime.time
+                acceptOffset((sentAtMs + receivedAtMs) / 2 - serverTime.time)
             }
         }
     }
@@ -149,7 +156,22 @@ public class ServerClockOffset(
     public fun estimatedServerTime(): Date =
         Date(localTimeMs() - offsetMs)
 
+    /**
+     * Accepts [candidate] as the new [offsetMs] only when its absolute value is within
+     * [maxOffsetMs]. Offsets that are implausibly large (e.g. produced by a stale or
+     * static server timestamp) are silently discarded and [offsetMs] is left unchanged.
+     *
+     * Note: callers that want a rejected offset to reset to zero (e.g. [onConnected])
+     * should set [offsetMs] = 0 before calling this function.
+     */
+    private fun acceptOffset(candidate: Long) {
+        if (kotlin.math.abs(candidate) <= maxOffsetMs) {
+            offsetMs = candidate
+        }
+    }
+
     internal companion object {
         internal const val DEFAULT_MAX_RTT_MS = 11_000L
+        internal const val DEFAULT_MAX_OFFSET_MS = 3_600_000L // 1 hour
     }
 }
