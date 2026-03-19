@@ -288,7 +288,8 @@ internal constructor(
     @InternalStreamChatApi
     public val audioPlayer: AudioPlayer,
     private val now: () -> Date = ::Date,
-    private val serverClockOffset: ServerClockOffset,
+    @InternalStreamChatApi
+    public val serverClockOffset: ServerClockOffset,
     private val repository: ChatClientRepository,
     private val messageReceiptReporter: MessageReceiptReporter,
     internal val messageReceiptManager: MessageReceiptManager,

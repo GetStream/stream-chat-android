@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.test.randomConnectedEvent
+import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.models.ConnectionState
@@ -546,6 +547,7 @@ internal class SyncManagerTest {
             isAutomaticSyncOnReconnectEnabled = isAutomaticSyncOnReconnectEnabled,
             syncMaxThreshold = syncMaxThreshold,
             now = { currentTime },
+            serverClockOffset = ServerClockOffset(localTimeMs = { currentTime }),
         )
     }
 }

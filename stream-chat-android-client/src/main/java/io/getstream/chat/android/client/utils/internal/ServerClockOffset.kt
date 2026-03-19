@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.utils.internal
 
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.Date
 
 /**
@@ -37,7 +38,8 @@ import java.util.Date
  *   discarded as stale or mismatched. Defaults to the health check cycle
  *   interval (MONITOR_INTERVAL + HEALTH_CHECK_INTERVAL = 11 000 ms).
  */
-internal class ServerClockOffset(
+@InternalStreamChatApi
+public class ServerClockOffset(
     private val localTimeMs: () -> Long = { System.currentTimeMillis() },
     private val maxRttMs: Long = DEFAULT_MAX_RTT_MS,
 ) {
@@ -143,7 +145,8 @@ internal class ServerClockOffset(
      * Before the first [onConnected] call, this returns the raw local time
      * (offset = 0).
      */
-    internal fun estimatedServerTime(): Date =
+    @InternalStreamChatApi
+    public fun estimatedServerTime(): Date =
         Date(localTimeMs() - offsetMs)
 
     internal companion object {
