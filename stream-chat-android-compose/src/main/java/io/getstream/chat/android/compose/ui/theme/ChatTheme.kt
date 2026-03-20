@@ -66,10 +66,10 @@ import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 
 /**
- * The local composition containing the current [ChatConfig].
+ * The local composition containing the current [ChatUiConfig].
  */
-public val LocalChatConfig: ProvidableCompositionLocal<ChatConfig> = compositionLocalOf {
-    error("No ChatConfig provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+public val LocalChatUiConfig: ProvidableCompositionLocal<ChatUiConfig> = compositionLocalOf {
+    error("No ChatUiConfig provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 
 /**
@@ -169,7 +169,7 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  *
  * @param isInDarkMode If we're currently in the dark mode or not. Affects only the default color palette that's
  * provided. If you customize [colors], make sure to add your own logic for dark/light colors.
- * @param config Central behavioral configuration for the Chat SDK. See [ChatConfig].
+ * @param config Central behavioral configuration for the Chat SDK. See [ChatUiConfig].
  * @param colors The set of colors we provide, wrapped in [StreamDesign.Colors].
  * @param typography The set of typography styles we provide, wrapped in [StreamDesign.Typography].
  * @param rippleConfiguration Defines the appearance for ripples.
@@ -216,7 +216,7 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
 @Composable
 public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
-    config: ChatConfig = ChatConfig(),
+    config: ChatUiConfig = ChatUiConfig(),
     colors: StreamDesign.Colors =
         if (isInDarkMode) StreamDesign.Colors.defaultDark() else StreamDesign.Colors.default(),
     typography: StreamDesign.Typography = StreamDesign.Typography.default(),
@@ -283,7 +283,7 @@ public fun ChatTheme(
 
     @Suppress("DEPRECATION")
     CompositionLocalProvider(
-        LocalChatConfig provides config,
+        LocalChatUiConfig provides config,
         LocalColors provides colors,
         LocalTypography provides typography,
         LocalRippleConfiguration provides rippleConfiguration.toRippleConfiguration(),
@@ -330,12 +330,12 @@ public fun ChatTheme(
  */
 public object ChatTheme {
     /**
-     * Retrieves the current [ChatConfig] at the call site's position in the hierarchy.
+     * Retrieves the current [ChatUiConfig] at the call site's position in the hierarchy.
      */
-    public val config: ChatConfig
+    public val config: ChatUiConfig
         @Composable
         @ReadOnlyComposable
-        get() = LocalChatConfig.current
+        get() = LocalChatUiConfig.current
 
     /**
      * Retrieves the current [StreamDesign.Colors] at the call site's position in the hierarchy.

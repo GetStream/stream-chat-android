@@ -18,7 +18,7 @@ package io.getstream.chat.android.uitests.app
 
 import android.app.Application
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.StateConfig
+import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 
@@ -27,13 +27,12 @@ class ChatApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val stateConfig = StateConfig(
-            backgroundSyncEnabled = false,
+        val chatClientConfig = ChatClientConfig(
             userPresence = true,
         )
 
         ChatClient.Builder("hrwwzsgrzapv", this)
-            .stateConfig(stateConfig)
+            .config(chatClientConfig)
             .logLevel(ChatLogLevel.NOTHING)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .build()

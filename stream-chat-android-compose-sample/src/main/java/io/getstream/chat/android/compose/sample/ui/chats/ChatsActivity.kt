@@ -72,8 +72,8 @@ import io.getstream.chat.android.compose.ui.chats.ChatsScreen
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionItemVisibility
 import io.getstream.chat.android.compose.ui.theme.ChannelOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
-import io.getstream.chat.android.compose.ui.theme.ChatConfig
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.CompoundComponentFactory
 import io.getstream.chat.android.compose.ui.theme.DirectChannelInfoTopBarParams
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoAddMembersButtonParams
@@ -166,7 +166,7 @@ class ChatsActivity : ComponentActivity() {
         setContent {
             ChatTheme(
                 dateFormatter = ChatApp.dateFormatter,
-                config = ChatConfig(
+                config = ChatUiConfig(
                     translation = TranslationConfig(enabled = ChatApp.autoTranslationEnabled),
                 ),
                 allowUIAutomationTest = true,
