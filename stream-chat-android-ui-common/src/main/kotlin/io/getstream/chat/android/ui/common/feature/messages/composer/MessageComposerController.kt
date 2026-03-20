@@ -275,13 +275,6 @@ public class MessageComposerController(
     /** UI state of the current composer input. */
     public val messageInput: MutableStateFlow<MessageInput> = MutableStateFlow(MessageInput())
 
-    /** UI state of the current composer input. */
-    @Deprecated(
-        message = "Use messageInput instead",
-        replaceWith = ReplaceWith("messageInput"),
-    )
-    public val input: MutableStateFlow<String> = MutableStateFlow("")
-
     /** Represents the remaining time until the user is allowed to send the next message. */
     public val cooldownTimer: MutableStateFlow<Int> = MutableStateFlow(0)
 
@@ -422,7 +415,6 @@ public class MessageComposerController(
     private fun setupComposerState() {
         fetchDraftMessage(messageMode.value)
         messageInput.onEach { value ->
-            input.value = value.text
             state.value = state.value.copy(inputValue = value.text)
 
             if (canSendTypingUpdates.value) {

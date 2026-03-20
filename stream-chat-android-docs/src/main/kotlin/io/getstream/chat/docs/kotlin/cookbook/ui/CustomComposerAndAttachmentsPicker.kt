@@ -366,7 +366,7 @@ private fun AttachmentsTypeMenuItem(
             Icon(
                 painter = painterResource(
                     when (pickerMode) {
-                        is GalleryPickerMode -> ComposeR.drawable.stream_compose_ic_media_picker
+                        is GalleryPickerMode -> R.drawable.ic_media_picker
                         is FilePickerMode -> ComposeR.drawable.stream_compose_ic_attachment_file_picker
                         is CameraPickerMode -> ComposeR.drawable.stream_compose_ic_attachment_camera_picker
                         else -> R.drawable.ic_menu

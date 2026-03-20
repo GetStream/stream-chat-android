@@ -40,7 +40,6 @@
     <string name="stream_compose_swipe_action_unpin">Unpin</string>
     <string name="stream_compose_swipe_action_mute">Mute</string>
     <string name="stream_compose_swipe_action_unmute">Unmute</string>
-    <string name="stream_compose_swipe_action_delete">Delete</string>
     <string name="stream_compose_swipe_action_more">More</string>
     <string name="stream_compose_swipe_action_archive">Archive</string>
     <string name="stream_compose_swipe_action_unarchive">Unarchive</string>
@@ -51,12 +50,8 @@
     <string name="stream_compose_selected_channel_menu_leave_group">Leave group</string>
     <string name="stream_compose_selected_channel_menu_pin_channel">Pin Channel</string>
     <string name="stream_compose_selected_channel_menu_unpin_channel">Unpin Channel</string>
-    <string name="stream_compose_selected_channel_menu_archive_channel">Archive Channel</string>
-    <string name="stream_compose_selected_channel_menu_unarchive_channel">Unarchive Channel</string>
     <string name="stream_compose_selected_channel_menu_leave_group_confirmation_title">Leave group</string>
     <string name="stream_compose_selected_channel_menu_leave_group_confirmation_message">Do you want to leave the %1$s group?</string>
-    <string name="stream_compose_selected_channel_menu_mute_channel">Mute channel</string>
-    <string name="stream_compose_selected_channel_menu_unmute_channel">Unmute channel</string>
     <string name="stream_compose_selected_channel_menu_mute_group">Mute Group</string>
     <string name="stream_compose_selected_channel_menu_unmute_group">Unmute Group</string>
     <string name="stream_compose_selected_channel_menu_mute_user">Mute User</string>
@@ -73,10 +68,6 @@
     <string name="stream_compose_selected_channel_menu_delete_group">Delete Group</string>
     <string name="stream_compose_selected_channel_menu_delete_group_confirmation_title">Delete Group</string>
     <string name="stream_compose_selected_channel_menu_delete_group_confirmation_message">Do you want to delete the group %1$s?</string>
-    <string name="stream_compose_selected_channel_menu_delete_conversation">Delete conversation</string>
-    <string name="stream_compose_selected_channel_menu_delete_conversation_confirmation_title">Delete conversation</string>
-    <string name="stream_compose_selected_channel_menu_delete_conversation_confirmation_message">Do you want to delete the channel %1$s?</string>
-    <string name="stream_compose_selected_channel_menu_dismiss">Cancel</string>
 
     <!-- Avatar -->
     <string name="stream_compose_avatar_overflow_count">+%1$d</string>
@@ -96,13 +87,8 @@
     <string name="stream_compose_disconnected">Disconnected</string>
 
     <!-- Message List Header -->
-    <plurals name="stream_compose_message_list_header_typing_users">
-        <item quantity="one">%s is typing</item>
-        <item quantity="other">%s and %d more are typing</item>
-    </plurals>
 
     <!-- Message List -->
-    <string name="stream_compose_message_list_giphy_title">Giphy</string>
     <string name="stream_compose_message_list_giphy_send">Send</string>
     <string name="stream_compose_message_list_giphy_cancel">Cancel</string>
     <string name="stream_compose_message_list_giphy_shuffle">Shuffle</string>
@@ -223,47 +209,29 @@
     <string name="stream_compose_audio_recording_locked">Recording locked</string>
 
     <!-- Audio Playback -->
-    <string name="stream_compose_audio_playback_play">Play</string>
     <string name="stream_compose_audio_playback_pause">Pause</string>
-    <string name="stream_compose_audio_playback_speed">Playback speed, %s</string>
-    <string name="stream_compose_audio_playback_progress">Audio playback progress</string>
 
     <!-- Attachment Picker -->
     <string name="stream_compose_attachment_media_picker">Media</string>
     <string name="stream_compose_attachment_file_picker">Files</string>
     <string name="stream_compose_attachment_camera_picker">Camera</string>
     <string name="stream_compose_attachment_camera_picker_content">Capture from the camera</string>
-    <string name="stream_compose_attachment_camera_picker_cta">Capture</string>
     <string name="stream_compose_attachment_polls_picker">Polls</string>
     <string name="stream_compose_attachment_poll_picker_content">Create a poll and let everyone vote</string>
     <string name="stream_compose_attachment_poll_picker_cta">Create Poll</string>
     <string name="stream_compose_attachment_commands_picker">Commands</string>
 
     <string name="stream_compose_attachments">Attachments</string>
-    <string name="stream_compose_images_option">Images</string>
-    <string name="stream_compose_files_option">Files</string>
-    <string name="stream_compose_poll_option">Poll</string>
-    <string name="stream_compose_capture_option">Media capture</string>
     <string name="stream_compose_recent_files">Recent Files</string>
     <string name="stream_compose_thread_title">Thread Reply</string>
     <string name="stream_compose_thread_subtitle">with %1$s</string>
-    <string name="stream_compose_reply_to_message">Reply to message</string>
     <string name="stream_compose_message_deleted">Message deleted</string>
     <string name="stream_compose_message_moderated">Message was blocked by moderation policies</string>
     <string name="stream_compose_only_visible_to_you">Only visible to you</string>
-    <string name="stream_compose_download">Download</string>
-    <string name="stream_compose_share">Share</string>
-    <string name="stream_compose_photos">Photos</string>
     <string name="stream_compose_image_order">%1$d of %2$d</string>
     <string name="stream_compose_scroll_to_bottom">Scroll to bottom</string>
-    <string name="stream_compose_new_message">New message</string>
-    <string name="stream_compose_storage_permission_title">Read storage permission missing!</string>
-    <string name="stream_compose_remaining_images_count">+%1$d</string>
     <string name="stream_compose_remaining_media_attachments_count">+%1$d</string>
-    <string name="stream_compose_attachment_gallery_share">Share Image</string>
     <string name="stream_compose_giphy_label">GIPHY</string>
-    <string name="stream_compose_upload_progress">"%1$s / %2$s"</string>
-    <string name="stream_compose_upload_file_count">Uploading %1$d / %2$d …</string>
     <string name="stream_compose_pinned_to_channel">Pinned</string>
     <string name="stream_compose_pinned_to_channel_by">Pinned by %1$s</string>
     <string name="stream_compose_message_list_you">You</string>
@@ -274,26 +242,18 @@
     <string name="stream_compose_message_list_auto_translated">Translated</string>
     <string name="stream_compose_message_list_view_original">View original</string>
     <string name="stream_compose_message_list_view">View</string>
-    <string name="stream_compose_replied_to">replied to:&#160;</string>
 
     <!--  Image Preview  -->
     <string name="stream_compose_image_options">Image options</string>
-    <string name="stream_compose_image_preview_reply">Reply</string>
-    <string name="stream_compose_image_preview_show_in_chat">Show in chat</string>
-    <string name="stream_compose_image_preview_save_image">Save image</string>
-    <string name="stream_compose_image_preview_delete">Delete</string>
     <string name="stream_compose_image_preview_share">Share</string>
     <string name="stream_compose_image_preview_cancel_sharing">Cancel Sharing</string>
     <string name="stream_compose_image_preview_photos">Photos</string>
 
     <!--  Media Gallery Preview  -->
-    <string name="stream_compose_media_gallery_preview_options">Media options</string>
     <string name="stream_compose_media_gallery_preview_reply">Reply</string>
     <string name="stream_compose_media_gallery_preview_show_in_chat">Show in chat</string>
     <string name="stream_compose_media_gallery_preview_save_image">Save media</string>
     <string name="stream_compose_media_gallery_preview_delete">Delete</string>
-    <string name="stream_compose_media_gallery_preview_share">Share</string>
-    <string name="stream_compose_media_gallery_preview_photos">Photos</string>
     <string name="stream_compose_media_gallery_preview_preparing">Preparing...</string>
     <string name="stream_compose_media_gallery_preview_could_not_share_attachment">Could not share attachment</string>
     <string name="stream_compose_media_gallery_share_large_file_prompt_title">Large file warning</string>
@@ -330,7 +290,6 @@
     <string name="stream_compose_poll_option_switch_add_comment">Add a comment</string>
     <string name="stream_compose_poll_option_switch_add_comment_description">Allow others to add comments</string>
     <string name="stream_compose_poll_view_result">View Results</string>
-    <string name="stream_compose_poll_show_all_votes">Show All</string>
     <string name="stream_compose_poll_option_results_error">An error occurred while loading the poll option results. Please try again later.</string>
     <string name="stream_compose_poll_end_vote">End Poll</string>
     <string name="stream_compose_poll_end_confirmation_title">End this poll?</string>
@@ -385,9 +344,4 @@
         <item quantity="one">1 reply</item>
         <item quantity="other">%d replies</item>
     </plurals>
-    <string name="stream_compose_thread_timestamp_just_now">Just now</string>
-    <string name="stream_compose_thread_timestamp_today">Today at %1$s</string>
-    <string name="stream_compose_thread_timestamp_yesterday">Yesterday at %1$s</string>
-    <string name="stream_compose_thread_timestamp_day_of_week">%1$s at %2$s</string>
-    <string name="stream_compose_thread_timestamp_date">%1$s at %2$s</string>
 </resources>
