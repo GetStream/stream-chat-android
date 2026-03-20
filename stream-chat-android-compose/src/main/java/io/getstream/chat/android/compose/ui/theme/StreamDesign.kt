@@ -119,9 +119,6 @@ public object StreamDesign {
      * The following component tokens alias **different** semantic tokens in light vs dark themes
      * and therefore cannot be expressed as a single derived expression:
      *
-     * @param chatPollProgressFillOutgoing Outgoing poll progress fill.
-     * @param chatReplyIndicatorIncoming Reply indicator shading for incoming messages.
-     * @param chatReplyIndicatorOutgoing Reply indicator shading for outgoing messages.
      * @param controlPlaybackThumbBgDefault Playback thumb background in default state.
      */
     @Immutable
@@ -186,9 +183,6 @@ public object StreamDesign {
         public val avatarPresenceBorder: Color,
         public val skeletonLoadingBase: Color,
         public val skeletonLoadingHighlight: Color,
-        public val chatPollProgressFillOutgoing: Color,
-        public val chatReplyIndicatorIncoming: Color,
-        public val chatReplyIndicatorOutgoing: Color,
         public val controlPlaybackThumbBgDefault: Color,
     ) {
 
@@ -279,6 +273,9 @@ public object StreamDesign {
         /** Border on outgoing message bubbles. */
         internal val chatBorderOnChatOutgoing: Color = brand.s300
 
+        /** Outgoing poll progress fill. */
+        internal val chatPollProgressFillOutgoing: Color = accentPrimary
+
         /** Incoming poll progress fill. */
         internal val chatPollProgressFillIncoming: Color = accentNeutral
 
@@ -287,6 +284,12 @@ public object StreamDesign {
 
         /** Outgoing poll progress track. */
         internal val chatPollProgressTrackOutgoing: Color = brand.s200
+
+        /** Reply indicator shading for incoming messages. */
+        internal val chatReplyIndicatorIncoming: Color = chrome.s400
+
+        /** Reply indicator shading for outgoing messages. */
+        internal val chatReplyIndicatorOutgoing: Color = brand.s400
 
         /** Incoming message text color. */
         internal val chatTextIncoming: Color = textPrimary
@@ -519,10 +522,7 @@ public object StreamDesign {
                     avatarTextPlaceholder = chrome.s500,
                     avatarPresenceBorder = chrome.s0,
                     skeletonLoadingBase = Color.Transparent,
-                    skeletonLoadingHighlight = StreamPrimitiveColors.baseWhite,
-                    chatPollProgressFillOutgoing = brand.s500,
-                    chatReplyIndicatorIncoming = StreamPrimitiveColors.slate400,
-                    chatReplyIndicatorOutgoing = brand.s400,
+                    skeletonLoadingHighlight = Color(0xBFFFFFFF),
                     controlPlaybackThumbBgDefault = chrome.s0,
                 )
             }
@@ -598,10 +598,7 @@ public object StreamDesign {
                     avatarTextPlaceholder = chrome.s500,
                     avatarPresenceBorder = chrome.s0,
                     skeletonLoadingBase = Color.Transparent,
-                    skeletonLoadingHighlight = StreamPrimitiveColors.baseWhite.copy(alpha = 0.2f),
-                    chatPollProgressFillOutgoing = StreamPrimitiveColors.baseWhite,
-                    chatReplyIndicatorIncoming = StreamPrimitiveColors.neutral500,
-                    chatReplyIndicatorOutgoing = brand.s700,
+                    skeletonLoadingHighlight = Color(0xBF000000),
                     controlPlaybackThumbBgDefault = chrome.s900,
                 )
             }
