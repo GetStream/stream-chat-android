@@ -7033,7 +7033,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageC
 	public final fun dismissMessageActions ()V
 	public final fun getInputFocusEvents ()Lkotlinx/coroutines/flow/SharedFlow;
 	public final fun getMessageComposerState ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun getMessageInput ()Lkotlinx/coroutines/flow/MutableStateFlow;
+	public final fun getMessageInput ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun holdRecording (Lkotlin/Pair;)V
 	public final fun leaveThread ()V
 	public final fun lockRecording ()V

@@ -31,7 +31,6 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.result.call.Call
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -56,7 +55,7 @@ public class MessageComposerViewModel(
     /**
      * UI state of the current composer input.
      */
-    public val messageInput: MutableStateFlow<MessageInput> = messageComposerController.messageInput
+    public val messageInput: StateFlow<MessageInput> = messageComposerController.messageInput
 
     /**
      * Called when the input changes and the internal state needs to be updated.
