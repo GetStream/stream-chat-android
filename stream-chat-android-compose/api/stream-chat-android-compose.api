@@ -6225,6 +6225,7 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Color
 	public final fun getS800-0d7_KjU ()J
 	public final fun getS900-0d7_KjU ()J
 	public fun hashCode ()I
+	public final fun inverted ()Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -6374,8 +6375,10 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Color
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Colors$Companion {
-	public final fun default ()Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
-	public final fun defaultDark ()Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
+	public final fun default (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
+	public static synthetic fun default$default (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors$Companion;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
+	public final fun defaultDark (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
+	public static synthetic fun defaultDark$default (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors$Companion;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Typography {

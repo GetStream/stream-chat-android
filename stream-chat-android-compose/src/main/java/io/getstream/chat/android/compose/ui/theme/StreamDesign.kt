@@ -23,6 +23,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import io.getstream.chat.android.compose.ui.theme.StreamDesign.Colors.Companion.default
+import io.getstream.chat.android.compose.ui.theme.StreamDesign.Colors.Companion.defaultDark
 
 /**
  * The Stream Chat Design System namespace.
@@ -44,8 +46,8 @@ import androidx.compose.ui.text.font.FontFamily
 public object StreamDesign {
 
     /**
-     * Contains all the colors in our palette. Each color is used for various things and can be
-     * changed to customize the app design style.
+     * Semantic color tokens for theming Chat SDK components.
+     * Customize via [default] / [defaultDark] factory parameters or [copy].
      *
      * Parameters are organized by domain:
      * scales → accent → text → background → border → avatar → skeleton → component exceptions.
@@ -62,7 +64,7 @@ public object StreamDesign {
      * @param textTertiary Lowest priority text.
      * @param textDisabled Disabled text.
      * @param textOnAccent Text on dark or accent backgrounds.
-     * @param textInverse Text on dark or accent backgrounds.
+     * @param textInverse Text on inverse backgrounds.
      * @param textLink Hyperlinks and inline actions.
      * @param backgroundCoreElevation0 Flat surfaces.
      * @param backgroundCoreElevation1 Slightly elevated surfaces.
@@ -616,7 +618,7 @@ public object StreamDesign {
      *
      * Re-brand the entire Chat UI from a single color:
      * ```
-     * val purple = StreamDesign.ColorScale.from(Color(0xFF6200EE))
+     * val purple = StreamDesign.ColorScale.from(brandColor = Color(0xFF6200EE))
      * ChatTheme(colors = StreamDesign.Colors.default(brand = purple))
      * ```
      *
@@ -659,6 +661,27 @@ public object StreamDesign {
         public val s800: Color,
         public val s900: Color,
     ) {
+
+        /**
+         * Returns a new scale with the stops mirrored around the center.
+         *
+         * `s50` ↔ `s900`, `s100` ↔ `s800`, etc., while `s400` stays in place.
+         * Use this to create a dark-theme counterpart from a light brand ramp.
+         */
+        public fun inverted(): ColorScale = ColorScale(
+            s50 = s900,
+            s100 = s800,
+            s150 = s700,
+            s200 = s600,
+            s300 = s500,
+            s400 = s400,
+            s500 = s300,
+            s600 = s200,
+            s700 = s150,
+            s800 = s100,
+            s900 = s50,
+        )
+
         public companion object {
             /**
              * Default brand scale for light themes.
@@ -708,6 +731,13 @@ public object StreamDesign {
              *
              * This is an approximation intended for quick re-branding.
              * For pixel-perfect results, provide an explicit [ColorScale].
+             *
+             * Use [inverted] to obtain the dark-theme counterpart:
+             * ```
+             * val purple = ColorScale.from(brandColor = Color(0xFF6200EE))
+             * val light  = Colors.default(brand = purple)
+             * val dark   = Colors.defaultDark(brand = purple.inverted())
+             * ```
              *
              * @param brandColor The core brand color (maps to [s500]).
              */
