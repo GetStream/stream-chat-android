@@ -72,7 +72,7 @@ fun ChannelsScreenNavigationDrawer(
         }
         // New Direct Message
         NavigationDrawerItem(
-            icon = R.drawable.stream_compose_ic_new_chat,
+            icon = R.drawable.ic_new_chat,
             text = stringResource(R.string.navigation_drawer_new_direct_message),
             onClick = onNewDirectMessageClick,
         )

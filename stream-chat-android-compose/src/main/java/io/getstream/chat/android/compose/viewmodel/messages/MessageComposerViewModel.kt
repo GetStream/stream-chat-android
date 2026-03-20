@@ -29,6 +29,7 @@ import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Men
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.MessageInput
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -67,7 +68,7 @@ public class MessageComposerViewModel(
     /**
      * UI state of the current composer input.
      */
-    public val input: MutableStateFlow<String> = messageComposerController.input
+    public val messageInput: MutableStateFlow<MessageInput> = messageComposerController.messageInput
 
     /**
      * Represents the remaining time until the user is allowed to send the next message.
@@ -234,7 +235,7 @@ public class MessageComposerViewModel(
      * @return [Message] object, with all the data required to send it to the API.
      */
     public fun buildNewMessage(
-        message: String = input.value,
+        message: String = messageInput.value.text,
         attachments: List<Attachment> = emptyList(),
     ): Message = messageComposerController.buildNewMessage(message, attachments)
 
