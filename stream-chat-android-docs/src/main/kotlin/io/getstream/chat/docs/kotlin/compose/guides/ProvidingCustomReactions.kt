@@ -10,13 +10,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionIconParams
 import io.getstream.chat.android.compose.ui.util.ReactionResolver
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.docs.R
 
 /**
  * [Providing Custom Reactions](https://getstream.io/chat/docs/sdk/android/compose/guides/providing-custom-reactions/)
@@ -104,7 +104,7 @@ private object ProvidingCustomReactionsSnippet {
         override fun ReactionIcon(params: ReactionIconParams) {
             if (params.type == CustomReactionResolver.HAHA) {
                 Image(
-                    painter = painterResource(R.drawable.stream_compose_ic_reaction_lol),
+                    painter = painterResource(R.drawable.ic_reaction_lol),
                     contentDescription = params.type,
                     modifier = params.modifier,
                 )
