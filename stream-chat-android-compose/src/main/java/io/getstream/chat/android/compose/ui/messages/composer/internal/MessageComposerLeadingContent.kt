@@ -84,8 +84,8 @@ internal fun MessageComposerLeadingContent(
                     .size(48.dp)
                     .testTag("Stream_ComposerAttachmentsButton"),
                 colors = IconButtonDefaults.filledIconButtonColors(
-                    containerColor = ChatTheme.colors.backgroundElevationElevation1,
-                    disabledContainerColor = ChatTheme.colors.backgroundElevationElevation1,
+                    containerColor = ChatTheme.colors.backgroundCoreElevation1,
+                    disabledContainerColor = ChatTheme.colors.backgroundCoreElevation1,
                     contentColor = ChatTheme.colors.buttonSecondaryText,
                     disabledContentColor = ChatTheme.colors.textDisabled,
                 ),

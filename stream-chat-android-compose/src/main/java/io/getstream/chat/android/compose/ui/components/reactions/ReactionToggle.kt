@@ -66,7 +66,7 @@ internal fun ReactionToggle(
                 size = size.toIconSize(),
                 modifier = modifier
                     .applyIf(checked) {
-                        background(ChatTheme.colors.backgroundCoreSelected, CircleShape)
+                        background(ChatTheme.colors.backgroundUtilitySelected, CircleShape)
                     }
                     .ifNotNull(onCheckedChange) { onChange ->
                         clip(CircleShape).clickable { onChange(!checked) }

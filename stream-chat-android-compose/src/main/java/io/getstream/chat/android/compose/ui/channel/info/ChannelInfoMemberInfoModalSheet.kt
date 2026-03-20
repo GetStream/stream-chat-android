@@ -85,7 +85,7 @@ internal fun ChannelInfoMemberInfoModalSheet(
 
     ModalBottomSheet(
         sheetState = sheetState,
-        containerColor = ChatTheme.colors.backgroundElevationElevation1,
+        containerColor = ChatTheme.colors.backgroundCoreElevation1,
         onDismissRequest = onDismiss,
     ) {
         val state by viewModel.state.collectAsStateWithLifecycle()
@@ -239,7 +239,7 @@ private fun ExpandedSheet(content: @Composable () -> Unit) {
     // so we need to mimic it with a card.
     Card(
         shape = BottomSheetDefaults.ExpandedShape,
-        colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundElevationElevation1),
+        colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundCoreElevation1),
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

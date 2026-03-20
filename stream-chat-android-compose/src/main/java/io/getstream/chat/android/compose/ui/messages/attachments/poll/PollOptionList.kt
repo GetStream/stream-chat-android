@@ -131,7 +131,7 @@ private fun ReorderableScope.PollOptionRow(
     onRemove: () -> Unit,
 ) {
     val colors = ChatTheme.colors
-    val borderColor = if (item.pollOptionError == null) colors.inputBorderDefault else colors.accentError
+    val borderColor = if (item.pollOptionError == null) colors.borderCoreDefault else colors.accentError
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -195,7 +195,7 @@ private fun AddPollOptionButton(onClick: () -> Unit) {
             .defaultMinSize(minHeight = PollInputMinHeight)
             .border(
                 width = 1.dp,
-                color = colors.inputBorderDefault,
+                color = colors.borderCoreDefault,
                 shape = PollInputShape,
             )
             .clip(PollInputShape)

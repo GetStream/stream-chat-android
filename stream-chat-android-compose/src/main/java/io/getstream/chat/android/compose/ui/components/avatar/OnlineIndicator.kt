@@ -37,14 +37,14 @@ internal fun OnlineIndicator(
     val colors = ChatTheme.colors
 
     val color = when (isOnline) {
-        true -> colors.presenceBgOnline
-        false -> colors.presenceBgOffline
+        true -> colors.avatarPresenceBgOnline
+        false -> colors.avatarPresenceBgOffline
     }
 
     Box(
         modifier
             .size(dimensions.indicatorSize)
-            .border(dimensions.borderWidth, colors.presenceBorder, CircleShape)
+            .border(dimensions.borderWidth, colors.avatarPresenceBorder, CircleShape)
             .padding(dimensions.borderWidth)
             .background(color, CircleShape),
     )

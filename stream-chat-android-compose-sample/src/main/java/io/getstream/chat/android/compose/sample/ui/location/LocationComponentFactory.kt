@@ -61,9 +61,9 @@ class LocationComponentFactory(
                         onCheckedChange = { params.onModeSelected(LocationPickerMode) },
                         colors = IconButtonDefaults.filledIconToggleButtonColors(
                             containerColor = Color.Transparent,
-                            contentColor = ChatTheme.colors.buttonSecondaryText,
-                            checkedContainerColor = ChatTheme.colors.backgroundCoreSelected,
-                            checkedContentColor = ChatTheme.colors.buttonSecondaryText,
+                            contentColor = ChatTheme.colors.textPrimary,
+                            checkedContainerColor = ChatTheme.colors.backgroundUtilitySelected,
+                            checkedContentColor = ChatTheme.colors.textPrimary,
                         ),
                     ) {
                         Icon(

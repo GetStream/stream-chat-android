@@ -95,7 +95,7 @@ public fun AttachmentPicker(
 
     Surface(
         modifier = modifier.testTag("Stream_AttachmentsPicker"),
-        color = ChatTheme.colors.backgroundElevationElevation1,
+        color = ChatTheme.colors.backgroundCoreElevation1,
     ) {
         if (ChatTheme.config.attachmentPicker.useSystemPicker) {
             ChatTheme.componentFactory.AttachmentSystemPicker(

@@ -201,7 +201,7 @@ private fun StackedGroupAvatar(
                 channel = channel,
                 size = maxWidth,
                 modifier = Modifier
-                    .applyIf(showBorder) { border(1.dp, ChatTheme.colors.borderCoreOpacity10, CircleShape) }
+                    .applyIf(showBorder) { border(1.dp, ChatTheme.colors.borderCoreOpacitySubtle, CircleShape) }
                     .clip(CircleShape),
             )
 
@@ -219,7 +219,7 @@ private fun StackedGroupAvatar(
                     foreground = colors.avatarTextPlaceholder,
                     modifier = baseModifier
                         .clip(CircleShape)
-                        .applyIf(showBorder) { border(1.dp, ChatTheme.colors.borderCoreOpacity10, CircleShape) }
+                        .applyIf(showBorder) { border(1.dp, ChatTheme.colors.borderCoreOpacitySubtle, CircleShape) }
                         .align(alignments[1]),
                 )
             }

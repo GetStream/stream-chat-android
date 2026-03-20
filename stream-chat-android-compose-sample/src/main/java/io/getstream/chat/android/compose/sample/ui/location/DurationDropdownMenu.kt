@@ -37,7 +37,7 @@ fun DurationDropdownMenu(
 ) {
     DropdownMenu(
         expanded = expanded,
-        containerColor = ChatTheme.colors.backgroundElevationElevation1,
+        containerColor = ChatTheme.colors.backgroundCoreElevation1,
         onDismissRequest = onDismiss,
     ) {
         Text(

@@ -99,7 +99,7 @@ internal fun PollOptionVotesDialog(
         sheetMaxWidth = Dp.Unspecified,
         shape = RoundedCornerShape(0.dp),
         dragHandle = {},
-        containerColor = ChatTheme.colors.backgroundElevationElevation1,
+        containerColor = ChatTheme.colors.backgroundCoreElevation1,
     ) {
         ViewModelStore {
             val viewModel = viewModel {

@@ -509,7 +509,7 @@ internal fun MessageComposerAudioRecordingFloatingLockIcon(
                     scaleY = entranceScale
                 }
                 .shadow(4.dp, LockButtonShape)
-                .background(ChatTheme.colors.backgroundElevationElevation1, LockButtonShape)
+                .background(ChatTheme.colors.backgroundCoreElevation1, LockButtonShape)
                 .border(1.dp, ChatTheme.colors.borderCoreDefault, LockButtonShape)
                 .padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,

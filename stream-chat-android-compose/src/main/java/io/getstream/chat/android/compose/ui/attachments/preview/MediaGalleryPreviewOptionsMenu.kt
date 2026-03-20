@@ -79,7 +79,7 @@ internal fun MediaGalleryOptionsMenu(
     ModalBottomSheet(
         modifier = modifier,
         sheetState = rememberStandardBottomSheetState(initialValue = SheetValue.Expanded, skipHiddenState = false),
-        containerColor = ChatTheme.colors.backgroundElevationElevation1,
+        containerColor = ChatTheme.colors.backgroundCoreElevation1,
         scrimColor = ChatTheme.colors.backgroundCoreScrim,
         onDismissRequest = onDismiss,
     ) {

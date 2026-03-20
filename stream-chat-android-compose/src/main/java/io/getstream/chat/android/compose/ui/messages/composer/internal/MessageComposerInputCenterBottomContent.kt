@@ -120,7 +120,7 @@ private fun Checkbox(
                 Icon(
                     painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
                     contentDescription = null,
-                    tint = ChatTheme.colors.controlRadioCheckIconSelected,
+                    tint = ChatTheme.colors.controlRadioCheckIcon,
                 )
             }
         }

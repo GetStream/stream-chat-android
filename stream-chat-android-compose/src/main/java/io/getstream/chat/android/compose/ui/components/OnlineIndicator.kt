@@ -37,7 +37,7 @@ public fun OnlineIndicator(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .size(12.dp)
-            .background(ChatTheme.colors.presenceBorder, CircleShape)
+            .background(ChatTheme.colors.avatarPresenceBorder, CircleShape)
             .padding(2.dp)
             .background(ChatTheme.colors.accentSuccess, CircleShape),
     )

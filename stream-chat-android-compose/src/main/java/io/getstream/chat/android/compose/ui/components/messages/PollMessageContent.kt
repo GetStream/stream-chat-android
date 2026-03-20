@@ -400,7 +400,7 @@ private fun NewOptionDialog(
                 Text(stringResource(R.string.stream_compose_dismiss))
             }
         },
-        containerColor = ChatTheme.colors.backgroundElevationElevation1,
+        containerColor = ChatTheme.colors.backgroundCoreElevation1,
     )
 }
 
@@ -530,7 +530,7 @@ private fun EndPollConfirmationDialog(
         },
         titleContentColor = ChatTheme.colors.textPrimary,
         textContentColor = ChatTheme.colors.textPrimary,
-        containerColor = ChatTheme.colors.backgroundElevationElevation1,
+        containerColor = ChatTheme.colors.backgroundCoreElevation1,
     )
 }
 
