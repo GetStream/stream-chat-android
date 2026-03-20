@@ -29,7 +29,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import io.getstream.chat.android.client.ChatClient.Companion.MAX_COOLDOWN_TIME_SECONDS
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatApiConfig
-import io.getstream.chat.android.client.api.ChatCoreConfig
+import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
@@ -4604,7 +4604,7 @@ internal constructor(
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
         private var distinctApiCalls: Boolean = true
         private var debugRequests: Boolean = false
-        private var chatCoreConfig: ChatCoreConfig = ChatCoreConfig()
+        private var chatClientConfig: ChatClientConfig = ChatClientConfig()
         private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.CONNECTED
         private var fileTransformer: FileTransformer = NoOpFileTransformer
         private var apiModelTransformers: ApiModelTransformers = ApiModelTransformers()
@@ -4825,12 +4825,12 @@ internal constructor(
         }
 
         /**
-         * Specifies the state management configuration.
+         * Specifies the client configuration.
          *
-         * @param config The state configuration to be used.
+         * @param config The [ChatClientConfig] to be used.
          */
-        public fun config(config: ChatCoreConfig): Builder = apply {
-            chatCoreConfig = config
+        public fun config(config: ChatClientConfig): Builder = apply {
+            chatClientConfig = config
         }
 
         /**
@@ -4974,7 +4974,7 @@ internal constructor(
             val repository = ChatClientRepository.from(database)
 
             val allPluginFactories = setupPluginFactories(
-                chatCoreConfig = chatCoreConfig,
+                chatClientConfig = chatClientConfig,
             )
 
             return ChatClient(
@@ -5022,17 +5022,17 @@ internal constructor(
         }
 
         private fun setupPluginFactories(
-            chatCoreConfig: ChatCoreConfig,
+            chatClientConfig: ChatClientConfig,
         ): List<PluginFactory> {
             return buildList {
                 // Mandatory plugins first
                 add(ThrottlingPluginFactory)
                 add(MessageDeliveredPluginFactory)
                 // State plugin
-                add(StreamStatePluginFactory(chatCoreConfig, appContext))
+                add(StreamStatePluginFactory(chatClientConfig, appContext))
                 // Offline plugin (if enabled)
-                if (chatCoreConfig.offlineEnabled) {
-                    add(StreamOfflinePluginFactory(appContext, chatCoreConfig.ignoredOfflineChannelTypes))
+                if (chatClientConfig.offlineEnabled) {
+                    add(StreamOfflinePluginFactory(appContext, chatClientConfig.ignoredOfflineChannelTypes))
                 }
             }
         }

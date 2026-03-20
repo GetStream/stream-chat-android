@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.internal.state.extensions
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.ChatCoreConfig
+import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.api.state.watchChannelAsState
@@ -77,7 +77,7 @@ internal class ChatClientExtensionTests {
     fun setUp() {
         channel = randomChannel()
 
-        val chatCoreConfig = ChatCoreConfig()
+        val chatClientConfig = ChatClientConfig()
         val globalState: GlobalState = mock {}
         val channelState: ChannelState = mock {
             on(it.cid) doReturn channel.cid
@@ -89,7 +89,7 @@ internal class ChatClientExtensionTests {
         }
 
         val request = QueryChannelPaginationRequest(MESSAGE_LIMIT)
-            .toWatchChannelRequest(chatCoreConfig.userPresence)
+            .toWatchChannelRequest(chatClientConfig.userPresence)
             .apply {
                 this.shouldRefresh = false
                 this.isWatchChannel = true
@@ -97,13 +97,13 @@ internal class ChatClientExtensionTests {
 
         pluginFactories = listOf<PluginFactory>(
             mock<StreamStatePluginFactory> {
-                on(it.resolveDependency(ChatCoreConfig::class)) doReturn chatCoreConfig
+                on(it.resolveDependency(ChatClientConfig::class)) doReturn chatClientConfig
             },
         )
 
         plugins = listOf(
             mock<StatePlugin> {
-                on(it.resolveDependency(ChatCoreConfig::class)) doReturn chatCoreConfig
+                on(it.resolveDependency(ChatClientConfig::class)) doReturn chatClientConfig
                 on(it.resolveDependency(GlobalState::class)) doReturn globalState
                 on(it.resolveDependency(StateRegistry::class)) doReturn stateRegistry
             },

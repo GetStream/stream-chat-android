@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.TimeDuration
 
 /**
- * Provides a configuration for the state layer.
+ * Provides a configuration for the [ChatClient] behavior.
  *
  * @param backgroundSyncEnabled Controls whether the SDK performs background synchronization when push notifications
  * are received. When enabled (default: `true`), the SDK automatically syncs messages in the background when a push
@@ -86,7 +86,7 @@ import io.getstream.chat.android.models.TimeDuration
  * @param ignoredOfflineChannelTypes Set of channel types to be ignored by offline support. Default is
  *   an empty set.
  */
-public data class ChatCoreConfig @JvmOverloads constructor(
+public data class ChatClientConfig @JvmOverloads constructor(
     @Deprecated(
         "The background sync on push notification is no longer needed to keep the state in sync and " +
             "will be removed in the future. If you are using the default UI components, or building your own UI " +
@@ -125,7 +125,7 @@ public data class ChatCoreConfig @JvmOverloads constructor(
  *
  * Example configuration:
  * ```kotlin
- * StatePluginConfig(
+ * ChatClientConfig(
  *     messageLimitConfig = MessageLimitConfig(
  *         channelMessageLimits = setOf(
  *             ChannelMessageLimit(channelType = "messaging", baseLimit = 1000),

@@ -268,7 +268,7 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 	public fun build ()Lio/getstream/chat/android/client/ChatClient;
 	public final fun cdnUrl (Ljava/lang/String;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun clientDebugger (Lio/getstream/chat/android/client/debugger/ChatClientDebugger;)Lio/getstream/chat/android/client/ChatClient$Builder;
-	public final fun config (Lio/getstream/chat/android/client/api/ChatCoreConfig;)Lio/getstream/chat/android/client/ChatClient$Builder;
+	public final fun config (Lio/getstream/chat/android/client/api/ChatClientConfig;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun credentialStorage (Lio/getstream/chat/android/client/user/storage/UserCredentialStorage;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun debugRequests (Z)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun disableDistinctApiCalls ()Lio/getstream/chat/android/client/ChatClient$Builder;
@@ -321,7 +321,7 @@ public final class io/getstream/chat/android/client/api/ChannelMessageLimit {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/client/api/ChatCoreConfig {
+public final class io/getstream/chat/android/client/api/ChatClientConfig {
 	public fun <init> ()V
 	public fun <init> (Z)V
 	public fun <init> (ZZ)V
@@ -342,8 +342,8 @@ public final class io/getstream/chat/android/client/api/ChatCoreConfig {
 	public final fun component7 ()Lkotlin/jvm/functions/Function0;
 	public final fun component8 ()Lio/getstream/chat/android/client/api/MessageLimitConfig;
 	public final fun component9 ()Z
-	public final fun copy (ZZLjava/util/Set;ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/api/MessageLimitConfig;Z)Lio/getstream/chat/android/client/api/ChatCoreConfig;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/ChatCoreConfig;ZZLjava/util/Set;ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/api/MessageLimitConfig;ZILjava/lang/Object;)Lio/getstream/chat/android/client/api/ChatCoreConfig;
+	public final fun copy (ZZLjava/util/Set;ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/api/MessageLimitConfig;Z)Lio/getstream/chat/android/client/api/ChatClientConfig;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/ChatClientConfig;ZZLjava/util/Set;ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/api/MessageLimitConfig;ZILjava/lang/Object;)Lio/getstream/chat/android/client/api/ChatClientConfig;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBackgroundSyncEnabled ()Z
 	public final fun getIgnoredOfflineChannelTypes ()Ljava/util/Set;
