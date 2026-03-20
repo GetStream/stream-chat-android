@@ -534,8 +534,8 @@ public class MessageComposerController(
         val previousMode = _state.value.messageMode
         if (isSameMessageMode(previousMode, messageMode)) return
         scope.launch(start = CoroutineStart.UNDISPATCHED) {
-            saveDraftMessage(previousMode)
             _state.update { it.copy(messageMode = messageMode) }
+            saveDraftMessage(previousMode)
             fetchDraftMessage(messageMode)
         }
     }
