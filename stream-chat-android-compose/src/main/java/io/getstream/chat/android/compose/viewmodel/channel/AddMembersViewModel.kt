@@ -20,13 +20,14 @@ package io.getstream.chat.android.compose.viewmodel.channel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.watchChannelAsState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.feature.channel.info.AddMembersViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.AddMembersViewController
-import io.getstream.chat.android.ui.common.feature.channel.info.AddMembersViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.AddMembersViewState
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterNotNull
 
 /**
  * ViewModel for managing the "Add Members" view and its actions.
@@ -38,8 +39,10 @@ public class AddMembersViewModel(
     private val cid: String,
     private val controllerProvider: ViewModel.() -> AddMembersViewController = {
         AddMembersViewController(
-            cid = cid,
             scope = viewModelScope,
+            channelState = ChatClient.instance()
+                .watchChannelAsState(cid = cid, messageLimit = 0, coroutineScope = viewModelScope)
+                .filterNotNull(),
         )
     },
 ) : ViewModel() {
@@ -50,11 +53,6 @@ public class AddMembersViewModel(
      * @see [AddMembersViewController.state]
      */
     public val state: StateFlow<AddMembersViewState> get() = controller.state
-
-    /**
-     * @see [AddMembersViewController.events]
-     */
-    public val events: SharedFlow<AddMembersViewEvent> get() = controller.events
 
     /**
      * @see [AddMembersViewController.onViewAction]

@@ -2480,6 +2480,7 @@ public interface ChatComponentFactory {
         io.getstream.chat.android.compose.ui.channel.info.AddMembersBottomSheet(
             viewModel = params.viewModel,
             onDismiss = params.onDismiss,
+            onConfirm = params.onConfirm,
         )
     }
 

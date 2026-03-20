@@ -31,14 +31,14 @@ public sealed interface AddMembersViewAction {
     public data class QueryChanged(val query: String) : AddMembersViewAction
 
     /**
-     * Represents a click on a user in the search results.
+     * Represents a click on a user in the search results, toggling their selection.
      *
      * @param user The user that was clicked.
      */
     public data class UserClick(val user: User) : AddMembersViewAction
 
     /**
-     * Represents a click on the confirm button to add the selected members.
+     * Requests the next page of search results to be loaded and appended to the current list.
      */
-    public data object ConfirmClick : AddMembersViewAction
+    public data object LoadMore : AddMembersViewAction
 }
