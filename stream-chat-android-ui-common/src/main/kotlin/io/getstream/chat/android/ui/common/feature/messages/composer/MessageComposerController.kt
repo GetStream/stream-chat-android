@@ -855,6 +855,7 @@ public class MessageComposerController(
             text.contains("@${it.user.name.lowercase()}")
         }.map { it.user.id }
         this.selectedMentions.clear()
+        _state.update { it.copy(selectedMentions = emptySet()) }
         return remainingMentions.toMutableList()
     }
 
@@ -925,7 +926,7 @@ public class MessageComposerController(
         setMessageInputInternal(augmentedMessageText, MessageInput.Source.MentionSelected)
 
         selectedMentions += mention
-        _state.update { it.copy(selectedMentions = selectedMentions) }
+        _state.update { it.copy(selectedMentions = selectedMentions.toSet()) }
     }
 
     /**
