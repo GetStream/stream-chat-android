@@ -20,7 +20,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.getstream.chat.android.guides.databinding.ItemDateAttachmentBinding
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListeners
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.InnerAttachmentViewHolder
 
@@ -35,7 +35,7 @@ class DateAttachmentFactory : AttachmentFactory {
 
     override fun createViewHolder(
         message: Message,
-        listeners: MessageListListenerContainer?,
+        listeners: MessageListListeners?,
         parent: ViewGroup,
     ): InnerAttachmentViewHolder {
         return ItemDateAttachmentBinding
@@ -45,7 +45,7 @@ class DateAttachmentFactory : AttachmentFactory {
 
     class DateAttachmentViewHolder(
         private val binding: ItemDateAttachmentBinding,
-        listeners: MessageListListenerContainer?,
+        listeners: MessageListListeners?,
     ) : InnerAttachmentViewHolder(binding.root) {
 
         private lateinit var message: Message

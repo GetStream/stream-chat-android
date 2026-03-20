@@ -61,13 +61,6 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
     /**
      * A listener that is invoked when attachment picking has been completed
      */
-    private var attachmentSelectionListener: AttachmentSelectionListener? = AttachmentSelectionListener { attachments ->
-        attachmentsSelectionListener?.onAttachmentsSelected(attachments.map { it.toAttachment(requireContext()) })
-    }
-
-    /**
-     * A listener that is invoked when attachment picking has been completed
-     */
     private var attachmentsSelectionListener: AttachmentsSelectionListener? = null
 
     /**
@@ -100,7 +93,9 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface) {
         if (::style.isInitialized && style.saveAttachmentsOnDismiss) {
-            attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments)
+            attachmentsSelectionListener?.onAttachmentsSelected(
+                selectedAttachments.map { it.toAttachment(requireContext()) },
+            )
         }
         super.onDismiss(dialog)
     }
@@ -122,7 +117,9 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
         binding.attachButton.setImageDrawable(style.submitAttachmentsButtonIconDrawable)
         binding.attachButton.isEnabled = false
         binding.attachButton.setOnClickListener {
-            attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments)
+            attachmentsSelectionListener?.onAttachmentsSelected(
+                selectedAttachments.map { it.toAttachment(requireContext()) },
+            )
             dismiss()
         }
     }
@@ -165,7 +162,9 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
             }
 
             override fun onSelectedAttachmentsSubmitted() {
-                attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments)
+                attachmentsSelectionListener?.onAttachmentsSelected(
+                    selectedAttachments.map { it.toAttachment(requireContext()) },
+                )
                 dismiss()
             }
 
@@ -204,11 +203,6 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
         _binding = null
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        attachmentSelectionListener = null
-    }
-
     override fun getTheme(): Int = R.style.StreamUiAttachmentBottomSheetDialog
 
     /**
@@ -225,22 +219,6 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
      */
     public fun setAttachmentsPickerTabFactories(attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory>) {
         this.attachmentsPickerTabFactories = attachmentsPickerTabFactories
-    }
-
-    /**
-     * Sets the listener that will be notified when picking attachments has been completed.
-     */
-    @Suppress("MaxLineLength")
-    @Deprecated(
-        message = "Use the new [AttachmentsSelectionListener] interface instead",
-        level = DeprecationLevel.WARNING,
-        replaceWith = ReplaceWith(
-            "setAttachmentsSelectionListener(attachmentsSelectionListener)",
-            "io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogFragment.AttachmentsSelectionListener",
-        ),
-    )
-    public fun setAttachmentSelectionListener(attachmentSelectionListener: AttachmentSelectionListener) {
-        this.attachmentSelectionListener = attachmentSelectionListener
     }
 
     /**

@@ -73,63 +73,6 @@ import io.getstream.chat.android.ui.common.utils.giphyInfo
  *
  * It shows the GIF, as well as a label for users to recognize it's sent from Giphy.
  *
- * @param attachmentState - The attachment to show.
- * @param modifier Modifier for styling.
- * @param giphyInfoType Used to modify the quality and dimensions of the rendered
- * Giphy attachments.
- * @param giphySizingMode Sets the Giphy container sizing strategy. Setting it to automatic
- * makes the container capable of adaptive resizing and ignore
- * the default Giphy width and height dimensions, however you can still clip maximum dimensions.
- * Setting it to fixed size mode will make it respect all given dimensions.
- * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
- * @param onItemClick Lambda called when an item gets clicked (no-action by default).
- */
-@OptIn(ExperimentalFoundationApi::class)
-@Suppress("LongMethod")
-@Composable
-@Deprecated(
-    message = "Use GiphyAttachmentContent version with the `onItemClick` parameter that accepts a " +
-        "GiphyAttachmentClickData.",
-    replaceWith = ReplaceWith(
-        "GiphyAttachmentContent(" +
-            "state = state, " +
-            "modifier = modifier, " +
-            "giphyInfoType = giphyInfoType, " +
-            "giphySizingMode = giphySizingMode, " +
-            "contentScale = contentScale, " +
-            "onItemClick = onItemClick" +
-            ")",
-    ),
-    level = DeprecationLevel.WARNING,
-)
-public fun GiphyAttachmentContent(
-    attachmentState: AttachmentState,
-    modifier: Modifier = Modifier,
-    giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
-    giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
-    contentScale: ContentScale = ContentScale.Crop,
-    onItemClick: (context: Context, previewUrl: String) -> Unit = { _, _ -> },
-) {
-    GiphyAttachmentContent(
-        state = attachmentState,
-        modifier = modifier,
-        giphyInfoType = giphyInfoType,
-        giphySizingMode = giphySizingMode,
-        contentScale = contentScale,
-        onItemClick = {
-            onItemClick(
-                it.context,
-                it.url,
-            )
-        },
-    )
-}
-
-/**
- * Builds a Giphy attachment message.
- *
- * It shows the GIF, as well as a label for users to recognize it's sent from Giphy.
- *
  * @param state - The attachment to show.
  * @param modifier Modifier for styling.
  * @param giphyInfoType Used to modify the quality and dimensions of the rendered
@@ -345,7 +288,7 @@ internal fun GiphyAttachmentContent() {
     }
     CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
         GiphyAttachmentContent(
-            attachmentState = AttachmentState(
+            state = AttachmentState(
                 message = Message(
                     text = "Hello",
                     attachments = listOf(
