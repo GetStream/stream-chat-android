@@ -50,7 +50,7 @@ public object StreamDesign {
      * Customize via [default] / [defaultDark] factory parameters or [copy].
      *
      * Parameters are organized by domain:
-     * scales → accent → text → background → border → avatar → skeleton → component exceptions.
+     * scales → accent → text → background → border → avatar → skeleton.
      *
      * @param brand The brand (accent) color scale. See [ColorScale].
      * @param chrome The chrome (neutral gray) color scale. See [ChromeScale].
@@ -77,8 +77,8 @@ public object StreamDesign {
      * @param backgroundCoreSurfaceCard Card surface backgrounds (e.g. link previews, attachments).
      * @param backgroundCoreInverse Inverse background for elevated, transient, or high-attention UI
      * surfaces that sit on top of the default app background.
-     * @param backgroundCoreOnAccent Base surface for accent content (e.g., media controls over video).
-     * Follows `chrome.s0` polarity: white in light, black in dark. Do not use for general UI surfaces.
+     * @param backgroundCoreOnAccent Surfaces that must remain white across themes
+     * (e.g., media controls over video). Do not use for general UI surfaces.
      * @param backgroundCoreScrim Dimmed overlay for modals.
      * @param backgroundCoreOverlayDark Selected overlay (dark variant).
      * @param backgroundCoreOverlayLight Selected overlay (light variant).
@@ -115,11 +115,6 @@ public object StreamDesign {
      * surface behind the avatar; in high-contrast it uses the base surface.
      * @param skeletonLoadingBase Base color for the skeleton loading gradient (placeholder surfaces).
      * @param skeletonLoadingHighlight Highlight for the skeleton loading gradient (moving shimmer).
-     *
-     * The following component tokens alias **different** semantic tokens in light vs dark themes
-     * and therefore cannot be expressed as a single derived expression:
-     *
-     * @param controlPlaybackThumbBgDefault Playback thumb background in default state.
      */
     @Immutable
     public data class Colors(
@@ -183,7 +178,6 @@ public object StreamDesign {
         public val avatarPresenceBorder: Color,
         public val skeletonLoadingBase: Color,
         public val skeletonLoadingHighlight: Color,
-        public val controlPlaybackThumbBgDefault: Color,
     ) {
 
         /** Default badge background. */
@@ -350,6 +344,9 @@ public object StreamDesign {
 
         /** Chip text color. */
         internal val controlChipText: Color = textPrimary
+
+        /** Playback thumb background in default state. */
+        internal val controlPlaybackThumbBgDefault: Color = backgroundCoreOnAccent
 
         /** Playback thumb background in active state. */
         internal val controlPlaybackThumbBgActive: Color = accentPrimary
@@ -523,7 +520,6 @@ public object StreamDesign {
                     avatarPresenceBorder = chrome.s0,
                     skeletonLoadingBase = Color.Transparent,
                     skeletonLoadingHighlight = Color(0xBFFFFFFF),
-                    controlPlaybackThumbBgDefault = chrome.s0,
                 )
             }
 
@@ -563,7 +559,7 @@ public object StreamDesign {
                     backgroundCoreSurfaceStrong = chrome.s150,
                     backgroundCoreSurfaceCard = chrome.s100,
                     backgroundCoreInverse = chrome.s1000,
-                    backgroundCoreOnAccent = chrome.s0,
+                    backgroundCoreOnAccent = chrome.s1000,
                     backgroundCoreScrim = StreamPrimitiveColors.baseBlack.copy(alpha = 0.75f),
                     backgroundCoreOverlayDark = StreamPrimitiveColors.baseBlack.copy(alpha = 0.5f),
                     backgroundCoreOverlayLight = Color(0xBF000000),
@@ -599,7 +595,6 @@ public object StreamDesign {
                     avatarPresenceBorder = chrome.s0,
                     skeletonLoadingBase = Color.Transparent,
                     skeletonLoadingHighlight = Color(0xBF000000),
-                    controlPlaybackThumbBgDefault = chrome.s900,
                 )
             }
         }
