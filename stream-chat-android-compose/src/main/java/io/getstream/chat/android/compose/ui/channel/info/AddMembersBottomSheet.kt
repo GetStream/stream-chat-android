@@ -136,7 +136,14 @@ internal fun AddMembersBottomSheet(
             }
 
             state.searchResult.isEmpty() -> {
-                AddMembersEmptyState()
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    AddMembersEmptyState()
+                }
             }
 
             else -> {
@@ -300,9 +307,7 @@ private fun AddMembersUserItem(
 @Composable
 private fun AddMembersEmptyState() {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = StreamTokens.spacing3xl),
+        modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {
