@@ -50,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
@@ -360,13 +361,17 @@ internal fun DefaultMessageTop(messageItem: MessageItemState, onThreadClick: (Me
 }
 
 @Composable
+private fun MessageItemState.annotationContentColor(default: Color = ChatTheme.colors.textPrimary): Color =
+    if (isPreviewMode) ChatTheme.colors.textOnAccent else default
+
+@Composable
 private fun SavedForLaterAnnotation(item: MessageItemState) {
     val reminder = item.message.reminder
     if (reminder != null && reminder.remindAt == null) {
         MessageAnnotation(
             iconId = R.drawable.stream_compose_ic_annotation_bookmark,
             text = stringResource(R.string.stream_compose_message_list_saved_for_later),
-            contentColor = ChatTheme.colors.accentPrimary,
+            contentColor = item.annotationContentColor(default = ChatTheme.colors.accentPrimary),
         )
     }
 }
@@ -385,6 +390,7 @@ private fun PinnedAnnotation(item: MessageItemState) {
             iconId = R.drawable.stream_compose_ic_annotation_pin,
             text = pinnedByUser?.let { stringResource(R.string.stream_compose_pinned_to_channel_by, it) }
                 ?: stringResource(R.string.stream_compose_pinned_to_channel),
+            contentColor = item.annotationContentColor(),
         )
     }
 }
@@ -401,6 +407,7 @@ private fun ShowInChannelAnnotation(item: MessageItemState, onThreadClick: (Mess
             iconId = R.drawable.stream_compose_ic_annotation_arrow_up_right,
             text = stringResource(alsoSendToChannelTextRes),
             trailingText = stringResource(R.string.stream_compose_message_list_view),
+            contentColor = item.annotationContentColor(),
             trailingTextColor = ChatTheme.colors.chatTextLink,
             onClick = { onThreadClick(item.message) },
         )
@@ -416,6 +423,7 @@ private fun ReminderAnnotation(item: MessageItemState) {
             iconId = R.drawable.stream_compose_ic_annotation_reminder,
             text = stringResource(R.string.stream_compose_message_list_remind_me),
             trailingText = formatReminderDuration(remindAt.time, timeProvider()),
+            contentColor = item.annotationContentColor(),
         )
     }
 }
@@ -436,6 +444,7 @@ private fun TranslationAnnotation(item: MessageItemState) {
             MessageAnnotation(
                 iconId = R.drawable.stream_compose_ic_annotation_translated,
                 text = stringResource(R.string.stream_compose_message_list_auto_translated),
+                contentColor = item.annotationContentColor(),
                 trailingText = if (item.showOriginalText) {
                     stringResource(R.string.stream_compose_message_list_show_translation)
                 } else {
@@ -450,6 +459,7 @@ private fun TranslationAnnotation(item: MessageItemState) {
             MessageAnnotation(
                 iconId = R.drawable.stream_compose_ic_annotation_translated,
                 text = stringResource(R.string.stream_compose_message_list_auto_translated),
+                contentColor = item.annotationContentColor(),
             )
         }
     }
