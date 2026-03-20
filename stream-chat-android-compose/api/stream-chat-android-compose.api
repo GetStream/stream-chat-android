@@ -6238,7 +6238,7 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Color
 public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Colors {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors$Companion;
-	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;
 	public final fun component10-0d7_KjU ()J
 	public final fun component11-0d7_KjU ()J
@@ -6297,14 +6297,11 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Color
 	public final fun component6-0d7_KjU ()J
 	public final fun component60-0d7_KjU ()J
 	public final fun component61-0d7_KjU ()J
-	public final fun component62-0d7_KjU ()J
-	public final fun component63-0d7_KjU ()J
-	public final fun component64-0d7_KjU ()J
 	public final fun component7-0d7_KjU ()J
 	public final fun component8-0d7_KjU ()J
 	public final fun component9-0d7_KjU ()J
-	public final fun copy-xoxRo9Q (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
-	public static synthetic fun copy-xoxRo9Q$default (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
+	public final fun copy-7QP4Db0 (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
+	public static synthetic fun copy-7QP4Db0$default (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAccentError-0d7_KjU ()J
 	public final fun getAccentNeutral-0d7_KjU ()J
@@ -6356,9 +6353,6 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Color
 	public final fun getBorderUtilitySuccess-0d7_KjU ()J
 	public final fun getBorderUtilityWarning-0d7_KjU ()J
 	public final fun getBrand ()Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ColorScale;
-	public final fun getChatPollProgressFillOutgoing-0d7_KjU ()J
-	public final fun getChatReplyIndicatorIncoming-0d7_KjU ()J
-	public final fun getChatReplyIndicatorOutgoing-0d7_KjU ()J
 	public final fun getChrome ()Lio/getstream/chat/android/compose/ui/theme/StreamDesign$ChromeScale;
 	public final fun getControlPlaybackThumbBgDefault-0d7_KjU ()J
 	public final fun getSkeletonLoadingBase-0d7_KjU ()J
