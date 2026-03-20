@@ -36,16 +36,16 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
  * @param notificationConfig A notification config to be used by the client.
  */
 @Suppress("LongParameterList")
-public class ChatApiConfig @JvmOverloads constructor(
-    public val apiKey: String,
-    public var httpUrl: String,
-    public var cdnHttpUrl: String,
-    public var wssUrl: String,
-    public val warmUp: Boolean,
-    public val loggerConfig: ChatLoggerConfig,
-    public var distinctApiCalls: Boolean = true,
-    public val debugRequests: Boolean,
-    public val notificationConfig: NotificationConfig,
+internal class ChatApiConfig @JvmOverloads constructor(
+    val apiKey: String,
+    var httpUrl: String,
+    var cdnHttpUrl: String,
+    var wssUrl: String,
+    val warmUp: Boolean,
+    val loggerConfig: ChatLoggerConfig,
+    var distinctApiCalls: Boolean = true,
+    val debugRequests: Boolean,
+    val notificationConfig: NotificationConfig,
 ) {
-    public var isAnonymous: Boolean = false
+    var isAnonymous: Boolean = false
 }

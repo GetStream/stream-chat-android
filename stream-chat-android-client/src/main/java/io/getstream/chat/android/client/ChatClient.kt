@@ -267,7 +267,7 @@ import kotlin.time.Duration.Companion.days
 public class ChatClient
 @Suppress("LongParameterList")
 internal constructor(
-    public val config: ChatApiConfig,
+    internal val config: ChatApiConfig,
     private val api: ChatApi,
     private val dtoMapping: DtoMapping,
     private val notifications: ChatNotifications,

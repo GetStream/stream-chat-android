@@ -43,10 +43,14 @@ object ChatHelper {
 
     private const val TAG = "ChatHelper"
 
+    var apiKey: String = ""
+        private set
+
     /**
      * Initializes the SDK with the given API key.
      */
     fun initializeSdk(context: Context, apiKey: String, baseUrl: String? = null) {
+        this.apiKey = apiKey
         Log.d(TAG, "[init] apiKey: $apiKey")
         val notificationConfig = NotificationConfig(
             pushDeviceGenerators = listOf(
