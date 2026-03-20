@@ -75,8 +75,8 @@ public object StreamDesign {
      * @param backgroundCoreSurfaceCard Card surface backgrounds (e.g. link previews, attachments).
      * @param backgroundCoreInverse Inverse background for elevated, transient, or high-attention UI
      * surfaces that sit on top of the default app background.
-     * @param backgroundCoreOnAccent Surfaces that must remain white across themes
-     * (e.g., media controls over video). Do not use for general UI surfaces.
+     * @param backgroundCoreOnAccent Base surface for accent content (e.g., media controls over video).
+     * Follows `chrome.s0` polarity: white in light, black in dark. Do not use for general UI surfaces.
      * @param backgroundCoreScrim Dimmed overlay for modals.
      * @param backgroundCoreOverlayDark Selected overlay (dark variant).
      * @param backgroundCoreOverlayLight Selected overlay (light variant).
