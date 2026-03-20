@@ -80,7 +80,7 @@ internal class MessageComposerViewModelTest {
 
         val messageComposerState = viewModel.messageComposerState.value
         messageComposerState.inputValue `should be equal to` "Message text"
-        viewModel.input.value `should be equal to` "Message text"
+        viewModel.messageInput.value.text `should be equal to` "Message text"
     }
 
     @Test
@@ -111,7 +111,7 @@ internal class MessageComposerViewModelTest {
                 isRetrying = eq(false),
             )
             captor.firstValue.text `should be equal to` "Message text"
-            viewModel.input.value `should be equal to` ""
+            viewModel.messageInput.value.text `should be equal to` ""
         }
 
     @Test
@@ -313,7 +313,7 @@ internal class MessageComposerViewModelTest {
             viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 0
             viewModel.commandSuggestions.value.size `should be equal to` 0
             viewModel.messageComposerState.value.inputValue `should be equal to` "/giphy "
-            viewModel.input.value `should be equal to` "/giphy "
+            viewModel.messageInput.value.text `should be equal to` "/giphy "
         }
 
     @Test
@@ -353,7 +353,7 @@ internal class MessageComposerViewModelTest {
 
             viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 0
             viewModel.mentionSuggestions.value.size `should be equal to` 0
-            viewModel.input.value `should be equal to` "@Jc Miñarro "
+            viewModel.messageInput.value.text `should be equal to` "@Jc Miñarro "
         }
 
     private class Fixture(

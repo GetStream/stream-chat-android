@@ -17,6 +17,6 @@
 <resources>
 
     <style name="AppTheme" parent="AppTheme.Base">
-        <item name="android:windowBackground">@color/stream_compose_bars_background_dark</item>
+        <item name="android:windowBackground">#121416</item>
     </style>
 </resources>
