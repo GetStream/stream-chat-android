@@ -449,11 +449,14 @@ public object StreamDesign {
             /**
              * Provides the default colors for the light mode of the app.
              *
+             * @param brand The brand color scale. Defaults to [ColorScale.defaultLight].
+             * @param chrome The chrome color scale. Defaults to [ChromeScale.defaultLight].
              * @return A [Colors] instance holding our color palette.
              */
-            public fun default(): Colors {
-                val brand = ColorScale.defaultLight()
-                val chrome = ChromeScale.defaultLight()
+            public fun default(
+                brand: ColorScale = ColorScale.defaultLight(),
+                chrome: ChromeScale = ChromeScale.defaultLight(),
+            ): Colors {
                 return Colors(
                     brand = brand,
                     chrome = chrome,
@@ -525,11 +528,14 @@ public object StreamDesign {
             /**
              * Provides the default colors for the dark mode of the app.
              *
+             * @param brand The brand color scale. Defaults to [ColorScale.defaultDark].
+             * @param chrome The chrome color scale. Defaults to [ChromeScale.defaultDark].
              * @return A [Colors] instance holding our color palette.
              */
-            public fun defaultDark(): Colors {
-                val brand = ColorScale.defaultDark()
-                val chrome = ChromeScale.defaultDark()
+            public fun defaultDark(
+                brand: ColorScale = ColorScale.defaultDark(),
+                chrome: ChromeScale = ChromeScale.defaultDark(),
+            ): Colors {
                 return Colors(
                     brand = brand,
                     chrome = chrome,
