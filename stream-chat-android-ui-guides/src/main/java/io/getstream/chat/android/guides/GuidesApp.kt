@@ -18,7 +18,7 @@ package io.getstream.chat.android.guides
 
 import android.app.Application
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.StateConfig
+import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 
@@ -27,13 +27,12 @@ class GuidesApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val stateConfig = StateConfig(
-            backgroundSyncEnabled = false,
+        val chatClientConfig = ChatClientConfig(
             userPresence = true,
         )
 
         ChatClient.Builder("qx5us2v6xvmh", this)
-            .stateConfig(stateConfig)
+            .config(chatClientConfig)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .logLevel(ChatLogLevel.NOTHING)
             .build()

@@ -49,7 +49,7 @@ import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestio
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.UserSuggestionList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
-import io.getstream.chat.android.compose.ui.theme.LocalChatConfig
+import io.getstream.chat.android.compose.ui.theme.LocalChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.MessageComposerInputParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerLeadingContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerParams
@@ -472,7 +472,7 @@ private fun MessageComposerFloatingStylePreview() {
 @Composable
 internal fun MessageComposerFloatingStyle() {
     val config = ChatTheme.config.copy(composer = ComposerConfig(floatingStyleEnabled = true))
-    CompositionLocalProvider(LocalChatConfig provides config) {
+    CompositionLocalProvider(LocalChatUiConfig provides config) {
         MessageComposer(
             messageComposerState = PreviewMessageComposerState,
             onSendMessage = { _, _ -> },
@@ -491,7 +491,7 @@ private fun MessageComposerFloatingStyleWithVisibleAttachmentPickerPreview() {
 @Composable
 internal fun MessageComposerFloatingStyleWithVisibleAttachmentPicker() {
     val config = ChatTheme.config.copy(composer = ComposerConfig(floatingStyleEnabled = true))
-    CompositionLocalProvider(LocalChatConfig provides config) {
+    CompositionLocalProvider(LocalChatUiConfig provides config) {
         MessageComposer(
             messageComposerState = PreviewMessageComposerState,
             isAttachmentPickerVisible = true,
@@ -511,7 +511,7 @@ private fun MessageComposerFloatingStyleWithUserSuggestionsPreview() {
 @Composable
 internal fun MessageComposerFloatingStyleWithUserSuggestions() {
     val config = ChatTheme.config.copy(composer = ComposerConfig(floatingStyleEnabled = true))
-    CompositionLocalProvider(LocalChatConfig provides config) {
+    CompositionLocalProvider(LocalChatUiConfig provides config) {
         MessageComposer(
             messageComposerState = PreviewMessageComposerState.copy(
                 currentUser = PreviewUserData.userWithOnlineStatus,
@@ -538,7 +538,7 @@ private fun MessageComposerFloatingStyleWithCommandSuggestionsPreview() {
 @Composable
 internal fun MessageComposerFloatingStyleWithCommandSuggestions() {
     val config = ChatTheme.config.copy(composer = ComposerConfig(floatingStyleEnabled = true))
-    CompositionLocalProvider(LocalChatConfig provides config) {
+    CompositionLocalProvider(LocalChatUiConfig provides config) {
         MessageComposer(
             messageComposerState = PreviewMessageComposerState.copy(
                 inputValue = "/",
