@@ -18,7 +18,7 @@ package io.getstream.chat.android.client
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.testing.TestLifecycleOwner
-import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.ChatApiConfig
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.clientstate.UserStateService
@@ -97,7 +97,7 @@ internal class ChatClientTest {
     fun setUp() {
         val apiKey = "api-key"
         val wssUrl = "socket.url"
-        val config = ChatClientConfig(
+        val config = ChatApiConfig(
             apiKey = apiKey,
             httpUrl = "hello.http",
             cdnHttpUrl = "cdn.http",

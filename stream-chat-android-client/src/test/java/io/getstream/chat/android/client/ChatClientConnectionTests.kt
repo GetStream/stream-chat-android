@@ -18,7 +18,7 @@ package io.getstream.chat.android.client
 
 import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.ChatApiConfig
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -89,7 +89,7 @@ internal class ChatClientConnectionTests {
     private val anonUser = User(id = anonId)
     private val mutableClientState: MutableClientState = MutableClientState(mock())
     private val streamDateFormatter = StreamDateFormatter()
-    private val config = mock<ChatClientConfig>()
+    private val config = mock<ChatApiConfig>()
     private val userCredentialStorage = mock<UserCredentialStorage>()
 
     @BeforeEach

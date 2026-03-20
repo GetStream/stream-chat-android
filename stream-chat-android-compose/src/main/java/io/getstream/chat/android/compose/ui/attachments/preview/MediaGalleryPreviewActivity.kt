@@ -57,8 +57,8 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.SaveMedia
 import io.getstream.chat.android.compose.state.mediagallerypreview.ShowInChat
 import io.getstream.chat.android.compose.state.mediagallerypreview.toMediaGalleryPreviewActivityState
 import io.getstream.chat.android.compose.state.mediagallerypreview.toMessage
-import io.getstream.chat.android.compose.ui.theme.ChatConfig
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.MediaGalleryConfig
 import io.getstream.chat.android.compose.ui.theme.MessageListConfig
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
@@ -156,7 +156,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
         setContent {
             ChatTheme(
-                config = ChatConfig(
+                config = ChatUiConfig(
                     messageList = MessageListConfig(
                         videoThumbnailsEnabled = videoThumbnailsEnabled,
                     ),

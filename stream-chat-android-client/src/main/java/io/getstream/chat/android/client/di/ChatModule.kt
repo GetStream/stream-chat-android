@@ -25,7 +25,7 @@ import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.api.AnonymousApi
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.ChatApiConfig
 import io.getstream.chat.android.client.api.ProxyChatApi
 import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
 import io.getstream.chat.android.client.api.RetrofitCdnApi
@@ -123,7 +123,7 @@ constructor(
     private val appContext: Context,
     private val clientScope: ClientScope,
     private val userScope: UserScope,
-    private val config: ChatClientConfig,
+    private val config: ChatApiConfig,
     private val notificationsHandler: NotificationHandler?,
     private val apiModelTransformers: ApiModelTransformers,
     private val fileTransformer: FileTransformer,
@@ -226,7 +226,7 @@ constructor(
     private fun buildRetrofit(
         endpoint: String,
         timeout: Long,
-        config: ChatClientConfig,
+        config: ChatApiConfig,
         parser: ChatParser,
         isAnonymousApi: Boolean,
     ): Retrofit {
@@ -274,7 +274,7 @@ constructor(
 
     private fun clientBuilder(
         timeout: Long,
-        config: ChatClientConfig,
+        config: ChatApiConfig,
         parser: ChatParser,
         isAnonymousApi: Boolean,
     ): OkHttpClient.Builder {
@@ -293,14 +293,14 @@ constructor(
     }
 
     private fun getAnonymousProvider(
-        config: ChatClientConfig,
+        config: ChatApiConfig,
         isAnonymousApi: Boolean,
     ): () -> Boolean {
         return { isAnonymousApi || config.isAnonymous }
     }
 
     private fun buildChatSocket(
-        chatConfig: ChatClientConfig,
+        chatConfig: ChatApiConfig,
     ) = ChatSocket(
         chatConfig.apiKey,
         chatConfig.wssUrl,
@@ -312,7 +312,7 @@ constructor(
         clientDebugger,
     )
 
-    private fun buildApi(chatConfig: ChatClientConfig): ChatApi = ProxyChatApi(
+    private fun buildApi(chatConfig: ChatApiConfig): ChatApi = ProxyChatApi(
         delegate = MoshiChatApi(
             domainMapping = domainMapping,
             eventMapping = eventMapping,

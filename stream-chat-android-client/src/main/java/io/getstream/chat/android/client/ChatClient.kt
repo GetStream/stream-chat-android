@@ -28,10 +28,9 @@ import androidx.media3.common.C.AUDIO_CONTENT_TYPE_MUSIC
 import androidx.media3.exoplayer.ExoPlayer
 import io.getstream.chat.android.client.ChatClient.Companion.MAX_COOLDOWN_TIME_SECONDS
 import io.getstream.chat.android.client.api.ChatApi
+import io.getstream.chat.android.client.api.ChatApiConfig
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
-import io.getstream.chat.android.client.api.OfflineConfig
-import io.getstream.chat.android.client.api.StateConfig
 import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -268,7 +267,7 @@ import kotlin.time.Duration.Companion.days
 public class ChatClient
 @Suppress("LongParameterList")
 internal constructor(
-    public val config: ChatClientConfig,
+    internal val config: ChatApiConfig,
     private val api: ChatApi,
     private val dtoMapping: DtoMapping,
     private val notifications: ChatNotifications,
@@ -4605,8 +4604,7 @@ internal constructor(
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
         private var distinctApiCalls: Boolean = true
         private var debugRequests: Boolean = false
-        private var offlineConfig: OfflineConfig = OfflineConfig()
-        private var stateConfig: StateConfig = StateConfig()
+        private var chatClientConfig: ChatClientConfig = ChatClientConfig()
         private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.CONNECTED
         private var fileTransformer: FileTransformer = NoOpFileTransformer
         private var apiModelTransformers: ApiModelTransformers = ApiModelTransformers()
@@ -4827,21 +4825,12 @@ internal constructor(
         }
 
         /**
-         * Configures the offline support for the ChatClient.
+         * Specifies the client configuration.
          *
-         * @param offlineConfig The offline configuration to be used.
+         * @param config The [ChatClientConfig] to be used.
          */
-        public fun offlineConfig(offlineConfig: OfflineConfig): Builder = apply {
-            this.offlineConfig = offlineConfig
-        }
-
-        /**
-         * Specifies the state management configuration.
-         *
-         * @param config The state configuration to be used.
-         */
-        public fun stateConfig(config: StateConfig): Builder = apply {
-            stateConfig = config
+        public fun config(config: ChatClientConfig): Builder = apply {
+            chatClientConfig = config
         }
 
         /**
@@ -4924,7 +4913,7 @@ internal constructor(
             val wsProtocol = if (isInsecureConnection) "ws" else "wss"
             val lifecycle = ProcessLifecycleOwner.get().lifecycle
 
-            val config = ChatClientConfig(
+            val config = ChatApiConfig(
                 apiKey = apiKey,
                 httpUrl = forceHttpUrl ?: "$httpProtocol://$baseUrl/",
                 cdnHttpUrl = "$httpProtocol://${cdnUrl ?: baseUrl}/",
@@ -4985,8 +4974,7 @@ internal constructor(
             val repository = ChatClientRepository.from(database)
 
             val allPluginFactories = setupPluginFactories(
-                offlineConfig = offlineConfig,
-                stateConfig = stateConfig,
+                chatClientConfig = chatClientConfig,
             )
 
             return ChatClient(
@@ -5034,18 +5022,17 @@ internal constructor(
         }
 
         private fun setupPluginFactories(
-            offlineConfig: OfflineConfig,
-            stateConfig: StateConfig,
+            chatClientConfig: ChatClientConfig,
         ): List<PluginFactory> {
             return buildList {
                 // Mandatory plugins first
                 add(ThrottlingPluginFactory)
                 add(MessageDeliveredPluginFactory)
                 // State plugin
-                add(StreamStatePluginFactory(stateConfig, appContext))
+                add(StreamStatePluginFactory(chatClientConfig, appContext))
                 // Offline plugin (if enabled)
-                if (offlineConfig.enabled) {
-                    add(StreamOfflinePluginFactory(appContext, offlineConfig.ignoredChannelTypes))
+                if (chatClientConfig.offlineEnabled) {
+                    add(StreamOfflinePluginFactory(appContext, chatClientConfig.ignoredOfflineChannelTypes))
                 }
             }
         }

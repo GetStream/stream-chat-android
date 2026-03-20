@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client
 
-import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.ChatApiConfig
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.attachment.AttachmentsSender
@@ -82,7 +82,7 @@ internal class MockClientBuilder(
     lateinit var attachmentSender: AttachmentsSender
 
     fun build(): ChatClient {
-        val config = ChatClientConfig(
+        val config = ChatApiConfig(
             apiKey,
             "hello.http",
             "cdn.http",
