@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.internal.state.event.handler.internal.Ev
 import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
-import io.getstream.chat.android.client.internal.state.sync.internal.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.client.internal.state.sync.internal.SyncManager
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
@@ -155,12 +154,6 @@ public class StreamStatePluginFactory(
             syncedEvents = syncManager.syncedEvents,
             sideEffect = syncManager::awaitSyncing,
         )
-
-        if (config.backgroundSyncEnabled) {
-            chatClient.setPushNotificationReceivedListener { channelType, channelId ->
-                OfflineSyncFirebaseMessagingHandler().syncMessages(appContext, "$channelType:$channelId")
-            }
-        }
 
         val stateErrorHandlerFactory = StateErrorHandlerFactory(
             scope = scope,

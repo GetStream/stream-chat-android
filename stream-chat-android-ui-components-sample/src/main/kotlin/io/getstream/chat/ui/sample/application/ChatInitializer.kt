@@ -95,7 +95,6 @@ class ChatInitializer(
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
         val chatClientConfig = ChatClientConfig(
-            backgroundSyncEnabled = false,
             userPresence = true,
             useLegacyChannelLogic = false,
         )

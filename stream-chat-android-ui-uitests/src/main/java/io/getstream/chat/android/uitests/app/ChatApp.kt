@@ -28,7 +28,6 @@ class ChatApp : Application() {
         super.onCreate()
 
         val chatClientConfig = ChatClientConfig(
-            backgroundSyncEnabled = false,
             userPresence = true,
         )
 

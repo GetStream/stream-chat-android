@@ -85,7 +85,6 @@ object ChatHelper {
         )
 
         val chatClientConfig = ChatClientConfig(
-            backgroundSyncEnabled = false,
             userPresence = true,
             useLegacyChannelLogic = false,
         )

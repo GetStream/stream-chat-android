@@ -23,12 +23,6 @@ import io.getstream.chat.android.models.TimeDuration
 /**
  * Provides a configuration for the [ChatClient] behavior.
  *
- * @param backgroundSyncEnabled Controls whether the SDK performs background synchronization when push notifications
- * are received. When enabled (default: `true`), the SDK automatically syncs messages in the background when a push
- * notification arrives, ensuring the local state/database stays up-to-date even when the app is in the background.
- * This is particularly useful for displaying accurate notification content and maintaining
- * offline state consistency. Disable this if you want to reduce background processing.
- *
  * @param userPresence Controls whether the SDK subscribes to and processes user presence events (online/offline status,
  * last active time). When enabled (default: `true`), the SDK receives real-time updates about user presence changes
  * and updates the user objects in channels, members, and watchers accordingly. This affects both WebSocket event
@@ -87,13 +81,6 @@ import io.getstream.chat.android.models.TimeDuration
  *   an empty set.
  */
 public data class ChatClientConfig @JvmOverloads constructor(
-    @Deprecated(
-        "The background sync on push notification is no longer needed to keep the state in sync and " +
-            "will be removed in the future. If you are using the default UI components, or building your own UI " +
-            "using [ChatClient.queryChannelsAsState] / [ChatClient.watchChannelAsState], the state will always be " +
-            "up-to-date. We recommend disabling it to avoid unnecessary background work.",
-    )
-    public val backgroundSyncEnabled: Boolean = true,
     public val offlineEnabled: Boolean = true,
     public val ignoredOfflineChannelTypes: Set<String> = emptySet(),
     public val userPresence: Boolean = true,
