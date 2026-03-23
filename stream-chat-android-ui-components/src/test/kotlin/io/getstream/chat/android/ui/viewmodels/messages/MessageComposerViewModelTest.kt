@@ -201,7 +201,6 @@ internal class MessageComposerViewModelTest {
 
         val messageComposerState = viewModel.messageComposerState.value
         messageComposerState.messageMode `should be instance of` MessageMode.MessageThread::class
-        viewModel.messageMode.value `should be instance of` MessageMode.MessageThread::class
     }
 
     @Test
@@ -217,7 +216,6 @@ internal class MessageComposerViewModelTest {
 
         val messageComposerState = viewModel.messageComposerState.value
         messageComposerState.messageMode `should be instance of` MessageMode.Normal::class
-        viewModel.messageMode.value `should be instance of` MessageMode.Normal::class
     }
 
     @Test
@@ -265,7 +263,7 @@ internal class MessageComposerViewModelTest {
             .givenChannelState(channelData)
             .get()
 
-        val ownCapabilities = viewModel.ownCapabilities.value
+        val ownCapabilities = viewModel.messageComposerState.value.ownCapabilities
         ownCapabilities.size `should be equal to` 3
     }
 
@@ -280,7 +278,6 @@ internal class MessageComposerViewModelTest {
         viewModel.setMessageInput("/")
 
         viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 1
-        viewModel.commandSuggestions.value.size `should be equal to` 1
     }
 
     @Test
@@ -295,7 +292,6 @@ internal class MessageComposerViewModelTest {
         viewModel.setMessageInput("")
 
         viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 0
-        viewModel.commandSuggestions.value.size `should be equal to` 0
     }
 
     @Test
@@ -308,10 +304,9 @@ internal class MessageComposerViewModelTest {
                 .get()
 
             viewModel.toggleCommandsVisibility()
-            viewModel.selectCommand(viewModel.commandSuggestions.value.first())
+            viewModel.selectCommand(viewModel.messageComposerState.value.commandSuggestions.first())
 
             viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 0
-            viewModel.commandSuggestions.value.size `should be equal to` 0
             viewModel.messageComposerState.value.inputValue `should be equal to` "/giphy "
             viewModel.messageInput.value.text `should be equal to` "/giphy "
         }
@@ -331,7 +326,6 @@ internal class MessageComposerViewModelTest {
             advanceUntilIdle()
 
             viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 2
-            viewModel.mentionSuggestions.value.size `should be equal to` 2
         }
 
     @Test
@@ -348,11 +342,10 @@ internal class MessageComposerViewModelTest {
             viewModel.setMessageInput("@")
             advanceUntilIdle()
 
-            viewModel.selectMention(viewModel.mentionSuggestions.value.first())
+            viewModel.selectMention(viewModel.messageComposerState.value.mentionSuggestions.first())
             advanceUntilIdle()
 
             viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 0
-            viewModel.mentionSuggestions.value.size `should be equal to` 0
             viewModel.messageInput.value.text `should be equal to` "@Jc Miñarro "
         }
 
