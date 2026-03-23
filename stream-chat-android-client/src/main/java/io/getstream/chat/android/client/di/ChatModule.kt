@@ -83,6 +83,7 @@ import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
 import io.getstream.chat.android.client.user.CurrentUserFetcher
 import io.getstream.chat.android.client.utils.HeadersUtil
+import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.models.UserId
 import io.getstream.log.StreamLog
 import okhttp3.Interceptor
@@ -116,6 +117,7 @@ import java.util.concurrent.TimeUnit
  * @param lifecycle Host [Lifecycle] used to observe app foreground/background and manage socket behavior.
  * @param appName Optional app name added to default headers for tracking.
  * @param appVersion Optional app version added to default headers for tracking.
+ * @param serverClockOffset Shared clock-offset tracker used by the socket layer for time synchronisation.
  */
 @Suppress("TooManyFunctions")
 internal class ChatModule
@@ -137,6 +139,7 @@ constructor(
     private val lifecycle: Lifecycle,
     private val appName: String?,
     private val appVersion: String?,
+    private val serverClockOffset: ServerClockOffset,
 ) {
 
     private val headersUtil = HeadersUtil(appContext, appName, appVersion)
@@ -311,6 +314,7 @@ constructor(
         lifecycleObserver,
         networkStateProvider,
         clientDebugger,
+        serverClockOffset,
     )
 
     private fun buildApi(chatConfig: ChatClientConfig): ChatApi = ProxyChatApi(
