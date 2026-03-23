@@ -33,7 +33,6 @@ import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewAction
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.viewmodel.channel.ChannelAttachmentsViewModel
@@ -49,7 +48,7 @@ class ChatInfoSharedMediaFragment : Fragment() {
         ChannelAttachmentsViewModelFactory(
             cid = args.cid!!,
             attachmentTypes = listOf(AttachmentType.IMAGE, AttachmentType.VIDEO),
-            localFilter = { !it.imagePreviewUrl.isNullOrEmpty() && it.titleLink.isNullOrEmpty() },
+            localFilter = { !(it.imageUrl ?: it.thumbUrl).isNullOrEmpty() && it.titleLink.isNullOrEmpty() },
         )
     }
 

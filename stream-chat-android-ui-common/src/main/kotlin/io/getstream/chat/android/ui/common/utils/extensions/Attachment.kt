@@ -24,5 +24,11 @@ public fun Attachment.getDisplayableName(): String? {
     return StringUtils.removeTimePrefix(title ?: name ?: upload?.name, StorageHelper.TIME_FORMAT)
 }
 
+@Deprecated(
+    message = "Use the appropriate field for your attachment type: " +
+        "imageUrl for image attachments, " +
+        "thumbUrl for video thumbnails and link/giphy previews.",
+    level = DeprecationLevel.WARNING,
+)
 public val Attachment.imagePreviewUrl: String?
     get() = thumbUrl ?: imageUrl

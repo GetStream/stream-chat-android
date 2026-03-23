@@ -25,7 +25,6 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewController
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.onErrorSuspend
@@ -81,7 +80,10 @@ internal class ChannelMediaAttachmentsPreviewViewModel(
     }
 
     private fun startSharing(attachment: Attachment) {
-        logger.d { "[startSharing] mimeType: ${attachment.mimeType}, attachment: ${attachment.imagePreviewUrl}" }
+        logger.d {
+            "[startSharing] mimeType: ${attachment.mimeType}, imageUrl: ${attachment.imageUrl}, " +
+                "thumbUrl: ${attachment.thumbUrl}"
+        }
         if (attachment.fileSize >= AttachmentConstants.MAX_SIZE_BEFORE_DOWNLOAD_WARNING_IN_BYTES) {
             logger.d {
                 "[startSharing] Attachment larger than " +
@@ -111,7 +113,10 @@ internal class ChannelMediaAttachmentsPreviewViewModel(
     }
 
     private fun share(attachment: Attachment) {
-        logger.d { "[share] mimeType: ${attachment.mimeType}, attachment: ${attachment.imagePreviewUrl}" }
+        logger.d {
+            "[share] mimeType: ${attachment.mimeType}, imageUrl: ${attachment.imageUrl}, " +
+                "thumbUrl: ${attachment.thumbUrl}"
+        }
         _state.update { currentState ->
             currentState.copy(
                 isPreparingToShare = true,

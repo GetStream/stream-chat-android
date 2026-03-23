@@ -23,7 +23,6 @@ import io.getstream.chat.android.ui.common.state.messages.list.CancelGiphy
 import io.getstream.chat.android.ui.common.state.messages.list.SendGiphy
 import io.getstream.chat.android.ui.common.state.messages.list.ShuffleGiphy
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.common.utils.giphyInfo
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageGiphyBinding
 import io.getstream.chat.android.ui.feature.messages.list.GiphyViewHolderStyle
@@ -74,7 +73,7 @@ public class GiphyViewHolder internal constructor(
             .firstOrNull()
             ?.let {
                 val url = it.giphyInfo(GiphyInfoType.FIXED_HEIGHT)?.url ?: it.let {
-                    it.imagePreviewUrl ?: it.titleLink ?: it.ogUrl
+                    it.thumbUrl ?: it.titleLink ?: it.ogUrl
                 } ?: return
 
                 binding.giphyPreview.load(

@@ -22,20 +22,26 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 
 /**
  * This property checks if the attachment is an image or a video with enabled thumbnails.
- * If so, it returns the image preview URL (applied with Stream CDN image resizing if enabled)
+ * If so, it returns the appropriate URL (applied with Stream CDN image resizing if enabled)
  * or the upload [java.io.File] object.
  * Otherwise, it returns null.
+ *
+ * For image attachments, [Attachment.imageUrl] is used.
+ * For video attachments when thumbnails are enabled, [Attachment.thumbUrl] is used.
  */
 @get:Composable
 internal val Attachment.imagePreviewData: Any?
-    get() = if (isImage() || (isVideo() && ChatTheme.videoThumbnailsEnabled)) {
-        imagePreviewUrl
-            ?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
-            ?: upload
-    } else {
-        null
+    get() = when {
+        isImage() ->
+            imageUrl
+                ?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
+                ?: upload
+        isVideo() && ChatTheme.videoThumbnailsEnabled ->
+            thumbUrl
+                ?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
+                ?: upload
+        else -> null
     }

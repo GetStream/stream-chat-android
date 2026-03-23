@@ -24,7 +24,6 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader.ImageTransformation.RoundedCorners
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.databinding.StreamUiLinkAttachmentsViewBinding
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.font.TextStyle
@@ -121,11 +120,12 @@ internal class LinkAttachmentView : FrameLayout {
      * Shows the attachment preview image if it is not null.
      */
     private fun showAttachmentImage(attachment: Attachment) {
-        if (attachment.imagePreviewUrl != null) {
+        val linkPreviewUrl = attachment.thumbUrl ?: attachment.imageUrl
+        if (linkPreviewUrl != null) {
             binding.linkPreviewContainer.isVisible = true
 
             binding.linkPreviewImageView.load(
-                data = attachment.imagePreviewUrl,
+                data = linkPreviewUrl,
                 placeholderResId = R.drawable.stream_ui_picture_placeholder,
                 onStart = { binding.progressBar.isVisible = true },
                 onComplete = { binding.progressBar.isVisible = false },

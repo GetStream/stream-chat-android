@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.databinding.StreamUiItemMediaAttachmentBinding
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.feature.gallery.MediaAttachmentGridViewStyle
@@ -94,14 +93,17 @@ internal class MediaAttachmentAdapter(
             val shouldLoadImage = attachmentGalleryItem.attachment.isImage() ||
                 (attachmentGalleryItem.attachment.isVideo() && ChatUI.videoThumbnailsEnabled)
 
+            val imageData = if (shouldLoadImage) {
+                val attachment = attachmentGalleryItem.attachment
+                val url = if (attachment.isImage()) attachment.imageUrl else attachment.thumbUrl
+                url?.applyStreamCdnImageResizingIfEnabled(
+                    streamCdnImageResizing = ChatUI.streamCdnImageResizing,
+                )
+            } else {
+                null
+            }
             binding.mediaImageView.load(
-                data = if (shouldLoadImage) {
-                    attachmentGalleryItem.attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(
-                        streamCdnImageResizing = ChatUI.streamCdnImageResizing,
-                    )
-                } else {
-                    null
-                },
+                data = imageData,
                 placeholderDrawable = if (!isVideoAttachment) {
                     style.imagePlaceholder
                 } else {
@@ -186,7 +188,8 @@ internal class MediaAttachmentAdapter(
 
     private object AttachmentGalleryItemDiffCallback : DiffUtil.ItemCallback<AttachmentGalleryItem>() {
         override fun areItemsTheSame(oldItem: AttachmentGalleryItem, newItem: AttachmentGalleryItem): Boolean {
-            return oldItem.attachment.imagePreviewUrl == newItem.attachment.imagePreviewUrl &&
+            return (oldItem.attachment.imageUrl ?: oldItem.attachment.thumbUrl) ==
+                (newItem.attachment.imageUrl ?: newItem.attachment.thumbUrl) &&
                 oldItem.createdAt == newItem.createdAt
         }
 

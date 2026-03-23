@@ -28,7 +28,6 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.GiphyInfo
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
 import io.getstream.chat.android.ui.common.utils.GiphySizingMode
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.common.utils.giphyInfo
 import io.getstream.chat.android.ui.databinding.StreamUiGiphyMediaAttachmentViewBinding
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.GiphyMediaAttachmentViewStyle
@@ -96,7 +95,7 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
         val giphyInfo = attachment.giphyInfo(giphyType)
 
         val url = giphyInfo?.url ?: attachment.let {
-            it.imagePreviewUrl ?: it.titleLink ?: it.ogUrl
+            it.thumbUrl ?: it.titleLink ?: it.ogUrl
         } ?: return
 
         if (style.sizingMode == GiphySizingMode.ADAPTIVE) {

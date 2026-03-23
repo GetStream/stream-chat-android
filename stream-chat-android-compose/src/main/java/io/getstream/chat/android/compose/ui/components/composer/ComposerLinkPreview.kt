@@ -60,7 +60,6 @@ import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.LinkPreview
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.uiutils.extension.addSchemeToUrlIfNeeded
 import io.getstream.log.StreamLog
 
@@ -133,14 +132,14 @@ public fun ComposerLinkPreview(
 
 @Composable
 private fun ComposerLinkImagePreview(attachment: Attachment) {
-    val imagePreviewUrl = attachment.imagePreviewUrl ?: return
+    val linkPreviewUrl = attachment.thumbUrl ?: attachment.imageUrl ?: return
     val theme = ChatTheme.messageComposerTheme.linkPreview
     Box(
         modifier = Modifier.padding(theme.imagePadding),
         contentAlignment = Alignment.Center,
     ) {
         StreamAsyncImage(
-            data = imagePreviewUrl,
+            data = linkPreviewUrl,
             modifier = Modifier
                 .height(theme.imageSize.height)
                 .width(theme.imageSize.width)
