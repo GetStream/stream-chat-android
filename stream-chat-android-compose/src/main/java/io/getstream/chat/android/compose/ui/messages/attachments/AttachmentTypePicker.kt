@@ -139,7 +139,7 @@ private fun AttachmentPickerToggleButton(
         colors = IconButtonDefaults.filledIconToggleButtonColors(
             containerColor = Color.Transparent,
             contentColor = ChatTheme.colors.buttonSecondaryText,
-            checkedContainerColor = ChatTheme.colors.backgroundCoreSelected,
+            checkedContainerColor = ChatTheme.colors.backgroundUtilitySelected,
             checkedContentColor = ChatTheme.colors.buttonSecondaryText,
         ),
     ) {

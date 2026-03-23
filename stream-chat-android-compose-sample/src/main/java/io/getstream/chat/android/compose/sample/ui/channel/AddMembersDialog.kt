@@ -105,7 +105,7 @@ fun AddMembersDialog(
                 Text(text = stringResource(id = io.getstream.chat.android.compose.R.string.stream_compose_cancel))
             }
         },
-        containerColor = ChatTheme.colors.backgroundElevationElevation1,
+        containerColor = ChatTheme.colors.backgroundCoreElevation1,
     )
     LaunchedEffect(viewModel) {
         viewModel.events.collectLatest { event ->
@@ -201,7 +201,7 @@ private fun SearchResultItem(
             exit = shrinkOut(targetSize = { fullSize -> fullSize }) + fadeOut(),
         ) {
             Icon(
-                modifier = Modifier.background(ChatTheme.colors.backgroundElevationElevation1, CircleShape),
+                modifier = Modifier.background(ChatTheme.colors.backgroundCoreElevation1, CircleShape),
                 tint = ChatTheme.colors.accentPrimary,
                 painter = painterResource(id = R.drawable.ic_check_filled),
                 contentDescription = null,

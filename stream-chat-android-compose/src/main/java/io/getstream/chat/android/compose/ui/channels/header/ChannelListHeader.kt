@@ -86,7 +86,7 @@ public fun ChannelListHeader(
     title: String = "",
     currentUser: User? = null,
     connectionState: ConnectionState,
-    color: Color = ChatTheme.colors.backgroundElevationElevation1,
+    color: Color = ChatTheme.colors.backgroundCoreElevation1,
     shape: Shape = RectangleShape,
     elevation: Dp = 0.dp,
     onAvatarClick: (User?) -> Unit = {},

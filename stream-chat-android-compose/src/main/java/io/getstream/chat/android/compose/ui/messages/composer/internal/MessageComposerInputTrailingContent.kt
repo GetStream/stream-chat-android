@@ -125,7 +125,7 @@ internal fun MessageComposerSendButton(
             .testTag("Stream_ComposerSendButton"),
         colors = IconButtonDefaults.filledIconButtonColors(
             containerColor = ChatTheme.colors.accentPrimary,
-            contentColor = ChatTheme.colors.textOnAccent,
+            contentColor = ChatTheme.colors.buttonPrimaryTextOnAccent,
         ),
         onClick = onClick,
     ) {
@@ -149,8 +149,8 @@ internal fun MessageComposerSaveButton(
             .testTag("Stream_ComposerSaveButton"),
         colors = IconButtonDefaults.filledIconButtonColors(
             containerColor = ChatTheme.colors.accentPrimary,
-            contentColor = ChatTheme.colors.textOnAccent,
-            disabledContainerColor = ChatTheme.colors.backgroundCoreDisabled,
+            contentColor = ChatTheme.colors.buttonPrimaryTextOnAccent,
+            disabledContainerColor = ChatTheme.colors.backgroundUtilityDisabled,
             disabledContentColor = ChatTheme.colors.textDisabled,
         ),
         onClick = onClick,

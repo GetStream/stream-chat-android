@@ -68,7 +68,7 @@ public fun PollQuestionInput(
                 .fillMaxWidth()
                 .border(
                     width = 1.dp,
-                    color = colors.inputBorderDefault,
+                    color = colors.borderCoreDefault,
                     shape = PollInputShape,
                 )
                 .clip(shape = PollInputShape)

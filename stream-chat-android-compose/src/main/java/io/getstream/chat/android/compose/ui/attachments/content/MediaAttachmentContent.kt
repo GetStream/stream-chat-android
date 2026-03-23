@@ -564,7 +564,7 @@ internal fun MediaAttachmentContentItem(
                         shape = CircleShape,
                     )
                     .background(
-                        color = ChatTheme.colors.backgroundElevationElevation0,
+                        color = ChatTheme.colors.backgroundCoreElevation0,
                         shape = CircleShape,
                     )
                     .padding(2.dp)

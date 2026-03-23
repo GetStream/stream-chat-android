@@ -51,7 +51,7 @@ internal object StreamButtonStyleDefaults {
                 containerColor = colors.buttonPrimaryBg,
                 contentColor = colors.buttonPrimaryTextOnAccent,
                 borderColor = null,
-                disabledContainerColor = colors.backgroundCoreDisabled,
+                disabledContainerColor = colors.backgroundUtilityDisabled,
                 disabledContentColor = colors.textDisabled,
                 disabledBorderColor = null,
             )
@@ -90,7 +90,7 @@ internal object StreamButtonStyleDefaults {
                 containerColor = colors.buttonSecondaryBg,
                 contentColor = colors.buttonSecondaryTextOnAccent,
                 borderColor = null,
-                disabledContainerColor = colors.backgroundCoreDisabled,
+                disabledContainerColor = colors.backgroundUtilityDisabled,
                 disabledContentColor = colors.textDisabled,
                 disabledBorderColor = null,
             )
@@ -129,7 +129,7 @@ internal object StreamButtonStyleDefaults {
                 containerColor = colors.buttonDestructiveBg,
                 contentColor = colors.buttonDestructiveTextOnAccent,
                 borderColor = null,
-                disabledContainerColor = colors.backgroundCoreDisabled,
+                disabledContainerColor = colors.backgroundUtilityDisabled,
                 disabledContentColor = colors.textDisabled,
                 disabledBorderColor = null,
             )

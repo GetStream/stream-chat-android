@@ -179,7 +179,7 @@ class ChannelsActivity : ComponentActivity() {
                     drawerContent = {
                         ModalDrawerSheet(
                             modifier = Modifier.width(300.dp),
-                            drawerContainerColor = ChatTheme.colors.backgroundElevationElevation1,
+                            drawerContainerColor = ChatTheme.colors.backgroundCoreElevation1,
                         ) {
                             ChannelsScreenNavigationDrawer(
                                 currentUser = user,

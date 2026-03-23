@@ -70,7 +70,7 @@ public fun SimpleMenu(
                     interactionSource = null,
                 ),
             shape = shape,
-            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundElevationElevation1),
+            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundCoreElevation1),
         ) {
             Column {
                 headerContent()

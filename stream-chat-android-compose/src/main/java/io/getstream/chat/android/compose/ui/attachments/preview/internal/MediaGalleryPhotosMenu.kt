@@ -105,7 +105,7 @@ internal fun MediaGalleryPhotosMenu(
                 .wrapContentHeight()
                 .align(Alignment.BottomCenter),
             shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-            color = ChatTheme.colors.backgroundElevationElevation1,
+            color = ChatTheme.colors.backgroundCoreElevation1,
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 MediaGalleryPhotosMenuHeader(onDismiss)
