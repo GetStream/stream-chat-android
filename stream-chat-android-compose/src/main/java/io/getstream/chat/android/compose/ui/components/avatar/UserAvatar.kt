@@ -94,7 +94,7 @@ internal fun BoxWithConstraintsScope.resolveIndicatorDimensions(): OnlineIndicat
             offset = base.offset,
         )
     }
-    maxWidth >= AvatarSize.ExtraExtraLarge -> OnlineIndicatorDimensions.ExtraLarge
+    maxWidth >= AvatarSize.ExtraExtraLarge -> OnlineIndicatorDimensions.ExtraExtraLarge
     maxWidth >= AvatarSize.ExtraLarge -> OnlineIndicatorDimensions.ExtraLarge
     maxWidth >= AvatarSize.Large -> OnlineIndicatorDimensions.Large
     maxWidth >= AvatarSize.Medium -> OnlineIndicatorDimensions.Medium
