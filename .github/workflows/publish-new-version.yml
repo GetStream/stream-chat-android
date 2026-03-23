@@ -11,6 +11,7 @@ on:
           - patch
           - minor
           - major
+          - none
         default: minor
       suffix:
         required: false
