@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://getstream.io/tutorials/android-chat/">
-    <img src="/docs/sdk-hero-android.png"/>
+    <img src="/docs/stream-chat-android-github-cover.png"/>
   </a>
 </p>
 
