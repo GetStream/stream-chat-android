@@ -48,6 +48,9 @@ import io.getstream.chat.android.compose.ui.attachments.preview.handler.Attachme
 import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
+import io.getstream.chat.android.compose.ui.theme.ChatTheme.autoTranslationEnabled
+import io.getstream.chat.android.compose.ui.theme.ChatTheme.isComposerLinkPreviewEnabled
+import io.getstream.chat.android.compose.ui.theme.ChatTheme.showOriginalTranslationEnabled
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
 import io.getstream.chat.android.compose.ui.util.DefaultPollSwitchItemFactory
 import io.getstream.chat.android.compose.ui.util.ImageHeadersInterceptor
@@ -73,6 +76,7 @@ import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.ReactionPushEmojiFactory
 import io.getstream.chat.android.ui.common.helper.TimeProvider
+import io.getstream.chat.android.ui.common.images.internal.CDNImageInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.model.UserPresence
 import io.getstream.chat.android.ui.common.permissions.SystemAttachmentsPickerConfig
@@ -449,14 +453,16 @@ public fun ChatTheme(
     }
 
     val context = LocalContext.current
-    val imageLoader = remember(imageLoaderFactory, asyncImageHeadersProvider) {
-        if (asyncImageHeadersProvider == null) {
+    val cdn = remember { ChatClient.instance().cdn }
+    val imageLoader = remember(imageLoaderFactory, asyncImageHeadersProvider, cdn) {
+        val interceptors = buildList {
+            asyncImageHeadersProvider?.let { add(ImageHeadersInterceptor(it)) }
+            cdn?.let { add(CDNImageInterceptor(it)) }
+        }
+        if (interceptors.isEmpty()) {
             imageLoaderFactory.imageLoader(context.applicationContext)
         } else {
-            imageLoaderFactory.imageLoader(
-                context.applicationContext,
-                listOf(ImageHeadersInterceptor(asyncImageHeadersProvider)),
-            )
+            imageLoaderFactory.imageLoader(context.applicationContext, interceptors)
         }
     }
 

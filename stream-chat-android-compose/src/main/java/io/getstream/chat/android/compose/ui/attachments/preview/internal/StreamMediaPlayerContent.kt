@@ -43,7 +43,10 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.PlayerView
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.cdn.internal.StreamMediaDataSource
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
@@ -195,7 +198,11 @@ internal fun createPlayer(
     onPlaybackError: (error: Throwable) -> Unit,
 ): Player {
     // Setup player
-    val player = ExoPlayer.Builder(context).build()
+    val cdn = ChatClient.instance().cdn
+    val dataSourceFactory = StreamMediaDataSource.factory(context, cdn)
+    val player = ExoPlayer.Builder(context)
+        .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
+        .build()
     player.addListener(object : Player.Listener {
         override fun onPlaybackStateChanged(playbackState: Int) {
             if (playbackState == Player.STATE_BUFFERING) {

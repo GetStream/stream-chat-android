@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.common.images.internal
 import android.content.Context
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.images.StreamImageLoaderFactory
 
@@ -47,7 +48,11 @@ public object StreamCoil {
     }
 
     private fun newImageLoaderFactory(): SingletonImageLoader.Factory {
-        return StreamImageLoaderFactory().apply {
+        val cdn = ChatClient.instance().cdn
+        val interceptors = buildList {
+            cdn?.let { add(CDNImageInterceptor(it)) }
+        }
+        return StreamImageLoaderFactory(interceptors).apply {
             imageLoaderFactory = this
         }
     }

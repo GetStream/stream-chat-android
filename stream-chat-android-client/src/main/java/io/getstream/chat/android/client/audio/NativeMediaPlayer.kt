@@ -16,14 +16,13 @@
 
 package io.getstream.chat.android.client.audio
 
-import android.content.Context
 import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.datasource.DataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
@@ -358,12 +357,12 @@ public enum class NativeMediaPlayerState {
 /**
  * Default implementation of [NativeMediaPlayer] based on ExoPlayer.
  *
- * @param context The context.
+ * @param dataSourceFactory The data source factory used for creating media sources.
  * @param builder A builder function to create an [ExoPlayer] instance.
  */
 @OptIn(UnstableApi::class)
 internal class NativeMediaPlayerImpl(
-    context: Context,
+    dataSourceFactory: DataSource.Factory,
     private val builder: () -> ExoPlayer,
 ) : NativeMediaPlayer {
 
@@ -392,7 +391,7 @@ internal class NativeMediaPlayerImpl(
      * For more info see [ExoPlayer Progressive](https://developer.android.com/media/media3/exoplayer/progressive).
      */
     private val mediaSourceFactory: MediaSource.Factory = ProgressiveMediaSource.Factory(
-        DefaultDataSource.Factory(context),
+        dataSourceFactory,
         DefaultExtractorsFactory().setConstantBitrateSeekingEnabled(true),
     )
 
