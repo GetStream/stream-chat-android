@@ -184,7 +184,7 @@ public fun ChatClient.watchChannelAsState(
         "[watchChannelAsState] cid: $cid, messageLimit: $messageLimit, aroundMessageId: $aroundMessageId"
     }
     return getStateOrNull(coroutineScope) {
-        requestsAsState(coroutineScope).watchChannel(cid, messageLimit, stateConfig.userPresence, aroundMessageId)
+        requestsAsState(coroutineScope).watchChannel(cid, messageLimit, chatClientConfig.userPresence, aroundMessageId)
     }
 }
 
