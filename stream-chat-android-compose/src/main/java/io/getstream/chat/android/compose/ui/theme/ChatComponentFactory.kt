@@ -458,7 +458,7 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default read status indicator in the channel item, weather the last message is sent, pending or read.
+     * The default read status indicator in the channel item, whether the last message is sent, pending or read.
      *
      * @param params Parameters for this component.
      */
@@ -807,6 +807,8 @@ public interface ChatComponentFactory {
 
     /**
      * The default unread separator item content of the message list.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun LazyItemScope.MessageListUnreadSeparatorItemContent(
@@ -817,6 +819,8 @@ public interface ChatComponentFactory {
 
     /**
      * The default thread date separator item content of the message list.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun LazyItemScope.MessageListThreadDateSeparatorItemContent(
@@ -847,6 +851,8 @@ public interface ChatComponentFactory {
 
     /**
      * The default typing indicator content of the message list.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun LazyItemScope.MessageListTypingIndicatorItemContent(
@@ -857,6 +863,8 @@ public interface ChatComponentFactory {
 
     /**
      * The default empty thread placeholder item content of the message list.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun LazyItemScope.MessageListEmptyThreadPlaceholderItemContent(
@@ -866,6 +874,8 @@ public interface ChatComponentFactory {
 
     /**
      * The default start of the channel item content of the message list.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun LazyItemScope.MessageListStartOfTheChannelItemContent(
@@ -1015,6 +1025,8 @@ public interface ChatComponentFactory {
      * The component displaying the reactions on a message. Defaults to [SegmentedMessageReactions],
      * but an equivalent implementation with a different visual style is available through
      * [ClusteredMessageReactions].
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageReactions(
@@ -1109,7 +1121,11 @@ public interface ChatComponentFactory {
         )
     }
 
-    /** The message footer while uploading attachments. Empty by default. */
+    /**
+     * The message footer while uploading attachments. Empty by default.
+     *
+     * @param params Parameters for this component.
+     */
     @Composable
     public fun MessageFooterUploadingContent(params: MessageFooterUploadingContentParams) {
     }
@@ -1138,6 +1154,12 @@ public interface ChatComponentFactory {
         MessageFooter(messageItem = params.messageItem)
     }
 
+    /**
+     * The default message footer status indicator.
+     * Displays the delivery or read status icon of a message.
+     *
+     * @param params Parameters for this component.
+     */
     @Composable
     public fun MessageFooterStatusIndicator(
         params: MessageFooterStatusIndicatorParams,
@@ -1163,6 +1185,8 @@ public interface ChatComponentFactory {
     /**
      * The default message composer that contains
      * the message input, attachments, commands, recording actions, integrations, and the send button.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposer(
@@ -1193,6 +1217,8 @@ public interface ChatComponentFactory {
      * Shows the link image preview, the title of the link and its description.
      *
      * Used as part of [MessageComposerInput].
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposerLinkPreview(
@@ -1226,6 +1252,8 @@ public interface ChatComponentFactory {
      * The default leading content of the user suggestion item of the message composer.
      *
      * Used as part of [MessageComposerUserSuggestionItem].
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposerUserSuggestionItemLeadingContent(
@@ -1241,6 +1269,8 @@ public interface ChatComponentFactory {
      * The default center content of the user suggestion item of the message composer.
      *
      * Used as part of [MessageComposerUserSuggestionItem].
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposerUserSuggestionItemCenterContent(
@@ -1256,6 +1286,8 @@ public interface ChatComponentFactory {
      * The default trailing content of the user suggestion item of the message composer.
      *
      * Used as part of [MessageComposerUserSuggestionItem].
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposerUserSuggestionItemTrailingContent(
@@ -1282,6 +1314,8 @@ public interface ChatComponentFactory {
      * The default leading content of the command suggestion item of the message composer.
      *
      * Used as part of [MessageComposerCommandSuggestionItem].
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposerCommandSuggestionItemLeadingContent(
@@ -1297,6 +1331,8 @@ public interface ChatComponentFactory {
      * The default center content of the command suggestion item of the message composer.
      *
      * Used as part of [MessageComposerCommandSuggestionItem].
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposerCommandSuggestionItemCenterContent(
@@ -1529,6 +1565,8 @@ public interface ChatComponentFactory {
      *
      * Shows an open lock with a chevron while dragging, and a closed lock once locked.
      * The icon follows the vertical drag offset during Hold.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposerAudioRecordingFloatingLockIcon(
@@ -1546,6 +1584,8 @@ public interface ChatComponentFactory {
      * needs explanation. Shows a message and a "Settings" action button.
      *
      * Override this method to provide a custom permission rationale UI.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposerAudioRecordingPermissionRationale(
@@ -1600,6 +1640,8 @@ public interface ChatComponentFactory {
      * (delete, complete) below.
      *
      * Override this method to provide a fully custom recording-overview UI.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposerAudioRecordingOverviewContent(
@@ -2065,7 +2107,8 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default loading content of the pinned message list. Shows an avatar of the user who sent the pinned message.
+     * The default leading content of the pinned message list item. Shows an avatar of the user who sent the pinned
+     * message.
      *
      * Used in the [PinnedMessageListItem].
      *
@@ -2077,7 +2120,8 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default loading content of the pinned message list. Shows the message sender name and the message content.
+     * The default center content of the pinned message list item. Shows the message sender name and the message
+     * content.
      *
      * Used in the [PinnedMessageListItem].
      *
@@ -2089,7 +2133,7 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default loading content of the pinned message list. Shows the message timestamp.
+     * The default trailing content of the pinned message list item. Shows the message timestamp.
      *
      * Used in the [PinnedMessageListItem].
      *
@@ -2621,6 +2665,11 @@ public interface ChatComponentFactory {
         )
     }
 
+    /**
+     * The default error content of the channel files attachments screen.
+     *
+     * @param params Parameters for this component.
+     */
     @Composable
     public fun BoxScope.ChannelFilesAttachmentsErrorContent(params: ChannelFilesAttachmentsErrorContentParams) {
         EmptyContent(
@@ -2735,6 +2784,11 @@ public interface ChatComponentFactory {
         )
     }
 
+    /**
+     * The default error content of the channel media attachments screen.
+     *
+     * @param params Parameters for this component.
+     */
     @Composable
     public fun BoxScope.ChannelMediaAttachmentsErrorContent(params: ChannelMediaAttachmentsErrorContentParams) {
         EmptyContent(
@@ -2869,6 +2923,8 @@ public interface ChatComponentFactory {
 
     /**
      * Factory method for creating the bottom bar of the channel media attachments preview screen.
+     *
+     * @param params Parameters for this component.
      */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
