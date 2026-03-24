@@ -2149,7 +2149,6 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun PinnedMessageListItemDivider(params: PinnedMessageListItemDividerParams) {
-        StreamHorizontalDivider()
     }
 
     /**

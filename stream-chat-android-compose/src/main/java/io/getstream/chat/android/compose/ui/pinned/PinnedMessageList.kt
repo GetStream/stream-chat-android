@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.pinned
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,6 +30,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,10 +43,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
@@ -57,7 +55,7 @@ import io.getstream.chat.android.compose.ui.theme.PinnedMessageListItemDividerPa
 import io.getstream.chat.android.compose.ui.theme.PinnedMessageListItemParams
 import io.getstream.chat.android.compose.ui.theme.PinnedMessageListLoadingContentParams
 import io.getstream.chat.android.compose.ui.theme.PinnedMessageListLoadingMoreContentParams
-import io.getstream.chat.android.compose.ui.util.parseBoldTags
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -267,36 +265,32 @@ private fun PinnedMessages(
 @Composable
 internal fun DefaultPinnedMessageListEmptyContent(modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier.background(ChatTheme.colors.backgroundCoreApp),
+        modifier = modifier
+            .fillMaxSize()
+            .background(ChatTheme.colors.backgroundCoreApp)
+            .padding(horizontal = StreamTokens.spacingMd),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Image(
-            modifier = Modifier.size(112.dp),
-            painter = painterResource(R.drawable.stream_compose_ic_pinned_messages_empty),
+        Icon(
+            modifier = Modifier.size(32.dp),
+            painter = painterResource(R.drawable.stream_compose_ic_pin),
             contentDescription = null,
+            tint = ChatTheme.colors.textDisabled,
         )
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(StreamTokens.spacingSm))
         Text(
-            modifier = Modifier.fillMaxWidth(),
             text = stringResource(id = R.string.stream_compose_pinned_message_list_empty_title),
             textAlign = TextAlign.Center,
-            style = ChatTheme.typography.numericMedium,
+            style = ChatTheme.typography.bodyDefault,
             color = ChatTheme.colors.textPrimary,
-            fontSize = 16.sp,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(StreamTokens.spacingXs))
         Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            text = stringResource(id = R.string.stream_compose_pinned_message_list_empty_description).parseBoldTags(),
+            text = stringResource(id = R.string.stream_compose_pinned_message_list_empty_description),
             textAlign = TextAlign.Center,
-            style = ChatTheme.typography.bodyEmphasis,
+            style = ChatTheme.typography.bodyDefault,
             color = ChatTheme.colors.textSecondary,
-            fontSize = 16.sp,
         )
     }
 }
@@ -322,7 +316,12 @@ internal fun DefaultPinnedMessageListLoadingMoreContent() {
         modifier = Modifier
             .fillMaxWidth()
             .background(ChatTheme.colors.backgroundCoreApp)
-            .padding(top = 8.dp, start = 8.dp, end = 8.dp, bottom = 40.dp),
+            .padding(
+                top = StreamTokens.spacingXs,
+                start = StreamTokens.spacingXs,
+                end = StreamTokens.spacingXs,
+                bottom = StreamTokens.spacing3xl,
+            ),
         contentAlignment = Alignment.Center,
     ) {
         LoadingIndicator(modifier = Modifier.size(16.dp))

@@ -34,9 +34,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.ui.components.Timestamp
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
@@ -79,6 +78,7 @@ internal fun PinnedMessageItemContent(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
+            .padding(horizontal = StreamTokens.spacing2xs)
             .combinedClickable(
                 onClick = { onPinnedMessageClick(message) },
                 indication = ripple(),
@@ -86,8 +86,11 @@ internal fun PinnedMessageItemContent(
             ),
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(StreamTokens.spacingSm),
+            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
+            verticalAlignment = Alignment.Top,
         ) {
             leadingContent(message)
             centerContent(message)
@@ -106,15 +109,8 @@ internal fun DefaultPinnedMessageItemLeadingContent(message: Message) {
     ChatTheme.componentFactory.UserAvatar(
         params = UserAvatarParams(
             user = message.user,
-            modifier = Modifier
-                .padding(
-                    start = StreamTokens.spacingXs,
-                    end = 4.dp,
-                    top = StreamTokens.spacingSm,
-                    bottom = StreamTokens.spacingSm,
-                )
-                .size(40.dp),
-            showIndicator = true,
+            modifier = Modifier.size(AvatarSize.Large),
+            showIndicator = false,
             showBorder = false,
         ),
     )
@@ -134,18 +130,16 @@ internal fun RowScope.DefaultPinnedMessageItemCenterContent(
 ) {
     Column(
         modifier = Modifier
-            .padding(start = 4.dp, end = 4.dp)
             .weight(1f)
             .wrapContentHeight(),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
     ) {
         Text(
             text = ChatTheme.messagePreviewFormatter.formatMessageTitle(message, currentUser),
-            style = ChatTheme.typography.bodyEmphasis,
-            fontSize = 16.sp,
+            style = ChatTheme.typography.bodyDefault,
+            color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textPrimary,
         )
 
         Text(
@@ -157,8 +151,8 @@ internal fun RowScope.DefaultPinnedMessageItemCenterContent(
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = ChatTheme.typography.bodyDefault,
-            color = ChatTheme.colors.textSecondary,
+            style = ChatTheme.typography.captionDefault,
+            color = ChatTheme.colors.textTertiary,
             inlineContent = ChatTheme.messagePreviewIconFactory.createPreviewIcons(),
         )
     }
@@ -170,21 +164,6 @@ internal fun RowScope.DefaultPinnedMessageItemCenterContent(
  * @param message The [Message] for which the trailing content is shown.
  */
 @Composable
-internal fun RowScope.DefaultPinnedMessageItemTrailingContent(message: Message) {
-    Column(
-        modifier = Modifier
-            .padding(
-                start = 4.dp,
-                end = StreamTokens.spacingXs,
-                top = StreamTokens.spacingSm,
-                bottom = StreamTokens.spacingSm,
-            )
-            .wrapContentHeight()
-            .align(Alignment.Bottom),
-        horizontalAlignment = Alignment.End,
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Timestamp(date = message.createdAt)
-        }
-    }
+internal fun DefaultPinnedMessageItemTrailingContent(message: Message) {
+    Timestamp(date = message.createdAt)
 }
