@@ -29,7 +29,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageComposerUserSuggestionItemCenterContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerUserSuggestionItemLeadingContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerUserSuggestionItemTrailingContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.User
 
@@ -53,17 +57,21 @@ internal fun UserSuggestionItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ChatTheme.componentFactory.MessageComposerUserSuggestionItemLeadingContent(
-            modifier = Modifier,
-            user = user,
-            currentUser = currentUser,
+            params = MessageComposerUserSuggestionItemLeadingContentParams(
+                user = user,
+                currentUser = currentUser,
+            ),
         )
         ChatTheme.componentFactory.MessageComposerUserSuggestionItemCenterContent(
-            modifier = Modifier.weight(1f),
-            user = user,
+            params = MessageComposerUserSuggestionItemCenterContentParams(
+                modifier = Modifier.weight(1f),
+                user = user,
+            ),
         )
         ChatTheme.componentFactory.MessageComposerUserSuggestionItemTrailingContent(
-            modifier = Modifier,
-            user = user,
+            params = MessageComposerUserSuggestionItemTrailingContentParams(
+                user = user,
+            ),
         )
     }
 }
@@ -74,10 +82,12 @@ internal fun DefaultUserSuggestionItemLeadingContent(
     modifier: Modifier = Modifier,
 ) {
     ChatTheme.componentFactory.UserAvatar(
-        modifier = modifier.size(AvatarSize.Medium),
-        user = user,
-        showIndicator = false,
-        showBorder = true,
+        params = UserAvatarParams(
+            modifier = modifier.size(AvatarSize.Medium),
+            user = user,
+            showIndicator = false,
+            showBorder = true,
+        ),
     )
 }
 

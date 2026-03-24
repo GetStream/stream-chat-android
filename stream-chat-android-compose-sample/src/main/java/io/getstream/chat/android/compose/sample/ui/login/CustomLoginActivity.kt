@@ -251,7 +251,7 @@ class CustomLoginActivity : AppCompatActivity() {
                     )
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = ChatTheme.colors.backgroundElevationElevation1),
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = ChatTheme.colors.backgroundCoreElevation1),
         )
     }
 
@@ -298,7 +298,7 @@ class CustomLoginActivity : AppCompatActivity() {
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = ChatTheme.colors.accentPrimary,
-                disabledContainerColor = ChatTheme.colors.backgroundCoreDisabled,
+                disabledContainerColor = ChatTheme.colors.backgroundUtilityDisabled,
             ),
             onClick = onClick,
         ) {

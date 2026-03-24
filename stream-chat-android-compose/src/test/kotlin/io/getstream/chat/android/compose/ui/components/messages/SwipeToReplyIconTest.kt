@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.extensions
+package io.getstream.chat.android.compose.ui.components.messages
 
-/**
- * Limits the integer value to the given range.
- *
- * @param min The minimum value.
- * @param max The maximum value.
- */
-@Deprecated(
-    message = "This function is deprecated and will be removed in the future. " +
-        "Use `kotlin.ranges.coerceIn` instead.",
-    replaceWith = ReplaceWith("this.coerceIn(min, max)"),
-)
-public fun Int.limitTo(min: Int, max: Int): Int {
-    return when {
-        this < min -> min
-        this > max -> max
-        else -> this
+import app.cash.paparazzi.DeviceConfig
+import app.cash.paparazzi.Paparazzi
+import io.getstream.chat.android.compose.ui.PaparazziComposeTest
+import org.junit.Rule
+import org.junit.Test
+
+internal class SwipeToReplyIconTest : PaparazziComposeTest {
+
+    @get:Rule
+    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
+
+    @Test
+    fun `swipe to reply icon`() {
+        snapshotWithDarkModeRow {
+            SwipeToReplyIcon()
+        }
     }
 }

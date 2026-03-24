@@ -55,6 +55,7 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ReactionsMenuContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.viewmodel.messages.ReactionsMenuViewModel
@@ -95,18 +96,20 @@ public fun SelectedReactionsMenu(
         modifier = modifier,
         sheetState = rememberModalBottomSheetState(),
         shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-        containerColor = ChatTheme.colors.backgroundElevationElevation1,
+        containerColor = ChatTheme.colors.backgroundCoreElevation1,
         scrimColor = ChatTheme.colors.backgroundCoreScrim,
         onDismissRequest = onDismiss,
         dragHandle = { BottomSheetDefaults.DragHandle() },
     ) {
         ChatTheme.componentFactory.ReactionsMenuContent(
-            modifier = Modifier.fillMaxHeight(),
-            currentUser = currentUser,
-            message = message,
-            onMessageAction = onMessageAction,
-            onShowMoreReactionsSelected = onShowMoreReactionsSelected,
-            ownCapabilities = ownCapabilities,
+            params = ReactionsMenuContentParams(
+                modifier = Modifier.fillMaxHeight(),
+                currentUser = currentUser,
+                message = message,
+                onMessageAction = onMessageAction,
+                onShowMoreReactionsSelected = onShowMoreReactionsSelected,
+                ownCapabilities = ownCapabilities,
+            ),
         )
     }
 }
@@ -207,7 +210,7 @@ private fun ReactionsMenuList(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.backgroundElevationElevation1),
+            .background(ChatTheme.colors.backgroundCoreElevation1),
     ) {
         item(key = "Stream_header") {
             val totalCount = reactionGroups.sumOf(MessageReactionItemState::count)

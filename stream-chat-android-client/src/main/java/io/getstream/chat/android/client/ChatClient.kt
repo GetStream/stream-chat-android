@@ -28,10 +28,9 @@ import androidx.media3.common.C.AUDIO_CONTENT_TYPE_MUSIC
 import androidx.media3.exoplayer.ExoPlayer
 import io.getstream.chat.android.client.ChatClient.Companion.MAX_COOLDOWN_TIME_SECONDS
 import io.getstream.chat.android.client.api.ChatApi
+import io.getstream.chat.android.client.api.ChatApiConfig
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
-import io.getstream.chat.android.client.api.OfflineConfig
-import io.getstream.chat.android.client.api.StateConfig
 import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -195,7 +194,6 @@ import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Mute
-import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollOption
@@ -217,8 +215,6 @@ import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
-import io.getstream.chat.android.models.VideoCallInfo
-import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -271,7 +267,7 @@ import kotlin.time.Duration.Companion.days
 public class ChatClient
 @Suppress("LongParameterList")
 internal constructor(
-    public val config: ChatClientConfig,
+    internal val config: ChatApiConfig,
     private val api: ChatApi,
     private val dtoMapping: DtoMapping,
     private val notifications: ChatNotifications,
@@ -1766,8 +1762,11 @@ internal constructor(
         next: String? = null,
         sort: QuerySorter<Message>? = null,
     ): Call<SearchMessagesResult> {
-        if (offset != null && (sort != null || next != null)) {
-            return ErrorCall(userScope, Error.GenericError("Cannot specify offset with sort or next parameters"))
+        if (offset != null && next != null) {
+            return ErrorCall(
+                userScope,
+                Error.GenericError("Cannot use both offset and next values. Specify only one of these options."),
+            )
         }
         return api.searchMessages(
             channelFilter = channelFilter,
@@ -2050,25 +2049,6 @@ internal constructor(
 
     /**
      * Create a new option for a poll.
-     * Note: To create an option with custom data, use [createPollOption] instead.
-     *
-     * @param pollId The poll id.
-     * @param option The option to create.
-     *
-     * @return Executable async [Call] responsible for creating a new option.
-     */
-    @Deprecated("ChatClient.suggestPollOption doesn't allow passing custom data. Use createPollOption instead.")
-    @CheckResult
-    public fun suggestPollOption(
-        pollId: String,
-        option: String,
-    ): Call<Option> {
-        return createPollOption(pollId, option = PollOption(text = option))
-            .map { Option(id = it.id ?: "", text = it.text, extraData = it.extraData) }
-    }
-
-    /**
-     * Create a new option for a poll.
      *
      * @param pollId The poll id.
      * @param option The option to create. Note: Don't pass [PollOption.id] as it is ignored for creation.
@@ -2165,25 +2145,6 @@ internal constructor(
      *
      * @param messageId The message id where the poll is.
      * @param pollId The poll id.
-     * @param option The option to vote for.
-     *
-     * @return Executable async [Call] responsible for casting a vote.
-     */
-    @Deprecated("Use castPollVote(messageId: String, pollId: String, optionId: String) instead.")
-    @CheckResult
-    public fun castPollVote(
-        messageId: String,
-        pollId: String,
-        option: Option,
-    ): Call<Vote> {
-        return api.castPollVote(messageId, pollId, option.id)
-    }
-
-    /**
-     * Cast a vote for a poll in a message.
-     *
-     * @param messageId The message id where the poll is.
-     * @param pollId The poll id.
      * @param optionId The id of the option to vote for.
      *
      * @return Executable async [Call] responsible for casting a vote.
@@ -2211,25 +2172,6 @@ internal constructor(
         answer: String,
     ): Call<Vote> {
         return api.castPollAnswer(messageId, pollId, answer)
-    }
-
-    /**
-     * Remove a vote for a poll in a message.
-     *
-     * @param messageId The message id where the poll is.
-     * @param pollId The poll id.
-     * @param vote The vote to remove.
-     *
-     * @return Executable async [Call] responsible for removing a vote.
-     */
-    @Deprecated("Use removePollVote(messageId: String, pollId: String, voteId: String) instead.")
-    @CheckResult
-    public fun removePollVote(
-        messageId: String,
-        pollId: String,
-        vote: Vote,
-    ): Call<Vote> {
-        return removePollVote(messageId = messageId, pollId = pollId, voteId = vote.id)
     }
 
     /**
@@ -2656,35 +2598,6 @@ internal constructor(
                 plugins.forEach { listener ->
                     logger.v { "[deleteDraftMessages] #doOnResult; plugin: ${listener::class.qualifiedName}" }
                     listener.onDeleteDraftMessagesResult(result, channelType, channelId, message)
-                }
-            }
-    }
-
-    /**
-     * Query draft messages for the current user.
-     * The query can be paginated using [offset] and [limit].
-     *
-     * @param offset The offset to start querying from.
-     * @param limit The number of draft messages to return.
-     *
-     * @return Executable async [Call] responsible for querying draft messages.
-     */
-    @Deprecated(
-        message = "The offset param in the queryDraftMessages method is not used. Use the queryDrafts method instead.",
-        replaceWith = ReplaceWith("queryDrafts(filter, limit, next, sort)"),
-    )
-    @CheckResult
-    public fun queryDraftMessages(
-        offset: Int?,
-        limit: Int?,
-    ): Call<List<DraftMessage>> {
-        return api.queryDraftMessages(offset, limit)
-            .retry(userScope, retryPolicy)
-            .doOnResult(userScope) { result ->
-                logger.i { "[queryDraftMessages] result: ${result.stringify { it.toString() }}" }
-                plugins.forEach { listener ->
-                    logger.v { "[queryDraftMessages] #doOnResult; plugin: ${listener::class.qualifiedName}" }
-                    listener.onQueryDraftMessagesResult(result, offset, limit)
                 }
             }
     }
@@ -3630,29 +3543,6 @@ internal constructor(
     }
 
     /**
-     * Marks a thread as unread.
-     *
-     * @param channelType Type of the channel.
-     * @param channelId Id of the channel.
-     * @param threadId Id of the thread to mark as unread.
-     * @param messageId Id of the message from where the thread should be marked as unread.
-     */
-    @Deprecated(
-        "Marking a thread as unread from a given message is currently not supported. " +
-            "Passing messageId has no effect and the whole thread is marked as unread." +
-            "Use markThreadUnread(channelType, channelId, threadId) instead.",
-    )
-    @CheckResult
-    public fun markThreadUnread(
-        channelType: String,
-        channelId: String,
-        threadId: String,
-        messageId: String,
-    ): Call<Unit> {
-        return api.markUnread(channelType, channelId, messageId = messageId, threadId = threadId)
-    }
-
-    /**
      * Updates multiple users in a single request.
      *
      * @param users The list of users to be updated.
@@ -4528,51 +4418,6 @@ internal constructor(
     }
 
     /**
-     * Creates a newly available video call, which belongs to a channel.
-     * The video call will be created based on the third-party video integration (Agora and 100ms) on your
-     * [Stream Dashboard](https://dashboard.getstream.io/).
-     *
-     * You can set the call type by passing [callType] like `video` or `audio`.
-     *
-     * @param channelType The channel type. ie messaging.
-     * @param channelId The id of the channel.
-     * @param callType Represents call type such as `video` or `audio`.
-     * @param callId A unique identifier to assign to the call. The id is case-insensitive.
-     */
-    @Deprecated(
-        "This third-party library integration is deprecated. Contact the support team for more information.",
-        level = DeprecationLevel.WARNING,
-    )
-    @CheckResult
-    public fun createVideoCall(
-        channelType: String,
-        channelId: String,
-        callType: String,
-        callId: String,
-    ): Call<VideoCallInfo> {
-        return api.createVideoCall(
-            channelType = channelType,
-            channelId = channelId,
-            callType = callType,
-            callId = callId,
-        )
-    }
-
-    /**
-     * Returns the currently available video call token.
-     *
-     * @param callId The call id, which indicates a dedicated video call id on the channel.
-     */
-    @Deprecated(
-        "This third-party library integration is deprecated. Contact the support team for more information.",
-        level = DeprecationLevel.WARNING,
-    )
-    @CheckResult
-    public fun getVideoCallToken(callId: String): Call<VideoCallToken> {
-        return api.getVideoCallToken(callId = callId)
-    }
-
-    /**
      * Downloads the given file which can be fetched through the response body.
      *
      * @param fileUrl The URL of the file that we are downloading.
@@ -4759,9 +4604,7 @@ internal constructor(
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
         private var distinctApiCalls: Boolean = true
         private var debugRequests: Boolean = false
-        private var offlineConfig: OfflineConfig = OfflineConfig()
-        private var stateConfig: StateConfig = StateConfig()
-        private var repositoryFactoryProvider: RepositoryFactory.Provider? = null
+        private var chatClientConfig: ChatClientConfig = ChatClientConfig()
         private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.CONNECTED
         private var fileTransformer: FileTransformer = NoOpFileTransformer
         private var apiModelTransformers: ApiModelTransformers = ApiModelTransformers()
@@ -4982,28 +4825,12 @@ internal constructor(
         }
 
         /**
-         * Inject a [RepositoryFactory.Provider] to use your own DB Persistence mechanism.
-         */
-        public fun withRepositoryFactoryProvider(provider: RepositoryFactory.Provider): Builder = apply {
-            repositoryFactoryProvider = provider
-        }
-
-        /**
-         * Configures the offline support for the ChatClient.
+         * Specifies the client configuration.
          *
-         * @param offlineConfig The offline configuration to be used.
+         * @param config The [ChatClientConfig] to be used.
          */
-        public fun offlineConfig(offlineConfig: OfflineConfig): Builder = apply {
-            this.offlineConfig = offlineConfig
-        }
-
-        /**
-         * Specifies the state management configuration.
-         *
-         * @param config The state configuration to be used.
-         */
-        public fun stateConfig(config: StateConfig): Builder = apply {
-            stateConfig = config
+        public fun config(config: ChatClientConfig): Builder = apply {
+            chatClientConfig = config
         }
 
         /**
@@ -5086,7 +4913,7 @@ internal constructor(
             val wsProtocol = if (isInsecureConnection) "ws" else "wss"
             val lifecycle = ProcessLifecycleOwner.get().lifecycle
 
-            val config = ChatClientConfig(
+            val config = ChatApiConfig(
                 apiKey = apiKey,
                 httpUrl = forceHttpUrl ?: "$httpProtocol://$baseUrl/",
                 cdnHttpUrl = "$httpProtocol://${cdnUrl ?: baseUrl}/",
@@ -5147,8 +4974,7 @@ internal constructor(
             val repository = ChatClientRepository.from(database)
 
             val allPluginFactories = setupPluginFactories(
-                offlineConfig = offlineConfig,
-                stateConfig = stateConfig,
+                chatClientConfig = chatClientConfig,
             )
 
             return ChatClient(
@@ -5166,10 +4992,9 @@ internal constructor(
                 appSettingsManager = appSettingsManager,
                 chatSocket = module.chatSocket,
                 pluginFactories = allPluginFactories,
-                repositoryFactoryProvider = repositoryFactoryProvider
-                    ?: allPluginFactories
-                        .filterIsInstance<RepositoryFactory.Provider>()
-                        .firstOrNull()
+                repositoryFactoryProvider = allPluginFactories
+                    .filterIsInstance<RepositoryFactory.Provider>()
+                    .firstOrNull()
                     ?: NoOpRepositoryFactory.Provider,
                 mutableClientState = MutableClientState(module.networkStateProvider),
                 currentUserFetcher = module.currentUserFetcher,
@@ -5197,18 +5022,17 @@ internal constructor(
         }
 
         private fun setupPluginFactories(
-            offlineConfig: OfflineConfig,
-            stateConfig: StateConfig,
+            chatClientConfig: ChatClientConfig,
         ): List<PluginFactory> {
             return buildList {
                 // Mandatory plugins first
                 add(ThrottlingPluginFactory)
                 add(MessageDeliveredPluginFactory)
                 // State plugin
-                add(StreamStatePluginFactory(stateConfig, appContext))
+                add(StreamStatePluginFactory(chatClientConfig, appContext))
                 // Offline plugin (if enabled)
-                if (offlineConfig.enabled) {
-                    add(StreamOfflinePluginFactory(appContext, offlineConfig.ignoredChannelTypes))
+                if (chatClientConfig.offlineEnabled) {
+                    add(StreamOfflinePluginFactory(appContext, chatClientConfig.ignoredOfflineChannelTypes))
                 }
             }
         }

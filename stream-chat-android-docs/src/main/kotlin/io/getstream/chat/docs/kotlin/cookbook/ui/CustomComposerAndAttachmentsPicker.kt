@@ -49,9 +49,11 @@ import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicke
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
+import io.getstream.chat.android.compose.ui.theme.AttachmentPickerContentParams
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.LocalComponentFactory
+import io.getstream.chat.android.compose.ui.theme.MessageComposerInputTrailingContentParams
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
@@ -59,7 +61,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
-import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.docs.R
 import io.getstream.chat.android.compose.R as ComposeR
 
@@ -137,11 +138,7 @@ private fun CustomMessageComposer(
 ) {
     CompositionLocalProvider(LocalComponentFactory provides object : ChatComponentFactory {
         @Composable
-        override fun MessageComposerInputTrailingContent(
-            state: MessageComposerState,
-            recordingActions: AudioRecordingActions,
-            onSendClick: (String, List<Attachment>) -> Unit,
-        ) {
+        override fun MessageComposerInputTrailingContent(params: MessageComposerInputTrailingContentParams) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(
                     onClick = {
@@ -156,8 +153,8 @@ private fun CustomMessageComposer(
                     },
                 )
                 IconButton(
-                    enabled = state.canSendMessage(),
-                    onClick = { onSendClick(state.inputValue, state.attachments) },
+                    enabled = params.state.canSendMessage(),
+                    onClick = { params.onSendClick(params.state.inputValue, params.state.attachments) },
                     content = {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.Send,
@@ -280,17 +277,19 @@ private fun CustomAttachmentsPicker(
 
                         pickerModes.getOrNull(selectedModeIndex)?.let { pickerMode ->
                             ChatTheme.componentFactory.AttachmentPickerContent(
-                                pickerMode = pickerMode,
-                                commands = attachmentsPickerViewModel.channel.config.commands,
-                                attachments = attachmentsPickerViewModel.attachments,
-                                onLoadAttachments = attachmentsPickerViewModel::loadAttachments,
-                                onUrisSelected = attachmentsPickerViewModel::resolveAndSubmitUris,
-                                actions = actions,
-                                onAttachmentsSubmitted = { metaData ->
-                                    actions.onAttachmentsSelected(
-                                        attachmentsPickerViewModel.getAttachmentsFromMetadata(metaData),
-                                    )
-                                },
+                                params = AttachmentPickerContentParams(
+                                    pickerMode = pickerMode,
+                                    commands = attachmentsPickerViewModel.channel.config.commands,
+                                    attachments = attachmentsPickerViewModel.attachments,
+                                    onLoadAttachments = attachmentsPickerViewModel::loadAttachments,
+                                    onUrisSelected = attachmentsPickerViewModel::resolveAndSubmitUris,
+                                    actions = actions,
+                                    onAttachmentsSubmitted = { metaData ->
+                                        actions.onAttachmentsSelected(
+                                            attachmentsPickerViewModel.getAttachmentsFromMetadata(metaData),
+                                        )
+                                    },
+                                ),
                             )
                         }
                     }
@@ -367,7 +366,7 @@ private fun AttachmentsTypeMenuItem(
             Icon(
                 painter = painterResource(
                     when (pickerMode) {
-                        is GalleryPickerMode -> ComposeR.drawable.stream_compose_ic_media_picker
+                        is GalleryPickerMode -> R.drawable.ic_media_picker
                         is FilePickerMode -> ComposeR.drawable.stream_compose_ic_attachment_file_picker
                         is CameraPickerMode -> ComposeR.drawable.stream_compose_ic_attachment_camera_picker
                         else -> R.drawable.ic_menu

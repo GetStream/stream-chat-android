@@ -42,13 +42,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.DirectChannelInfoAvatarContainerParams
+import io.getstream.chat.android.compose.ui.theme.DirectChannelInfoTopBarParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
@@ -109,9 +113,11 @@ private fun DirectChannelInfoScaffold(
         modifier = modifier,
         topBar = {
             ChatTheme.componentFactory.DirectChannelInfoTopBar(
-                headerState = headerState,
-                listState = listState,
-                onNavigationIconClick = onNavigationIconClick,
+                params = DirectChannelInfoTopBarParams(
+                    headerState = headerState,
+                    listState = listState,
+                    onNavigationIconClick = onNavigationIconClick,
+                ),
             )
         },
         containerColor = ChatTheme.colors.backgroundCoreApp,
@@ -140,11 +146,13 @@ private fun DirectChannelInfoScreenModal(viewModel: ChannelInfoViewModel) {
     }
 
     ChatTheme.componentFactory.ChannelInfoScreenModal(
-        modal = modal,
-        isGroupChannel = false,
-        onViewAction = viewModel::onViewAction,
-        onMemberViewEvent = viewModel::onMemberViewEvent,
-        onDismiss = { modal = null },
+        params = ChannelInfoScreenModalParams(
+            modal = modal,
+            isGroupChannel = false,
+            onViewAction = viewModel::onViewAction,
+            onMemberViewEvent = viewModel::onMemberViewEvent,
+            onDismiss = { modal = null },
+        ),
     )
 }
 
@@ -206,7 +214,9 @@ private fun DirectChannelInfoContent(
         ) {
             item {
                 content.members.firstOrNull()?.user?.let { user ->
-                    ChatTheme.componentFactory.DirectChannelInfoAvatarContainer(user)
+                    ChatTheme.componentFactory.DirectChannelInfoAvatarContainer(
+                        params = DirectChannelInfoAvatarContainerParams(user = user),
+                    )
                 }
             }
             if (navigationOptions.isNotEmpty()) {
@@ -246,10 +256,12 @@ internal fun DirectChannelInfoAvatarContainer(user: User) {
         verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
     ) {
         ChatTheme.componentFactory.UserAvatar(
-            modifier = Modifier.size(96.dp),
-            user = user,
-            showIndicator = true,
-            showBorder = false,
+            params = UserAvatarParams(
+                modifier = Modifier.size(AvatarSize.ExtraExtraLarge),
+                user = user,
+                showIndicator = true,
+                showBorder = false,
+            ),
         )
         Text(
             text = user.name.takeIf(String::isNotBlank) ?: user.id,

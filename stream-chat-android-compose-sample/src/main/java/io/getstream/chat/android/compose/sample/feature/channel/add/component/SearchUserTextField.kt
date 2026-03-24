@@ -47,8 +47,8 @@ fun SearchUserTextField(
         singleLine = true,
         maxLines = 1,
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = ChatTheme.colors.backgroundElevationElevation1,
-            unfocusedContainerColor = ChatTheme.colors.backgroundElevationElevation1,
+            focusedContainerColor = ChatTheme.colors.backgroundCoreElevation1,
+            unfocusedContainerColor = ChatTheme.colors.backgroundCoreElevation1,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,

@@ -3,8 +3,8 @@ package io.getstream.chat.docs.kotlin.client.docusaurus
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
-import io.getstream.result.Result
 import io.getstream.result.Error
+import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

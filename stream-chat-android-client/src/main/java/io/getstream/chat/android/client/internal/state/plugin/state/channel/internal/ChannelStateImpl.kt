@@ -102,7 +102,6 @@ internal class ChannelStateImpl(
      */
     private val _cachedLatestMessages = MutableStateFlow<List<Message>>(emptyList())
     private val _pinnedMessages = MutableStateFlow<List<Message>>(emptyList())
-    private val _oldMessages = MutableStateFlow<List<Message>>(emptyList())
 
     // Watchers
     private val _watcherCount = MutableStateFlow(0)
@@ -171,9 +170,6 @@ internal class ChannelStateImpl(
             else -> MessagesState.Result(messages)
         }
     }
-
-    @Deprecated("This property is not used anymore and will be removed in future versions.")
-    override val oldMessages: StateFlow<List<Message>> = _oldMessages.asStateFlow()
 
     override val watcherCount: StateFlow<Int> = _watcherCount.asStateFlow()
 
@@ -1411,6 +1407,26 @@ internal class ChannelStateImpl(
         _cachedLatestMessages.value = emptyList()
     }
 
+    /**
+     * Merges [messages] into the cached latest messages, replacing any existing entry
+     * with the same id and capping the list at [CACHED_LATEST_MESSAGES_LIMIT].
+     *
+     * Called during reconnection to refresh the "jump to latest" cache with the server's
+     * current latest page without disturbing the user's active scroll position.
+     */
+    fun upsertCachedLatestMessages(messages: List<Message>) {
+        if (messages.isEmpty()) return
+        val messagesToUpsert = messages.filterNot { shouldIgnoreUpsertion(it) }
+        if (messagesToUpsert.isEmpty()) return
+        _cachedLatestMessages.update { current ->
+            current.mergeSorted(
+                other = messagesToUpsert,
+                idSelector = Message::id,
+                comparator = MESSAGE_COMPARATOR,
+            ).takeLast(CACHED_LATEST_MESSAGES_LIMIT)
+        }
+    }
+
     // endregion
 
     // region Destroy
@@ -1428,7 +1444,6 @@ internal class ChannelStateImpl(
         pendingMessagesManager.reset()
         _cachedLatestMessages.value = emptyList()
         _pinnedMessages.value = emptyList()
-        _oldMessages.value = emptyList()
 
         // Watchers
         _watcherCount.value = 0

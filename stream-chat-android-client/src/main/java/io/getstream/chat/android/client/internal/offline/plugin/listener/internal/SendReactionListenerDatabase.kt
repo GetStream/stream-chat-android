@@ -49,30 +49,6 @@ internal class SendReactionListenerDatabase(
     private val ignoredChannelTypes: Set<String>,
 ) : SendReactionListener {
 
-    /**
-     * A method called before making an API call to send the reaction.
-     * Fills the reaction with necessary data, updates reactions' database
-     *
-     * @param cid The full channel id, i.e. "messaging:123".
-     * @param reaction The [Reaction] to send.
-     * @param enforceUnique Flag to determine whether the reaction should replace other ones added by the current user.
-     * @param currentUser The currently logged in user.
-     */
-    @Deprecated(
-        "This method will be removed in the future. " +
-            "Use SendReactionListener#onSendReactionRequest(cid, reaction, enforceUnique, skipPush, currentUser) " +
-            "instead. For backwards compatibility, this method is still called internally by the new, non-deprecated " +
-            "method.",
-    )
-    override suspend fun onSendReactionRequest(
-        cid: String?,
-        reaction: Reaction,
-        enforceUnique: Boolean,
-        currentUser: User,
-    ) {
-        saveReactionInDatabase(reaction, enforceUnique, null, currentUser)
-    }
-
     override suspend fun onSendReactionRequest(
         cid: String?,
         reaction: Reaction,
@@ -106,34 +82,6 @@ internal class SendReactionListenerDatabase(
             userId = currentUser.id,
         )?.let { cachedReaction ->
             reactionsRepository.insertReaction(cachedReaction.updateSyncStatus(result))
-        }
-    }
-
-    /**
-     * Checks if current user is set and reaction contains required data.
-     *
-     * @param currentUser The currently logged in user.
-     * @param reaction The [Reaction] to send.
-     */
-    @Deprecated(
-        "This method will be removed in the future. " +
-            "Use SendReactionListener#onSendReactionPrecondition(cid, currentUser, reaction) instead." +
-            "For backwards compatibility, this method is still called internally by the new, non-deprecated method.",
-    )
-    override suspend fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> {
-        return when {
-            currentUser == null -> {
-                Result.Failure(Error.GenericError(message = "Current user is null!"))
-            }
-            reaction.messageId.isBlank() || reaction.type.isBlank() -> {
-                Result.Failure(Error.GenericError("Reaction::messageId and Reaction::type cannot be empty!"))
-            }
-            messageRepository.selectMessage(reaction.messageId) == null -> {
-                Result.Failure(Error.GenericError("Reaction::messageId cannot be found in DB!"))
-            }
-            else -> {
-                Result.Success(Unit)
-            }
         }
     }
 

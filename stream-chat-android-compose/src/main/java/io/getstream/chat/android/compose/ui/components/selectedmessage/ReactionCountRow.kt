@@ -41,6 +41,7 @@ import io.getstream.chat.android.compose.previewdata.PreviewReactionData
 import io.getstream.chat.android.compose.state.messages.MessageReactionItemState
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ReactionIconParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -79,7 +80,7 @@ internal fun ReactionCountRow(
                     Icon(
                         painter = painterResource(R.drawable.stream_compose_ic_reaction_add),
                         contentDescription = stringResource(R.string.stream_compose_reactions_add),
-                        tint = ChatTheme.colors.chipText,
+                        tint = ChatTheme.colors.controlChipText,
                     )
                 },
             )
@@ -92,10 +93,11 @@ internal fun ReactionCountRow(
                 count = reaction.count,
                 icon = {
                     ChatTheme.componentFactory.ReactionIcon(
-                        type = reaction.type,
-                        emoji = reaction.emoji,
-                        size = ReactionIconSize.Small,
-                        modifier = Modifier,
+                        params = ReactionIconParams(
+                            type = reaction.type,
+                            emoji = reaction.emoji,
+                            size = ReactionIconSize.Small,
+                        ),
                     )
                 },
             )
@@ -113,8 +115,8 @@ private fun ReactionChip(
     val colors = ChatTheme.colors
     Row(
         modifier = Modifier
-            .applyIf(checked) { background(colors.backgroundCoreSelected, CircleShape) }
-            .border(1.dp, color = colors.borderCoreDefault, shape = CircleShape)
+            .applyIf(checked) { background(colors.backgroundUtilitySelected, CircleShape) }
+            .border(1.dp, color = colors.controlChipBorder, shape = CircleShape)
             .clip(CircleShape)
             .clickable(onClick = onClick)
             .defaultMinSize(minWidth = 64.dp, minHeight = 32.dp)
@@ -127,7 +129,7 @@ private fun ReactionChip(
                 Text(
                     text = it,
                     style = ChatTheme.typography.bodyEmphasis,
-                    color = colors.chipText,
+                    color = colors.controlChipText,
                 )
             }
         },

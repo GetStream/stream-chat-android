@@ -161,7 +161,7 @@ private fun SelectUsersToolbar(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.backgroundElevationElevation1),
+            .background(ChatTheme.colors.backgroundCoreElevation1),
     ) {
         AppToolbar(
             title = stringResource(id = R.string.add_group_channel_members_title),
@@ -204,7 +204,7 @@ private fun EnterNameToolbar(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.backgroundElevationElevation1),
+            .background(ChatTheme.colors.backgroundCoreElevation1),
     ) {
         AppToolbar(
             title = stringResource(id = R.string.add_group_channel_name_title),
@@ -317,8 +317,8 @@ private fun ChannelNameTextField(
         singleLine = true,
         maxLines = 1,
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = ChatTheme.colors.backgroundElevationElevation1,
-            unfocusedContainerColor = ChatTheme.colors.backgroundElevationElevation1,
+            focusedContainerColor = ChatTheme.colors.backgroundCoreElevation1,
+            unfocusedContainerColor = ChatTheme.colors.backgroundCoreElevation1,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
@@ -402,7 +402,7 @@ private fun SelectedUsersList(
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.backgroundElevationElevation1),
+            .background(ChatTheme.colors.backgroundCoreElevation1),
         contentPadding = PaddingValues(8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -451,7 +451,7 @@ private fun SelectedUserItem(
             modifier = Modifier
                 .size(24.dp)
                 .clip(RoundedCornerShape(12.dp))
-                .background(ChatTheme.colors.backgroundElevationElevation1)
+                .background(ChatTheme.colors.backgroundCoreElevation1)
                 .align(Alignment.TopEnd)
                 .clickable { onRemoveClick() },
         ) {

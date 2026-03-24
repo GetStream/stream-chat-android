@@ -53,6 +53,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.SearchInputClearButtonParams
+import io.getstream.chat.android.compose.ui.theme.SearchInputLabelParams
+import io.getstream.chat.android.compose.ui.theme.SearchInputLeadingIconParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
 /**
@@ -79,15 +82,15 @@ public fun SearchInput(
     onSearchStarted: () -> Unit = {},
     leadingIcon: @Composable RowScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
-            SearchInputLeadingIcon()
+            SearchInputLeadingIcon(params = SearchInputLeadingIconParams())
         }
     },
     label: @Composable () -> Unit = {
-        ChatTheme.componentFactory.SearchInputLabel()
+        ChatTheme.componentFactory.SearchInputLabel(params = SearchInputLabelParams())
     },
     clearButton: (@Composable RowScope.() -> Unit) = {
         with(ChatTheme.componentFactory) {
-            SearchInputClearButton(onClick = { onValueChange("") })
+            SearchInputClearButton(params = SearchInputClearButtonParams(onClick = { onValueChange("") }))
         }
     },
 ) {
@@ -149,7 +152,7 @@ public fun SearchInput(
                 Modifier
                     .fillMaxWidth()
                     .padding(
-                        start = StreamTokens.spacingXs,
+                        start = StreamTokens.spacingMd,
                         end = StreamTokens.spacingMd,
                         top = StreamTokens.spacingSm,
                         bottom = StreamTokens.spacingSm,
@@ -178,12 +181,7 @@ public fun SearchInput(
 @Composable
 internal fun DefaultSearchLeadingIcon() {
     Icon(
-        modifier = Modifier
-            .padding(
-                start = StreamTokens.spacingSm,
-                end = StreamTokens.spacingXs,
-            )
-            .size(16.dp),
+        modifier = Modifier.padding(end = StreamTokens.spacingXs),
         painter = painterResource(id = R.drawable.stream_compose_ic_search),
         contentDescription = null,
         tint = ChatTheme.colors.textTertiary,
@@ -209,8 +207,8 @@ internal fun DefaultSearchLabel() {
 internal fun DefaultSearchClearButton(onClick: () -> Unit) {
     IconButton(
         modifier = Modifier
-            .padding(horizontal = 4.dp)
-            .size(24.dp),
+            .padding(start = StreamTokens.spacingXs)
+            .size(20.dp),
         onClick = onClick,
     ) {
         Icon(

@@ -141,10 +141,17 @@ public interface Plugin :
 
     override fun onDeleteReactionPrecondition(currentUser: User?): Result<Unit> = Result.Success(Unit)
 
+    override suspend fun onSendReactionPrecondition(
+        cid: String?,
+        currentUser: User?,
+        reaction: Reaction,
+    ): Result<Unit> = Result.Success(Unit)
+
     override suspend fun onSendReactionRequest(
         cid: String?,
         reaction: Reaction,
         enforceUnique: Boolean,
+        skipPush: Boolean,
         currentUser: User,
     ) {
         /* No-Op */
@@ -159,11 +166,6 @@ public interface Plugin :
     ) {
         /* No-Op */
     }
-
-    override suspend fun onSendReactionPrecondition(
-        currentUser: User?,
-        reaction: Reaction,
-    ): Result<Unit> = Result.Success(Unit)
 
     override suspend fun onGetRepliesRequest(
         parentId: String,
@@ -336,24 +338,6 @@ public interface Plugin :
         channelId: String,
     ): Result<Unit> = Result.Success(Unit)
 
-    @Deprecated(
-        "Use CreateChannelListener.onCreateChannelRequest(channelType, channelId, request, currentUser) instead",
-        replaceWith = ReplaceWith(
-            "onCreateChannelRequest(String, String, CreateChannelParams, User)",
-            "io.getstream.chat.android.client.plugin.listeners.CreateChannelListener",
-        ),
-        level = DeprecationLevel.WARNING,
-    )
-    override suspend fun onCreateChannelRequest(
-        channelType: String,
-        channelId: String,
-        memberIds: List<String>,
-        extraData: Map<String, Any>,
-        currentUser: User,
-    ) {
-        /* No-Op */
-    }
-
     override suspend fun onCreateChannelRequest(
         channelType: String,
         channelId: String,
@@ -461,14 +445,6 @@ public interface Plugin :
         channelType: String,
         channelId: String,
         message: DraftMessage,
-    ) {
-        /* No-Op */
-    }
-
-    override suspend fun onQueryDraftMessagesResult(
-        result: Result<List<DraftMessage>>,
-        offset: Int?,
-        limit: Int?,
     ) {
         /* No-Op */
     }

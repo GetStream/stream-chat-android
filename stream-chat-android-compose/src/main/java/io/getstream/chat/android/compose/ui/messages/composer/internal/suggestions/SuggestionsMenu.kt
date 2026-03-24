@@ -53,7 +53,7 @@ internal fun SuggestionsMenu(
                     .heightIn(max = contentMaxHeight),
                 elevation = CardDefaults.cardElevation(defaultElevation = StreamTokens.elevation3),
                 shape = SuggestionsShape,
-                colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundElevationElevation1),
+                colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundCoreElevation1),
             ) {
                 content()
             }

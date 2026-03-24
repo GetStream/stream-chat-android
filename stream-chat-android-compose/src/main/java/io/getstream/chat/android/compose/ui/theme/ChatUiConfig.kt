@@ -90,7 +90,7 @@ public data class PollsConfig(
  * @param attachmentPicker Configuration for the attachment picker behavior.
  * @param polls Configuration for the poll creation screen.
  */
-public data class ChatConfig(
+public data class ChatUiConfig(
     val translation: TranslationConfig = TranslationConfig(),
     val messageList: MessageListConfig = MessageListConfig(),
     val mediaGallery: MediaGalleryConfig = MediaGalleryConfig(),

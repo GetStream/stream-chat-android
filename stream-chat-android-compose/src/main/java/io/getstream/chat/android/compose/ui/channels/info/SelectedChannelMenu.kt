@@ -38,6 +38,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
+import io.getstream.chat.android.compose.ui.theme.ChannelMenuCenterContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelMenuHeaderContentParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
@@ -77,18 +80,20 @@ public fun SelectedChannelMenu(
     headerContent: @Composable ColumnScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMenuHeaderContent(
-                modifier = Modifier,
-                selectedChannel = selectedChannel,
-                currentUser = currentUser,
+                params = ChannelMenuHeaderContentParams(
+                    selectedChannel = selectedChannel,
+                    currentUser = currentUser,
+                ),
             )
         }
     },
     centerContent: @Composable ColumnScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMenuCenterContent(
-                modifier = Modifier,
-                onChannelOptionConfirm = onChannelOptionConfirm,
-                channelActions = channelActions,
+                params = ChannelMenuCenterContentParams(
+                    onChannelOptionConfirm = onChannelOptionConfirm,
+                    channelActions = channelActions,
+                ),
             )
         }
     },
@@ -126,11 +131,12 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ChatTheme.componentFactory.ChannelAvatar(
-            modifier = Modifier.size(AvatarSize.ExtraLarge),
-            channel = selectedChannel,
-            currentUser = currentUser,
-            showIndicator = true,
-            showBorder = false,
+            params = ChannelAvatarParams(
+                modifier = Modifier.size(AvatarSize.ExtraLarge),
+                channel = selectedChannel,
+                currentUser = currentUser,
+                showIndicator = true,
+            ),
         )
 
         Column(

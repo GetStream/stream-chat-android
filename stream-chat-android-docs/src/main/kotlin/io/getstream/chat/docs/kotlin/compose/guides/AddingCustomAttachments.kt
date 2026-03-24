@@ -36,11 +36,12 @@ import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.CustomAttachmentContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentsParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerLeadingContentParams
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.docs.R
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -151,9 +152,9 @@ private object AddingCustomAttachmentsSnippet {
 
 class CustomComponentFactory : ChatComponentFactory {
     @Composable
-    override fun CustomAttachmentContent(state: AttachmentState, modifier: Modifier) {
-        if (state.message.attachments.any { it.type == "date" }) {
-            DateAttachmentContent(state, modifier)
+    override fun CustomAttachmentContent(params: CustomAttachmentContentParams) {
+        if (params.state.message.attachments.any { it.type == "date" }) {
+            DateAttachmentContent(params.state, params.modifier)
         }
     }
 
@@ -182,12 +183,7 @@ class CustomComponentFactory : ChatComponentFactory {
     }
 
     @Composable
-    override fun MessageComposerLeadingContent(
-        modifier: Modifier,
-        state: MessageComposerState,
-        isAttachmentPickerVisible: Boolean,
-        onAttachmentsClick: () -> Unit,
-    ) {
+    override fun MessageComposerLeadingContent(params: MessageComposerLeadingContentParams) {
         IconButton(
             modifier = Modifier
                 .size(48.dp)
@@ -199,7 +195,7 @@ class CustomComponentFactory : ChatComponentFactory {
                     tint = ChatTheme.colors.textSecondary,
                 )
             },
-            onClick = onAttachmentsClick,
+            onClick = params.onAttachmentsClick,
         )
     }
 }
@@ -254,7 +250,7 @@ fun DateAttachmentPreviewContent(
         modifier = modifier
             .wrapContentHeight()
             .clip(RoundedCornerShape(16.dp))
-            .background(color = ChatTheme.colors.backgroundElevationElevation1),
+            .background(color = ChatTheme.colors.backgroundCoreElevation1),
     ) {
         Text(
             modifier = Modifier

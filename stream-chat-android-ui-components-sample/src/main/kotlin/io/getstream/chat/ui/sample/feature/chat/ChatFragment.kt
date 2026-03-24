@@ -228,19 +228,16 @@ class ChatFragment : Fragment() {
 
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                messageComposerViewModel.messageMode.collect { messageMode ->
+                messageComposerViewModel.messageComposerState.collect { composerState ->
+                    val messageMode = composerState.messageMode
                     when (messageMode) {
                         is MessageMode.Normal -> { /* no-op */ }
                         is MessageMode.MessageThread -> { /* no-op */ }
                     }
                     val modeText = messageMode.javaClass.simpleName
                     logger.d { "[onMessageModeChange] messageMode: $modeText" }
-                }
-            }
-        }
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                messageComposerViewModel.lastActiveAction.collect { messageAction ->
+
+                    val messageAction = composerState.action
                     when (messageAction) {
                         is Edit -> { /* no-op */ }
                         is Reply -> { /* no-op */ }

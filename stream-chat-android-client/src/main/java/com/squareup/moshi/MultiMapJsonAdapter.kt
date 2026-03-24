@@ -16,7 +16,6 @@
 
 package com.squareup.moshi
 
-import com.squareup.moshi.JsonAdapter.Factory
 import io.getstream.log.StreamLog
 import java.io.IOException
 import java.lang.reflect.Type

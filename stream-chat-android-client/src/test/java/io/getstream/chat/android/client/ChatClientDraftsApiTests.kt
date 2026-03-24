@@ -99,34 +99,6 @@ internal class ChatClientDraftsApiTests : BaseChatClientTest() {
     }
 
     @Test
-    fun queryDraftMessagesSuccess() = runTest {
-        // given
-        val offset = positiveRandomInt()
-        val limit = positiveRandomInt()
-        val drafts = listOf(randomDraftMessage())
-        whenever(api.queryDraftMessages(any(), any()))
-            .doReturn(RetroSuccess(drafts).toRetrofitCall())
-        // when
-        val result = chatClient.queryDraftMessages(offset, limit).await()
-        // then
-        verifySuccess(result, drafts)
-    }
-
-    @Test
-    fun queryDraftMessagesError() = runTest {
-        // given
-        val offset = positiveRandomInt()
-        val limit = positiveRandomInt()
-        val errorCode = positiveRandomInt()
-        whenever(api.queryDraftMessages(any(), any()))
-            .doReturn(RetroError<List<DraftMessage>>(errorCode).toRetrofitCall())
-        // when
-        val result = chatClient.queryDraftMessages(offset, limit).await()
-        // then
-        verifyNetworkError(result, errorCode)
-    }
-
-    @Test
     fun queryDraftsSuccess() = runTest {
         // given
         val filter = Filters.neutral()

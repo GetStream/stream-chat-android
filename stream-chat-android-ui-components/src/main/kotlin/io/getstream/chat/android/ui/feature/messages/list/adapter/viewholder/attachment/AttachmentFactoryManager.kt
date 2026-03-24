@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.at
 
 import android.view.ViewGroup
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListeners
 
 /**
@@ -44,24 +43,10 @@ public class AttachmentFactoryManager(
      * ViewHolder lifecycle.
      *
      * @param message The message containing custom attachments that we are going to render.
-     * @param listeners [MessageListListenerContainer] with listeners for the message list.
+     * @param listeners [MessageListListeners] with listeners for the message list.
      * @param parent The parent View where the attachment content view is supposed to be placed.
      * @return An inner ViewHolder with the attachment content view.
      */
-    @Deprecated(
-        message = "Use createViewHolder(message: Message, listeners: MessageListListeners?, parent: ViewGroup) instead",
-        replaceWith = ReplaceWith("createViewHolder(message, listeners, parent)"),
-        level = DeprecationLevel.WARNING,
-    )
-    public fun createViewHolder(
-        message: Message,
-        listeners: MessageListListenerContainer?,
-        parent: ViewGroup,
-    ): InnerAttachmentViewHolder {
-        val factory = attachmentFactories.first { it.canHandle(message) }
-        return factory.createViewHolder(message, listeners, parent)
-    }
-
     public fun createViewHolder(
         message: Message,
         listeners: MessageListListeners?,

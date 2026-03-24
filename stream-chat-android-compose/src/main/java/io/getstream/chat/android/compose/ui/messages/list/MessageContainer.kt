@@ -49,6 +49,8 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
@@ -79,9 +81,21 @@ import io.getstream.chat.android.compose.ui.components.messages.MessageAnnotatio
 import io.getstream.chat.android.compose.ui.components.messages.MessageContent
 import io.getstream.chat.android.compose.ui.components.messages.PollMessageContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageAuthorParams
+import io.getstream.chat.android.compose.ui.theme.MessageBottomParams
+import io.getstream.chat.android.compose.ui.theme.MessageBubbleParams
+import io.getstream.chat.android.compose.ui.theme.MessageContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageFailedIconParams
+import io.getstream.chat.android.compose.ui.theme.MessageFooterContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageFooterOnlyVisibleToYouContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageFooterUploadingContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageReactionsParams
+import io.getstream.chat.android.compose.ui.theme.MessageSpacerParams
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
+import io.getstream.chat.android.compose.ui.theme.MessageTopParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.theme.SwipeToReplyContentParams
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.ifNotNull
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
@@ -175,9 +189,11 @@ public fun MessageContainer(
         },
     )
 
-    val backgroundColor = when (focusState is MessageFocused || message.isPinned(ChatTheme.timeProvider)) {
-        true -> ChatTheme.colors.backgroundCoreHighlight
-        else -> ChatTheme.colors.backgroundCoreHighlight.copy(alpha = 0f)
+    val highlightColor = ChatTheme.colors.backgroundCoreHighlight
+    val backgroundColor = when {
+        messageItem.isPreviewMode -> highlightColor.copy(alpha = 0f)
+        focusState is MessageFocused || message.isPinned(ChatTheme.timeProvider) -> highlightColor
+        else -> highlightColor.copy(alpha = 0f)
     }
 
     val color by animateColorAsState(
@@ -187,18 +203,17 @@ public fun MessageContainer(
 
     val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
     val description = stringResource(id = R.string.stream_compose_cd_message_item)
-    val isSwipable = ChatTheme.messageOptionsTheme.optionVisibility
-        .canReplyToMessage(
-            message = message,
-            ownCapabilities = messageItem.ownCapabilities,
-        )
+    val optionVisibility = ChatTheme.messageOptionsTheme.optionVisibility
+    val isSwipeable = remember(message, messageItem.ownCapabilities, optionVisibility) {
+        optionVisibility.canReplyToMessage(message, messageItem.ownCapabilities)
+    }
 
     // Remember the message to ensure updated values are captured in the onReply lambda
     val replyMessage by rememberUpdatedState(message)
     SwipeToReply(
         modifier = modifier,
         onReply = { onReply(replyMessage) },
-        isSwipeable = { isSwipable },
+        isSwipeable = isSwipeable,
     ) {
         Box(
             modifier = Modifier
@@ -218,18 +233,25 @@ public fun MessageContainer(
                 with(ChatTheme.componentFactory) {
                     when (messageAlignment) {
                         MessageAlignment.Start -> MessageAuthor(
-                            messageItem = messageItem,
-                            onUserAvatarClick = onUserAvatarClick,
+                            params = MessageAuthorParams(
+                                messageItem = messageItem,
+                                onUserAvatarClick = onUserAvatarClick,
+                            ),
                         )
 
-                        MessageAlignment.End -> MessageSpacer(messageItem)
+                        MessageAlignment.End -> MessageSpacer(params = MessageSpacerParams(messageItem))
                     }
 
                     Column(
                         modifier = Modifier.weight(1f, fill = false),
                         horizontalAlignment = messageAlignment.contentAlignment,
                     ) {
-                        MessageTop(messageItem = messageItem, onThreadClick = onThreadClick)
+                        MessageTop(
+                            params = MessageTopParams(
+                                messageItem = messageItem,
+                                onThreadClick = onThreadClick,
+                            ),
+                        )
                         MessageContentWithReactions(
                             messageAlignment = messageAlignment,
                             reactions = rememberMessageReactions(message, reactionSorting)?.let { reactions ->
@@ -245,31 +267,35 @@ public fun MessageContainer(
                             },
                             content = {
                                 MessageContent(
-                                    messageItem = messageItem,
-                                    onLongItemClick = onLongItemClick,
-                                    onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                                    onGiphyActionClick = onGiphyActionClick,
-                                    onQuotedMessageClick = onQuotedMessageClick,
-                                    onLinkClick = onLinkClick,
-                                    onUserMentionClick = onUserMentionClick,
-                                    onPollUpdated = onPollUpdated,
-                                    onCastVote = onCastVote,
-                                    onRemoveVote = onRemoveVote,
-                                    selectPoll = selectPoll,
-                                    onAddAnswer = onAddAnswer,
-                                    onClosePoll = onClosePoll,
-                                    onAddPollOption = onAddPollOption,
+                                    params = MessageContentParams(
+                                        messageItem = messageItem,
+                                        onLongItemClick = onLongItemClick,
+                                        onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                                        onGiphyActionClick = onGiphyActionClick,
+                                        onQuotedMessageClick = onQuotedMessageClick,
+                                        onLinkClick = onLinkClick,
+                                        onUserMentionClick = onUserMentionClick,
+                                        onPollUpdated = onPollUpdated,
+                                        onCastVote = onCastVote,
+                                        onRemoveVote = onRemoveVote,
+                                        selectPoll = selectPoll,
+                                        onAddAnswer = onAddAnswer,
+                                        onClosePoll = onClosePoll,
+                                        onAddPollOption = onAddPollOption,
+                                    ),
                                 )
                             },
                         )
-                        MessageBottom(messageItem = messageItem)
+                        MessageBottom(params = MessageBottomParams(messageItem = messageItem))
                     }
 
                     when (messageAlignment) {
-                        MessageAlignment.Start -> MessageSpacer(messageItem)
+                        MessageAlignment.Start -> MessageSpacer(params = MessageSpacerParams(messageItem))
                         MessageAlignment.End -> MessageAuthor(
-                            messageItem = messageItem,
-                            onUserAvatarClick = onUserAvatarClick,
+                            params = MessageAuthorParams(
+                                messageItem = messageItem,
+                                onUserAvatarClick = onUserAvatarClick,
+                            ),
                         )
                     }
                 }
@@ -304,12 +330,12 @@ internal fun RowScope.DefaultMessageAuthor(
         messageItem.groupPosition == MessagePosition.NONE
     ) {
         ChatTheme.componentFactory.UserAvatar(
-            modifier = modifier
-                .testTag("Stream_UserAvatar")
-                .ifNotNull(onUserAvatarClick) { clickable(onClick = it) },
-            user = messageItem.message.user,
-            showIndicator = false,
-            showBorder = false,
+            params = UserAvatarParams(
+                modifier = modifier
+                    .testTag("Stream_UserAvatar")
+                    .ifNotNull(onUserAvatarClick) { clickable(onClick = it) },
+                user = messageItem.message.user,
+            ),
         )
     } else {
         Spacer(modifier = modifier)
@@ -335,13 +361,17 @@ internal fun DefaultMessageTop(messageItem: MessageItemState, onThreadClick: (Me
 }
 
 @Composable
+private fun MessageItemState.annotationContentColor(default: Color = ChatTheme.colors.textPrimary): Color =
+    if (isPreviewMode) ChatTheme.colors.textOnAccent else default
+
+@Composable
 private fun SavedForLaterAnnotation(item: MessageItemState) {
     val reminder = item.message.reminder
     if (reminder != null && reminder.remindAt == null) {
         MessageAnnotation(
             iconId = R.drawable.stream_compose_ic_annotation_bookmark,
             text = stringResource(R.string.stream_compose_message_list_saved_for_later),
-            contentColor = ChatTheme.colors.accentPrimary,
+            contentColor = item.annotationContentColor(default = ChatTheme.colors.accentPrimary),
         )
     }
 }
@@ -360,6 +390,7 @@ private fun PinnedAnnotation(item: MessageItemState) {
             iconId = R.drawable.stream_compose_ic_annotation_pin,
             text = pinnedByUser?.let { stringResource(R.string.stream_compose_pinned_to_channel_by, it) }
                 ?: stringResource(R.string.stream_compose_pinned_to_channel),
+            contentColor = item.annotationContentColor(),
         )
     }
 }
@@ -376,6 +407,7 @@ private fun ShowInChannelAnnotation(item: MessageItemState, onThreadClick: (Mess
             iconId = R.drawable.stream_compose_ic_annotation_arrow_up_right,
             text = stringResource(alsoSendToChannelTextRes),
             trailingText = stringResource(R.string.stream_compose_message_list_view),
+            contentColor = item.annotationContentColor(),
             trailingTextColor = ChatTheme.colors.chatTextLink,
             onClick = { onThreadClick(item.message) },
         )
@@ -391,6 +423,7 @@ private fun ReminderAnnotation(item: MessageItemState) {
             iconId = R.drawable.stream_compose_ic_annotation_reminder,
             text = stringResource(R.string.stream_compose_message_list_remind_me),
             trailingText = formatReminderDuration(remindAt.time, timeProvider()),
+            contentColor = item.annotationContentColor(),
         )
     }
 }
@@ -411,6 +444,7 @@ private fun TranslationAnnotation(item: MessageItemState) {
             MessageAnnotation(
                 iconId = R.drawable.stream_compose_ic_annotation_translated,
                 text = stringResource(R.string.stream_compose_message_list_auto_translated),
+                contentColor = item.annotationContentColor(),
                 trailingText = if (item.showOriginalText) {
                     stringResource(R.string.stream_compose_message_list_show_translation)
                 } else {
@@ -425,6 +459,7 @@ private fun TranslationAnnotation(item: MessageItemState) {
             MessageAnnotation(
                 iconId = R.drawable.stream_compose_ic_annotation_translated,
                 text = stringResource(R.string.stream_compose_message_list_auto_translated),
+                contentColor = item.annotationContentColor(),
             )
         }
     }
@@ -525,19 +560,25 @@ internal fun ColumnScope.DefaultMessageBottom(
     when {
         message.isUploading() -> {
             ChatTheme.componentFactory.MessageFooterUploadingContent(
-                modifier = Modifier.align(Alignment.End),
-                messageItem = messageItem,
+                params = MessageFooterUploadingContentParams(
+                    modifier = Modifier.align(Alignment.End),
+                    messageItem = messageItem,
+                ),
             )
         }
 
         message.isDeleted() && !message.deletedForMe &&
             messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
             ChatTheme.componentFactory.MessageFooterOnlyVisibleToYouContent(
-                messageItem = messageItem,
+                params = MessageFooterOnlyVisibleToYouContentParams(
+                    messageItem = messageItem,
+                ),
             )
         }
 
-        else -> ChatTheme.componentFactory.MessageFooterContent(messageItem = messageItem)
+        else -> ChatTheme.componentFactory.MessageFooterContent(
+            params = MessageFooterContentParams(messageItem = messageItem),
+        )
     }
 
     val position = messageItem.groupPosition
@@ -667,10 +708,12 @@ public fun EmojiMessageContent(
             )
 
             ChatTheme.componentFactory.MessageFailedIcon(
-                modifier = Modifier
-                    .size(24.dp)
-                    .align(Alignment.BottomEnd),
-                message = message,
+                params = MessageFailedIconParams(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.BottomEnd),
+                    message = message,
+                ),
             )
         }
     }
@@ -719,30 +762,34 @@ public fun RegularMessageContent(
     }
     if (!messageItem.isErrorOrFailed()) {
         ChatTheme.componentFactory.MessageBubble(
-            modifier = modifier,
-            message = message,
-            shape = messageBubbleShape,
-            color = messageBubbleColor,
-            border = null,
-            content = content,
+            params = MessageBubbleParams(
+                modifier = modifier,
+                message = message,
+                shape = messageBubbleShape,
+                color = messageBubbleColor,
+                content = content,
+            ),
         )
     } else {
         Box(modifier = modifier) {
             ChatTheme.componentFactory.MessageBubble(
-                modifier = Modifier.padding(end = 12.dp),
-                message = message,
-                shape = messageBubbleShape,
-                color = messageBubbleColor,
-                border = null,
-                content = content,
+                params = MessageBubbleParams(
+                    modifier = Modifier.padding(end = 12.dp),
+                    message = message,
+                    shape = messageBubbleShape,
+                    color = messageBubbleColor,
+                    content = content,
+                ),
             )
 
             ChatTheme.componentFactory.MessageFailedIcon(
-                modifier = Modifier
-                    .size(24.dp)
-                    .align(Alignment.BottomEnd)
-                    .testTag("Stream_MessageFailedIcon"),
-                message = message,
+                params = MessageFailedIconParams(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.BottomEnd)
+                        .testTag("Stream_MessageFailedIcon"),
+                    message = message,
+                ),
             )
         }
     }
@@ -755,7 +802,7 @@ public fun RegularMessageContent(
  *
  * @param modifier Modifier for styling.
  * @param onReply Handler when the user swipes to reply.
- * @param isSwipeable Handler to determine if the message is swipeable.
+ * @param isSwipeable Indicator if swipe-to-reply is enabled.
  * @param content The swipeable content to show when not swiping to reply.
  */
 @Suppress("LongMethod")
@@ -763,7 +810,7 @@ public fun RegularMessageContent(
 private fun SwipeToReply(
     modifier: Modifier = Modifier,
     onReply: () -> Unit = {},
-    isSwipeable: () -> Boolean = { true },
+    isSwipeable: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     var swipeToReplyWidth by remember { mutableFloatStateOf(0f) }
@@ -774,7 +821,8 @@ private fun SwipeToReply(
 
     Box(
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clipToBounds(),
     ) {
         Row(
             modifier = Modifier
@@ -791,16 +839,17 @@ private fun SwipeToReply(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             with(ChatTheme.componentFactory) {
-                SwipeToReplyContent()
+                SwipeToReplyContent(params = SwipeToReplyContentParams())
             }
         }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .onSizeChanged { rowWidth = it.width.toFloat() }
                 .offset { IntOffset(x = offset.value.roundToInt(), y = 0) }
-                .pointerInput(swipeToReplyWidth) {
-                    if (isSwipeable()) {
+                .pointerInput(swipeToReplyWidth, isSwipeable) {
+                    if (isSwipeable) {
                         detectHorizontalDragGestures(
                             onHorizontalDrag = { change, dragAmount ->
                                 // Only consume if horizontal drag dominates vertical

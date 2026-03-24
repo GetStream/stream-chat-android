@@ -98,12 +98,6 @@ internal class MessagingStyleNotificationHandler(
         showNotificationInternal(notification)
     }
 
-    override fun showNotification(channel: Channel, message: Message) {
-        logger.d { "[showNotification] channel.cid: ${channel.cid}, message.cid: ${message.cid}" }
-        // Only possible type is message.new
-        showNotificationInternal(ChatNotification.MessageNew(channel, message))
-    }
-
     override fun dismissChannelNotifications(channelType: String, channelId: String) {
         // Dismiss all tracked notifications for the channel
         dismissTrackedChannelNotifications(channelType, channelId)

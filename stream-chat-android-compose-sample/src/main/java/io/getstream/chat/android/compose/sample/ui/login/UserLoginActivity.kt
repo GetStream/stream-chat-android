@@ -56,7 +56,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.data.PredefinedUserCredentials
@@ -85,7 +84,7 @@ class UserLoginActivity : AppCompatActivity() {
                 UserLoginScreen(
                     onUserItemClick = { userCredentials ->
                         lifecycleScope.launch {
-                            if (ChatClient.instance().config.apiKey != userCredentials.apiKey) {
+                            if (ChatHelper.apiKey != userCredentials.apiKey) {
                                 // If the user attempted to login with custom credentials on the custom
                                 // login screen then we need to reinitialize the SDK with our API key.
                                 ChatHelper.initializeSdk(applicationContext, userCredentials.apiKey)
@@ -250,7 +249,7 @@ class UserLoginActivity : AppCompatActivity() {
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(40.dp)
-                    .background(ChatTheme.colors.backgroundCoreDisabled)
+                    .background(ChatTheme.colors.backgroundUtilityDisabled)
                     .padding(8.dp),
                 painter = painterResource(id = R.drawable.ic_settings),
                 contentDescription = null,

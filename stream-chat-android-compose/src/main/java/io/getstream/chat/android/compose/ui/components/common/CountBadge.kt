@@ -74,18 +74,18 @@ internal data class CountBadgeSize(
 ) {
     companion object {
         val Large = CountBadgeSize(
+            minSize = 40.dp,
+            spacing = StreamTokens.spacing2xs,
+            textStyle = StreamDesign.Typography::numericLarge,
+        )
+        val Medium = CountBadgeSize(
             minSize = 32.dp,
             spacing = StreamTokens.spacingXs,
             textStyle = StreamDesign.Typography::numericLarge,
         )
-        val Medium = CountBadgeSize(
-            minSize = 24.dp,
-            spacing = StreamTokens.spacingXs,
-            textStyle = StreamDesign.Typography::numericLarge,
-        )
         val Small = CountBadgeSize(
-            minSize = 20.dp,
-            spacing = StreamTokens.spacing2xs,
+            minSize = 24.dp,
+            spacing = StreamTokens.spacingSm,
             textStyle = StreamDesign.Typography::numericMedium,
         )
         val entries = listOf(Large, Medium, Small)

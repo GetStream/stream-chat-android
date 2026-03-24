@@ -39,19 +39,20 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.CustomAttachmentContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentsParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerLeadingContentParams
 import io.getstream.chat.android.guides.R
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 
 /**
  * A custom [ChatComponentFactory] that adds support for date attachments.
  */
 object CustomChatComponentFactory : ChatComponentFactory {
     @Composable
-    override fun CustomAttachmentContent(state: AttachmentState, modifier: Modifier) {
-        if (state.message.attachments.any { it.type == "date" }) {
-            DateAttachmentContent(state, modifier)
+    override fun CustomAttachmentContent(params: CustomAttachmentContentParams) {
+        if (params.state.message.attachments.any { it.type == "date" }) {
+            DateAttachmentContent(params.state, params.modifier)
         }
     }
 
@@ -80,14 +81,9 @@ object CustomChatComponentFactory : ChatComponentFactory {
     }
 
     @Composable
-    override fun MessageComposerLeadingContent(
-        modifier: Modifier,
-        state: MessageComposerState,
-        isAttachmentPickerVisible: Boolean,
-        onAttachmentsClick: () -> Unit,
-    ) {
+    override fun MessageComposerLeadingContent(params: MessageComposerLeadingContentParams) {
         IconButton(
-            modifier = Modifier
+            modifier = params.modifier
                 .size(48.dp)
                 .padding(12.dp),
             content = {
@@ -97,7 +93,7 @@ object CustomChatComponentFactory : ChatComponentFactory {
                     tint = ChatTheme.colors.textSecondary,
                 )
             },
-            onClick = onAttachmentsClick,
+            onClick = params.onAttachmentsClick,
         )
     }
 }
@@ -122,7 +118,7 @@ fun DateAttachmentPreviewContent(
         modifier = modifier
             .wrapContentHeight()
             .clip(RoundedCornerShape(16.dp))
-            .background(color = ChatTheme.colors.backgroundElevationElevation1),
+            .background(color = ChatTheme.colors.backgroundCoreElevation1),
     ) {
         Text(
             modifier = Modifier

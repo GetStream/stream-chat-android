@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomString
@@ -119,9 +120,11 @@ internal class DraftMessageListenerStateTest {
         val draftMessages = listOf(randomDraftMessage(), randomDraftMessage())
 
         listener.onQueryDraftMessagesResult(
-            Result.Success(draftMessages),
-            randomInt(),
-            randomInt(),
+            result = Result.Success(QueryDraftsResult(drafts = draftMessages, next = null)),
+            filter = mock(),
+            limit = randomInt(),
+            next = null,
+            sort = mock(),
         )
 
         draftMessages.forEach { message ->
@@ -132,9 +135,11 @@ internal class DraftMessageListenerStateTest {
     @Test
     fun `onQueryDraftMessagesResult should not update state on error`() = runTest {
         listener.onQueryDraftMessagesResult(
-            Result.Failure(Error.GenericError("")),
-            randomInt(),
-            randomInt(),
+            result = Result.Failure(Error.GenericError("")),
+            filter = mock(),
+            limit = randomInt(),
+            next = null,
+            sort = mock(),
         )
 
         verify(mutableGlobalState, never()).updateDraftMessage(any())

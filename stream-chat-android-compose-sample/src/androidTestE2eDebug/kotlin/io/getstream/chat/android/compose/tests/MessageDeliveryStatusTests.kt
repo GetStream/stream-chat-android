@@ -80,7 +80,9 @@ class MessageDeliveryStatusTests : StreamTestCase() {
             userRobot.login().openChannel()
         }
         step("AND user successfully sends a new message") {
-            userRobot.sendMessage(sampleText)
+            userRobot
+                .sendMessage(sampleText)
+                .assertMessageDeliveryStatus(MessageDeliveryStatus.SENT) // await for message to be successfully sent
         }
         step("WHEN participant reads the user's message") {
             participantRobot.readMessage()

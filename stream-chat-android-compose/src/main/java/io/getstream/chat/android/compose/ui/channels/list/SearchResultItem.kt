@@ -34,7 +34,11 @@ import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.SearchResultItemCenterContentParams
+import io.getstream.chat.android.compose.ui.theme.SearchResultItemLeadingContentParams
+import io.getstream.chat.android.compose.ui.theme.SearchResultItemTrailingContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -61,17 +65,23 @@ public fun SearchResultItem(
     onSearchResultClick: ((Message) -> Unit)? = null,
     leadingContent: @Composable RowScope.(ItemState.SearchResultItemState) -> Unit = {
         with(ChatTheme.componentFactory) {
-            SearchResultItemLeadingContent(it, currentUser)
+            SearchResultItemLeadingContent(
+                params = SearchResultItemLeadingContentParams(searchResultItem = it, currentUser = currentUser),
+            )
         }
     },
     centerContent: @Composable RowScope.(ItemState.SearchResultItemState) -> Unit = {
         with(ChatTheme.componentFactory) {
-            SearchResultItemCenterContent(it, currentUser)
+            SearchResultItemCenterContent(
+                params = SearchResultItemCenterContentParams(searchResultItem = it, currentUser = currentUser),
+            )
         }
     },
     trailingContent: @Composable RowScope.(ItemState.SearchResultItemState) -> Unit = {
         with(ChatTheme.componentFactory) {
-            SearchResultItemTrailingContent(it)
+            SearchResultItemTrailingContent(
+                params = SearchResultItemTrailingContentParams(searchResultItem = it),
+            )
         }
     },
 ) {
@@ -119,17 +129,18 @@ internal fun DefaultSearchResultItemLeadingContent(
         )
         .let { user ->
             ChatTheme.componentFactory.UserAvatar(
-                user = user,
-                modifier = Modifier
-                    .padding(
-                        start = StreamTokens.spacingMd,
-                        end = 0.dp,
-                        top = StreamTokens.spacingMd,
-                        bottom = StreamTokens.spacingMd,
-                    )
-                    .size(48.dp),
-                showIndicator = true,
-                showBorder = false,
+                params = UserAvatarParams(
+                    user = user,
+                    modifier = Modifier
+                        .padding(
+                            start = StreamTokens.spacingMd,
+                            end = 0.dp,
+                            top = StreamTokens.spacingMd,
+                            bottom = StreamTokens.spacingMd,
+                        )
+                        .size(48.dp),
+                    showIndicator = true,
+                ),
             )
         }
 }

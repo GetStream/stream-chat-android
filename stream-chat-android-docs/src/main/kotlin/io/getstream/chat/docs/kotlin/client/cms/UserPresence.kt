@@ -6,9 +6,9 @@ import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
+import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.client.subscribeFor
 import io.getstream.result.Result
 
 class UserPresence(val client: ChatClient, val channelClient: ChannelClient) {

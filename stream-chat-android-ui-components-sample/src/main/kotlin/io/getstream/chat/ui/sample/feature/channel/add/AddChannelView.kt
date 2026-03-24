@@ -35,7 +35,6 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.databinding.AddChannelEmptyMessageListViewBinding
 import io.getstream.chat.ui.sample.databinding.AddChannelViewBinding
-import io.getstream.chat.ui.sample.feature.channel.add.AddChannelView.EndReachedListener
 
 class AddChannelView : FrameLayout {
 

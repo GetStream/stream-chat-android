@@ -17,7 +17,7 @@
 package io.getstream.chat.android.ui.viewmodels.messages
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.StateConfig
+import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.channel.state.ChannelState
@@ -80,7 +80,7 @@ internal class MessageComposerViewModelTest {
 
         val messageComposerState = viewModel.messageComposerState.value
         messageComposerState.inputValue `should be equal to` "Message text"
-        viewModel.input.value `should be equal to` "Message text"
+        viewModel.messageInput.value.text `should be equal to` "Message text"
     }
 
     @Test
@@ -111,7 +111,7 @@ internal class MessageComposerViewModelTest {
                 isRetrying = eq(false),
             )
             captor.firstValue.text `should be equal to` "Message text"
-            viewModel.input.value `should be equal to` ""
+            viewModel.messageInput.value.text `should be equal to` ""
         }
 
     @Test
@@ -201,7 +201,6 @@ internal class MessageComposerViewModelTest {
 
         val messageComposerState = viewModel.messageComposerState.value
         messageComposerState.messageMode `should be instance of` MessageMode.MessageThread::class
-        viewModel.messageMode.value `should be instance of` MessageMode.MessageThread::class
     }
 
     @Test
@@ -217,7 +216,6 @@ internal class MessageComposerViewModelTest {
 
         val messageComposerState = viewModel.messageComposerState.value
         messageComposerState.messageMode `should be instance of` MessageMode.Normal::class
-        viewModel.messageMode.value `should be instance of` MessageMode.Normal::class
     }
 
     @Test
@@ -265,7 +263,7 @@ internal class MessageComposerViewModelTest {
             .givenChannelState(channelData)
             .get()
 
-        val ownCapabilities = viewModel.ownCapabilities.value
+        val ownCapabilities = viewModel.messageComposerState.value.ownCapabilities
         ownCapabilities.size `should be equal to` 3
     }
 
@@ -280,7 +278,6 @@ internal class MessageComposerViewModelTest {
         viewModel.setMessageInput("/")
 
         viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 1
-        viewModel.commandSuggestions.value.size `should be equal to` 1
     }
 
     @Test
@@ -295,7 +292,6 @@ internal class MessageComposerViewModelTest {
         viewModel.setMessageInput("")
 
         viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 0
-        viewModel.commandSuggestions.value.size `should be equal to` 0
     }
 
     @Test
@@ -308,12 +304,11 @@ internal class MessageComposerViewModelTest {
                 .get()
 
             viewModel.toggleCommandsVisibility()
-            viewModel.selectCommand(viewModel.commandSuggestions.value.first())
+            viewModel.selectCommand(viewModel.messageComposerState.value.commandSuggestions.first())
 
             viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 0
-            viewModel.commandSuggestions.value.size `should be equal to` 0
             viewModel.messageComposerState.value.inputValue `should be equal to` "/giphy "
-            viewModel.input.value `should be equal to` "/giphy "
+            viewModel.messageInput.value.text `should be equal to` "/giphy "
         }
 
     @Test
@@ -331,7 +326,6 @@ internal class MessageComposerViewModelTest {
             advanceUntilIdle()
 
             viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 2
-            viewModel.mentionSuggestions.value.size `should be equal to` 2
         }
 
     @Test
@@ -348,19 +342,18 @@ internal class MessageComposerViewModelTest {
             viewModel.setMessageInput("@")
             advanceUntilIdle()
 
-            viewModel.selectMention(viewModel.mentionSuggestions.value.first())
+            viewModel.selectMention(viewModel.messageComposerState.value.mentionSuggestions.first())
             advanceUntilIdle()
 
             viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 0
-            viewModel.mentionSuggestions.value.size `should be equal to` 0
-            viewModel.input.value `should be equal to` "@Jc Miñarro "
+            viewModel.messageInput.value.text `should be equal to` "@Jc Miñarro "
         }
 
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelId: String = "messaging:123",
         private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
-        stateConfig: StateConfig = StateConfig(),
+        chatClientConfig: ChatClientConfig = ChatClientConfig(),
     ) {
         private val stateRegistry: StateRegistry = mock()
         private val globalState: GlobalState = mock()
@@ -390,7 +383,7 @@ internal class MessageComposerViewModelTest {
             val statePlugin: StatePlugin = mock()
             val statePluginFactory: StreamStatePluginFactory = mock()
             whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
-            whenever(statePluginFactory.resolveDependency(eq(StateConfig::class))) doReturn stateConfig
+            whenever(statePluginFactory.resolveDependency(eq(ChatClientConfig::class))) doReturn chatClientConfig
             whenever(globalState.channelDraftMessages) doReturn MutableStateFlow(emptyMap())
             whenever(globalState.threadDraftMessages) doReturn MutableStateFlow(emptyMap())
             whenever(chatClient.plugins) doReturn listOf(statePlugin)

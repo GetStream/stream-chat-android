@@ -30,9 +30,10 @@ public fun Poll.getSubtitle(context: Context): String {
     if (closed) {
         return context.getString(R.string.stream_ui_poll_description_closed)
     }
-    val maxVotes = maxVotesAllowed?.let { min(it, options.size) } ?: options.size
+    val maxVotes = maxVotesAllowed?.let { min(it, options.size) }
     return when (maxVotes) {
         1 -> context.getString(R.string.stream_ui_poll_description_single_answer)
+        null -> context.getString(R.string.stream_ui_poll_description_unlimited_answers)
         else -> context.getString(R.string.stream_ui_poll_description_multiple_answers, maxVotes)
     }
 }

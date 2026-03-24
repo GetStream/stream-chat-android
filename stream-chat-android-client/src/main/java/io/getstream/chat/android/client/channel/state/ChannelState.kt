@@ -59,10 +59,6 @@ public interface ChannelState {
     /** Strong typed state of message collection of this channel. See [MessagesState] for more details.*/
     public val messagesState: StateFlow<MessagesState>
 
-    /** The collection of messages from previous pages of data.*/
-    @Deprecated("This property is not used anymore and will be removed in future versions.")
-    public val oldMessages: StateFlow<List<Message>>
-
     /** The number of people currently watching the channel.*/
     public val watcherCount: StateFlow<Int>
 

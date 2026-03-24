@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyle
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
@@ -63,6 +64,8 @@ import io.getstream.chat.android.compose.ui.components.common.RadioCheck
 import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.components.poll.AddAnswerDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageBubbleParams
+import io.getstream.chat.android.compose.ui.theme.MessageFailedIconParams
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.MessageStyling.PollStyle
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -117,56 +120,61 @@ public fun PollMessageContent(
     val poll = message.poll
     if (!messageItem.isErrorOrFailed() && poll != null) {
         ChatTheme.componentFactory.MessageBubble(
-            modifier = modifier,
-            message = message,
-            shape = messageBubbleShape,
-            color = messageBubbleColor,
-            border = null,
-            content = {
-                PollMessageContent(
-                    message = message,
-                    poll = poll,
-                    isMine = ownsMessage,
-                    onCastVote = { option ->
-                        onCastVote.invoke(message, poll, option)
-                    },
-                    onRemoveVote = { vote ->
-                        onRemoveVote.invoke(message, poll, vote)
-                    },
-                    selectPoll = selectPoll,
-                    onAddAnswer = { answer ->
-                        onAddAnswer.invoke(message, poll, answer)
-                    },
-                    onClosePoll = onClosePoll,
-                    onAddPollOption = onAddPollOption,
-                )
-            },
+            params = MessageBubbleParams(
+                modifier = modifier,
+                message = message,
+                shape = messageBubbleShape,
+                color = messageBubbleColor,
+                content = {
+                    PollMessageContent(
+                        message = message,
+                        poll = poll,
+                        isMine = ownsMessage,
+                        onCastVote = { option ->
+                            onCastVote.invoke(message, poll, option)
+                        },
+                        onRemoveVote = { vote ->
+                            onRemoveVote.invoke(message, poll, vote)
+                        },
+                        selectPoll = selectPoll,
+                        onAddAnswer = { answer ->
+                            onAddAnswer.invoke(message, poll, answer)
+                        },
+                        onClosePoll = onClosePoll,
+                        onAddPollOption = onAddPollOption,
+                    )
+                },
+            ),
         )
     } else {
         Box(modifier = modifier) {
             ChatTheme.componentFactory.MessageBubble(
-                modifier = Modifier.padding(end = 12.dp),
-                message = message,
-                shape = messageBubbleShape,
-                color = messageBubbleColor,
-                border = BorderStroke(1.dp, ChatTheme.colors.borderCoreDefault),
-                content = {
-                    MessageContent(
-                        message = message,
-                        currentUser = messageItem.currentUser,
-                        onLongItemClick = onLongItemClick,
-                        onGiphyActionClick = {},
-                        onMediaGalleryPreviewResult = {},
-                        onQuotedMessageClick = {},
-                    )
-                },
+                params = MessageBubbleParams(
+                    modifier = Modifier.padding(end = 12.dp),
+                    message = message,
+                    shape = messageBubbleShape,
+                    color = messageBubbleColor,
+                    border = BorderStroke(1.dp, ChatTheme.colors.borderCoreDefault),
+                    content = {
+                        MessageContent(
+                            message = message,
+                            currentUser = messageItem.currentUser,
+                            onLongItemClick = onLongItemClick,
+                            onGiphyActionClick = {},
+                            onMediaGalleryPreviewResult = {},
+                            onQuotedMessageClick = {},
+                        )
+                    },
+                ),
             )
 
             ChatTheme.componentFactory.MessageFailedIcon(
-                modifier = Modifier
-                    .size(24.dp)
-                    .align(Alignment.BottomEnd),
-                message = message,
+                params = MessageFailedIconParams(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.BottomEnd),
+                    message = message,
+                ),
             )
         }
     }
@@ -188,6 +196,7 @@ private fun PollMessageContent(
     val context = LocalContext.current
     val showDialog = remember { mutableStateOf(false) }
     val showAddAnswerDialog = remember { mutableStateOf(false) }
+    val showEndPollDialog = remember { mutableStateOf(false) }
     val typography = ChatTheme.typography
     val style = MessageStyling.pollStyle(outgoing = isMine)
 
@@ -203,6 +212,16 @@ private fun PollMessageContent(
         NewOptionDialog(
             onDismiss = { showDialog.value = false },
             onNewOption = { newOption -> onAddPollOption.invoke(poll, newOption) },
+        )
+    }
+
+    if (showEndPollDialog.value) {
+        EndPollConfirmationDialog(
+            onConfirm = {
+                showEndPollDialog.value = false
+                onClosePoll(poll.id)
+            },
+            onDismiss = { showEndPollDialog.value = false },
         )
     }
 
@@ -253,7 +272,7 @@ private fun PollMessageContent(
             showDialog = showDialog,
             showAddAnswerDialog = showAddAnswerDialog,
             isMine = isMine,
-            onClosePoll = onClosePoll,
+            onClosePoll = { showEndPollDialog.value = true },
         )
     }
 }
@@ -381,7 +400,7 @@ private fun NewOptionDialog(
                 Text(stringResource(R.string.stream_compose_dismiss))
             }
         },
-        containerColor = ChatTheme.colors.backgroundElevationElevation1,
+        containerColor = ChatTheme.colors.backgroundCoreElevation1,
     )
 }
 
@@ -474,6 +493,47 @@ private fun PollOptionItem(
     }
 }
 
+@Composable
+private fun EndPollConfirmationDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = stringResource(R.string.stream_compose_poll_end_confirmation_title),
+                style = ChatTheme.typography.headingMedium,
+            )
+        },
+        text = {
+            Text(
+                text = stringResource(R.string.stream_compose_poll_end_confirmation_message),
+                style = ChatTheme.typography.bodyDefault,
+            )
+        },
+        confirmButton = {
+            TextButton(
+                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.accentError),
+                onClick = onConfirm,
+            ) {
+                Text(text = stringResource(R.string.stream_compose_poll_end_confirmation_action))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.textPrimary),
+                onClick = onDismiss,
+            ) {
+                Text(text = stringResource(R.string.stream_compose_cancel))
+            }
+        },
+        titleContentColor = ChatTheme.colors.textPrimary,
+        textContentColor = ChatTheme.colors.textPrimary,
+        containerColor = ChatTheme.colors.backgroundCoreElevation1,
+    )
+}
+
 private const val MaxStackedAvatars = 3
 
 @Composable
@@ -487,6 +547,7 @@ private fun PollOptionButton(
         text = text,
         style = style,
         modifier = Modifier.fillMaxWidth(),
+        size = StreamButtonSize.Small,
     )
 }
 
@@ -528,18 +589,6 @@ private fun PollMessageContentPreview() {
                     ownCapabilities = ChannelCapabilities.toSet(),
                 ),
             )
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun PollOptionButtonPreview() {
-    ChatTheme {
-        val style = StreamButtonStyleDefaults.secondaryOutline
-        Column {
-            PollOptionButton("End Vote", style) {}
-            PollOptionButton("View Result", style) {}
         }
     }
 }

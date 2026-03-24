@@ -37,7 +37,6 @@ public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig 
 
     /**
      * Creates the intent to start the [MediaGalleryPreviewActivity].
-     * It receives a data pair of a [String] and an [Int] that represent the messageId and the attachmentPosition.
      *
      * @return The [Intent] to start the [MediaGalleryPreviewActivity].
      */
@@ -45,7 +44,7 @@ public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig 
         return MediaGalleryPreviewActivity.getIntent(
             context,
             message = input.message,
-            attachmentPosition = input.initialPosition,
+            selectedAttachmentUrl = input.selectedAttachmentUrl,
             downloadAttachmentUriGenerator = input.downloadAttachmentUriGenerator,
             downloadRequestInterceptor = input.downloadRequestInterceptor,
             videoThumbnailsEnabled = input.videoThumbnailsEnabled,
@@ -68,7 +67,7 @@ public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig 
      * Defines the input for the [MediaGalleryPreviewContract].
      *
      * @param message The message containing the attachments.
-     * @param initialPosition The initial position of the media gallery, based on the clicked item.
+     * @param selectedAttachmentUrl The preview URL of the selected attachment to display first.
      * @param downloadAttachmentUriGenerator The URI generator for downloading attachments.
      * @param downloadRequestInterceptor The request interceptor for downloading attachments.
      * @param videoThumbnailsEnabled Whether video thumbnails will be displayed in previews or not.
@@ -78,7 +77,7 @@ public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig 
      */
     public class Input(
         public val message: Message,
-        public val initialPosition: Int = 0,
+        public val selectedAttachmentUrl: String? = null,
         public val videoThumbnailsEnabled: Boolean,
         public val downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
         public val downloadRequestInterceptor: DownloadRequestInterceptor,

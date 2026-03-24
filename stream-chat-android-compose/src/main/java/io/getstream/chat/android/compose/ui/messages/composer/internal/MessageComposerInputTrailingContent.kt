@@ -33,6 +33,10 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageComposerAudioRecordingButtonParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerCoolDownIndicatorParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerSaveButtonParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerSendButtonParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
@@ -73,22 +77,29 @@ internal fun MessageComposerInputTrailingContent(
     Crossfade(targetState = actionButton) { button ->
         when (button) {
             is ActionButton.CoolDown -> ChatTheme.componentFactory.MessageComposerCoolDownIndicator(
-                modifier = Modifier.Companion,
-                coolDownTime = button.coolDownTime,
+                params = MessageComposerCoolDownIndicatorParams(
+                    coolDownTime = button.coolDownTime,
+                ),
             )
 
             is ActionButton.Save -> ChatTheme.componentFactory.MessageComposerSaveButton(
-                enabled = button.enabled,
-                onClick = { onSendClick(inputText, attachments) },
+                params = MessageComposerSaveButtonParams(
+                    enabled = button.enabled,
+                    onClick = { onSendClick(inputText, attachments) },
+                ),
             )
 
             is ActionButton.Send -> ChatTheme.componentFactory.MessageComposerSendButton(
-                onClick = { onSendClick(inputText, attachments) },
+                params = MessageComposerSendButtonParams(
+                    onClick = { onSendClick(inputText, attachments) },
+                ),
             )
 
             is ActionButton.Record -> ChatTheme.componentFactory.MessageComposerAudioRecordingButton(
-                state = state.recording,
-                recordingActions = recordingActions,
+                params = MessageComposerAudioRecordingButtonParams(
+                    state = state.recording,
+                    recordingActions = recordingActions,
+                ),
             )
 
             null -> Unit
@@ -114,7 +125,7 @@ internal fun MessageComposerSendButton(
             .testTag("Stream_ComposerSendButton"),
         colors = IconButtonDefaults.filledIconButtonColors(
             containerColor = ChatTheme.colors.accentPrimary,
-            contentColor = ChatTheme.colors.textOnAccent,
+            contentColor = ChatTheme.colors.buttonPrimaryTextOnAccent,
         ),
         onClick = onClick,
     ) {
@@ -138,8 +149,8 @@ internal fun MessageComposerSaveButton(
             .testTag("Stream_ComposerSaveButton"),
         colors = IconButtonDefaults.filledIconButtonColors(
             containerColor = ChatTheme.colors.accentPrimary,
-            contentColor = ChatTheme.colors.textOnAccent,
-            disabledContainerColor = ChatTheme.colors.backgroundCoreDisabled,
+            contentColor = ChatTheme.colors.buttonPrimaryTextOnAccent,
+            disabledContainerColor = ChatTheme.colors.backgroundUtilityDisabled,
             disabledContentColor = ChatTheme.colors.textDisabled,
         ),
         onClick = onClick,

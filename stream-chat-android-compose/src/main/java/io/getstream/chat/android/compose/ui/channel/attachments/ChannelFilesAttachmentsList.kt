@@ -33,6 +33,13 @@ import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.components.ContentBox
+import io.getstream.chat.android.compose.ui.theme.ChannelFilesAttachmentsEmptyContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelFilesAttachmentsErrorContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelFilesAttachmentsHeaderItemParams
+import io.getstream.chat.android.compose.ui.theme.ChannelFilesAttachmentsItemDividerParams
+import io.getstream.chat.android.compose.ui.theme.ChannelFilesAttachmentsItemParams
+import io.getstream.chat.android.compose.ui.theme.ChannelFilesAttachmentsLoadingIndicatorParams
+import io.getstream.chat.android.compose.ui.theme.ChannelFilesAttachmentsLoadingItemParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
@@ -79,55 +86,58 @@ internal fun ChannelFilesAttachmentsList(
             val previewHandlers = ChatTheme.attachmentPreviewHandlers
             with(ChatTheme.componentFactory) {
                 ChannelFilesAttachmentsItem(
-                    modifier = Modifier,
-                    index = index,
-                    item = item,
-                    currentUser = currentUser,
-                    onClick = { onItemClick(item, previewHandlers) },
+                    params = ChannelFilesAttachmentsItemParams(
+                        index = index,
+                        item = item,
+                        currentUser = currentUser,
+                        onClick = { onItemClick(item, previewHandlers) },
+                    ),
                 )
             }
         },
     headerItem: @Composable LazyItemScope.(label: String) -> Unit = { label ->
         with(ChatTheme.componentFactory) {
             ChannelFilesAttachmentsHeaderItem(
-                modifier = Modifier,
-                label = label,
+                params = ChannelFilesAttachmentsHeaderItemParams(
+                    label = label,
+                ),
             )
         }
     },
     loadingIndicator: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelFilesAttachmentsLoadingIndicator(
-                modifier = Modifier,
+                params = ChannelFilesAttachmentsLoadingIndicatorParams(),
             )
         }
     },
     emptyContent: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelFilesAttachmentsEmptyContent(
-                modifier = Modifier,
+                params = ChannelFilesAttachmentsEmptyContentParams(),
             )
         }
     },
     errorContent: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelFilesAttachmentsErrorContent(
-                modifier = Modifier,
+                params = ChannelFilesAttachmentsErrorContentParams(),
             )
         }
     },
     itemDivider: @Composable LazyItemScope.(index: Int) -> Unit = { index ->
         with(ChatTheme.componentFactory) {
             ChannelFilesAttachmentsItemDivider(
-                modifier = Modifier,
-                index = index,
+                params = ChannelFilesAttachmentsItemDividerParams(
+                    index = index,
+                ),
             )
         }
     },
     loadingItem: @Composable LazyItemScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelFilesAttachmentsLoadingItem(
-                modifier = Modifier,
+                params = ChannelFilesAttachmentsLoadingItemParams(),
             )
         }
     },

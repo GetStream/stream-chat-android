@@ -47,6 +47,7 @@ import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndic
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.compose.ui.util.isOneToOne
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Thread
@@ -97,10 +98,11 @@ public fun ThreadItem(
         verticalAlignment = Alignment.Top,
     ) {
         ChatTheme.componentFactory.UserAvatar(
-            modifier = Modifier.size(AvatarSize.ExtraLarge),
-            user = thread.parentMessage.user,
-            showIndicator = true,
-            showBorder = false,
+            params = UserAvatarParams(
+                modifier = Modifier.size(AvatarSize.ExtraLarge),
+                user = thread.parentMessage.user,
+                showIndicator = true,
+            ),
         )
         ThreadItemContentContainer(
             modifier = Modifier.weight(1f),

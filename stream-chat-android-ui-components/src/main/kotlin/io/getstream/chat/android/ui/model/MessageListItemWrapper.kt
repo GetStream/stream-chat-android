@@ -26,17 +26,14 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
  * @param hasNewMessages Whether the user has new messages or not.
  * @param isTyping Whether the user is typing or not.
  * @param isThread Whether the user is in a thread or not.
- * @param areNewestMessagesLoaded Whether the newest messages are loaded or not.
+ * @param endOfNewMessagesReached Whether the newest messages are loaded or not.
  */
 public data class MessageListItemWrapper(
     val items: List<MessageListItem> = listOf(),
     val hasNewMessages: Boolean = false,
     val isTyping: Boolean = false,
     val isThread: Boolean = false,
-    @Deprecated(
-        "The name of this field will to be aligned with `MessageListState.endOfNewMessagesReached` field.",
-    )
-    val areNewestMessagesLoaded: Boolean = true,
+    val endOfNewMessagesReached: Boolean = true,
     internal val newMessageState: NewMessageState? = null,
 ) {
 
@@ -46,7 +43,7 @@ public data class MessageListItemWrapper(
 
     private fun stringify(): String {
         return "MessageListItemWrapper(" +
-            "endOfNewMessagesReached=$areNewestMessagesLoaded" +
+            "endOfNewMessagesReached=$endOfNewMessagesReached" +
             ", hasNewMessages=$hasNewMessages" +
             ", newMessageState=$newMessageState" +
             ", items=${items.size}" +

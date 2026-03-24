@@ -132,11 +132,14 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -284,11 +287,22 @@ public class MessageListController(
     public val isInThread: Boolean
         get() = _mode.value is MessageMode.MessageThread
 
+    private val _events: MutableSharedFlow<Event> = MutableSharedFlow()
+
     /**
-     * Emits error events.
+     * Flow of one-shot events emitted by the controller, such as action successes and errors.
+     *
+     * @see Event
      */
-    private val _errorEvents: MutableStateFlow<ErrorEvent?> = MutableStateFlow(null)
-    public val errorEvents: StateFlow<ErrorEvent?> = _errorEvents
+    public val events: SharedFlow<Event> = _events.asSharedFlow()
+
+    /**
+     * Flow of events representing errors happening in the controller.
+     *
+     * @see [ErrorEvent]
+     */
+    public val errorEvents: StateFlow<ErrorEvent?> =
+        _events.filterIsInstance<ErrorEvent>().stateIn(scope, SharingStarted.Eagerly, null)
 
     // TODO separate unreads to message list unreads and thread unreads after
     //  https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
@@ -506,6 +520,7 @@ public class MessageListController(
                         isLoading = false,
                         messageItems = emptyList(),
                     )
+
                     is MessagesState.Result -> _messageListState.value.copy(
                         isLoading = false,
                         messageItems = groupMessages(
@@ -1218,6 +1233,7 @@ public class MessageListController(
                 if (endOfOlderMessages || loadingOlderMessages) return
                 chatClient.loadOlderMessages(cid, messageLimit).enqueue()
             }
+
             is MessageMode.MessageThread -> threadLoadMore(mode)
         }
     }
@@ -1994,11 +2010,10 @@ public class MessageListController(
      */
     public fun closePoll(pollId: String) {
         chatClient.closePoll(pollId = pollId)
-            .enqueue(onError = { error ->
-                onActionResult(error) {
-                    ErrorEvent.PollCastingVoteError(it)
-                }
-            })
+            .enqueue(
+                onSuccess = { poll -> emitEvent(Event.PollClosingSuccess(poll)) },
+                onError = { error -> onActionResult(error, ErrorEvent::PollClosingError) },
+            )
     }
 
     /**
@@ -2375,6 +2390,10 @@ public class MessageListController(
         }
     }
 
+    private fun emitEvent(event: Event) {
+        scope.launch { _events.emit(event) }
+    }
+
     /**
      * Quality of life function that notifies the result of an action and logs any error in case the action has failed.
      *
@@ -2387,7 +2406,7 @@ public class MessageListController(
     ) {
         val errorMessage = error.message
         logger.e { errorMessage }
-        _errorEvents.value = onError(error)
+        emitEvent(onError(error))
     }
 
     /**
@@ -2451,11 +2470,24 @@ public class MessageListController(
     }
 
     /**
+     * Represents errors happening in [MessageListController].
+     */
+    public sealed interface Event {
+
+        /**
+         * Emitted when a poll is successfully closed.
+         *
+         * @param poll The closed [Poll].
+         */
+        public data class PollClosingSuccess(val poll: Poll) : Event
+    }
+
+    /**
      * A class designed for error event propagation.
      *
      * @param streamError Contains the original [Throwable] along with a message.
      */
-    public sealed class ErrorEvent(public open val streamError: Error) {
+    public sealed class ErrorEvent(public open val streamError: Error) : Event {
 
         /**
          * When an error occurs while muting a user.
@@ -2507,7 +2539,7 @@ public class MessageListController(
         public data class PollRemovingVoteError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
-         * When an error occurs while closing a vote.
+         * When an error occurs while closing a poll.
          *
          * @param streamError Contains the original [Throwable] along with a message.
          */

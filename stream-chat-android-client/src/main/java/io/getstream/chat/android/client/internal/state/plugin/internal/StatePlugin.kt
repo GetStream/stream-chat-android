@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.internal
 
-import io.getstream.chat.android.client.api.StateConfig
+import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
@@ -110,7 +110,7 @@ public class StatePlugin internal constructor(
     private val eventHandler: EventHandler,
     private val mutableGlobalState: MutableGlobalState,
     private val queryingChannelsFree: MutableStateFlow<Boolean>,
-    private val stateConfig: StateConfig,
+    private val chatClientConfig: ChatClientConfig,
 ) : Plugin,
     QueryMembersListener by QueryMembersListenerState(logic),
     QueryChannelsListener by QueryChannelsListenerState(logic, queryingChannelsFree),
@@ -162,7 +162,7 @@ public class StatePlugin internal constructor(
         LogicRegistry::class -> logic as T
         StateRegistry::class -> stateRegistry as T
         GlobalState::class -> mutableGlobalState as T
-        StateConfig::class -> stateConfig as T
+        ChatClientConfig::class -> chatClientConfig as T
         else -> null
     }
 }
