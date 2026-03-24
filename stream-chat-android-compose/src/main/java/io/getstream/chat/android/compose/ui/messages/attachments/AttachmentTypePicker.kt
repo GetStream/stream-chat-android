@@ -196,7 +196,7 @@ private data class AttachmentPickerModeInfo(
 
 private val AttachmentPickerModeInfos = mapOf(
     GalleryPickerMode::class to AttachmentPickerModeInfo(
-        icon = R.drawable.stream_compose_ic_attachment_media_picker,
+        icon = R.drawable.stream_compose_ic_media,
         contentDescription = R.string.stream_compose_attachment_media_picker,
         testTag = "Stream_AttachmentPickerImagesTab",
     ),
