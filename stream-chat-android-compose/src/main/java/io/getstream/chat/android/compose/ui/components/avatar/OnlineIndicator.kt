@@ -56,5 +56,6 @@ internal data class OnlineIndicatorDimensions(val indicatorSize: Dp, val borderW
         val Medium = OnlineIndicatorDimensions(indicatorSize = 12.dp, borderWidth = 2.dp, offset = 2.dp)
         val Large = OnlineIndicatorDimensions(indicatorSize = 14.dp, borderWidth = 2.dp, offset = 2.dp)
         val ExtraLarge = OnlineIndicatorDimensions(indicatorSize = 16.dp, borderWidth = 2.dp, offset = 0.dp)
+        val ExtraExtraLarge = OnlineIndicatorDimensions(indicatorSize = 20.dp, borderWidth = 2.dp, offset = 0.dp)
     }
 }

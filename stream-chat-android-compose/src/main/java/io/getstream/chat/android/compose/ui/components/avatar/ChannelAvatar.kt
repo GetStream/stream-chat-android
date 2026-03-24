@@ -263,7 +263,7 @@ private fun BoxWithConstraintsScope.resolveStackedAvatarDimensions(): StackedGro
 
 private data class StackedGroupAvatarDimensions(val avatarSize: Dp, val badgeSize: CountBadgeSize) {
     companion object {
-        val XXL = StackedGroupAvatarDimensions(avatarSize = AvatarSize.Large, badgeSize = CountBadgeSize.Large)
+        val XXL = StackedGroupAvatarDimensions(avatarSize = AvatarSize.ExtraLarge, badgeSize = CountBadgeSize.Large)
         val XL = StackedGroupAvatarDimensions(avatarSize = AvatarSize.Medium, badgeSize = CountBadgeSize.Medium)
         val L = StackedGroupAvatarDimensions(avatarSize = AvatarSize.Small, badgeSize = CountBadgeSize.Small)
     }
