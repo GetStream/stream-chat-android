@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,6 +30,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -46,7 +48,6 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
@@ -334,7 +335,7 @@ internal fun GroupChannelInfoAvatarContainer(
     ) {
         ChatTheme.componentFactory.ChannelAvatar(
             params = ChannelAvatarParams(
-                modifier = Modifier.size(96.dp),
+                modifier = Modifier.size(AvatarSize.ExtraExtraLarge),
                 channel = channel,
                 currentUser = currentUser,
                 showIndicator = false,
@@ -377,7 +378,8 @@ internal fun GroupChannelInfoMemberSection(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = StreamTokens.spacingMd, vertical = StreamTokens.spacingXs),
+                .padding(horizontal = StreamTokens.spacingMd)
+                .defaultMinSize(minHeight = LocalMinimumInteractiveComponentSize.current),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
