@@ -16,43 +16,25 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.state.channel.internal
 
-import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.User
-import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.client.api.models.Pagination
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.randomUser
-import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.RegisterExtension
 import java.util.Date
 
 @ExperimentalCoroutinesApi
-internal class ChannelStateImplMessagesTest {
-
-    private val userFlow = MutableStateFlow(currentUser)
-    private lateinit var channelState: ChannelStateImpl
-
-    @BeforeEach
-    fun setUp() {
-        channelState = ChannelStateImpl(
-            channelType = CHANNEL_TYPE,
-            channelId = CHANNEL_ID,
-            currentUser = userFlow,
-            latestUsers = MutableStateFlow(mapOf(currentUser.id to currentUser)),
-            mutedUsers = MutableStateFlow(emptyList()),
-            liveLocations = MutableStateFlow(emptyList()),
-            messageLimit = null,
-        )
-    }
+internal class ChannelStateImplMessagesTest : ChannelStateImplTestBase() {
 
     @Nested
     inner class SetMessages {
@@ -717,52 +699,78 @@ internal class ChannelStateImplMessagesTest {
         }
     }
 
-    private fun createMessage(
-        index: Int,
-        timestamp: Long = currentTime() + index * 1000L,
-        text: String = "Test message $index",
-        user: User = currentUser,
-        parentId: String? = null,
-        showInChannel: Boolean = true,
-        shadowed: Boolean = false,
-        pinned: Boolean = false,
-        pinnedAt: Date? = null,
-    ): Message = randomMessage(
-        id = "message_$index",
-        cid = CID,
-        createdAt = Date(timestamp),
-        createdLocallyAt = null,
-        text = text,
-        user = user,
-        parentId = parentId,
-        showInChannel = showInChannel,
-        shadowed = shadowed,
-        pinned = pinned,
-        pinnedAt = pinnedAt,
-        deletedAt = null,
-    )
+    // region MessagesState
 
-    private fun createMessages(
-        count: Int,
-        startIndex: Int = 1,
-        baseTimestamp: Long = currentTime(),
-    ): List<Message> {
-        return (startIndex until startIndex + count).map { i ->
-            createMessage(i, timestamp = baseTimestamp + i * 1000L)
+    @Nested
+    inner class MessagesStateTests {
+
+        @Test
+        fun `messagesState is Loading when loading and messages are empty`() = runTest {
+            channelState.paginationManager.begin(
+                QueryChannelRequest().withMessages(Pagination.LESS_THAN, "msgId", 30),
+            )
+            assertTrue(channelState.loading.value)
+            assertInstanceOf(MessagesState.Loading::class.java, channelState.messagesState.value)
+        }
+
+        @Test
+        fun `messagesState is Result when loading but messages are non-empty`() = runTest {
+            channelState.setMessages(createMessages(3))
+            channelState.paginationManager.begin(
+                QueryChannelRequest().withMessages(Pagination.LESS_THAN, "msgId", 30),
+            )
+            assertTrue(channelState.loading.value)
+            assertInstanceOf(MessagesState.Result::class.java, channelState.messagesState.value)
+        }
+
+        @Test
+        fun `messagesState is OfflineNoResults when not loading and messages are empty`() = runTest {
+            assertFalse(channelState.loading.value)
+            assertInstanceOf(MessagesState.OfflineNoResults::class.java, channelState.messagesState.value)
         }
     }
 
-    companion object {
-        @JvmField
-        @RegisterExtension
-        val testCoroutines = TestCoroutineExtension()
+    // endregion
 
-        private const val CHANNEL_TYPE = "messaging"
-        private const val CHANNEL_ID = "123"
-        private const val CID = "messaging:123"
+    // region ThreeWayMerge — messages StateFlow combine branches
 
-        private val currentUser = User(id = "tom", name = "Tom")
+    @Nested
+    inner class ThreeWayMerge {
 
-        private fun currentTime() = testCoroutines.dispatcher.scheduler.currentTime
+        private fun enablePendingMessages() {
+            channelState.setChannelConfig(Config(markMessagesPending = true))
+        }
+
+        @Test
+        fun `given three sources, all messages appear in chronological order`() = runTest {
+            enablePendingMessages()
+            val regular = createMessage(2, timestamp = 2000L)
+            val pending = createMessage(1, timestamp = 1000L)
+            val localOnly = createLocalOnlyMessage(3, timestamp = 3000L)
+            channelState.setMessages(listOf(regular))
+            channelState.setPendingMessages(listOf(pending))
+            channelState.setLocalOnlyMessages(listOf(localOnly))
+            assertEquals(listOf(pending.id, regular.id, localOnly.id), channelState.messages.value.map { it.id })
+        }
+
+        @Test
+        fun `given two sources, pending and local-only, appear in chronological order`() = runTest {
+            enablePendingMessages()
+            val pending = createMessage(1, timestamp = 1000L)
+            val localOnly = createLocalOnlyMessage(2, timestamp = 2000L)
+            channelState.setPendingMessages(listOf(pending))
+            channelState.setLocalOnlyMessages(listOf(localOnly))
+            assertEquals(listOf(pending.id, localOnly.id), channelState.messages.value.map { it.id })
+        }
+
+        @Test
+        fun `given one source, regular is returned as-is when pending and local-only are empty`() = runTest {
+            val regular1 = createMessage(1, timestamp = 1000L)
+            val regular2 = createMessage(2, timestamp = 2000L)
+            channelState.setMessages(listOf(regular1, regular2))
+            assertEquals(listOf(regular1.id, regular2.id), channelState.messages.value.map { it.id })
+        }
     }
+
+    // endregion
 }

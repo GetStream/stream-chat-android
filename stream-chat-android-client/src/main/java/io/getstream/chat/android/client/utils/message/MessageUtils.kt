@@ -252,3 +252,32 @@ internal fun DraftMessage.ensureId(): DraftMessage =
  * Generates a fallback message id (lowercase UUID).
  */
 internal fun fallbackMessageId(): String = UUID.randomUUID().toString().lowercase()
+
+/**
+ * Returns true if this message is local-only and must be preserved across server message
+ * window replacements. Local-only messages are never returned by the server after the
+ * initial send attempt completes.
+ *
+ * Covers:
+ * - Pending sends: SYNC_NEEDED, IN_PROGRESS
+ * - Attachment upload in-flight: AWAITING_ATTACHMENTS
+ * - Send failed: FAILED_PERMANENTLY (user must see to retry or dismiss)
+ * - Ephemeral: type == "ephemeral" (e.g. Giphy previews — not re-delivered by server)
+ * - Error type: type == "error" (client-generated, not re-delivered by server)
+ *
+ * DOES NOT include COMPLETED messages — those are already in the server response.
+ */
+internal fun Message.isLocalOnly(): Boolean =
+    syncStatus in LocalOnlySyncStatuses || type in LocalOnlyMessageTypes
+
+internal val LocalOnlySyncStatuses = setOf(
+    SyncStatus.SYNC_NEEDED, // new message or pending edit/delete
+    SyncStatus.IN_PROGRESS, // send in flight
+    SyncStatus.AWAITING_ATTACHMENTS, // attachment upload pending
+    SyncStatus.FAILED_PERMANENTLY, // permanent failure — user must see to retry
+)
+
+internal val LocalOnlyMessageTypes = setOf(
+    MessageType.EPHEMERAL, // giphy preview etc. — not re-delivered by server
+    MessageType.ERROR, // error type — not re-delivered by server
+)

@@ -53,8 +53,8 @@ internal class QueryChannelListenerState(private val logic: LogicRegistry) : Que
     ) {
         logger.d { "[onQueryChannelRequest] cid: $channelType:$channelId, request: $request" }
         logic.channel(channelType, channelId).apply {
-            updateStateFromDatabase(request)
             setPaginationDirection(request)
+            updateStateFromDatabase(request)
         }
     }
 
