@@ -24,14 +24,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.feature.channel.add.group.AddGroupChannelActivity
 import io.getstream.chat.android.compose.sample.ui.MessagesActivity
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.compose.ui.theme.MessageComposerLeadingContentParams
 import kotlinx.coroutines.flow.collectLatest
 
 /**
@@ -97,12 +96,7 @@ class AddChannelActivity : ComponentActivity() {
 
 private val CustomChatComponentFactory = object : ChatComponentFactory {
     @Composable
-    override fun MessageComposerLeadingContent(
-        modifier: Modifier,
-        state: MessageComposerState,
-        isAttachmentPickerVisible: Boolean,
-        onAttachmentsClick: () -> Unit,
-    ) {
+    override fun MessageComposerLeadingContent(params: MessageComposerLeadingContentParams) {
         // Disable adding attachments when sending the very first message in this flow
     }
 }

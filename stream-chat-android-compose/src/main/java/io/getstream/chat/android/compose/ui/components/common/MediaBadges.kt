@@ -75,7 +75,7 @@ private fun MediaBadge(
         modifier = modifier
             .background(
                 shape = MediaBadgeShape,
-                color = ChatTheme.colors.accentBlack,
+                color = ChatTheme.colors.badgeBgInverse,
             )
             .padding(
                 horizontal = StreamTokens.spacingXs,
@@ -87,7 +87,7 @@ private fun MediaBadge(
         Icon(
             painter = painterResource(iconRes),
             contentDescription = null,
-            tint = ChatTheme.colors.textOnAccent,
+            tint = ChatTheme.colors.textInverse,
         )
         Text(
             text = if (compact) {
@@ -96,7 +96,7 @@ private fun MediaBadge(
                 durationInSeconds.toPreciseDuration()
             },
             style = ChatTheme.typography.numericMedium,
-            color = ChatTheme.colors.textOnAccent,
+            color = ChatTheme.colors.textInverse,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

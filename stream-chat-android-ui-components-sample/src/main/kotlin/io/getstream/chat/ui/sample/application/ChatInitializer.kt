@@ -22,7 +22,7 @@ import com.google.firebase.FirebaseApp
 import io.getstream.android.push.firebase.FirebasePushDeviceGenerator
 import io.getstream.android.push.xiaomi.XiaomiPushDeviceGenerator
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.StateConfig
+import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
@@ -94,8 +94,7 @@ class ChatInitializer(
         )
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
-        val stateConfig = StateConfig(
-            backgroundSyncEnabled = false,
+        val chatClientConfig = ChatClientConfig(
             userPresence = true,
             useLegacyChannelLogic = false,
         )
@@ -104,7 +103,7 @@ class ChatInitializer(
             .loggerHandler(FirebaseLogger)
             .notifications(notificationConfig, notificationHandler)
             .logLevel(logLevel)
-            .stateConfig(stateConfig)
+            .config(chatClientConfig)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .apply {
                 if (BuildConfig.DEBUG) {

@@ -20,7 +20,7 @@ import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.ChatApiConfig
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.attachment.AttachmentsSender
 import io.getstream.chat.android.client.clientstate.UserStateService
@@ -73,7 +73,7 @@ internal open class BaseChatClientTest {
     private lateinit var clientScope: ClientTestScope
 
     @Mock
-    protected lateinit var config: ChatClientConfig
+    protected lateinit var config: ChatApiConfig
 
     protected val plugins: MutableList<Plugin> = mutableListOf()
 

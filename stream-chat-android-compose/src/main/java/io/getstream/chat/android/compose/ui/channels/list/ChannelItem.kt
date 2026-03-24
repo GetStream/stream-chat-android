@@ -63,9 +63,15 @@ import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.TypingIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
+import io.getstream.chat.android.compose.ui.theme.ChannelItemCenterContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelItemLeadingContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelItemReadStatusIndicatorParams
+import io.getstream.chat.android.compose.ui.theme.ChannelItemTrailingContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelItemUnreadCountIndicatorParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListConfig
-import io.getstream.chat.android.compose.ui.theme.ChatConfig
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.MuteIndicatorPosition
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.applyIf
@@ -108,24 +114,30 @@ public fun ChannelItem(
     leadingContent: @Composable RowScope.(ItemState.ChannelItemState) -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelItemLeadingContent(
-                channelItem = channelItem,
-                currentUser = currentUser,
+                params = ChannelItemLeadingContentParams(
+                    channelItem = channelItem,
+                    currentUser = currentUser,
+                ),
             )
         }
     },
     centerContent: @Composable RowScope.(ItemState.ChannelItemState) -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelItemCenterContent(
-                channelItem = channelItem,
-                currentUser = currentUser,
+                params = ChannelItemCenterContentParams(
+                    channelItem = channelItem,
+                    currentUser = currentUser,
+                ),
             )
         }
     },
     trailingContent: @Composable RowScope.(ItemState.ChannelItemState) -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelItemTrailingContent(
-                channelItem = channelItem,
-                currentUser = currentUser,
+                params = ChannelItemTrailingContentParams(
+                    channelItem = channelItem,
+                    currentUser = currentUser,
+                ),
             )
         }
     },
@@ -147,7 +159,7 @@ public fun ChannelItem(
             .semantics { contentDescription = description }
             .applyIf(isFocused) { border(2.dp, ChatTheme.colors.borderUtilitySelected, shape) }
             .clip(shape)
-            .applyIf(channelItem.isSelected) { background(ChatTheme.colors.backgroundCoreSelected, shape) }
+            .applyIf(channelItem.isSelected) { background(ChatTheme.colors.backgroundUtilitySelected, shape) }
             .combinedClickable(
                 onClick = { onChannelClick(channel) },
                 onLongClick = { onChannelLongClick(channel) },
@@ -180,18 +192,18 @@ internal fun DefaultChannelItemLeadingContent(
     currentUser: User?,
 ) {
     ChatTheme.componentFactory.ChannelAvatar(
-        modifier = Modifier
-            .padding(
-                start = StreamTokens.spacingMd,
-                end = StreamTokens.spacingMd,
-                top = StreamTokens.spacingMd,
-                bottom = StreamTokens.spacingMd,
-            )
-            .size(AvatarSize.ExtraLarge),
-        channel = channelItem.channel,
-        currentUser = currentUser,
-        showIndicator = false,
-        showBorder = false,
+        params = ChannelAvatarParams(
+            modifier = Modifier
+                .padding(
+                    start = StreamTokens.spacingMd,
+                    end = StreamTokens.spacingMd,
+                    top = StreamTokens.spacingMd,
+                    bottom = StreamTokens.spacingMd,
+                )
+                .size(AvatarSize.ExtraLarge),
+            channel = channelItem.channel,
+            currentUser = currentUser,
+        ),
     )
 }
 
@@ -294,8 +306,9 @@ private fun TitleRow(
 
             if (unreadCount > 0) {
                 ChatTheme.componentFactory.ChannelItemUnreadCountIndicator(
-                    unreadCount = unreadCount,
-                    modifier = Modifier,
+                    params = ChannelItemUnreadCountIndicatorParams(
+                        unreadCount = unreadCount,
+                    ),
                 )
             }
         }
@@ -323,10 +336,11 @@ private fun MessageRow(
         } else {
             if (isLastMessageFromCurrentUser && lastMessage != null && !isLastMessageDeleted) {
                 ChatTheme.componentFactory.ChannelItemReadStatusIndicator(
-                    channel = channel,
-                    message = lastMessage,
-                    currentUser = currentUser,
-                    modifier = Modifier,
+                    params = ChannelItemReadStatusIndicatorParams(
+                        channel = channel,
+                        message = lastMessage,
+                        currentUser = currentUser,
+                    ),
                 )
             }
 
@@ -460,7 +474,7 @@ internal fun ChannelItemMuted() {
 @Composable
 private fun ChannelItemMutedTrailingBottomPreview() {
     ChatTheme(
-        config = ChatConfig(
+        config = ChatUiConfig(
             channelList = ChannelListConfig(muteIndicatorPosition = MuteIndicatorPosition.TrailingBottom),
         ),
     ) {

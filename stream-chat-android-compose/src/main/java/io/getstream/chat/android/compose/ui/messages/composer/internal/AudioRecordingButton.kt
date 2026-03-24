@@ -76,6 +76,9 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageComposerAudioRecordingFloatingLockIconParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerAudioRecordingHintParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerAudioRecordingPermissionRationaleParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.SnackbarPopup
 import io.getstream.chat.android.compose.ui.util.applyIf
@@ -136,8 +139,10 @@ internal fun AudioRecordingButton(
 
         if (showFloatingIcons) {
             ChatTheme.componentFactory.MessageComposerAudioRecordingFloatingLockIcon(
-                isLocked = recordingState is RecordingState.Locked,
-                dragOffsetY = floatingMic.offset.y,
+                params = MessageComposerAudioRecordingFloatingLockIconParams(
+                    isLocked = recordingState is RecordingState.Locked,
+                    dragOffsetY = floatingMic.offset.y,
+                ),
             )
         }
     }
@@ -309,9 +314,10 @@ private fun MicButtonGestureArea(
 
     val buttonDescription = stringResource(R.string.stream_compose_audio_recording_start)
 
+    val buttonSize = if (isVisible) MicButtonSize else 0.dp
     Box(
         modifier = Modifier
-            .run { if (isVisible) size(MicButtonSize) else size(0.dp) }
+            .size(buttonSize)
             .semantics { contentDescription = buttonDescription }
             .pointerInput(Unit) {
                 awaitEachGesture {
@@ -341,14 +347,32 @@ private fun MicButtonGestureArea(
         }
     }
 
-    SnackbarPopup(
-        hostState = hint.snackbarHostState,
-        snackbar = { ChatTheme.componentFactory.MessageComposerAudioRecordingHint(it) },
+    RecordingSnackbars(
+        hintHostState = hint.snackbarHostState,
+        rationaleHostState = permissionState.rationaleSnackbarHostState,
     )
+}
 
+@Composable
+private fun RecordingSnackbars(
+    hintHostState: SnackbarHostState,
+    rationaleHostState: SnackbarHostState,
+) {
     SnackbarPopup(
-        hostState = permissionState.rationaleSnackbarHostState,
-        snackbar = { ChatTheme.componentFactory.MessageComposerAudioRecordingPermissionRationale(it) },
+        hostState = hintHostState,
+        snackbar = {
+            ChatTheme.componentFactory.MessageComposerAudioRecordingHint(
+                params = MessageComposerAudioRecordingHintParams(it),
+            )
+        },
+    )
+    SnackbarPopup(
+        hostState = rationaleHostState,
+        snackbar = {
+            ChatTheme.componentFactory.MessageComposerAudioRecordingPermissionRationale(
+                params = MessageComposerAudioRecordingPermissionRationaleParams(it),
+            )
+        },
     )
 }
 
@@ -485,7 +509,7 @@ internal fun MessageComposerAudioRecordingFloatingLockIcon(
                     scaleY = entranceScale
                 }
                 .shadow(4.dp, LockButtonShape)
-                .background(ChatTheme.colors.backgroundElevationElevation1, LockButtonShape)
+                .background(ChatTheme.colors.backgroundCoreElevation1, LockButtonShape)
                 .border(1.dp, ChatTheme.colors.borderCoreDefault, LockButtonShape)
                 .padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,

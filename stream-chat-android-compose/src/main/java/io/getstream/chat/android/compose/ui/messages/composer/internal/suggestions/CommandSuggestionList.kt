@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageComposerCommandSuggestionItemParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.previewdata.PreviewCommandData
@@ -65,8 +66,10 @@ internal fun CommandSuggestionList(
             key = Command::name,
         ) { command ->
             ChatTheme.componentFactory.MessageComposerCommandSuggestionItem(
-                command = command,
-                onCommandSelected = onCommandSelected,
+                params = MessageComposerCommandSuggestionItemParams(
+                    command = command,
+                    onCommandSelected = onCommandSelected,
+                ),
             )
         }
     }

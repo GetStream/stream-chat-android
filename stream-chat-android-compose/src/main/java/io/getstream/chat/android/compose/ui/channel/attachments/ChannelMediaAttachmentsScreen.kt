@@ -40,7 +40,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChannelMediaAttachmentsTopBarParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModel
@@ -112,8 +114,10 @@ private fun ChannelMediaAttachmentsContent(
         modifier = modifier,
         topBar = {
             ChatTheme.componentFactory.ChannelMediaAttachmentsTopBar(
-                gridState = gridState,
-                onNavigationIconClick = onNavigationIconClick,
+                params = ChannelMediaAttachmentsTopBarParams(
+                    gridState = gridState,
+                    onNavigationIconClick = onNavigationIconClick,
+                ),
             )
         },
         containerColor = ChatTheme.colors.backgroundCoreApp,
@@ -155,14 +159,16 @@ internal fun LazyGridItemScope.ChannelMediaAttachmentsItem(
 
         @Suppress("MagicNumber")
         ChatTheme.componentFactory.UserAvatar(
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(8.dp)
-                .fillMaxSize(.25f)
-                .aspectRatio(1f),
-            user = item.message.user,
-            showIndicator = false,
-            showBorder = true,
+            params = UserAvatarParams(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(8.dp)
+                    .fillMaxSize(.25f)
+                    .aspectRatio(1f),
+                user = item.message.user,
+                showIndicator = false,
+                showBorder = true,
+            ),
         )
 
         if (item.attachment.isVideo()) {

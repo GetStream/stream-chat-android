@@ -451,7 +451,7 @@ private fun UserProfilePicture(
                 .align(Alignment.BottomEnd)
                 .size(24.dp)
                 .background(
-                    color = ChatTheme.colors.backgroundElevationElevation1,
+                    color = ChatTheme.colors.backgroundCoreElevation1,
                     shape = CircleShape,
                 )
                 .padding(4.dp),

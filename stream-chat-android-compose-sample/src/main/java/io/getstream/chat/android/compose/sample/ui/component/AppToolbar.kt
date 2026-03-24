@@ -63,7 +63,7 @@ fun AppToolbar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(ChatTheme.colors.backgroundElevationElevation1)
+                .background(ChatTheme.colors.backgroundCoreElevation1)
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,

@@ -254,10 +254,10 @@ public fun randomMessageListItemStyle(
     iconIndicatorRead: Drawable = mock(),
     iconIndicatorPendingSync: Drawable = mock(),
     iconOnlyVisibleToYou: Drawable = mock(),
-    textStyleMessageDeletedMine: TextStyle? = mock(),
-    messageDeletedBackgroundMine: Int? = randomInt(),
-    textStyleMessageDeletedTheirs: TextStyle? = mock(),
-    messageDeletedBackgroundTheirs: Int? = randomInt(),
+    textStyleMessageDeletedMine: TextStyle = mock(),
+    messageDeletedBackgroundMine: Int = randomInt(),
+    textStyleMessageDeletedTheirs: TextStyle = mock(),
+    messageDeletedBackgroundTheirs: Int = randomInt(),
     messageStrokeColorMine: Int = randomInt(),
     messageStrokeWidthMine: Float = randomFloat(),
     messageStrokeColorTheirs: Int = randomInt(),
@@ -330,8 +330,6 @@ public fun randomMessageListItemStyle(
     loadingMoreView = loadingMoreView,
     unreadSeparatorBackgroundColor = unreadSeparatorBackgroundColor,
     unreadSeparatorTextStyle = unreadSeparatorTextStyle,
-    messageDeletedBackground = randomInt(),
-    textStyleMessageDeleted = mock(),
 )
 
 public fun randomViewReactionsViewStyle(

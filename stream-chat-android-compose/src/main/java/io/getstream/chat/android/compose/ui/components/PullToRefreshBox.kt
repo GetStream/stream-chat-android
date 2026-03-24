@@ -55,7 +55,7 @@ internal fun PullToRefreshBox(
             state = state,
             isRefreshing = isRefreshing,
             modifier = Modifier.align(Alignment.TopCenter),
-            containerColor = ChatTheme.colors.backgroundElevationElevation1,
+            containerColor = ChatTheme.colors.backgroundCoreElevation1,
             color = ChatTheme.colors.accentPrimary,
         )
     },

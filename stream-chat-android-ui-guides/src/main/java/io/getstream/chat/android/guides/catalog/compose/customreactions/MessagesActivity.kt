@@ -23,12 +23,11 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ReactionIconParams
 import io.getstream.chat.android.compose.ui.util.ReactionResolver
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.guides.R
@@ -111,20 +110,15 @@ class CustomReactionResolver : ReactionResolver {
 class CustomComponentFactory : ChatComponentFactory {
 
     @Composable
-    override fun ReactionIcon(
-        type: String,
-        emoji: String?,
-        size: ReactionIconSize,
-        modifier: Modifier,
-    ) {
-        if (type == "mood_good") {
+    override fun ReactionIcon(params: ReactionIconParams) {
+        if (params.type == "mood_good") {
             Image(
                 painter = painterResource(R.drawable.ic_mood_good),
-                contentDescription = type,
-                modifier = modifier,
+                contentDescription = params.type,
+                modifier = params.modifier,
             )
         } else {
-            super.ReactionIcon(type, emoji, size, modifier)
+            super.ReactionIcon(params)
         }
     }
 }

@@ -66,7 +66,7 @@ internal class SendReactionListenerDatabaseTest {
         whenever(messageRepository.selectMessage(any())) doReturn defaultMessage
         whenever(clientState.isNetworkAvailable) doReturn true
 
-        sendReactionListenerState.onSendReactionRequest(randomCID(), testReaction, false, currentUser)
+        sendReactionListenerState.onSendReactionRequest(randomCID(), testReaction, false, false, currentUser)
 
         verify(reactionsRepository).insertReaction(
             argThat { reaction ->
@@ -94,7 +94,7 @@ internal class SendReactionListenerDatabaseTest {
         whenever(messageRepository.selectMessage(any())) doReturn defaultMessage
         whenever(clientState.isNetworkAvailable) doReturn false
 
-        sendReactionListenerState.onSendReactionRequest(randomCID(), testReaction, false, currentUser)
+        sendReactionListenerState.onSendReactionRequest(randomCID(), testReaction, false, false, currentUser)
 
         verify(reactionsRepository).insertReaction(
             argThat { reaction ->
@@ -177,46 +177,47 @@ internal class SendReactionListenerDatabaseTest {
         }
 
     @Test
-    fun `when sending reactions with enforceUnique true and skipPush true, should remove existing reactions and save new one`() = runTest {
-        val testReaction = randomReaction(user = randomUser(), syncStatus = SyncStatus.SYNC_NEEDED)
+    fun `when sending reactions with enforceUnique true and skipPush true, should remove existing reactions and save new one`() =
+        runTest {
+            val testReaction = randomReaction(user = randomUser(), syncStatus = SyncStatus.SYNC_NEEDED)
 
-        whenever(messageRepository.selectMessage(any())) doReturn defaultMessage
-        whenever(clientState.isNetworkAvailable) doReturn true
+            whenever(messageRepository.selectMessage(any())) doReturn defaultMessage
+            whenever(clientState.isNetworkAvailable) doReturn true
 
-        sendReactionListenerState.onSendReactionRequest(
-            cid = randomCID(),
-            reaction = testReaction,
-            enforceUnique = true,
-            skipPush = true,
-            currentUser = currentUser,
-        )
+            sendReactionListenerState.onSendReactionRequest(
+                cid = randomCID(),
+                reaction = testReaction,
+                enforceUnique = true,
+                skipPush = true,
+                currentUser = currentUser,
+            )
 
-        // Verify that existing reactions are marked as deleted
-        verify(reactionsRepository).updateReactionsForMessageByDeletedDate(
-            userId = eq(currentUser.id),
-            messageId = eq(testReaction.messageId),
-            deletedAt = any(),
-        )
+            // Verify that existing reactions are marked as deleted
+            verify(reactionsRepository).updateReactionsForMessageByDeletedDate(
+                userId = eq(currentUser.id),
+                messageId = eq(testReaction.messageId),
+                deletedAt = any(),
+            )
 
-        // Verify that the new reaction is inserted
-        verify(reactionsRepository).insertReaction(
-            argThat { reaction ->
-                reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.IN_PROGRESS
-            },
-        )
-
-        // Verify that the user is saved
-        verify(userRepository).insertUser(testReaction.user!!)
-
-        // Verify that the message is updated with the new reaction
-        verify(messageRepository).insertMessage(
-            argThat { message ->
-                message.latestReactions.any { reaction ->
+            // Verify that the new reaction is inserted
+            verify(reactionsRepository).insertReaction(
+                argThat { reaction ->
                     reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.IN_PROGRESS
-                } && message.ownReactions.any { reaction ->
-                    reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.IN_PROGRESS
-                }
-            },
-        )
-    }
+                },
+            )
+
+            // Verify that the user is saved
+            verify(userRepository).insertUser(testReaction.user!!)
+
+            // Verify that the message is updated with the new reaction
+            verify(messageRepository).insertMessage(
+                argThat { message ->
+                    message.latestReactions.any { reaction ->
+                        reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.IN_PROGRESS
+                    } && message.ownReactions.any { reaction ->
+                        reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.IN_PROGRESS
+                    }
+                },
+            )
+        }
 }

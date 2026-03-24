@@ -47,12 +47,17 @@ import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.channels.buildDefaultChannelActions
+import io.getstream.chat.android.compose.ui.theme.ChannelListEmptyContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelListHeaderParams
+import io.getstream.chat.android.compose.ui.theme.ChannelListSearchInputParams
+import io.getstream.chat.android.compose.ui.theme.ChannelMenuParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
 
 /**
@@ -73,6 +78,8 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
  * @param onChannelClick Handler for Channel item clicks.
  * @param onViewChannelInfoAction Handler for when the user selects the [ViewInfo] option for a [Channel].
  * @param onBackPressed Handler for back press action.
+ * @param isBackPressEnabled Indicator if the default back handler is enabled. Set to `false` to fully disable the back
+ * handling and catch the back-press event in a [BackHandler] higher in the compose hierarchy. Default: `true`.
  */
 @Composable
 @Suppress("LongMethod")
@@ -89,6 +96,7 @@ public fun ChannelsScreen(
     onSearchMessageItemClick: (Message) -> Unit = {},
     onViewChannelInfoAction: (Channel) -> Unit = {},
     onBackPressed: () -> Unit = {},
+    isBackPressEnabled: Boolean = true,
 ) {
     val listViewModel: ChannelListViewModel = viewModel(
         ChannelListViewModel::class.java,
@@ -100,7 +108,7 @@ public fun ChannelsScreen(
     val user by listViewModel.user.collectAsState()
     val connectionState by listViewModel.connectionState.collectAsState()
 
-    BackHandler(enabled = true) {
+    BackHandler(enabled = isBackPressEnabled) {
         if (selectedChannel != null) {
             listViewModel.selectChannel(null)
         } else {
@@ -120,12 +128,13 @@ public fun ChannelsScreen(
             topBar = {
                 if (isShowingHeader) {
                     ChatTheme.componentFactory.ChannelListHeader(
-                        modifier = Modifier,
-                        onHeaderActionClick = onHeaderActionClick,
-                        onAvatarClick = { onHeaderAvatarClick() },
-                        currentUser = user,
-                        title = title,
-                        connectionState = connectionState,
+                        params = ChannelListHeaderParams(
+                            onHeaderActionClick = onHeaderActionClick,
+                            onAvatarClick = { onHeaderAvatarClick() },
+                            currentUser = user,
+                            title = title,
+                            connectionState = connectionState,
+                        ),
                     )
                 }
             },
@@ -138,30 +147,31 @@ public fun ChannelsScreen(
             ) {
                 if (searchMode != SearchMode.None) {
                     ChatTheme.componentFactory.ChannelListSearchInput(
-                        modifier = Modifier
-                            .testTag("Stream_SearchInput")
-                            .padding(
-                                top = StreamTokens.spacingMd,
-                                bottom = StreamTokens.spacingXs,
-                                start = StreamTokens.spacingMd,
-                                end = StreamTokens.spacingMd,
-                            )
-                            .fillMaxWidth(),
-                        query = searchQuery,
-                        onSearchStarted = {},
-                        onValueChange = remember(listViewModel) {
-                            {
-                                searchQuery = it
-                                listViewModel.setSearchQuery(
-                                    when {
-                                        it.isBlank() -> SearchQuery.Empty
-                                        searchMode == SearchMode.Channels -> SearchQuery.Channels(it)
-                                        searchMode == SearchMode.Messages -> SearchQuery.Messages(it)
-                                        else -> SearchQuery.Empty
-                                    },
+                        params = ChannelListSearchInputParams(
+                            modifier = Modifier
+                                .testTag("Stream_SearchInput")
+                                .padding(
+                                    top = StreamTokens.spacingMd,
+                                    bottom = StreamTokens.spacingXs,
+                                    start = StreamTokens.spacingMd,
+                                    end = StreamTokens.spacingMd,
                                 )
-                            }
-                        },
+                                .fillMaxWidth(),
+                            query = searchQuery,
+                            onValueChange = remember(listViewModel, searchMode) {
+                                {
+                                    searchQuery = it
+                                    listViewModel.setSearchQuery(
+                                        when {
+                                            it.isBlank() -> SearchQuery.Empty
+                                            searchMode == SearchMode.Channels -> SearchQuery.Channels(it)
+                                            searchMode == SearchMode.Messages -> SearchQuery.Messages(it)
+                                            else -> SearchQuery.Empty
+                                        },
+                                    )
+                                }
+                            },
+                        ),
                     )
                 }
 
@@ -177,8 +187,10 @@ public fun ChannelsScreen(
                     },
                     emptyContent = {
                         ChatTheme.componentFactory.ChannelListEmptyContent(
-                            modifier = Modifier.fillMaxSize(),
-                            onStartChatClick = onStartChatClick,
+                            params = ChannelListEmptyContentParams(
+                                modifier = Modifier.fillMaxSize(),
+                                onStartChatClick = onStartChatClick,
+                            ),
                         )
                     },
                 )
@@ -208,28 +220,30 @@ public fun ChannelsScreen(
             )
 
             ChatTheme.componentFactory.ChannelMenu(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .animateEnterExit(
-                        enter = slideInVertically(
-                            initialOffsetY = { height -> height },
-                            animationSpec = tween(),
+                params = ChannelMenuParams(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .animateEnterExit(
+                            enter = slideInVertically(
+                                initialOffsetY = { height -> height },
+                                animationSpec = tween(),
+                            ),
+                            exit = slideOutVertically(
+                                targetOffsetY = { height -> height },
+                                animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2),
+                            ),
                         ),
-                        exit = slideOutVertically(
-                            targetOffsetY = { height -> height },
-                            animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2),
-                        ),
-                    ),
-                selectedChannel = channel,
-                currentUser = user,
-                channelActions = channelActions,
-                onChannelOptionConfirm = remember(listViewModel) {
-                    {
-                            action ->
-                        listViewModel.executeOrConfirm(action)
-                    }
-                },
-                onDismiss = remember(listViewModel) { { listViewModel.dismissChannelAction() } },
+                    selectedChannel = channel,
+                    currentUser = user,
+                    channelActions = channelActions,
+                    onChannelOptionConfirm = remember(listViewModel) {
+                        {
+                                action: ChannelAction ->
+                            listViewModel.executeOrConfirm(action)
+                        }
+                    },
+                    onDismiss = remember(listViewModel) { { listViewModel.dismissChannelAction() } },
+                ),
             )
         }
 

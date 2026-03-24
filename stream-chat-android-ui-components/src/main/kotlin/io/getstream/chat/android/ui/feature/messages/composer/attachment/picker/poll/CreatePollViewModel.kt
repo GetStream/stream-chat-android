@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.feature.messages.composer.attachment.picker
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.R
@@ -57,17 +57,6 @@ public class CreatePollViewModel : ViewModel() {
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     /**
-     * The error message for the maximum number of answers allowed.
-     */
-    @Deprecated(
-        "Use multipleAnswersError instead. This property will be removed in future versions.",
-        ReplaceWith("multipleAnswersError"),
-        level = DeprecationLevel.WARNING,
-    )
-    public val maxAnswerError: StateFlow<Int?> =
-        multipleAnswersErrorFlow().stateIn(viewModelScope, SharingStarted.Lazily, null)
-
-    /**
      * A shared flow that emits an error when the range of multiple answers is invalid.
      */
     public val multipleAnswersError: SharedFlow<Int?> =
@@ -88,7 +77,7 @@ public class CreatePollViewModel : ViewModel() {
      * The poll configuration.
      * If the poll is not ready to be created, it will be null.
      */
-    public val pollConfig: StateFlow<PollConfig?> = createPoll
+    public val createPollParams: StateFlow<CreatePollParams?> = createPoll
         .flatMapLatest { pollIsReady.filter { it } }
         .flatMapLatest {
             combine(
@@ -97,7 +86,7 @@ public class CreatePollViewModel : ViewModel() {
                 allowMultipleVotes,
                 maxAnswers,
             ) { title, options, allowMultipleVotes, maxAnswers ->
-                PollConfig(
+                CreatePollParams(
                     name = title,
                     options = options.map { PollOption(text = it.text) },
                     votingVisibility = if (annonymousPoll) VotingVisibility.ANONYMOUS else VotingVisibility.PUBLIC,

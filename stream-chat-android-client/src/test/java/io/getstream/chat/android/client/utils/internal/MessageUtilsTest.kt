@@ -25,13 +25,6 @@ import org.junit.jupiter.api.Test
 internal class MessageUtilsTest {
 
     @Test
-    fun testCommandMessage() {
-        val message = Message(text = "/command")
-        val updatedMessageType = getMessageType(message)
-        updatedMessageType `should be equal to` MessageType.EPHEMERAL
-    }
-
-    @Test
     fun testMessageWithAttachmentsInUploadStateIdle() {
         val message = Message(
             text = "Message with attachments",

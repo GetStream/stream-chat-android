@@ -37,12 +37,6 @@ import io.getstream.chat.android.ui.common.state.channels.actions.LeaveGroup
 import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
 import io.getstream.chat.android.ui.feature.channels.actions.ChannelActionsDialogViewStyle
 import io.getstream.chat.android.ui.feature.channels.actions.internal.ChannelActionsDialogFragment
-import io.getstream.chat.android.ui.feature.channels.list.ChannelListView.ChannelClickListener
-import io.getstream.chat.android.ui.feature.channels.list.ChannelListView.ChannelListItemPredicate
-import io.getstream.chat.android.ui.feature.channels.list.ChannelListView.ChannelListUpdateListener
-import io.getstream.chat.android.ui.feature.channels.list.ChannelListView.ChannelLongClickListener
-import io.getstream.chat.android.ui.feature.channels.list.ChannelListView.ErrorEventHandler
-import io.getstream.chat.android.ui.feature.channels.list.ChannelListView.UserClickListener
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.SwipeViewHolder

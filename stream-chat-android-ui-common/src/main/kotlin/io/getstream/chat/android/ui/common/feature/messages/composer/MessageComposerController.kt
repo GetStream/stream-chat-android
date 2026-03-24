@@ -29,10 +29,10 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
@@ -48,7 +48,6 @@ import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageValidator
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
-import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.common.utils.extensions.addSchemeToUrlIfNeeded
 import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
@@ -63,6 +62,7 @@ import io.getstream.result.call.map
 import io.getstream.result.onSuccessSuspend
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -75,9 +75,9 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -173,7 +173,7 @@ public class MessageComposerController(
      * e.g. send messages, delete messages, etc...
      * For a full list @see [ChannelCapabilities].
      */
-    public val ownCapabilities: StateFlow<Set<String>> = channelState
+    private val ownCapabilities: StateFlow<Set<String>> = channelState
         .filterNotNull()
         .flatMapLatest { it.channelData }
         .map {
@@ -269,41 +269,15 @@ public class MessageComposerController(
 
     private val sessionRepository = ComposerSessionRepository(savedStateHandle)
 
+    private val _state = MutableStateFlow(MessageComposerState())
+
     /** Full message composer state holding all the required information. */
-    public val state: MutableStateFlow<MessageComposerState> = MutableStateFlow(MessageComposerState())
+    public val state: StateFlow<MessageComposerState> = _state.asStateFlow()
+
+    private val _messageInput = MutableStateFlow(MessageInput())
 
     /** UI state of the current composer input. */
-    public val messageInput: MutableStateFlow<MessageInput> = MutableStateFlow(MessageInput())
-
-    /** UI state of the current composer input. */
-    @Deprecated(
-        message = "Use messageInput instead",
-        replaceWith = ReplaceWith("messageInput"),
-    )
-    public val input: MutableStateFlow<String> = MutableStateFlow("")
-
-    /** Represents the remaining time until the user is allowed to send the next message. */
-    public val cooldownTimer: MutableStateFlow<Int> = MutableStateFlow(0)
-
-    /**
-     * Represents the list of validation errors for the current text input and the currently selected attachments.
-     */
-    public val validationErrors: MutableStateFlow<List<ValidationError>> = MutableStateFlow(emptyList())
-
-    /**
-     * Represents the list of users that can be used to autocomplete the current mention input.
-     */
-    public val mentionSuggestions: MutableStateFlow<List<User>> = MutableStateFlow(emptyList())
-
-    /**
-     * Represents the list of commands that can be executed for the channel.
-     */
-    public val commandSuggestions: MutableStateFlow<List<Command>> = MutableStateFlow(emptyList())
-
-    /**
-     * Represents the list of links that can be previewed.
-     */
-    public val linkPreviews: MutableStateFlow<List<LinkPreview>> = MutableStateFlow(emptyList())
+    public val messageInput: StateFlow<MessageInput> = _messageInput.asStateFlow()
 
     /**
      * Represents the list of users in the channel.
@@ -320,31 +294,19 @@ public class MessageComposerController(
      */
     private var cooldownTimerJob: Job? = null
 
-    /**
-     * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're
-     * sending a thread reply or a regular message.
-     */
-    public val messageMode: MutableStateFlow<MessageMode> = MutableStateFlow(MessageMode.Normal)
+    private val _messageActions = MutableStateFlow<Set<MessageAction>>(mutableSetOf())
 
     /**
      * Set of currently active message actions. These are used to display different UI in the composer,
      * as well as help us decorate the message with information, such as the quoted message id.
      */
-    public val messageActions: MutableStateFlow<Set<MessageAction>> = MutableStateFlow(mutableSetOf())
-
-    /**
-     * Represents a Flow that holds the last active [MessageAction] that is either the [Edit], [Reply].
-     */
-    public val lastActiveAction: Flow<MessageAction?>
-        get() = messageActions.map { actions ->
-            actions.lastOrNull { it is Edit || it is Reply }
-        }
+    public val messageActions: StateFlow<Set<MessageAction>> = _messageActions.asStateFlow()
 
     /**
      * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
      */
     private val activeAction: MessageAction?
-        get() = messageActions.value.lastOrNull { it is Edit || it is Reply }
+        get() = _messageActions.value.lastOrNull { it is Edit || it is Reply }
 
     /**
      * Gives us information if the active action is Edit, for business logic purposes.
@@ -356,19 +318,19 @@ public class MessageComposerController(
      * Gets the parent message id if we are in thread mode, or null otherwise.
      */
     private val parentMessageId: String?
-        get() = (messageMode.value as? MessageMode.MessageThread)?.parentMessage?.id
+        get() = (_state.value.messageMode as? MessageMode.MessageThread)?.parentMessage?.id
 
     /**
      * Gets the current text input in the message composer.
      */
     private val messageText: String
-        get() = messageInput.value.text
+        get() = _messageInput.value.text
 
     /**
      * Gives us information if the composer is in the "thread" mode.
      */
     private val isInThread: Boolean
-        get() = messageMode.value is MessageMode.MessageThread
+        get() = _state.value.messageMode is MessageMode.MessageThread
 
     /**
      * Represents the selected mentions based on the message suggestion list.
@@ -389,7 +351,7 @@ public class MessageComposerController(
             .onEach {
                 messageValidator.maxMessageLength = it.maxMessageLength
                 commands = it.commands
-                state.value = state.value.copy(
+                _state.value = _state.value.copy(
                     hasCommands = commands.isNotEmpty(),
                     pollsEnabled = it.pollsEnabled,
                 )
@@ -420,10 +382,9 @@ public class MessageComposerController(
     @OptIn(FlowPreview::class)
     @Suppress("LongMethod")
     private fun setupComposerState() {
-        fetchDraftMessage(messageMode.value)
-        messageInput.onEach { value ->
-            input.value = value.text
-            state.value = state.value.copy(inputValue = value.text)
+        fetchDraftMessage(_state.value.messageMode)
+        _messageInput.onEach { value ->
+            _state.value = _state.value.copy(inputValue = value.text)
 
             if (canSendTypingUpdates.value) {
                 typingUpdatesBuffer.onKeystroke(value.text)
@@ -435,50 +396,17 @@ public class MessageComposerController(
             scope.launch { handleLinkPreviews() }
         }.launchIn(scope)
 
-        lastActiveAction.onEach { activeAction ->
-            state.value = state.value.copy(action = activeAction)
+        _messageActions.onEach { actions ->
+            val activeAction = actions.lastOrNull { it is Edit || it is Reply }
+            _state.update { it.copy(action = activeAction) }
         }.launchIn(scope)
-
-        validationErrors.onEach { validationErrors ->
-            state.value = state.value.copy(validationErrors = validationErrors)
-        }.launchIn(scope)
-
-        mentionSuggestions.onEach { mentionSuggestions ->
-            state.value = state.value.copy(mentionSuggestions = mentionSuggestions)
-        }.launchIn(scope)
-
-        commandSuggestions.onEach { commandSuggestions ->
-            state.value = state.value.copy(commandSuggestions = commandSuggestions)
-        }.launchIn(scope)
-
-        linkPreviews.onEach { linkPreviews ->
-            state.value = state.value.copy(linkPreviews = linkPreviews)
-        }.launchIn(scope)
-
-        cooldownTimer.onEach { cooldownTimer ->
-            state.value = state.value.copy(coolDownTime = cooldownTimer)
-        }.launchIn(scope)
-
-        messageMode
-            .distinctUntilChanged { old, new ->
-                when (old) {
-                    is MessageMode.Normal -> new is MessageMode.Normal
-                    is MessageMode.MessageThread ->
-                        old.parentMessage.id == (new as? MessageMode.MessageThread)?.parentMessage?.id
-                }
-            }
-            .onEach { messageMode ->
-                saveDraftMessage(state.value.messageMode)
-                state.value = state.value.copy(messageMode = messageMode)
-                fetchDraftMessage(messageMode)
-            }.launchIn(scope)
 
         ownCapabilities.onEach { ownCapabilities ->
-            state.value = state.value.copy(ownCapabilities = ownCapabilities)
+            _state.value = _state.value.copy(ownCapabilities = ownCapabilities)
         }.launchIn(scope)
 
         chatClient.clientState.user.onEach { currentUser ->
-            state.value = state.value.copy(currentUser = currentUser)
+            _state.value = _state.value.copy(currentUser = currentUser)
         }.launchIn(scope)
 
         audioRecordingController.recordingState.onEach { recording ->
@@ -486,7 +414,7 @@ public class MessageComposerController(
             if (recording is RecordingState.Complete) {
                 _recordingAttachment.value = recording.attachment
             }
-            state.update { it.copy(recording = recording) }
+            _state.update { it.copy(recording = recording) }
             syncAttachments()
         }.launchIn(scope)
 
@@ -494,7 +422,7 @@ public class MessageComposerController(
             channelDraftMessages.onEach {
                 if (it[channelCid] == null &&
                     !currentDraftId.isNullOrEmpty() &&
-                    messageMode.value is MessageMode.Normal
+                    _state.value.messageMode is MessageMode.Normal
                 ) {
                     clearData()
                 }
@@ -503,7 +431,7 @@ public class MessageComposerController(
             threadDraftMessages.onEach {
                 if (it[parentMessageId] == null &&
                     !currentDraftId.isNullOrEmpty() &&
-                    messageMode.value is MessageMode.MessageThread
+                    _state.value.messageMode is MessageMode.MessageThread
                 ) {
                     clearData()
                 }
@@ -541,7 +469,7 @@ public class MessageComposerController(
         setMessageInputInternal(message.text, MessageInput.Source.Edit)
         _editModeMessage.value = fullMessage
         _editModeAttachments.value = attachments
-        messageActions.value += Edit(fullMessage)
+        _messageActions.update { it + Edit(fullMessage) }
         syncAttachments()
     }
 
@@ -551,19 +479,19 @@ public class MessageComposerController(
      * @param value Current state value.
      */
     public fun setMessageInput(value: String) {
-        if (this.messageInput.value.text == value) return
-        this.messageInput.value = MessageInput(value, MessageInput.Source.External)
+        if (_messageInput.value.text == value) return
+        _messageInput.value = MessageInput(value, MessageInput.Source.External)
     }
 
     private fun setMessageInputInternal(value: String, source: MessageInput.Source) {
-        if (this.messageInput.value.text == value) return
-        this.messageInput.value = MessageInput(value, source)
+        if (_messageInput.value.text == value) return
+        _messageInput.value = MessageInput(value, source)
     }
 
     private suspend fun saveDraftMessage(messageMode: MessageMode) {
         if (!config.isDraftMessageEnabled) return
         currentDraftId = null
-        when (val messageText = messageInput.value.text) {
+        when (val messageText = _messageInput.value.text) {
             "" -> clearDraftMessage(messageMode)
             else -> {
                 getDraftMessageOrEmpty(messageMode).let {
@@ -572,8 +500,8 @@ public class MessageComposerController(
                         channelId = channelId,
                         message = it.copy(
                             text = messageText,
-                            showInChannel = state.value.alsoSendToChannel,
-                            replyMessage = (messageActions.value.firstOrNull { it is Reply } as? Reply)?.message,
+                            showInChannel = _state.value.alsoSendToChannel,
+                            replyMessage = (_messageActions.value.firstOrNull { it is Reply } as? Reply)?.message,
                         ),
                     ).await()
                 }
@@ -590,7 +518,7 @@ public class MessageComposerController(
             draftMessage.replyMessage
                 ?.let { performMessageAction(Reply(it)) }
                 ?: run {
-                    messageActions.value = messageActions.value.filterNot { it is Reply }.toSet()
+                    _messageActions.value = _messageActions.value.filterNot { it is Reply }.toSet()
                 }
         }
     }
@@ -603,7 +531,20 @@ public class MessageComposerController(
      * @param messageMode The current message mode.
      */
     public fun setMessageMode(messageMode: MessageMode) {
-        this.messageMode.value = messageMode
+        val previousMode = _state.value.messageMode
+        if (isSameMessageMode(previousMode, messageMode)) return
+        scope.launch(start = CoroutineStart.UNDISPATCHED) {
+            _state.update { it.copy(messageMode = messageMode) }
+            saveDraftMessage(previousMode)
+            fetchDraftMessage(messageMode)
+        }
+    }
+
+    private fun isSameMessageMode(old: MessageMode, new: MessageMode): Boolean = when {
+        old is MessageMode.Normal && new is MessageMode.Normal -> true
+        old is MessageMode.MessageThread && new is MessageMode.MessageThread ->
+            old.parentMessage.id == new.parentMessage.id
+        else -> false
     }
 
     /**
@@ -612,14 +553,14 @@ public class MessageComposerController(
      * @param alsoSendToChannel If the message will be shown in the channel after it is sent.
      */
     public fun setAlsoSendToChannel(alsoSendToChannel: Boolean) {
-        state.update { it.copy(alsoSendToChannel = alsoSendToChannel) }
+        _state.update { it.copy(alsoSendToChannel = alsoSendToChannel) }
     }
 
     /**
      * Handles selected [messageAction]. We only have three actions we can react to in the composer:
-     * - [ThreadReply] - We change the [messageMode] so we can send the message to a thread.
+     * - [ThreadReply] - We change the message mode so we can send the message to a thread.
      * - [Reply] - We need to reply to a message and set up the reply UI.
-     * - [Edit] - We need to change the [input] to the message we want to edit and change the UI to
+     * - [Edit] - We need to change the [messageInput] to the message we want to edit and change the UI to
      * match the editing action.
      *
      * @param messageAction The newly selected action.
@@ -628,14 +569,14 @@ public class MessageComposerController(
         when (messageAction) {
             is ThreadReply -> setMessageMode(MessageMode.MessageThread(messageAction.message))
             is Reply ->
-                messageActions.value =
-                    (messageActions.value.filterNot { it is Reply } + messageAction).toSet()
+                _messageActions.value =
+                    (_messageActions.value.filterNot { it is Reply } + messageAction).toSet()
 
             is Edit -> {
                 setMessageInputInternal(messageAction.message.text, MessageInput.Source.Edit)
                 _editModeMessage.value = messageAction.message
                 _editModeAttachments.value = messageAction.message.attachments
-                messageActions.value += messageAction
+                _messageActions.update { it + messageAction }
                 syncAttachments()
             }
 
@@ -654,7 +595,7 @@ public class MessageComposerController(
             syncAttachments()
         }
 
-        this.messageActions.value = emptySet()
+        _messageActions.value = emptySet()
     }
 
     /**
@@ -724,15 +665,15 @@ public class MessageComposerController(
     }
 
     /**
-     * Creates a poll with the given [pollConfig].
+     * Creates a poll with the given [createPollParams].
      *
-     * @param pollConfig Configuration for creating a poll.
+     * @param createPollParams Configuration for creating a poll.
      */
-    public fun createPoll(pollConfig: PollConfig, onResult: (Result<Message>) -> Unit = {}) {
+    public fun createPoll(createPollParams: CreatePollParams, onResult: (Result<Message>) -> Unit = {}) {
         chatClient.sendPoll(
             channelType = channelType,
             channelId = channelId,
-            pollConfig = pollConfig,
+            createPollParams = createPollParams,
         ).enqueue { onResult(it) }
     }
 
@@ -744,13 +685,13 @@ public class MessageComposerController(
     public fun clearData() {
         logger.i { "[clearData]" }
         dismissMessageActions()
-        scope.launch { clearDraftMessage(messageMode.value) }
-        messageInput.value = MessageInput()
+        scope.launch { clearDraftMessage(_state.value.messageMode) }
+        _messageInput.value = MessageInput()
         clearAttachments()
         clearActiveCommand()
-        validationErrors.value = emptyList()
+        _state.update { it.copy(validationErrors = emptyList()) }
         if (!isInThread) {
-            state.update { it.copy(alsoSendToChannel = false) }
+            _state.update { it.copy(alsoSendToChannel = false) }
         }
     }
 
@@ -798,8 +739,8 @@ public class MessageComposerController(
             chatClient.deleteMessage(activeMessage.id, true).enqueue()
         }
         val preparedMessage = message.copy(
-            showInChannel = isInThread && state.value.alsoSendToChannel,
-            skipEnrichUrl = linkPreviews.value.isEmpty(),
+            showInChannel = isInThread && _state.value.alsoSendToChannel,
+            skipEnrichUrl = _state.value.linkPreviews.isEmpty(),
         )
         clearData()
 
@@ -869,7 +810,7 @@ public class MessageComposerController(
 
         val currentUserId = chatClient.getCurrentUser()?.id
         val fullText = if (config.isActiveCommandEnabled) {
-            state.value.activeCommand?.let { "/${it.name} $message" } ?: message
+            _state.value.activeCommand?.let { "/${it.name} $message" } ?: message
         } else {
             message
         }
@@ -914,6 +855,7 @@ public class MessageComposerController(
             text.contains("@${it.user.name.lowercase()}")
         }.map { it.user.id }
         this.selectedMentions.clear()
+        _state.update { it.copy(selectedMentions = emptySet()) }
         return remainingMentions.toMutableList()
     }
 
@@ -936,13 +878,13 @@ public class MessageComposerController(
         typingUpdatesBuffer.clear()
         audioRecordingController.onCleared()
         scope.launch {
-            saveDraftMessage(messageMode.value)
+            saveDraftMessage(_state.value.messageMode)
             scope.cancel()
         }
     }
 
     private fun syncAttachments() {
-        state.update {
+        _state.update {
             it.copy(
                 attachments = _editModeAttachments.value +
                     _selectedAttachments.value.values.toList() +
@@ -956,7 +898,9 @@ public class MessageComposerController(
      * Checks the current input for validation errors.
      */
     private fun handleValidationErrors() {
-        validationErrors.value = messageValidator.validateMessage(messageInput.value.text, state.value.attachments)
+        _state.update {
+            it.copy(validationErrors = messageValidator.validateMessage(_messageInput.value.text, it.attachments))
+        }
     }
 
     /**
@@ -982,7 +926,7 @@ public class MessageComposerController(
         setMessageInputInternal(augmentedMessageText, MessageInput.Source.MentionSelected)
 
         selectedMentions += mention
-        state.update { it.copy(selectedMentions = selectedMentions) }
+        _state.update { it.copy(selectedMentions = selectedMentions.toSet()) }
     }
 
     /**
@@ -994,7 +938,7 @@ public class MessageComposerController(
      * @param command The command that was selected.
      */
     public fun selectCommand(command: Command) {
-        state.update { it.copy(activeCommand = command) }
+        _state.update { it.copy(activeCommand = command) }
         setMessageInputInternal(
             value = if (config.isActiveCommandEnabled) "" else "/${command.name} ",
             source = MessageInput.Source.CommandSelected,
@@ -1006,7 +950,7 @@ public class MessageComposerController(
      * Dismisses the active command, clearing [MessageComposerState.activeCommand] and resetting the text input.
      */
     public fun clearActiveCommand() {
-        state.update { it.copy(activeCommand = null) }
+        _state.update { it.copy(activeCommand = null) }
         setMessageInputInternal("", MessageInput.Source.Default)
     }
 
@@ -1014,15 +958,22 @@ public class MessageComposerController(
      * Toggles the visibility of the command suggestion list popup.
      */
     public fun toggleCommandsVisibility() {
-        commandSuggestions.value = if (commandSuggestions.value.isEmpty()) commands else emptyList()
+        _state.update { s ->
+            val showCommands = s.commandSuggestions.isEmpty()
+            s.copy(commandSuggestions = if (showCommands) commands else emptyList())
+        }
     }
 
     /**
      * Dismisses the suggestions popup above the message composer.
      */
     public fun dismissSuggestionsPopup() {
-        mentionSuggestions.value = emptyList()
-        commandSuggestions.value = emptyList()
+        _state.update {
+            it.copy(
+                mentionSuggestions = emptyList(),
+                commandSuggestions = emptyList(),
+            )
+        }
     }
 
     /**
@@ -1096,7 +1047,7 @@ public class MessageComposerController(
             audioRecordingController.completeRecordingSync().onSuccess { recording ->
                 _recordingAttachment.value = recording
                 syncAttachments()
-                sendMessage(buildNewMessage(messageInput.value.text, state.value.attachments), callback = {})
+                sendMessage(buildNewMessage(_messageInput.value.text, _state.value.attachments), callback = {})
             }
         }
     }
@@ -1105,13 +1056,13 @@ public class MessageComposerController(
      * Shows the mention suggestion list popup if necessary.
      */
     private fun handleMentionSuggestions() {
-        val messageInput = messageInput.value
-        if (messageInput.source == MessageInput.Source.MentionSelected) {
+        val currentInput = _messageInput.value
+        if (currentInput.source == MessageInput.Source.MentionSelected) {
             logger.v { "[handleMentionSuggestions] rejected (messageInput came from mention selection)" }
-            mentionSuggestions.value = emptyList()
+            _state.update { it.copy(mentionSuggestions = emptyList()) }
             return
         }
-        val inputText = messageInput.text
+        val inputText = currentInput.text
         scope.launch(DispatcherProvider.IO) {
             val suggestion = mentionSuggester.typingSuggestion(inputText)
             logger.v { "[handleMentionSuggestions] suggestion: $suggestion" }
@@ -1121,7 +1072,7 @@ public class MessageComposerController(
                 emptyList()
             }
             withContext(DispatcherProvider.Main) {
-                mentionSuggestions.value = result
+                _state.update { it.copy(mentionSuggestions = result) }
             }
         }
     }
@@ -1131,12 +1082,13 @@ public class MessageComposerController(
      */
     private fun handleCommandSuggestions() {
         val containsCommand = CommandPattern.matcher(messageText).find()
-        commandSuggestions.value = if (containsCommand && state.value.attachments.isEmpty()) {
+        val suggestions = if (containsCommand && _state.value.attachments.isEmpty()) {
             val commandPattern = messageText.removePrefix("/")
             commands.filter { it.name.startsWith(commandPattern) }
         } else {
             emptyList()
         }
+        _state.update { it.copy(commandSuggestions = suggestions) }
     }
 
     /**
@@ -1155,8 +1107,7 @@ public class MessageComposerController(
                 .coerceAtLeast(0)
 
             fun updateCooldownTime(timeRemaining: Int) {
-                cooldownTimer.value = timeRemaining
-                state.value = state.value.copy(coolDownTime = timeRemaining)
+                _state.update { it.copy(coolDownTime = timeRemaining) }
             }
 
             // If the user is still unable to send messages show the timer
@@ -1187,7 +1138,7 @@ public class MessageComposerController(
             .map { it.value }
 
         logger.v { "[handleLinkPreviews] previews: ${previews.map { it.originUrl }}" }
-        linkPreviews.value = previews
+        _state.update { it.copy(linkPreviews = previews) }
     }
 
     private fun loadLatestMessagesIfNeeded() {
@@ -1272,7 +1223,7 @@ public class MessageComposerController(
      * Cancels any link preview.
      */
     public fun cancelLinkPreview() {
-        linkPreviews.value = emptyList()
+        _state.update { it.copy(linkPreviews = emptyList()) }
     }
 }
 

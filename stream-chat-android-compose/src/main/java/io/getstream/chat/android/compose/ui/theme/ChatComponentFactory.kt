@@ -16,17 +16,13 @@
 
 package io.getstream.chat.android.compose.ui.theme
 
-import android.net.Uri
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,9 +30,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
-import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Warning
 import androidx.compose.material3.BottomAppBarDefaults
@@ -46,41 +40,27 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ItemState
-import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
-import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.state.messages.attachments.CameraPickerMode
-import io.getstream.chat.android.compose.state.messages.attachments.CommandPickerMode
-import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
-import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
-import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.attachments.content.UnsupportedAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfoNavigationIcon
@@ -113,6 +93,9 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
+import io.getstream.chat.android.compose.ui.components.button.StreamButton
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
@@ -134,13 +117,11 @@ import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisi
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.ScrollToBottomButton
 import io.getstream.chat.android.compose.ui.components.messages.SegmentedMessageReactions
+import io.getstream.chat.android.compose.ui.components.messages.SwipeToReplyIcon
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
-import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleSize
 import io.getstream.chat.android.compose.ui.components.selectedmessage.MessageMenuHeader
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
-import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerActions
-import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordingButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerEditIndicator
 import io.getstream.chat.android.compose.ui.messages.composer.internal.attachments.MessageComposerAttachmentAudioRecordItem
@@ -171,7 +152,6 @@ import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageUnreadSe
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesHelperContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesLoadingMoreIndicator
 import io.getstream.chat.android.compose.ui.messages.list.DefaultSystemMessageContent
-import io.getstream.chat.android.compose.ui.messages.list.MessagesLazyListState
 import io.getstream.chat.android.compose.ui.messages.preview.internal.DefaultMessagePreviewItemCenterContent
 import io.getstream.chat.android.compose.ui.messages.preview.internal.DefaultMessagePreviewItemLeadingContent
 import io.getstream.chat.android.compose.ui.messages.preview.internal.DefaultMessagePreviewItemTrailingContent
@@ -184,56 +164,17 @@ import io.getstream.chat.android.compose.ui.threads.DefaultThreadListEmptyConten
 import io.getstream.chat.android.compose.ui.threads.DefaultThreadListLoadingContent
 import io.getstream.chat.android.compose.ui.threads.DefaultThreadListLoadingMoreContent
 import io.getstream.chat.android.compose.ui.threads.ThreadItem
-import io.getstream.chat.android.compose.ui.threads.ThreadListBannerState
-import io.getstream.chat.android.compose.ui.util.ReactionResolver
 import io.getstream.chat.android.compose.ui.util.StreamSnackbar
-import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
+import io.getstream.chat.android.compose.ui.util.bottomBorder
+import io.getstream.chat.android.compose.ui.util.topBorder
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
-import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
-import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.ConnectionState
-import io.getstream.chat.android.models.LinkPreview
-import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.Option
-import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.Reaction
-import io.getstream.chat.android.models.ReactionSorting
-import io.getstream.chat.android.models.Thread
-import io.getstream.chat.android.models.User
-import io.getstream.chat.android.models.Vote
-import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewEvent
-import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
-import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
-import io.getstream.chat.android.ui.common.model.MessageResult
-import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
-import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
-import io.getstream.chat.android.ui.common.state.channel.info.MemberAction
-import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
-import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.React
-import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
-import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
-import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
-import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
-import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
-import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
-import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
-import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
-import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageItemState
-import io.getstream.chat.android.ui.common.state.messages.list.StartOfTheChannelItemState
-import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
-import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
-import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
-import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
-import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
-import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.chat.android.compose.ui.channel.attachments.ChannelFilesAttachmentsItem as DefaultChannelFilesAttachmentsItem
 import io.getstream.chat.android.compose.ui.channel.attachments.ChannelMediaAttachmentsItem as DefaultChannelMediaAttachmentsItem
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfoOptionItem as DefaultChannelInfoOptionItem
@@ -243,9 +184,6 @@ import io.getstream.chat.android.ui.common.R as UiCommonR
  * Default implementation of [ChatComponentFactory].
  */
 internal class DefaultChatComponentFactory : ChatComponentFactory
-
-// Default values
-private const val DefaultCellsCount: Int = 5
 
 /**
  * Factory for creating stateless components that are used by default throughout the Chat UI.
@@ -258,9 +196,9 @@ private const val DefaultCellsCount: Int = 5
  *     componentFactory = object : ChatComponentFactory() {
  *         @Composable
  *         override fun RowScope.ChannelListHeaderTrailingContent(
- *             onHeaderActionClick: () -> Unit,
+ *             params: ChannelListHeaderTrailingContentParams,
  *         ) {
- *             IconButton(onClick = onHeaderActionClick) {
+ *             IconButton(onClick = params.onHeaderActionClick) {
  *                 Icon(
  *                     imageVector = Icons.Default.Add,
  *                     contentDescription = "Add",
@@ -278,8 +216,10 @@ private const val DefaultCellsCount: Int = 5
  * ```kotlin
  * class MyChatComponentFactory : ChatComponentFactory {
  *     @Composable
- *     override fun RowScope.ChannelListHeaderTrailingContent(onHeaderActionClick: () -> Unit) {
- *         IconButton(onClick = onHeaderActionClick) {
+ *     override fun RowScope.ChannelListHeaderTrailingContent(
+ *         params: ChannelListHeaderTrailingContentParams,
+ *     ) {
+ *         IconButton(onClick = params.onHeaderActionClick) {
  *             Icon(
  *                 imageVector = Icons.Default.Add,
  *                 contentDescription = "Add",
@@ -295,101 +235,92 @@ private const val DefaultCellsCount: Int = 5
  * }
  * ```
  */
-@Suppress("TooManyFunctions", "LargeClass", "LongParameterList")
+@Suppress("TooManyFunctions", "LargeClass")
 public interface ChatComponentFactory {
 
     /**
      * The default header shown above the channel list.
      * Usually contains the current user's avatar, a title or the connected status, and an action button.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelListHeader(
-        modifier: Modifier,
-        title: String,
-        currentUser: User?,
-        connectionState: ConnectionState,
-        onAvatarClick: (User?) -> Unit,
-        onHeaderActionClick: () -> Unit,
-    ) {
+    public fun ChannelListHeader(params: ChannelListHeaderParams) {
         io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader(
-            modifier = modifier,
-            title = title,
-            currentUser = currentUser,
-            connectionState = connectionState,
-            onAvatarClick = onAvatarClick,
-            onHeaderActionClick = onHeaderActionClick,
+            modifier = params.modifier,
+            title = params.title,
+            currentUser = params.currentUser,
+            connectionState = params.connectionState,
+            onAvatarClick = params.onAvatarClick,
+            onHeaderActionClick = params.onHeaderActionClick,
         )
     }
 
     /**
      * The default leading content of the channel list header.
      * Usually the avatar of the current user if it's available.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.ChannelListHeaderLeadingContent(
-        currentUser: User?,
-        onAvatarClick: (User?) -> Unit,
-    ) {
+    public fun RowScope.ChannelListHeaderLeadingContent(params: ChannelListHeaderLeadingContentParams) {
         DefaultChannelHeaderLeadingContent(
-            currentUser = currentUser,
-            onAvatarClick = onAvatarClick,
+            currentUser = params.currentUser,
+            onAvatarClick = params.onAvatarClick,
         )
     }
 
     /**
      * The default center content of the channel list header.
-     * Usually shows the [title] if [connectionState] is [ConnectionState.Connected],
-     * a `Disconnected` text if [connectionState] is offline,
+     * Usually shows the title if connectionState is [ConnectionState.Connected],
+     * a `Disconnected` text if connectionState is offline,
      * or [NetworkLoadingIndicator] otherwise.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.ChannelListHeaderCenterContent(
-        connectionState: ConnectionState,
-        title: String,
-    ) {
+    public fun RowScope.ChannelListHeaderCenterContent(params: ChannelListHeaderCenterContentParams) {
         DefaultChannelListHeaderCenterContent(
-            connectionState = connectionState,
-            title = title,
+            connectionState = params.connectionState,
+            title = params.title,
         )
     }
 
     /**
      * The default trailing content of the channel list header.
      * Usually an action button.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.ChannelListHeaderTrailingContent(
-        onHeaderActionClick: () -> Unit,
-    ) {
+    public fun RowScope.ChannelListHeaderTrailingContent(params: ChannelListHeaderTrailingContentParams) {
         DefaultChannelListHeaderTrailingContent(
-            onHeaderActionClick = onHeaderActionClick,
+            onHeaderActionClick = params.onHeaderActionClick,
         )
     }
 
     /**
      * The default loading indicator of the channel list, when the initial data is loading.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelListLoadingIndicator(modifier: Modifier) {
+    public fun ChannelListLoadingIndicator(params: ChannelListLoadingIndicatorParams) {
         DefaultChannelListLoadingIndicator(
-            modifier = modifier,
+            modifier = params.modifier,
         )
     }
 
     /**
      * The default empty content of the channel list.
      *
-     * @param modifier Modifier for styling.
-     * @param onStartChatClick Optional callback for the "Start a chat" button.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelListEmptyContent(
-        modifier: Modifier,
-        onStartChatClick: (() -> Unit)?,
-    ) {
+    public fun ChannelListEmptyContent(params: ChannelListEmptyContentParams) {
         DefaultChannelListEmptyContent(
-            modifier = modifier,
-            onStartChatClick = onStartChatClick,
+            modifier = params.modifier,
+            onStartChatClick = params.onStartChatClick,
         )
     }
 
@@ -397,38 +328,35 @@ public interface ChatComponentFactory {
      * The default channel list item content.
      * When swipe actions are enabled and a [SwipeRevealCoordinator][LocalSwipeRevealCoordinator]
      * is provided, wraps the item in [SwipeableChannelItem].
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyItemScope.ChannelListItemContent(
-        channelItem: ItemState.ChannelItemState,
-        currentUser: User?,
-        onChannelClick: (Channel) -> Unit,
-        onChannelLongClick: (Channel) -> Unit,
-    ) {
+    public fun LazyItemScope.ChannelListItemContent(params: ChannelListItemContentParams) {
         val coordinator = LocalSwipeRevealCoordinator.current
         val swipeEnabled = ChatTheme.config.channelList.swipeActionsEnabled && coordinator != null
 
         if (swipeEnabled) {
             SwipeableChannelItem(
                 modifier = Modifier.animateItem(),
-                channelCid = channelItem.channel.cid,
+                channelCid = params.channelItem.channel.cid,
                 backgroundColor = ChatTheme.colors.backgroundCoreApp,
-                swipeActions = { ChannelSwipeActions(channelItem) },
+                swipeActions = { ChannelSwipeActions(ChannelSwipeActionsParams(params.channelItem)) },
             ) {
                 ChannelItem(
-                    channelItem = channelItem,
-                    currentUser = currentUser,
-                    onChannelClick = onChannelClick,
-                    onChannelLongClick = onChannelLongClick,
+                    channelItem = params.channelItem,
+                    currentUser = params.currentUser,
+                    onChannelClick = params.onChannelClick,
+                    onChannelLongClick = params.onChannelLongClick,
                 )
             }
         } else {
             ChannelItem(
                 modifier = Modifier.animateItem(),
-                channelItem = channelItem,
-                currentUser = currentUser,
-                onChannelClick = onChannelClick,
-                onChannelLongClick = onChannelLongClick,
+                channelItem = params.channelItem,
+                currentUser = params.currentUser,
+                onChannelClick = params.onChannelClick,
+                onChannelLongClick = params.onChannelLongClick,
             )
         }
     }
@@ -437,134 +365,125 @@ public interface ChatComponentFactory {
      * The swipe actions revealed when swiping a channel list item.
      * Override this to provide custom swipe actions.
      *
-     * @param channelItem The channel item to build actions for.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelSwipeActions(channelItem: ItemState.ChannelItemState) {
-        DefaultChannelSwipeActions(channelItem)
+    public fun ChannelSwipeActions(params: ChannelSwipeActionsParams) {
+        DefaultChannelSwipeActions(params.channelItem)
     }
 
     /**
      * The default helper content of the channel list.
      * It's empty by default and can be used to implement a scroll to top feature.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun BoxScope.ChannelListHelperContent() {
+    public fun BoxScope.ChannelListHelperContent(params: ChannelListHelperContentParams) {
     }
 
     /**
      * The default loading more item, when the next page of the channel list is loading.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyItemScope.ChannelListLoadingMoreItemContent() {
+    public fun LazyItemScope.ChannelListLoadingMoreItemContent(params: ChannelListLoadingMoreItemContentParams) {
         DefaultChannelsLoadingMoreIndicator()
     }
 
     /**
      * The default divider between channel items.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyItemScope.ChannelListDividerItem() {
+    public fun LazyItemScope.ChannelListDividerItem(params: ChannelListDividerItemParams) {
         StreamHorizontalDivider()
     }
 
     /**
      * The default leading content of the channel item.
      * Usually the avatar that holds an image of the channel or its members.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.ChannelItemLeadingContent(
-        channelItem: ItemState.ChannelItemState,
-        currentUser: User?,
-    ) {
+    public fun RowScope.ChannelItemLeadingContent(params: ChannelItemLeadingContentParams) {
         DefaultChannelItemLeadingContent(
-            channelItem = channelItem,
-            currentUser = currentUser,
+            channelItem = params.channelItem,
+            currentUser = params.currentUser,
         )
     }
 
     /**
      * The default center content of the channel item.
      * Usually the name of the channel and the last message.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.ChannelItemCenterContent(
-        channelItem: ItemState.ChannelItemState,
-        currentUser: User?,
-    ) {
+    public fun RowScope.ChannelItemCenterContent(params: ChannelItemCenterContentParams) {
         DefaultChannelItemCenterContent(
-            channelItemState = channelItem,
-            currentUser = currentUser,
+            channelItemState = params.channelItem,
+            currentUser = params.currentUser,
         )
     }
 
     /**
      * The default trailing content of the channel item.
      * Usually information about the last message such as its read state, timestamp, and the number of unread messages.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.ChannelItemTrailingContent(
-        channelItem: ItemState.ChannelItemState,
-        currentUser: User?,
-    ) {
+    public fun RowScope.ChannelItemTrailingContent(params: ChannelItemTrailingContentParams) {
         DefaultChannelItemTrailingContent(
-            channel = channelItem.channel,
-            currentUser = currentUser,
+            channel = params.channelItem.channel,
+            currentUser = params.currentUser,
         )
     }
 
     /**
      * The default unread count indicator in the channel item.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelItemUnreadCountIndicator(
-        unreadCount: Int,
-        modifier: Modifier,
-    ) {
+    public fun ChannelItemUnreadCountIndicator(params: ChannelItemUnreadCountIndicatorParams) {
         UnreadCountIndicator(
-            unreadCount = unreadCount,
-            modifier = modifier,
+            unreadCount = params.unreadCount,
+            modifier = params.modifier,
         )
     }
 
     /**
      * The default read status indicator in the channel item, weather the last message is sent, pending or read.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelItemReadStatusIndicator(
-        channel: Channel,
-        message: Message,
-        currentUser: User?,
-        modifier: Modifier,
-    ) {
+    public fun ChannelItemReadStatusIndicator(params: ChannelItemReadStatusIndicatorParams) {
         MessageReadStatusIcon(
-            channel = channel,
-            message = message,
-            currentUser = currentUser,
-            modifier = modifier,
+            channel = params.channel,
+            message = params.message,
+            currentUser = params.currentUser,
+            modifier = params.modifier,
         )
     }
 
     /**
      * The default search input of the channel list.
      *
-     * @param modifier Modifier for styling.
-     * @param query Current query string.
-     * @param onSearchStarted Action invoked when the search starts.
-     * @param onValueChange Action invoked when the query value changes.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelListSearchInput(
-        modifier: Modifier,
-        query: String,
-        onSearchStarted: () -> Unit,
-        onValueChange: (String) -> Unit,
-    ) {
+    public fun ChannelListSearchInput(params: ChannelListSearchInputParams) {
         SearchInput(
-            modifier = modifier,
-            query = query,
-            onSearchStarted = onSearchStarted,
-            onValueChange = onValueChange,
+            modifier = params.modifier,
+            query = params.query,
+            onSearchStarted = params.onSearchStarted,
+            onValueChange = params.onValueChange,
         )
     }
 
@@ -572,9 +491,11 @@ public interface ChatComponentFactory {
      * The default leading icon of the search input.
      *
      * Used by [ChannelListSearchInput].
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.SearchInputLeadingIcon() {
+    public fun RowScope.SearchInputLeadingIcon(params: SearchInputLeadingIconParams) {
         DefaultSearchLeadingIcon()
     }
 
@@ -582,9 +503,11 @@ public interface ChatComponentFactory {
      * The default label of the search input.
      *
      * Used by [ChannelListSearchInput].
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun SearchInputLabel() {
+    public fun SearchInputLabel(params: SearchInputLabelParams) {
         DefaultSearchLabel()
     }
 
@@ -592,39 +515,38 @@ public interface ChatComponentFactory {
      * The default clear button of the search input.
      *
      * Used by [ChannelListSearchInput].
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun SearchInputClearButton(onClick: () -> Unit) {
-        DefaultSearchClearButton(onClick = onClick)
+    public fun SearchInputClearButton(params: SearchInputClearButtonParams) {
+        DefaultSearchClearButton(onClick = params.onClick)
     }
 
     /**
      * The default empty search content of the channel list, when there are no matching search results.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelListEmptySearchContent(
-        modifier: Modifier,
-        searchQuery: String,
-    ) {
+    public fun ChannelListEmptySearchContent(params: ChannelListEmptySearchContentParams) {
         DefaultChannelSearchEmptyContent(
-            modifier = modifier,
-            searchQuery = searchQuery,
+            modifier = params.modifier,
+            searchQuery = params.searchQuery,
         )
     }
 
     /**
      * The default search result item of the channel list.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyItemScope.SearchResultItemContent(
-        searchResultItem: ItemState.SearchResultItemState,
-        currentUser: User?,
-        onSearchResultClick: (Message) -> Unit,
-    ) {
+    public fun LazyItemScope.SearchResultItemContent(params: SearchResultItemContentParams) {
         SearchResultItem(
-            searchResultItemState = searchResultItem,
-            currentUser = currentUser,
-            onSearchResultClick = onSearchResultClick,
+            searchResultItemState = params.searchResultItem,
+            currentUser = params.currentUser,
+            onSearchResultClick = params.onSearchResultClick,
         )
     }
 
@@ -633,15 +555,11 @@ public interface ChatComponentFactory {
      *
      * Used by [SearchResultItemContent].
      *
-     * @param searchResultItem The search result item.
-     * @param currentUser The currently logged in user.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.SearchResultItemLeadingContent(
-        searchResultItem: ItemState.SearchResultItemState,
-        currentUser: User?,
-    ) {
-        DefaultSearchResultItemLeadingContent(searchResultItem, currentUser)
+    public fun RowScope.SearchResultItemLeadingContent(params: SearchResultItemLeadingContentParams) {
+        DefaultSearchResultItemLeadingContent(params.searchResultItem, params.currentUser)
     }
 
     /**
@@ -650,15 +568,11 @@ public interface ChatComponentFactory {
      *
      * Used by [SearchResultItemContent].
      *
-     * @param searchResultItem The state of the search result item.
-     * @param currentUser The currently logged in user.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.SearchResultItemCenterContent(
-        searchResultItem: ItemState.SearchResultItemState,
-        currentUser: User?,
-    ) {
-        DefaultSearchResultItemCenterContent(searchResultItem, currentUser)
+    public fun RowScope.SearchResultItemCenterContent(params: SearchResultItemCenterContentParams) {
+        DefaultSearchResultItemCenterContent(params.searchResultItem, params.currentUser)
     }
 
     /**
@@ -666,11 +580,11 @@ public interface ChatComponentFactory {
      *
      * Used by [SearchResultItemContent].
      *
-     * @param searchResultItem The state of the search result item.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.SearchResultItemTrailingContent(searchResultItem: ItemState.SearchResultItemState) {
-        DefaultSearchResultItemTrailingContent(searchResultItem)
+    public fun RowScope.SearchResultItemTrailingContent(params: SearchResultItemTrailingContentParams) {
+        DefaultSearchResultItemTrailingContent(params.searchResultItem)
     }
 
     /**
@@ -679,129 +593,74 @@ public interface ChatComponentFactory {
      * the channel title in the top center,
      * the channel information or the connection status in the bottom center,
      * and the channel avatar as the trailing content.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageListHeader(
-        modifier: Modifier,
-        channel: Channel,
-        currentUser: User?,
-        connectionState: ConnectionState,
-        typingUsers: List<User>,
-        messageMode: MessageMode,
-        onBackPressed: () -> Unit,
-        onHeaderTitleClick: (Channel) -> Unit,
-        onChannelAvatarClick: ((Channel) -> Unit)?,
-    ) {
+    public fun MessageListHeader(params: MessageListHeaderParams) {
         io.getstream.chat.android.compose.ui.messages.header.MessageListHeader(
-            channel = channel,
-            currentUser = currentUser,
-            connectionState = connectionState,
-            modifier = modifier,
-            typingUsers = typingUsers,
-            messageMode = messageMode,
-            onBackPressed = onBackPressed,
-            onHeaderTitleClick = onHeaderTitleClick,
-            onChannelAvatarClick = onChannelAvatarClick,
+            channel = params.channel,
+            currentUser = params.currentUser,
+            connectionState = params.connectionState,
+            modifier = params.modifier,
+            typingUsers = params.typingUsers,
+            messageMode = params.messageMode,
+            onBackPressed = params.onBackPressed,
+            onHeaderTitleClick = params.onHeaderTitleClick,
+            onChannelAvatarClick = params.onChannelAvatarClick,
         )
     }
 
     /**
      * The default leading content of the message list header, which is the back button.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.MessageListHeaderLeadingContent(
-        onBackPressed: () -> Unit,
-    ) {
-        DefaultMessageListHeaderLeadingContent(onBackPressed = onBackPressed)
+    public fun RowScope.MessageListHeaderLeadingContent(params: MessageListHeaderLeadingContentParams) {
+        DefaultMessageListHeaderLeadingContent(onBackPressed = params.onBackPressed)
     }
 
     /**
      * The default center content of the message list header.
      * Usually shows the channel title in the top and
      * the channel information or the connection status in the bottom.
-     */
-    @Deprecated(
-        message = "Use the new version of MessageListHeaderCenterContent with a nullable onClick.",
-        replaceWith = ReplaceWith(
-            "MessageListHeaderCenterContent(\n" +
-                "modifier = modifier,\n" +
-                "channel = channel,\n" +
-                "currentUser = currentUser,\n" +
-                "connectionState = connectionState,\n" +
-                "typingUsers = typingUsers,\n" +
-                "messageMode = messageMode,\n" +
-                "onClick = onHeaderTitleClick,\n" +
-                ")",
-        ),
-        level = DeprecationLevel.WARNING,
-    )
-    @Composable
-    public fun RowScope.MessageListHeaderCenterContent(
-        modifier: Modifier,
-        channel: Channel,
-        currentUser: User?,
-        typingUsers: List<User>,
-        messageMode: MessageMode,
-        onHeaderTitleClick: (Channel) -> Unit,
-        connectionState: ConnectionState,
-    ) {
-        MessageListHeaderCenterContent(
-            modifier = modifier,
-            channel = channel,
-            currentUser = currentUser,
-            connectionState = connectionState,
-            typingUsers = typingUsers,
-            messageMode = messageMode,
-            onClick = onHeaderTitleClick,
-        )
-    }
-
-    /**
-     * The default center content of the message list header.
-     * Usually shows the channel title in the top and
-     * the channel information or the connection status in the bottom.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.MessageListHeaderCenterContent(
-        modifier: Modifier,
-        channel: Channel,
-        currentUser: User?,
-        connectionState: ConnectionState,
-        typingUsers: List<User>,
-        messageMode: MessageMode,
-        onClick: ((Channel) -> Unit)?,
-    ) {
+    public fun RowScope.MessageListHeaderCenterContent(params: MessageListHeaderCenterContentParams) {
         DefaultMessageListHeaderCenterContent(
-            modifier = modifier,
-            channel = channel,
-            currentUser = currentUser,
-            connectionState = connectionState,
-            messageMode = messageMode,
-            onHeaderTitleClick = onClick,
+            modifier = params.modifier,
+            channel = params.channel,
+            currentUser = params.currentUser,
+            connectionState = params.connectionState,
+            messageMode = params.messageMode,
+            onHeaderTitleClick = params.onClick,
         )
     }
 
     /**
      * The default trailing content of the message list header, which is the channel avatar.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.MessageListHeaderTrailingContent(
-        channel: Channel,
-        currentUser: User?,
-        onClick: ((Channel) -> Unit)?,
-    ) {
+    public fun RowScope.MessageListHeaderTrailingContent(params: MessageListHeaderTrailingContentParams) {
         DefaultMessageListHeaderTrailingContent(
-            channel = channel,
-            currentUser = currentUser,
-            onClick = onClick,
+            channel = params.channel,
+            currentUser = params.currentUser,
+            onClick = params.onClick,
         )
     }
 
     /**
      * The default background of the message list.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageListBackground() {
+    public fun MessageListBackground(params: MessageListBackgroundParams) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -812,72 +671,70 @@ public interface ChatComponentFactory {
     /**
      * The default loading indicator of the message list,
      * when the initial message list is loading.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageListLoadingIndicator(modifier: Modifier) {
+    public fun MessageListLoadingIndicator(params: MessageListLoadingIndicatorParams) {
         DefaultMessageListLoadingIndicator(
-            modifier = modifier,
+            modifier = params.modifier,
         )
     }
 
     /**
      * The default empty content of the message list,
      * when the message list is empty.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageListEmptyContent(modifier: Modifier) {
+    public fun MessageListEmptyContent(params: MessageListEmptyContentParams) {
         DefaultMessageListEmptyContent(
-            modifier = modifier,
+            modifier = params.modifier,
         )
     }
 
     /**
      * The default helper content of the message list.
      * It handles the scroll-to-bottom and scroll-to-focused message features.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun BoxScope.MessageListHelperContent(
-        messageListState: MessageListState,
-        messagesLazyListState: MessagesLazyListState,
-        contentPadding: PaddingValues,
-        onScrollToBottomClick: (() -> Unit) -> Unit,
-    ) {
+    public fun BoxScope.MessageListHelperContent(params: MessageListHelperContentParams) {
         DefaultMessagesHelperContent(
-            messagesState = messageListState,
-            messagesLazyListState = messagesLazyListState,
-            contentPadding = contentPadding,
-            scrollToBottom = onScrollToBottomClick,
+            messagesState = params.messageListState,
+            messagesLazyListState = params.messagesLazyListState,
+            contentPadding = params.contentPadding,
+            scrollToBottom = params.onScrollToBottomClick,
         )
     }
 
     /**
      * The default scroll-to-bottom button shown when the user scrolls away from the bottom of the list.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ScrollToBottomButton(
-        modifier: Modifier,
-        visible: Boolean,
-        count: Int,
-        onClick: () -> Unit,
-    ) {
+    public fun ScrollToBottomButton(params: ScrollToBottomButtonParams) {
         // Disable animations in snapshot tests, at least until Paparazzi has a better support for animations.
         // This is due to the scroll to bottom tests, where the items are not visible in the snapshots.
         if (LocalInspectionMode.current) {
-            if (visible) {
+            if (params.visible) {
                 ScrollToBottomButton(
-                    modifier = modifier,
-                    count = count,
-                    onClick = onClick,
+                    modifier = params.modifier,
+                    count = params.count,
+                    onClick = params.onClick,
                 )
             }
         } else {
             FadingVisibility(
-                modifier = modifier,
-                visible = visible,
+                modifier = params.modifier,
+                visible = params.visible,
             ) {
                 ScrollToBottomButton(
-                    count = count,
-                    onClick = onClick,
+                    count = params.count,
+                    onClick = params.onClick,
                 )
             }
         }
@@ -886,60 +743,42 @@ public interface ChatComponentFactory {
     /**
      * The default message item component, which renders each [MessageListItemState]'s subtype.
      * This includes date separators, system messages, and regular messages.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyItemScope.MessageItem(
-        messageListItem: MessageListItemState,
-        reactionSorting: ReactionSorting,
-        onPollUpdated: (Message, Poll) -> Unit,
-        onCastVote: (Message, Poll, Option) -> Unit,
-        onRemoveVote: (Message, Poll, Vote) -> Unit,
-        selectPoll: (Message, Poll, PollSelectionType) -> Unit,
-        onClosePoll: (String) -> Unit,
-        onAddPollOption: (Poll, String) -> Unit,
-        onLongItemClick: (Message) -> Unit,
-        onThreadClick: (Message) -> Unit,
-        onReactionsClick: (Message) -> Unit,
-        onGiphyActionClick: (GiphyAction) -> Unit,
-        onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
-        onQuotedMessageClick: (Message) -> Unit,
-        onUserAvatarClick: ((User) -> Unit)?,
-        onMessageLinkClick: ((Message, String) -> Unit)?,
-        onUserMentionClick: (User) -> Unit,
-        onAddAnswer: (Message, Poll, String) -> Unit,
-        onReply: (Message) -> Unit,
-    ) {
+    public fun LazyItemScope.MessageItem(params: MessageItemParams) {
         DefaultMessageItem(
-            messageListItemState = messageListItem,
-            reactionSorting = reactionSorting,
-            onPollUpdated = onPollUpdated,
-            onCastVote = onCastVote,
-            onRemoveVote = onRemoveVote,
-            selectPoll = selectPoll,
-            onClosePoll = onClosePoll,
-            onAddPollOption = onAddPollOption,
-            onLongItemClick = onLongItemClick,
-            onThreadClick = onThreadClick,
-            onReactionsClick = onReactionsClick,
-            onGiphyActionClick = onGiphyActionClick,
-            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-            onQuotedMessageClick = onQuotedMessageClick,
-            onUserAvatarClick = onUserAvatarClick,
-            onLinkClick = onMessageLinkClick,
-            onUserMentionClick = onUserMentionClick,
-            onAddAnswer = onAddAnswer,
-            onReply = onReply,
+            messageListItemState = params.messageListItem,
+            reactionSorting = params.reactionSorting,
+            onPollUpdated = params.onPollUpdated,
+            onCastVote = params.onCastVote,
+            onRemoveVote = params.onRemoveVote,
+            selectPoll = params.selectPoll,
+            onClosePoll = params.onClosePoll,
+            onAddPollOption = params.onAddPollOption,
+            onLongItemClick = params.onLongItemClick,
+            onThreadClick = params.onThreadClick,
+            onReactionsClick = params.onReactionsClick,
+            onGiphyActionClick = params.onGiphyActionClick,
+            onMediaGalleryPreviewResult = params.onMediaGalleryPreviewResult,
+            onQuotedMessageClick = params.onQuotedMessageClick,
+            onUserAvatarClick = params.onUserAvatarClick,
+            onLinkClick = params.onMessageLinkClick,
+            onUserMentionClick = params.onUserMentionClick,
+            onAddAnswer = params.onAddAnswer,
+            onReply = params.onReply,
         )
     }
 
     /**
      * The default message list item modifier for styling.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyItemScope.messageListItemModifier(): Modifier =
+    public fun LazyItemScope.messageListItemModifier(params: MessageListItemModifierParams): Modifier =
         if (LocalInspectionMode.current) {
-            // Disable animations in snapshot tests, at least until Paparazzi has a better support for animations.
-            // This is due to the scroll to bottom tests, where the items are not visible in the snapshots.
             Modifier
         } else {
             Modifier.animateItem()
@@ -948,26 +787,32 @@ public interface ChatComponentFactory {
     /**
      * The default loading more item of the message list,
      * when the next page of messages is loading.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyItemScope.MessageListLoadingMoreItemContent() {
+    public fun LazyItemScope.MessageListLoadingMoreItemContent(params: MessageListLoadingMoreItemContentParams) {
         DefaultMessagesLoadingMoreIndicator()
     }
 
     /**
      * The default date separator item content of the message list.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyItemScope.MessageListDateSeparatorItemContent(dateSeparatorItem: DateSeparatorItemState) {
-        DefaultMessageDateSeparatorContent(dateSeparator = dateSeparatorItem)
+    public fun LazyItemScope.MessageListDateSeparatorItemContent(params: MessageListDateSeparatorItemContentParams) {
+        DefaultMessageDateSeparatorContent(dateSeparator = params.dateSeparatorItem)
     }
 
     /**
      * The default unread separator item content of the message list.
      */
     @Composable
-    public fun LazyItemScope.MessageListUnreadSeparatorItemContent(unreadSeparatorItem: UnreadSeparatorItemState) {
-        DefaultMessageUnreadSeparatorContent(unreadSeparatorItemState = unreadSeparatorItem)
+    public fun LazyItemScope.MessageListUnreadSeparatorItemContent(
+        params: MessageListUnreadSeparatorItemContentParams,
+    ) {
+        DefaultMessageUnreadSeparatorContent(unreadSeparatorItemState = params.unreadSeparatorItem)
     }
 
     /**
@@ -975,33 +820,39 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun LazyItemScope.MessageListThreadDateSeparatorItemContent(
-        threadDateSeparatorItem: ThreadDateSeparatorItemState,
+        params: MessageListThreadDateSeparatorItemContentParams,
     ) {
-        DefaultMessageThreadSeparatorContent(threadSeparator = threadDateSeparatorItem)
+        DefaultMessageThreadSeparatorContent(threadSeparator = params.threadDateSeparatorItem)
     }
 
     /**
      * The default system message content of the message list.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyItemScope.MessageListSystemItemContent(systemMessageItem: SystemMessageItemState) {
-        DefaultSystemMessageContent(systemMessageState = systemMessageItem)
+    public fun LazyItemScope.MessageListSystemItemContent(params: MessageListSystemItemContentParams) {
+        DefaultSystemMessageContent(systemMessageState = params.systemMessageItem)
     }
 
     /**
      * The default moderated message content of the message list.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyItemScope.MessageListModeratedItemContent(moderatedMessageItem: ModeratedMessageItemState) {
-        DefaultMessageModeratedContent(moderatedMessageItemState = moderatedMessageItem)
+    public fun LazyItemScope.MessageListModeratedItemContent(params: MessageListModeratedItemContentParams) {
+        DefaultMessageModeratedContent(moderatedMessageItemState = params.moderatedMessageItem)
     }
 
     /**
      * The default typing indicator content of the message list.
      */
     @Composable
-    public fun LazyItemScope.MessageListTypingIndicatorItemContent(typingItem: TypingItemState) {
-        DefaultMessageTypingIndicatorContent(typingItem)
+    public fun LazyItemScope.MessageListTypingIndicatorItemContent(
+        params: MessageListTypingIndicatorItemContentParams,
+    ) {
+        DefaultMessageTypingIndicatorContent(params.typingItem)
     }
 
     /**
@@ -1009,7 +860,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun LazyItemScope.MessageListEmptyThreadPlaceholderItemContent(
-        emptyThreadPlaceholderItem: EmptyThreadPlaceholderItemState,
+        params: MessageListEmptyThreadPlaceholderItemContentParams,
     ) {
     }
 
@@ -1018,102 +869,67 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun LazyItemScope.MessageListStartOfTheChannelItemContent(
-        startOfTheChannelItem: StartOfTheChannelItemState,
+        params: MessageListStartOfTheChannelItemContentParams,
     ) {
     }
 
     /**
      * The default container for a regular message, which includes the author avatar,
      * message bubble, and reactions.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageContainer(
-        messageItem: MessageItemState,
-        reactionSorting: ReactionSorting,
-        modifier: Modifier,
-        onPollUpdated: (Message, Poll) -> Unit,
-        onCastVote: (Message, Poll, Option) -> Unit,
-        onRemoveVote: (Message, Poll, Vote) -> Unit,
-        selectPoll: (Message, Poll, PollSelectionType) -> Unit,
-        onClosePoll: (String) -> Unit,
-        onAddPollOption: (Poll, String) -> Unit,
-        onLongItemClick: (Message) -> Unit,
-        onThreadClick: (Message) -> Unit,
-        onReactionsClick: (Message) -> Unit,
-        onGiphyActionClick: (GiphyAction) -> Unit,
-        onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
-        onQuotedMessageClick: (Message) -> Unit,
-        onUserAvatarClick: ((User) -> Unit)?,
-        onMessageLinkClick: ((Message, String) -> Unit)?,
-        onUserMentionClick: (User) -> Unit,
-        onAddAnswer: (Message, Poll, String) -> Unit,
-        onReply: (Message) -> Unit,
-    ) {
+    public fun MessageContainer(params: MessageContainerParams) {
         io.getstream.chat.android.compose.ui.messages.list.MessageContainer(
-            messageItem = messageItem,
-            reactionSorting = reactionSorting,
-            modifier = modifier,
-            onPollUpdated = onPollUpdated,
-            onCastVote = onCastVote,
-            onRemoveVote = onRemoveVote,
-            selectPoll = selectPoll,
-            onClosePoll = onClosePoll,
-            onAddPollOption = onAddPollOption,
-            onLongItemClick = onLongItemClick,
-            onThreadClick = onThreadClick,
-            onReactionsClick = onReactionsClick,
-            onGiphyActionClick = onGiphyActionClick,
-            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-            onQuotedMessageClick = onQuotedMessageClick,
-            onUserAvatarClick = onUserAvatarClick?.let { { it.invoke(messageItem.message.user) } },
-            onLinkClick = onMessageLinkClick,
-            onUserMentionClick = onUserMentionClick,
-            onAddAnswer = onAddAnswer,
-            onReply = onReply,
+            messageItem = params.messageItem,
+            reactionSorting = params.reactionSorting,
+            modifier = params.modifier,
+            onPollUpdated = params.onPollUpdated,
+            onCastVote = params.onCastVote,
+            onRemoveVote = params.onRemoveVote,
+            selectPoll = params.selectPoll,
+            onClosePoll = params.onClosePoll,
+            onAddPollOption = params.onAddPollOption,
+            onLongItemClick = params.onLongItemClick,
+            onThreadClick = params.onThreadClick,
+            onReactionsClick = params.onReactionsClick,
+            onGiphyActionClick = params.onGiphyActionClick,
+            onMediaGalleryPreviewResult = params.onMediaGalleryPreviewResult,
+            onQuotedMessageClick = params.onQuotedMessageClick,
+            onUserAvatarClick = params.onUserAvatarClick?.let { { it.invoke(params.messageItem.message.user) } },
+            onLinkClick = params.onMessageLinkClick,
+            onUserMentionClick = params.onUserMentionClick,
+            onAddAnswer = params.onAddAnswer,
+            onReply = params.onReply,
         )
     }
 
     /**
      * The default appearance of the message bubble.
      *
-     * @param modifier Prepared [Modifier] for styling.
-     * @param message The [Message] to be rendered inside the bubble.
-     * @param color The color of the message bubble.
-     * @param shape The shape of the message bubble.
-     * @param border The border of the message bubble.
-     * @param content The content shown inside the message bubble.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageBubble(
-        modifier: Modifier,
-        message: Message,
-        color: Color,
-        shape: Shape,
-        border: BorderStroke?,
-        content: @Composable () -> Unit,
-    ) {
+    public fun MessageBubble(params: MessageBubbleParams) {
         io.getstream.chat.android.compose.ui.components.messages.MessageBubble(
-            modifier = modifier,
-            color = color,
-            shape = shape,
-            border = border,
-            content = content,
+            modifier = params.modifier,
+            color = params.color,
+            shape = params.shape,
+            border = params.border,
+            content = params.content,
         )
     }
 
     /**
      * Icon shown at the bottom-end of a [Message] when it failed to send.
      *
-     * @param modifier Prepared [Modifier] for styling.
-     * @param message The [Message] that failed to send.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageFailedIcon(
-        modifier: Modifier,
-        message: Message,
-    ) {
+    public fun MessageFailedIcon(params: MessageFailedIconParams) {
         Icon(
-            modifier = modifier,
+            modifier = params.modifier,
             painter = painterResource(id = R.drawable.stream_compose_ic_error),
             contentDescription = null,
             tint = ChatTheme.colors.accentError,
@@ -1123,77 +939,65 @@ public interface ChatComponentFactory {
     /**
      * The default top content inside the message bubble.
      * Usually shows pinned indicator and thread labels.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ColumnScope.MessageTop(messageItem: MessageItemState, onThreadClick: (Message) -> Unit) {
+    public fun ColumnScope.MessageTop(params: MessageTopParams) {
         DefaultMessageTop(
-            messageItem = messageItem,
-            onThreadClick = onThreadClick,
+            messageItem = params.messageItem,
+            onThreadClick = params.onThreadClick,
         )
     }
 
     /**
      * The default bottom content inside the message bubble.
      * Usually shows timestamp and delivery status.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ColumnScope.MessageBottom(
-        messageItem: MessageItemState,
-    ) {
-        DefaultMessageBottom(messageItem = messageItem)
+    public fun ColumnScope.MessageBottom(params: MessageBottomParams) {
+        DefaultMessageBottom(messageItem = params.messageItem)
     }
 
     /**
      * The default author content for a message.
      * Usually shows the avatar of the user if the message doesn't belong to the current user.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.MessageAuthor(
-        messageItem: MessageItemState,
-        onUserAvatarClick: (() -> Unit)?,
-    ) {
+    public fun RowScope.MessageAuthor(params: MessageAuthorParams) {
         DefaultMessageAuthor(
-            messageItem = messageItem,
-            onUserAvatarClick = onUserAvatarClick,
+            messageItem = params.messageItem,
+            onUserAvatarClick = params.onUserAvatarClick,
         )
     }
 
     /**
      * The default content of the message bubble.
      * Usually contains attachments and text.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageContent(
-        messageItem: MessageItemState,
-        onLongItemClick: (Message) -> Unit,
-        onPollUpdated: (Message, Poll) -> Unit,
-        onCastVote: (Message, Poll, Option) -> Unit,
-        onRemoveVote: (Message, Poll, Vote) -> Unit,
-        selectPoll: (Message, Poll, PollSelectionType) -> Unit,
-        onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit,
-        onClosePoll: (String) -> Unit,
-        onAddPollOption: (poll: Poll, option: String) -> Unit,
-        onGiphyActionClick: (GiphyAction) -> Unit,
-        onQuotedMessageClick: (Message) -> Unit,
-        onLinkClick: ((Message, String) -> Unit)?,
-        onUserMentionClick: (User) -> Unit,
-        onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
-    ) {
+    public fun MessageContent(params: MessageContentParams) {
         DefaultMessageContent(
-            messageItem = messageItem,
-            onLongItemClick = onLongItemClick,
-            onGiphyActionClick = onGiphyActionClick,
-            onQuotedMessageClick = onQuotedMessageClick,
-            onLinkClick = onLinkClick,
-            onUserMentionClick = onUserMentionClick,
-            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-            onPollUpdated = onPollUpdated,
-            onCastVote = onCastVote,
-            onRemoveVote = onRemoveVote,
-            selectPoll = selectPoll,
-            onAddAnswer = onAddAnswer,
-            onClosePoll = onClosePoll,
-            onAddPollOption = onAddPollOption,
+            messageItem = params.messageItem,
+            onLongItemClick = params.onLongItemClick,
+            onGiphyActionClick = params.onGiphyActionClick,
+            onQuotedMessageClick = params.onQuotedMessageClick,
+            onLinkClick = params.onLinkClick,
+            onUserMentionClick = params.onUserMentionClick,
+            onMediaGalleryPreviewResult = params.onMediaGalleryPreviewResult,
+            onPollUpdated = params.onPollUpdated,
+            onCastVote = params.onCastVote,
+            onRemoveVote = params.onRemoveVote,
+            selectPoll = params.selectPoll,
+            onAddAnswer = params.onAddAnswer,
+            onClosePoll = params.onClosePoll,
+            onAddPollOption = params.onAddPollOption,
         )
     }
 
@@ -1201,12 +1005,10 @@ public interface ChatComponentFactory {
      * The empty space in the message item opposite to the message bubble.
      * For example, for outgoing messages, by default the spacer is placed before the bubble.
      *
-     * @param messageItem The message item to show the spacer for.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.MessageSpacer(
-        messageItem: MessageItemState,
-    ) {
+    public fun RowScope.MessageSpacer(params: MessageSpacerParams) {
     }
 
     /**
@@ -1227,123 +1029,100 @@ public interface ChatComponentFactory {
 
     /**
      * The default Giphy message content.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageGiphyContent(
-        message: Message,
-        currentUser: User?,
-        onGiphyActionClick: (GiphyAction) -> Unit,
-    ) {
+    public fun MessageGiphyContent(params: MessageGiphyContentParams) {
         GiphyMessageContent(
-            message = message,
-            currentUser = currentUser,
-            onGiphyActionClick = onGiphyActionClick,
+            message = params.message,
+            currentUser = params.currentUser,
+            onGiphyActionClick = params.onGiphyActionClick,
         )
     }
 
     /**
      * The default content of a deleted message.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageDeletedContent(
-        message: Message,
-        currentUser: User?,
-        modifier: Modifier,
-    ) {
+    public fun MessageDeletedContent(params: MessageDeletedContentParams) {
         DefaultMessageDeletedContent(
-            message = message,
-            currentUser = currentUser,
-            modifier = modifier,
+            message = params.message,
+            currentUser = params.currentUser,
+            modifier = params.modifier,
         )
     }
 
     /**
      * The default content of a regular message that can contain attachments and text.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageRegularContent(
-        message: Message,
-        currentUser: User?,
-        onLongItemClick: (Message) -> Unit,
-        onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
-        onQuotedMessageClick: (Message) -> Unit,
-        onUserMentionClick: (User) -> Unit,
-        onLinkClick: ((Message, String) -> Unit)?,
-    ) {
+    public fun MessageRegularContent(params: MessageRegularContentParams) {
         DefaultMessageContent(
-            message = message,
-            currentUser = currentUser,
-            onLongItemClick = onLongItemClick,
-            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-            onQuotedMessageClick = onQuotedMessageClick,
-            onUserMentionClick = onUserMentionClick,
-            onLinkClick = onLinkClick,
+            message = params.message,
+            currentUser = params.currentUser,
+            onLongItemClick = params.onLongItemClick,
+            onMediaGalleryPreviewResult = params.onMediaGalleryPreviewResult,
+            onQuotedMessageClick = params.onQuotedMessageClick,
+            onUserMentionClick = params.onUserMentionClick,
+            onLinkClick = params.onLinkClick,
         )
     }
 
     /**
      * The default message text content.
      * Usually with extra styling and padding for the chat bubble.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageTextContent(
-        modifier: Modifier,
-        message: Message,
-        currentUser: User?,
-        onLongItemClick: (Message) -> Unit,
-        onLinkClick: ((Message, String) -> Unit)?,
-        onUserMentionClick: (User) -> Unit,
-    ) {
+    public fun MessageTextContent(params: MessageTextContentParams) {
         MessageText(
-            modifier = modifier,
-            message = message,
-            currentUser = currentUser,
-            onLongItemClick = onLongItemClick,
-            onLinkClick = onLinkClick,
-            onUserMentionClick = onUserMentionClick,
+            modifier = params.modifier,
+            message = params.message,
+            currentUser = params.currentUser,
+            onLongItemClick = params.onLongItemClick,
+            onLinkClick = params.onLinkClick,
+            onUserMentionClick = params.onUserMentionClick,
         )
     }
 
     /**
      * The default quoted message content.
      * Usually shows only the sender avatar, text and a single attachment preview.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageQuotedContent(
-        modifier: Modifier,
-        message: Message,
-        currentUser: User?,
-        replyMessage: Message,
-        onLongItemClick: (Message) -> Unit,
-        onQuotedMessageClick: (Message) -> Unit,
-    ) {
+    public fun MessageQuotedContent(params: MessageQuotedContentParams) {
         QuotedMessage(
-            modifier = modifier.padding(MessageStyling.messageSectionPadding),
-            message = message,
-            currentUser = currentUser,
-            replyMessage = replyMessage,
-            onLongItemClick = onLongItemClick,
-            onQuotedMessageClick = onQuotedMessageClick,
+            modifier = params.modifier.padding(MessageStyling.messageSectionPadding),
+            message = params.message,
+            currentUser = params.currentUser,
+            replyMessage = params.replyMessage,
+            onLongItemClick = params.onLongItemClick,
+            onQuotedMessageClick = params.onQuotedMessageClick,
         )
     }
 
     /** The message footer while uploading attachments. Empty by default. */
     @Composable
-    public fun MessageFooterUploadingContent(
-        modifier: Modifier,
-        messageItem: MessageItemState,
-    ) {
+    public fun MessageFooterUploadingContent(params: MessageFooterUploadingContentParams) {
     }
 
     /**
      * The default content of the only-visible-to-you footer message.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageFooterOnlyVisibleToYouContent(
-        messageItem: MessageItemState,
-    ) {
+    public fun MessageFooterOnlyVisibleToYouContent(params: MessageFooterOnlyVisibleToYouContentParams) {
         OwnedMessageVisibilityContent(
-            message = messageItem.message,
+            message = params.messageItem.message,
         )
     }
 
@@ -1351,12 +1130,12 @@ public interface ChatComponentFactory {
      * The default footer content.
      * Usually contains either [MessageThreadFooter] or the default footer,
      * which holds the sender name and the timestamp.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageFooterContent(
-        messageItem: MessageItemState,
-    ) {
-        MessageFooter(messageItem = messageItem)
+    public fun MessageFooterContent(params: MessageFooterContentParams) {
+        MessageFooter(messageItem = params.messageItem)
     }
 
     @Composable
@@ -1387,36 +1166,25 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun MessageComposer(
-        messageComposerState: MessageComposerState,
-        isAttachmentPickerVisible: Boolean,
-        onSendMessage: (String, List<Attachment>) -> Unit,
-        modifier: Modifier,
-        onAttachmentsClick: () -> Unit,
-        onValueChange: (String) -> Unit,
-        onAttachmentRemoved: (Attachment) -> Unit,
-        onCancelAction: () -> Unit,
-        onLinkPreviewClick: ((LinkPreview) -> Unit)?,
-        onUserSelected: (User) -> Unit,
-        onCommandSelected: (Command) -> Unit,
-        onAlsoSendToChannelSelected: (Boolean) -> Unit,
-        recordingActions: AudioRecordingActions,
-        input: @Composable RowScope.(MessageComposerState) -> Unit,
+        params: MessageComposerParams,
     ) {
         io.getstream.chat.android.compose.ui.messages.composer.MessageComposer(
-            messageComposerState = messageComposerState,
-            isAttachmentPickerVisible = isAttachmentPickerVisible,
-            onSendMessage = onSendMessage,
-            modifier = modifier,
-            onAttachmentsClick = onAttachmentsClick,
-            onValueChange = onValueChange,
-            onAttachmentRemoved = onAttachmentRemoved,
-            onCancelAction = onCancelAction,
-            onLinkPreviewClick = onLinkPreviewClick,
-            onUserSelected = onUserSelected,
-            onCommandSelected = onCommandSelected,
-            onAlsoSendToChannelChange = onAlsoSendToChannelSelected,
-            recordingActions = recordingActions,
-            input = input,
+            messageComposerState = params.messageComposerState,
+            isAttachmentPickerVisible = params.isAttachmentPickerVisible,
+            onSendMessage = params.onSendMessage,
+            modifier = params.modifier,
+            onAttachmentsClick = params.onAttachmentsClick,
+            onValueChange = params.onValueChange,
+            onAttachmentRemoved = params.onAttachmentRemoved,
+            onCancelAction = params.onCancelAction,
+            onLinkPreviewClick = params.onLinkPreviewClick,
+            onCancelLinkPreviewClick = params.onCancelLinkPreviewClick,
+            onUserSelected = params.onUserSelected,
+            onCommandSelected = params.onCommandSelected,
+            onAlsoSendToChannelChange = params.onAlsoSendToChannelSelected,
+            onActiveCommandDismiss = params.onActiveCommandDismiss,
+            recordingActions = params.recordingActions,
+            input = params.input,
         )
     }
 
@@ -1425,24 +1193,16 @@ public interface ChatComponentFactory {
      * Shows the link image preview, the title of the link and its description.
      *
      * Used as part of [MessageComposerInput].
-     *
-     * @param modifier The modifier to apply to the composable.
-     * @param linkPreview The link preview to show.
-     * @param onContentClick The handler called when the content is clicked.
-     * @param onCancelClick The handler called when the cancel button is clicked.
      */
     @Composable
     public fun MessageComposerLinkPreview(
-        modifier: Modifier,
-        linkPreview: LinkPreview,
-        onContentClick: ((LinkPreview) -> Unit)?,
-        onCancelClick: (() -> Unit)?,
+        params: MessageComposerLinkPreviewParams,
     ) {
         ComposerLinkPreview(
-            modifier = modifier.padding(horizontal = StreamTokens.spacingSm),
-            linkPreview = linkPreview,
-            onContentClick = onContentClick,
-            onCancelClick = onCancelClick,
+            modifier = params.modifier.padding(horizontal = StreamTokens.spacingSm),
+            linkPreview = params.linkPreview,
+            onContentClick = params.onContentClick,
+            onCancelClick = params.onCancelClick,
         )
     }
 
@@ -1451,20 +1211,14 @@ public interface ChatComponentFactory {
      *
      * Used in [io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.UserSuggestionList].
      *
-     * @param user The user for which the suggestion is rendered.
-     * @param currentUser The current user.
-     * @param onUserSelected The action to perform when the user is selected.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageComposerUserSuggestionItem(
-        user: User,
-        currentUser: User?,
-        onUserSelected: (User) -> Unit,
-    ) {
+    public fun MessageComposerUserSuggestionItem(params: MessageComposerUserSuggestionItemParams) {
         UserSuggestionItem(
-            user = user,
-            currentUser = currentUser,
-            onUserSelected = onUserSelected,
+            user = params.user,
+            currentUser = params.currentUser,
+            onUserSelected = params.onUserSelected,
         )
     }
 
@@ -1472,19 +1226,14 @@ public interface ChatComponentFactory {
      * The default leading content of the user suggestion item of the message composer.
      *
      * Used as part of [MessageComposerUserSuggestionItem].
-     *
-     * @param modifier The modifier to apply to the composable.
-     * @param user The user for which the leading content is rendered.
      */
     @Composable
     public fun MessageComposerUserSuggestionItemLeadingContent(
-        modifier: Modifier,
-        user: User,
-        currentUser: User?,
+        params: MessageComposerUserSuggestionItemLeadingContentParams,
     ) {
         DefaultUserSuggestionItemLeadingContent(
-            modifier = modifier,
-            user = user,
+            modifier = params.modifier,
+            user = params.user,
         )
     }
 
@@ -1492,18 +1241,14 @@ public interface ChatComponentFactory {
      * The default center content of the user suggestion item of the message composer.
      *
      * Used as part of [MessageComposerUserSuggestionItem].
-     *
-     * @param modifier The modifier to apply to the composable.
-     * @param user The user for which the center content is rendered.
      */
     @Composable
     public fun MessageComposerUserSuggestionItemCenterContent(
-        modifier: Modifier,
-        user: User,
+        params: MessageComposerUserSuggestionItemCenterContentParams,
     ) {
         DefaultUserSuggestionItemCenterContent(
-            modifier = modifier,
-            user = user,
+            modifier = params.modifier,
+            user = params.user,
         )
     }
 
@@ -1511,14 +1256,10 @@ public interface ChatComponentFactory {
      * The default trailing content of the user suggestion item of the message composer.
      *
      * Used as part of [MessageComposerUserSuggestionItem].
-     *
-     * @param modifier The modifier to apply to the composable.
-     * @param user The user for which the trailing content is rendered.
      */
     @Composable
     public fun MessageComposerUserSuggestionItemTrailingContent(
-        modifier: Modifier,
-        user: User,
+        params: MessageComposerUserSuggestionItemTrailingContentParams,
     ) {
     }
 
@@ -1527,17 +1268,13 @@ public interface ChatComponentFactory {
      *
      * Used in [io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.CommandSuggestionList].
      *
-     * @param command The command for which the suggestion is rendered.
-     * @param onCommandSelected The action to perform when the command is selected.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageComposerCommandSuggestionItem(
-        command: Command,
-        onCommandSelected: (Command) -> Unit,
-    ) {
+    public fun MessageComposerCommandSuggestionItem(params: MessageComposerCommandSuggestionItemParams) {
         CommandSuggestionItem(
-            command = command,
-            onCommandSelected = onCommandSelected,
+            command = params.command,
+            onCommandSelected = params.onCommandSelected,
         )
     }
 
@@ -1545,18 +1282,14 @@ public interface ChatComponentFactory {
      * The default leading content of the command suggestion item of the message composer.
      *
      * Used as part of [MessageComposerCommandSuggestionItem].
-     *
-     * @param modifier The modifier to apply to the composable.
-     * @param command The command for which the leading content is rendered.
      */
     @Composable
     public fun MessageComposerCommandSuggestionItemLeadingContent(
-        modifier: Modifier,
-        command: Command,
+        params: MessageComposerCommandSuggestionItemLeadingContentParams,
     ) {
         DefaultCommandSuggestionItemLeadingContent(
-            modifier = modifier,
-            command = command,
+            modifier = params.modifier,
+            command = params.command,
         )
     }
 
@@ -1564,80 +1297,47 @@ public interface ChatComponentFactory {
      * The default center content of the command suggestion item of the message composer.
      *
      * Used as part of [MessageComposerCommandSuggestionItem].
-     *
-     * @param modifier The modifier to apply to the composable.
-     * @param command The command for which the center content is rendered.
      */
     @Composable
     public fun MessageComposerCommandSuggestionItemCenterContent(
-        modifier: Modifier,
-        command: Command,
+        params: MessageComposerCommandSuggestionItemCenterContentParams,
     ) {
-        DefaultCommandSuggestionItemCenterContent(command, modifier)
+        DefaultCommandSuggestionItemCenterContent(params.command, params.modifier)
     }
 
     /**
      * The default leading content of the message composer, which includes an add attachment button by default.
      *
-     * @param modifier The modifier to apply to the composable.
-     * @param state The current state of the message composer.
-     * @param isAttachmentPickerVisible Whether the attachment picker is visible.
-     * @param onAttachmentsClick The action to perform when the attachments button is clicked.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageComposerLeadingContent(
-        modifier: Modifier,
-        state: MessageComposerState,
-        isAttachmentPickerVisible: Boolean,
-        onAttachmentsClick: () -> Unit,
-    ) {
+    public fun MessageComposerLeadingContent(params: MessageComposerLeadingContentParams) {
         io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerLeadingContent(
-            messageInputState = state,
-            isAttachmentPickerVisible = isAttachmentPickerVisible,
-            onAttachmentsClick = onAttachmentsClick,
+            messageInputState = params.state,
+            isAttachmentPickerVisible = params.isAttachmentPickerVisible,
+            onAttachmentsClick = params.onAttachmentsClick,
         )
     }
 
     /**
      * The default input of the message composer.
      *
-     * @param modifier The modifier to apply to the composable.
-     * @param state The current state of the message composer.
-     * @param onInputChanged The action to perform when the input is changed.
-     * @param onAttachmentRemoved The action to perform when an attachment is removed.
-     * @param onCancel The action to perform when the cancel button is clicked.
-     * @param onLinkPreviewClick The action to perform when a link preview is clicked.
-     * @param onCancelLinkPreviewClick The action to perform when the link preview cancel button is clicked.
-     * @param onSendClick The action to perform when the send button is clicked.
-     * @param onAlsoSendToChannelChange The action to perform when the "Also send to channel" checkbox is changed.
-     * @param recordingActions The actions to control the audio recording.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageComposerInput(
-        modifier: Modifier,
-        state: MessageComposerState,
-        onInputChanged: (String) -> Unit,
-        onAttachmentRemoved: (Attachment) -> Unit,
-        onCancel: () -> Unit,
-        onLinkPreviewClick: ((LinkPreview) -> Unit)?,
-        onCancelLinkPreviewClick: (() -> Unit)?,
-        onSendClick: (String, List<Attachment>) -> Unit,
-        onAlsoSendToChannelChange: (Boolean) -> Unit,
-        recordingActions: AudioRecordingActions,
-        onActiveCommandDismiss: () -> Unit,
-    ) {
+    public fun MessageComposerInput(params: MessageComposerInputParams) {
         MessageInput(
-            modifier = modifier,
-            messageComposerState = state,
-            onValueChange = onInputChanged,
-            onAttachmentRemoved = onAttachmentRemoved,
-            onCancelAction = onCancel,
-            onLinkPreviewClick = onLinkPreviewClick,
-            onCancelLinkPreviewClick = onCancelLinkPreviewClick,
-            onSendClick = onSendClick,
-            onAlsoSendToChannelChange = onAlsoSendToChannelChange,
-            recordingActions = recordingActions,
-            onActiveCommandDismiss = onActiveCommandDismiss,
+            modifier = params.modifier,
+            messageComposerState = params.state,
+            onValueChange = params.onInputChanged,
+            onAttachmentRemoved = params.onAttachmentRemoved,
+            onCancelAction = params.onCancel,
+            onLinkPreviewClick = params.onLinkPreviewClick,
+            onCancelLinkPreviewClick = params.onCancelLinkPreviewClick,
+            onSendClick = params.onSendClick,
+            onAlsoSendToChannelChange = params.onAlsoSendToChannelChange,
+            recordingActions = params.recordingActions,
+            onActiveCommandDismiss = params.onActiveCommandDismiss,
         )
     }
 
@@ -1647,23 +1347,15 @@ public interface ChatComponentFactory {
      *
      * Used as part of [MessageComposerInput].
      *
-     * @param modifier The modifier to apply to the composable.
-     * @param state The current state of the message composer.
-     * @param quotedMessage The message that is being quoted (replied to).
-     * @param onCancelClick The action to perform when the cancel button is clicked.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageComposerQuotedMessage(
-        modifier: Modifier,
-        state: MessageComposerState,
-        quotedMessage: Message,
-        onCancelClick: () -> Unit,
-    ) {
+    public fun MessageComposerQuotedMessage(params: MessageComposerQuotedMessageParams) {
         MessageComposerQuotedMessage(
-            modifier = modifier.padding(horizontal = StreamTokens.spacingSm),
-            message = quotedMessage,
-            currentUser = state.currentUser,
-            onCancelClick = onCancelClick,
+            modifier = params.modifier.padding(horizontal = StreamTokens.spacingSm),
+            message = params.quotedMessage,
+            currentUser = params.state.currentUser,
+            onCancelClick = params.onCancelClick,
         )
     }
 
@@ -1673,22 +1365,14 @@ public interface ChatComponentFactory {
      *
      * Used as part of [MessageComposerInput].
      *
-     * @param modifier The modifier to apply to the composable.
-     * @param state The current state of the message composer.
-     * @param editMessage The message being edited.
-     * @param onCancelClick The action to perform when the cancel button is clicked.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageComposerEditIndicator(
-        modifier: Modifier,
-        state: MessageComposerState,
-        editMessage: Message,
-        onCancelClick: () -> Unit,
-    ) {
+    public fun MessageComposerEditIndicator(params: MessageComposerEditIndicatorParams) {
         MessageComposerEditIndicator(
-            modifier = modifier.padding(horizontal = StreamTokens.spacingSm),
-            message = editMessage,
-            onCancelClick = onCancelClick,
+            modifier = params.modifier.padding(horizontal = StreamTokens.spacingSm),
+            message = params.editMessage,
+            onCancelClick = params.onCancelClick,
         )
     }
 
@@ -1698,6 +1382,8 @@ public interface ChatComponentFactory {
      * When a command is active, renders a [CommandChip].
      *
      * Used as part of [MessageComposerInput].
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposerInputLeadingContent(params: MessageComposerInputLeadingContentParams) {
@@ -1718,20 +1404,14 @@ public interface ChatComponentFactory {
      *
      * Used as part of [MessageComposerInput].
      *
-     * @param state The current state of the message composer.
-     * @param onValueChange The action to perform when the input value changes.
-     * @param modifier The modifier to apply to the composable.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageComposerInputCenterContent(
-        state: MessageComposerState,
-        onValueChange: (String) -> Unit,
-        modifier: Modifier,
-    ) {
+    public fun MessageComposerInputCenterContent(params: MessageComposerInputCenterContentParams) {
         io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerInputCenterContent(
-            state = state,
-            onValueChange = onValueChange,
-            modifier = modifier,
+            state = params.state,
+            onValueChange = params.onValueChange,
+            modifier = params.modifier,
         )
     }
 
@@ -1741,22 +1421,16 @@ public interface ChatComponentFactory {
      *
      * Used as part of [MessageComposerInput].
      *
-     * @param state The current state of the message composer.
-     * @param onAlsoSendToChannelChange The action to perform when the "Also send to channel" checkbox is changed.
-     * @param modifier The modifier to apply to the composable.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageComposerInputCenterBottomContent(
-        state: MessageComposerState,
-        onAlsoSendToChannelChange: (Boolean) -> Unit,
-        modifier: Modifier,
-    ) {
-        val inThreadMode = state.messageMode is MessageMode.MessageThread
+    public fun MessageComposerInputCenterBottomContent(params: MessageComposerInputCenterBottomContentParams) {
+        val inThreadMode = params.state.messageMode is MessageMode.MessageThread
         AnimatedContent(targetState = inThreadMode) { visible ->
             if (visible) {
                 io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerInputCenterBottomContent(
-                    alsoSendToChannel = state.alsoSendToChannel,
-                    onAlsoSendToChannelChange = onAlsoSendToChannelChange,
+                    alsoSendToChannel = params.state.alsoSendToChannel,
+                    onAlsoSendToChannelChange = params.onAlsoSendToChannelChange,
                 )
             }
         }
@@ -1768,20 +1442,14 @@ public interface ChatComponentFactory {
      *
      * Used as part of [MessageComposerInput].
      *
-     * @param state The current state of the message composer.
-     * @param recordingActions The actions to control the audio recording.
-     * @param onSendClick The action to perform when the send button is clicked.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageComposerInputTrailingContent(
-        state: MessageComposerState,
-        recordingActions: AudioRecordingActions,
-        onSendClick: (String, List<Attachment>) -> Unit,
-    ) {
+    public fun MessageComposerInputTrailingContent(params: MessageComposerInputTrailingContentParams) {
         io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerInputTrailingContent(
-            state = state,
-            recordingActions = recordingActions,
-            onSendClick = onSendClick,
+            state = params.state,
+            recordingActions = params.recordingActions,
+            onSendClick = params.onSendClick,
         )
     }
 
@@ -1791,12 +1459,10 @@ public interface ChatComponentFactory {
      *
      * Used as part of [MessageComposer].
      *
-     * @param state The current state of the message composer.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageComposerTrailingContent(
-        state: MessageComposerState,
-    ) {
+    public fun MessageComposerTrailingContent(params: MessageComposerTrailingContentParams) {
     }
 
     /**
@@ -1805,15 +1471,11 @@ public interface ChatComponentFactory {
      *
      * Used as part of [MessageComposerTrailingContent].
      *
-     * @param modifier The modifier to apply to the composable.
-     * @param coolDownTime The remaining time until the user can send a message.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageComposerCoolDownIndicator(
-        modifier: Modifier,
-        coolDownTime: Int,
-    ) {
-        CoolDownIndicator(coolDownTime, modifier)
+    public fun MessageComposerCoolDownIndicator(params: MessageComposerCoolDownIndicatorParams) {
+        CoolDownIndicator(params.coolDownTime, params.modifier)
     }
 
     /**
@@ -1821,14 +1483,12 @@ public interface ChatComponentFactory {
      *
      * Used as part of [MessageComposerTrailingContent].
      *
-     * @param onClick The action to perform when the button is clicked.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageComposerSendButton(
-        onClick: () -> Unit,
-    ) {
+    public fun MessageComposerSendButton(params: MessageComposerSendButtonParams) {
         io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerSendButton(
-            onClick = onClick,
+            onClick = params.onClick,
         )
     }
 
@@ -1838,17 +1498,13 @@ public interface ChatComponentFactory {
      *
      * Used as part of [MessageComposerTrailingContent].
      *
-     * @param enabled Whether the save button is enabled. Disabled when the edit content is empty.
-     * @param onClick The action to perform when the button is clicked.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageComposerSaveButton(
-        enabled: Boolean,
-        onClick: () -> Unit,
-    ) {
+    public fun MessageComposerSaveButton(params: MessageComposerSaveButtonParams) {
         io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerSaveButton(
-            enabled = enabled,
-            onClick = onClick,
+            enabled = params.enabled,
+            onClick = params.onClick,
         )
     }
 
@@ -1857,17 +1513,13 @@ public interface ChatComponentFactory {
      *
      * Used as part of [MessageComposerTrailingContent].
      *
-     * @param state The current state of the recording process.
-     * @param recordingActions The actions to control the audio recording.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageComposerAudioRecordingButton(
-        state: RecordingState,
-        recordingActions: AudioRecordingActions,
-    ) {
+    public fun MessageComposerAudioRecordingButton(params: MessageComposerAudioRecordingButtonParams) {
         AudioRecordingButton(
-            recordingState = state,
-            recordingActions = recordingActions,
+            recordingState = params.state,
+            recordingActions = params.recordingActions,
         )
     }
 
@@ -1877,19 +1529,15 @@ public interface ChatComponentFactory {
      *
      * Shows an open lock with a chevron while dragging, and a closed lock once locked.
      * The icon follows the vertical drag offset during Hold.
-     *
-     * @param isLocked Whether the recording is currently locked (true) or still being held (false).
-     * @param dragOffsetY The vertical drag offset in pixels (negative = upward) during Hold.
      */
     @Composable
     public fun MessageComposerAudioRecordingFloatingLockIcon(
-        isLocked: Boolean,
-        dragOffsetY: Int,
+        params: MessageComposerAudioRecordingFloatingLockIconParams,
     ) {
         io.getstream.chat.android.compose.ui.messages.composer.internal
             .MessageComposerAudioRecordingFloatingLockIcon(
-                isLocked = isLocked,
-                dragOffsetY = dragOffsetY,
+                isLocked = params.isLocked,
+                dragOffsetY = params.dragOffsetY,
             )
     }
 
@@ -1898,14 +1546,12 @@ public interface ChatComponentFactory {
      * needs explanation. Shows a message and a "Settings" action button.
      *
      * Override this method to provide a custom permission rationale UI.
-     *
-     * @param data The [SnackbarData] containing the rationale message and action.
      */
     @Composable
     public fun MessageComposerAudioRecordingPermissionRationale(
-        data: SnackbarData,
+        params: MessageComposerAudioRecordingPermissionRationaleParams,
     ) {
-        StreamSnackbar(snackbarData = data)
+        StreamSnackbar(snackbarData = params.data)
     }
 
     /**
@@ -1916,17 +1562,13 @@ public interface ChatComponentFactory {
      *
      * Override this method to provide a fully custom hold-to-record UI.
      *
-     * @param state The current [RecordingState.Hold] containing the recording duration and drag offset.
-     * @param modifier Modifier applied to the content container.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageComposerAudioRecordingHoldContent(
-        state: RecordingState.Hold,
-        modifier: Modifier,
-    ) {
+    public fun MessageComposerAudioRecordingHoldContent(params: MessageComposerAudioRecordingHoldContentParams) {
         io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerAudioRecordingHoldContent(
-            state = state,
-            modifier = modifier,
+            state = params.state,
+            modifier = params.modifier,
         )
     }
 
@@ -1939,20 +1581,14 @@ public interface ChatComponentFactory {
      *
      * Override this method to provide a fully custom locked-recording UI.
      *
-     * @param state The current [RecordingState.Locked] containing the recording duration and waveform data.
-     * @param recordingActions Actions to control the recording (delete, stop, confirm).
-     * @param modifier Modifier applied to the content container.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageComposerAudioRecordingLockedContent(
-        state: RecordingState.Locked,
-        recordingActions: AudioRecordingActions,
-        modifier: Modifier,
-    ) {
+    public fun MessageComposerAudioRecordingLockedContent(params: MessageComposerAudioRecordingLockedContentParams) {
         io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerAudioRecordingLockedContent(
-            state = state,
-            recordingActions = recordingActions,
-            modifier = modifier,
+            state = params.state,
+            recordingActions = params.recordingActions,
+            modifier = params.modifier,
         )
     }
 
@@ -1964,21 +1600,15 @@ public interface ChatComponentFactory {
      * (delete, complete) below.
      *
      * Override this method to provide a fully custom recording-overview UI.
-     *
-     * @param state The current [RecordingState.Overview] containing waveform data and playback progress.
-     * @param recordingActions Actions to control playback (toggle play/pause, drag start/stop, delete, confirm).
-     * @param modifier Modifier applied to the content container.
      */
     @Composable
     public fun MessageComposerAudioRecordingOverviewContent(
-        state: RecordingState.Overview,
-        recordingActions: AudioRecordingActions,
-        modifier: Modifier,
+        params: MessageComposerAudioRecordingOverviewContentParams,
     ) {
         io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerAudioRecordingOverviewContent(
-            state = state,
-            recordingActions = recordingActions,
-            modifier = modifier,
+            state = params.state,
+            recordingActions = params.recordingActions,
+            modifier = params.modifier,
         )
     }
 
@@ -1988,35 +1618,26 @@ public interface ChatComponentFactory {
      *
      * Override this method to provide a custom recording hint UI.
      *
-     * @param data The [SnackbarData] containing the hint message and dismiss action.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageComposerAudioRecordingHint(
-        data: SnackbarData,
-    ) {
-        StreamSnackbar(snackbarData = data)
+    public fun MessageComposerAudioRecordingHint(params: MessageComposerAudioRecordingHintParams) {
+        StreamSnackbar(snackbarData = params.data)
     }
 
     /**
      * The default avatar component that displays an image from a URL or falls back to a placeholder.
      * This component serves as the foundational UI for all avatar types.
      *
-     * @param imageUrl The URL of the image to display.
-     * @param fallback The fallback content to be displayed if the [imageUrl] is null or fails to load.
-     * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun Avatar(
-        modifier: Modifier,
-        imageUrl: String?,
-        fallback: @Composable () -> Unit,
-        showBorder: Boolean,
-    ) {
+    public fun Avatar(params: AvatarParams) {
         io.getstream.chat.android.compose.ui.components.avatar.Avatar(
-            modifier = modifier,
-            imageUrl = imageUrl,
-            fallback = fallback,
-            showBorder = showBorder,
+            modifier = params.modifier,
+            imageUrl = params.imageUrl,
+            fallback = params.fallback,
+            showBorder = params.showBorder,
         )
     }
 
@@ -2026,22 +1647,15 @@ public interface ChatComponentFactory {
      * This component displays the user's uploaded image or falls back to their initials if no
      * image is available. It is commonly used in message lists, headers, and user profiles.
      *
-     * @param user The user whose avatar will be displayed.
-     * @param showIndicator Whether to overlay a status indicator to show whether the user is online.
-     * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun UserAvatar(
-        modifier: Modifier,
-        user: User,
-        showIndicator: Boolean,
-        showBorder: Boolean,
-    ) {
+    public fun UserAvatar(params: UserAvatarParams) {
         io.getstream.chat.android.compose.ui.components.avatar.UserAvatar(
-            modifier = modifier,
-            user = user,
-            showIndicator = showIndicator,
-            showBorder = showBorder,
+            modifier = params.modifier,
+            user = params.user,
+            showIndicator = params.showIndicator,
+            showBorder = params.showBorder,
         )
     }
 
@@ -2050,418 +1664,287 @@ public interface ChatComponentFactory {
      *
      * This component displays the channel image, the user avatar for direct messages, or a placeholder.
      *
-     * @param channel The channel whose avatar will be displayed.
-     * @param currentUser The user currently logged in.
-     * @param showIndicator Whether to overlay a status indicator to show whether any user in the channel is online.
-     * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelAvatar(
-        modifier: Modifier,
-        channel: Channel,
-        currentUser: User?,
-        showIndicator: Boolean,
-        showBorder: Boolean,
-    ) {
+    public fun ChannelAvatar(params: ChannelAvatarParams) {
         io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar(
-            modifier = modifier,
-            channel = channel,
-            currentUser = currentUser,
-            showIndicator = showIndicator,
-            showBorder = showBorder,
+            modifier = params.modifier,
+            channel = params.channel,
+            currentUser = params.currentUser,
+            showIndicator = params.showIndicator,
+            showBorder = params.showBorder,
         )
     }
 
-    // REGION: Channel menu
     /**
      * Factory method for creating the full content of the SelectedChannelMenu.
      *
-     * @param modifier The modifier for the menu.
-     * @param selectedChannel The selected channel.
-     * @param currentUser The current user.
-     * @param channelActions The list of channel actions to show in the menu.
-     * @param onChannelOptionConfirm Callback for confirming a channel action.
-     * Routes through confirmation dialogs for destructive actions.
-     * @param onDismiss Callback for when the menu is dismissed.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelMenu(
-        modifier: Modifier,
-        selectedChannel: Channel,
-        currentUser: User?,
-        channelActions: List<ChannelAction>,
-        onChannelOptionConfirm: (ChannelAction) -> Unit,
-        onDismiss: () -> Unit,
-    ) {
+    public fun ChannelMenu(params: ChannelMenuParams) {
         SelectedChannelMenu(
-            modifier = modifier,
-            selectedChannel = selectedChannel,
-            currentUser = currentUser,
-            channelActions = channelActions,
-            onChannelOptionConfirm = onChannelOptionConfirm,
-            onDismiss = onDismiss,
+            modifier = params.modifier,
+            selectedChannel = params.selectedChannel,
+            currentUser = params.currentUser,
+            channelActions = params.channelActions,
+            onChannelOptionConfirm = params.onChannelOptionConfirm,
+            onDismiss = params.onDismiss,
         )
     }
 
     /**
      * Factory method for creating the header content of the SelectedChannelMenu.
      *
-     * @param selectedChannel The selected channel.
-     * @param currentUser The current user.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelMenuHeaderContent(
-        modifier: Modifier,
-        selectedChannel: Channel,
-        currentUser: User?,
-    ) {
+    public fun ChannelMenuHeaderContent(params: ChannelMenuHeaderContentParams) {
         DefaultSelectedChannelMenuHeaderContent(
-            selectedChannel = selectedChannel,
-            currentUser = currentUser,
+            selectedChannel = params.selectedChannel,
+            currentUser = params.currentUser,
         )
     }
 
     /**
      * Factory method for creating the center content of the SelectedChannelMenu.
      *
-     * @param onChannelOptionConfirm Callback for confirming a channel action.
-     * Routes through confirmation dialogs for destructive actions.
-     * @param channelActions List of channel actions.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelMenuCenterContent(
-        modifier: Modifier,
-        onChannelOptionConfirm: (ChannelAction) -> Unit,
-        channelActions: List<ChannelAction>,
-    ) {
+    public fun ChannelMenuCenterContent(params: ChannelMenuCenterContentParams) {
         ChannelMenuOptions(
-            channelActions = channelActions,
-            onChannelOptionConfirm = onChannelOptionConfirm,
-            modifier = modifier,
+            params = ChannelMenuOptionsParams(
+                channelActions = params.channelActions,
+                onChannelOptionConfirm = params.onChannelOptionConfirm,
+                modifier = params.modifier,
+            ),
         )
     }
 
     /**
      * Factory method for creating the options content of the SelectedChannelMenu.
      *
-     * @param onChannelOptionConfirm Callback for confirming a channel action.
-     * Routes through confirmation dialogs for destructive actions.
-     * @param channelActions List of channel actions.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelMenuOptions(
-        modifier: Modifier,
-        onChannelOptionConfirm: (ChannelAction) -> Unit,
-        channelActions: List<ChannelAction>,
-    ) {
+    public fun ChannelMenuOptions(params: ChannelMenuOptionsParams) {
         ChannelOptions(
-            actions = channelActions,
-            onChannelOptionConfirm = onChannelOptionConfirm,
-            modifier = modifier,
+            actions = params.channelActions,
+            onChannelOptionConfirm = params.onChannelOptionConfirm,
+            modifier = params.modifier,
         )
     }
 
     /**
      * Factory method for creating a single channel option item.
      *
-     * @param modifier The modifier for the item.
-     * @param action The channel action to render.
-     * @param onClick Callback for when the item is clicked.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelOptionsItem(
-        modifier: Modifier,
-        action: ChannelAction,
-        onClick: () -> Unit,
-    ) {
-        val titleColor = if (action.isDestructive) {
+    public fun ChannelOptionsItem(params: ChannelOptionsItemParams) {
+        val titleColor = if (params.action.isDestructive) {
             ChatTheme.colors.accentError
         } else {
             ChatTheme.colors.textPrimary
         }
         MenuOptionItem(
-            modifier = modifier.padding(horizontal = StreamTokens.spacingMd),
-            title = action.label,
-            titleColor = titleColor,
-            leadingIcon = {
-                ChannelOptionsItemLeadingIcon(Modifier, action)
-            },
-            onClick = onClick,
-            style = ChatTheme.typography.bodyDefault,
-            itemHeight = 44.dp,
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
+            params = MenuOptionItemParams(
+                modifier = params.modifier.padding(horizontal = StreamTokens.spacingMd),
+                title = params.action.label,
+                titleColor = titleColor,
+                leadingIcon = {
+                    ChannelOptionsItemLeadingIcon(ChannelOptionsItemLeadingIconParams(action = params.action))
+                },
+                onClick = params.onClick,
+                style = ChatTheme.typography.bodyDefault,
+                itemHeight = 44.dp,
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start,
+            ),
         )
     }
 
     /**
      * Factory method for creating the leading icon of the Channel options menu item.
      *
-     * @param action The channel action.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelOptionsItemLeadingIcon(modifier: Modifier, action: ChannelAction) {
-        val iconColor = if (action.isDestructive) {
+    public fun ChannelOptionsItemLeadingIcon(params: ChannelOptionsItemLeadingIconParams) {
+        val iconColor = if (params.action.isDestructive) {
             ChatTheme.colors.accentError
         } else {
             ChatTheme.colors.textSecondary
         }
         Icon(
-            modifier = modifier
-                .padding(end = StreamTokens.spacingXs) // 8dp gap to text
-                .size(StreamTokens.spacingXl), // 24dp
-            painter = painterResource(id = action.icon),
+            modifier = params.modifier
+                .padding(end = StreamTokens.spacingXs)
+                .size(StreamTokens.spacingXl),
+            painter = painterResource(id = params.action.icon),
             tint = iconColor,
             contentDescription = null,
         )
     }
 
-    // REGION: Message menu
     /**
      * Factory method for creating the full content of the SelectedMessageMenu.
      * This is the menu that appears when a message is long-pressed.
      *
-     * @param modifier The modifier for the menu.
-     * @param message The selected message.
-     * @param messageOptions List of message options.
-     * @param ownCapabilities The capabilities of the current user.
-     * @param onMessageAction Callback for when a message action is clicked.
-     * @param onShowMore Callback for when the show more reactions option is clicked.
-     * @param onDismiss Callback for when the menu is dismissed.
-     * @param currentUser The currently logged in user.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageMenu(
-        modifier: Modifier,
-        message: Message,
-        messageOptions: List<MessageOptionItemState>,
-        ownCapabilities: Set<String>,
-        onMessageAction: (MessageAction) -> Unit,
-        onShowMore: () -> Unit,
-        onDismiss: () -> Unit,
-        currentUser: User?,
-    ) {
+    public fun MessageMenu(params: MessageMenuParams) {
         SelectedMessageMenu(
-            modifier = modifier,
-            messageOptions = messageOptions,
-            message = message,
-            ownCapabilities = ownCapabilities,
-            onMessageAction = onMessageAction,
-            onShowMoreReactionsSelected = onShowMore,
-            onDismiss = onDismiss,
-            currentUser = currentUser,
+            modifier = params.modifier,
+            messageOptions = params.messageOptions,
+            message = params.message,
+            ownCapabilities = params.ownCapabilities,
+            onMessageAction = params.onMessageAction,
+            onShowMoreReactionsSelected = params.onShowMore,
+            onDismiss = params.onDismiss,
+            currentUser = params.currentUser,
         )
     }
 
     /**
      * Factory method for creating the header content of the SelectedMessageMenu.
      *
-     * @param modifier The modifier for the header content.
-     * @param message The selected message.
-     * @param onMessageAction Callback for when a message action is clicked.
-     * @param onShowMore Callback for when the show more reactions option is clicked.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageMenuHeaderContent(
-        modifier: Modifier,
-        message: Message,
-        messageOptions: List<MessageOptionItemState>,
-        onMessageAction: (MessageAction) -> Unit,
-        ownCapabilities: Set<String>,
-        onShowMore: () -> Unit,
-    ) {
+    public fun MessageMenuHeaderContent(params: MessageMenuHeaderContentParams) {
         MessageMenuHeader(
-            modifier = modifier,
+            modifier = params.modifier,
             onReactionOptionSelected = {
-                onMessageAction(
+                params.onMessageAction(
                     React(
-                        reaction = Reaction(messageId = message.id, type = it.type, emojiCode = it.emojiCode),
-                        message = message,
+                        reaction = Reaction(messageId = params.message.id, type = it.type, emojiCode = it.emojiCode),
+                        message = params.message,
                     ),
                 )
             },
-            onShowMoreReactionsSelected = onShowMore,
-            ownReactions = message.ownReactions,
+            onShowMoreReactionsSelected = params.onShowMore,
+            ownReactions = params.message.ownReactions,
         )
     }
 
     /**
      * Shows the default message options.
      *
-     * @param modifier The modifier for the message options.
-     * @param options The list of message options.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageMenuOptions(
-        modifier: Modifier,
-        message: Message,
-        options: List<MessageOptionItemState>,
-        onMessageOptionSelected: (MessageOptionItemState) -> Unit,
-    ) {
+    public fun MessageMenuOptions(params: MessageMenuOptionsParams) {
         MessageOptions(
-            modifier = modifier,
-            onMessageOptionSelected = onMessageOptionSelected,
-            options = options,
+            modifier = params.modifier,
+            onMessageOptionSelected = params.onMessageOptionSelected,
+            options = params.options,
         )
     }
 
     /**
      * Factory method for creating an individual option item in the SelectedMessageMenu.
      *
-     * @param option The message option state.
-     * @param onMessageOptionSelected Callback for when a message option is selected.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageMenuOptionsItem(
-        option: MessageOptionItemState,
-        onMessageOptionSelected: (MessageOptionItemState) -> Unit,
-    ) {
+    public fun MessageMenuOptionsItem(params: MessageMenuOptionsItemParams) {
         ContextualMenuItem(
-            label = stringResource(id = option.title),
-            leadingIcon = option.iconPainter,
-            destructive = option.destructive,
-            onClick = { onMessageOptionSelected(option) },
+            label = stringResource(id = params.option.title),
+            leadingIcon = params.option.iconPainter,
+            destructive = params.option.destructive,
+            onClick = { params.onMessageOptionSelected(params.option) },
         )
     }
-
-    // REGION: Reactions
 
     /**
      * Factory method for creating a reaction icon. By default, it only displays the emoji.
      *
-     * @param type The string representation of the reaction.
-     * @param emoji The emoji character the [type] maps to, if any. See [ReactionResolver].
-     * @param size The size of the reaction button.
-     * @param modifier Modifier for styling.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ReactionIcon(
-        type: String,
-        emoji: String?,
-        size: ReactionIconSize,
-        modifier: Modifier,
-    ) {
+    public fun ReactionIcon(params: ReactionIconParams) {
         io.getstream.chat.android.compose.ui.components.reactions.ReactionIcon(
-            type = type,
-            emoji = emoji,
-            size = size,
-            modifier = modifier,
+            type = params.type,
+            emoji = params.emoji,
+            size = params.size,
+            modifier = params.modifier,
         )
     }
 
     /**
      * Factory method for creating a reaction toggle. By default, it only displays the emoji.
      *
-     * @param type The string representation of the reaction.
-     * @param emoji The emoji character the [type] maps to, if any. See [ReactionResolver].
-     * @param size The size of the reaction button.
-     * @param checked Whether the toggle is checked.
-     * @param onCheckedChange Callback when the checked state of the toggle changes.
-     * @param modifier Modifier for styling.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ReactionToggle(
-        type: String,
-        emoji: String?,
-        size: ReactionToggleSize,
-        checked: Boolean,
-        onCheckedChange: ((Boolean) -> Unit)?,
-        modifier: Modifier,
-    ) {
+    public fun ReactionToggle(params: ReactionToggleParams) {
         io.getstream.chat.android.compose.ui.components.reactions.ReactionToggle(
-            type = type,
-            emoji = emoji,
-            size = size,
-            checked = checked,
-            onCheckedChange = onCheckedChange,
-            modifier = modifier,
+            type = params.type,
+            emoji = params.emoji,
+            size = params.size,
+            checked = params.checked,
+            onCheckedChange = params.onCheckedChange,
+            modifier = params.modifier,
         )
     }
 
     /**
      * Factory method for creating the menu displaying all the reactions on a message.
      *
-     * @param modifier The modifier for the menu.
-     * @param currentUser The current user.
-     * @param message The selected message.
-     * @param ownCapabilities The capabilities of the current user.
-     * @param onMessageAction Callback for when a message action is clicked.
-     * @param onDismiss Callback for when the menu is dismissed.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ReactionsMenu(
-        modifier: Modifier,
-        currentUser: User?,
-        message: Message,
-        onMessageAction: (MessageAction) -> Unit,
-        onShowMoreReactionsSelected: () -> Unit,
-        ownCapabilities: Set<String>,
-        onDismiss: () -> Unit,
-    ) {
+    public fun ReactionsMenu(params: ReactionsMenuParams) {
         io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu(
-            modifier = modifier,
-            currentUser = currentUser,
-            message = message,
-            onMessageAction = onMessageAction,
-            onShowMoreReactionsSelected = onShowMoreReactionsSelected,
-            onDismiss = onDismiss,
-            ownCapabilities = ownCapabilities,
+            modifier = params.modifier,
+            currentUser = params.currentUser,
+            message = params.message,
+            onMessageAction = params.onMessageAction,
+            onShowMoreReactionsSelected = params.onShowMoreReactionsSelected,
+            onDismiss = params.onDismiss,
+            ownCapabilities = params.ownCapabilities,
         )
     }
 
     /**
      * Factory method for creating the content of the reactions menu.
      *
-     * @param modifier The modifier for the content.
-     * @param currentUser The current user.
-     * @param message The selected message.
-     * @param onMessageAction Callback for when a message action is clicked.
-     * @param onShowMoreReactionsSelected Callback for when the show more reactions option is clicked.
-     * @param ownCapabilities The capabilities of the current user.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ReactionsMenuContent(
-        modifier: Modifier,
-        currentUser: User?,
-        message: Message,
-        onMessageAction: (MessageAction) -> Unit,
-        onShowMoreReactionsSelected: () -> Unit,
-        ownCapabilities: Set<String>,
-    ) {
+    public fun ReactionsMenuContent(params: ReactionsMenuContentParams) {
         io.getstream.chat.android.compose.ui.components.selectedmessage.ReactionsMenuContent(
-            modifier = modifier,
-            currentUser = currentUser,
-            message = message,
-            onMessageAction = onMessageAction,
-            onShowMoreReactionsSelected = onShowMoreReactionsSelected,
-            ownCapabilities = ownCapabilities,
+            modifier = params.modifier,
+            currentUser = params.currentUser,
+            message = params.message,
+            onMessageAction = params.onMessageAction,
+            onShowMoreReactionsSelected = params.onShowMoreReactionsSelected,
+            ownCapabilities = params.ownCapabilities,
         )
     }
 
     /**
      * Factory method for creating a single reaction option item in the reactions menu.
      *
-     * @param modifier The modifier for the item.
-     * @param option The reaction option state.
-     * @param onReactionOptionSelected Callback for when a reaction option is clicked.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ReactionMenuOptionItem(
-        modifier: Modifier,
-        option: ReactionOptionItemState,
-        onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
-    ) {
+    public fun ReactionMenuOptionItem(params: ReactionMenuOptionItemParams) {
         Box(
-            modifier = modifier.testTag("Stream_Reaction_${option.type}"),
+            modifier = params.modifier.testTag("Stream_Reaction_${params.option.type}"),
             contentAlignment = Alignment.Center,
         ) {
             ReactionToggle(
-                type = option.type,
-                emoji = option.emojiCode,
-                size = ReactionToggleSize.ExtraLarge,
-                checked = option.isSelected,
-                onCheckedChange = { onReactionOptionSelected(option) },
-                modifier = Modifier,
+                params = ReactionToggleParams(
+                    type = params.option.type,
+                    emoji = params.option.emojiCode,
+                    size = ReactionToggleSize.ExtraLarge,
+                    checked = params.option.isSelected,
+                    onCheckedChange = { params.onReactionOptionSelected(params.option) },
+                ),
             )
         }
     }
@@ -2469,78 +1952,49 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the reaction picker bottom sheet.
      *
-     * @param modifier The modifier.
-     * @param message The selected message.
-     * @param onMessageAction Callback for when a message action is clicked.
-     * @param onDismiss Callback for when the menu is dismissed.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageReactionPicker(
-        modifier: Modifier,
-        message: Message,
-        onMessageAction: (MessageAction) -> Unit,
-        onDismiss: () -> Unit,
-    ) {
+    public fun MessageReactionPicker(params: MessageReactionPickerParams) {
         ReactionsPicker(
-            modifier = modifier,
-            message = message,
-            onMessageAction = onMessageAction,
-            onDismiss = onDismiss,
+            modifier = params.modifier,
+            message = params.message,
+            onMessageAction = params.onMessageAction,
+            onDismiss = params.onDismiss,
         )
     }
 
     /**
      * Factory method for creating the content of the reaction picker bottom sheet.
      *
-     * @param modifier The modifier.
-     * @param message The selected message.
-     * @param onMessageAction Callback for when a message action is clicked.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageReactionsPickerContent(
-        modifier: Modifier,
-        message: Message,
-        onMessageAction: (MessageAction) -> Unit,
-    ) {
+    public fun MessageReactionsPickerContent(params: MessageReactionsPickerContentParams) {
         io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPickerContent(
-            modifier = modifier,
-            message = message,
-            onMessageAction = onMessageAction,
+            modifier = params.modifier,
+            message = params.message,
+            onMessageAction = params.onMessageAction,
         )
     }
 
-    // REGION: Generic menu items
     /**
      * Factory method for creating a generic menu option item.
      *
-     * @param modifier The modifier for the menu item.
-     * @param title The title of the menu item.
-     * @param titleColor The color of the title.
-     * @param leadingIcon The leading icon of the menu item.
-     * @param onClick Callback for when the menu item is clicked.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MenuOptionItem(
-        modifier: Modifier,
-        onClick: () -> Unit,
-        leadingIcon: @Composable RowScope.() -> Unit,
-        title: String,
-        titleColor: Color,
-        style: TextStyle,
-        itemHeight: Dp,
-        verticalAlignment: Alignment.Vertical,
-        horizontalArrangement: Arrangement.Horizontal,
-    ) {
+    public fun MenuOptionItem(params: MenuOptionItemParams) {
         io.getstream.chat.android.compose.ui.components.common.MenuOptionItem(
-            modifier = modifier,
-            onClick = onClick,
-            leadingIcon = leadingIcon,
-            title = title,
-            titleColor = titleColor,
-            style = style,
-            itemHeight = itemHeight,
-            verticalAlignment = verticalAlignment,
-            horizontalArrangement = horizontalArrangement,
+            modifier = params.modifier,
+            onClick = params.onClick,
+            leadingIcon = params.leadingIcon,
+            title = params.title,
+            titleColor = params.titleColor,
+            style = params.style,
+            itemHeight = params.itemHeight,
+            verticalAlignment = params.verticalAlignment,
+            horizontalArrangement = params.horizontalArrangement,
         )
     }
 
@@ -2548,17 +2002,13 @@ public interface ChatComponentFactory {
      * The default thread list banner.
      * Shows unread thread count, a loading indicator during refresh, or an error prompt.
      *
-     * @param state The current [ThreadListBannerState] to render.
-     * @param onClick Action invoked when the user clicks on the banner.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ThreadListBanner(
-        state: ThreadListBannerState,
-        onClick: () -> Unit,
-    ) {
+    public fun ThreadListBanner(params: ThreadListBannerParams) {
         io.getstream.chat.android.compose.ui.threads.ThreadListBanner(
-            state = state,
-            onClick = onClick,
+            state = params.state,
+            onClick = params.onClick,
         )
     }
 
@@ -2567,61 +2017,51 @@ public interface ChatComponentFactory {
      * Shows information about the Thread title, parent message, last reply and number of unread
      * replies.
      *
-     * @param thread The thread to display.
-     * @param currentUser The current user.
-     * @param onThreadClick Action invoked when the user clicks on the thread.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ThreadListItem(
-        thread: Thread,
-        currentUser: User?,
-        onThreadClick: (Thread) -> Unit,
-    ) {
-        ThreadItem(thread, currentUser, onThreadClick)
+    public fun ThreadListItem(params: ThreadListItemParams) {
+        ThreadItem(params.thread, params.currentUser, params.onThreadClick)
     }
 
     /**
      * The default empty placeholder that is displayed when there are no threads.
      *
-     * @param modifier Modifier for styling.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ThreadListEmptyContent(modifier: Modifier) {
-        DefaultThreadListEmptyContent(modifier)
+    public fun ThreadListEmptyContent(params: ThreadListEmptyContentParams) {
+        DefaultThreadListEmptyContent(params.modifier)
     }
 
     /**
      * The default loading content that is displayed during the initial loading of the threads.
      *
-     * @param modifier Modifier for styling.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ThreadListLoadingContent(modifier: Modifier) {
-        DefaultThreadListLoadingContent(modifier)
+    public fun ThreadListLoadingContent(params: ThreadListLoadingContentParams) {
+        DefaultThreadListLoadingContent(params.modifier)
     }
 
     /**
      * The default content shown on the bottom of the list during the loading of more threads.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ThreadListLoadingMoreContent() {
+    public fun ThreadListLoadingMoreContent(params: ThreadListLoadingMoreContentParams) {
         DefaultThreadListLoadingMoreContent()
     }
 
     /**
      * The default content of the pinned message list item.
      *
-     * @param message The pinned message to display.
-     * @param currentUser The current user.
-     * @param onClick Action invoked when the user clicks on the pinned message.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun PinnedMessageListItem(
-        message: Message,
-        currentUser: User?,
-        onClick: (Message) -> Unit,
-    ) {
-        PinnedMessageItem(message, currentUser, onClick)
+    public fun PinnedMessageListItem(params: PinnedMessageListItemParams) {
+        PinnedMessageItem(params.message, params.currentUser, params.onClick)
     }
 
     /**
@@ -2629,12 +2069,11 @@ public interface ChatComponentFactory {
      *
      * Used in the [PinnedMessageListItem].
      *
-     * @param message The pinned message to display.
-     * @param currentUser The currently logged-in user.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.PinnedMessageListItemLeadingContent(message: Message, currentUser: User?) {
-        DefaultMessagePreviewItemLeadingContent(message, currentUser)
+    public fun RowScope.PinnedMessageListItemLeadingContent(params: PinnedMessageListItemLeadingContentParams) {
+        DefaultMessagePreviewItemLeadingContent(params.message, params.currentUser)
     }
 
     /**
@@ -2642,15 +2081,11 @@ public interface ChatComponentFactory {
      *
      * Used in the [PinnedMessageListItem].
      *
-     * @param message The pinned message to display.
-     * @param currentUser The current user.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.PinnedMessageListItemCenterContent(
-        message: Message,
-        currentUser: User?,
-    ) {
-        DefaultMessagePreviewItemCenterContent(message, currentUser)
+    public fun RowScope.PinnedMessageListItemCenterContent(params: PinnedMessageListItemCenterContentParams) {
+        DefaultMessagePreviewItemCenterContent(params.message, params.currentUser)
     }
 
     /**
@@ -2658,143 +2093,134 @@ public interface ChatComponentFactory {
      *
      * Used in the [PinnedMessageListItem].
      *
-     * @param message The pinned message to display.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.PinnedMessageListItemTrailingContent(message: Message) {
-        DefaultMessagePreviewItemTrailingContent(message)
+    public fun RowScope.PinnedMessageListItemTrailingContent(params: PinnedMessageListItemTrailingContentParams) {
+        DefaultMessagePreviewItemTrailingContent(params.message)
     }
 
     /**
      * The default divider appended after each pinned message.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun PinnedMessageListItemDivider() {
+    public fun PinnedMessageListItemDivider(params: PinnedMessageListItemDividerParams) {
         StreamHorizontalDivider()
     }
 
     /**
      * The default empty placeholder that is displayed when there are no pinned messages.
      *
-     * @param modifier Modifier for styling.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun PinnedMessageListEmptyContent(modifier: Modifier) {
-        DefaultPinnedMessageListEmptyContent(modifier)
+    public fun PinnedMessageListEmptyContent(params: PinnedMessageListEmptyContentParams) {
+        DefaultPinnedMessageListEmptyContent(params.modifier)
     }
 
     /**
      * The default loading content that is displayed during the initial loading of the pinned messages.
      *
-     * @param modifier Modifier for styling.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun PinnedMessageListLoadingContent(modifier: Modifier) {
-        DefaultPinnedMessageListLoadingContent(modifier)
+    public fun PinnedMessageListLoadingContent(params: PinnedMessageListLoadingContentParams) {
+        DefaultPinnedMessageListLoadingContent(params.modifier)
     }
 
     /**
      * The default content shown on the bottom of the list during the loading of more pinned messages.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun PinnedMessageListLoadingMoreContent() {
+    public fun PinnedMessageListLoadingMoreContent(params: PinnedMessageListLoadingMoreContentParams) {
         DefaultPinnedMessageListLoadingMoreContent()
     }
 
     /**
      * The default content shown when swiping to reply to a message.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.SwipeToReplyContent() {
-        Box {
-            Icon(
-                painter = painterResource(id = R.drawable.stream_compose_ic_reply),
-                contentDescription = "",
-                tint = ChatTheme.colors.textSecondary,
-            )
-        }
+    public fun RowScope.SwipeToReplyContent(params: SwipeToReplyContentParams) {
+        SwipeToReplyIcon()
     }
 
     /**
      * The default content of a mention list item.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyItemScope.MentionListItem(
-        mention: MessageResult,
-        modifier: Modifier,
-        currentUser: User?,
-        onClick: ((message: Message) -> Unit)?,
-    ) {
+    public fun LazyItemScope.MentionListItem(params: MentionListItemParams) {
         SearchResultItem(
             searchResultItemState = remember {
                 ItemState.SearchResultItemState(
-                    message = mention.message,
-                    channel = mention.channel,
+                    message = params.mention.message,
+                    channel = params.mention.channel,
                 )
             },
-            currentUser = currentUser,
-            modifier = modifier.animateItem(),
-            onSearchResultClick = onClick,
+            currentUser = params.currentUser,
+            modifier = params.modifier.animateItem(),
+            onSearchResultClick = params.onClick,
         )
     }
 
     /**
      * The default loading indicator that is displayed during the initial loading of the mention list.
      *
-     * @param modifier Modifier for styling.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun BoxScope.MentionListLoadingIndicator(
-        modifier: Modifier,
-    ) {
+    public fun BoxScope.MentionListLoadingIndicator(params: MentionListLoadingIndicatorParams) {
         LoadingIndicator(
-            modifier = modifier,
+            modifier = params.modifier,
         )
     }
 
     /**
      * The default empty placeholder that is displayed when the mention list is empty.
      *
-     * @param modifier Modifier for styling.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun BoxScope.MentionListEmptyContent(modifier: Modifier) {
+    public fun BoxScope.MentionListEmptyContent(params: MentionListEmptyContentParams) {
         EmptyContent(
             text = stringResource(UiCommonR.string.stream_ui_mention_list_empty),
             painter = painterResource(UiCommonR.drawable.stream_compose_ic_mentions),
-            modifier = modifier,
+            modifier = params.modifier,
         )
     }
 
     /**
      * The default loading indicator that is displayed on the bottom of the list when there are more mentions loading.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyItemScope.MentionListLoadingItem(modifier: Modifier) {
+    public fun LazyItemScope.MentionListLoadingItem(params: MentionListLoadingItemParams) {
         LoadingFooter(
-            modifier = modifier.fillMaxWidth(),
+            modifier = params.modifier.fillMaxWidth(),
         )
     }
 
     /**
      * The default pull-to-refresh indicator for the mention list.
      *
-     * @param modifier Modifier for styling.
-     * @param pullToRefreshState The state of the pull-to-refresh.
-     * @param isRefreshing Whether the mention list is currently refreshing.
+     * @param params Parameters for this component.
      */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    public fun BoxScope.MentionListPullToRefreshIndicator(
-        modifier: Modifier,
-        pullToRefreshState: PullToRefreshState,
-        isRefreshing: Boolean,
-    ) {
+    public fun BoxScope.MentionListPullToRefreshIndicator(params: MentionListPullToRefreshIndicatorParams) {
         PullToRefreshDefaults.Indicator(
-            state = pullToRefreshState,
-            isRefreshing = isRefreshing,
-            modifier = modifier.align(Alignment.TopCenter),
-            containerColor = ChatTheme.colors.backgroundElevationElevation1,
+            state = params.pullToRefreshState,
+            isRefreshing = params.isRefreshing,
+            modifier = params.modifier.align(Alignment.TopCenter),
+            containerColor = ChatTheme.colors.backgroundCoreElevation1,
             color = ChatTheme.colors.accentPrimary,
         )
     }
@@ -2869,14 +2295,10 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the content of audio recording attachments in a message.
      *
-     * @param state State providing the context needed to render and handle interactions for the attachment.
-     * @param modifier Modifier for styling.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun AudioRecordAttachmentContent(
-        state: AttachmentState,
-        modifier: Modifier,
-    ) {
+    public fun AudioRecordAttachmentContent(params: AudioRecordAttachmentContentParams) {
         val viewModelFactory = remember {
             AudioPlayerViewModelFactory(
                 getAudioPlayer = { ChatClient.instance().audioPlayer },
@@ -2884,8 +2306,8 @@ public interface ChatComponentFactory {
             )
         }
         io.getstream.chat.android.compose.ui.attachments.content.AudioRecordAttachmentContent(
-            modifier = modifier,
-            attachmentState = state,
+            modifier = params.modifier,
+            attachmentState = params.state,
             viewModelFactory = viewModelFactory,
         )
     }
@@ -2893,17 +2315,13 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the content of file attachments in a message.
      *
-     * @param state State providing the context needed to render and handle interactions for the attachment.
-     * @param modifier Modifier for styling.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun FileAttachmentContent(
-        state: AttachmentState,
-        modifier: Modifier,
-    ) {
+    public fun FileAttachmentContent(params: FileAttachmentContentParams) {
         io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentContent(
-            modifier = modifier,
-            attachmentState = state,
+            modifier = params.modifier,
+            attachmentState = params.state,
             showFileSize = { true },
             onItemClick = ::onFileAttachmentContentItemClick,
         )
@@ -2912,209 +2330,147 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the content of Giphy attachments in a message.
      *
-     * @param state State providing the context needed to render and handle interactions for the attachment.
-     * @param modifier Modifier for styling.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun GiphyAttachmentContent(
-        state: AttachmentState,
-        modifier: Modifier,
-    ) {
+    public fun GiphyAttachmentContent(params: GiphyAttachmentContentParams) {
         io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentContent(
-            state = state,
-            modifier = modifier,
+            state = params.state,
+            modifier = params.modifier,
         )
     }
 
     /**
      * Factory method for creating the content of link attachments in a message.
      *
-     * @param state State providing the context needed to render and handle interactions for the attachment.
-     * @param modifier Modifier for styling.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LinkAttachmentContent(
-        state: AttachmentState,
-        modifier: Modifier,
-    ) {
+    public fun LinkAttachmentContent(params: LinkAttachmentContentParams) {
         io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentContent(
-            state = state,
-            modifier = modifier,
+            state = params.state,
+            modifier = params.modifier,
         )
     }
 
     /**
      * Factory method for creating the content of media attachments in a message.
      *
-     * @param state State providing the context needed to render and handle interactions for the attachment.
-     * @param modifier Modifier for styling.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun MediaAttachmentContent(
-        state: AttachmentState,
-        modifier: Modifier,
-    ) {
+    public fun MediaAttachmentContent(params: MediaAttachmentContentParams) {
         io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentContent(
-            state = state,
-            modifier = modifier,
+            state = params.state,
+            modifier = params.modifier,
         )
     }
 
     /**
      * Factory method for creating the content of custom attachments in a message.
      *
-     * @param state State providing the context needed to render and handle interactions for the attachment.
-     * @param modifier Modifier for styling.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun CustomAttachmentContent(
-        state: AttachmentState,
-        modifier: Modifier,
-    ) {
-        UnsupportedAttachmentContent(modifier)
+    public fun CustomAttachmentContent(params: CustomAttachmentContentParams) {
+        UnsupportedAttachmentContent(state = params.state, modifier = params.modifier)
     }
 
     /**
      * Factory method for creating a file attachment item.
      *
-     * @param modifier Modifier for styling.
-     * @param attachment The file attachment to show.
-     * @param isMine Whether the message is sent by the current user or not.
-     * @param showFileSize Whether to show the file size or not.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun FileAttachmentItem(
-        modifier: Modifier,
-        attachment: Attachment,
-        isMine: Boolean,
-        showFileSize: (Attachment) -> Boolean,
-    ) {
+    public fun FileAttachmentItem(params: FileAttachmentItemParams) {
         io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentItem(
-            attachment = attachment,
-            isMine = isMine,
-            showFileSize = showFileSize,
-            modifier = modifier,
+            attachment = params.attachment,
+            isMine = params.isMine,
+            showFileSize = params.showFileSize,
+            modifier = params.modifier,
         )
     }
 
     /**
      * Factory method for creating the top bar of the channel info screen.
      *
-     * @param headerState The state of the channel header.
-     * @param listState The state of the lazy list.
-     * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun DirectChannelInfoTopBar(
-        headerState: ChannelHeaderViewState,
-        listState: LazyListState,
-        onNavigationIconClick: () -> Unit,
-    ) {
+    public fun DirectChannelInfoTopBar(params: DirectChannelInfoTopBarParams) {
         io.getstream.chat.android.compose.ui.channel.info.DirectChannelInfoTopBar(
-            onNavigationIconClick = onNavigationIconClick,
+            onNavigationIconClick = params.onNavigationIconClick,
         )
     }
 
     /**
      * Factory method for creating the avatar container in the direct channel info screen.
      *
-     * @param user The user whose avatar is displayed.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun DirectChannelInfoAvatarContainer(user: User) {
+    public fun DirectChannelInfoAvatarContainer(params: DirectChannelInfoAvatarContainerParams) {
         io.getstream.chat.android.compose.ui.channel.info.DirectChannelInfoAvatarContainer(
-            user = user,
+            user = params.user,
         )
     }
 
     /**
      * Factory method for creating the avatar container in the group channel info screen.
      *
-     * @param channel The channel to display the avatar for.
-     * @param currentUser The currently logged-in user.
-     * @param members The members list of the channel.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun GroupChannelInfoAvatarContainer(
-        channel: Channel,
-        currentUser: User?,
-        members: ExpandableList<Member>,
-    ) {
+    public fun GroupChannelInfoAvatarContainer(params: GroupChannelInfoAvatarContainerParams) {
         io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoAvatarContainer(
-            channel = channel,
-            currentUser = currentUser,
-            members = members,
+            channel = params.channel,
+            currentUser = params.currentUser,
+            members = params.members,
         )
     }
 
     /**
      * Factory method for creating the member section card in the group channel info screen.
      *
-     * @param members The expandable list of members.
-     * @param currentUser The currently logged-in user.
-     * @param owner The owner of the channel.
-     * @param totalMemberCount The total number of members in the channel.
-     * @param showAddButton Whether to show the "Add" button.
-     * @param onAddMembersClick Callback invoked when the "Add" button is clicked.
-     * @param onViewAction Callback invoked when a view action is triggered.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun GroupChannelInfoMemberSection(
-        members: ExpandableList<Member>,
-        currentUser: User?,
-        owner: User,
-        totalMemberCount: Int,
-        showAddButton: Boolean,
-        onAddMembersClick: () -> Unit,
-        onViewAction: (ChannelInfoViewAction) -> Unit,
-    ) {
+    public fun GroupChannelInfoMemberSection(params: GroupChannelInfoMemberSectionParams) {
         io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoMemberSection(
-            members = members,
-            currentUser = currentUser,
-            owner = owner,
-            totalMemberCount = totalMemberCount,
-            showAddButton = showAddButton,
-            onAddMembersClick = onAddMembersClick,
-            onViewAction = onViewAction,
+            members = params.members,
+            currentUser = params.currentUser,
+            owner = params.owner,
+            totalMemberCount = params.totalMemberCount,
+            showAddButton = params.showAddButton,
+            onAddMembersClick = params.onAddMembersClick,
+            onViewAction = params.onViewAction,
         )
     }
 
     /**
      * Factory method for creating the top bar of the group channel info screen.
      *
-     * @param headerState The state of the channel header.
-     * @param infoState The state of the channel info.
-     * @param listState The state of the lazy list.
-     * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
-     * @param onAddMembersClick Callback invoked when the "Add members" button is clicked.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun GroupChannelInfoTopBar(
-        headerState: ChannelHeaderViewState,
-        infoState: ChannelInfoViewState,
-        listState: LazyListState,
-        onNavigationIconClick: () -> Unit,
-        onAddMembersClick: () -> Unit,
-    ) {
+    public fun GroupChannelInfoTopBar(params: GroupChannelInfoTopBarParams) {
         io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoTopBar(
-            headerState = headerState,
-            infoState = infoState,
-            listState = listState,
-            onNavigationIconClick = onNavigationIconClick,
-            onAddMembersClick = onAddMembersClick,
+            headerState = params.headerState,
+            infoState = params.infoState,
+            listState = params.listState,
+            onNavigationIconClick = params.onNavigationIconClick,
+            onAddMembersClick = params.onAddMembersClick,
         )
     }
 
     /**
      * Factory method for creating the "Add members" button of the group channel info screen.
      *
-     * @param onClick Callback invoked when button is clicked.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun GroupChannelInfoAddMembersButton(
-        onClick: () -> Unit,
-    ) {
-        IconButton(onClick = onClick) {
+    public fun GroupChannelInfoAddMembersButton(params: GroupChannelInfoAddMembersButtonParams) {
+        IconButton(onClick = params.onClick) {
             Icon(
                 painter = painterResource(R.drawable.stream_ic_member_add),
                 contentDescription = stringResource(R.string.stream_ui_channel_info_member_add_button),
@@ -3125,138 +2481,105 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the channel info separator item.
      * This is used to visually separate different sections in the channel info screens.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyItemScope.ChannelInfoSeparatorItem() {
+    public fun LazyItemScope.ChannelInfoSeparatorItem(params: ChannelInfoSeparatorItemParams) {
         StreamHorizontalDivider(thickness = 8.dp)
     }
 
     /**
      * Factory method for creating the channel info option item used in direct and group channel info screens.
      *
-     * @param option The channel info option to display.
-     * @param isGroupChannel Whether the channel is a group channel.
-     * @param onViewAction Callback invoked when a view action is triggered.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyItemScope.ChannelInfoOptionItem(
-        option: ChannelInfoViewState.Content.Option,
-        isGroupChannel: Boolean,
-        onViewAction: (ChannelInfoViewAction) -> Unit,
-    ) {
+    public fun LazyItemScope.ChannelInfoOptionItem(params: ChannelInfoOptionItemParams) {
         DefaultChannelInfoOptionItem(
-            option = option,
-            isGroupChannel = isGroupChannel,
-            onViewAction = onViewAction,
+            option = params.option,
+            isGroupChannel = params.isGroupChannel,
+            onViewAction = params.onViewAction,
         )
     }
 
     /**
      * Factory method for creating the member item in the group channel info screen.
      *
-     * @param currentUser The currently logged-in user.
-     * @param member The member to display.
-     * @param isOwner Whether the member is the owner of the channel.
-     * @param onClick Callback invoked when the user clicks on the member item.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun GroupChannelInfoMemberItem(
-        currentUser: User?,
-        member: Member,
-        isOwner: Boolean,
-        onClick: (() -> Unit)?,
-    ) {
+    public fun GroupChannelInfoMemberItem(params: GroupChannelInfoMemberItemParams) {
         io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoMemberItem(
             modifier = Modifier,
-            currentUser = currentUser,
-            member = member,
-            isOwner = isOwner,
-            onClick = onClick,
+            currentUser = params.currentUser,
+            member = params.member,
+            isOwner = params.isOwner,
+            onClick = params.onClick,
         )
     }
 
     /**
      * Factory method for creating the expand members item in the group channel info screen.
      *
-     * @param collapsedCount The number of members that are currently collapsed.
-     * @param onClick Callback invoked when the user clicks to expand the member list.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun GroupChannelInfoExpandMembersItem(
-        collapsedCount: Int,
-        onClick: () -> Unit,
-    ) {
+    public fun GroupChannelInfoExpandMembersItem(params: GroupChannelInfoExpandMembersItemParams) {
         io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoExpandMembersItem(
-            collapsedCount = collapsedCount,
-            onClick = onClick,
+            collapsedCount = params.collapsedCount,
+            onClick = params.onClick,
         )
     }
 
     /**
      * Factory method for creating the channel info screen modal.
      *
-     * @param modal Which modal to display.
-     * @param isGroupChannel Whether the channel is a group channel.
-     * @param onViewAction Callback invoked when a view action is triggered.
-     * Applicable for all modals except [ChannelInfoViewEvent.MemberInfoModal].
-     * @param onMemberViewEvent Callback invoked when a member view event is triggered.
-     * Only applicable for [ChannelInfoViewEvent.MemberInfoModal].
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelInfoScreenModal(
-        modal: ChannelInfoViewEvent.Modal?,
-        isGroupChannel: Boolean,
-        onViewAction: (action: ChannelInfoViewAction) -> Unit,
-        onMemberViewEvent: (event: ChannelInfoMemberViewEvent) -> Unit,
-        onDismiss: () -> Unit,
-    ) {
+    public fun ChannelInfoScreenModal(params: ChannelInfoScreenModalParams) {
         io.getstream.chat.android.compose.ui.channel.info.ChannelInfoScreenModal(
-            modal = modal,
-            isGroupChannel = isGroupChannel,
-            onViewAction = onViewAction,
-            onMemberViewEvent = onMemberViewEvent,
-            onDismiss = onDismiss,
+            modal = params.modal,
+            isGroupChannel = params.isGroupChannel,
+            onViewAction = params.onViewAction,
+            onMemberViewEvent = params.onMemberViewEvent,
+            onDismiss = params.onDismiss,
         )
     }
 
     /**
      * Factory method for creating the top bar of the member info modal sheet in the group channel info screen.
      *
-     * @param member The member to display in the top bar.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
+    public fun ChannelInfoMemberInfoModalSheetTopBar(params: ChannelInfoMemberInfoModalSheetTopBarParams) {
         io.getstream.chat.android.compose.ui.channel.info.ChannelInfoMemberInfoModalSheetTopBar(
-            member = member,
+            member = params.member,
         )
     }
 
     /**
      * Factory method for creating a single member option item.
      *
-     * @param action The member action to render.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelInfoMemberOptionItem(
-        action: MemberAction,
-    ) {
+    public fun ChannelInfoMemberOptionItem(params: ChannelInfoMemberOptionItemParams) {
         io.getstream.chat.android.compose.ui.channel.info.ChannelInfoMemberOptionItem(
-            action = action,
+            action = params.action,
         )
     }
 
     /**
      * Factory method for creating the top bar of the channel files attachments screen.
      *
-     * @param listState The state of the lazy list.
-     * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
+     * @param params Parameters for this component.
      */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    public fun ChannelFilesAttachmentsTopBar(
-        listState: LazyListState,
-        onNavigationIconClick: () -> Unit,
-    ) {
+    public fun ChannelFilesAttachmentsTopBar(params: ChannelFilesAttachmentsTopBarParams) {
         CenterAlignedTopAppBar(
             title = {
                 Text(
@@ -3265,9 +2588,9 @@ public interface ChatComponentFactory {
                     maxLines = 1,
                 )
             },
-            navigationIcon = { ChannelInfoNavigationIcon(onClick = onNavigationIconClick) },
+            navigationIcon = { ChannelInfoNavigationIcon(onClick = params.onNavigationIconClick) },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                containerColor = ChatTheme.colors.backgroundCoreElevation1,
                 titleContentColor = ChatTheme.colors.textPrimary,
             ),
         )
@@ -3275,19 +2598,23 @@ public interface ChatComponentFactory {
 
     /**
      * Factory method for creating the loading indicator of the channel files attachments screen.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelFilesAttachmentsLoadingIndicator(modifier: Modifier) {
-        LoadingIndicator(modifier = modifier)
+    public fun ChannelFilesAttachmentsLoadingIndicator(params: ChannelFilesAttachmentsLoadingIndicatorParams) {
+        LoadingIndicator(modifier = params.modifier)
     }
 
     /**
      * Factory method for creating the empty content of the channel files attachments screen.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun BoxScope.ChannelFilesAttachmentsEmptyContent(modifier: Modifier) {
+    public fun BoxScope.ChannelFilesAttachmentsEmptyContent(params: ChannelFilesAttachmentsEmptyContentParams) {
         EmptyContent(
-            modifier = modifier,
+            modifier = params.modifier,
             title = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_empty_title),
             text = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_empty_text),
             painter = painterResource(UiCommonR.drawable.stream_ic_files),
@@ -3295,9 +2622,9 @@ public interface ChatComponentFactory {
     }
 
     @Composable
-    public fun BoxScope.ChannelFilesAttachmentsErrorContent(modifier: Modifier) {
+    public fun BoxScope.ChannelFilesAttachmentsErrorContent(params: ChannelFilesAttachmentsErrorContentParams) {
         EmptyContent(
-            modifier = modifier,
+            modifier = params.modifier,
             text = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_load_error),
             painter = rememberVectorPainter(Icons.TwoTone.Warning),
         )
@@ -3307,20 +2634,16 @@ public interface ChatComponentFactory {
      * Factory method for creating the channel files attachments header item.
      * This is typically used to display the title of a group of attachments.
      *
-     * @param modifier The modifier for styling the header item.
-     * @param label The label for the header item.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyItemScope.ChannelFilesAttachmentsHeaderItem(
-        modifier: Modifier,
-        label: String,
-    ) {
+    public fun LazyItemScope.ChannelFilesAttachmentsHeaderItem(params: ChannelFilesAttachmentsHeaderItemParams) {
         Text(
-            modifier = modifier
+            modifier = params.modifier
                 .fillMaxWidth()
                 .background(ChatTheme.colors.borderCoreDefault.copy(alpha = 0.8f))
                 .padding(horizontal = 16.dp, vertical = 8.dp),
-            text = label,
+            text = params.label,
             style = ChatTheme.typography.bodyEmphasis,
             color = ChatTheme.colors.textPrimary,
         )
@@ -3329,39 +2652,25 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the channel files attachments item.
      *
-     * @param modifier The modifier for styling the item.
-     * @param index The index of the item in the list.
-     * @param item The channel file attachment item to display.
-     * @param currentUser The currently logged-in user.
-     * @param onClick Callback invoked when the item is clicked.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyItemScope.ChannelFilesAttachmentsItem(
-        modifier: Modifier,
-        index: Int,
-        item: ChannelAttachmentsViewState.Content.Item,
-        currentUser: User?,
-        onClick: () -> Unit,
-    ) {
+    public fun LazyItemScope.ChannelFilesAttachmentsItem(params: ChannelFilesAttachmentsItemParams) {
         DefaultChannelFilesAttachmentsItem(
-            modifier = modifier.animateItem(),
-            item = item,
-            currentUser = currentUser,
-            onClick = onClick,
+            modifier = params.modifier.animateItem(),
+            item = params.item,
+            currentUser = params.currentUser,
+            onClick = params.onClick,
         )
     }
 
     /**
      * Factory method for creating a divider between channel files attachments items.
      *
-     * @param modifier The modifier for styling the divider.
-     * @param index The index of the item in the list.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyItemScope.ChannelFilesAttachmentsItemDivider(
-        modifier: Modifier,
-        index: Int,
-    ) {
+    public fun LazyItemScope.ChannelFilesAttachmentsItemDivider(params: ChannelFilesAttachmentsItemDividerParams) {
         StreamHorizontalDivider()
     }
 
@@ -3369,24 +2678,22 @@ public interface ChatComponentFactory {
      * Factory method for creating the loading item in the channel files attachments list.
      *
      * This is typically shown at the end of the list when more items are being loaded.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyItemScope.ChannelFilesAttachmentsLoadingItem(modifier: Modifier) {
-        LoadingFooter(modifier = modifier.fillMaxWidth())
+    public fun LazyItemScope.ChannelFilesAttachmentsLoadingItem(params: ChannelFilesAttachmentsLoadingItemParams) {
+        LoadingFooter(modifier = params.modifier.fillMaxWidth())
     }
 
     /**
      * Factory method for creating the top bar of the channel media attachments screen.
      *
-     * @param gridState The state of the lazy grid.
-     * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
+     * @param params Parameters for this component.
      */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    public fun ChannelMediaAttachmentsTopBar(
-        gridState: LazyGridState,
-        onNavigationIconClick: () -> Unit,
-    ) {
+    public fun ChannelMediaAttachmentsTopBar(params: ChannelMediaAttachmentsTopBarParams) {
         CenterAlignedTopAppBar(
             title = {
                 Text(
@@ -3395,9 +2702,9 @@ public interface ChatComponentFactory {
                     maxLines = 1,
                 )
             },
-            navigationIcon = { ChannelInfoNavigationIcon(onClick = onNavigationIconClick) },
+            navigationIcon = { ChannelInfoNavigationIcon(onClick = params.onNavigationIconClick) },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                containerColor = ChatTheme.colors.backgroundCoreElevation1,
                 titleContentColor = ChatTheme.colors.textPrimary,
             ),
         )
@@ -3405,19 +2712,23 @@ public interface ChatComponentFactory {
 
     /**
      * Factory method for creating the loading indicator of the channel media attachments screen.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelMediaAttachmentsLoadingIndicator(modifier: Modifier) {
-        LoadingIndicator(modifier = modifier)
+    public fun ChannelMediaAttachmentsLoadingIndicator(params: ChannelMediaAttachmentsLoadingIndicatorParams) {
+        LoadingIndicator(modifier = params.modifier)
     }
 
     /**
      * Factory method for creating the empty content of the channel media attachments screen.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun BoxScope.ChannelMediaAttachmentsEmptyContent(modifier: Modifier) {
+    public fun BoxScope.ChannelMediaAttachmentsEmptyContent(params: ChannelMediaAttachmentsEmptyContentParams) {
         EmptyContent(
-            modifier = modifier,
+            modifier = params.modifier,
             title = stringResource(UiCommonR.string.stream_ui_channel_attachments_media_empty_title),
             text = stringResource(UiCommonR.string.stream_ui_channel_attachments_media_empty_text),
             painter = painterResource(UiCommonR.drawable.stream_ic_media),
@@ -3425,9 +2736,9 @@ public interface ChatComponentFactory {
     }
 
     @Composable
-    public fun BoxScope.ChannelMediaAttachmentsErrorContent(modifier: Modifier) {
+    public fun BoxScope.ChannelMediaAttachmentsErrorContent(params: ChannelMediaAttachmentsErrorContentParams) {
         EmptyContent(
-            modifier = modifier,
+            modifier = params.modifier,
             text = stringResource(UiCommonR.string.stream_ui_channel_attachments_media_load_error),
             painter = rememberVectorPainter(Icons.TwoTone.Warning),
         )
@@ -3437,14 +2748,10 @@ public interface ChatComponentFactory {
      * Factory method for creating the channel media attachments floating header.
      * This is typically used to display the title of a group of attachments.
      *
-     * @param modifier The modifier for styling the floating header.
-     * @param label The label for the floating item.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun BoxScope.ChannelMediaAttachmentsFloatingHeader(
-        modifier: Modifier,
-        label: String,
-    ) {
+    public fun BoxScope.ChannelMediaAttachmentsFloatingHeader(params: ChannelMediaAttachmentsFloatingHeaderParams) {
         Text(
             modifier = Modifier
                 .align(Alignment.TopCenter)
@@ -3454,7 +2761,7 @@ public interface ChatComponentFactory {
                     shape = ButtonDefaults.outlinedShape,
                 )
                 .padding(horizontal = 12.dp, vertical = 8.dp),
-            text = label,
+            text = params.label,
             style = ChatTheme.typography.bodyEmphasis,
             color = ChatTheme.colors.textInverse,
         )
@@ -3463,22 +2770,14 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the channel media attachments item.
      *
-     * @param modifier The modifier for styling the item.
-     * @param index The index of the item in the list.
-     * @param item The channel file attachment item to display.
-     * @param onClick Callback invoked when the item is clicked.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyGridItemScope.ChannelMediaAttachmentsItem(
-        modifier: Modifier,
-        index: Int,
-        item: ChannelAttachmentsViewState.Content.Item,
-        onClick: () -> Unit,
-    ) {
+    public fun LazyGridItemScope.ChannelMediaAttachmentsItem(params: ChannelMediaAttachmentsItemParams) {
         DefaultChannelMediaAttachmentsItem(
-            modifier = modifier.animateItem(),
-            item = item,
-            onClick = onClick,
+            modifier = params.modifier.animateItem(),
+            item = params.item,
+            onClick = params.onClick,
         )
     }
 
@@ -3486,16 +2785,18 @@ public interface ChatComponentFactory {
      * Factory method for creating the loading item in the channel media attachments list.
      *
      * This is typically shown at the end of the list when more items are being loaded.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyGridItemScope.ChannelMediaAttachmentsLoadingItem(modifier: Modifier) {
+    public fun LazyGridItemScope.ChannelMediaAttachmentsLoadingItem(params: ChannelMediaAttachmentsLoadingItemParams) {
         Box(
-            modifier = modifier.aspectRatio(1f),
+            modifier = params.modifier.aspectRatio(1f),
             contentAlignment = Alignment.Center,
         ) {
             @Suppress("MagicNumber")
             CircularProgressIndicator(
-                modifier = modifier.fillMaxSize(.25f),
+                modifier = params.modifier.fillMaxSize(.25f),
                 strokeWidth = 2.dp,
                 color = ChatTheme.colors.accentPrimary,
             )
@@ -3505,28 +2806,33 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the top bar of the channel media attachments preview screen.
      *
-     * @param item The item to display in the top bar.
-     * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
+     * @param params Parameters for this component.
      */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    public fun ChannelMediaAttachmentsPreviewTopBar(
-        item: ChannelAttachmentsViewState.Content.Item,
-        onNavigationIconClick: () -> Unit,
-    ) {
+    public fun ChannelMediaAttachmentsPreviewTopBar(params: ChannelMediaAttachmentsPreviewTopBarParams) {
         CenterAlignedTopAppBar(
-            title = { ChannelMediaAttachmentsPreviewTopBarTitle(item = item) },
+            modifier = Modifier.bottomBorder(ChatTheme.colors.borderCoreSubtle),
+            title = {
+                ChannelMediaAttachmentsPreviewTopBarTitle(
+                    params = ChannelMediaAttachmentsPreviewTopBarTitleParams(item = params.item),
+                )
+            },
             navigationIcon = {
-                IconButton(onClick = onNavigationIconClick) {
+                StreamButton(
+                    modifier = Modifier.minimumInteractiveComponentSize(),
+                    onClick = params.onNavigationIconClick,
+                    style = StreamButtonStyleDefaults.secondaryGhost,
+                    size = StreamButtonSize.Medium,
+                ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_close),
+                        painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
                         contentDescription = stringResource(id = R.string.stream_compose_cancel),
-                        tint = ChatTheme.colors.textPrimary,
                     )
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                containerColor = ChatTheme.colors.backgroundCoreElevation1,
                 titleContentColor = ChatTheme.colors.textPrimary,
             ),
         )
@@ -3536,57 +2842,26 @@ public interface ChatComponentFactory {
      * Factory method for creating the title of the channel media attachments preview top bar.
      * This displays the message sender's name and the time when the message was sent.
      *
-     * @param item The item containing the message to display in the top bar.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun ChannelMediaAttachmentsPreviewTopBarTitle(item: ChannelAttachmentsViewState.Content.Item) {
+    public fun ChannelMediaAttachmentsPreviewTopBarTitle(params: ChannelMediaAttachmentsPreviewTopBarTitleParams) {
         val dateFormatter = ChatTheme.dateFormatter
-        val title = item.message.user.name
-        val subtitle = dateFormatter.formatRelativeTime(item.message.getCreatedAtOrThrow())
+        val title = params.item.message.user.name
+        val subtitle = dateFormatter.formatRelativeTime(params.item.message.getCreatedAtOrThrow())
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = title,
-                style = ChatTheme.typography.headingMedium,
+                style = ChatTheme.typography.headingSmall,
                 color = ChatTheme.colors.textPrimary,
                 maxLines = 1,
             )
             Text(
                 text = subtitle,
-                style = ChatTheme.typography.metadataDefault,
+                style = ChatTheme.typography.captionDefault,
                 color = ChatTheme.colors.textSecondary,
-                maxLines = 1,
-            )
-        }
-    }
-
-    /**
-     * Factory method for creating the bottom bar of the channel media attachments preview screen.
-     *
-     * @param text The text to display in the bottom bar.
-     */
-    @Deprecated(
-        message = "Use ChannelMediaAttachmentsPreviewBottomBar(" +
-            "params: ChannelMediaAttachmentsPreviewBottomBarParams) instead.",
-        replaceWith = ReplaceWith(
-            "ChannelMediaAttachmentsPreviewBottomBar(ChannelMediaAttachmentsPreviewBottomBarParams(" +
-                "centerContent = { Text(text) }))",
-        ),
-    )
-    @Composable
-    public fun ChannelMediaAttachmentsPreviewBottomBar(text: String) {
-        Row(
-            modifier = Modifier
-                .background(ChatTheme.colors.backgroundElevationElevation1)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            Text(
-                text = text,
-                style = ChatTheme.typography.headingMedium,
-                color = ChatTheme.colors.textPrimary,
                 maxLines = 1,
             )
         }
@@ -3600,18 +2875,25 @@ public interface ChatComponentFactory {
     public fun ChannelMediaAttachmentsPreviewBottomBar(
         params: ChannelMediaAttachmentsPreviewBottomBarParams,
     ) {
-        CenterAlignedTopAppBar(
-            title = { params.centerContent() },
-            navigationIcon = { params.leadingContent() },
-            actions = { params.trailingContent() },
-            windowInsets = BottomAppBarDefaults.windowInsets,
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = ChatTheme.colors.backgroundElevationElevation1,
-                titleContentColor = ChatTheme.colors.textPrimary,
-                navigationIconContentColor = ChatTheme.colors.textPrimary,
-                actionIconContentColor = ChatTheme.colors.textPrimary,
-            ),
-        )
+        Column(
+            modifier = Modifier
+                .background(ChatTheme.colors.backgroundCoreElevation1)
+                .topBorder(ChatTheme.colors.borderCoreDefault),
+        ) {
+            params.topContent?.invoke()
+            CenterAlignedTopAppBar(
+                title = { params.centerContent() },
+                navigationIcon = { params.leadingContent() },
+                actions = { params.trailingContent() },
+                windowInsets = BottomAppBarDefaults.windowInsets,
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = ChatTheme.colors.backgroundCoreElevation1,
+                    titleContentColor = ChatTheme.colors.textPrimary,
+                    navigationIconContentColor = ChatTheme.colors.textPrimary,
+                    actionIconContentColor = ChatTheme.colors.textPrimary,
+                ),
+            )
+        }
     }
 
     /**
@@ -3620,17 +2902,13 @@ public interface ChatComponentFactory {
      * Override this to customize the picker container behavior, including animations,
      * keyboard coordination, and composer integration.
      *
-     * @param attachmentsPickerViewModel Controls picker visibility and manages attachment state.
-     * @param composerViewModel Receives selected attachments and handles poll/command actions.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun AttachmentPickerMenu(
-        attachmentsPickerViewModel: AttachmentsPickerViewModel,
-        composerViewModel: MessageComposerViewModel,
-    ) {
+    public fun AttachmentPickerMenu(params: AttachmentPickerMenuParams) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerMenu(
-            attachmentsPickerViewModel = attachmentsPickerViewModel,
-            composerViewModel = composerViewModel,
+            attachmentsPickerViewModel = params.attachmentsPickerViewModel,
+            composerViewModel = params.composerViewModel,
         )
     }
 
@@ -3640,23 +2918,15 @@ public interface ChatComponentFactory {
      * Override this to customize the overall picker layout. The picker automatically switches
      * between system picker and in-app picker based on [ChatTheme.attachmentPickerConfig].
      *
-     * @param modifier Modifier for styling.
-     * @param attachmentsPickerViewModel Manages picker state including current mode and selections.
-     * @param messageMode Current message mode; affects poll availability (disabled in threads).
-     * @param actions The [AttachmentPickerActions] that handle user interactions within the picker.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun AttachmentPicker(
-        modifier: Modifier,
-        attachmentsPickerViewModel: AttachmentsPickerViewModel,
-        messageMode: MessageMode,
-        actions: AttachmentPickerActions,
-    ) {
+    public fun AttachmentPicker(params: AttachmentPickerParams) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicker(
-            modifier = modifier,
-            attachmentsPickerViewModel = attachmentsPickerViewModel,
-            messageMode = messageMode,
-            actions = actions,
+            modifier = params.modifier,
+            attachmentsPickerViewModel = params.attachmentsPickerViewModel,
+            messageMode = params.messageMode,
+            actions = params.actions,
         )
     }
 
@@ -3666,26 +2936,16 @@ public interface ChatComponentFactory {
      * Override this to customize the tab bar appearance or add custom tabs. The available
      * modes are determined by [ChatTheme.attachmentPickerConfig.modes].
      *
-     * @param channel Used to check channel capabilities (e.g., polls enabled).
-     * @param messageMode Used to filter modes (e.g., polls disabled in threads).
-     * @param selectedMode The currently active mode (highlighted tab).
-     * @param onModeSelected Called when user taps a tab to switch modes.
-     * @param trailingContent Slot for adding custom content after the mode buttons.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun AttachmentTypePicker(
-        channel: Channel,
-        messageMode: MessageMode,
-        selectedMode: AttachmentPickerMode?,
-        onModeSelected: (AttachmentPickerMode) -> Unit,
-        trailingContent: @Composable RowScope.() -> Unit,
-    ) {
+    public fun AttachmentTypePicker(params: AttachmentTypePickerParams) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentTypePicker(
-            channel = channel,
-            messageMode = messageMode,
-            selectedMode = selectedMode,
-            onModeSelected = onModeSelected,
-            trailingContent = trailingContent,
+            channel = params.channel,
+            messageMode = params.messageMode,
+            selectedMode = params.selectedMode,
+            onModeSelected = params.onModeSelected,
+            trailingContent = params.trailingContent,
         )
     }
 
@@ -3695,23 +2955,15 @@ public interface ChatComponentFactory {
      * Unlike [AttachmentTypePicker], each button directly launches the corresponding system picker
      * rather than switching to an in-app content view. No storage permissions are required.
      *
-     * @param channel Used to check channel capabilities (e.g., polls enabled).
-     * @param messageMode Used to filter modes (e.g., polls disabled in threads).
-     * @param onModeSelected Called when user taps a button to launch a system picker.
-     * @param trailingContent Slot for adding custom content after the mode buttons.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun AttachmentTypeSystemPicker(
-        channel: Channel,
-        messageMode: MessageMode,
-        onModeSelected: (AttachmentPickerMode) -> Unit,
-        trailingContent: @Composable RowScope.() -> Unit,
-    ) {
+    public fun AttachmentTypeSystemPicker(params: AttachmentTypeSystemPickerParams) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentTypeSystemPicker(
-            channel = channel,
-            messageMode = messageMode,
-            onModeSelected = onModeSelected,
-            trailingContent = trailingContent,
+            channel = params.channel,
+            messageMode = params.messageMode,
+            onModeSelected = params.onModeSelected,
+            trailingContent = params.trailingContent,
         )
     }
 
@@ -3721,32 +2973,18 @@ public interface ChatComponentFactory {
      * Override this to add support for custom [AttachmentPickerMode] implementations or
      * to customize how modes are rendered.
      *
-     * @param pickerMode The currently active mode; determines which picker UI to show.
-     * @param commands Available slash commands for [CommandPickerMode].
-     * @param attachments Current attachment items loaded for gallery/file modes.
-     * @param onLoadAttachments Called to trigger loading attachment metadata for the current mode.
-     * @param onUrisSelected Called with URIs from a system picker for async resolution.
-     * @param actions The [AttachmentPickerActions] containing all user-interaction handlers.
-     * @param onAttachmentsSubmitted Called when attachments are ready to be added to the composer.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun AttachmentPickerContent(
-        pickerMode: AttachmentPickerMode?,
-        commands: List<Command>,
-        attachments: List<AttachmentPickerItemState>,
-        onLoadAttachments: () -> Unit,
-        onUrisSelected: (List<Uri>) -> Unit,
-        actions: AttachmentPickerActions,
-        onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
-    ) {
+    public fun AttachmentPickerContent(params: AttachmentPickerContentParams) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerContent(
-            pickerMode = pickerMode,
-            commands = commands,
-            attachments = attachments,
-            onLoadAttachments = onLoadAttachments,
-            onUrisSelected = onUrisSelected,
-            actions = actions,
-            onAttachmentsSubmitted = onAttachmentsSubmitted,
+            pickerMode = params.pickerMode,
+            commands = params.commands,
+            attachments = params.attachments,
+            onLoadAttachments = params.onLoadAttachments,
+            onUrisSelected = params.onUrisSelected,
+            actions = params.actions,
+            onAttachmentsSubmitted = params.onAttachmentsSubmitted,
         )
     }
 
@@ -3756,23 +2994,15 @@ public interface ChatComponentFactory {
      * Shows a scrollable grid of media thumbnails with selection badges. Requires storage
      * permissions to display content.
      *
-     * @param pickerMode Configuration for the gallery picker (media type filter, multi-select).
-     * @param attachments Media items to display in the grid.
-     * @param onLoadAttachments Called to trigger loading media metadata from device storage.
-     * @param onAttachmentItemSelected Called when user taps an item to toggle selection.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun AttachmentMediaPicker(
-        pickerMode: GalleryPickerMode,
-        attachments: List<AttachmentPickerItemState>,
-        onLoadAttachments: () -> Unit,
-        onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
-    ) {
+    public fun AttachmentMediaPicker(params: AttachmentMediaPickerParams) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentMediaPicker(
-            pickerMode = pickerMode,
-            attachments = attachments,
-            onLoadAttachments = onLoadAttachments,
-            onAttachmentItemSelected = onAttachmentItemSelected,
+            pickerMode = params.pickerMode,
+            attachments = params.attachments,
+            onLoadAttachments = params.onLoadAttachments,
+            onAttachmentItemSelected = params.onAttachmentItemSelected,
         )
     }
 
@@ -3782,17 +3012,13 @@ public interface ChatComponentFactory {
      * Displays a button that launches the device camera. Captured media is automatically
      * submitted as an attachment.
      *
-     * @param pickerMode Configuration for camera capture (photo, video, or both).
-     * @param onAttachmentsSubmitted Called with the captured media metadata.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun AttachmentCameraPicker(
-        pickerMode: CameraPickerMode,
-        onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
-    ) {
+    public fun AttachmentCameraPicker(params: AttachmentCameraPickerParams) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentCameraPicker(
-            pickerMode = pickerMode,
-            onAttachmentsSubmitted = onAttachmentsSubmitted,
+            pickerMode = params.pickerMode,
+            onAttachmentsSubmitted = params.onAttachmentsSubmitted,
         )
     }
 
@@ -3802,26 +3028,16 @@ public interface ChatComponentFactory {
      * Shows a scrollable list of files (documents, audio, etc.) with file type icons,
      * names, and sizes. Requires storage permissions to display content.
      *
-     * @param pickerMode Configuration for the file picker (multi-select).
-     * @param attachments File items to display in the list.
-     * @param onLoadAttachments Called to trigger loading file metadata from device storage.
-     * @param onAttachmentItemSelected Called when user taps an item to toggle selection.
-     * @param onUrisSelected Called with URIs picked via the system file browser.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun AttachmentFilePicker(
-        pickerMode: FilePickerMode,
-        attachments: List<AttachmentPickerItemState>,
-        onLoadAttachments: () -> Unit,
-        onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
-        onUrisSelected: (List<Uri>) -> Unit,
-    ) {
+    public fun AttachmentFilePicker(params: AttachmentFilePickerParams) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentFilePicker(
-            pickerMode = pickerMode,
-            attachments = attachments,
-            onLoadAttachments = onLoadAttachments,
-            onAttachmentItemSelected = onAttachmentItemSelected,
-            onUrisSelected = onUrisSelected,
+            pickerMode = params.pickerMode,
+            attachments = params.attachments,
+            onLoadAttachments = params.onLoadAttachments,
+            onAttachmentItemSelected = params.onAttachmentItemSelected,
+            onUrisSelected = params.onUrisSelected,
         )
     }
 
@@ -3831,23 +3047,15 @@ public interface ChatComponentFactory {
      * Shows a button or automatically opens the poll creation dialog based on [PollPickerMode.autoShowCreateDialog].
      * Poll creation is only available when the channel has the "polls" capability.
      *
-     * @param pickerMode Configuration for poll picker behavior.
-     * @param onCreatePollClick Called when the user taps "Create Poll", opening the creation dialog.
-     * @param onCreatePoll Called when the user submits a new poll configuration.
-     * @param onCreatePollDismissed Called when the poll creation dialog is closed without submitting.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun AttachmentPollPicker(
-        pickerMode: PollPickerMode,
-        onCreatePollClick: () -> Unit,
-        onCreatePoll: (PollConfig) -> Unit,
-        onCreatePollDismissed: () -> Unit,
-    ) {
+    public fun AttachmentPollPicker(params: AttachmentPollPickerParams) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPollPicker(
-            pickerMode = pickerMode,
-            onCreatePollClick = onCreatePollClick,
-            onCreatePoll = onCreatePoll,
-            onCreatePollDismissed = onCreatePollDismissed,
+            pickerMode = params.pickerMode,
+            onCreatePollClick = params.onCreatePollClick,
+            onCreatePoll = params.onCreatePoll,
+            onCreatePollDismissed = params.onCreatePollDismissed,
         )
     }
 
@@ -3857,20 +3065,14 @@ public interface ChatComponentFactory {
      * Displays a scrollable list of commands configured for the channel (e.g., /giphy, /mute).
      * Tapping a command inserts it into the message composer.
      *
-     * @param pickerMode The command picker mode configuration.
-     * @param commands Available commands from the channel configuration.
-     * @param onCommandSelected Called when a slash command is selected.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun AttachmentCommandPicker(
-        pickerMode: CommandPickerMode,
-        commands: List<Command>,
-        onCommandSelected: (Command) -> Unit,
-    ) {
+    public fun AttachmentCommandPicker(params: AttachmentCommandPickerParams) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentCommandPicker(
-            pickerMode = pickerMode,
-            commands = commands,
-            onCommandSelected = onCommandSelected,
+            pickerMode = params.pickerMode,
+            commands = params.commands,
+            onCommandSelected = params.onCommandSelected,
         )
     }
 
@@ -3881,29 +3083,17 @@ public interface ChatComponentFactory {
      * This variant does not require storage permissions since it uses system intents.
      * Used when [ChatTheme.config.attachmentPicker.useSystemPicker] is `true`.
      *
-     * @param channel Used to check channel capabilities for filtering available modes.
-     * @param messageMode Used to filter modes (e.g., polls disabled in threads).
-     * @param attachments Current attachment state (used for state management).
-     * @param actions The [AttachmentPickerActions] containing all user-interaction handlers.
-     * @param onUrisSelected Called with URIs from system pickers for async resolution.
-     * @param onAttachmentsSubmitted Called when camera-captured media is ready.
+     * @param params Parameters for this component.
      */
     @Composable
-    public fun AttachmentSystemPicker(
-        channel: Channel,
-        messageMode: MessageMode,
-        attachments: List<AttachmentPickerItemState>,
-        actions: AttachmentPickerActions,
-        onUrisSelected: (List<Uri>) -> Unit,
-        onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
-    ) {
+    public fun AttachmentSystemPicker(params: AttachmentSystemPickerParams) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentSystemPicker(
-            channel = channel,
-            messageMode = messageMode,
-            attachments = attachments,
-            actions = actions,
-            onUrisSelected = onUrisSelected,
-            onAttachmentsSubmitted = onAttachmentsSubmitted,
+            channel = params.channel,
+            messageMode = params.messageMode,
+            attachments = params.attachments,
+            actions = params.actions,
+            onUrisSelected = params.onUrisSelected,
+            onAttachmentsSubmitted = params.onAttachmentsSubmitted,
         )
     }
 }

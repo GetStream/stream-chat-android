@@ -44,8 +44,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.theme.ChannelInfoMemberInfoModalSheetTopBarParams
+import io.getstream.chat.android.compose.ui.theme.ChannelInfoMemberOptionItemParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoMemberViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoMemberViewModelFactory
@@ -82,7 +85,7 @@ internal fun ChannelInfoMemberInfoModalSheet(
 
     ModalBottomSheet(
         sheetState = sheetState,
-        containerColor = ChatTheme.colors.backgroundElevationElevation1,
+        containerColor = ChatTheme.colors.backgroundCoreElevation1,
         onDismissRequest = onDismiss,
     ) {
         val state by viewModel.state.collectAsStateWithLifecycle()
@@ -120,9 +123,13 @@ private fun ChannelInfoMemberInfoModalSheetContent(
             onViewAction = onViewAction,
         )
         Column(modifier = Modifier.fillMaxWidth()) {
-            ChatTheme.componentFactory.ChannelInfoMemberInfoModalSheetTopBar(content.member)
+            ChatTheme.componentFactory.ChannelInfoMemberInfoModalSheetTopBar(
+                params = ChannelInfoMemberInfoModalSheetTopBarParams(member = content.member),
+            )
             actions.forEach { action ->
-                ChatTheme.componentFactory.ChannelInfoMemberOptionItem(action = action)
+                ChatTheme.componentFactory.ChannelInfoMemberOptionItem(
+                    params = ChannelInfoMemberOptionItemParams(action = action),
+                )
             }
         }
     }
@@ -144,10 +151,12 @@ internal fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ChatTheme.componentFactory.UserAvatar(
-            modifier = Modifier.size(AvatarSize.ExtraLarge),
-            user = user,
-            showIndicator = true,
-            showBorder = false,
+            params = UserAvatarParams(
+                modifier = Modifier.size(AvatarSize.ExtraLarge),
+                user = user,
+                showIndicator = true,
+                showBorder = false,
+            ),
         )
         Column(
             modifier = Modifier
@@ -230,7 +239,7 @@ private fun ExpandedSheet(content: @Composable () -> Unit) {
     // so we need to mimic it with a card.
     Card(
         shape = BottomSheetDefaults.ExpandedShape,
-        colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundElevationElevation1),
+        colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundCoreElevation1),
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

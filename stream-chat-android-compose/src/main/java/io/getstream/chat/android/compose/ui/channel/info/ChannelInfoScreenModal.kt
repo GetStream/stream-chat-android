@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
+import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.previewdata.PreviewMembersData
@@ -371,10 +372,12 @@ internal fun ChannelInfoScreenModal(
     isGroupChannel: Boolean,
 ) {
     ChatTheme.componentFactory.ChannelInfoScreenModal(
-        modal = modal,
-        isGroupChannel = isGroupChannel,
-        onViewAction = {},
-        onMemberViewEvent = {},
-        onDismiss = {},
+        params = ChannelInfoScreenModalParams(
+            modal = modal,
+            isGroupChannel = isGroupChannel,
+            onViewAction = {},
+            onMemberViewEvent = {},
+            onDismiss = {},
+        ),
     )
 }

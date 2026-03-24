@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
-import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.VotingVisibility
 import org.amshove.kluent.`should be equal to`
@@ -38,9 +38,9 @@ internal class AttachmentsPickerPollUtilsTest {
             optionItemList = options,
         )
         // when
-        val pollConfig = pollConfigFrom(pollQuestion, options, state)
+        val pollConfig = createPollParamsFrom(pollQuestion, options, state)
         // then
-        val expected = PollConfig(
+        val expected = CreatePollParams(
             name = "Poll question",
             options = listOf(PollOption(text = "Answer 1"), PollOption(text = "Answer 2")),
             description = "",
@@ -68,9 +68,9 @@ internal class AttachmentsPickerPollUtilsTest {
             limitVotesPerPerson = switchEnabled(false),
         )
         // when
-        val pollConfig = pollConfigFrom(pollQuestion, options, state)
+        val pollConfig = createPollParamsFrom(pollQuestion, options, state)
         // then
-        val expected = PollConfig(
+        val expected = CreatePollParams(
             name = "Poll question",
             options = listOf(PollOption(text = "Answer 1"), PollOption(text = "Answer 2")),
             description = "",
@@ -104,9 +104,9 @@ internal class AttachmentsPickerPollUtilsTest {
         )
 
         // when
-        val pollConfig = pollConfigFrom(pollQuestion, options, state)
+        val pollConfig = createPollParamsFrom(pollQuestion, options, state)
         // then
-        val expected = PollConfig(
+        val expected = CreatePollParams(
             name = "Poll question",
             options = listOf(PollOption(text = "Answer 1"), PollOption(text = "Answer 2")),
             description = "",

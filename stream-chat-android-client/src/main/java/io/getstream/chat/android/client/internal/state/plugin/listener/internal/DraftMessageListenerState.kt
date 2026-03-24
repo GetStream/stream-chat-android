@@ -86,26 +86,6 @@ internal class DraftMessageListenerState(
      * is successful.
      *
      * @param result [Result] response from the original request.
-     * @param offset The offset of the query.
-     * @param limit The limit of the query.
-     */
-    override suspend fun onQueryDraftMessagesResult(
-        result: Result<List<DraftMessage>>,
-        offset: Int?,
-        limit: Int?,
-    ) {
-        result.onSuccess { draftMessages ->
-            draftMessages.forEach { draftMessage ->
-                mutableGlobalState.updateDraftMessage(draftMessage)
-            }
-        }
-    }
-
-    /**
-     * Updates the [MutableGlobalState] with the list of [DraftMessage] when the request to query draft messages
-     * is successful.
-     *
-     * @param result [Result] response from the original request.
      * @param filter The filter object used to query draft messages.
      * @param limit The limit of the query.
      * @param next The next page token of the query.

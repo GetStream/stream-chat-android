@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.internal.state.plugin.factory
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.StateConfig
+import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.internal.state.errorhandler.StateErrorHandlerFactory
@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.internal.state.event.handler.internal.Ev
 import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
-import io.getstream.chat.android.client.internal.state.sync.internal.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.client.internal.state.sync.internal.SyncManager
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
@@ -49,12 +48,12 @@ import kotlin.reflect.KClass
 /**
  * Implementation of [PluginFactory] that provides [StatePlugin].
  *
- * @param config [StateConfig] Configuration of persistence of the SDK.
+ * @param config [ChatClientConfig] Configuration of persistence of the SDK.
  * @param appContext [Context]
  */
 @InternalStreamChatApi
 public class StreamStatePluginFactory(
-    private val config: StateConfig,
+    private val config: ChatClientConfig,
     private val appContext: Context,
 ) : PluginFactory {
     private val logger by taggedLogger("Chat:StatePluginFactory")
@@ -62,7 +61,7 @@ public class StreamStatePluginFactory(
     @InternalStreamChatApi
     override fun <T : Any> resolveDependency(klass: KClass<T>): T? {
         return when (klass) {
-            StateConfig::class -> config as T
+            ChatClientConfig::class -> config as T
             else -> null
         }
     }
@@ -156,12 +155,6 @@ public class StreamStatePluginFactory(
             sideEffect = syncManager::awaitSyncing,
         )
 
-        if (config.backgroundSyncEnabled) {
-            chatClient.setPushNotificationReceivedListener { channelType, channelId ->
-                OfflineSyncFirebaseMessagingHandler().syncMessages(appContext, "$channelType:$channelId")
-            }
-        }
-
         val stateErrorHandlerFactory = StateErrorHandlerFactory(
             scope = scope,
             logicRegistry = logic,
@@ -179,7 +172,7 @@ public class StreamStatePluginFactory(
             eventHandler = eventHandler,
             mutableGlobalState = mutableGlobalState,
             queryingChannelsFree = isQueryingFree,
-            stateConfig = config,
+            chatClientConfig = config,
         )
     }
 

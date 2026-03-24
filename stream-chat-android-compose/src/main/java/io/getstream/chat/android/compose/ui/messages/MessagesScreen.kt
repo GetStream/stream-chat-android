@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.messages
 
 import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,15 +34,20 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -58,8 +64,13 @@ import io.getstream.chat.android.compose.ui.components.poll.PollViewResultDialog
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageBounds
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
-import io.getstream.chat.android.compose.ui.messages.list.ThreadMessagesStart
+import io.getstream.chat.android.compose.ui.theme.AttachmentPickerMenuParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageListHeaderParams
+import io.getstream.chat.android.compose.ui.theme.MessageMenuParams
+import io.getstream.chat.android.compose.ui.theme.MessageReactionPickerParams
+import io.getstream.chat.android.compose.ui.theme.ReactionsMenuParams
+import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -71,10 +82,12 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Flag
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.Resend
@@ -88,6 +101,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageSt
 import io.getstream.chat.android.ui.common.state.messages.list.SendAnyway
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.state.messages.updateMessage
+import kotlinx.coroutines.launch
 
 /**
  * Default root Messages screen component, that provides the necessary ViewModels and
@@ -111,9 +125,9 @@ import io.getstream.chat.android.ui.common.state.messages.updateMessage
  * If URL is not enriched, it will not be displayed as a link attachment. False by default.
  * @param showAnonymousAvatar If the user avatar should be shown on comments for polls with anonymous voting visibility.
  * @param verticalArrangement Vertical arrangement of the regular message list.
- * Default: [Arrangement.Top].
- * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
- * Default: [ThreadMessagesStart.BOTTOM].
+ * Default: [Arrangement.Bottom].
+ * @param threadsVerticalArrangement Vertical arrangement of the thread message list.
+ * Default: [Arrangement.Bottom].
  * @param topBarContent custom top bar content to be displayed on top of the messages list.
  * @param bottomBarContent custom bottom bar content to be displayed at the bottom of the messages list.
  */
@@ -124,7 +138,7 @@ public fun MessagesScreen(
     showHeader: Boolean = true,
     reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
     onBackPressed: () -> Unit = {},
-    onHeaderTitleClick: (channel: Channel) -> Unit = {},
+    onHeaderTitleClick: ((channel: Channel) -> Unit)? = null,
     onChannelAvatarClick: ((Channel) -> Unit)? = null,
     onComposerLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onMessageLinkClick: ((Message, String) -> Unit)? = null,
@@ -133,8 +147,8 @@ public fun MessagesScreen(
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
     showAnonymousAvatar: Boolean = false,
-    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
-    threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
+    threadsVerticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
     topBarContent: @Composable (BackAction) -> Unit = {
         DefaultTopBarContent(
             viewModelFactory = viewModelFactory,
@@ -185,6 +199,9 @@ public fun MessagesScreen(
             }
         }
 
+    val snackbarHostState = remember(::SnackbarHostState)
+    EventHandler(listViewModel, snackbarHostState)
+
     BackHandler(enabled = true, onBack = backAction)
 
     MessagesScreenContentBox {
@@ -198,6 +215,7 @@ public fun MessagesScreen(
             bottomBar = {
                 bottomBarContent()
             },
+            snackbarHost = { StreamSnackbarHost(snackbarHostState) },
             containerColor = ChatTheme.colors.backgroundCoreApp,
         ) { contentPadding ->
             val currentState by listViewModel.currentMessagesState
@@ -211,7 +229,7 @@ public fun MessagesScreen(
                 reactionSorting = reactionSorting,
                 messagesLazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
                 verticalArrangement = verticalArrangement,
-                threadMessagesStart = threadMessagesStart,
+                threadsVerticalArrangement = threadsVerticalArrangement,
                 onThreadClick = remember(composerViewModel, listViewModel) {
                     {
                             message ->
@@ -227,6 +245,7 @@ public fun MessagesScreen(
                 onUserAvatarClick = onUserAvatarClick,
                 onMessageLinkClick = onMessageLinkClick,
                 onUserMentionClick = onUserMentionClick,
+                onClosePoll = listViewModel::closePoll,
                 onReply = { message -> composerViewModel.performMessageAction(Reply(message)) },
                 onMediaGalleryPreviewResult = remember(listViewModel, composerViewModel) {
                     {
@@ -298,6 +317,41 @@ private fun MessagesScreenContentBox(content: @Composable BoxScope.() -> Unit) {
 }
 
 /**
+ * Collects and reacts to events emitted by [MessageListViewModel].
+ *
+ * @param viewModel The [MessageListViewModel] whose events are observed.
+ * @param snackbarHostState The [SnackbarHostState] used to show snackbar messages.
+ */
+@Composable
+private fun EventHandler(viewModel: MessageListViewModel, snackbarHostState: SnackbarHostState) {
+    val snackbarScope = rememberCoroutineScope()
+    val resources = LocalResources.current
+
+    fun showSnackbar(@StringRes resId: Int) {
+        snackbarScope.launch {
+            snackbarHostState.showSnackbar(
+                message = resources.getString(resId),
+                duration = SnackbarDuration.Short,
+            )
+        }
+    }
+
+    LaunchedEffect(viewModel) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is MessageListController.Event.PollClosingSuccess ->
+                    showSnackbar(R.string.stream_compose_poll_ended_success)
+
+                is MessageListController.ErrorEvent.PollClosingError ->
+                    showSnackbar(R.string.stream_compose_poll_ended_failure)
+
+                else -> {}
+            }
+        }
+    }
+}
+
+/**
  * Callback for when the user taps on the back button.
  */
 public typealias BackAction = () -> Unit
@@ -306,7 +360,7 @@ public typealias BackAction = () -> Unit
 internal fun DefaultTopBarContent(
     viewModelFactory: MessagesViewModelFactory,
     backAction: BackAction,
-    onHeaderTitleClick: (channel: Channel) -> Unit,
+    onHeaderTitleClick: ((channel: Channel) -> Unit)?,
     onChannelAvatarClick: ((Channel) -> Unit)?,
 ) {
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = viewModelFactory)
@@ -316,16 +370,17 @@ internal fun DefaultTopBarContent(
     val messageMode = listViewModel.messageMode
 
     ChatTheme.componentFactory.MessageListHeader(
-        modifier = Modifier
-            .height(56.dp),
-        channel = listViewModel.channel,
-        currentUser = user,
-        typingUsers = listViewModel.typingUsers,
-        connectionState = connectionState,
-        messageMode = messageMode,
-        onBackPressed = backAction,
-        onHeaderTitleClick = onHeaderTitleClick,
-        onChannelAvatarClick = onChannelAvatarClick,
+        params = MessageListHeaderParams(
+            channel = listViewModel.channel,
+            currentUser = user,
+            connectionState = connectionState,
+            typingUsers = listViewModel.typingUsers,
+            messageMode = messageMode,
+            onBackPressed = backAction,
+            onHeaderTitleClick = onHeaderTitleClick,
+            onChannelAvatarClick = onChannelAvatarClick,
+            modifier = Modifier.height(56.dp),
+        ),
     )
 }
 
@@ -373,8 +428,10 @@ internal fun DefaultBottomBarContent(
         )
 
         ChatTheme.componentFactory.AttachmentPickerMenu(
-            attachmentsPickerViewModel = attachmentsPickerViewModel,
-            composerViewModel = composerViewModel,
+            params = AttachmentPickerMenuParams(
+                attachmentsPickerViewModel = attachmentsPickerViewModel,
+                composerViewModel = composerViewModel,
+            ),
         )
     }
 }
@@ -470,60 +527,62 @@ private fun BoxScope.MessagesScreenMenus(
 
     if (selectedMessageState is SelectedMessageOptionsState && selectedMessage.id.isNotEmpty()) {
         ChatTheme.componentFactory.MessageMenu(
-            modifier = Modifier,
-            messageOptions = messageOptions,
-            message = selectedMessage,
-            ownCapabilities = ownCapabilities,
-            onMessageAction = remember(composerViewModel, listViewModel) {
-                {
-                        action ->
-                    action.updateMessage(
-                        action.message.copy(
-                            skipPushNotification = skipPushNotification,
-                            skipEnrichUrl = skipEnrichUrl,
-                        ),
-                    ).let {
-                        composerViewModel.performMessageAction(it)
-                        listViewModel.performMessageAction(it)
+            params = MessageMenuParams(
+                messageOptions = messageOptions,
+                message = selectedMessage,
+                ownCapabilities = ownCapabilities,
+                onMessageAction = remember(composerViewModel, listViewModel) {
+                    {
+                            action: MessageAction ->
+                        action.updateMessage(
+                            action.message.copy(
+                                skipPushNotification = skipPushNotification,
+                                skipEnrichUrl = skipEnrichUrl,
+                            ),
+                        ).let {
+                            composerViewModel.performMessageAction(it)
+                            listViewModel.performMessageAction(it)
+                        }
                     }
-                }
-            },
-            onShowMore = remember(listViewModel) {
-                {
-                    listViewModel.selectExtendedReactions(selectedMessage)
-                }
-            },
-            onDismiss = remember(listViewModel) { { listViewModel.removeOverlay() } },
-            currentUser = user,
+                },
+                onShowMore = remember(listViewModel) {
+                    {
+                        listViewModel.selectExtendedReactions(selectedMessage)
+                    }
+                },
+                onDismiss = remember(listViewModel) { { listViewModel.removeOverlay() } },
+                currentUser = user,
+            ),
         )
     }
 
     if (selectedMessageState is SelectedMessageReactionsState && selectedMessage.id.isNotEmpty()) {
         ChatTheme.componentFactory.ReactionsMenu(
-            modifier = Modifier,
-            currentUser = user,
-            message = selectedMessage,
-            onMessageAction = remember(composerViewModel, listViewModel) {
-                {
-                        action ->
-                    action.updateMessage(
-                        action.message.copy(
-                            skipPushNotification = skipPushNotification,
-                            skipEnrichUrl = skipEnrichUrl,
-                        ),
-                    ).let {
-                        composerViewModel.performMessageAction(it)
-                        listViewModel.performMessageAction(it)
+            params = ReactionsMenuParams(
+                currentUser = user,
+                message = selectedMessage,
+                onMessageAction = remember(composerViewModel, listViewModel) {
+                    {
+                            action: MessageAction ->
+                        action.updateMessage(
+                            action.message.copy(
+                                skipPushNotification = skipPushNotification,
+                                skipEnrichUrl = skipEnrichUrl,
+                            ),
+                        ).let {
+                            composerViewModel.performMessageAction(it)
+                            listViewModel.performMessageAction(it)
+                        }
                     }
-                }
-            },
-            onShowMoreReactionsSelected = remember(listViewModel) {
-                {
-                    listViewModel.selectExtendedReactions(selectedMessage)
-                }
-            },
-            onDismiss = remember(listViewModel) { { listViewModel.removeOverlay() } },
-            ownCapabilities = selectedMessageState?.ownCapabilities ?: setOf(),
+                },
+                onShowMoreReactionsSelected = remember(listViewModel) {
+                    {
+                        listViewModel.selectExtendedReactions(selectedMessage)
+                    }
+                },
+                onDismiss = remember(listViewModel) { { listViewModel.removeOverlay() } },
+                ownCapabilities = selectedMessageState?.ownCapabilities ?: setOf(),
+            ),
         )
     }
 }
@@ -553,23 +612,24 @@ private fun MessagesScreenReactionsPicker(
 ) {
     if (selectedMessageState is SelectedMessageReactionsPickerState && selectedMessage.id.isNotEmpty()) {
         ChatTheme.componentFactory.MessageReactionPicker(
-            modifier = Modifier,
-            message = selectedMessage,
-            onMessageAction = remember(composerViewModel, listViewModel) {
-                {
-                        action ->
-                    action.updateMessage(
-                        action.message.copy(
-                            skipPushNotification = skipPushNotification,
-                            skipEnrichUrl = skipEnrichUrl,
-                        ),
-                    ).let {
-                        composerViewModel.performMessageAction(it)
-                        listViewModel.performMessageAction(it)
+            params = MessageReactionPickerParams(
+                message = selectedMessage,
+                onMessageAction = remember(composerViewModel, listViewModel) {
+                    {
+                            action ->
+                        action.updateMessage(
+                            action.message.copy(
+                                skipPushNotification = skipPushNotification,
+                                skipEnrichUrl = skipEnrichUrl,
+                            ),
+                        ).let {
+                            composerViewModel.performMessageAction(it)
+                            listViewModel.performMessageAction(it)
+                        }
                     }
-                }
-            },
-            onDismiss = remember(listViewModel) { { listViewModel.removeOverlay() } },
+                },
+                onDismiss = remember(listViewModel) { { listViewModel.removeOverlay() } },
+            ),
         )
     }
 }

@@ -32,6 +32,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
@@ -46,7 +47,6 @@ import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
@@ -64,8 +64,6 @@ import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
-import io.getstream.chat.android.models.VideoCallInfo
-import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.result.call.Call
@@ -528,20 +526,6 @@ internal interface ChatApi {
         createdAtBeforeOrEqual: Date?,
     ): Call<List<BannedUser>>
 
-    @Deprecated(
-        "This third-party library integration is deprecated. Contact the support team for more information.",
-        level = DeprecationLevel.WARNING,
-    )
-    @CheckResult
-    fun createVideoCall(channelId: String, channelType: String, callId: String, callType: String): Call<VideoCallInfo>
-
-    @Deprecated(
-        "This third-party library integration is deprecated. Contact the support team for more information.",
-        level = DeprecationLevel.WARNING,
-    )
-    @CheckResult
-    fun getVideoCallToken(callId: String): Call<VideoCallToken>
-
     @CheckResult
     fun sendEvent(
         eventType: String,
@@ -587,7 +571,7 @@ internal interface ChatApi {
     ): Call<ThreadInfo>
 
     @CheckResult
-    fun createPoll(pollConfig: PollConfig): Call<Poll>
+    fun createPoll(createPollParams: CreatePollParams): Call<Poll>
 
     @CheckResult
     fun updatePoll(request: UpdatePollRequest): Call<Poll>

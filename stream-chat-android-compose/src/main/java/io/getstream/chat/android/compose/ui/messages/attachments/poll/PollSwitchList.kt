@@ -269,7 +269,7 @@ private fun PollSwitch(enabled: Boolean, onCheckedChange: (Boolean) -> Unit) {
                         color = if (enabled) {
                             StreamPrimitiveColors.baseWhite
                         } else {
-                            ChatTheme.colors.backgroundCoreDisabled
+                            ChatTheme.colors.backgroundUtilityDisabled
                         },
                     ),
             )

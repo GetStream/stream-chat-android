@@ -56,7 +56,7 @@ internal fun ContextualMenu(
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(StreamTokens.radiusMd),
-        color = colors.backgroundElevationElevation2,
+        color = colors.backgroundCoreElevation2,
         shadowElevation = StreamTokens.elevation3,
         border = BorderStroke(StreamTokens.borderStrokeSubtle, colors.borderCoreSubtle),
     ) {

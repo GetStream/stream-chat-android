@@ -26,10 +26,8 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.AttachmentType
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canUploadFile
-import io.getstream.chat.android.ui.common.internal.getColorList
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
@@ -39,7 +37,6 @@ import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerVie
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
-import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 /**
@@ -114,14 +111,6 @@ public open class DefaultMessageComposerTrailingContent : FrameLayout, MessageCo
     override fun attachContext(messageComposerContext: MessageComposerContext) {
         this.style = messageComposerContext.style
 
-        val getStateListColor = { tintColor: Int ->
-            getColorList(
-                normalColor = tintColor,
-                selectedColor = tintColor,
-                disabledColor = context.getColorCompat(R.color.stream_ui_grey_gainsboro),
-            )
-        }
-
         binding.sendMessageButton.setImageDrawable(style.sendMessageButtonIconDrawable)
         binding.sendMessageButton.updateLayoutParams {
             width = style.sendMessageButtonWidth
@@ -135,15 +124,11 @@ public open class DefaultMessageComposerTrailingContent : FrameLayout, MessageCo
         )
         style.sendMessageButtonIconTintList?.also { tintList ->
             binding.sendMessageButton.imageTintList = tintList
-        } ?: style.buttonIconDrawableTintColor?.let { tintColor ->
-            binding.sendMessageButton.imageTintList = getStateListColor(tintColor)
         }
 
         binding.recordAudioButton.setImageDrawable(style.audioRecordingButtonIconDrawable)
         style.audioRecordingButtonIconTintList?.also { tintList ->
             binding.recordAudioButton.imageTintList = tintList
-        } ?: style.buttonIconDrawableTintColor?.let { tintColor ->
-            binding.recordAudioButton.imageTintList = getStateListColor(tintColor)
         }
         binding.recordAudioButton.updateLayoutParams {
             width = style.audioRecordingButtonWidth

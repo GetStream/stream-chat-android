@@ -183,7 +183,7 @@ private fun ReminderDialog(
     content: @Composable () -> Unit,
 ) {
     Dialog(onDismissRequest = onDismiss) {
-        Card(colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundElevationElevation1)) {
+        Card(colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundCoreElevation1)) {
             content()
         }
     }

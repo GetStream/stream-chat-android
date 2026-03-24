@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.CreatePollParams
 
 /**
  * Screen for creating a new poll with options and configuration switches.
@@ -52,7 +52,7 @@ import io.getstream.chat.android.models.PollConfig
 @Composable
 public fun CreatePollScreen(
     onBack: () -> Unit,
-    onCreatePoll: (PollConfig) -> Unit,
+    onCreatePoll: (CreatePollParams) -> Unit,
 ) {
     val viewModel: CreatePollViewModel = viewModel(
         factory = CreatePollViewModelFactory(ChatTheme.config.polls),
@@ -81,7 +81,7 @@ public fun CreatePollScreen(
                 enabledCreation = state.isCreationEnabled,
                 onPollCreateClicked = {
                     onCreatePoll(
-                        pollConfigFrom(
+                        createPollParamsFrom(
                             pollQuestion = state.question,
                             pollOptions = state.optionItemList,
                             state = state,

@@ -17,6 +17,9 @@
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.QueryDraftsResult
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomString
@@ -126,9 +129,11 @@ internal class DraftMessageListenerDatabaseTest {
         val draftMessages = listOf(randomDraftMessage(), randomDraftMessage())
 
         listener.onQueryDraftMessagesResult(
-            Result.Success(draftMessages),
-            randomInt(),
-            randomInt(),
+            Result.Success(QueryDraftsResult(draftMessages, null)),
+            Filters.neutral(),
+            2,
+            null,
+            QuerySortByField.ascByName("created_at"),
         )
 
         draftMessages.forEach { message ->
@@ -140,8 +145,10 @@ internal class DraftMessageListenerDatabaseTest {
     fun `onQueryDraftMessagesResult should not update state on error`() = runTest {
         listener.onQueryDraftMessagesResult(
             Result.Failure(Error.GenericError("")),
-            randomInt(),
-            randomInt(),
+            Filters.neutral(),
+            2,
+            null,
+            QuerySortByField.ascByName("created_at"),
         )
 
         verify(messageRepository, never()).insertDraftMessage(any())

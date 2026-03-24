@@ -18,25 +18,21 @@ package io.getstream.chat.android.compose.viewmodel.messages
 
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
-import io.getstream.chat.android.models.LinkPreview
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.MessageInput
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
-import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
 import io.getstream.result.call.Call
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -67,52 +63,7 @@ public class MessageComposerViewModel(
     /**
      * UI state of the current composer input.
      */
-    public val input: MutableStateFlow<String> = messageComposerController.input
-
-    /**
-     * Represents the remaining time until the user is allowed to send the next message.
-     */
-    public val cooldownTimer: MutableStateFlow<Int> = messageComposerController.cooldownTimer
-
-    /**
-     * Represents the list of validation errors for the current text input and the currently selected attachments.
-     */
-    public val validationErrors: MutableStateFlow<List<ValidationError>> = messageComposerController.validationErrors
-
-    /**
-     * Represents the list of users that can be used to autocomplete the current mention input.
-     */
-    public val mentionSuggestions: MutableStateFlow<List<User>> = messageComposerController.mentionSuggestions
-
-    /**
-     * Represents the list of commands to be displayed in the command suggestion list popup.
-     */
-    public val commandSuggestions: MutableStateFlow<List<Command>> = messageComposerController.commandSuggestions
-
-    /**
-     * Represents the list of links that can be previewed.
-     */
-    public val linkPreviews: MutableStateFlow<List<LinkPreview>> = messageComposerController.linkPreviews
-
-    /**
-     * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're
-     * sending a thread reply or a regular message.
-     */
-    public val messageMode: MutableStateFlow<MessageMode> = messageComposerController.messageMode
-
-    /**
-     * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
-     */
-    public val lastActiveAction: Flow<MessageAction?> = messageComposerController.lastActiveAction
-
-    /**
-     * Holds information about the abilities the current user
-     * is able to exercise in the given channel.
-     *
-     * e.g. send messages, delete messages, etc...
-     * For a full list @see [ChannelCapabilities].
-     */
-    public val ownCapabilities: StateFlow<Set<String>> = messageComposerController.ownCapabilities
+    public val messageInput: StateFlow<MessageInput> = messageComposerController.messageInput
 
     /**
      * Called when the input changes and the internal state needs to be updated.
@@ -191,12 +142,12 @@ public class MessageComposerViewModel(
     }
 
     /**
-     * Creates a poll with the given [pollConfig].
+     * Creates a poll with the given [createPollParams].
      *
-     * @param pollConfig Configuration for creating a poll.
+     * @param createPollParams Configuration for creating a poll.
      */
-    public fun createPoll(pollConfig: PollConfig) {
-        messageComposerController.createPoll(pollConfig = pollConfig)
+    public fun createPoll(createPollParams: CreatePollParams) {
+        messageComposerController.createPoll(createPollParams = createPollParams)
     }
 
     /**
@@ -234,7 +185,7 @@ public class MessageComposerViewModel(
      * @return [Message] object, with all the data required to send it to the API.
      */
     public fun buildNewMessage(
-        message: String = input.value,
+        message: String = messageInput.value.text,
         attachments: List<Attachment> = emptyList(),
     ): Message = messageComposerController.buildNewMessage(message, attachments)
 

@@ -56,6 +56,7 @@ import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.common.PlayButton
 import io.getstream.chat.android.compose.ui.components.common.PlayButtonSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePreviewData
@@ -104,7 +105,7 @@ internal fun MediaGalleryPhotosMenu(
                 .wrapContentHeight()
                 .align(Alignment.BottomCenter),
             shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-            color = ChatTheme.colors.backgroundElevationElevation1,
+            color = ChatTheme.colors.backgroundCoreElevation1,
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 MediaGalleryPhotosMenuHeader(onDismiss)
@@ -226,13 +227,15 @@ private fun MediaGalleryPhotosMenuItem(
         }
 
         ChatTheme.componentFactory.UserAvatar(
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(8.dp)
-                .size(AvatarSize.Small),
-            user = user,
-            showIndicator = false,
-            showBorder = true,
+            params = UserAvatarParams(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(8.dp)
+                    .size(AvatarSize.Small),
+                user = user,
+                showIndicator = false,
+                showBorder = true,
+            ),
         )
 
         if (isVideo && imageState.isCompleted) {

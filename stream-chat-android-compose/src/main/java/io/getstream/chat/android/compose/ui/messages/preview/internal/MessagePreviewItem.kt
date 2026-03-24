@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 
@@ -104,17 +105,19 @@ internal fun MessagePreviewItem(
 @Composable
 internal fun DefaultMessagePreviewItemLeadingContent(message: Message, currentUser: User?) {
     ChatTheme.componentFactory.UserAvatar(
-        user = message.user,
-        modifier = Modifier
-            .padding(
-                start = StreamTokens.spacingXs,
-                end = 4.dp,
-                top = StreamTokens.spacingSm,
-                bottom = StreamTokens.spacingSm,
-            )
-            .size(40.dp),
-        showIndicator = true,
-        showBorder = false,
+        params = UserAvatarParams(
+            user = message.user,
+            modifier = Modifier
+                .padding(
+                    start = StreamTokens.spacingXs,
+                    end = 4.dp,
+                    top = StreamTokens.spacingSm,
+                    bottom = StreamTokens.spacingSm,
+                )
+                .size(40.dp),
+            showIndicator = true,
+            showBorder = false,
+        ),
     )
 }
 
