@@ -30,7 +30,12 @@ import io.getstream.log.TaggedLogger;
 
 /**
  * An Activity showing attachments such as PDF and Office documents.
+ *
+ * @deprecated Use the CDN-aware document preview handlers instead. For text/HTML files, use
+ * {@code TextFilePreviewActivity}. For other file types, files are downloaded and opened
+ * with an external application.
  */
+@Deprecated
 public class AttachmentDocumentActivity extends AppCompatActivity {
 
     private static final String KEY_URL = "url";

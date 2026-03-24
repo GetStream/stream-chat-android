@@ -18,11 +18,14 @@ package io.getstream.chat.android.compose.ui.attachments.preview.handler
 
 import android.content.Context
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.ui.common.feature.documents.AttachmentDocumentActivity
+import io.getstream.chat.android.ui.common.feature.documents.DocumentAttachmentHandler
 import io.getstream.chat.android.uiutils.model.MimeType
 
 /**
- * Shows a preview for the document in the attachment using Google Docs.
+ * Shows a preview for document attachments.
+ *
+ * Text-based files (TXT, HTML) are displayed in-app using a WebView.
+ * All other document types (PDF, Office formats, etc.) are downloaded and opened with an external application.
  */
 public class DocumentAttachmentPreviewHandler(private val context: Context) : AttachmentPreviewHandler {
 
@@ -45,6 +48,6 @@ public class DocumentAttachmentPreviewHandler(private val context: Context) : At
     }
 
     override fun handleAttachmentPreview(attachment: Attachment) {
-        context.startActivity(AttachmentDocumentActivity.getIntent(context, attachment.assetUrl))
+        DocumentAttachmentHandler.openAttachment(context, attachment)
     }
 }

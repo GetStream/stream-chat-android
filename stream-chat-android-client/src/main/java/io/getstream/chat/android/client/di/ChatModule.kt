@@ -57,6 +57,8 @@ import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
+import io.getstream.chat.android.client.cdn.CDN
+import io.getstream.chat.android.client.cdn.internal.CDNOkHttpInterceptor
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.debugger.ChatClientDebugger
 import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
@@ -133,6 +135,7 @@ constructor(
     private val fileUploader: FileUploader?,
     private val sendMessageInterceptor: SendMessageInterceptor?,
     private val shareFileDownloadRequestInterceptor: Interceptor?,
+    private val cdn: CDN?,
     private val tokenManager: TokenManager,
     private val customOkHttpClient: OkHttpClient?,
     private val clientDebugger: ChatClientDebugger?,
@@ -390,6 +393,7 @@ constructor(
     private fun buildFileDownloadApi(): FileDownloadApi {
         val okHttpClient = baseClientBuilder(BASE_TIMEOUT)
             .apply {
+                cdn?.let { addInterceptor(CDNOkHttpInterceptor(it)) }
                 shareFileDownloadRequestInterceptor?.let { addInterceptor(it) }
             }
             .build()

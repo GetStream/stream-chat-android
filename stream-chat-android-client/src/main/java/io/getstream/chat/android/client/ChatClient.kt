@@ -5087,6 +5087,7 @@ internal constructor(
                     fileUploader = fileUploader,
                     sendMessageInterceptor = sendMessageInterceptor,
                     shareFileDownloadRequestInterceptor = shareFileDownloadRequestInterceptor,
+                    cdn = cdn,
                     tokenManager = tokenManager,
                     customOkHttpClient = customOkHttpClient,
                     clientDebugger = clientDebugger,

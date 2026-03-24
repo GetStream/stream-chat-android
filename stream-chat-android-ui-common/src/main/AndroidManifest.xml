@@ -46,6 +46,11 @@
             android:exported="false"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             />
+        <activity
+            android:name=".feature.documents.TextFilePreviewActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            />
 
         <provider
             android:name=".StreamFileProvider"
