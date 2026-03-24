@@ -103,7 +103,7 @@ internal class ChatClientExtensionTests {
         val aroundMessageRequest = QueryChannelPaginationRequest(MESSAGE_LIMIT).apply {
             messageFilterDirection = Pagination.AROUND_ID
             messageFilterValue = AROUND_MESSAGE_ID
-        }.toWatchChannelRequest(stateConfig.userPresence).apply {
+        }.toWatchChannelRequest(chatClientConfig.userPresence).apply {
             this.shouldRefresh = false
             this.isWatchChannel = true
         }
