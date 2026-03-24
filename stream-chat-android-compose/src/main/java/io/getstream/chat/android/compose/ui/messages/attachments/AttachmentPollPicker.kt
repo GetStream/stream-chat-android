@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
 import io.getstream.chat.android.compose.ui.components.FullscreenDialog
-import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.CreatePollScreen
@@ -90,7 +89,6 @@ internal fun AttachmentPollPicker(
         Spacer(modifier = Modifier.height(StreamTokens.spacingMd))
         StreamTextButton(
             style = StreamButtonStyleDefaults.secondaryOutline,
-            size = StreamButtonSize.Large,
             text = stringResource(id = R.string.stream_compose_attachment_poll_picker_cta),
             onClick = openDialog,
         )
