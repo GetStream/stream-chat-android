@@ -17,12 +17,15 @@
 package io.getstream.chat.android.compose.ui.channel.info
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,8 +36,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -54,6 +57,9 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
+import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -65,7 +71,10 @@ import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoMemberSectionP
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoTopBarParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
+import io.getstream.chat.android.compose.ui.util.bottomBorder
+import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
+import io.getstream.chat.android.compose.ui.util.topBorder
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
@@ -190,6 +199,7 @@ internal fun GroupChannelInfoTopBar(
     onAddMembersClick: () -> Unit,
 ) {
     CenterAlignedTopAppBar(
+        modifier = Modifier.bottomBorder(color = ChatTheme.colors.borderCoreSubtle),
         title = {
             Text(
                 text = stringResource(R.string.stream_ui_channel_info_group_title),
@@ -330,8 +340,8 @@ internal fun GroupChannelInfoAvatarContainer(
     val totalMembers = members.size + members.collapsedCount
     val onlineCount = channel.members.count { it.user.online }
     Column(
+        modifier = Modifier.padding(bottom = StreamTokens.spacingMd),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
     ) {
         ChatTheme.componentFactory.ChannelAvatar(
             params = ChannelAvatarParams(
@@ -341,6 +351,7 @@ internal fun GroupChannelInfoAvatarContainer(
                 showIndicator = false,
             ),
         )
+        Spacer(modifier = Modifier.height(StreamTokens.spacingMd))
         Text(
             text = ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser),
             style = ChatTheme.typography.headingLarge,
@@ -348,13 +359,14 @@ internal fun GroupChannelInfoAvatarContainer(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
+        Spacer(modifier = Modifier.height(StreamTokens.spacingXs))
         Text(
             text = stringResource(
                 R.string.stream_ui_channel_info_member_count_online,
                 totalMembers,
                 onlineCount,
             ),
-            style = ChatTheme.typography.metadataDefault,
+            style = ChatTheme.typography.captionDefault,
             color = ChatTheme.colors.textSecondary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -393,13 +405,12 @@ internal fun GroupChannelInfoMemberSection(
                 color = ChatTheme.colors.textPrimary,
             )
             if (showAddButton) {
-                TextButton(onClick = onAddMembersClick) {
-                    Text(
-                        text = stringResource(R.string.stream_ui_channel_info_member_add_button),
-                        style = ChatTheme.typography.bodyDefault,
-                        color = ChatTheme.colors.accentPrimary,
-                    )
-                }
+                StreamTextButton(
+                    style = StreamButtonStyleDefaults.secondaryOutline,
+                    size = StreamButtonSize.Small,
+                    text = stringResource(id = R.string.stream_ui_channel_info_member_add_button),
+                    onClick = onAddMembersClick,
+                )
             }
         }
 
@@ -465,7 +476,7 @@ internal fun GroupChannelInfoMemberItem(
             Text(
                 text = user.getLastSeenText(LocalContext.current),
                 style = ChatTheme.typography.metadataDefault,
-                color = if (member.banned) errorColor else ChatTheme.colors.textSecondary,
+                color = if (member.banned) errorColor else ChatTheme.colors.textTertiary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -474,18 +485,15 @@ internal fun GroupChannelInfoMemberItem(
             stringResource(id = R.string.stream_ui_channel_info_member_owner)
         } else {
             when (val role = member.channelRole) {
-                "channel_moderator" -> stringResource(
-                    id = R.string.stream_ui_channel_info_member_moderator,
-                )
-
+                "channel_moderator" -> stringResource(id = R.string.stream_ui_channel_info_member_moderator)
                 "channel_member" -> ""
                 else -> role.orEmpty()
             }
         }
         Text(
             text = role,
-            style = ChatTheme.typography.metadataDefault,
-            color = ChatTheme.colors.textSecondary,
+            style = ChatTheme.typography.bodyDefault,
+            color = ChatTheme.colors.textTertiary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -497,14 +505,19 @@ internal fun GroupChannelInfoExpandMembersItem(
     collapsedCount: Int,
     onClick: () -> Unit,
 ) {
-    TextButton(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = onClick,
+    Box(
+        modifier = Modifier
+            .padding(top = StreamTokens.spacingSm)
+            .topBorder(color = ChatTheme.colors.borderCoreDefault)
+            .clickable(onClick = onClick)
+            .minimumInteractiveComponentSize()
+            .fillMaxWidth(),
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = stringResource(R.string.stream_ui_channel_info_view_all),
-            style = ChatTheme.typography.bodyDefault,
-            color = ChatTheme.colors.accentPrimary,
+            style = ChatTheme.typography.bodyEmphasis,
+            color = ChatTheme.colors.buttonSecondaryText,
         )
     }
 }

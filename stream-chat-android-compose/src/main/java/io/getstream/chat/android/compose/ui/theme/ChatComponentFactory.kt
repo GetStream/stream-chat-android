@@ -2661,7 +2661,7 @@ public interface ChatComponentFactory {
             modifier = params.modifier,
             title = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_empty_title),
             text = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_empty_text),
-            painter = painterResource(UiCommonR.drawable.stream_ic_files),
+            painter = painterResource(R.drawable.stream_compose_ic_files),
         )
     }
 
@@ -2780,7 +2780,7 @@ public interface ChatComponentFactory {
             modifier = params.modifier,
             title = stringResource(UiCommonR.string.stream_ui_channel_attachments_media_empty_title),
             text = stringResource(UiCommonR.string.stream_ui_channel_attachments_media_empty_text),
-            painter = painterResource(UiCommonR.drawable.stream_ic_media),
+            painter = painterResource(R.drawable.stream_compose_ic_media),
         )
     }
 
