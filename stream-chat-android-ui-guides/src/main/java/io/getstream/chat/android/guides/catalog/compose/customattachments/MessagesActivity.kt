@@ -144,9 +144,8 @@ class MessagesActivity : AppCompatActivity() {
                         composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                         messageListViewModel.openMessageThread(message)
                     },
-                    onLongItemClick = {
-                        composerViewModel.performMessageAction(Reply(it))
-                    },
+                    onLongItemClick = { composerViewModel.performMessageAction(Reply(it)) },
+                    onReply = { composerViewModel.performMessageAction(Reply(it)) },
                 )
             }
         }
