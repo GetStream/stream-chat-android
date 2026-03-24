@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.sync.stringify
+import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.Tube
@@ -95,6 +96,7 @@ internal class SyncManager(
     private val isAutomaticSyncOnReconnectEnabled: Boolean,
     private val syncMaxThreshold: TimeDuration,
     private val now: () -> Long,
+    private val serverClockOffset: ServerClockOffset,
     scope: CoroutineScope,
     private val events: Tube<List<ChatEvent>> = Tube(),
     private val syncState: MutableStateFlow<SyncState?> = MutableStateFlow(null),
@@ -598,7 +600,7 @@ internal class SyncManager(
                 repos.markMessageAsFailed(message)
             } else {
                 logger.v { "[retryMessagesWithPendingAttachments] sending message($id)" }
-                if (message.createdLocallyAt.exceedsSyncThreshold()) {
+                if (message.createdLocallyAt.exceedsSyncThresholdServerTime()) {
                     logger.w { "[retryMessagesWithPendingAttachments] outdated sending($id)" }
                     removeMessage(message).await()
                 } else {
@@ -672,7 +674,7 @@ internal class SyncManager(
         channelClient: ChannelClient,
     ): Result<Any> {
         logger.v { "[retrySendingOfMessageWithSyncedAttachments] sending message(${message.id})" }
-        return if (message.createdLocallyAt.exceedsSyncThreshold()) {
+        return if (message.createdLocallyAt.exceedsSyncThresholdServerTime()) {
             logger.w { "[retrySendingOfMessageWithSyncedAttachments] outdated sending($id)" }
             removeMessage(message).await()
         } else {
@@ -742,6 +744,15 @@ internal class SyncManager(
 
     private fun Date?.exceedsSyncThreshold(): Boolean {
         return this == null || diff(now()) > syncMaxThreshold
+    }
+
+    /**
+     * Important: Use only for local dates created with [ServerClockOffset.estimatedServerTime].
+     * Use for comparing:
+     *  - [Message.createdLocallyAt]
+     */
+    private fun Date?.exceedsSyncThresholdServerTime(): Boolean {
+        return this == null || diff(serverClockOffset.estimatedServerTime()) > syncMaxThreshold
     }
 
     private enum class State {
