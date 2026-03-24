@@ -354,6 +354,7 @@ internal constructor(
      *
      * @see [Plugin]
      */
+    @Volatile
     @InternalStreamChatApi
     public var plugins: List<Plugin> = emptyList()
 
@@ -400,12 +401,16 @@ internal constructor(
     @Suppress("ThrowsCount")
     internal inline fun <reified P : DependencyResolver, reified T : Any> resolvePluginDependency(): T {
         StreamLog.v(TAG) { "[resolvePluginDependency] P: ${P::class.simpleName}, T: ${T::class.simpleName}" }
+        // Snapshot plugins BEFORE checking initializationState to avoid a race with disconnect().
+        // disconnect() sets initializationState to NOT_INITIALIZED before clearing plugins,
+        // so if we snapshot plugins first and then see COMPLETE, the snapshot is guaranteed valid.
+        val currentPlugins = plugins
         val initState = awaitInitializationState(RESOLVE_DEPENDENCY_TIMEOUT)
         if (initState != InitializationState.COMPLETE) {
             StreamLog.e(TAG) { "[resolvePluginDependency] failed (initializationState is not COMPLETE): $initState " }
             throw IllegalStateException("ChatClient::connectUser() must be called before resolving any dependency")
         }
-        val resolver = plugins.find { plugin ->
+        val resolver = currentPlugins.find { plugin ->
             plugin is P
         } ?: throw IllegalStateException(
             "Plugin '${P::class.qualifiedName}' was not found. Did you init it within ChatClient?",
@@ -1570,9 +1575,9 @@ internal constructor(
 
         notifications.onLogout()
         // Set initializationState to NOT_INITIALIZED BEFORE clearing plugins to prevent race condition.
-        // This ensures the StatePlugin extension methods don't access the plugin during disconnect.
+        // resolvePluginDependency() snapshots plugins before checking state, so if it sees COMPLETE
+        // here, the snapshot is guaranteed to still contain the plugins.
         mutableClientState.setInitializationState(InitializationState.NOT_INITIALIZED)
-
         plugins.forEach { it.onUserDisconnected() }
         plugins = emptyList()
         userStateService.onLogout()
