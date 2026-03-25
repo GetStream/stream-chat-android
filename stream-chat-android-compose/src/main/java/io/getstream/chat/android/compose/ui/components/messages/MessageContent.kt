@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.components.messages
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -171,6 +174,7 @@ internal fun DefaultMessageDeletedContent(
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onLinkClick Handler for clicking on a link in the message.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 @Suppress("LongMethod")
 internal fun DefaultMessageContent(
@@ -192,8 +196,12 @@ internal fun DefaultMessageContent(
                     message = quotedMessage,
                     currentUser = currentUser,
                     replyMessage = message,
-                    onLongItemClick = onLongItemClick,
-                    onQuotedMessageClick = onQuotedMessageClick,
+                    modifier = Modifier.combinedClickable(
+                        interactionSource = remember(::MutableInteractionSource),
+                        indication = null,
+                        onLongClick = { onLongItemClick(message) },
+                        onClick = { onQuotedMessageClick(quotedMessage) },
+                    ),
                 ),
             )
         }

@@ -828,16 +828,12 @@ public data class MessageTextContentParams(
  * @param message The message that contains the quote.
  * @param currentUser The currently logged in user.
  * @param replyMessage The quoted message.
- * @param onLongItemClick Action invoked when a message is long-clicked.
- * @param onQuotedMessageClick Action invoked when the quoted message is clicked.
  * @param modifier Modifier for styling.
  */
 public data class MessageQuotedContentParams(
     val message: Message,
     val currentUser: User?,
     val replyMessage: Message,
-    val onLongItemClick: (Message) -> Unit,
-    val onQuotedMessageClick: (Message) -> Unit,
     val modifier: Modifier = Modifier,
 )
 
