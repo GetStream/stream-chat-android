@@ -309,6 +309,8 @@ internal class MockMessageRepository : MessageRepository {
         // No-op
     }
 
+    override suspend fun selectLocalOnlyMessagesForChannel(cid: String): List<Message> = emptyList()
+
     override suspend fun clear() {
         messages.clear()
     }
