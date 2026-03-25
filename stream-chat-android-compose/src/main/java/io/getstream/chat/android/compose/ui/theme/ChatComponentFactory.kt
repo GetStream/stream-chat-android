@@ -31,10 +31,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Warning
 import androidx.compose.material3.BottomAppBarDefaults
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -2745,14 +2745,14 @@ public interface ChatComponentFactory {
             title = {
                 Text(
                     text = stringResource(R.string.stream_ui_channel_attachments_media_title),
-                    style = ChatTheme.typography.headingMedium,
+                    style = ChatTheme.typography.headingSmall,
                     maxLines = 1,
                 )
             },
             navigationIcon = { ChannelInfoNavigationIcon(onClick = params.onNavigationIconClick) },
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = ChatTheme.colors.backgroundCoreElevation1,
-                titleContentColor = ChatTheme.colors.textPrimary,
+                titleContentColor = ChatTheme.colors.textSecondary,
             ),
         )
     }
@@ -2805,16 +2805,16 @@ public interface ChatComponentFactory {
     @Composable
     public fun BoxScope.ChannelMediaAttachmentsFloatingHeader(params: ChannelMediaAttachmentsFloatingHeaderParams) {
         Text(
-            modifier = Modifier
+            modifier = params.modifier
                 .align(Alignment.TopCenter)
-                .padding(16.dp)
+                .padding(StreamTokens.spacingMd)
                 .background(
-                    color = ChatTheme.colors.textPrimary.copy(alpha = 0.6f),
-                    shape = ButtonDefaults.outlinedShape,
+                    color = ChatTheme.colors.backgroundCoreInverse,
+                    shape = RoundedCornerShape(StreamTokens.radiusFull),
                 )
-                .padding(horizontal = 12.dp, vertical = 8.dp),
+                .padding(horizontal = StreamTokens.spacingSm, vertical = StreamTokens.spacingXs),
             text = params.label,
-            style = ChatTheme.typography.bodyEmphasis,
+            style = ChatTheme.typography.captionEmphasis,
             color = ChatTheme.colors.textInverse,
         )
     }
