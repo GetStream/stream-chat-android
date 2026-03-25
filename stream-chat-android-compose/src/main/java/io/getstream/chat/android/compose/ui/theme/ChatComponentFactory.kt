@@ -2807,19 +2807,23 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun BoxScope.ChannelMediaAttachmentsFloatingHeader(params: ChannelMediaAttachmentsFloatingHeaderParams) {
-        Text(
-            modifier = params.modifier
-                .align(Alignment.TopCenter)
-                .padding(StreamTokens.spacingMd)
-                .background(
-                    color = ChatTheme.colors.backgroundCoreInverse,
-                    shape = RoundedCornerShape(StreamTokens.radiusFull),
-                )
-                .padding(horizontal = StreamTokens.spacingSm, vertical = StreamTokens.spacingXs),
-            text = params.label,
-            style = ChatTheme.typography.captionEmphasis,
-            color = ChatTheme.colors.textInverse,
-        )
+        FadingVisibility(
+            modifier = params.modifier.align(Alignment.TopCenter),
+            visible = params.visible,
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(StreamTokens.spacingMd)
+                    .background(
+                        color = ChatTheme.colors.backgroundCoreInverse,
+                        shape = RoundedCornerShape(StreamTokens.radiusFull),
+                    )
+                    .padding(horizontal = StreamTokens.spacingSm, vertical = StreamTokens.spacingXs),
+                text = params.label,
+                style = ChatTheme.typography.captionEmphasis,
+                color = ChatTheme.colors.textInverse,
+            )
+        }
     }
 
     /**
