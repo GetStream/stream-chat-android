@@ -40,7 +40,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.compose.ui.components.attachments.images.ImagesPicker
-import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredStoragePermission
+import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredMediaStoragePermission
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.visualMediaAccessAsState
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
@@ -131,7 +131,7 @@ private fun VisualMediaAccessContent(
         }
 
         VisualMediaAccess.DENIED -> {
-            RequiredStoragePermission(
+            RequiredMediaStoragePermission(
                 onGrantPermissionClick = onGrantPermissionClick,
             )
         }

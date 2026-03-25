@@ -19,14 +19,12 @@ package io.getstream.chat.android.compose.ui.messages.attachments
 import android.Manifest
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,6 +48,8 @@ import com.google.accompanist.permissions.shouldShowRationale
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.CameraPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.CaptureMode
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
+import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberCaptureMediaLauncher
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredCameraPermission
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -114,39 +114,27 @@ private fun AttachmentCameraPickerContent(
             )
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+        verticalArrangement = Arrangement.Center,
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs, Alignment.CenterVertically),
-        ) {
-            Icon(
-                modifier = Modifier.size(32.dp),
-                painter = painterResource(id = R.drawable.stream_compose_ic_attachment_camera_picker),
-                contentDescription = null,
-                tint = ChatTheme.colors.textTertiary,
-            )
-            Text(
-                text = stringResource(id = R.string.stream_compose_attachment_camera_picker_content),
-                style = ChatTheme.typography.bodyDefault,
-                color = ChatTheme.colors.textTertiary,
-                textAlign = TextAlign.Center,
-            )
-        }
-        OutlinedButton(
-            modifier = Modifier
-                .height(48.dp)
-                .fillMaxWidth(),
+        Icon(
+            modifier = Modifier.size(32.dp),
+            painter = painterResource(id = R.drawable.stream_compose_ic_attachment_camera_picker),
+            contentDescription = null,
+            tint = ChatTheme.colors.textTertiary,
+        )
+        Spacer(modifier = Modifier.height(StreamTokens.spacingSm))
+        Text(
+            text = stringResource(id = R.string.stream_compose_attachment_camera_picker_content),
+            style = ChatTheme.typography.bodyDefault,
+            color = ChatTheme.colors.textSecondary,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(modifier = Modifier.height(StreamTokens.spacingMd))
+        StreamTextButton(
+            style = StreamButtonStyleDefaults.secondaryOutline,
+            text = stringResource(id = R.string.stream_compose_attachment_camera_picker),
             onClick = onCaptureClick,
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = ChatTheme.colors.buttonSecondaryText,
-            ),
-        ) {
-            Text(text = stringResource(id = R.string.stream_compose_attachment_camera_picker))
-        }
+        )
     }
 }
 

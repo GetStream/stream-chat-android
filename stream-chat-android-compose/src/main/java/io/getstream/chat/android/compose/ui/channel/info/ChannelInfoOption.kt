@@ -57,7 +57,7 @@ internal fun ChannelInfoSection(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(StreamTokens.radiusLg))
-            .background(ChatTheme.colors.backgroundCoreSurfaceSubtle)
+            .background(ChatTheme.colors.backgroundCoreSurfaceCard)
             .padding(vertical = StreamTokens.spacingXs),
         content = content,
     )
@@ -184,7 +184,7 @@ private fun ChannelInfoOptionButtonPreview() {
 private fun ChannelInfoOptionNavigationButtonPreview() {
     ChatTheme {
         ChannelInfoOptionNavigationButton(
-            icon = R.drawable.stream_ic_files,
+            icon = R.drawable.stream_compose_ic_files,
             text = "Files",
             onClick = {},
         )
