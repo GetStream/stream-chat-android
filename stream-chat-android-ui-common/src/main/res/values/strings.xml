@@ -54,6 +54,7 @@
     <string name="stream_ui_message_list_attachment_invalid_mime_type">Something went wrong. Unable to open attachment: %s</string>
     <string name="stream_ui_message_list_attachment_display_error">Error. File can\'t be displayed</string>
     <string name="stream_ui_message_list_attachment_opening">Opening…</string>
+    <string name="stream_ui_message_list_attachment_downloading">Downloading… %1$s / %2$s</string>
     <string name="stream_ui_message_list_attachment_no_app">No app available to open this file</string>
     <string name="stream_ui_message_list_attachment_download_failed">Failed to download file: %s</string>
     <string name="stream_ui_message_list_video_display_error">Error. Video can\'t be displayed</string>

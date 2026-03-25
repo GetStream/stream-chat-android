@@ -31,6 +31,8 @@ import kotlinx.coroutines.withContext
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FilterInputStream
+import java.io.InputStream
 
 /**
  * Class handling operations related to sharing files with external apps.
@@ -74,12 +76,14 @@ public class StreamShareFileManager(
      *
      * @param context The Android context.
      * @param attachment The attachment to write.
+     * @param onProgress Optional callback informing the caller about the download progress.
      * @param chatClient Lambda providing the [ChatClient] instance for downloading. Defaults to [ChatClient.instance].
      * @return A [Result] containing the [Uri] of the shareable file, or an error if the operation fails.
      */
     public suspend fun writeAttachmentToShareableFile(
         context: Context,
         attachment: Attachment,
+        onProgress: ((bytesDownloaded: Long, totalBytes: Long) -> Unit)? = null,
         chatClient: () -> ChatClient = { ChatClient.instance() },
     ): Result<Uri> = withContext(DispatcherProvider.IO) {
         // Check if already cached
@@ -96,7 +100,11 @@ public class StreamShareFileManager(
             .await()
             .flatMap { response ->
                 val fileName = getCacheFileName(attachment)
-                val source = response.byteStream()
+                val source = if (onProgress != null) {
+                    ProgressInputStream(response.byteStream(), attachment.fileSize.toLong(), onProgress)
+                } else {
+                    response.byteStream()
+                }
                 fileManager.writeFileInCache(context, fileName, source)
             }
             .map { file -> getUriForFile(context, file) }
@@ -143,5 +151,25 @@ public class StreamShareFileManager(
     private companion object {
         private const val CACHE_FILE_PREFIX = "TMP"
         private const val BITMAP_QUALITY = 90
+    }
+}
+
+/**
+ * An [InputStream] wrapper that reports read progress via [onProgress].
+ */
+private class ProgressInputStream(
+    delegate: InputStream,
+    private val totalBytes: Long,
+    private val onProgress: (bytesRead: Long, totalBytes: Long) -> Unit,
+) : FilterInputStream(delegate) {
+    private var bytesRead = 0L
+
+    override fun read(b: ByteArray, off: Int, len: Int): Int {
+        val count = super.read(b, off, len)
+        if (count > 0) {
+            bytesRead += count
+            onProgress(bytesRead, totalBytes)
+        }
+        return count
     }
 }

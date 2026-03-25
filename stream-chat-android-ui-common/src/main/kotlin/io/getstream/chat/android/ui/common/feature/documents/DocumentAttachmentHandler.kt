@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.common.feature.documents
 
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.ContextWrapper
@@ -23,10 +24,12 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.snackbar.Snackbar
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.R
 import io.getstream.chat.android.ui.common.internal.file.StreamShareFileManager
+import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.chat.android.uiutils.model.MimeType
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.launch
@@ -37,12 +40,16 @@ import kotlinx.coroutines.launch
  * Text-based files (TXT, HTML) are displayed in-app using [TextFilePreviewActivity].
  * All other document types (PDF, Office formats, etc.) are downloaded via [StreamShareFileManager]
  * and opened with an external application.
+ *
+ * For files larger than [SMALL_FILE_THRESHOLD], a Snackbar with download progress is shown.
  */
 @InternalStreamChatApi
 public object DocumentAttachmentHandler {
 
     private val logger by taggedLogger("Chat:DocumentAttachmentHandler")
     private val shareFileManager = StreamShareFileManager()
+
+    private const val SMALL_FILE_THRESHOLD = 2 * 1024 * 1024 // 2 MB
 
     /**
      * Opens the given document [attachment].
@@ -74,41 +81,102 @@ public object DocumentAttachmentHandler {
             return
         }
 
+        val isLargeFile = attachment.fileSize > SMALL_FILE_THRESHOLD
+
         lifecycleOwner.lifecycleScope.launch {
-            Toast.makeText(context, R.string.stream_ui_message_list_attachment_opening, Toast.LENGTH_SHORT).show()
-            shareFileManager.writeAttachmentToShareableFile(context, attachment)
-                .onSuccess { uri ->
-                    try {
-                        val intent = Intent(Intent.ACTION_VIEW).apply {
-                            setDataAndType(uri, attachment.mimeType)
-                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                        }
-                        context.startActivity(Intent.createChooser(intent, attachment.name))
-                    } catch (e: ActivityNotFoundException) {
-                        logger.e(e) { "[openWithExternalApp] No app available to open file." }
-                        Toast.makeText(context, R.string.stream_ui_message_list_attachment_no_app, Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                }
-                .onError {
-                    logger.e { "[openWithExternalApp] Failed to download file: ${it.message}" }
-                    val msg = context.getString(
-                        R.string.stream_ui_message_list_attachment_download_failed,
-                        attachment.name ?: "",
-                    )
-                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-                }
+            if (isLargeFile) {
+                downloadWithProgress(context, attachment)
+            } else {
+                downloadSilently(context, attachment)
+            }
         }
     }
 
-    /**
-     * Walks the [Context] wrapper chain to find the underlying [LifecycleOwner].
-     * Handles [ContextThemeWrapper] and other [ContextWrapper] layers that may wrap an Activity.
-     */
+    private suspend fun downloadSilently(context: Context, attachment: Attachment) {
+        shareFileManager.writeAttachmentToShareableFile(context, attachment)
+            .onSuccess { uri -> openFileUri(context, uri, attachment) }
+            .onError { error ->
+                logger.e { "[downloadSilently] Failed to download file: ${error.message}" }
+                val msg = context.getString(
+                    R.string.stream_ui_message_list_attachment_download_failed,
+                    attachment.name ?: "",
+                )
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private suspend fun downloadWithProgress(context: Context, attachment: Attachment) {
+        val snackbar = context.findActivity()
+            ?.findViewById<android.view.View>(android.R.id.content)
+            ?.let { rootView ->
+                Snackbar.make(
+                    rootView,
+                    context.getString(
+                        R.string.stream_ui_message_list_attachment_downloading,
+                        MediaStringUtil.convertFileSizeByteCount(0L),
+                        MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong()),
+                    ),
+                    Snackbar.LENGTH_INDEFINITE,
+                ).also { it.show() }
+            }
+
+        shareFileManager.writeAttachmentToShareableFile(
+            context = context,
+            attachment = attachment,
+            onProgress = { bytesDownloaded, totalBytes ->
+                snackbar?.let { sb ->
+                    val downloaded = MediaStringUtil.convertFileSizeByteCount(bytesDownloaded)
+                    val total = MediaStringUtil.convertFileSizeByteCount(totalBytes)
+                    val text = context.getString(
+                        R.string.stream_ui_message_list_attachment_downloading,
+                        downloaded,
+                        total,
+                    )
+                    sb.view.post { sb.setText(text) }
+                }
+            },
+        )
+            .onSuccess { uri ->
+                snackbar?.dismiss()
+                openFileUri(context, uri, attachment)
+            }
+            .onError { error ->
+                snackbar?.dismiss()
+                logger.e { "[downloadWithProgress] Failed to download file: ${error.message}" }
+                val msg = context.getString(
+                    R.string.stream_ui_message_list_attachment_download_failed,
+                    attachment.name ?: "",
+                )
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun openFileUri(context: Context, uri: android.net.Uri, attachment: Attachment) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, attachment.mimeType)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            context.startActivity(Intent.createChooser(intent, attachment.name))
+        } catch (e: ActivityNotFoundException) {
+            logger.e(e) { "[openFileUri] No app available to open file." }
+            Toast.makeText(context, R.string.stream_ui_message_list_attachment_no_app, Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun Context.findLifecycleOwner(): LifecycleOwner? {
         var ctx: Context? = this
         while (ctx != null) {
             if (ctx is LifecycleOwner) return ctx
+            ctx = (ctx as? ContextWrapper)?.baseContext
+        }
+        return null
+    }
+
+    private fun Context.findActivity(): Activity? {
+        var ctx: Context? = this
+        while (ctx != null) {
+            if (ctx is Activity) return ctx
             ctx = (ctx as? ContextWrapper)?.baseContext
         }
         return null
