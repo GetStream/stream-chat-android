@@ -41,10 +41,13 @@ import java.io.InputStream
 public class StreamShareFileManager(
     private val fileManager: StreamFileManager = StreamFileManager(),
     private val uriProvider: ShareableUriProvider = ShareableUriProvider(),
+    private val config: ShareCacheConfig = ShareCacheConfig(),
 ) {
 
     /**
      * Writes a bitmap to a shareable file in the cache directory and returns a shareable URI.
+     *
+     * Uses a fixed filename so that only the most recent shared bitmap is kept in cache.
      *
      * @param context The Android context.
      * @param bitmap The bitmap to write.
@@ -55,14 +58,13 @@ public class StreamShareFileManager(
         context: Context,
         bitmap: Bitmap,
     ): Result<Uri> = withContext(DispatcherProvider.IO) {
-        val fileName = "shared_image_${System.currentTimeMillis()}.png"
         try {
             val byteArrayOutputStream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.PNG, BITMAP_QUALITY, byteArrayOutputStream)
+            bitmap.compress(Bitmap.CompressFormat.PNG, config.bitmapQuality, byteArrayOutputStream)
             val byteArray = byteArrayOutputStream.toByteArray()
             val inputStream = ByteArrayInputStream(byteArray)
             fileManager
-                .writeFileInCache(context, fileName, inputStream)
+                .writeFileInCache(context, config.bitmapShareFilename, inputStream)
                 .map { file -> getUriForFile(context, file) }
         } catch (e: Exception) {
             Result.Failure(Error.ThrowableError("Could not write bitmap.", e))
@@ -86,12 +88,11 @@ public class StreamShareFileManager(
         onProgress: ((bytesDownloaded: Long, totalBytes: Long) -> Unit)? = null,
         chatClient: () -> ChatClient = { ChatClient.instance() },
     ): Result<Uri> = withContext(DispatcherProvider.IO) {
-        // Check if already cached
         val cachedFile = getCachedFileForAttachment(context, attachment)
         if (cachedFile is Result.Success) {
             return@withContext Result.Success(getUriForFile(context, cachedFile.value))
         }
-        // Not cached -> download and cache
+        fileManager.evictCacheFiles(context, config.cacheFilePrefix, config.cacheTtlMs, config.maxCacheSizeBytes)
         val url = attachment.assetUrl ?: attachment.imageUrl
             ?: return@withContext Result.Failure(Error.GenericError(message = "File URL cannot be null."))
 
@@ -130,29 +131,47 @@ public class StreamShareFileManager(
     private suspend fun getCachedFileForAttachment(context: Context, attachment: Attachment): Result<File> {
         val fileName = getCacheFileName(attachment)
         return fileManager.getFileFromCache(context, fileName).flatMap { file ->
-            // Ensure attachment was really cached
-            if (file.exists() && file.length() == attachment.fileSize.toLong()) {
+            if (isCachedFileValid(file, attachment.fileSize.toLong())) {
                 Result.Success(file)
             } else {
-                Result.Failure(Error.GenericError("Cached file is invalid or incomplete."))
+                Result.Failure(Error.GenericError("Cached file is invalid, incomplete, or expired."))
             }
         }
     }
 
+    private fun isCachedFileValid(file: File, expectedSize: Long): Boolean =
+        file.exists() &&
+            file.length() == expectedSize &&
+            System.currentTimeMillis() - file.lastModified() < config.cacheTtlMs
+
     private fun getCacheFileName(attachment: Attachment): String {
         val url = attachment.assetUrl ?: attachment.imageUrl
         val hashCode = url?.hashCode() ?: 0
-        return "${CACHE_FILE_PREFIX}${hashCode}${attachment.name}"
+        return "${config.cacheFilePrefix}${hashCode}${attachment.name}"
     }
 
     private fun getUriForFile(context: Context, file: File): Uri =
         uriProvider.getUriForFile(context, file)
-
-    private companion object {
-        private const val CACHE_FILE_PREFIX = "TMP"
-        private const val BITMAP_QUALITY = 90
-    }
 }
+
+/**
+ * Configuration for the share file cache.
+ *
+ * @param cacheFilePrefix Filename prefix for cached attachment files.
+ * @param bitmapShareFilename Fixed filename used for shared bitmaps.
+ * @param bitmapQuality Compression quality (0-100) for shared bitmap PNGs (default: 90).
+ * @param cacheTtlMs Maximum age in milliseconds before a cached file is considered expired (default: 5 min.).
+ * @param maxCacheSizeBytes Soft size cap in bytes for all cached attachment files (default: 25MB).
+ */
+@Suppress("MagicNumber")
+@InternalStreamChatApi
+public data class ShareCacheConfig(
+    val cacheFilePrefix: String = "TMP",
+    val bitmapShareFilename: String = "shared_image.png",
+    val bitmapQuality: Int = 90,
+    val cacheTtlMs: Long = 5 * 60 * 1000L,
+    val maxCacheSizeBytes: Long = 25L * 1024 * 1024,
+)
 
 /**
  * An [InputStream] wrapper that reports read progress via [onProgress].
