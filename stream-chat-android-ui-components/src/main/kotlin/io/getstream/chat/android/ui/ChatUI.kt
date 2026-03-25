@@ -73,31 +73,56 @@ public object ChatUI {
 
     /**
      * Provides a custom implementation for loading images.
+     *
+     * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
+     * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to provide headers and transform URLs
+     * for all image, file, and download requests.
      */
+    @Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
     @JvmStatic
     public var imageAssetTransformer: ImageAssetTransformer by StreamImageLoader.instance()::imageAssetTransformer
 
     /**
      * Generates a download URI for the given attachment.
+     *
+     * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
+     * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to provide headers and transform URLs
+     * for all image, file, and download requests.
      */
+    @Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
     @JvmStatic
     public var downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator = DefaultDownloadAttachmentUriGenerator
 
     /**
      * Intercepts and modifies the download request before it is enqueued.
+     *
+     * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
+     * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to provide headers and transform URLs
+     * for all image, file, and download requests.
      */
+    @Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
     @JvmStatic
     public var downloadRequestInterceptor: DownloadRequestInterceptor = DownloadRequestInterceptor { }
 
     /**
      * Provides HTTP headers for image loading requests.
+     *
+     * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
+     * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to provide headers and transform URLs
+     * for all image, file, and download requests.
      */
+    @Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
     @JvmStatic
     public var imageHeadersProvider: ImageHeadersProvider by StreamImageLoader.instance()::imageHeadersProvider
 
     /**
      * Provides HTTP headers for video loading requests.
+     *
+     * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
+     * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to provide headers and transform URLs
+     * for all image, file, and download requests.
      */
+    @Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
     @JvmStatic
     public var videoHeadersProvider: VideoHeadersProvider = DefaultVideoHeadersProvider
 

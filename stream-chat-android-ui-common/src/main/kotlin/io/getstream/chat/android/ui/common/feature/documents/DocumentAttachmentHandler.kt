@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.common.feature.documents
 
 import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
@@ -68,8 +69,8 @@ public object DocumentAttachmentHandler {
     }
 
     private fun openWithExternalApp(context: Context, attachment: Attachment) {
-        val lifecycleOwner = context as? LifecycleOwner ?: run {
-            logger.e { "[openWithExternalApp] Context is not a LifecycleOwner. Cannot download file." }
+        val lifecycleOwner = context.findLifecycleOwner() ?: run {
+            logger.e { "[openWithExternalApp] Could not find a LifecycleOwner from Context. Cannot download file." }
             return
         }
 
@@ -98,5 +99,18 @@ public object DocumentAttachmentHandler {
                     Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                 }
         }
+    }
+
+    /**
+     * Walks the [Context] wrapper chain to find the underlying [LifecycleOwner].
+     * Handles [ContextThemeWrapper] and other [ContextWrapper] layers that may wrap an Activity.
+     */
+    private fun Context.findLifecycleOwner(): LifecycleOwner? {
+        var ctx: Context? = this
+        while (ctx != null) {
+            if (ctx is LifecycleOwner) return ctx
+            ctx = (ctx as? ContextWrapper)?.baseContext
+        }
+        return null
     }
 }

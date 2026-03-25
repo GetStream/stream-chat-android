@@ -24,10 +24,13 @@ package io.getstream.chat.android.ui.common.helper
  * Implementations are always invoked on [kotlinx.coroutines.Dispatchers.IO], so blocking
  * calls are safe.
  *
- * Prefer this over [ImageHeadersProvider] when integrating with [ChatTheme].
+ * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
+ * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to provide headers and transform URLs
+ * for all image, file, and download requests.
  *
  * @see ImageHeadersProvider
  */
+@Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
 public interface AsyncImageHeadersProvider {
 
     /**
