@@ -134,8 +134,20 @@ internal fun RowScope.DefaultPinnedMessageItemCenterContent(
             .wrapContentHeight(),
         verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
     ) {
+        val formatter = ChatTheme.messagePreviewFormatter
+        val title = remember(message, currentUser, formatter) {
+            formatter.formatMessageTitle(message, currentUser)
+        }
+        val preview = remember(message, currentUser, formatter) {
+            formatter.formatMessagePreview(
+                message = message,
+                currentUser = currentUser,
+                isDirectMessaging = false,
+                includeSenderName = false,
+            )
+        }
         Text(
-            text = ChatTheme.messagePreviewFormatter.formatMessageTitle(message, currentUser),
+            text = title,
             style = ChatTheme.typography.bodyDefault,
             color = ChatTheme.colors.textPrimary,
             maxLines = 1,
@@ -143,12 +155,7 @@ internal fun RowScope.DefaultPinnedMessageItemCenterContent(
         )
 
         Text(
-            text = ChatTheme.messagePreviewFormatter.formatMessagePreview(
-                message = message,
-                currentUser = currentUser,
-                isDirectMessaging = false,
-                includeSenderName = false,
-            ),
+            text = preview,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = ChatTheme.typography.captionDefault,
