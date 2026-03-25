@@ -30,7 +30,10 @@ import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineExtension
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.invoking
@@ -44,6 +47,7 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.reflect.KClass
 
 public class DependencyResolverTest {
@@ -127,6 +131,22 @@ public class DependencyResolverTest {
 
         pResult `should be` expectedDependency
         fResult `should be` expectedDependency
+    }
+
+    @Test
+    public fun `Should resolve dependency when plugins are cleared during resolution`(): TestResult = runTest {
+        val expectedDependency = SomeDependency()
+        val fixture = Fixture()
+            .with(PluginDependency(mapOf(SomeDependency::class to expectedDependency)))
+
+        val client = fixture.get()
+
+        val racingFlow = DisconnectSimulatingStateFlow(client)
+        whenever(fixture.mutableClientState.initializationState).thenReturn(racingFlow)
+
+        val result = client.resolveDependency<PluginDependency, SomeDependency>()
+
+        result `should be` expectedDependency
     }
 
     public companion object {
@@ -219,4 +239,28 @@ public class DependencyResolverTest {
     }
 
     private class SomeDependency
+
+    private class DisconnectSimulatingStateFlow(
+        private val client: ChatClient,
+    ) : StateFlow<InitializationState> {
+
+        private val disconnected = AtomicBoolean(false)
+
+        override val value: InitializationState
+            get() {
+                if (disconnected.compareAndSet(false, true)) {
+                    client.plugins = emptyList()
+                    return InitializationState.COMPLETE
+                }
+                return InitializationState.NOT_INITIALIZED
+            }
+
+        override val replayCache: List<InitializationState>
+            get() = listOf(InitializationState.COMPLETE)
+
+        override suspend fun collect(collector: FlowCollector<InitializationState>): Nothing {
+            collector.emit(InitializationState.COMPLETE)
+            awaitCancellation()
+        }
+    }
 }

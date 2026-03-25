@@ -42,6 +42,7 @@
     <string name="stream_ui_message_composer_permissions_files_allow_more_visual_media">Allow access to more visual media</string>
 
     <!-- Attachment system picker -->
+    <string name="stream_ui_attachment_picker_error_unresolvable_attachments">Some files could not be loaded and were skipped.</string>
     <string name="stream_ui_message_composer_attachment_picker_files">Files</string>
     <string name="stream_ui_message_composer_attachment_picker_media">Media</string>
     <string name="stream_ui_message_composer_attachment_picker_capture">Capture</string>
