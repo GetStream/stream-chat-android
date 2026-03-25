@@ -37,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -71,6 +72,7 @@ import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
  * @param modifier Modifier for styling.
+ * @param showFileSize Whether to show the file size or not.
  * @param onItemClick Lambda called when an item gets clicked.
  */
 @OptIn(ExperimentalFoundationApi::class)
@@ -151,7 +153,15 @@ public fun FileAttachmentItem(
         )
         FileAttachmentDescription(
             attachment = attachment,
-            isMine = isMine,
+            style = FileAttachmentStyle(
+                titleTextStyle = ChatTheme.typography.captionEmphasis,
+                titleColor = ChatTheme.colors.textPrimary,
+                fileSizeTextStyle = ChatTheme.typography.metadataDefault,
+                fileSizeTextColor = when (isMine) {
+                    true -> ChatTheme.colors.chatTextOutgoing
+                    false -> ChatTheme.colors.chatTextIncoming
+                },
+            ),
             showFileSize = showFileSize,
         )
     }
@@ -159,24 +169,22 @@ public fun FileAttachmentItem(
 
 private val fileAttachmentShape = RoundedCornerShape(StreamTokens.radiusLg)
 
+internal data class FileAttachmentStyle(
+    val titleTextStyle: TextStyle,
+    val titleColor: Color,
+    val fileSizeTextStyle: TextStyle,
+    val fileSizeTextColor: Color,
+)
+
 /**
- *  Displays information about the attachment such as
- *  the attachment title and its size in bytes.
- *
- *  @param attachment The attachment for which the information is displayed.
+ *  Displays information about the attachment such as the attachment title and its file size in bytes.
  */
 @Composable
 internal fun RowScope.FileAttachmentDescription(
     attachment: Attachment,
-    isMine: Boolean,
+    style: FileAttachmentStyle,
     showFileSize: (Attachment) -> Boolean,
 ) {
-    val typography = ChatTheme.typography
-    val textColor = when (isMine) {
-        true -> ChatTheme.colors.chatTextOutgoing
-        false -> ChatTheme.colors.chatTextIncoming
-    }
-
     Column(
         modifier = Modifier
             .weight(1f)
@@ -187,8 +195,8 @@ internal fun RowScope.FileAttachmentDescription(
         Text(
             modifier = Modifier.testTag("Stream_FileAttachmentName"),
             text = attachment.getDisplayableName() ?: "",
-            style = typography.captionEmphasis,
-            color = textColor,
+            style = style.titleTextStyle,
+            color = style.titleColor,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
         )
@@ -197,7 +205,7 @@ internal fun RowScope.FileAttachmentDescription(
         if (uploadState is UploadState.InProgress) {
             FileUploadProgressIndicator(
                 state = uploadState,
-                textColor = textColor,
+                textColor = style.fileSizeTextColor,
             )
         } else if (showFileSize(attachment)) {
             Text(
@@ -205,8 +213,8 @@ internal fun RowScope.FileAttachmentDescription(
                     .padding(top = StreamTokens.spacing2xs)
                     .testTag("Stream_FileAttachmentSize"),
                 text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong()),
-                style = typography.metadataDefault,
-                color = textColor,
+                style = style.fileSizeTextStyle,
+                color = style.fileSizeTextColor,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )

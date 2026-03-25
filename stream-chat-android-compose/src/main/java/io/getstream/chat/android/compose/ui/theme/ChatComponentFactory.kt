@@ -2626,14 +2626,14 @@ public interface ChatComponentFactory {
             title = {
                 Text(
                     text = stringResource(R.string.stream_ui_channel_attachments_files_title),
-                    style = ChatTheme.typography.headingMedium,
+                    style = ChatTheme.typography.headingSmall,
                     maxLines = 1,
                 )
             },
             navigationIcon = { ChannelInfoNavigationIcon(onClick = params.onNavigationIconClick) },
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = ChatTheme.colors.backgroundCoreElevation1,
-                titleContentColor = ChatTheme.colors.textPrimary,
+                titleContentColor = ChatTheme.colors.textSecondary,
             ),
         )
     }
@@ -2688,11 +2688,14 @@ public interface ChatComponentFactory {
         Text(
             modifier = params.modifier
                 .fillMaxWidth()
-                .background(ChatTheme.colors.borderCoreDefault.copy(alpha = 0.8f))
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(start = StreamTokens.spacing2xs)
+                .background(ChatTheme.colors.backgroundCoreSurfaceSubtle)
+                .topBorder(color = ChatTheme.colors.borderCoreSubtle)
+                .bottomBorder(color = ChatTheme.colors.borderCoreSubtle)
+                .padding(horizontal = StreamTokens.spacingMd, vertical = StreamTokens.spacingXs),
             text = params.label,
-            style = ChatTheme.typography.bodyEmphasis,
-            color = ChatTheme.colors.textPrimary,
+            style = ChatTheme.typography.captionEmphasis,
+            color = ChatTheme.colors.chatTextSystem,
         )
     }
 
