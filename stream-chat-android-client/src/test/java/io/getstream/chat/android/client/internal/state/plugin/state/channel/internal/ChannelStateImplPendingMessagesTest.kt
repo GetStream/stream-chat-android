@@ -109,22 +109,6 @@ internal class ChannelStateImplPendingMessagesTest : ChannelStateImplTestBase() 
         }
 
         @Test
-        fun `multiple pending messages are merged in sorted order`() {
-            // Given
-            enablePendingMessages()
-            val r1 = createMessage(1, timestamp = 1000L)
-            val r2 = createMessage(4, timestamp = 4000L)
-            val p1 = createMessage(2, timestamp = 2000L)
-            val p2 = createMessage(3, timestamp = 3000L)
-            channelState.setMessages(listOf(r1, r2))
-            // When
-            channelState.setPendingMessages(listOf(p2, p1)) // intentionally reversed
-            // Then
-            val ids = channelState.messages.value.map { it.id }
-            assertEquals(listOf(r1.id, p1.id, p2.id, r2.id), ids)
-        }
-
-        @Test
         fun `messages flow contains only regular messages when pending list is empty`() {
             // Given
             enablePendingMessages()
@@ -139,74 +123,65 @@ internal class ChannelStateImplPendingMessagesTest : ChannelStateImplTestBase() 
 
     // endregion
 
-    // region date range filtering via ChannelStateImpl delegation
+    // region date range filtering via paginationManager state
 
     @Nested
     inner class DateRangeFiltering {
 
         @Test
         fun `pending message below oldest loaded date is not shown`() {
-            // Given
             enablePendingMessages()
             val pending = createMessage(1, timestamp = 500L)
             val floor = randomMessage(id = "floor", createdAt = Date(1000L), createdLocallyAt = null)
             channelState.setPendingMessages(listOf(pending))
-            // When — floor = 1000, pending at 500 is below it
-            channelState.advanceOldestLoadedDate(listOf(floor))
-            // Then
+            channelState.paginationManager.setOldestMessage(floor)
             assertFalse(channelState.messages.value.any { it.id == pending.id })
         }
 
         @Test
         fun `pending message above newest loaded date ceiling is not shown`() {
-            // Given
             enablePendingMessages()
             val pending = createMessage(1, timestamp = 3000L)
+            val ceiling = randomMessage(id = "ceiling", createdAt = Date(2000L), createdLocallyAt = null)
             channelState.setPendingMessages(listOf(pending))
-            // When — ceiling = 2000, pending at 3000 is above it
-            channelState.setNewestLoadedDate(Date(2000L))
-            // Then
+            channelState.paginationManager.setNewestMessage(ceiling)
             assertFalse(channelState.messages.value.any { it.id == pending.id })
         }
 
         @Test
         fun `pending message within both floor and ceiling is shown`() {
-            // Given
             enablePendingMessages()
             val pending = createMessage(1, timestamp = 2000L)
-            val floorMsg = randomMessage(id = "f", createdAt = Date(1000L), createdLocallyAt = null)
+            val floor = randomMessage(id = "f", createdAt = Date(1000L), createdLocallyAt = null)
+            val ceiling = randomMessage(id = "c", createdAt = Date(3000L), createdLocallyAt = null)
             channelState.setPendingMessages(listOf(pending))
-            channelState.advanceOldestLoadedDate(listOf(floorMsg)) // floor = 1000
-            channelState.setNewestLoadedDate(Date(3000L)) // ceiling = 3000
-            // Then
+            channelState.paginationManager.setOldestMessage(floor)
+            channelState.paginationManager.setNewestMessage(ceiling)
             assertTrue(channelState.messages.value.any { it.id == pending.id })
         }
 
         @Test
-        fun `setNewestLoadedDate null removes ceiling and reveals previously hidden pending messages`() {
-            // Given
+        fun `removing ceiling reveals previously hidden pending messages`() {
             enablePendingMessages()
             val pending = createMessage(1, timestamp = 5000L)
+            val ceiling = randomMessage(id = "c", createdAt = Date(1000L), createdLocallyAt = null)
             channelState.setPendingMessages(listOf(pending))
-            channelState.setNewestLoadedDate(Date(1000L))
+            channelState.paginationManager.setNewestMessage(ceiling)
             assertFalse(channelState.messages.value.any { it.id == pending.id })
-            // When
-            channelState.setNewestLoadedDate(null)
-            // Then
+            channelState.paginationManager.setNewestMessage(null)
             assertTrue(channelState.messages.value.any { it.id == pending.id })
         }
 
         @Test
-        fun `advanceNewestLoadedDate advances ceiling to reveal newer pending messages`() {
-            // Given
+        fun `advancing ceiling reveals newer pending messages`() {
             enablePendingMessages()
             val pending = createMessage(1, timestamp = 3000L)
             channelState.setPendingMessages(listOf(pending))
-            channelState.advanceNewestLoadedDate(Date(2000L)) // hidden
+            val ceiling1 = randomMessage(id = "c", createdAt = Date(2000L), createdLocallyAt = null)
+            channelState.paginationManager.setNewestMessage(ceiling1)
             assertFalse(channelState.messages.value.any { it.id == pending.id })
-            // When — advance to 4000
-            channelState.advanceNewestLoadedDate(Date(4000L))
-            // Then
+            val ceiling2 = randomMessage(id = "c", createdAt = Date(4000L), createdLocallyAt = null)
+            channelState.paginationManager.setNewestMessage(ceiling2)
             assertTrue(channelState.messages.value.any { it.id == pending.id })
         }
     }

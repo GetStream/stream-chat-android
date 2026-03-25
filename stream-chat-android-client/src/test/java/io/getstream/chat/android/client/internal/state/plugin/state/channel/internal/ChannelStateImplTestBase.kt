@@ -17,6 +17,8 @@
 package io.getstream.chat.android.client.internal.state.plugin.state.channel.internal
 
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -86,6 +88,20 @@ internal abstract class ChannelStateImplTestBase {
             createMessage(i, timestamp = baseTimestamp + i * 1000L)
         }
     }
+
+    protected fun createLocalOnlyMessage(index: Int, timestamp: Long): Message =
+        randomMessage(
+            id = "local_only_$index",
+            cid = CID,
+            createdAt = Date(timestamp),
+            createdLocallyAt = null,
+            syncStatus = SyncStatus.COMPLETED,
+            type = MessageType.EPHEMERAL,
+            parentId = null,
+            showInChannel = true,
+            shadowed = false,
+            deletedAt = null,
+        )
 
     companion object {
         @JvmField

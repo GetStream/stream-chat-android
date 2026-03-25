@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MessagesPaginationManager
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.models.ChannelData
@@ -64,6 +65,8 @@ internal class ChannelLogicImplTest {
         val testCoroutines = TestCoroutineExtension()
     }
 
+    private lateinit var paginationManager: MessagesPaginationManager
+
     private lateinit var stateImpl: ChannelStateImpl
     private lateinit var repository: RepositoryFacade
     private lateinit var mutableGlobalState: MutableGlobalState
@@ -75,6 +78,7 @@ internal class ChannelLogicImplTest {
 
     @BeforeEach
     fun setUp() {
+        paginationManager = mock()
         stateImpl = mock()
         repository = mock()
         mutableGlobalState = mock()
@@ -86,6 +90,7 @@ internal class ChannelLogicImplTest {
         whenever(stateImpl.channelConfig).thenReturn(MutableStateFlow(Config()))
         whenever(stateImpl.messages).thenReturn(MutableStateFlow(emptyList()))
         whenever(stateImpl.insideSearch).thenReturn(MutableStateFlow(false))
+        whenever(stateImpl.paginationManager).thenReturn(paginationManager)
 
         // Stub global state
         whenever(mutableGlobalState.channelMutes).thenReturn(MutableStateFlow(emptyList()))
@@ -127,36 +132,13 @@ internal class ChannelLogicImplTest {
     inner class SetPaginationDirection {
 
         @Test
-        fun `should set loading older messages when filtering older messages`() {
+        fun `setPaginationDirection delegates to MessagesPaginationManager`() {
             // Given
             val query = QueryChannelRequest().withMessages(Pagination.LESS_THAN, "msgId", 30)
             // When
             sut.setPaginationDirection(query)
             // Then
-            verify(stateImpl).setLoadingOlderMessages(true)
-            verify(stateImpl, never()).setLoadingNewerMessages(true)
-        }
-
-        @Test
-        fun `should set loading newer messages when filtering newer messages`() {
-            // Given
-            val query = QueryChannelRequest().withMessages(Pagination.GREATER_THAN, "msgId", 30)
-            // When
-            sut.setPaginationDirection(query)
-            // Then
-            verify(stateImpl).setLoadingNewerMessages(true)
-            verify(stateImpl, never()).setLoadingOlderMessages(true)
-        }
-
-        @Test
-        fun `should not set any loading state when not filtering messages`() {
-            // Given
-            val query = QueryChannelRequest().withMessages(30)
-            // When
-            sut.setPaginationDirection(query)
-            // Then
-            verify(stateImpl, never()).setLoadingOlderMessages(true)
-            verify(stateImpl, never()).setLoadingNewerMessages(true)
+            verify(paginationManager).begin(query)
         }
     }
 
@@ -391,11 +373,11 @@ internal class ChannelLogicImplTest {
                 watcherCount = 0,
             )
             val query = QueryChannelRequest().withMessages(30)
+            val result = Result.Success(channel)
             // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
+            sut.onQueryChannelResult(query, result)
             // Then
-            verify(stateImpl).setLoadingOlderMessages(false)
-            verify(stateImpl).setLoadingNewerMessages(false)
+            verify(paginationManager).end(query, result)
         }
 
         @Test
@@ -420,122 +402,6 @@ internal class ChannelLogicImplTest {
             verify(stateImpl, never()).upsertMessages(any())
             verify(stateImpl, never()).clearCachedLatestMessages()
             verify(stateImpl, never()).setInsideSearch(any())
-        }
-    }
-
-    // endregion
-
-    // region onQueryChannelResult - Success - Pagination end
-
-    @Nested
-    inner class OnQueryChannelResultPaginationEnd {
-
-        @Test
-        fun `should set end of older messages when loading latest and end reached`() {
-            // Given (limit=30, messages.size=10, so endReached=true)
-            val messages = (1..10).map { randomMessage(id = "m$it") }
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            val query = QueryChannelRequest().withMessages(30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).setEndOfOlderMessages(true)
-            verify(stateImpl).setEndOfNewerMessages(true)
-        }
-
-        @Test
-        fun `should not set end of older messages when loading latest and not reached`() {
-            // Given (limit=10, messages.size=10, so endReached=false)
-            val messages = (1..10).map { randomMessage(id = "m$it") }
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            val query = QueryChannelRequest().withMessages(10)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).setEndOfOlderMessages(false)
-            verify(stateImpl).setEndOfNewerMessages(true)
-        }
-
-        @Test
-        fun `should set both ends to false when filtering around id`() {
-            // Given
-            val messages = (1..5).map { randomMessage(id = "m$it") }
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.AROUND_ID, "m3", 30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).setEndOfOlderMessages(false)
-            verify(stateImpl).setEndOfNewerMessages(false)
-        }
-
-        @Test
-        fun `should set end of older messages when filtering older and end reached`() {
-            // Given (limit=30, messages.size=5, so endReached=true)
-            val messages = (1..5).map { randomMessage(id = "m$it") }
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.LESS_THAN, "m10", 30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).setEndOfOlderMessages(true)
-        }
-
-        @Test
-        fun `should set end of newer messages when filtering newer and end reached`() {
-            // Given (limit=30, messages.size=5, so endReached=true)
-            val messages = (1..5).map { randomMessage(id = "m$it") }
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.GREATER_THAN, "m1", 30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).setEndOfNewerMessages(true)
         }
     }
 
@@ -618,7 +484,7 @@ internal class ChannelLogicImplTest {
 
         @Test
         fun `should upsert messages and trim oldest when loading newer messages`() {
-            // Given
+            // Given — limit=30, messages.size=30 → endReached=false
             val messages = (1..30).map { randomMessage(id = "m$it") }
             val channel = randomChannel(
                 id = "123",
@@ -633,7 +499,6 @@ internal class ChannelLogicImplTest {
             val query = QueryChannelRequest().withMessages(Pagination.GREATER_THAN, "m0", 30)
             // When
             sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
             verify(stateImpl).upsertMessages(messages)
             verify(stateImpl).trimOldestMessages()
         }
@@ -743,11 +608,11 @@ internal class ChannelLogicImplTest {
             // Given
             val error = Error.GenericError("Error")
             val query = QueryChannelRequest().withMessages(30)
+            val result = Result.Failure(error)
             // When
-            sut.onQueryChannelResult(query, Result.Failure(error))
+            sut.onQueryChannelResult(query, result)
             // Then
-            verify(stateImpl).setLoadingOlderMessages(false)
-            verify(stateImpl).setLoadingNewerMessages(false)
+            verify(paginationManager).end(query, result)
         }
     }
 
@@ -812,6 +677,39 @@ internal class ChannelLogicImplTest {
             // Then
             verify(repository).selectChannel(cid)
             verify(stateImpl).updateChannelData(any<(ChannelData?) -> ChannelData?>())
+        }
+
+        @Test
+        fun `should set oldest message and local-only messages on state after loading from database`() = runTest {
+            // Given
+            val dbChannel = randomChannel(id = "123", type = "messaging", messages = emptyList())
+            val olderMessage = randomMessage(id = "m1", createdAt = Date(1000))
+            val newerMessage = randomMessage(id = "m2", createdAt = Date(2000))
+            val messages = listOf(newerMessage, olderMessage)
+            val localOnlyMessages = listOf(randomMessage(id = "lo1"), randomMessage(id = "lo2"))
+            val query = QueryChannelRequest().withMessages(30)
+            whenever(repository.selectChannel(cid)).thenReturn(dbChannel)
+            whenever(repository.selectMessagesForChannel(any(), any())).thenReturn(messages)
+            whenever(repository.selectLocalOnlyMessagesForChannel(cid)).thenReturn(localOnlyMessages)
+            // When
+            sut.updateStateFromDatabase(query)
+            // Then
+            verify(paginationManager).setOldestMessage(olderMessage)
+            verify(repository).selectLocalOnlyMessagesForChannel(cid)
+            verify(stateImpl).setLocalOnlyMessages(localOnlyMessages)
+        }
+
+        @Test
+        fun `should set oldest message as null when no messages are loaded from database`() = runTest {
+            // Given
+            val dbChannel = randomChannel(id = "123", type = "messaging", messages = emptyList())
+            val query = QueryChannelRequest().withMessages(30)
+            whenever(repository.selectChannel(cid)).thenReturn(dbChannel)
+            whenever(repository.selectMessagesForChannel(any(), any())).thenReturn(emptyList())
+            // When
+            sut.updateStateFromDatabase(query)
+            // Then
+            verify(paginationManager).setOldestMessage(null)
         }
     }
 
@@ -1279,7 +1177,7 @@ internal class ChannelLogicImplTest {
             // When
             sut.updateDataForChannel(channel = channel, messageLimit = 30)
             // Then
-            verify(stateImpl).setEndOfOlderMessages(true)
+            verify(paginationManager).setEndOfOlderMessages(true)
         }
 
         @Test
@@ -1299,7 +1197,7 @@ internal class ChannelLogicImplTest {
             // When
             sut.updateDataForChannel(channel = channel, messageLimit = 2)
             // Then
-            verify(stateImpl).setEndOfOlderMessages(false)
+            verify(paginationManager).setEndOfOlderMessages(false)
         }
 
         @Test
@@ -1320,7 +1218,7 @@ internal class ChannelLogicImplTest {
             sut.updateDataForChannel(channel = channel, messageLimit = 0)
             // Then
             verify(stateImpl, never()).setMessages(any())
-            verify(stateImpl, never()).setEndOfOlderMessages(any())
+            verify(paginationManager, never()).setEndOfOlderMessages(any())
         }
 
         @Test
@@ -1341,26 +1239,6 @@ internal class ChannelLogicImplTest {
             sut.updateDataForChannel(channel = channel, messageLimit = 0)
             // Then
             verify(stateImpl).addPinnedMessages(pinnedMessages)
-        }
-
-        @Test
-        fun `should reset loading states`() = runTest {
-            // Given
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = emptyList(),
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-            )
-            // When
-            sut.updateDataForChannel(channel = channel, messageLimit = 0)
-            // Then
-            verify(stateImpl).setLoadingOlderMessages(false)
-            verify(stateImpl).setLoadingNewerMessages(false)
         }
 
         @Test
@@ -1404,7 +1282,7 @@ internal class ChannelLogicImplTest {
             verify(stateImpl).upsertMessages(listOf(incomingMsg))
             verify(stateImpl, never()).setMessages(any())
             verify(stateImpl, never()).upsertCachedLatestMessages(any())
-            verify(stateImpl, never()).setEndOfNewerMessages(any())
+            verify(paginationManager, never()).setEndOfNewerMessages(any())
         }
 
         @Test
@@ -1425,10 +1303,10 @@ internal class ChannelLogicImplTest {
             sut.updateDataForChannel(channel = channel, messageLimit = 30)
             verify(stateImpl).upsertCachedLatestMessages(listOf(incomingMsg))
             verify(stateImpl).setInsideSearch(true)
-            verify(stateImpl).setEndOfNewerMessages(false)
+            verify(paginationManager).setEndOfNewerMessages(false)
             verify(stateImpl, never()).setMessages(any())
             verify(stateImpl, never()).upsertMessages(any())
-            verify(stateImpl, never()).setEndOfOlderMessages(any())
+            verify(paginationManager, never()).setEndOfOlderMessages(any())
         }
 
         @Test
@@ -1452,7 +1330,7 @@ internal class ChannelLogicImplTest {
             verify(stateImpl, never()).setMessages(any())
             verify(stateImpl, never()).upsertMessages(any())
             verify(stateImpl, never()).setInsideSearch(any())
-            verify(stateImpl, never()).setEndOfNewerMessages(any())
+            verify(paginationManager, never()).setEndOfNewerMessages(any())
         }
 
         @Test
@@ -1504,166 +1382,6 @@ internal class ChannelLogicImplTest {
             sut.onQueryChannelResult(query, Result.Success(channel))
             // Then
             verify(stateImpl, atLeastOnce()).setPendingMessages(listOf(pendingMsg))
-        }
-
-        @Test
-        fun `should call setNewestLoadedDate with null when loading latest messages`() {
-            // Given
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = emptyList(),
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-                pendingMessages = emptyList(),
-            )
-            val query = QueryChannelRequest().withMessages(30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).setNewestLoadedDate(null)
-        }
-
-        @Test
-        fun `should call setNewestLoadedDate with newest message date when loading around id`() {
-            // Given
-            whenever(stateImpl.insideSearch).thenReturn(MutableStateFlow(false))
-            val newestDate = Date(2000L)
-            val messages = listOf(
-                randomMessage(id = "m1", createdAt = Date(1000L), createdLocallyAt = null),
-                randomMessage(id = "m2", createdAt = newestDate, createdLocallyAt = null),
-            )
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-                pendingMessages = emptyList(),
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.AROUND_ID, "m1", 30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).setNewestLoadedDate(newestDate)
-        }
-
-        @Test
-        fun `should call setNewestLoadedDate with null when paginating newer reaches the end`() {
-            // Given (limit=30, messages.size=5, so endReached=true)
-            val messages = (1..5).map { randomMessage(id = "m$it") }
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-                pendingMessages = emptyList(),
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.GREATER_THAN, "m0", 30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).setNewestLoadedDate(null)
-        }
-
-        @Test
-        fun `should call advanceNewestLoadedDate when paginating newer and not at end`() {
-            // Given (limit=5, messages.size=5, so endReached=false)
-            val newestDate = Date(5000L)
-            val messages = (1..5).map { i ->
-                randomMessage(id = "m$i", createdAt = Date(i * 1000L), createdLocallyAt = null)
-            }
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-                pendingMessages = emptyList(),
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.GREATER_THAN, "m0", 5)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).advanceNewestLoadedDate(newestDate)
-        }
-
-        @Test
-        fun `should call advanceOldestLoadedDate with channel messages when loading latest`() {
-            // Given
-            val messages = listOf(randomMessage(id = "m1"), randomMessage(id = "m2"))
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-                pendingMessages = emptyList(),
-            )
-            val query = QueryChannelRequest().withMessages(30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).advanceOldestLoadedDate(messages)
-        }
-
-        @Test
-        fun `should call advanceOldestLoadedDate with channel messages when loading older`() {
-            // Given
-            val messages = (1..10).map { randomMessage(id = "m$it") }
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-                pendingMessages = emptyList(),
-            )
-            val query = QueryChannelRequest().withMessages(Pagination.LESS_THAN, "m20", 30)
-            // When
-            sut.onQueryChannelResult(query, Result.Success(channel))
-            // Then
-            verify(stateImpl).advanceOldestLoadedDate(messages)
-        }
-
-        @Test
-        fun `should NOT call advanceOldestLoadedDate from updateDataForChannel`() = runTest {
-            // Given — updateDataForChannel is the QueryChannels path, not the paginated path
-            val messages = listOf(randomMessage(id = "m1"))
-            val channel = randomChannel(
-                id = "123",
-                type = "messaging",
-                messages = messages,
-                members = emptyList(),
-                watchers = emptyList(),
-                read = emptyList(),
-                memberCount = 0,
-                watcherCount = 0,
-                pendingMessages = emptyList(),
-            )
-            // When
-            sut.updateDataForChannel(channel = channel, messageLimit = 30)
-            // Then — floor must only be set from queryChannel pagination, never from updateDataForChannel
-            verify(stateImpl, never()).advanceOldestLoadedDate(any())
         }
     }
 
