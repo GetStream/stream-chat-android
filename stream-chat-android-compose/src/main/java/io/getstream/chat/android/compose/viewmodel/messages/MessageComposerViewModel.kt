@@ -33,6 +33,7 @@ import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
+import io.getstream.result.Result
 import io.getstream.result.call.Call
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -273,7 +274,8 @@ public class MessageComposerViewModel(
 
     public fun toggleRecordingPlayback(): Unit = messageComposerController.toggleRecordingPlayback()
 
-    public fun completeRecording(): Unit = messageComposerController.completeRecording()
+    public fun completeRecording(onComplete: ((Result<Attachment>) -> Unit)? = null): Unit =
+        messageComposerController.completeRecording(onComplete)
 
     public fun pauseRecording(): Unit = messageComposerController.pauseRecording()
 
