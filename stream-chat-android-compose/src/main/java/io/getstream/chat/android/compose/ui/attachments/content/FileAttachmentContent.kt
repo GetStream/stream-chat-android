@@ -151,16 +151,17 @@ public fun FileAttachmentItem(
             attachment = attachment,
             isMine = isMine,
         )
+        val textColor = when (isMine) {
+            true -> ChatTheme.colors.chatTextOutgoing
+            false -> ChatTheme.colors.chatTextIncoming
+        }
         FileAttachmentDescription(
             attachment = attachment,
             style = FileAttachmentStyle(
                 titleTextStyle = ChatTheme.typography.captionEmphasis,
-                titleColor = ChatTheme.colors.textPrimary,
+                titleColor = textColor,
                 fileSizeTextStyle = ChatTheme.typography.metadataDefault,
-                fileSizeTextColor = when (isMine) {
-                    true -> ChatTheme.colors.chatTextOutgoing
-                    false -> ChatTheme.colors.chatTextIncoming
-                },
+                fileSizeTextColor = textColor,
             ),
             showFileSize = showFileSize,
         )
