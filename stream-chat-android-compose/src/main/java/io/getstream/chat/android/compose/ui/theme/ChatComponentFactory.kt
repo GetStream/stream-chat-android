@@ -1116,8 +1116,6 @@ public interface ChatComponentFactory {
             message = params.message,
             currentUser = params.currentUser,
             replyMessage = params.replyMessage,
-            onLongItemClick = params.onLongItemClick,
-            onQuotedMessageClick = params.onQuotedMessageClick,
         )
     }
 
