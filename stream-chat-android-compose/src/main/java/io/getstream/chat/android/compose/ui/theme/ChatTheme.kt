@@ -291,6 +291,10 @@ private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
  * @param userPresence The user presence display configuration.
  * @param componentFactory Provide to customize the stateless components that are used throughout the UI
  * @param attachmentFactories Attachment factories that we provide.
+ * @param useDocumentGView Whether to use Google Docs Viewer (gview) for document attachments. When `true` (default),
+ * documents are rendered via the legacy [AttachmentDocumentActivity] which loads them through Google Docs Viewer.
+ * When `false`, text-based files (TXT, HTML) are rendered in-app and other file types are downloaded and opened with an
+ * external application.
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
  * @param quotedAttachmentFactories Quoted attachment factories that we provide.
  * @param reactionIconFactory Used to create an icon [Painter] for the given reaction type.
@@ -359,8 +363,9 @@ public fun ChatTheme(
     componentFactory: ChatComponentFactory = DefaultChatComponentFactory(),
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaults(),
     messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
+    useDocumentGView: Boolean = true,
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
-        AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
+        AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current, useDocumentGView),
     quotedAttachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultQuotedFactories(),
     reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
     reactionPushEmojiFactory: ReactionPushEmojiFactory = ReactionPushEmojiFactory.defaultFactory(),

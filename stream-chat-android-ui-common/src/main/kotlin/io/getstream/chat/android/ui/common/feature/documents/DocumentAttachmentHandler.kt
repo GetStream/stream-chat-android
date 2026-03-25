@@ -41,7 +41,8 @@ import kotlinx.coroutines.launch
  * All other document types (PDF, Office formats, etc.) are downloaded via [StreamShareFileManager]
  * and opened with an external application.
  *
- * For files larger than [SMALL_FILE_THRESHOLD], a Snackbar with download progress is shown.
+ * For files larger than 2 MB, a Snackbar with download progress is shown.
+ * Smaller files are downloaded silently.
  */
 @InternalStreamChatApi
 public object DocumentAttachmentHandler {

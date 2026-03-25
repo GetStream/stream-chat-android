@@ -280,6 +280,12 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
 /**
  * Downloads the selected attachment to the "Download" folder in the public external storage directory.
  *
+ * If a [CDN][io.getstream.chat.android.client.cdn.CDN] is configured on this [ChatClient], the download URL
+ * and headers are transformed via [CDN.imageRequest][io.getstream.chat.android.client.cdn.CDN.imageRequest] (for
+ * images) or [CDN.fileRequest][io.getstream.chat.android.client.cdn.CDN.fileRequest] (for other files) before
+ * the download is enqueued. CDN transformations are applied after [generateDownloadUri] and before
+ * [interceptRequest], so custom interceptors can override CDN headers.
+ *
  * @param context The context used to access the [DownloadManager].
  * @param attachment The attachment to download.
  * @param generateDownloadUri The function that generates the download URI for the attachment.

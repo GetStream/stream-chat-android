@@ -113,6 +113,7 @@ import java.util.concurrent.TimeUnit
  * logic.
  * @param shareFileDownloadRequestInterceptor Optional interceptor to customize file download requests done for the
  * purpose of sharing the file.
+ * @param cdn Optional [CDN] implementation for transforming file download URLs and injecting headers.
  * @param tokenManager Manager that provides and refreshes auth tokens for authenticated requests.
  * @param customOkHttpClient Optional base [OkHttpClient] to reuse threads/connection pools and customize networking.
  * @param clientDebugger Optional hooks for debugging client state, sockets, and network operations.

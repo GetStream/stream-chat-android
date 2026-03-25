@@ -243,6 +243,16 @@ public object ChatUI {
     public var draftMessagesEnabled: Boolean = false
 
     /**
+     * Whether to use Google Docs Viewer (gview) for document attachments.
+     *
+     * When `true` (default), documents are rendered via the legacy [AttachmentDocumentActivity]
+     * which loads them through Google Docs Viewer. When `false`, text-based files (TXT, HTML)
+     * are rendered in-app and other file types are downloaded and opened with an external application.
+     */
+    @JvmStatic
+    public var useDocumentGView: Boolean = true
+
+    /**
      * Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,
      * set [StreamCdnImageResizing.imageResizingEnabled] to true if you wish to enable resizing images. Note that
      * resizing applies only to images hosted on Stream's CDN which contain the original width (ow) and height (oh)
