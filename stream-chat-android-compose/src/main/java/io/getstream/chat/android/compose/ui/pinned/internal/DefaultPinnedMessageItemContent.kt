@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.messages.preview.internal
+package io.getstream.chat.android.compose.ui.pinned.internal
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -34,9 +34,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.ui.components.Timestamp
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
@@ -44,50 +43,54 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 
 /**
- * Composable which represents a preview of a given message. It displays info about the channel in which it was typed,
- * and a short preview of the message text.
+ * Composable which represents a pinned message item. It displays the sender, a short preview of the message text,
+ * and the timestamp.
  *
- * @param message The [Message] to show a preview of.
+ * @param message The [Message] to show.
  * @param currentUser The currently logged in [User], used for message formatting.
- * @param onMessagePreviewClick Action to be executed when the item is clicked on.
+ * @param onPinnedMessageClick Action to be executed when the item is clicked on.
  * @param modifier The [Modifier] for external styling.
- * @param leadingContent Customizable composable function that represents the leading content of a message preview,
+ * @param leadingContent Customizable composable function that represents the leading content of a pinned message item,
  * usually the avatar that holds an image of the user that sent the message.
- * @param centerContent Customizable composable function that represents the center content of a message preview,
+ * @param centerContent Customizable composable function that represents the center content of a pinned message item,
  * usually holding information about the message and who and where it was sent.
- * @param trailingContent Customizable composable function that represents the trailing content of a message preview,
- * usually information about the date where the message was sent.
+ * @param trailingContent Customizable composable function that represents the trailing content of a pinned message
+ * item, usually information about the date where the message was sent.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun MessagePreviewItem(
+internal fun PinnedMessageItemContent(
     message: Message,
     currentUser: User?,
-    onMessagePreviewClick: (Message) -> Unit,
+    onPinnedMessageClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     leadingContent: @Composable RowScope.(Message) -> Unit = {
-        DefaultMessagePreviewItemLeadingContent(it, currentUser)
+        DefaultPinnedMessageItemLeadingContent(it)
     },
     centerContent: @Composable RowScope.(Message) -> Unit = {
-        DefaultMessagePreviewItemCenterContent(it, currentUser)
+        DefaultPinnedMessageItemCenterContent(it, currentUser)
     },
     trailingContent: @Composable RowScope.(Message) -> Unit = {
-        DefaultMessagePreviewItemTrailingContent(it)
+        DefaultPinnedMessageItemTrailingContent(it)
     },
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
+            .padding(horizontal = StreamTokens.spacing2xs)
             .combinedClickable(
-                onClick = { onMessagePreviewClick(message) },
+                onClick = { onPinnedMessageClick(message) },
                 indication = ripple(),
                 interactionSource = remember { MutableInteractionSource() },
             ),
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(StreamTokens.spacingSm),
+            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
+            verticalAlignment = Alignment.Top,
         ) {
             leadingContent(message)
             centerContent(message)
@@ -97,89 +100,77 @@ internal fun MessagePreviewItem(
 }
 
 /**
- * Default leading content for a message preview. Shows an avatar for the user which sent the message.
+ * Default leading content for a pinned message item. Shows an avatar for the user which sent the message.
  *
  * @param message The [Message] for which the leading content is shown.
- * @param currentUser The currently logged in user.
  */
 @Composable
-internal fun DefaultMessagePreviewItemLeadingContent(message: Message, currentUser: User?) {
+internal fun DefaultPinnedMessageItemLeadingContent(message: Message) {
     ChatTheme.componentFactory.UserAvatar(
         params = UserAvatarParams(
             user = message.user,
-            modifier = Modifier
-                .padding(
-                    start = StreamTokens.spacingXs,
-                    end = 4.dp,
-                    top = StreamTokens.spacingSm,
-                    bottom = StreamTokens.spacingSm,
-                )
-                .size(40.dp),
-            showIndicator = true,
+            modifier = Modifier.size(AvatarSize.Large),
+            showIndicator = false,
             showBorder = false,
         ),
     )
 }
 
 /**
- * Default center content for a message preview. Shows info about the channel in which the message was sent, and a short
+ * Default center content for a pinned message item. Shows the sender name as a title and a short
  * preview of the message text.
  *
  * @param message The [Message] for which the center content is shown.
  * @param currentUser The currently logged in [User], used for message formatting.
  */
 @Composable
-internal fun RowScope.DefaultMessagePreviewItemCenterContent(
+internal fun RowScope.DefaultPinnedMessageItemCenterContent(
     message: Message,
     currentUser: User?,
 ) {
     Column(
         modifier = Modifier
-            .padding(start = 4.dp, end = 4.dp)
             .weight(1f)
             .wrapContentHeight(),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
     ) {
+        val formatter = ChatTheme.messagePreviewFormatter
+        val title = remember(message, currentUser, formatter) {
+            formatter.formatMessageTitle(message, currentUser)
+        }
+        val preview = remember(message, currentUser, formatter) {
+            formatter.formatMessagePreview(
+                message = message,
+                currentUser = currentUser,
+                isDirectMessaging = false,
+                includeSenderName = false,
+            )
+        }
         Text(
-            text = ChatTheme.messagePreviewFormatter.formatMessageTitle(message),
-            style = ChatTheme.typography.bodyEmphasis,
-            fontSize = 16.sp,
+            text = title,
+            style = ChatTheme.typography.bodyDefault,
+            color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textPrimary,
         )
 
         Text(
-            text = ChatTheme.messagePreviewFormatter.formatMessagePreview(message, currentUser, false),
+            text = preview,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = ChatTheme.typography.bodyDefault,
-            color = ChatTheme.colors.textSecondary,
+            style = ChatTheme.typography.captionDefault,
+            color = ChatTheme.colors.textTertiary,
+            inlineContent = ChatTheme.messagePreviewIconFactory.createPreviewIcons(),
         )
     }
 }
 
 /**
- * Default leading trailing for a message preview. Shows the timestamp of the message.
+ * Default trailing content for a pinned message item. Shows the timestamp of the message.
  *
  * @param message The [Message] for which the trailing content is shown.
  */
 @Composable
-internal fun RowScope.DefaultMessagePreviewItemTrailingContent(message: Message) {
-    Column(
-        modifier = Modifier
-            .padding(
-                start = 4.dp,
-                end = StreamTokens.spacingXs,
-                top = StreamTokens.spacingSm,
-                bottom = StreamTokens.spacingSm,
-            )
-            .wrapContentHeight()
-            .align(Alignment.Bottom),
-        horizontalAlignment = Alignment.End,
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Timestamp(date = message.createdAt)
-        }
-    }
+internal fun DefaultPinnedMessageItemTrailingContent(message: Message) {
+    Timestamp(date = message.createdAt)
 }

@@ -50,7 +50,7 @@ public interface MessagePreviewFormatter {
      * @param message The message whose data is used to generate the preview title.
      * @return The formatted text representation of the preview title.
      */
-    public fun formatMessageTitle(message: Message): AnnotatedString
+    public fun formatMessageTitle(message: Message, currentUser: User?): AnnotatedString
 
     /**
      * Generates a preview text for the given message.
@@ -59,12 +59,14 @@ public interface MessagePreviewFormatter {
      * @param currentUser The currently logged in user.
      * @param isDirectMessaging Whether the channel is a direct message conversation.
      * Used to determine sender prefix behavior.
+     * @param includeSenderName Whether to include the sender name prefix in the preview.
      * @return The formatted text representation for the given message.
      */
     public fun formatMessagePreview(
         message: Message,
         currentUser: User?,
         isDirectMessaging: Boolean,
+        includeSenderName: Boolean = true,
     ): AnnotatedString
 
     /**
@@ -133,18 +135,23 @@ private class DefaultMessagePreviewFormatter(
      * @param message The message whose data is used to generate the preview title.
      * @return The formatted text representation of the preview title.
      */
-    override fun formatMessageTitle(message: Message): AnnotatedString {
+    override fun formatMessageTitle(message: Message, currentUser: User?): AnnotatedString {
         val channel = message.channelInfo
+        val senderName = if (message.user.id == currentUser?.id) {
+            context.getString(R.string.stream_compose_channel_list_you)
+        } else {
+            message.user.name
+        }
         return if (channel?.name != null && channel.memberCount > 2) {
             context.getString(
                 R.string.stream_compose_message_preview_sender,
-                message.user.name,
+                senderName,
                 channel.name,
             ).parseBoldTags()
         } else {
             buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append(message.user.name)
+                    append(senderName)
                 }
             }
         }
@@ -162,28 +169,27 @@ private class DefaultMessagePreviewFormatter(
         message: Message,
         currentUser: User?,
         isDirectMessaging: Boolean,
+        includeSenderName: Boolean,
     ): AnnotatedString {
         return buildAnnotatedString {
-            val displayedText = when (autoTranslationEnabled) {
-                true -> currentUser?.language?.let { userLanguage ->
-                    message.getTranslation(userLanguage).ifEmpty { message.text }
-                } ?: message.text
-
-                else -> message.text
-            }.trim()
-
+            val displayedText = resolveDisplayedText(message, currentUser)
+            val appendSender: ((Message) -> Unit)? = if (includeSenderName) {
+                { msg -> appendSenderName(msg, currentUser, senderNameTextStyle, isDirectMessaging) }
+            } else {
+                null
+            }
             when {
                 message.isSystem() -> append(displayedText)
 
                 message.isDeleted() -> {
-                    appendSenderName(message, currentUser, senderNameTextStyle, isDirectMessaging)
+                    appendSender?.invoke(message)
                     appendInlineContent(DefaultMessagePreviewIconFactory.DELETED)
                     append(SPACE)
                     append(context.getString(R.string.stream_compose_message_deleted_preview))
                 }
 
                 message.isPoll() -> {
-                    appendSenderName(message, currentUser, senderNameTextStyle, isDirectMessaging)
+                    appendSender?.invoke(message)
                     appendInlineContent(DefaultMessagePreviewIconFactory.POLL)
                     append(SPACE)
                     if (message.isPollClosed()) {
@@ -204,14 +210,14 @@ private class DefaultMessagePreviewFormatter(
                 }
 
                 message.hasAudioRecording() -> {
-                    appendSenderName(message, currentUser, senderNameTextStyle, isDirectMessaging)
+                    appendSender?.invoke(message)
                     appendInlineContent(DefaultMessagePreviewIconFactory.VOICE_MESSAGE)
                     append(SPACE)
                     append(context.getString(R.string.stream_compose_audio_recording_preview))
                 }
 
                 message.hasSharedLocation() -> {
-                    appendSenderName(message, currentUser, senderNameTextStyle, isDirectMessaging)
+                    appendSender?.invoke(message)
                     appendInlineContent(DefaultMessagePreviewIconFactory.LOCATION)
                     append(SPACE)
                     message.sharedLocation?.let { location ->
@@ -220,11 +226,18 @@ private class DefaultMessagePreviewFormatter(
                 }
 
                 else -> {
-                    appendSenderName(message, currentUser, senderNameTextStyle, isDirectMessaging)
+                    appendSender?.invoke(message)
                     appendTypedAttachmentPreview(message.attachments, displayedText)
                 }
             }
         }
+    }
+
+    private fun resolveDisplayedText(message: Message, currentUser: User?): String {
+        return when (autoTranslationEnabled) {
+            true -> currentUser?.language?.let(message::getTranslation)?.ifEmpty { message.text } ?: message.text
+            else -> message.text
+        }.trim()
     }
 
     /**
