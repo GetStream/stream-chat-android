@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.common.utils.extensions
 
 import android.content.Context
 import io.getstream.chat.android.models.MessageType
-import io.getstream.chat.android.models.User
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomInt
@@ -275,10 +274,14 @@ internal class ChannelExtensionsTests {
     @Test
     fun `Should return comma-separated member names when channel has no name and members within limit`() {
         // Given
-        val members = List(positiveRandomInt(4)) { randomUser() }
+        val members = listOf(
+            randomUser(name = "Alice"),
+            randomUser(name = "Bob"),
+            randomUser(name = "Charlie"),
+        )
         val channel = randomChannel(name = "", members = members.map { user -> randomMember(user = user) })
         val maxMembers = 4
-        val expectedName = members.sortedBy(User::name).joinToString(", ") { user -> user.name }
+        val expectedName = "Alice, Bob, Charlie"
 
         // When
         val displayName = channel.getDisplayName(context, currentUser, fallbackResource, maxMembers)
@@ -290,14 +293,16 @@ internal class ChannelExtensionsTests {
     @Test
     fun `Should return truncated member names with more indicator when channel has no name and members exceed limit`() {
         // Given
-        val members = List(5) { randomUser() }
-        val maxMembers = positiveRandomInt(4)
+        val members = listOf(
+            randomUser(name = "Alice"),
+            randomUser(name = "Bob"),
+            randomUser(name = "Charlie"),
+            randomUser(name = "Diana"),
+            randomUser(name = "Eve"),
+        )
+        val maxMembers = 3
         val channel = randomChannel(name = "", members = members.map { user -> randomMember(user = user) })
-        val expectedName = "${
-            members.sortedBy(User::name)
-                .take(maxMembers)
-                .joinToString(separator = ", ") { user -> user.name }
-        } +${members.size - maxMembers} more"
+        val expectedName = "Alice, Bob, Charlie +2 more"
 
         // When
         val displayName = channel.getDisplayName(context, currentUser, fallbackResource, maxMembers)
