@@ -57,10 +57,10 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
-import io.getstream.chat.android.compose.ui.theme.AddMembersBottomSheetParams
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
+import io.getstream.chat.android.compose.ui.theme.AddMembersBottomSheetParams
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -72,9 +72,9 @@ import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoMemberSectionP
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoTopBarParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
+import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.ui.util.bottomBorder
 import io.getstream.chat.android.compose.ui.util.clickable
-import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.compose.ui.util.topBorder
 import io.getstream.chat.android.compose.viewmodel.channel.AddMembersViewModel

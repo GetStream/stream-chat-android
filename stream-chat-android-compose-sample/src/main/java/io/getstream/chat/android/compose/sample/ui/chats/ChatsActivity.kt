@@ -753,6 +753,9 @@ private fun Context.showError(error: ChannelInfoViewEvent.Error) {
 
         ChannelInfoViewEvent.RemoveMemberError,
         -> R.string.stream_ui_channel_info_remove_member_error
+
+        ChannelInfoViewEvent.AddMembersError,
+        -> R.string.stream_ui_channel_info_add_members_error
     }
     Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
 }

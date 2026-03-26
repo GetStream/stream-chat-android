@@ -86,7 +86,7 @@ internal fun AddMembersBottomSheet(
     ModalBottomSheet(
         modifier = Modifier.statusBarsPadding(),
         sheetState = sheetState,
-        containerColor = ChatTheme.colors.backgroundElevationElevation1,
+        containerColor = ChatTheme.colors.backgroundCoreElevation1,
         onDismissRequest = onDismiss,
     ) {
         AddMembersBottomSheet(
