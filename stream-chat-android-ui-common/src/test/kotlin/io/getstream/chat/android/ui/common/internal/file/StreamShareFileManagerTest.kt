@@ -488,6 +488,93 @@ internal class StreamShareFileManagerTest {
         return bitmap
     }
 
+    @Test
+    fun `writeAttachmentToShareableFile onProgress receives incremental bytes`() = runTest {
+        // given
+        val content = "A".repeat(2048)
+        val attachment = randomAttachment(
+            assetUrl = "https://example.com/file.bin",
+            fileSize = content.length,
+            name = "file.bin",
+        )
+        val chatClient = mock<ChatClient>()
+        val responseBody = TestResponseBody(content)
+        whenever(fileManager.getFileFromCache(any(), any()))
+            .thenReturn(Result.Failure(Error.GenericError("Not cached")))
+        whenever(chatClient.downloadFile(any())) doReturn TestCall(Result.Success(responseBody))
+        whenever(fileManager.writeFileInCache(any(), any(), any()))
+            .thenAnswer { invocation ->
+                // Consume the stream to trigger onProgress callbacks
+                val inputStream = invocation.getArgument<java.io.InputStream>(2)
+                val buf = ByteArray(512)
+                while (inputStream.read(buf) != -1) { /* drain */ }
+                Result.Success(File("path/to/file.bin"))
+            }
+
+        val progressValues = mutableListOf<Pair<Long, Long>>()
+
+        // when
+        shareFileManager.writeAttachmentToShareableFile(
+            context = context,
+            attachment = attachment,
+            onProgress = { bytesRead, totalBytes -> progressValues.add(bytesRead to totalBytes) },
+            chatClient = { chatClient },
+        )
+
+        // then
+        Assert.assertTrue("onProgress should have been called", progressValues.isNotEmpty())
+        // Bytes should be monotonically increasing
+        for (i in 1 until progressValues.size) {
+            Assert.assertTrue(
+                "bytesRead should increase",
+                progressValues[i].first >= progressValues[i - 1].first,
+            )
+        }
+        // Last bytesRead should equal total content length
+        Assert.assertEquals(content.length.toLong(), progressValues.last().first)
+    }
+
+    @Test
+    fun `writeAttachmentToShareableFile onProgress receives correct totalBytes from attachment fileSize`() = runTest {
+        // given
+        val fileSize = 4096
+        val content = "B".repeat(fileSize)
+        val attachment = randomAttachment(
+            assetUrl = "https://example.com/file.bin",
+            fileSize = fileSize,
+            name = "file.bin",
+        )
+        val chatClient = mock<ChatClient>()
+        val responseBody = TestResponseBody(content)
+        whenever(fileManager.getFileFromCache(any(), any()))
+            .thenReturn(Result.Failure(Error.GenericError("Not cached")))
+        whenever(chatClient.downloadFile(any())) doReturn TestCall(Result.Success(responseBody))
+        whenever(fileManager.writeFileInCache(any(), any(), any()))
+            .thenAnswer { invocation ->
+                val inputStream = invocation.getArgument<java.io.InputStream>(2)
+                val buf = ByteArray(1024)
+                while (inputStream.read(buf) != -1) { /* drain */ }
+                Result.Success(File("path/to/file.bin"))
+            }
+
+        val progressValues = mutableListOf<Pair<Long, Long>>()
+
+        // when
+        shareFileManager.writeAttachmentToShareableFile(
+            context = context,
+            attachment = attachment,
+            onProgress = { bytesRead, totalBytes -> progressValues.add(bytesRead to totalBytes) },
+            chatClient = { chatClient },
+        )
+
+        // then
+        Assert.assertTrue("onProgress should have been called", progressValues.isNotEmpty())
+        // All totalBytes values should match the attachment's fileSize
+        progressValues.forEach { (_, totalBytes) ->
+            Assert.assertEquals(fileSize.toLong(), totalBytes)
+        }
+    }
+
     private class TestResponseBody(content: String) : ResponseBody() {
         private val buffer = Buffer().writeString(content, Charset.defaultCharset())
         override fun contentLength(): Long = buffer.size
