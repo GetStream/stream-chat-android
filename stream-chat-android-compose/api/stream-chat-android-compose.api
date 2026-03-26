@@ -833,8 +833,8 @@ public final class io/getstream/chat/android/compose/ui/channel/info/ChannelInfo
 	public static final fun buildDefaultMemberActions (Lio/getstream/chat/android/models/Member;Ljava/util/Set;ZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)Ljava/util/List;
 }
 
-public final class io/getstream/chat/android/compose/ui/channel/info/ComposableSingletons$AddMembersBottomSheetKt {
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/channel/info/ComposableSingletons$AddMembersBottomSheetKt;
+public final class io/getstream/chat/android/compose/ui/channel/info/ComposableSingletons$AddMembersScreenKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/channel/info/ComposableSingletons$AddMembersScreenKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
 	public static field lambda-10 Lkotlin/jvm/functions/Function2;
 	public static field lambda-2 Lkotlin/jvm/functions/Function2;
@@ -926,14 +926,16 @@ public final class io/getstream/chat/android/compose/ui/channel/info/ComposableS
 public final class io/getstream/chat/android/compose/ui/channel/info/ComposableSingletons$GroupChannelInfoScreenKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/channel/info/ComposableSingletons$GroupChannelInfoScreenKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
-	public static field lambda-2 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function3;
 	public static field lambda-3 Lkotlin/jvm/functions/Function2;
 	public static field lambda-4 Lkotlin/jvm/functions/Function2;
+	public static field lambda-5 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda-3$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-4$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-5$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/channel/info/DirectChannelInfoScreenKt {
@@ -2508,14 +2510,14 @@ public final class io/getstream/chat/android/compose/ui/pinned/PinnedMessageList
 	public static final fun PinnedMessageList (Lio/getstream/chat/android/compose/viewmodel/pinned/PinnedMessageListViewModel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
-public final class io/getstream/chat/android/compose/ui/theme/AddMembersBottomSheetParams {
+public final class io/getstream/chat/android/compose/ui/theme/AddMembersScreenParams {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/compose/viewmodel/channel/AddMembersViewModel;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)V
 	public final fun component1 ()Lio/getstream/chat/android/compose/viewmodel/channel/AddMembersViewModel;
 	public final fun component2 ()Lkotlin/jvm/functions/Function0;
 	public final fun component3 ()Lkotlin/jvm/functions/Function1;
-	public final fun copy (Lio/getstream/chat/android/compose/viewmodel/channel/AddMembersViewModel;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/compose/ui/theme/AddMembersBottomSheetParams;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/AddMembersBottomSheetParams;Lio/getstream/chat/android/compose/viewmodel/channel/AddMembersViewModel;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/AddMembersBottomSheetParams;
+	public final fun copy (Lio/getstream/chat/android/compose/viewmodel/channel/AddMembersViewModel;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/compose/ui/theme/AddMembersScreenParams;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/AddMembersScreenParams;Lio/getstream/chat/android/compose/viewmodel/channel/AddMembersViewModel;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/AddMembersScreenParams;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getOnConfirm ()Lkotlin/jvm/functions/Function1;
 	public final fun getOnDismiss ()Lkotlin/jvm/functions/Function0;
@@ -3526,7 +3528,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChannelSwipeAction
 }
 
 public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatComponentFactory {
-	public abstract fun AddMembersBottomSheet (Lio/getstream/chat/android/compose/ui/theme/AddMembersBottomSheetParams;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun AddMembersScreen (Lio/getstream/chat/android/compose/ui/theme/AddMembersScreenParams;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun AttachmentCameraPicker (Lio/getstream/chat/android/compose/ui/theme/AttachmentCameraPickerParams;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun AttachmentCommandPicker (Lio/getstream/chat/android/compose/ui/theme/AttachmentCommandPickerParams;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun AttachmentFilePicker (Lio/getstream/chat/android/compose/ui/theme/AttachmentFilePickerParams;Landroidx/compose/runtime/Composer;I)V
@@ -3714,7 +3716,7 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFactory$DefaultImpls {
-	public static fun AddMembersBottomSheet (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/AddMembersBottomSheetParams;Landroidx/compose/runtime/Composer;I)V
+	public static fun AddMembersScreen (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/AddMembersScreenParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun AttachmentCameraPicker (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/AttachmentCameraPickerParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun AttachmentCommandPicker (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/AttachmentCommandPickerParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun AttachmentFilePicker (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/AttachmentFilePickerParams;Landroidx/compose/runtime/Composer;I)V
@@ -3968,12 +3970,10 @@ public final class io/getstream/chat/android/compose/ui/theme/ComposableSingleto
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
 	public static field lambda-2 Lkotlin/jvm/functions/Function2;
 	public static field lambda-3 Lkotlin/jvm/functions/Function2;
-	public static field lambda-4 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-3$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda-4$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/ComposableSingletons$ChatComponentFactoryParamsKt {

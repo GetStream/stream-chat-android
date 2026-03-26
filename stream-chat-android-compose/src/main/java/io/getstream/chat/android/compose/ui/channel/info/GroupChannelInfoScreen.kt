@@ -57,10 +57,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
-import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
-import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
-import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
-import io.getstream.chat.android.compose.ui.theme.AddMembersBottomSheetParams
+import io.getstream.chat.android.compose.ui.theme.AddMembersScreenParams
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -132,8 +129,8 @@ public fun GroupChannelInfoScreen(
     if (showAddMembers) {
         ViewModelStore {
             val addMembersViewModel = viewModel<AddMembersViewModel>(factory = viewModelFactory)
-            ChatTheme.componentFactory.AddMembersBottomSheet(
-                params = AddMembersBottomSheetParams(
+            ChatTheme.componentFactory.AddMembersScreen(
+                params = AddMembersScreenParams(
                     viewModel = addMembersViewModel,
                     onDismiss = { showAddMembers = false },
                     onConfirm = { userIds ->
@@ -230,15 +227,7 @@ internal fun GroupChannelInfoTopBar(
                 onClick = onNavigationIconClick,
             )
         },
-        actions = {
-            if (infoState is ChannelInfoViewState.Content &&
-                infoState.options.contains(ChannelInfoViewState.Content.Option.AddMember)
-            ) {
-                ChatTheme.componentFactory.GroupChannelInfoAddMembersButton(
-                    params = GroupChannelInfoAddMembersButtonParams(onClick = onAddMembersClick),
-                )
-            }
-        },
+        actions = { /* No trailing action icon */ },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = ChatTheme.colors.backgroundCoreApp,
             scrolledContainerColor = ChatTheme.colors.backgroundCoreApp,
@@ -423,11 +412,8 @@ internal fun GroupChannelInfoMemberSection(
                 color = ChatTheme.colors.textPrimary,
             )
             if (showAddButton) {
-                StreamTextButton(
-                    style = StreamButtonStyleDefaults.secondaryOutline,
-                    size = StreamButtonSize.Small,
-                    text = stringResource(id = R.string.stream_ui_channel_info_member_add_button),
-                    onClick = onAddMembersClick,
+                ChatTheme.componentFactory.GroupChannelInfoAddMembersButton(
+                    params = GroupChannelInfoAddMembersButtonParams(onAddMembersClick),
                 )
             }
         }

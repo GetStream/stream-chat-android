@@ -22,78 +22,78 @@ import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import org.junit.Rule
 import org.junit.Test
 
-internal class AddMembersBottomSheetTest : PaparazziComposeTest {
+internal class AddMembersScreenTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
     fun loading() {
-        snapshot { AddMembersBottomSheetLoading() }
+        snapshot { AddMembersScreenLoading() }
     }
 
     @Test
     fun `loading in dark mode`() {
-        snapshot(isInDarkMode = true) { AddMembersBottomSheetLoading() }
+        snapshot(isInDarkMode = true) { AddMembersScreenLoading() }
     }
 
     @Test
     fun empty() {
-        snapshot { AddMembersBottomSheetEmpty() }
+        snapshot { AddMembersScreenEmpty() }
     }
 
     @Test
     fun `empty in dark mode`() {
-        snapshot(isInDarkMode = true) { AddMembersBottomSheetEmpty() }
+        snapshot(isInDarkMode = true) { AddMembersScreenEmpty() }
     }
 
     @Test
     fun `results with query`() {
-        snapshot { AddMembersBottomSheetResultsWithQuery() }
+        snapshot { AddMembersScreenResultsWithQuery() }
     }
 
     @Test
     fun `results with query in dark mode`() {
-        snapshot(isInDarkMode = true) { AddMembersBottomSheetResultsWithQuery() }
+        snapshot(isInDarkMode = true) { AddMembersScreenResultsWithQuery() }
     }
 
     @Test
     fun results() {
-        snapshot { AddMembersBottomSheetResults() }
+        snapshot { AddMembersScreenResults() }
     }
 
     @Test
     fun `results in dark mode`() {
-        snapshot(isInDarkMode = true) { AddMembersBottomSheetResults() }
+        snapshot(isInDarkMode = true) { AddMembersScreenResults() }
     }
 
     @Test
     fun `results with selection`() {
-        snapshot { AddMembersBottomSheetResultsWithSelection() }
+        snapshot { AddMembersScreenResultsWithSelection() }
     }
 
     @Test
     fun `results with selection in dark mode`() {
-        snapshot(isInDarkMode = true) { AddMembersBottomSheetResultsWithSelection() }
+        snapshot(isInDarkMode = true) { AddMembersScreenResultsWithSelection() }
     }
 
     @Test
     fun `results with existing member`() {
-        snapshot { AddMembersBottomSheetResultsWithMember() }
+        snapshot { AddMembersScreenResultsWithMember() }
     }
 
     @Test
     fun `results with existing member in dark mode`() {
-        snapshot(isInDarkMode = true) { AddMembersBottomSheetResultsWithMember() }
+        snapshot(isInDarkMode = true) { AddMembersScreenResultsWithMember() }
     }
 
     @Test
     fun `loading more`() {
-        snapshot { AddMembersBottomSheetLoadingMore() }
+        snapshot { AddMembersScreenLoadingMore() }
     }
 
     @Test
     fun `loading more in dark mode`() {
-        snapshot(isInDarkMode = true) { AddMembersBottomSheetLoadingMore() }
+        snapshot(isInDarkMode = true) { AddMembersScreenLoadingMore() }
     }
 }

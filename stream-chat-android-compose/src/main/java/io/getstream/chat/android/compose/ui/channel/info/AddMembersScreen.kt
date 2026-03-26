@@ -18,6 +18,7 @@
 
 package io.getstream.chat.android.compose.ui.channel.info
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,11 +32,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -58,6 +56,7 @@ import io.getstream.chat.android.compose.ui.components.common.RadioCheck
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
+import io.getstream.chat.android.compose.ui.util.bottomBorder
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.viewmodel.channel.AddMembersViewModel
 import io.getstream.chat.android.models.User
@@ -66,43 +65,34 @@ import io.getstream.chat.android.ui.common.feature.channel.info.AddMembersViewAc
 import io.getstream.chat.android.ui.common.state.channel.info.AddMembersViewState
 
 /**
- * A bottom sheet that allows users to search for and add members to a channel.
+ * A screen that allows users to search for and add members to a channel.
  *
  * @param viewModel The [AddMembersViewModel] managing the state and actions.
- * @param onDismiss Callback invoked when the bottom sheet is dismissed without adding members.
- * @param onConfirm Callback invoked with the selected [User] list when the user confirms.
- *   The caller is responsible for performing the actual API call and dismissing the sheet.
+ * @param onDismiss Callback invoked when the user navigates back without adding members.
+ * @param onConfirm Callback invoked with the selected [User] IDs when the user confirms.
+ *   The caller is responsible for performing the actual API call and dismissing the screen.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun AddMembersBottomSheet(
+internal fun AddMembersScreen(
     viewModel: AddMembersViewModel,
     onDismiss: () -> Unit,
     onConfirm: (Set<String>) -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    ModalBottomSheet(
-        modifier = Modifier.statusBarsPadding(),
-        sheetState = sheetState,
-        containerColor = ChatTheme.colors.backgroundCoreElevation1,
-        onDismissRequest = onDismiss,
-    ) {
-        AddMembersBottomSheet(
-            state = state,
-            onQueryChange = { viewModel.onViewAction(AddMembersViewAction.QueryChanged(it)) },
-            onUserClick = { viewModel.onViewAction(AddMembersViewAction.UserClick(it)) },
-            onLoadMore = { viewModel.onViewAction(AddMembersViewAction.LoadMore) },
-            onDismiss = onDismiss,
-            onConfirm = { onConfirm(state.selectedUserIds) },
-        )
-    }
+    AddMembersScreen(
+        state = state,
+        onQueryChange = { viewModel.onViewAction(AddMembersViewAction.QueryChanged(it)) },
+        onUserClick = { viewModel.onViewAction(AddMembersViewAction.UserClick(it)) },
+        onLoadMore = { viewModel.onViewAction(AddMembersViewAction.LoadMore) },
+        onDismiss = onDismiss,
+        onConfirm = { onConfirm(state.selectedUserIds) },
+    )
 }
 
 @Suppress("LongParameterList")
 @Composable
-internal fun AddMembersBottomSheet(
+internal fun AddMembersScreen(
     state: AddMembersViewState,
     onQueryChange: (String) -> Unit,
     onUserClick: (User) -> Unit,
@@ -110,7 +100,12 @@ internal fun AddMembersBottomSheet(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ChatTheme.colors.backgroundCoreApp)
+            .statusBarsPadding(),
+    ) {
         AddMembersHeader(
             hasSelection = state.selectedUserIds.isNotEmpty(),
             onDismiss = onDismiss,
@@ -119,7 +114,7 @@ internal fun AddMembersBottomSheet(
         SearchInput(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = StreamTokens.spacingMd),
+                .padding(StreamTokens.spacingMd),
             query = state.query,
             onValueChange = onQueryChange,
         )
@@ -169,18 +164,19 @@ private fun AddMembersHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .bottomBorder(color = ChatTheme.colors.borderCoreSubtle)
             .padding(StreamTokens.spacingSm),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {
         StreamButton(
             onClick = onDismiss,
-            style = StreamButtonStyleDefaults.secondaryOutline,
+            style = StreamButtonStyleDefaults.secondaryGhost,
         ) {
             Icon(
                 modifier = Modifier.size(20.dp),
-                painter = painterResource(id = R.drawable.stream_compose_ic_close),
-                contentDescription = stringResource(id = R.string.stream_compose_cancel),
+                painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+                contentDescription = stringResource(id = R.string.stream_ui_back_button),
             )
         }
         Text(
@@ -332,15 +328,15 @@ private fun AddMembersEmptyState() {
 
 @Preview(showBackground = true)
 @Composable
-private fun AddMembersBottomSheetLoadingPreview() {
+private fun AddMembersScreenLoadingPreview() {
     ChatTheme {
-        AddMembersBottomSheetLoading()
+        AddMembersScreenLoading()
     }
 }
 
 @Composable
-internal fun AddMembersBottomSheetLoading() {
-    AddMembersBottomSheet(
+internal fun AddMembersScreenLoading() {
+    AddMembersScreen(
         state = AddMembersViewState(isLoading = true),
         onQueryChange = {},
         onUserClick = {},
@@ -352,15 +348,15 @@ internal fun AddMembersBottomSheetLoading() {
 
 @Preview(showBackground = true)
 @Composable
-private fun AddMembersBottomSheetEmptyPreview() {
+private fun AddMembersScreenEmptyPreview() {
     ChatTheme {
-        AddMembersBottomSheetEmpty()
+        AddMembersScreenEmpty()
     }
 }
 
 @Composable
-internal fun AddMembersBottomSheetEmpty() {
-    AddMembersBottomSheet(
+internal fun AddMembersScreenEmpty() {
+    AddMembersScreen(
         state = AddMembersViewState(
             isLoading = false,
             query = "Darth Vader",
@@ -376,15 +372,15 @@ internal fun AddMembersBottomSheetEmpty() {
 
 @Preview(showBackground = true)
 @Composable
-private fun AddMembersBottomSheetResultsWithQueryPreview() {
+private fun AddMembersScreenResultsWithQueryPreview() {
     ChatTheme {
-        AddMembersBottomSheetResultsWithQuery()
+        AddMembersScreenResultsWithQuery()
     }
 }
 
 @Composable
-internal fun AddMembersBottomSheetResultsWithQuery() {
-    AddMembersBottomSheet(
+internal fun AddMembersScreenResultsWithQuery() {
+    AddMembersScreen(
         state = AddMembersViewState(
             isLoading = false,
             query = "Han",
@@ -400,15 +396,15 @@ internal fun AddMembersBottomSheetResultsWithQuery() {
 
 @Preview(showBackground = true)
 @Composable
-private fun AddMembersBottomSheetResultsPreview() {
+private fun AddMembersScreenResultsPreview() {
     ChatTheme {
-        AddMembersBottomSheetResults()
+        AddMembersScreenResults()
     }
 }
 
 @Composable
-internal fun AddMembersBottomSheetResults() {
-    AddMembersBottomSheet(
+internal fun AddMembersScreenResults() {
+    AddMembersScreen(
         state = AddMembersViewState(
             isLoading = false,
             searchResult = previewUsers,
@@ -423,15 +419,15 @@ internal fun AddMembersBottomSheetResults() {
 
 @Preview(showBackground = true)
 @Composable
-private fun AddMembersBottomSheetResultsWithSelectionPreview() {
+private fun AddMembersScreenResultsWithSelectionPreview() {
     ChatTheme {
-        AddMembersBottomSheetResultsWithSelection()
+        AddMembersScreenResultsWithSelection()
     }
 }
 
 @Composable
-internal fun AddMembersBottomSheetResultsWithSelection() {
-    AddMembersBottomSheet(
+internal fun AddMembersScreenResultsWithSelection() {
+    AddMembersScreen(
         state = AddMembersViewState(
             isLoading = false,
             searchResult = previewUsers,
@@ -447,15 +443,15 @@ internal fun AddMembersBottomSheetResultsWithSelection() {
 
 @Preview(showBackground = true)
 @Composable
-private fun AddMembersBottomSheetResultsWithMemberPreview() {
+private fun AddMembersScreenResultsWithMemberPreview() {
     ChatTheme {
-        AddMembersBottomSheetResultsWithMember()
+        AddMembersScreenResultsWithMember()
     }
 }
 
 @Composable
-internal fun AddMembersBottomSheetResultsWithMember() {
-    AddMembersBottomSheet(
+internal fun AddMembersScreenResultsWithMember() {
+    AddMembersScreen(
         state = AddMembersViewState(
             isLoading = false,
             searchResult = previewUsers,
@@ -471,15 +467,15 @@ internal fun AddMembersBottomSheetResultsWithMember() {
 
 @Preview(showBackground = true)
 @Composable
-private fun AddMembersBottomSheetLoadingMorePreview() {
+private fun AddMembersScreenLoadingMorePreview() {
     ChatTheme {
-        AddMembersBottomSheetLoadingMore()
+        AddMembersScreenLoadingMore()
     }
 }
 
 @Composable
-internal fun AddMembersBottomSheetLoadingMore() {
-    AddMembersBottomSheet(
+internal fun AddMembersScreenLoadingMore() {
+    AddMembersScreen(
         state = AddMembersViewState(
             isLoading = false,
             searchResult = previewUsers,

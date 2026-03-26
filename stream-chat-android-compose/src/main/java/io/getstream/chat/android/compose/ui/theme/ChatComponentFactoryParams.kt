@@ -1847,14 +1847,14 @@ public data class GroupChannelInfoAddMembersButtonParams(
 )
 
 /**
- * Parameters for [ChatComponentFactory.AddMembersBottomSheet].
+ * Parameters for [ChatComponentFactory.AddMembersScreen].
  *
  * @param viewModel The [AddMembersViewModel] managing the state and actions.
- * @param onDismiss Action invoked when the bottom sheet is dismissed without adding members.
+ * @param onDismiss Action invoked when the user navigates back without adding members.
  * @param onConfirm Action invoked with the selected user IDs when the user confirms.
- *   The caller is responsible for performing the API call and dismissing the sheet.
+ *   The caller is responsible for performing the API call and dismissing the screen.
  */
-public data class AddMembersBottomSheetParams(
+public data class AddMembersScreenParams(
     val viewModel: AddMembersViewModel,
     val onDismiss: () -> Unit,
     val onConfirm: (Set<String>) -> Unit,

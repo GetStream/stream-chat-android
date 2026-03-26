@@ -39,7 +39,6 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -96,6 +95,7 @@ import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
+import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
@@ -2506,34 +2506,34 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the "Add members" button of the group channel info screen.
+     * Factory method for creating the "Add Members" screen.
      *
-     * @param params Parameters for this component.
-     */
-    /**
-     * Factory method for creating the "Add Members" bottom sheet.
-     *
-     * Override this method to provide a custom implementation of the "Add Members" bottom sheet.
+     * Override this method to provide a custom implementation of the "Add Members" screen.
      *
      * @param params Parameters for this component.
      */
     @Composable
-    public fun AddMembersBottomSheet(params: AddMembersBottomSheetParams) {
-        io.getstream.chat.android.compose.ui.channel.info.AddMembersBottomSheet(
+    public fun AddMembersScreen(params: AddMembersScreenParams) {
+        io.getstream.chat.android.compose.ui.channel.info.AddMembersScreen(
             viewModel = params.viewModel,
             onDismiss = params.onDismiss,
             onConfirm = params.onConfirm,
         )
     }
 
+    /**
+     * Factory method for creating the "Add members" button of the group channel info screen.
+     *
+     * @param params Parameters for this component.
+     */
     @Composable
     public fun GroupChannelInfoAddMembersButton(params: GroupChannelInfoAddMembersButtonParams) {
-        IconButton(onClick = params.onClick) {
-            Icon(
-                painter = painterResource(R.drawable.stream_ic_member_add),
-                contentDescription = stringResource(R.string.stream_ui_channel_info_member_add_button),
-            )
-        }
+        StreamTextButton(
+            style = StreamButtonStyleDefaults.secondaryOutline,
+            size = StreamButtonSize.Small,
+            text = stringResource(id = R.string.stream_ui_channel_info_member_add_button),
+            onClick = params.onClick,
+        )
     }
 
     /**
