@@ -18,21 +18,15 @@ package io.getstream.chat.android.compose.ui.pinned
 
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,12 +36,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
+import io.getstream.chat.android.compose.ui.components.EmptyContent
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.PinnedMessageListEmptyContentParams
@@ -264,35 +258,14 @@ private fun PinnedMessages(
  */
 @Composable
 internal fun DefaultPinnedMessageListEmptyContent(modifier: Modifier = Modifier) {
-    Column(
+    EmptyContent(
+        text = stringResource(id = R.string.stream_compose_pinned_message_list_empty_description),
+        painter = painterResource(R.drawable.stream_compose_ic_pin),
         modifier = modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.backgroundCoreApp)
             .padding(horizontal = StreamTokens.spacingMd),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Icon(
-            modifier = Modifier.size(32.dp),
-            painter = painterResource(R.drawable.stream_compose_ic_pin),
-            contentDescription = null,
-            tint = ChatTheme.colors.textDisabled,
-        )
-        Spacer(modifier = Modifier.height(StreamTokens.spacingSm))
-        Text(
-            text = stringResource(id = R.string.stream_compose_pinned_message_list_empty_title),
-            textAlign = TextAlign.Center,
-            style = ChatTheme.typography.bodyDefault,
-            color = ChatTheme.colors.textPrimary,
-        )
-        Spacer(modifier = Modifier.height(StreamTokens.spacingXs))
-        Text(
-            text = stringResource(id = R.string.stream_compose_pinned_message_list_empty_description),
-            textAlign = TextAlign.Center,
-            style = ChatTheme.typography.bodyDefault,
-            color = ChatTheme.colors.textSecondary,
-        )
-    }
+        title = stringResource(id = R.string.stream_compose_pinned_message_list_empty_title),
+    )
 }
 
 /**
