@@ -34,7 +34,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isThreadStart
@@ -85,10 +84,10 @@ public fun MessageFooter(
         if (messageItem.showMessageFooter) {
             val showEditLabel = message.messageTextUpdatedAt != null && !message.isDeleted()
             var showEditInfo by remember(message.id, showEditLabel) { mutableStateOf(false) }
-            val textStyle = MessageStyling.timestampStyle()
+            val timestampStyle = MessageStyling.timestampStyle()
+
             Row(
-                modifier = Modifier
-                    .padding(top = 4.dp, bottom = 4.dp),
+                modifier = Modifier.padding(top = StreamTokens.spacingXs, bottom = StreamTokens.spacing2xs),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (!messageItem.isMine) {
@@ -97,17 +96,18 @@ public fun MessageFooter(
                             .clearAndSetSemantics {
                                 testTag = "Stream_MessageAuthorName"
                             }
-                            .padding(end = 8.dp)
+                            .padding(end = StreamTokens.spacingXs)
                             .weight(1f, fill = false),
                         text = message.user.name,
-                        style = textStyle,
+                        style = ChatTheme.typography.metadataEmphasis,
+                        color = ChatTheme.colors.chatTextUsername,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,
                     )
                 } else if (message.shouldShowMessageStatusIndicator()) {
                     ChatTheme.componentFactory.MessageFooterStatusIndicator(
                         params = MessageFooterStatusIndicatorParams(
-                            modifier = Modifier.padding(end = 4.dp),
+                            modifier = Modifier.padding(end = StreamTokens.spacing2xs),
                             messageItem = messageItem,
                         ),
                     )
@@ -118,7 +118,7 @@ public fun MessageFooter(
                     Timestamp(
                         date = date,
                         formatType = DateFormatType.TIME,
-                        textStyle = textStyle,
+                        textStyle = timestampStyle,
                     )
                 }
                 if (showEditLabel && !showEditInfo) {
@@ -128,23 +128,23 @@ public fun MessageFooter(
                             .clickable { showEditInfo = !showEditInfo }
                             .testTag("Stream_MessageEditedLabel"),
                         text = LocalContext.current.getString(R.string.stream_compose_message_list_footnote_edited),
-                        style = textStyle,
+                        style = timestampStyle,
                     )
                 }
             }
             if (showEditLabel && showEditInfo) {
                 Row(
                     modifier = Modifier
-                        .padding(bottom = 4.dp)
+                        .padding(bottom = StreamTokens.spacing2xs)
                         .clickable { showEditInfo = !showEditInfo },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         modifier = Modifier
-                            .padding(end = 4.dp)
+                            .padding(end = StreamTokens.spacing2xs)
                             .weight(1f, fill = false),
                         text = LocalContext.current.getString(R.string.stream_compose_message_list_footnote_edited),
-                        style = textStyle,
+                        style = timestampStyle,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,
                     )

@@ -165,6 +165,30 @@ public fun ChatClient.watchChannelAsState(
 }
 
 /**
+ * Same as [watchChannelAsState] but loads messages around the given [aroundMessageId] in the initial request.
+ * Use this when opening a channel with focus on a specific message (e.g. deep-link) to avoid a race between
+ * the initial watch and a separate loadAround call.
+ *
+ * @param aroundMessageId When non-null, the initial watch uses AROUND_ID pagination to load messages
+ * around this ID. Only use for channel-level focus (not when opening a thread).
+ */
+@InternalStreamChatApi
+@JvmOverloads
+public fun ChatClient.watchChannelAsState(
+    cid: String,
+    messageLimit: Int,
+    aroundMessageId: String?,
+    coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
+): StateFlow<ChannelState?> {
+    StreamLog.i(TAG) {
+        "[watchChannelAsState] cid: $cid, messageLimit: $messageLimit, aroundMessageId: $aroundMessageId"
+    }
+    return getStateOrNull(coroutineScope) {
+        requestsAsState(coroutineScope).watchChannel(cid, messageLimit, chatClientConfig.userPresence, aroundMessageId)
+    }
+}
+
+/**
  * Performs [ChatClient.queryThreadsResult] under the hood and returns [QueryThreadsState].
  * The [QueryThreadsState] cannot be created before connecting the user therefore, the method returns a StateFlow
  * that emits a null when the user has not been connected yet and the new value every time the user changes.

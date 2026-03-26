@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.internal.state.extensions
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.api.state.watchChannelAsState
@@ -28,6 +29,7 @@ import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlug
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionData
 import io.getstream.chat.android.models.InitializationState
@@ -55,6 +57,7 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import java.util.concurrent.atomic.AtomicInteger
 
+@OptIn(InternalStreamChatApi::class)
 internal class ChatClientExtensionTests {
 
     companion object {
@@ -64,6 +67,7 @@ internal class ChatClientExtensionTests {
 
         private const val MESSAGE_LIMIT = 30
         private const val ONE_SEC = 1000L
+        private const val AROUND_MESSAGE_ID = "msg-id-42"
     }
 
     private lateinit var channel: Channel
@@ -73,6 +77,7 @@ internal class ChatClientExtensionTests {
     private lateinit var pluginFactories: List<PluginFactory>
     private lateinit var plugins: List<Plugin>
 
+    @Suppress("LongMethod")
     @BeforeEach
     fun setUp() {
         channel = randomChannel()
@@ -94,6 +99,14 @@ internal class ChatClientExtensionTests {
                 this.shouldRefresh = false
                 this.isWatchChannel = true
             }
+
+        val aroundMessageRequest = QueryChannelPaginationRequest(MESSAGE_LIMIT).apply {
+            messageFilterDirection = Pagination.AROUND_ID
+            messageFilterValue = AROUND_MESSAGE_ID
+        }.toWatchChannelRequest(chatClientConfig.userPresence).apply {
+            this.shouldRefresh = false
+            this.isWatchChannel = true
+        }
 
         pluginFactories = listOf<PluginFactory>(
             mock<StreamStatePluginFactory> {
@@ -127,6 +140,7 @@ internal class ChatClientExtensionTests {
             on(it.pluginFactories) doReturn pluginFactories
             on(it.plugins) doReturn plugins
             on(it.queryChannel(channel.type, channel.id, request)) doReturn channel.asCall()
+            on(it.queryChannel(channel.type, channel.id, aroundMessageRequest)) doReturn channel.asCall()
             on(it.connectAnonymousUser()) doAnswer {
                 userFlow.value = connectionData.user
                 initializationStateFlow.value = InitializationState.COMPLETE
@@ -208,6 +222,78 @@ internal class ChatClientExtensionTests {
         val localScope = testCoroutines.scope + Job()
         localScope.launch {
             chatClient.watchChannelAsState(channel.cid, MESSAGE_LIMIT).collect { }
+        }
+        userFlow.value = randomUser(id = "123")
+        verify(chatClient, times(2)).queryChannel(any(), any(), any(), any())
+    }
+
+    @Test
+    fun `watchChannelAsState with aroundMessageId should emit when InitializationState becomes COMPLETE`() = runTest {
+        val channelStateEmissions = AtomicInteger(0)
+        val channelStateFlow = MutableStateFlow<ChannelState?>(null)
+        val localScope = testCoroutines.scope + Job()
+        localScope.launch {
+            chatClient.watchChannelAsState(channel.cid, MESSAGE_LIMIT, AROUND_MESSAGE_ID).collect {
+                channelStateFlow.value = it
+                channelStateEmissions.incrementAndGet()
+            }
+        }
+        delay(ONE_SEC)
+
+        chatClient.connectAnonymousUser().await()
+
+        delay(ONE_SEC)
+
+        val channelState = channelStateFlow.first { it != null }
+        channelState?.cid shouldBeEqualTo channel.cid
+        channelStateEmissions.get() shouldBeEqualTo 2
+    }
+
+    @Test
+    fun `watchChannelAsState with aroundMessageId should emit when InitializationState becomes NOT_INITIALIZED`() = runTest {
+        userFlow.value = randomUser()
+        initializationStateFlow.value = InitializationState.COMPLETE
+        val channelStateEmissions = AtomicInteger(0)
+        val channelStateFlow = MutableStateFlow<ChannelState?>(null)
+        val localScope = testCoroutines.scope + Job()
+        localScope.launch {
+            chatClient.watchChannelAsState(channel.cid, MESSAGE_LIMIT, AROUND_MESSAGE_ID).collect {
+                channelStateFlow.value = it
+                channelStateEmissions.incrementAndGet()
+            }
+        }
+        delay(ONE_SEC)
+        val channelState = channelStateFlow.first { it != null }
+        channelState?.cid shouldBeEqualTo channel.cid
+        channelStateEmissions.get() shouldBeEqualTo 2
+
+        chatClient.disconnect(flushPersistence = true).await()
+
+        delay(ONE_SEC)
+
+        channelStateFlow.value shouldBeEqualTo null
+        channelStateEmissions.get() shouldBeEqualTo 3
+    }
+
+    @Test
+    fun `watchChannelAsState with aroundMessageId shouldn't queryChannel twice when the user is the same but some properties has changed`() = runTest {
+        userFlow.value = randomUser(id = "jc")
+        initializationStateFlow.value = InitializationState.COMPLETE
+        val localScope = testCoroutines.scope + Job()
+        localScope.launch {
+            chatClient.watchChannelAsState(channel.cid, MESSAGE_LIMIT, AROUND_MESSAGE_ID).collect { }
+        }
+        userFlow.value = randomUser(id = "jc")
+        verify(chatClient, times(1)).queryChannel(any(), any(), any(), any())
+    }
+
+    @Test
+    fun `watchChannelAsState with aroundMessageId should queryChannel again when the user is a different one`() = runTest {
+        userFlow.value = randomUser(id = "jc")
+        initializationStateFlow.value = InitializationState.COMPLETE
+        val localScope = testCoroutines.scope + Job()
+        localScope.launch {
+            chatClient.watchChannelAsState(channel.cid, MESSAGE_LIMIT, AROUND_MESSAGE_ID).collect { }
         }
         userFlow.value = randomUser(id = "123")
         verify(chatClient, times(2)).queryChannel(any(), any(), any(), any())

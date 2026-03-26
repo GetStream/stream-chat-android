@@ -115,11 +115,13 @@ public class MessagesViewModelFactory(
 ) : ViewModelProvider.Factory {
 
     private val channelStateFlow: StateFlow<ChannelState?> by lazy {
-        chatClient.watchChannelAsState(
-            cid = channelId,
-            messageLimit = messageLimit,
-            coroutineScope = chatClient.inheritScope { SupervisorJob(it) + DispatcherProvider.Immediate },
-        )
+        val scope = chatClient.inheritScope { SupervisorJob(it) + DispatcherProvider.Immediate }
+        when {
+            messageId != null && parentMessageId == null ->
+                chatClient.watchChannelAsState(channelId, messageLimit, messageId, scope)
+            else ->
+                chatClient.watchChannelAsState(channelId, messageLimit, scope)
+        }
     }
 
     private val storageHelper by lazy { AttachmentStorageHelper(context) }
