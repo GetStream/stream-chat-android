@@ -25,13 +25,15 @@ public interface CDN {
      * Creates a request for loading an image from the CDN.
      *
      * @param url Original CDN url for the image.
+     * @return A [CDNRequest] holding the modified request URL and/or custom headers to include with the request.
      */
-    public suspend fun imageRequest(url: String): CDNRequest
+    public suspend fun imageRequest(url: String): CDNRequest = CDNRequest(url)
 
     /**
      * Creates a request for loading a non-image file from the CDN.
      *
      * @param url Original CDN url for the file.
+     * @return A [CDNRequest] holding the modified request URL and/or custom headers to include with the request.
      */
-    public suspend fun fileRequest(url: String): CDNRequest
+    public suspend fun fileRequest(url: String): CDNRequest = CDNRequest(url)
 }
