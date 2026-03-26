@@ -52,12 +52,16 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
 
     fun snapshot(
         isInDarkMode: Boolean = false,
+        contentAlignment: Alignment = Alignment.TopStart,
         composable: @Composable () -> Unit,
     ) {
         paparazzi.snapshot {
             TestEnvironment {
                 ChatTheme(isInDarkMode = isInDarkMode) {
-                    Box(modifier = Modifier.background(ChatTheme.colors.backgroundCoreApp)) {
+                    Box(
+                        modifier = Modifier.background(ChatTheme.colors.backgroundCoreApp),
+                        contentAlignment = contentAlignment,
+                    ) {
                         composable()
                     }
                 }
