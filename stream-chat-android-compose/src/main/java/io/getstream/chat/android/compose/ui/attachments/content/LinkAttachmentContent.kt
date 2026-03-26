@@ -67,7 +67,8 @@ import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.ui.common.utils.extensions.linkPreviewImageUrl
+import io.getstream.chat.android.ui.common.utils.extensions.linkUrl
 import io.getstream.chat.android.uiutils.extension.addSchemeToUrlIfNeeded
 import io.getstream.chat.android.uiutils.extension.hasLink
 
@@ -137,7 +138,7 @@ public fun LinkAttachmentContent(
         "Missing link attachment."
     }
 
-    val previewUrl = attachment.titleLink ?: attachment.ogUrl
+    val previewUrl = attachment.linkUrl
     val urlWithScheme = previewUrl?.addSchemeToUrlIfNeeded()
 
     checkNotNull(previewUrl) {
@@ -179,8 +180,8 @@ public fun LinkAttachmentContent(
                 onLongClick = { onLongItemClick(message) },
             ),
     ) {
-        val imagePreviewUrl = attachment.imagePreviewUrl
-        if (imagePreviewUrl != null) {
+        val linkPreviewUrl = attachment.linkPreviewImageUrl
+        if (linkPreviewUrl != null) {
             LinkAttachmentImagePreview(attachment, isMine)
         }
 
@@ -198,7 +199,7 @@ public fun LinkAttachmentContent(
 
 @Composable
 private fun LinkAttachmentImagePreview(attachment: Attachment, isMine: Boolean) {
-    val data = attachment.imagePreviewUrl
+    val data = attachment.linkPreviewImageUrl
     var maxWidth by remember { mutableStateOf(0.dp) }
 
     Box(

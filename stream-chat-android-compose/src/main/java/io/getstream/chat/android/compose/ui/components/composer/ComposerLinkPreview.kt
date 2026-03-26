@@ -60,7 +60,8 @@ import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.LinkPreview
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.ui.common.utils.extensions.linkPreviewImageUrl
+import io.getstream.chat.android.ui.common.utils.extensions.linkUrl
 import io.getstream.chat.android.uiutils.extension.addSchemeToUrlIfNeeded
 import io.getstream.log.StreamLog
 
@@ -91,7 +92,7 @@ public fun ComposerLinkPreview(
 
     val context = LocalContext.current
     val attachment = linkPreview.attachment
-    val previewUrl = attachment.titleLink ?: attachment.ogUrl
+    val previewUrl = attachment.linkUrl
 
     checkNotNull(previewUrl) {
         "Missing preview URL."
@@ -133,14 +134,14 @@ public fun ComposerLinkPreview(
 
 @Composable
 private fun ComposerLinkImagePreview(attachment: Attachment) {
-    val imagePreviewUrl = attachment.imagePreviewUrl ?: return
+    val linkPreviewUrl = attachment.linkPreviewImageUrl ?: return
     val theme = ChatTheme.messageComposerTheme.linkPreview
     Box(
         modifier = Modifier.padding(theme.imagePadding),
         contentAlignment = Alignment.Center,
     ) {
         StreamAsyncImage(
-            data = imagePreviewUrl,
+            data = linkPreviewUrl,
             modifier = Modifier
                 .height(theme.imageSize.height)
                 .width(theme.imageSize.width)
@@ -225,7 +226,7 @@ private fun ComposerLinkCancelIcon(
  * @param preview The preview of the link attachment being clicked.
  */
 private fun onLinkPreviewClick(context: Context, preview: LinkPreview) {
-    val previewUrl = preview.attachment.titleLink ?: preview.attachment.ogUrl
+    val previewUrl = preview.attachment.linkUrl
     checkNotNull(previewUrl) {
         "Missing preview URL."
     }

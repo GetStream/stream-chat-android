@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.ColorImage
 import coil3.compose.LocalAsyncImagePreviewHandler
+import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.compose.ui.attachments.factory.DefaultPreviewItemOverlayContent
 import io.getstream.chat.android.compose.ui.components.CancelIcon
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
@@ -45,7 +46,6 @@ import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 
 /**
  * UI for currently selected image and video attachments, within the [MessageInput].
@@ -98,7 +98,8 @@ private fun MediaAttachmentPreviewItem(
     onAttachmentRemoved: (Attachment) -> Unit,
     overlayContent: @Composable (attachmentType: String?) -> Unit,
 ) {
-    val data = mediaAttachment.upload ?: mediaAttachment.imagePreviewUrl
+    val data = mediaAttachment.upload
+        ?: if (mediaAttachment.isImage()) mediaAttachment.imageUrl else mediaAttachment.thumbUrl
 
     Box(
         modifier = Modifier
