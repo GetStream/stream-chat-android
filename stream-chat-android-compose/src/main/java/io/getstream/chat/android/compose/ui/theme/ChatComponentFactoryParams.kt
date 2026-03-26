@@ -2052,10 +2052,12 @@ public data class ChannelMediaAttachmentsErrorContentParams(
  * Parameters for [ChatComponentFactory.ChannelMediaAttachmentsFloatingHeader].
  *
  * @param label The label for the floating header.
+ * @param visible Whether the floating header is visible.
  * @param modifier Modifier for styling.
  */
 public data class ChannelMediaAttachmentsFloatingHeaderParams(
     val label: String,
+    val visible: Boolean,
     val modifier: Modifier = Modifier,
 )
 

@@ -28,43 +28,22 @@ internal class PollOptionVotesDialogTest : PaparazziComposeTest {
     override val paparazzi: Paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `loading in light mode`() {
-        snapshot(isInDarkMode = false) {
+    fun loading() {
+        snapshotWithDarkMode {
             PollOptionVotesLoading()
         }
     }
 
     @Test
-    fun `loading in dark mode`() {
-        snapshot(isInDarkMode = true) {
-            PollOptionVotesLoading()
-        }
-    }
-
-    @Test
-    fun `content in light mode`() {
-        snapshot(isInDarkMode = false) {
+    fun content() {
+        snapshotWithDarkMode {
             PollOptionVotesContent()
         }
     }
 
     @Test
-    fun `content in dark mode`() {
-        snapshot(isInDarkMode = true) {
-            PollOptionVotesContent()
-        }
-    }
-
-    @Test
-    fun `loading more in light mode`() {
-        snapshot(isInDarkMode = false) {
-            PollOptionVotesLoadingMore()
-        }
-    }
-
-    @Test
-    fun `loading more in dark mode`() {
-        snapshot(isInDarkMode = true) {
+    fun `loading more`() {
+        snapshotWithDarkMode {
             PollOptionVotesLoadingMore()
         }
     }

@@ -33,7 +33,7 @@ internal class TypingIndicatorContentTest : PaparazziComposeTest {
 
     @Test
     fun `multiple users typing`() {
-        snapshotWithDarkMode {
+        snapshotWithDarkModeRow {
             TypingIndicatorContentMultipleUsers()
         }
     }

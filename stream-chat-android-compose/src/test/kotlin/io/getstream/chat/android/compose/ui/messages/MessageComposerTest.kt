@@ -79,15 +79,29 @@ internal class MessageComposerTest : PaparazziComposeTest {
     }
 
     @Test
-    fun `floating style with user suggestions`() {
-        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+    fun `floating style with user suggestions in light mode`() {
+        snapshot(contentAlignment = Alignment.BottomCenter) {
             MessageComposerFloatingStyleWithUserSuggestions()
         }
     }
 
     @Test
-    fun `floating style with command suggestions`() {
-        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+    fun `floating style with user suggestions in dark mode`() {
+        snapshot(contentAlignment = Alignment.BottomCenter, isInDarkMode = true) {
+            MessageComposerFloatingStyleWithUserSuggestions()
+        }
+    }
+
+    @Test
+    fun `floating style with command suggestions in light mode`() {
+        snapshot(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerFloatingStyleWithCommandSuggestions()
+        }
+    }
+
+    @Test
+    fun `floating style with command suggestions in dark mode`() {
+        snapshot(contentAlignment = Alignment.BottomCenter, isInDarkMode = true) {
             MessageComposerFloatingStyleWithCommandSuggestions()
         }
     }
