@@ -61,7 +61,6 @@ import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoAddMembersButtonParams
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoAvatarContainerParams
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoExpandMembersItemParams
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoMemberItemParams
@@ -100,6 +99,7 @@ import java.util.Date
  * @param modifier The [Modifier] to be applied to this screen.
  * @param currentUser The current logged-in user. Defaults to the current user from the [ChatClient].
  * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
+ * @param onActionClick Callback invoked when the action button is clicked.
  */
 @Composable
 public fun GroupChannelInfoScreen(
@@ -107,6 +107,7 @@ public fun GroupChannelInfoScreen(
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onNavigationIconClick: () -> Unit = {},
+    onActionClick: () -> Unit = {},
 ) {
     val headerViewModel = viewModel<ChannelHeaderViewModel>(factory = viewModelFactory)
     val infoViewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
@@ -121,6 +122,7 @@ public fun GroupChannelInfoScreen(
         headerState = headerState,
         infoState = infoState,
         onNavigationIconClick = onNavigationIconClick,
+        onActionClick = onActionClick,
         onAddMembersClick = { showAddMembers = true },
         onViewAction = infoViewModel::onViewAction,
     )
@@ -150,6 +152,7 @@ private fun GroupChannelInfoScaffold(
     headerState: ChannelHeaderViewState,
     infoState: ChannelInfoViewState,
     onNavigationIconClick: () -> Unit = {},
+    onActionClick: () -> Unit = {},
     onAddMembersClick: () -> Unit = {},
     onViewAction: (action: ChannelInfoViewAction) -> Unit = {},
 ) {
@@ -163,7 +166,7 @@ private fun GroupChannelInfoScaffold(
                     infoState = infoState,
                     listState = listState,
                     onNavigationIconClick = onNavigationIconClick,
-                    onAddMembersClick = onAddMembersClick,
+                    onActionClick = onActionClick,
                 ),
             )
         },
@@ -211,7 +214,7 @@ internal fun GroupChannelInfoTopBar(
     infoState: ChannelInfoViewState,
     listState: LazyListState,
     onNavigationIconClick: () -> Unit,
-    onAddMembersClick: () -> Unit,
+    onActionClick: () -> Unit,
 ) {
     CenterAlignedTopAppBar(
         modifier = Modifier.bottomBorder(color = ChatTheme.colors.borderCoreSubtle),
@@ -227,7 +230,20 @@ internal fun GroupChannelInfoTopBar(
                 onClick = onNavigationIconClick,
             )
         },
-        actions = { /* No trailing action icon */ },
+        actions = {
+            if (infoState is ChannelInfoViewState.Content &&
+                infoState.options.any { option ->
+                    option is ChannelInfoViewState.Content.Option.RenameChannel &&
+                        !option.isReadOnly
+                }
+            ) {
+                StreamTextButton(
+                    style = StreamButtonStyleDefaults.secondaryOutline,
+                    text = stringResource(id = R.string.stream_ui_channel_info_edit_action),
+                    onClick = onActionClick,
+                )
+            }
+        },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = ChatTheme.colors.backgroundCoreApp,
             scrolledContainerColor = ChatTheme.colors.backgroundCoreApp,
@@ -554,13 +570,14 @@ private fun GroupChannelInfoCollapsedMembersPreview() {
 
 @Composable
 internal fun GroupChannelInfoCollapsedMembers() {
+    val channel = PreviewChannelData.channelWithImage.copy(name = "Channel Name")
     GroupChannelInfoScaffold(
         modifier = Modifier.fillMaxSize(),
         currentUser = PreviewUserData.user1,
         headerState = ChannelHeaderViewState.Content(
             currentUser = PreviewUserData.user1,
             connectionState = ConnectionState.Connected,
-            channel = PreviewChannelData.channelWithImage,
+            channel = channel,
         ),
         infoState = ChannelInfoViewState.Content(
             owner = PreviewUserData.user1,
@@ -576,6 +593,7 @@ internal fun GroupChannelInfoCollapsedMembers() {
             ),
             options = listOf(
                 ChannelInfoViewState.Content.Option.AddMember,
+                ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = false),
                 ChannelInfoViewState.Content.Option.PinnedMessages,
                 ChannelInfoViewState.Content.Option.MediaAttachments,
                 ChannelInfoViewState.Content.Option.FilesAttachments,

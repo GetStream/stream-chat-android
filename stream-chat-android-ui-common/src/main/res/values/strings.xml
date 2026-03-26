@@ -90,6 +90,7 @@
 
     <string name="stream_ui_channel_info_contact_title">Contact Info</string>
     <string name="stream_ui_channel_info_group_title">Group Info</string>
+    <string name="stream_ui_channel_info_edit_action">Edit</string>
     <string name="stream_ui_channel_info_member_add_button">Add</string>
     <string name="stream_ui_channel_info_view_all">View all</string>
     <plurals name="stream_ui_channel_info_member_count">
