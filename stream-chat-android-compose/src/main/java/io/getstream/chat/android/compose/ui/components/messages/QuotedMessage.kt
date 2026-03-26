@@ -87,7 +87,7 @@ public fun QuotedMessage(
             .combinedClickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
-                onLongClick = { onLongItemClick(message) },
+                onLongClick = { onLongItemClick(replyMessage ?: message) },
                 onClick = { onQuotedMessageClick(message) },
             ),
         verticalAlignment = Alignment.Bottom,
