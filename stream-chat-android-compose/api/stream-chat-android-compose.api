@@ -947,7 +947,7 @@ public final class io/getstream/chat/android/compose/ui/channel/info/DirectChann
 }
 
 public final class io/getstream/chat/android/compose/ui/channel/info/GroupChannelInfoScreenKt {
-	public static final fun GroupChannelInfoScreen (Lio/getstream/chat/android/compose/viewmodel/channel/ChannelInfoViewModelFactory;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+	public static final fun GroupChannelInfoScreen (Lio/getstream/chat/android/compose/viewmodel/channel/ChannelInfoViewModelFactory;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/ChannelsScreenKt {

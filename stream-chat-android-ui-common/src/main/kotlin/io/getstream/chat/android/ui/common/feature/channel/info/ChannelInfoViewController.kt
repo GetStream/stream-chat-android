@@ -237,6 +237,7 @@ public class ChannelInfoViewController(
             ).await()
                 .onError { error ->
                     logger.e { "[addMembers] error: ${error.message}" }
+                    _events.tryEmit(ChannelInfoViewEvent.AddMembersError)
                 }
         }
     }

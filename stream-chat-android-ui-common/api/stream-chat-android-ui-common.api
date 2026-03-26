@@ -464,6 +464,14 @@ public final class io/getstream/chat/android/ui/common/feature/channel/info/Chan
 public abstract interface class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent {
 }
 
+public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$AddMembersError : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Error {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$AddMembersError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$BanMemberError : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Error {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$BanMemberError;

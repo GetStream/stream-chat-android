@@ -93,7 +93,6 @@ import java.util.Date
  * @param modifier The [Modifier] to be applied to this screen.
  * @param currentUser The current logged-in user. Defaults to the current user from the [ChatClient].
  * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
- * @param onAddMembersClick Deprecated. The screen now manages the "Add Members" bottom sheet internally.
  */
 @Composable
 public fun GroupChannelInfoScreen(
@@ -101,8 +100,6 @@ public fun GroupChannelInfoScreen(
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onNavigationIconClick: () -> Unit = {},
-    @Suppress("UNUSED_PARAMETER")
-    onAddMembersClick: () -> Unit = {},
 ) {
     val headerViewModel = viewModel<ChannelHeaderViewModel>(factory = viewModelFactory)
     val infoViewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
@@ -129,8 +126,8 @@ public fun GroupChannelInfoScreen(
                 params = AddMembersBottomSheetParams(
                     viewModel = addMembersViewModel,
                     onDismiss = { showAddMembers = false },
-                    onConfirm = { users ->
-                        infoViewModel.addMembers(users.map { it.id }.toSet())
+                    onConfirm = { userIds ->
+                        infoViewModel.addMembers(userIds)
                         showAddMembers = false
                     },
                 ),

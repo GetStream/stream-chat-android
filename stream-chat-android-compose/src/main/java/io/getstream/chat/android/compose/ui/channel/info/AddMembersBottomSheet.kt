@@ -29,7 +29,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -52,12 +52,12 @@ import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.common.RadioCheck
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.viewmodel.channel.AddMembersViewModel
 import io.getstream.chat.android.models.User
@@ -78,7 +78,7 @@ import io.getstream.chat.android.ui.common.state.channel.info.AddMembersViewStat
 internal fun AddMembersBottomSheet(
     viewModel: AddMembersViewModel,
     onDismiss: () -> Unit,
-    onConfirm: (List<User>) -> Unit,
+    onConfirm: (Set<String>) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -95,7 +95,7 @@ internal fun AddMembersBottomSheet(
             onUserClick = { viewModel.onViewAction(AddMembersViewAction.UserClick(it)) },
             onLoadMore = { viewModel.onViewAction(AddMembersViewAction.LoadMore) },
             onDismiss = onDismiss,
-            onConfirm = { onConfirm(state.selectedUsers) },
+            onConfirm = { onConfirm(state.selectedUserIds) },
         )
     }
 }
@@ -230,10 +230,10 @@ private fun AddMembersList(
             bottom = StreamTokens.spacing3xl,
         ),
     ) {
-        itemsIndexed(
+        items(
             items = users,
-            key = { _, user -> user.id },
-        ) { _, user ->
+            key = { user -> user.id },
+        ) { user ->
             AddMembersUserItem(
                 user = user,
                 isSelected = isSelected(user),
@@ -272,11 +272,13 @@ private fun AddMembersUserItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
     ) {
-        UserAvatar(
-            modifier = Modifier.size(AvatarSize.Medium),
-            user = user,
-            showIndicator = false,
-            showBorder = false,
+        ChatTheme.componentFactory.UserAvatar(
+            UserAvatarParams(
+                user = user,
+                modifier = Modifier.size(AvatarSize.Medium),
+                showIndicator = false,
+                showBorder = false,
+            ),
         )
         Column(modifier = Modifier.weight(1f)) {
             Text(

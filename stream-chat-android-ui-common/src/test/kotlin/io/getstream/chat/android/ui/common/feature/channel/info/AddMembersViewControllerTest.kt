@@ -127,7 +127,7 @@ internal class AddMembersViewControllerTest {
     }
 
     @Test
-    fun `QueryChanged trims whitespace from the query`() = runTest {
+    fun `QueryChanged preserves whitespace in the query`() = runTest {
         val sut = Fixture()
             .givenQueryUsers(users = emptyList())
             .get(backgroundScope)
@@ -137,7 +137,7 @@ internal class AddMembersViewControllerTest {
 
             sut.onViewAction(AddMembersViewAction.QueryChanged("  John  "))
 
-            assertEquals("John", awaitItem().query)
+            assertEquals("  John  ", awaitItem().query)
             cancelAndIgnoreRemainingEvents()
         }
     }

@@ -27,6 +27,7 @@ import io.getstream.chat.android.ui.common.state.channel.info.AddMembersViewStat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -63,6 +64,8 @@ public class AddMembersViewController(
 
     private val channelMembers = channelState.flatMapLatest { it.members }
 
+    private var searchJob: Job? = null
+
     private val _state = MutableStateFlow(AddMembersViewState())
 
     /**
@@ -73,7 +76,7 @@ public class AddMembersViewController(
     init {
         // Keep loadedMemberIds in sync with the live channel member list.
         channelMembers
-            .map { members -> members.map(Member::getUserId).toSet() }
+            .map { members -> members.mapTo(mutableSetOf(), Member::getUserId) }
             .distinctUntilChanged()
             .onEach { memberIds -> _state.update { it.copy(loadedMemberIds = memberIds) } }
             .launchIn(scope)
@@ -95,7 +98,7 @@ public class AddMembersViewController(
     public fun onViewAction(action: AddMembersViewAction) {
         when (action) {
             is AddMembersViewAction.QueryChanged -> {
-                _state.update { it.copy(query = action.query.trim()) }
+                _state.update { it.copy(query = action.query) }
             }
 
             is AddMembersViewAction.UserClick -> {
@@ -115,9 +118,10 @@ public class AddMembersViewController(
     }
 
     private fun searchUsers(query: String) {
-        scope.launch {
+        searchJob?.cancel()
+        searchJob = scope.launch {
             _state.update { it.copy(isLoading = true) }
-            chatClient.queryUsers(query.toSearchRequest(offset = 0))
+            chatClient.queryUsers(query.trim().toSearchRequest(offset = 0))
                 .await()
                 .onSuccess { users ->
                     _state.update { it.copy(isLoading = false, searchResult = users) }
@@ -129,11 +133,11 @@ public class AddMembersViewController(
     }
 
     private fun loadMore() {
-        if (_state.value.isLoadingMore) return
+        if (_state.value.isLoading || _state.value.isLoadingMore) return
         scope.launch {
             val currentResult = _state.value.searchResult
             _state.update { it.copy(isLoadingMore = true) }
-            chatClient.queryUsers(_state.value.query.toSearchRequest(offset = currentResult.size))
+            chatClient.queryUsers(_state.value.query.trim().toSearchRequest(offset = currentResult.size))
                 .await()
                 .onSuccess { newUsers ->
                     _state.update { it.copy(isLoadingMore = false, searchResult = it.searchResult + newUsers) }
