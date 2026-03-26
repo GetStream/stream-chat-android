@@ -1873,7 +1873,7 @@ public abstract interface class io/getstream/chat/android/ui/common/state/channe
 	public abstract fun getLabel ()Ljava/lang/String;
 	public abstract fun getMember ()Lio/getstream/chat/android/models/Member;
 	public abstract fun getOnAction ()Lkotlin/jvm/functions/Function0;
-	public abstract fun isDestructive ()Z
+	public fun isDestructive ()Z
 }
 
 public final class io/getstream/chat/android/ui/common/state/channel/info/MemberAction$DefaultImpls {
@@ -1966,12 +1966,12 @@ public final class io/getstream/chat/android/ui/common/state/channels/actions/Bl
 
 public abstract interface class io/getstream/chat/android/ui/common/state/channels/actions/ChannelAction {
 	public abstract fun getChannel ()Lio/getstream/chat/android/models/Channel;
-	public abstract fun getConfirmationPopup ()Lio/getstream/chat/android/ui/common/state/channels/actions/ConfirmationPopup;
+	public fun getConfirmationPopup ()Lio/getstream/chat/android/ui/common/state/channels/actions/ConfirmationPopup;
 	public abstract fun getIcon ()I
 	public abstract fun getLabel ()Ljava/lang/String;
 	public abstract fun getOnAction ()Lkotlin/jvm/functions/Function0;
-	public abstract fun getRequiredCapability ()Ljava/lang/String;
-	public abstract fun isDestructive ()Z
+	public fun getRequiredCapability ()Ljava/lang/String;
+	public fun isDestructive ()Z
 }
 
 public final class io/getstream/chat/android/ui/common/state/channels/actions/ChannelAction$DefaultImpls {
@@ -3593,6 +3593,8 @@ public abstract interface class io/getstream/sdk/chat/audio/recording/StreamMedi
 	public abstract fun setOnRecordingStoppedListener (Lio/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnRecordingStopped;)V
 	public abstract fun startAudioRecording (Ljava/io/File;J)Lio/getstream/result/Result;
 	public abstract fun startAudioRecording (Ljava/lang/String;JZ)Lio/getstream/result/Result;
+	public static synthetic fun startAudioRecording$default (Lio/getstream/sdk/chat/audio/recording/StreamMediaRecorder;Ljava/io/File;JILjava/lang/Object;)Lio/getstream/result/Result;
+	public static synthetic fun startAudioRecording$default (Lio/getstream/sdk/chat/audio/recording/StreamMediaRecorder;Ljava/lang/String;JZILjava/lang/Object;)Lio/getstream/result/Result;
 	public abstract fun stopRecording ()Lio/getstream/result/Result;
 }
 

@@ -319,9 +319,12 @@ public abstract interface class io/getstream/chat/android/ui/feature/channels/li
 	public static final field DEFAULT Lio/getstream/chat/android/ui/feature/channels/list/ChannelListView$SwipeListener;
 	public abstract fun onRestoreSwipePosition (Lio/getstream/chat/android/ui/feature/channels/list/adapter/viewholder/SwipeViewHolder;I)V
 	public abstract fun onSwipeCanceled (Lio/getstream/chat/android/ui/feature/channels/list/adapter/viewholder/SwipeViewHolder;ILjava/lang/Float;Ljava/lang/Float;)V
+	public static synthetic fun onSwipeCanceled$default (Lio/getstream/chat/android/ui/feature/channels/list/ChannelListView$SwipeListener;Lio/getstream/chat/android/ui/feature/channels/list/adapter/viewholder/SwipeViewHolder;ILjava/lang/Float;Ljava/lang/Float;ILjava/lang/Object;)V
 	public abstract fun onSwipeChanged (Lio/getstream/chat/android/ui/feature/channels/list/adapter/viewholder/SwipeViewHolder;IFF)V
 	public abstract fun onSwipeCompleted (Lio/getstream/chat/android/ui/feature/channels/list/adapter/viewholder/SwipeViewHolder;ILjava/lang/Float;Ljava/lang/Float;)V
+	public static synthetic fun onSwipeCompleted$default (Lio/getstream/chat/android/ui/feature/channels/list/ChannelListView$SwipeListener;Lio/getstream/chat/android/ui/feature/channels/list/adapter/viewholder/SwipeViewHolder;ILjava/lang/Float;Ljava/lang/Float;ILjava/lang/Object;)V
 	public abstract fun onSwipeStarted (Lio/getstream/chat/android/ui/feature/channels/list/adapter/viewholder/SwipeViewHolder;ILjava/lang/Float;Ljava/lang/Float;)V
+	public static synthetic fun onSwipeStarted$default (Lio/getstream/chat/android/ui/feature/channels/list/ChannelListView$SwipeListener;Lio/getstream/chat/android/ui/feature/channels/list/adapter/viewholder/SwipeViewHolder;ILjava/lang/Float;Ljava/lang/Float;ILjava/lang/Object;)V
 }
 
 public final class io/getstream/chat/android/ui/feature/channels/list/ChannelListView$SwipeListener$Companion {
@@ -1570,6 +1573,7 @@ public abstract class io/getstream/chat/android/ui/feature/messages/composer/att
 public abstract interface class io/getstream/chat/android/ui/feature/messages/composer/attachment/preview/factory/AttachmentPreviewFactory {
 	public abstract fun canHandle (Lio/getstream/chat/android/models/Attachment;)Z
 	public abstract fun onCreateViewHolder (Landroid/view/ViewGroup;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/ui/feature/messages/composer/MessageComposerViewStyle;)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/preview/AttachmentPreviewViewHolder;
+	public static synthetic fun onCreateViewHolder$default (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/preview/factory/AttachmentPreviewFactory;Landroid/view/ViewGroup;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/ui/feature/messages/composer/MessageComposerViewStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/preview/AttachmentPreviewViewHolder;
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/preview/factory/AttachmentPreviewFactory$DefaultImpls {
@@ -1818,7 +1822,7 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/co
 	public static final field PredefinedKeys Lio/getstream/chat/android/ui/feature/messages/composer/content/MessageComposerContent$PredefinedKeys;
 	public static final field RECORD_AUDIO_BUTTON Ljava/lang/String;
 	public abstract fun attachContext (Lio/getstream/chat/android/ui/feature/messages/composer/MessageComposerContext;)V
-	public abstract fun findViewByKey (Ljava/lang/String;)Landroid/view/View;
+	public fun findViewByKey (Ljava/lang/String;)Landroid/view/View;
 	public abstract fun renderState (Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;)V
 }
 
@@ -3094,7 +3098,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/vi
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/AttachmentFactory {
 	public abstract fun canHandle (Lio/getstream/chat/android/models/Message;)Z
-	public abstract fun createViewHolder (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListeners;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
+	public fun createViewHolder (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListeners;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/AttachmentFactory$DefaultImpls {
@@ -3884,6 +3888,7 @@ public abstract interface class io/getstream/chat/android/ui/font/ChatFonts {
 	public abstract fun getFont (Lio/getstream/chat/android/ui/font/TextStyle;)Landroid/graphics/Typeface;
 	public abstract fun setFont (Lio/getstream/chat/android/ui/font/TextStyle;Landroid/widget/TextView;)V
 	public abstract fun setFont (Lio/getstream/chat/android/ui/font/TextStyle;Landroid/widget/TextView;Landroid/graphics/Typeface;)V
+	public static synthetic fun setFont$default (Lio/getstream/chat/android/ui/font/ChatFonts;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/widget/TextView;Landroid/graphics/Typeface;ILjava/lang/Object;)V
 }
 
 public final class io/getstream/chat/android/ui/font/ChatFonts$DefaultImpls {
@@ -4210,6 +4215,8 @@ public final class io/getstream/chat/android/ui/viewmodel/channel/ChannelAttachm
 	public fun <init> (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+	public fun create (Ljava/lang/Class;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
+	public fun create (Lkotlin/reflect/KClass;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/channel/ChannelInfoMemberViewModel : androidx/lifecycle/ViewModel {
@@ -4223,6 +4230,8 @@ public final class io/getstream/chat/android/ui/viewmodel/channel/ChannelInfoMem
 public final class io/getstream/chat/android/ui/viewmodel/channel/ChannelInfoMemberViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+	public fun create (Ljava/lang/Class;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
+	public fun create (Lkotlin/reflect/KClass;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/channel/ChannelInfoViewModel : androidx/lifecycle/ViewModel {
@@ -4238,6 +4247,8 @@ public final class io/getstream/chat/android/ui/viewmodel/channel/ChannelInfoVie
 	public fun <init> (Landroid/content/Context;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
 	public synthetic fun <init> (Landroid/content/Context;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+	public fun create (Ljava/lang/Class;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
+	public fun create (Lkotlin/reflect/KClass;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/channels/ChannelListHeaderViewModel : androidx/lifecycle/ViewModel {
@@ -4362,6 +4373,8 @@ public final class io/getstream/chat/android/ui/viewmodel/channels/ChannelListVi
 	public fun <init> (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;ILjava/lang/Integer;Ljava/lang/Integer;ZLio/getstream/chat/android/client/api/event/ChatEventHandlerFactory;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;ILjava/lang/Integer;Ljava/lang/Integer;ZLio/getstream/chat/android/client/api/event/ChatEventHandlerFactory;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+	public fun create (Ljava/lang/Class;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
+	public fun create (Lkotlin/reflect/KClass;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModelFactory$Builder {
@@ -4394,6 +4407,8 @@ public final class io/getstream/chat/android/ui/viewmodel/mentions/MentionListVi
 	public fun <init> (Lio/getstream/chat/android/models/querysort/QuerySorter;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/models/querysort/QuerySorter;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+	public fun create (Ljava/lang/Class;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
+	public fun create (Lkotlin/reflect/KClass;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModel : androidx/lifecycle/ViewModel {
@@ -5023,6 +5038,7 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListVi
 	public synthetic fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;Lio/getstream/sdk/chat/audio/recording/StreamMediaRecorder;Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler;Lkotlin/jvm/functions/Function1;IZIZLio/getstream/chat/android/ui/common/state/messages/list/DeletedMessageVisibility;Lio/getstream/chat/android/ui/common/state/messages/list/MessageFooterVisibility;Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler;Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler;Lio/getstream/chat/android/ui/common/feature/messages/list/MessagePositionHandler;ZZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 	public fun create (Ljava/lang/Class;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
+	public fun create (Lkotlin/reflect/KClass;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModelFactory$Builder {
@@ -5053,6 +5069,8 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/PollResultsVi
 public final class io/getstream/chat/android/ui/viewmodel/messages/PollResultsViewModel$Factory : androidx/lifecycle/ViewModelProvider$Factory {
 	public fun <init> (Lio/getstream/chat/android/models/Poll;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+	public fun create (Ljava/lang/Class;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
+	public fun create (Lkotlin/reflect/KClass;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/pinned/PinnedMessageListViewModel : androidx/lifecycle/ViewModel {
@@ -5069,6 +5087,8 @@ public final class io/getstream/chat/android/ui/viewmodel/pinned/PinnedMessageLi
 public final class io/getstream/chat/android/ui/viewmodel/pinned/PinnedMessageListViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public fun <init> (Ljava/lang/String;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+	public fun create (Ljava/lang/Class;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
+	public fun create (Lkotlin/reflect/KClass;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/pinned/PinnedMessageListViewModelFactory$Builder {
@@ -5126,6 +5146,8 @@ public final class io/getstream/chat/android/ui/viewmodel/threads/ThreadListView
 public final class io/getstream/chat/android/ui/viewmodel/threads/ThreadsViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public fun <init> (Lio/getstream/chat/android/client/api/models/QueryThreadsRequest;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+	public fun create (Ljava/lang/Class;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
+	public fun create (Lkotlin/reflect/KClass;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/typing/TypingIndicatorViewModel : androidx/lifecycle/ViewModel {
@@ -5142,6 +5164,8 @@ public final class io/getstream/chat/android/ui/viewmodel/typing/TypingIndicator
 	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+	public fun create (Ljava/lang/Class;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
+	public fun create (Lkotlin/reflect/KClass;Landroidx/lifecycle/viewmodel/CreationExtras;)Landroidx/lifecycle/ViewModel;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/typing/TypingIndicatorViewModelFactory$Builder {
