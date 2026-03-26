@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.components.poll
 
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
+import com.android.ide.common.rendering.api.SessionParams
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import org.junit.Rule
 import org.junit.Test
@@ -25,7 +26,10 @@ import org.junit.Test
 internal class PollMoreOptionsDialogTest : PaparazziComposeTest {
 
     @get:Rule
-    override val paparazzi: Paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
+    override val paparazzi: Paparazzi = Paparazzi(
+        deviceConfig = DeviceConfig.PIXEL_2,
+        renderingMode = SessionParams.RenderingMode.SHRINK,
+    )
 
     @Test
     fun `light mode`() {

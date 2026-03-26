@@ -29,70 +29,35 @@ internal class ChannelFilesAttachmentsContentTest : PaparazziComposeTest {
 
     @Test
     fun loading() {
-        snapshot {
-            ChannelFilesAttachmentsLoading()
-        }
-    }
-
-    @Test
-    fun `loading in dark mode`() {
-        snapshot(isInDarkMode = true) {
+        snapshotWithDarkMode {
             ChannelFilesAttachmentsLoading()
         }
     }
 
     @Test
     fun empty() {
-        snapshot {
-            ChannelFilesAttachmentsEmpty()
-        }
-    }
-
-    @Test
-    fun `empty in dark mode`() {
-        snapshot(isInDarkMode = true) {
+        snapshotWithDarkMode {
             ChannelFilesAttachmentsEmpty()
         }
     }
 
     @Test
     fun content() {
-        snapshot {
-            ChannelFilesAttachmentsContent()
-        }
-    }
-
-    @Test
-    fun `content in dark mode`() {
-        snapshot(isInDarkMode = true) {
+        snapshotWithDarkMode {
             ChannelFilesAttachmentsContent()
         }
     }
 
     @Test
     fun error() {
-        snapshot {
-            ChannelFilesAttachmentsError()
-        }
-    }
-
-    @Test
-    fun `error in dark mode`() {
-        snapshot(isInDarkMode = true) {
+        snapshotWithDarkMode {
             ChannelFilesAttachmentsError()
         }
     }
 
     @Test
     fun `loading more`() {
-        snapshot {
-            ChannelFilesAttachmentsLoadingMore()
-        }
-    }
-
-    @Test
-    fun `loading more in dark mode`() {
-        snapshot(isInDarkMode = true) {
+        snapshotWithDarkMode {
             ChannelFilesAttachmentsLoadingMore()
         }
     }
