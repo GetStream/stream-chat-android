@@ -186,13 +186,13 @@
     <!-- Channel Attachments -->
 
     <string name="stream_ui_channel_attachments_media_title">Photos &amp; Videos</string>
-    <string name="stream_ui_channel_attachments_media_empty_title">No media</string>
-    <string name="stream_ui_channel_attachments_media_empty_text">Media sent in this chat will appear here.</string>
+    <string name="stream_ui_channel_attachments_media_empty_title">No photos or videos</string>
+    <string name="stream_ui_channel_attachments_media_empty_text">Share a photo or video to see it here</string>
     <string name="stream_ui_channel_attachments_media_load_error">Failed to load media attachments!</string>
 
     <string name="stream_ui_channel_attachments_files_title">Files</string>
     <string name="stream_ui_channel_attachments_files_empty_title">No files</string>
-    <string name="stream_ui_channel_attachments_files_empty_text">Files sent in this chat will appear here.</string>
+    <string name="stream_ui_channel_attachments_files_empty_text">Share a file to see it here</string>
     <string name="stream_ui_channel_attachments_files_load_error">Failed to load files attachments!</string>
 
     <!-- Message Composer -->
