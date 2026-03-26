@@ -32,7 +32,7 @@
     <string name="stream_ui_message_composer_permission_camera_title">Camera Access Permission</string>
     <string name="stream_ui_message_composer_permission_camera_message">Camera access permission is needed in order to be able to take photos and videos</string>
     <string name="stream_ui_message_composer_permission_storage_title">Storage Access Permission</string>
-    <string name="stream_ui_message_composer_permission_storage_message">Storage access permission is needed in order to be able to send and save photos, videos, music and the other files</string>
+    <string name="stream_ui_message_composer_permission_storage_message">Storage access permission is needed in order to be able to send and save files</string>
     <string name="stream_ui_message_composer_permission_audio_record_title">Record Audio Permissions</string>
     <string name="stream_ui_message_composer_permission_audio_record_message">Record Audio permission is needed in order to be able to record and send audio files</string>
     <string name="stream_ui_message_composer_permission_setting_message">Enable permissions on App Settings</string>
@@ -90,13 +90,13 @@
 
     <string name="stream_ui_channel_info_contact_title">Contact Info</string>
     <string name="stream_ui_channel_info_group_title">Group Info</string>
-    <string name="stream_ui_channel_info_member_add_button">Add member</string>
+    <string name="stream_ui_channel_info_member_add_button">Add</string>
     <string name="stream_ui_channel_info_view_all">View all</string>
     <plurals name="stream_ui_channel_info_member_count">
         <item quantity="one">%d member</item>
         <item quantity="other">%d members</item>
     </plurals>
-    <string name="stream_ui_channel_info_member_count_online">%1$d members, %2$d online</string>
+    <string name="stream_ui_channel_info_member_count_online">%1$d members · %2$d online</string>
     <string name="stream_ui_channel_info_member_owner">Owner</string>
     <string name="stream_ui_channel_info_member_moderator">Moderator</string>
     <string name="stream_ui_channel_info_expand_button">%d more</string>

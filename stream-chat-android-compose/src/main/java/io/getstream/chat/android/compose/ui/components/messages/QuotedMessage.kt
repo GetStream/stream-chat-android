@@ -17,10 +17,7 @@
 package io.getstream.chat.android.compose.ui.components.messages
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -67,18 +64,13 @@ import io.getstream.chat.android.ui.common.utils.extensions.isMine
  *
  * @param message The quoted message to show.
  * @param currentUser The currently logged in user.
- * @param onLongItemClick Handler when the item is long clicked.
- * @param onQuotedMessageClick Handler for quoted message click action.
  * @param modifier Modifier for styling.
  * @param replyMessage The message that contains the reply.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun QuotedMessage(
     message: Message,
     currentUser: User?,
-    onLongItemClick: (Message) -> Unit,
-    onQuotedMessageClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     replyMessage: Message? = null,
 ) {
@@ -86,12 +78,6 @@ public fun QuotedMessage(
 
     Row(
         modifier = modifier
-            .combinedClickable(
-                interactionSource = remember(::MutableInteractionSource),
-                indication = null,
-                onLongClick = { onLongItemClick(message) },
-                onClick = { onQuotedMessageClick(message) },
-            )
             .background(style.backgroundColor, RoundedCornerShape(StreamTokens.radiusLg))
             .padding(StreamTokens.spacingXs)
             .height(IntrinsicSize.Min),
@@ -134,8 +120,6 @@ internal fun MessageComposerQuotedMessage(
         QuotedMessage(
             message = message,
             currentUser = currentUser,
-            onLongItemClick = {},
-            onQuotedMessageClick = {},
             replyMessage = null,
         )
 

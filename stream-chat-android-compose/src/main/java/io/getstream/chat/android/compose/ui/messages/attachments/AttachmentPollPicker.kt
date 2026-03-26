@@ -18,14 +18,12 @@ package io.getstream.chat.android.compose.ui.messages.attachments
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +41,8 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
 import io.getstream.chat.android.compose.ui.components.FullscreenDialog
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
+import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.CreatePollScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -68,46 +68,30 @@ internal fun AttachmentPollPicker(
     }
     Column(
         modifier = Modifier
-            .padding(
-                start = StreamTokens.spacing2xl,
-                end = StreamTokens.spacing2xl,
-                bottom = StreamTokens.spacing3xl,
-            )
+            .padding(horizontal = StreamTokens.spacing2xl)
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+        verticalArrangement = Arrangement.Center,
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs, Alignment.CenterVertically),
-        ) {
-            Icon(
-                modifier = Modifier.size(32.dp),
-                painter = painterResource(id = R.drawable.stream_compose_ic_attachment_polls_picker),
-                contentDescription = null,
-                tint = ChatTheme.colors.textTertiary,
-            )
-            Text(
-                text = stringResource(id = R.string.stream_compose_attachment_poll_picker_content),
-                style = ChatTheme.typography.bodyDefault,
-                color = ChatTheme.colors.textTertiary,
-                textAlign = TextAlign.Center,
-            )
-        }
-        OutlinedButton(
-            modifier = Modifier
-                .height(48.dp)
-                .fillMaxWidth(),
+        Icon(
+            modifier = Modifier.size(32.dp),
+            painter = painterResource(id = R.drawable.stream_compose_ic_attachment_polls_picker),
+            contentDescription = null,
+            tint = ChatTheme.colors.textTertiary,
+        )
+        Spacer(modifier = Modifier.height(StreamTokens.spacingSm))
+        Text(
+            text = stringResource(id = R.string.stream_compose_attachment_poll_picker_content),
+            style = ChatTheme.typography.bodyDefault,
+            color = ChatTheme.colors.textSecondary,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(modifier = Modifier.height(StreamTokens.spacingMd))
+        StreamTextButton(
+            style = StreamButtonStyleDefaults.secondaryOutline,
+            text = stringResource(id = R.string.stream_compose_attachment_poll_picker_cta),
             onClick = openDialog,
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = ChatTheme.colors.buttonSecondaryText,
-            ),
-        ) {
-            Text(text = stringResource(id = R.string.stream_compose_attachment_poll_picker_cta))
-        }
+        )
     }
     if (showCreateDialog) {
         FullscreenDialog(
