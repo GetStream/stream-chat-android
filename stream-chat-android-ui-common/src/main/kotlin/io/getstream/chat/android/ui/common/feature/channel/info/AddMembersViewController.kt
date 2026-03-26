@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 /**
@@ -124,9 +125,11 @@ public class AddMembersViewController(
             chatClient.queryUsers(query.trim().toSearchRequest(offset = 0))
                 .await()
                 .onSuccess { users ->
+                    if (!isActive) return@onSuccess
                     _state.update { it.copy(isLoading = false, searchResult = users) }
                 }
                 .onError {
+                    if (!isActive) return@onError
                     _state.update { it.copy(isLoading = false) }
                 }
         }
