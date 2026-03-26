@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
+import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.NoOpMessageTransformer
@@ -121,6 +122,7 @@ internal class MockClientBuilder(
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
             chatSocket = mock(),
+            serverClockOffset = ServerClockOffset(),
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             mutableClientState = mutableClientState,

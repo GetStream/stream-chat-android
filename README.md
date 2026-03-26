@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://getstream.io/tutorials/android-chat/">
-    <img src="/docs/sdk-hero-android.png"/>
+    <img src="/docs/stream-chat-android-github-cover.png"/>
   </a>
 </p>
 
@@ -20,7 +20,7 @@
 
 ![stream-chat-android-client](https://img.shields.io/badge/stream--chat--android--client-5.25%20MB-lightgreen)
 ![stream-chat-android-offline](https://img.shields.io/badge/stream--chat--android--offline-5.48%20MB-lightgreen)
-![stream-chat-android-ui-components](https://img.shields.io/badge/stream--chat--android--ui--components-10.62%20MB-lightgreen)
+![stream-chat-android-ui-components](https://img.shields.io/badge/stream--chat--android--ui--components-10.63%20MB-lightgreen)
 ![stream-chat-android-compose](https://img.shields.io/badge/stream--chat--android--compose-12.85%20MB-lightgreen)
 
 </div>

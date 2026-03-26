@@ -101,6 +101,7 @@ import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.extractBaseUrl
+import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.isLaterThanDays
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.AppSettingManager
@@ -157,6 +158,7 @@ import io.getstream.chat.android.client.user.storage.SharedPreferencesCredential
 import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.TokenUtils
+import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.message.ensureId
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
@@ -286,6 +288,8 @@ internal constructor(
     @InternalStreamChatApi
     public val audioPlayer: AudioPlayer,
     private val now: () -> Date = ::Date,
+    @InternalStreamChatApi
+    public val serverClockOffset: ServerClockOffset,
     private val repository: ChatClientRepository,
     private val messageReceiptReporter: MessageReceiptReporter,
     internal val messageReceiptManager: MessageReceiptManager,
@@ -350,6 +354,7 @@ internal constructor(
      *
      * @see [Plugin]
      */
+    @Volatile
     @InternalStreamChatApi
     public var plugins: List<Plugin> = emptyList()
 
@@ -396,12 +401,16 @@ internal constructor(
     @Suppress("ThrowsCount")
     internal inline fun <reified P : DependencyResolver, reified T : Any> resolvePluginDependency(): T {
         StreamLog.v(TAG) { "[resolvePluginDependency] P: ${P::class.simpleName}, T: ${T::class.simpleName}" }
+        // Snapshot plugins BEFORE checking initializationState to avoid a race with disconnect().
+        // disconnect() sets initializationState to NOT_INITIALIZED before clearing plugins,
+        // so if we snapshot plugins first and then see COMPLETE, the snapshot is guaranteed valid.
+        val currentPlugins = plugins
         val initState = awaitInitializationState(RESOLVE_DEPENDENCY_TIMEOUT)
         if (initState != InitializationState.COMPLETE) {
             StreamLog.e(TAG) { "[resolvePluginDependency] failed (initializationState is not COMPLETE): $initState " }
             throw IllegalStateException("ChatClient::connectUser() must be called before resolving any dependency")
         }
-        val resolver = plugins.find { plugin ->
+        val resolver = currentPlugins.find { plugin ->
             plugin is P
         } ?: throw IllegalStateException(
             "Plugin '${P::class.qualifiedName}' was not found. Did you init it within ChatClient?",
@@ -1566,9 +1575,9 @@ internal constructor(
 
         notifications.onLogout()
         // Set initializationState to NOT_INITIALIZED BEFORE clearing plugins to prevent race condition.
-        // This ensures the StatePlugin extension methods don't access the plugin during disconnect.
+        // resolvePluginDependency() snapshots plugins before checking state, so if it sees COMPLETE
+        // here, the snapshot is guaranteed to still contain the plugins.
         mutableClientState.setInitializationState(InitializationState.NOT_INITIALIZED)
-
         plugins.forEach { it.onUserDisconnected() }
         plugins = emptyList()
         userStateService.onLogout()
@@ -2588,16 +2597,34 @@ internal constructor(
 
     /**
      * Ensure the message has a [Message.createdLocallyAt] timestamp.
-     * If not, set it to the max of the channel's [Channel.lastMessageAt] + 1 millisecond and [now].
-     * This ensures that the message appears in the correct order in the channel.
+     * If not, set it to the max of the channel's [Channel.lastMessageAt] + 1 millisecond and the
+     * estimated server time. Using estimated server time (instead of raw local clock) prevents
+     * cross-user ordering issues when the device clock is skewed.
      */
     private suspend fun Message.ensureCreatedLocallyAt(cid: String): Message {
-        val lastMessageAt = repositoryFacade.selectChannel(cid = cid)?.lastMessageAt
-        val lastMessageAtPlusOneMillisecond = lastMessageAt?.let {
-            Date(it.time + 1)
+        val parentId = this.parentId
+        if (parentId != null) {
+            // Thread reply
+            val lastMessage = repositoryFacade.selectMessagesForThread(parentId, limit = 1).lastOrNull()
+            val lastMessageAt = lastMessage?.getCreatedAtOrNull()
+            val lastMessageAtPlusOneMillisecond = lastMessageAt?.let {
+                Date(it.time + 1)
+            }
+            val createdLocallyAt = max(lastMessageAtPlusOneMillisecond, serverClockOffset.estimatedServerTime())
+            return copy(createdLocallyAt = this.createdLocallyAt ?: createdLocallyAt)
+        } else {
+            // Regular message
+            val (type, id) = cid.cidToTypeAndId()
+            // Fetch channel lastMessageAt from state, fallback to offline storage
+            val channelState = logicRegistry?.channelStateLogic(type, id)?.listenForChannelState()
+            val lastMessageAt = channelState?.channelData?.value?.lastMessageAt
+                ?: repositoryFacade.selectChannel(cid = cid)?.lastMessageAt
+            val lastMessageAtPlusOneMillisecond = lastMessageAt?.let {
+                Date(it.time + 1)
+            }
+            val createdLocallyAt = max(lastMessageAtPlusOneMillisecond, serverClockOffset.estimatedServerTime())
+            return copy(createdLocallyAt = this.createdLocallyAt ?: createdLocallyAt)
         }
-        val createdLocallyAt = max(lastMessageAtPlusOneMillisecond, now())
-        return copy(createdLocallyAt = this.createdLocallyAt ?: createdLocallyAt)
     }
 
     /**
@@ -5037,6 +5064,8 @@ internal constructor(
                 warmUpReflection()
             }
 
+            val serverClockOffset = ServerClockOffset()
+
             val module =
                 ChatModule(
                     appContext = appContext,
@@ -5055,6 +5084,7 @@ internal constructor(
                     lifecycle = lifecycle,
                     appName = this.appName,
                     appVersion = this.appVersion,
+                    serverClockOffset = serverClockOffset,
                 )
 
             val api = module.api()
@@ -5091,6 +5121,7 @@ internal constructor(
                 retryPolicy = retryPolicy,
                 appSettingsManager = appSettingsManager,
                 chatSocket = module.chatSocket,
+                serverClockOffset = serverClockOffset,
                 pluginFactories = pluginFactories,
                 repositoryFactoryProvider = repositoryFactoryProvider
                     ?: pluginFactories
