@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.stream.log)
     implementation(libs.stream.push.permissions.snackbar)
     implementation(libs.stream.result)
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.runtime)
 
     implementation(libs.androidx.activity.ktx)
