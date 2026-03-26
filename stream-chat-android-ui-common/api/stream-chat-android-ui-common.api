@@ -1657,7 +1657,6 @@ public final class io/getstream/chat/android/ui/common/state/channel/info/AddMem
 	public final fun getQuery ()Ljava/lang/String;
 	public final fun getSearchResult ()Ljava/util/List;
 	public final fun getSelectedUserIds ()Ljava/util/Set;
-	public final fun getSelectedUsers ()Ljava/util/List;
 	public fun hashCode ()I
 	public final fun isAlreadyMember (Lio/getstream/chat/android/models/User;)Z
 	public final fun isLoading ()Z

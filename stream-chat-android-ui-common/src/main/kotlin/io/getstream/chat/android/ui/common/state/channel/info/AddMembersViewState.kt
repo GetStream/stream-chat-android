@@ -37,11 +37,6 @@ public data class AddMembersViewState(
     val loadedMemberIds: Set<String> = emptySet(),
 ) {
     /**
-     * The list of users selected to be added as members, derived from [searchResult] and [selectedUserIds].
-     */
-    public val selectedUsers: List<User> get() = searchResult.filter { it.id in selectedUserIds }
-
-    /**
      * Returns true if the given [user] is selected to be added as a member.
      */
     public fun isSelected(user: User): Boolean = user.id in selectedUserIds

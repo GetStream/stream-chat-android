@@ -244,7 +244,6 @@ internal class AddMembersViewControllerTest {
             val state = awaitItem()
             assertTrue(user1.id in state.selectedUserIds)
             assertTrue(user2.id in state.selectedUserIds)
-            assertEquals(listOf(user1, user2), state.selectedUsers)
         }
     }
 
@@ -303,7 +302,7 @@ internal class AddMembersViewControllerTest {
         init {
             whenever(chatClient.queryUsers(any())) doAnswer {
                 val index = callCount++
-                val (users, err) = queryUsersResults.getOrElse(index) { Pair(emptyList<User>(), null) }
+                val (users, err) = queryUsersResults.getOrElse(index) { Pair(emptyList(), null) }
                 err?.asCall() ?: (users ?: emptyList<User>()).asCall()
             }
         }
