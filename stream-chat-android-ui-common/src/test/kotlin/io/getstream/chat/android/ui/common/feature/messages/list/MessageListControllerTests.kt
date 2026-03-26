@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.common.feature.messages.list
 
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.StateConfig
+import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.audio.AudioPlayer
@@ -1128,7 +1128,7 @@ internal class MessageListControllerTests {
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val cid: String = CID,
-        stateConfig: StateConfig = StateConfig(),
+        chatClientConfig: ChatClientConfig = ChatClientConfig(),
     ) {
         private val clientState: ClientState = mock()
         private val stateRegistry: StateRegistry = mock()
@@ -1139,7 +1139,7 @@ internal class MessageListControllerTests {
             val statePlugin: StatePlugin = mock()
             val statePluginFactory: StreamStatePluginFactory = mock()
             whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
-            whenever(statePluginFactory.resolveDependency(eq(StateConfig::class))) doReturn stateConfig
+            whenever(statePluginFactory.resolveDependency(eq(ChatClientConfig::class))) doReturn chatClientConfig
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
             whenever(chatClient.pluginFactories) doReturn listOf(statePluginFactory)
             whenever(chatClient.clientState) doReturn clientState
