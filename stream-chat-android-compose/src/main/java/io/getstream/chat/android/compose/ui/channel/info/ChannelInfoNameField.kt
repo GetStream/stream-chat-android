@@ -44,6 +44,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.animation.FadingVisibility
 import io.getstream.chat.android.compose.ui.util.clickable
 
+// TODO Remove
 @Suppress("LongMethod")
 @Composable
 internal fun ChannelInfoNameField(

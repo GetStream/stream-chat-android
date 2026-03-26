@@ -57,19 +57,11 @@ public sealed interface ChannelInfoViewState {
             public data object AddMember : Option
 
             /**
-             * Indicates an option with user information.
-             *
-             * @param user The user whose information is displayed.
-             */
-            public data class UserInfo(val user: User) : Option
-
-            /**
              * Indicates an option to rename the channel.
              *
              * @param name The current name of the channel.
-             * @param isReadOnly Indicates if the channel is read-only.
              */
-            public data class RenameChannel(val name: String, val isReadOnly: Boolean) : Option
+            public data class EditChannel(val name: String) : Option
 
             /**
              * Indicates an option to mute the channel.

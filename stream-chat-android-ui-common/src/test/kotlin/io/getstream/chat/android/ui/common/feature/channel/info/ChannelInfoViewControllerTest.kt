@@ -96,7 +96,6 @@ internal class ChannelInfoViewControllerTest {
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.UserInfo(user = currentMember.user),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
@@ -137,7 +136,6 @@ internal class ChannelInfoViewControllerTest {
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.UserInfo(user = otherMember.user),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
@@ -177,7 +175,6 @@ internal class ChannelInfoViewControllerTest {
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
@@ -207,7 +204,6 @@ internal class ChannelInfoViewControllerTest {
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
@@ -224,7 +220,6 @@ internal class ChannelInfoViewControllerTest {
     fun `expand and collapse group channel content`() = runTest {
         val channel = randomChannel(members = randomMembers(10), ownCapabilities = emptySet())
         val options = listOf(
-            ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
             ChannelInfoViewState.Content.Option.PinnedMessages,
             ChannelInfoViewState.Content.Option.MediaAttachments,
             ChannelInfoViewState.Content.Option.FilesAttachments,
@@ -310,7 +305,6 @@ internal class ChannelInfoViewControllerTest {
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.UserInfo(user = otherMember.user),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
@@ -342,7 +336,6 @@ internal class ChannelInfoViewControllerTest {
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.UserInfo(user = otherMember.user),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
@@ -378,7 +371,6 @@ internal class ChannelInfoViewControllerTest {
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
@@ -409,10 +401,7 @@ internal class ChannelInfoViewControllerTest {
                     ),
                     options = listOf(
                         ChannelInfoViewState.Content.Option.AddMember,
-                        ChannelInfoViewState.Content.Option.RenameChannel(
-                            name = updatedChannel.name,
-                            isReadOnly = false,
-                        ),
+                        ChannelInfoViewState.Content.Option.EditChannel(name = updatedChannel.name),
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
@@ -452,7 +441,7 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = false),
+                        ChannelInfoViewState.Content.Option.EditChannel(name = channel.name),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
@@ -472,7 +461,7 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = newName, isReadOnly = false),
+                        ChannelInfoViewState.Content.Option.EditChannel(name = newName),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
@@ -575,7 +564,6 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
@@ -595,7 +583,6 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = true),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
@@ -622,7 +609,6 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
@@ -657,7 +643,6 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = true),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
@@ -677,7 +662,6 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
@@ -704,7 +688,6 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = true),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
@@ -755,7 +738,6 @@ internal class ChannelInfoViewControllerTest {
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
@@ -791,7 +773,6 @@ internal class ChannelInfoViewControllerTest {
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
@@ -827,7 +808,6 @@ internal class ChannelInfoViewControllerTest {
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
@@ -855,7 +835,6 @@ internal class ChannelInfoViewControllerTest {
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
@@ -930,7 +909,6 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
@@ -974,7 +952,6 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
@@ -1032,7 +1009,6 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
@@ -1070,7 +1046,6 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
