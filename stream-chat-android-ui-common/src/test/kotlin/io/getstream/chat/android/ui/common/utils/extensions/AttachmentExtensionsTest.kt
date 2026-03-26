@@ -63,4 +63,70 @@ internal class AttachmentExtensionsTest {
 
         assertNull(attachment.imagePreviewUrl)
     }
+
+    // linkPreviewImageUrl tests
+
+    @Test
+    fun `linkPreviewImageUrl returns thumbUrl when both thumbUrl and imageUrl are set`() {
+        val attachment = Attachment(thumbUrl = "thumb", imageUrl = "image")
+        assertEquals("thumb", attachment.linkPreviewImageUrl)
+    }
+
+    @Test
+    fun `linkPreviewImageUrl returns imageUrl when thumbUrl is null`() {
+        val attachment = Attachment(thumbUrl = null, imageUrl = "image")
+        assertEquals("image", attachment.linkPreviewImageUrl)
+    }
+
+    @Test
+    fun `linkPreviewImageUrl returns null when both are null`() {
+        val attachment = Attachment(thumbUrl = null, imageUrl = null)
+        assertNull(attachment.linkPreviewImageUrl)
+    }
+
+    // linkUrl tests
+
+    @Test
+    fun `linkUrl returns titleLink when both titleLink and ogUrl are set`() {
+        val attachment = Attachment(titleLink = "titleLink", ogUrl = "ogUrl")
+        assertEquals("titleLink", attachment.linkUrl)
+    }
+
+    @Test
+    fun `linkUrl returns ogUrl when titleLink is null`() {
+        val attachment = Attachment(titleLink = null, ogUrl = "ogUrl")
+        assertEquals("ogUrl", attachment.linkUrl)
+    }
+
+    @Test
+    fun `linkUrl returns null when both are null`() {
+        val attachment = Attachment(titleLink = null, ogUrl = null)
+        assertNull(attachment.linkUrl)
+    }
+
+    // giphyFallbackPreviewUrl tests
+
+    @Test
+    fun `giphyFallbackPreviewUrl returns thumbUrl when all are set`() {
+        val attachment = Attachment(thumbUrl = "thumb", titleLink = "titleLink", ogUrl = "ogUrl")
+        assertEquals("thumb", attachment.giphyFallbackPreviewUrl)
+    }
+
+    @Test
+    fun `giphyFallbackPreviewUrl returns titleLink when thumbUrl is null`() {
+        val attachment = Attachment(thumbUrl = null, titleLink = "titleLink", ogUrl = "ogUrl")
+        assertEquals("titleLink", attachment.giphyFallbackPreviewUrl)
+    }
+
+    @Test
+    fun `giphyFallbackPreviewUrl returns ogUrl when thumbUrl and titleLink are null`() {
+        val attachment = Attachment(thumbUrl = null, titleLink = null, ogUrl = "ogUrl")
+        assertEquals("ogUrl", attachment.giphyFallbackPreviewUrl)
+    }
+
+    @Test
+    fun `giphyFallbackPreviewUrl returns null when all are null`() {
+        val attachment = Attachment(thumbUrl = null, titleLink = null, ogUrl = null)
+        assertNull(attachment.giphyFallbackPreviewUrl)
+    }
 }

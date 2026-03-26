@@ -49,6 +49,7 @@ import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePrevie
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
+import io.getstream.chat.android.ui.common.utils.extensions.giphyFallbackPreviewUrl
 import java.io.File
 
 /**
@@ -76,7 +77,7 @@ public fun MediaAttachmentQuotedContent(
 
     val data =
         when {
-            isGiphy -> attachment.thumbUrl ?: attachment.titleLink ?: attachment.ogUrl
+            isGiphy -> attachment.giphyFallbackPreviewUrl
             isImageContent ->
                 attachment.imageUrl?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
             else -> attachment.imagePreviewData
