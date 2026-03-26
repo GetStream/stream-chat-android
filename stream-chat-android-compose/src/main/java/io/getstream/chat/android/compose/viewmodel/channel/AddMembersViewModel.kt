@@ -35,7 +35,7 @@ import kotlinx.coroutines.flow.filterNotNull
  * @param cid The full channel identifier (e.g., "messaging:123").
  * @param controllerProvider The provider for [AddMembersViewController].
  */
-public class AddMembersViewModel(
+internal class AddMembersViewModel(
     private val cid: String,
     private val controllerProvider: ViewModel.() -> AddMembersViewController = {
         AddMembersViewController(
@@ -52,12 +52,12 @@ public class AddMembersViewModel(
     /**
      * @see [AddMembersViewController.state]
      */
-    public val state: StateFlow<AddMembersViewState> get() = controller.state
+    val state: StateFlow<AddMembersViewState> get() = controller.state
 
     /**
      * @see [AddMembersViewController.onViewAction]
      */
-    public fun onViewAction(action: AddMembersViewAction) {
+    fun onViewAction(action: AddMembersViewAction) {
         controller.onViewAction(action)
     }
 }

@@ -2506,22 +2506,6 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the "Add Members" screen.
-     *
-     * Override this method to provide a custom implementation of the "Add Members" screen.
-     *
-     * @param params Parameters for this component.
-     */
-    @Composable
-    public fun AddMembersScreen(params: AddMembersScreenParams) {
-        io.getstream.chat.android.compose.ui.channel.info.AddMembersScreen(
-            viewModel = params.viewModel,
-            onDismiss = params.onDismiss,
-            onConfirm = params.onConfirm,
-        )
-    }
-
-    /**
      * Factory method for creating the "Add members" button of the group channel info screen.
      *
      * @param params Parameters for this component.

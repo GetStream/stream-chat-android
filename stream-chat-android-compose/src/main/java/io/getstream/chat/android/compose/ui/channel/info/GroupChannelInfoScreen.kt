@@ -56,8 +56,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
+import io.getstream.chat.android.compose.ui.components.FullscreenDialog
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
-import io.getstream.chat.android.compose.ui.theme.AddMembersScreenParams
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -127,18 +127,18 @@ public fun GroupChannelInfoScreen(
 
     GroupChannelInfoScreenModal(infoViewModel)
     if (showAddMembers) {
-        ViewModelStore {
-            val addMembersViewModel = viewModel<AddMembersViewModel>(factory = viewModelFactory)
-            ChatTheme.componentFactory.AddMembersScreen(
-                params = AddMembersScreenParams(
+        FullscreenDialog(onDismissRequest = { showAddMembers = false }) {
+            ViewModelStore {
+                val addMembersViewModel = viewModel<AddMembersViewModel>(factory = viewModelFactory)
+                AddMembersScreen(
                     viewModel = addMembersViewModel,
                     onDismiss = { showAddMembers = false },
                     onConfirm = { userIds ->
                         infoViewModel.addMembers(userIds)
                         showAddMembers = false
                     },
-                ),
-            )
+                )
+            }
         }
     }
 }

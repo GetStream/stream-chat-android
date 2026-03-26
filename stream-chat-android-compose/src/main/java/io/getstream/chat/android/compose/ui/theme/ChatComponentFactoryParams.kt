@@ -53,7 +53,6 @@ import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicke
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.list.MessagesLazyListState
 import io.getstream.chat.android.compose.ui.threads.ThreadListBannerState
-import io.getstream.chat.android.compose.viewmodel.channel.AddMembersViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Attachment
@@ -1844,20 +1843,6 @@ public data class GroupChannelInfoTopBarParams(
  */
 public data class GroupChannelInfoAddMembersButtonParams(
     val onClick: () -> Unit,
-)
-
-/**
- * Parameters for [ChatComponentFactory.AddMembersScreen].
- *
- * @param viewModel The [AddMembersViewModel] managing the state and actions.
- * @param onDismiss Action invoked when the user navigates back without adding members.
- * @param onConfirm Action invoked with the selected user IDs when the user confirms.
- *   The caller is responsible for performing the API call and dismissing the screen.
- */
-public data class AddMembersScreenParams(
-    val viewModel: AddMembersViewModel,
-    val onDismiss: () -> Unit,
-    val onConfirm: (Set<String>) -> Unit,
 )
 
 /**

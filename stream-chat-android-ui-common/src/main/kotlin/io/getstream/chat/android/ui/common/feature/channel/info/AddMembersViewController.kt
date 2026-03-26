@@ -143,7 +143,11 @@ public class AddMembersViewController(
             chatClient.queryUsers(_state.value.query.trim().toSearchRequest(offset = currentResult.size))
                 .await()
                 .onSuccess { newUsers ->
-                    _state.update { it.copy(isLoadingMore = false, searchResult = it.searchResult + newUsers) }
+                    _state.update {
+                        val existingIds = it.searchResult.mapTo(mutableSetOf()) { user -> user.id }
+                        val unique = newUsers.filterNot { user -> user.id in existingIds }
+                        it.copy(isLoadingMore = false, searchResult = it.searchResult + unique)
+                    }
                 }
                 .onError {
                     _state.update { it.copy(isLoadingMore = false) }

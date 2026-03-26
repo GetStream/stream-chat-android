@@ -2510,22 +2510,6 @@ public final class io/getstream/chat/android/compose/ui/pinned/PinnedMessageList
 	public static final fun PinnedMessageList (Lio/getstream/chat/android/compose/viewmodel/pinned/PinnedMessageListViewModel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
-public final class io/getstream/chat/android/compose/ui/theme/AddMembersScreenParams {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/compose/viewmodel/channel/AddMembersViewModel;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)V
-	public final fun component1 ()Lio/getstream/chat/android/compose/viewmodel/channel/AddMembersViewModel;
-	public final fun component2 ()Lkotlin/jvm/functions/Function0;
-	public final fun component3 ()Lkotlin/jvm/functions/Function1;
-	public final fun copy (Lio/getstream/chat/android/compose/viewmodel/channel/AddMembersViewModel;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/compose/ui/theme/AddMembersScreenParams;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/AddMembersScreenParams;Lio/getstream/chat/android/compose/viewmodel/channel/AddMembersViewModel;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/AddMembersScreenParams;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getOnConfirm ()Lkotlin/jvm/functions/Function1;
-	public final fun getOnDismiss ()Lkotlin/jvm/functions/Function0;
-	public final fun getViewModel ()Lio/getstream/chat/android/compose/viewmodel/channel/AddMembersViewModel;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class io/getstream/chat/android/compose/ui/theme/AttachmentCameraPickerParams {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/compose/state/messages/attachments/CameraPickerMode;Lkotlin/jvm/functions/Function1;)V
@@ -3528,7 +3512,6 @@ public final class io/getstream/chat/android/compose/ui/theme/ChannelSwipeAction
 }
 
 public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatComponentFactory {
-	public abstract fun AddMembersScreen (Lio/getstream/chat/android/compose/ui/theme/AddMembersScreenParams;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun AttachmentCameraPicker (Lio/getstream/chat/android/compose/ui/theme/AttachmentCameraPickerParams;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun AttachmentCommandPicker (Lio/getstream/chat/android/compose/ui/theme/AttachmentCommandPickerParams;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun AttachmentFilePicker (Lio/getstream/chat/android/compose/ui/theme/AttachmentFilePickerParams;Landroidx/compose/runtime/Composer;I)V
@@ -3716,7 +3699,6 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFactory$DefaultImpls {
-	public static fun AddMembersScreen (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/AddMembersScreenParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun AttachmentCameraPicker (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/AttachmentCameraPickerParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun AttachmentCommandPicker (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/AttachmentCommandPickerParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun AttachmentFilePicker (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/AttachmentFilePickerParams;Landroidx/compose/runtime/Composer;I)V
@@ -6864,14 +6846,6 @@ public final class io/getstream/chat/android/compose/util/KeyValuePair {
 	public final fun getValue ()Ljava/lang/Object;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/compose/viewmodel/channel/AddMembersViewModel : androidx/lifecycle/ViewModel {
-	public static final field $stable I
-	public fun <init> (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
-	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getState ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun onViewAction (Lio/getstream/chat/android/ui/common/feature/channel/info/AddMembersViewAction;)V
 }
 
 public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelAttachmentsViewModel : androidx/lifecycle/ViewModel {
