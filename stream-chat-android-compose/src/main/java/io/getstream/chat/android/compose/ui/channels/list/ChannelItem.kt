@@ -155,7 +155,6 @@ public fun ChannelItem(
             .testTag("Stream_ChannelItem")
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(horizontal = StreamTokens.spacing2xs)
             .semantics { contentDescription = description }
             .applyIf(isFocused) { border(2.dp, ChatTheme.colors.borderUtilitySelected, shape) }
             .clip(shape)
