@@ -63,7 +63,7 @@ fun AppBottomBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.backgroundElevationElevation1),
+            .background(ChatTheme.colors.backgroundCoreElevation1),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {

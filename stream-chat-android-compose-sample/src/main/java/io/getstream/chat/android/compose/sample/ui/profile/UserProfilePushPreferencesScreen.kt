@@ -219,7 +219,7 @@ private fun TemporaryDisableSection(
             colors = SwitchDefaults.colors(
                 checkedTrackColor = ChatTheme.colors.accentSuccess,
                 checkedThumbColor = Color.White,
-                uncheckedTrackColor = ChatTheme.colors.backgroundCoreDisabled,
+                uncheckedTrackColor = ChatTheme.colors.backgroundUtilityDisabled,
                 uncheckedThumbColor = Color.White,
             ),
         )

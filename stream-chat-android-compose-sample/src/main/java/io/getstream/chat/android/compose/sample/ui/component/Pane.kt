@@ -73,7 +73,7 @@ internal fun PaneRow(
                     else -> RectangleShape
                 }
                 background(
-                    color = ChatTheme.colors.backgroundElevationElevation1,
+                    color = ChatTheme.colors.backgroundCoreElevation1,
                     shape = shape,
                 )
             }

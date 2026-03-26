@@ -91,7 +91,7 @@ public fun MessageListHeader(
     modifier: Modifier = Modifier,
     typingUsers: List<User> = emptyList(),
     messageMode: MessageMode = MessageMode.Normal,
-    color: Color = ChatTheme.colors.backgroundElevationElevation1,
+    color: Color = ChatTheme.colors.backgroundCoreElevation1,
     shape: Shape = RectangleShape,
     elevation: Dp = StreamTokens.elevation3,
     onBackPressed: () -> Unit = {},

@@ -29,12 +29,12 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.Dp
@@ -51,6 +51,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 import io.getstream.result.Error
+import kotlinx.coroutines.delay
 
 /**
  * Displays the channel media attachments grid.
@@ -102,12 +103,12 @@ internal fun ChannelMediaAttachmentsGrid(
             )
         }
     },
-    floatingHeader: @Composable BoxScope.(label: String) -> Unit = { label ->
+    floatingHeader: @Composable BoxScope.(label: String, visible: Boolean) -> Unit = { label, visible ->
         with(ChatTheme.componentFactory) {
             ChannelMediaAttachmentsFloatingHeader(
                 params = ChannelMediaAttachmentsFloatingHeaderParams(
-                    modifier = Modifier.align(Alignment.TopCenter),
                     label = label,
+                    visible = visible,
                 ),
             )
         }
@@ -181,7 +182,18 @@ internal fun ChannelMediaAttachmentsGrid(
             derivedStateOf { headerKeySelector(content.items[gridState.firstVisibleItemIndex]) }
         }
 
-        floatingHeader(groupKey)
+        val isScrolling by remember { derivedStateOf { gridState.isScrollInProgress } }
+        var isHeaderVisible by remember { mutableStateOf(true) }
+        LaunchedEffect(isScrolling) {
+            if (isScrolling) {
+                isHeaderVisible = true
+            } else {
+                delay(FloatingHeaderAutoHideDelayMs)
+                isHeaderVisible = false
+            }
+        }
+
+        floatingHeader(groupKey, isHeaderVisible)
 
         LoadMoreHandler(
             lazyGridState = gridState,
@@ -196,7 +208,7 @@ internal fun ChannelMediaAttachmentsGrid(
                 sheetMaxWidth = Dp.Unspecified,
                 shape = RectangleShape,
                 dragHandle = {},
-                containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                containerColor = ChatTheme.colors.backgroundCoreElevation1,
             ) {
                 ChannelMediaAttachmentsPreviewScreen(
                     items = items,
@@ -210,6 +222,8 @@ internal fun ChannelMediaAttachmentsGrid(
         }
     }
 }
+
+private const val FloatingHeaderAutoHideDelayMs = 2000L
 
 /**
  * The default number of columns based on the window width size class.

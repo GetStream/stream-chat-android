@@ -31,10 +31,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Warning
 import androidx.compose.material3.BottomAppBarDefaults
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -458,7 +458,7 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default read status indicator in the channel item, weather the last message is sent, pending or read.
+     * The default read status indicator in the channel item, whether the last message is sent, pending or read.
      *
      * @param params Parameters for this component.
      */
@@ -807,6 +807,8 @@ public interface ChatComponentFactory {
 
     /**
      * The default unread separator item content of the message list.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun LazyItemScope.MessageListUnreadSeparatorItemContent(
@@ -817,6 +819,8 @@ public interface ChatComponentFactory {
 
     /**
      * The default thread date separator item content of the message list.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun LazyItemScope.MessageListThreadDateSeparatorItemContent(
@@ -847,6 +851,8 @@ public interface ChatComponentFactory {
 
     /**
      * The default typing indicator content of the message list.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun LazyItemScope.MessageListTypingIndicatorItemContent(
@@ -857,6 +863,8 @@ public interface ChatComponentFactory {
 
     /**
      * The default empty thread placeholder item content of the message list.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun LazyItemScope.MessageListEmptyThreadPlaceholderItemContent(
@@ -866,6 +874,8 @@ public interface ChatComponentFactory {
 
     /**
      * The default start of the channel item content of the message list.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun LazyItemScope.MessageListStartOfTheChannelItemContent(
@@ -1015,6 +1025,8 @@ public interface ChatComponentFactory {
      * The component displaying the reactions on a message. Defaults to [SegmentedMessageReactions],
      * but an equivalent implementation with a different visual style is available through
      * [ClusteredMessageReactions].
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageReactions(
@@ -1104,12 +1116,14 @@ public interface ChatComponentFactory {
             message = params.message,
             currentUser = params.currentUser,
             replyMessage = params.replyMessage,
-            onLongItemClick = params.onLongItemClick,
-            onQuotedMessageClick = params.onQuotedMessageClick,
         )
     }
 
-    /** The message footer while uploading attachments. Empty by default. */
+    /**
+     * The message footer while uploading attachments. Empty by default.
+     *
+     * @param params Parameters for this component.
+     */
     @Composable
     public fun MessageFooterUploadingContent(params: MessageFooterUploadingContentParams) {
     }
@@ -1138,6 +1152,12 @@ public interface ChatComponentFactory {
         MessageFooter(messageItem = params.messageItem)
     }
 
+    /**
+     * The default message footer status indicator.
+     * Displays the delivery or read status icon of a message.
+     *
+     * @param params Parameters for this component.
+     */
     @Composable
     public fun MessageFooterStatusIndicator(
         params: MessageFooterStatusIndicatorParams,
@@ -1163,6 +1183,8 @@ public interface ChatComponentFactory {
     /**
      * The default message composer that contains
      * the message input, attachments, commands, recording actions, integrations, and the send button.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposer(
@@ -1193,6 +1215,8 @@ public interface ChatComponentFactory {
      * Shows the link image preview, the title of the link and its description.
      *
      * Used as part of [MessageComposerInput].
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposerLinkPreview(
@@ -1226,6 +1250,8 @@ public interface ChatComponentFactory {
      * The default leading content of the user suggestion item of the message composer.
      *
      * Used as part of [MessageComposerUserSuggestionItem].
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposerUserSuggestionItemLeadingContent(
@@ -1241,6 +1267,8 @@ public interface ChatComponentFactory {
      * The default center content of the user suggestion item of the message composer.
      *
      * Used as part of [MessageComposerUserSuggestionItem].
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposerUserSuggestionItemCenterContent(
@@ -1256,6 +1284,8 @@ public interface ChatComponentFactory {
      * The default trailing content of the user suggestion item of the message composer.
      *
      * Used as part of [MessageComposerUserSuggestionItem].
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposerUserSuggestionItemTrailingContent(
@@ -1282,6 +1312,8 @@ public interface ChatComponentFactory {
      * The default leading content of the command suggestion item of the message composer.
      *
      * Used as part of [MessageComposerCommandSuggestionItem].
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposerCommandSuggestionItemLeadingContent(
@@ -1297,6 +1329,8 @@ public interface ChatComponentFactory {
      * The default center content of the command suggestion item of the message composer.
      *
      * Used as part of [MessageComposerCommandSuggestionItem].
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposerCommandSuggestionItemCenterContent(
@@ -1529,6 +1563,8 @@ public interface ChatComponentFactory {
      *
      * Shows an open lock with a chevron while dragging, and a closed lock once locked.
      * The icon follows the vertical drag offset during Hold.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposerAudioRecordingFloatingLockIcon(
@@ -1546,6 +1582,8 @@ public interface ChatComponentFactory {
      * needs explanation. Shows a message and a "Settings" action button.
      *
      * Override this method to provide a custom permission rationale UI.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposerAudioRecordingPermissionRationale(
@@ -1600,6 +1638,8 @@ public interface ChatComponentFactory {
      * (delete, complete) below.
      *
      * Override this method to provide a fully custom recording-overview UI.
+     *
+     * @param params Parameters for this component.
      */
     @Composable
     public fun MessageComposerAudioRecordingOverviewContent(
@@ -2065,7 +2105,8 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default loading content of the pinned message list. Shows an avatar of the user who sent the pinned message.
+     * The default leading content of the pinned message list item. Shows an avatar of the user who sent the pinned
+     * message.
      *
      * Used in the [PinnedMessageListItem].
      *
@@ -2077,7 +2118,8 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default loading content of the pinned message list. Shows the message sender name and the message content.
+     * The default center content of the pinned message list item. Shows the message sender name and the message
+     * content.
      *
      * Used in the [PinnedMessageListItem].
      *
@@ -2089,7 +2131,7 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default loading content of the pinned message list. Shows the message timestamp.
+     * The default trailing content of the pinned message list item. Shows the message timestamp.
      *
      * Used in the [PinnedMessageListItem].
      *
@@ -2220,7 +2262,7 @@ public interface ChatComponentFactory {
             state = params.pullToRefreshState,
             isRefreshing = params.isRefreshing,
             modifier = params.modifier.align(Alignment.TopCenter),
-            containerColor = ChatTheme.colors.backgroundElevationElevation1,
+            containerColor = ChatTheme.colors.backgroundCoreElevation1,
             color = ChatTheme.colors.accentPrimary,
         )
     }
@@ -2600,14 +2642,14 @@ public interface ChatComponentFactory {
             title = {
                 Text(
                     text = stringResource(R.string.stream_ui_channel_attachments_files_title),
-                    style = ChatTheme.typography.headingMedium,
+                    style = ChatTheme.typography.headingSmall,
                     maxLines = 1,
                 )
             },
             navigationIcon = { ChannelInfoNavigationIcon(onClick = params.onNavigationIconClick) },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = ChatTheme.colors.backgroundElevationElevation1,
-                titleContentColor = ChatTheme.colors.textPrimary,
+                containerColor = ChatTheme.colors.backgroundCoreElevation1,
+                titleContentColor = ChatTheme.colors.textSecondary,
             ),
         )
     }
@@ -2633,10 +2675,15 @@ public interface ChatComponentFactory {
             modifier = params.modifier,
             title = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_empty_title),
             text = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_empty_text),
-            painter = painterResource(UiCommonR.drawable.stream_ic_files),
+            painter = painterResource(R.drawable.stream_compose_ic_files),
         )
     }
 
+    /**
+     * The default error content of the channel files attachments screen.
+     *
+     * @param params Parameters for this component.
+     */
     @Composable
     public fun BoxScope.ChannelFilesAttachmentsErrorContent(params: ChannelFilesAttachmentsErrorContentParams) {
         EmptyContent(
@@ -2657,11 +2704,14 @@ public interface ChatComponentFactory {
         Text(
             modifier = params.modifier
                 .fillMaxWidth()
-                .background(ChatTheme.colors.borderCoreDefault.copy(alpha = 0.8f))
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(start = StreamTokens.spacing2xs)
+                .background(ChatTheme.colors.backgroundCoreSurfaceSubtle)
+                .topBorder(color = ChatTheme.colors.borderCoreSubtle)
+                .bottomBorder(color = ChatTheme.colors.borderCoreSubtle)
+                .padding(horizontal = StreamTokens.spacingMd, vertical = StreamTokens.spacingXs),
             text = params.label,
-            style = ChatTheme.typography.bodyEmphasis,
-            color = ChatTheme.colors.textPrimary,
+            style = ChatTheme.typography.captionEmphasis,
+            color = ChatTheme.colors.chatTextSystem,
         )
     }
 
@@ -2714,14 +2764,14 @@ public interface ChatComponentFactory {
             title = {
                 Text(
                     text = stringResource(R.string.stream_ui_channel_attachments_media_title),
-                    style = ChatTheme.typography.headingMedium,
+                    style = ChatTheme.typography.headingSmall,
                     maxLines = 1,
                 )
             },
             navigationIcon = { ChannelInfoNavigationIcon(onClick = params.onNavigationIconClick) },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = ChatTheme.colors.backgroundElevationElevation1,
-                titleContentColor = ChatTheme.colors.textPrimary,
+                containerColor = ChatTheme.colors.backgroundCoreElevation1,
+                titleContentColor = ChatTheme.colors.textSecondary,
             ),
         )
     }
@@ -2747,10 +2797,15 @@ public interface ChatComponentFactory {
             modifier = params.modifier,
             title = stringResource(UiCommonR.string.stream_ui_channel_attachments_media_empty_title),
             text = stringResource(UiCommonR.string.stream_ui_channel_attachments_media_empty_text),
-            painter = painterResource(UiCommonR.drawable.stream_ic_media),
+            painter = painterResource(R.drawable.stream_compose_ic_media),
         )
     }
 
+    /**
+     * The default error content of the channel media attachments screen.
+     *
+     * @param params Parameters for this component.
+     */
     @Composable
     public fun BoxScope.ChannelMediaAttachmentsErrorContent(params: ChannelMediaAttachmentsErrorContentParams) {
         EmptyContent(
@@ -2768,19 +2823,23 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun BoxScope.ChannelMediaAttachmentsFloatingHeader(params: ChannelMediaAttachmentsFloatingHeaderParams) {
-        Text(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(16.dp)
-                .background(
-                    color = ChatTheme.colors.textPrimary.copy(alpha = 0.6f),
-                    shape = ButtonDefaults.outlinedShape,
-                )
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-            text = params.label,
-            style = ChatTheme.typography.bodyEmphasis,
-            color = ChatTheme.colors.textInverse,
-        )
+        FadingVisibility(
+            modifier = params.modifier.align(Alignment.TopCenter),
+            visible = params.visible,
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(StreamTokens.spacingMd)
+                    .background(
+                        color = ChatTheme.colors.backgroundCoreInverse,
+                        shape = RoundedCornerShape(StreamTokens.radiusFull),
+                    )
+                    .padding(horizontal = StreamTokens.spacingSm, vertical = StreamTokens.spacingXs),
+                text = params.label,
+                style = ChatTheme.typography.captionEmphasis,
+                color = ChatTheme.colors.textInverse,
+            )
+        }
     }
 
     /**
@@ -2848,7 +2907,7 @@ public interface ChatComponentFactory {
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                containerColor = ChatTheme.colors.backgroundCoreElevation1,
                 titleContentColor = ChatTheme.colors.textPrimary,
             ),
         )
@@ -2885,6 +2944,8 @@ public interface ChatComponentFactory {
 
     /**
      * Factory method for creating the bottom bar of the channel media attachments preview screen.
+     *
+     * @param params Parameters for this component.
      */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -2893,7 +2954,7 @@ public interface ChatComponentFactory {
     ) {
         Column(
             modifier = Modifier
-                .background(ChatTheme.colors.backgroundElevationElevation1)
+                .background(ChatTheme.colors.backgroundCoreElevation1)
                 .topBorder(ChatTheme.colors.borderCoreDefault),
         ) {
             params.topContent?.invoke()
@@ -2903,7 +2964,7 @@ public interface ChatComponentFactory {
                 actions = { params.trailingContent() },
                 windowInsets = BottomAppBarDefaults.windowInsets,
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                    containerColor = ChatTheme.colors.backgroundCoreElevation1,
                     titleContentColor = ChatTheme.colors.textPrimary,
                     navigationIconContentColor = ChatTheme.colors.textPrimary,
                     actionIconContentColor = ChatTheme.colors.textPrimary,

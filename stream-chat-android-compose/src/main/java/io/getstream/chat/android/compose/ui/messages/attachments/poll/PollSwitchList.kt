@@ -34,8 +34,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -53,8 +51,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.StreamSwitch
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.StreamPrimitiveColors
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -199,7 +197,10 @@ private fun PollSwitchHeader(
             )
         }
 
-        PollSwitch(enabled = enabled, onCheckedChange = onCheckedChange)
+        StreamSwitch(
+            checked = enabled,
+            onCheckedChange = onCheckedChange,
+        )
     }
 }
 
@@ -236,7 +237,10 @@ private fun LimitVotesPerPerson(
                 )
             }
 
-            PollSwitch(enabled = enabled, onCheckedChange = onCheckedChange)
+            StreamSwitch(
+                checked = enabled,
+                onCheckedChange = onCheckedChange,
+            )
         }
 
         if (enabled) {
@@ -249,34 +253,6 @@ private fun LimitVotesPerPerson(
             )
         }
     }
-}
-
-@Composable
-private fun PollSwitch(enabled: Boolean, onCheckedChange: (Boolean) -> Unit) {
-    Switch(
-        colors = SwitchDefaults.colors(
-            checkedTrackColor = ChatTheme.colors.accentPrimary,
-            checkedBorderColor = ChatTheme.colors.accentPrimary,
-            uncheckedTrackColor = ChatTheme.colors.textSecondary,
-            uncheckedBorderColor = ChatTheme.colors.textSecondary,
-        ),
-        thumbContent = {
-            Box(
-                modifier = Modifier
-                    .size(24.dp)
-                    .clip(CircleShape)
-                    .background(
-                        color = if (enabled) {
-                            StreamPrimitiveColors.baseWhite
-                        } else {
-                            ChatTheme.colors.backgroundCoreDisabled
-                        },
-                    ),
-            )
-        },
-        checked = enabled,
-        onCheckedChange = onCheckedChange,
-    )
 }
 
 @Composable

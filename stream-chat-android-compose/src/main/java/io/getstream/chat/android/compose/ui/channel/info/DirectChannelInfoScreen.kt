@@ -19,7 +19,9 @@ package io.getstream.chat.android.compose.ui.channel.info
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -42,17 +44,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.DirectChannelInfoAvatarContainerParams
 import io.getstream.chat.android.compose.ui.theme.DirectChannelInfoTopBarParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
+import io.getstream.chat.android.compose.ui.util.bottomBorder
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
@@ -162,6 +165,7 @@ internal fun DirectChannelInfoTopBar(
     onNavigationIconClick: () -> Unit,
 ) {
     CenterAlignedTopAppBar(
+        modifier = Modifier.bottomBorder(color = ChatTheme.colors.borderCoreSubtle),
         title = {
             Text(
                 text = stringResource(R.string.stream_ui_channel_info_contact_title),
@@ -252,17 +256,18 @@ private fun DirectChannelInfoContent(
 @Composable
 internal fun DirectChannelInfoAvatarContainer(user: User) {
     Column(
+        modifier = Modifier.padding(bottom = StreamTokens.spacingMd),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
     ) {
         ChatTheme.componentFactory.UserAvatar(
             params = UserAvatarParams(
-                modifier = Modifier.size(96.dp),
+                modifier = Modifier.size(AvatarSize.ExtraExtraLarge),
                 user = user,
                 showIndicator = true,
                 showBorder = false,
             ),
         )
+        Spacer(modifier = Modifier.height(StreamTokens.spacingMd))
         Text(
             text = user.name.takeIf(String::isNotBlank) ?: user.id,
             style = ChatTheme.typography.headingLarge,
@@ -270,9 +275,10 @@ internal fun DirectChannelInfoAvatarContainer(user: User) {
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
+        Spacer(modifier = Modifier.height(StreamTokens.spacingXs))
         Text(
             text = user.getLastSeenText(LocalContext.current),
-            style = ChatTheme.typography.metadataDefault,
+            style = ChatTheme.typography.captionDefault,
             color = ChatTheme.colors.textSecondary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

@@ -49,7 +49,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPi
 import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
 import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.components.attachments.files.FilesPicker
-import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredStoragePermission
+import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredFilesStoragePermission
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.filesAccessAsState
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -131,7 +131,7 @@ private fun FilesAccessContent(
 ) {
     when (filesAccess) {
         FilesAccess.DENIED -> {
-            RequiredStoragePermission(onGrantPermissionClick = onGrantPermissionClick)
+            RequiredFilesStoragePermission(onGrantPermissionClick = onGrantPermissionClick)
         }
 
         FilesAccess.PARTIAL_VISUAL -> {

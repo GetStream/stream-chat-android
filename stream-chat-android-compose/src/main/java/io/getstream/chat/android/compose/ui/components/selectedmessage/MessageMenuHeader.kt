@@ -70,7 +70,7 @@ public fun MessageMenuHeader(
 
     Row(
         modifier = modifier
-            .background(colors.backgroundElevationElevation2, CircleShape)
+            .background(colors.backgroundCoreElevation2, CircleShape)
             .border(1.dp, colors.borderCoreDefault, CircleShape)
             .padding(StreamTokens.spacing2xs),
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing3xs),

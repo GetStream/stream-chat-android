@@ -21,7 +21,6 @@ package io.getstream.chat.android.compose.ui.channel.info
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -33,20 +32,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.StreamSwitch
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -60,7 +57,7 @@ internal fun ChannelInfoSection(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(StreamTokens.radiusLg))
-            .background(ChatTheme.colors.backgroundCoreSurfaceSubtle)
+            .background(ChatTheme.colors.backgroundCoreSurfaceCard)
             .padding(vertical = StreamTokens.spacingXs),
         content = content,
     )
@@ -166,19 +163,7 @@ internal fun ChannelInfoOptionSwitch(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-        Switch(
-            checked = checked,
-            onCheckedChange = null,
-            thumbContent = { Box(Modifier.size(24.dp)) },
-            colors = SwitchDefaults.colors(
-                checkedTrackColor = ChatTheme.colors.controlToggleSwitchBgSelected,
-                uncheckedTrackColor = ChatTheme.colors.controlToggleSwitchBg,
-                checkedThumbColor = ChatTheme.colors.controlToggleSwitchKnob,
-                uncheckedThumbColor = ChatTheme.colors.controlToggleSwitchKnob,
-                checkedBorderColor = Color.Transparent,
-                uncheckedBorderColor = Color.Transparent,
-            ),
-        )
+        StreamSwitch(checked = checked, onCheckedChange = null)
     }
 }
 
@@ -199,7 +184,7 @@ private fun ChannelInfoOptionButtonPreview() {
 private fun ChannelInfoOptionNavigationButtonPreview() {
     ChatTheme {
         ChannelInfoOptionNavigationButton(
-            icon = R.drawable.stream_ic_files,
+            icon = R.drawable.stream_compose_ic_files,
             text = "Files",
             onClick = {},
         )

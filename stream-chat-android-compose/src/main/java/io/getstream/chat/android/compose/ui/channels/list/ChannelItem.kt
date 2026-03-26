@@ -159,7 +159,7 @@ public fun ChannelItem(
             .semantics { contentDescription = description }
             .applyIf(isFocused) { border(2.dp, ChatTheme.colors.borderUtilitySelected, shape) }
             .clip(shape)
-            .applyIf(channelItem.isSelected) { background(ChatTheme.colors.backgroundCoreSelected, shape) }
+            .applyIf(channelItem.isSelected) { background(ChatTheme.colors.backgroundUtilitySelected, shape) }
             .combinedClickable(
                 onClick = { onChannelClick(channel) },
                 onLongClick = { onChannelLongClick(channel) },

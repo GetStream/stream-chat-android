@@ -51,7 +51,7 @@ internal fun PollVoteItem(
             params = UserAvatarParams(
                 modifier = Modifier
                     .size(AvatarSize.Medium + borderSize * 2)
-                    .background(ChatTheme.colors.borderCoreOpacity10, CircleShape)
+                    .background(ChatTheme.colors.borderCoreOpacitySubtle, CircleShape)
                     .padding(borderSize),
                 user = user,
                 showIndicator = false,

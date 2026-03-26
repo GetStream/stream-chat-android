@@ -49,8 +49,8 @@ internal fun Avatar(
         data = data,
         modifier = modifier
             .clip(CircleShape)
-            .applyIf(showBorder) { border(1.dp, ChatTheme.colors.borderCoreOpacity10, CircleShape) }
-            .background(ChatTheme.colors.backgroundElevationElevation0, CircleShape),
+            .applyIf(showBorder) { border(1.dp, ChatTheme.colors.borderCoreOpacitySubtle, CircleShape) }
+            .background(ChatTheme.colors.backgroundCoreElevation0, CircleShape),
         contentScale = ContentScale.Crop,
         content = { state ->
             val painter = (state as? AsyncImagePainter.State.Success)?.painter
@@ -81,5 +81,5 @@ public object AvatarSize {
     public val Medium: Dp = 32.dp
     public val Large: Dp = 40.dp
     public val ExtraLarge: Dp = 48.dp
-    public val ExtraExtraLarge: Dp = 64.dp
+    public val ExtraExtraLarge: Dp = 80.dp
 }

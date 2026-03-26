@@ -85,7 +85,7 @@ internal class MessageComposerViewModelTest {
 
         val messageComposerState = viewModel.messageComposerState.value
         messageComposerState.inputValue `should be equal to` "Message text"
-        viewModel.input.value `should be equal to` "Message text"
+        viewModel.messageInput.value.text `should be equal to` "Message text"
     }
 
     @Test
@@ -116,7 +116,7 @@ internal class MessageComposerViewModelTest {
                 isRetrying = eq(false),
             )
             captor.firstValue.text `should be equal to` "Message text"
-            viewModel.input.value `should be equal to` ""
+            viewModel.messageInput.value.text `should be equal to` ""
         }
 
     @Test
@@ -247,7 +247,6 @@ internal class MessageComposerViewModelTest {
 
         val messageComposerState = viewModel.messageComposerState.value
         messageComposerState.messageMode `should be instance of` MessageMode.MessageThread::class
-        viewModel.messageMode.value `should be instance of` MessageMode.MessageThread::class
     }
 
     @Test
@@ -263,7 +262,6 @@ internal class MessageComposerViewModelTest {
 
         val messageComposerState = viewModel.messageComposerState.value
         messageComposerState.messageMode `should be instance of` MessageMode.Normal::class
-        viewModel.messageMode.value `should be instance of` MessageMode.Normal::class
     }
 
     @Test
@@ -311,7 +309,7 @@ internal class MessageComposerViewModelTest {
             .givenChannelState(channelData)
             .get()
 
-        val ownCapabilities = viewModel.ownCapabilities.value
+        val ownCapabilities = viewModel.messageComposerState.value.ownCapabilities
         ownCapabilities.size `should be equal to` 3
     }
 
@@ -326,7 +324,6 @@ internal class MessageComposerViewModelTest {
         viewModel.setMessageInput("/")
 
         viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 1
-        viewModel.commandSuggestions.value.size `should be equal to` 1
     }
 
     @Test
@@ -341,7 +338,6 @@ internal class MessageComposerViewModelTest {
         viewModel.setMessageInput("")
 
         viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 0
-        viewModel.commandSuggestions.value.size `should be equal to` 0
     }
 
     @Test
@@ -355,12 +351,11 @@ internal class MessageComposerViewModelTest {
 
             viewModel.inputFocusEvents.test {
                 viewModel.toggleCommandsVisibility()
-                viewModel.selectCommand(viewModel.commandSuggestions.value.first())
+                viewModel.selectCommand(viewModel.messageComposerState.value.commandSuggestions.first())
 
                 viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 0
-                viewModel.commandSuggestions.value.size `should be equal to` 0
                 viewModel.messageComposerState.value.inputValue `should be equal to` "/giphy "
-                viewModel.input.value `should be equal to` "/giphy "
+                viewModel.messageInput.value.text `should be equal to` "/giphy "
                 awaitItem()
                 cancelAndIgnoreRemainingEvents()
             }
@@ -381,7 +376,6 @@ internal class MessageComposerViewModelTest {
             advanceUntilIdle()
 
             viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 2
-            viewModel.mentionSuggestions.value.size `should be equal to` 2
         }
 
     @Test
@@ -398,12 +392,11 @@ internal class MessageComposerViewModelTest {
             viewModel.setMessageInput("@")
             advanceUntilIdle()
 
-            viewModel.selectMention(viewModel.mentionSuggestions.value.first())
+            viewModel.selectMention(viewModel.messageComposerState.value.mentionSuggestions.first())
             advanceUntilIdle()
 
             viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 0
-            viewModel.mentionSuggestions.value.size `should be equal to` 0
-            viewModel.input.value `should be equal to` "@Jc Miñarro "
+            viewModel.messageInput.value.text `should be equal to` "@Jc Miñarro "
         }
 
     @Test
@@ -429,8 +422,7 @@ internal class MessageComposerViewModelTest {
             advanceUntilIdle()
 
             viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 0
-            viewModel.mentionSuggestions.value.size `should be equal to` 0
-            viewModel.input.value `should be equal to` "@Custom Mention "
+            viewModel.messageInput.value.text `should be equal to` "@Custom Mention "
         }
 
     @Test

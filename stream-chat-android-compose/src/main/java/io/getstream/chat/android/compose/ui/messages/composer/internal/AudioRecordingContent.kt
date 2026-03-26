@@ -344,7 +344,7 @@ private fun MessageComposerAudioRecordingControlsContent(
             testTag = "Stream_ComposerConfirmAudioRecordingButton",
             circleModifier = Modifier.background(ChatTheme.colors.buttonPrimaryBg, CircleShape),
             iconRes = R.drawable.stream_compose_ic_checkmark,
-            iconTint = ChatTheme.colors.textOnAccent,
+            iconTint = ChatTheme.colors.buttonPrimaryTextOnAccent,
         )
     }
 }

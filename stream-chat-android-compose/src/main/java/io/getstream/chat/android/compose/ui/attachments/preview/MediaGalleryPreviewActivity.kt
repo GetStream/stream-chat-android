@@ -222,7 +222,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     @Composable
     private fun SetupEdgeToEdge() {
         val nightMode = isSystemInDarkTheme()
-        val systemBarsColor = ChatTheme.colors.backgroundElevationElevation1.toArgb()
+        val systemBarsColor = ChatTheme.colors.backgroundCoreElevation1.toArgb()
         LaunchedEffect(nightMode) {
             val style = if (nightMode) {
                 SystemBarStyle.dark(systemBarsColor)

@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.state.channel.internal
 
-import io.getstream.chat.android.models.MessagesState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
@@ -28,167 +27,6 @@ import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
 internal class ChannelStateImplNonChannelStatesTest : ChannelStateImplTestBase() {
-
-    // region Loading
-
-    @Nested
-    inner class SetLoading {
-
-        @Test
-        fun `loading should default to false`() = runTest {
-            assertFalse(channelState.loading.value)
-        }
-
-        @Test
-        fun `setLoading should set loading to true`() = runTest {
-            // when
-            channelState.setLoading(true)
-            // then
-            assertTrue(channelState.loading.value)
-        }
-
-        @Test
-        fun `setLoading should set loading to false`() = runTest {
-            // given
-            channelState.setLoading(true)
-            // when
-            channelState.setLoading(false)
-            // then
-            assertFalse(channelState.loading.value)
-        }
-
-        @Test
-        fun `messagesState should be Loading when loading is true`() = runTest {
-            // when
-            channelState.setLoading(true)
-            // then
-            assertTrue(channelState.messagesState.value is MessagesState.Loading)
-        }
-
-        @Test
-        fun `messagesState should be OfflineNoResults when loading is false and no messages`() = runTest {
-            // when
-            channelState.setLoading(false)
-            // then
-            assertTrue(channelState.messagesState.value is MessagesState.OfflineNoResults)
-        }
-
-        @Test
-        fun `messagesState should be Result when loading is false and messages exist`() = runTest {
-            // given
-            channelState.setMessages(listOf(createMessage(1)))
-            // when
-            channelState.setLoading(false)
-            // then
-            assertTrue(channelState.messagesState.value is MessagesState.Result)
-        }
-    }
-
-    // endregion
-
-    // region LoadingOlderMessages
-
-    @Nested
-    inner class SetLoadingOlderMessages {
-
-        @Test
-        fun `loadingOlderMessages should default to false`() = runTest {
-            assertFalse(channelState.loadingOlderMessages.value)
-        }
-
-        @Test
-        fun `setLoadingOlderMessages should set to true`() = runTest {
-            channelState.setLoadingOlderMessages(true)
-            assertTrue(channelState.loadingOlderMessages.value)
-        }
-
-        @Test
-        fun `setLoadingOlderMessages should set to false`() = runTest {
-            channelState.setLoadingOlderMessages(true)
-            channelState.setLoadingOlderMessages(false)
-            assertFalse(channelState.loadingOlderMessages.value)
-        }
-    }
-
-    // endregion
-
-    // region LoadingNewerMessages
-
-    @Nested
-    inner class SetLoadingNewerMessages {
-
-        @Test
-        fun `loadingNewerMessages should default to false`() = runTest {
-            assertFalse(channelState.loadingNewerMessages.value)
-        }
-
-        @Test
-        fun `setLoadingNewerMessages should set to true`() = runTest {
-            channelState.setLoadingNewerMessages(true)
-            assertTrue(channelState.loadingNewerMessages.value)
-        }
-
-        @Test
-        fun `setLoadingNewerMessages should set to false`() = runTest {
-            channelState.setLoadingNewerMessages(true)
-            channelState.setLoadingNewerMessages(false)
-            assertFalse(channelState.loadingNewerMessages.value)
-        }
-    }
-
-    // endregion
-
-    // region EndOfOlderMessages
-
-    @Nested
-    inner class SetEndOfOlderMessages {
-
-        @Test
-        fun `endOfOlderMessages should default to false`() = runTest {
-            assertFalse(channelState.endOfOlderMessages.value)
-        }
-
-        @Test
-        fun `setEndOfOlderMessages should set to true`() = runTest {
-            channelState.setEndOfOlderMessages(true)
-            assertTrue(channelState.endOfOlderMessages.value)
-        }
-
-        @Test
-        fun `setEndOfOlderMessages should set to false`() = runTest {
-            channelState.setEndOfOlderMessages(true)
-            channelState.setEndOfOlderMessages(false)
-            assertFalse(channelState.endOfOlderMessages.value)
-        }
-    }
-
-    // endregion
-
-    // region EndOfNewerMessages
-
-    @Nested
-    inner class SetEndOfNewerMessages {
-
-        @Test
-        fun `endOfNewerMessages should default to true`() = runTest {
-            assertTrue(channelState.endOfNewerMessages.value)
-        }
-
-        @Test
-        fun `setEndOfNewerMessages should set to false`() = runTest {
-            channelState.setEndOfNewerMessages(false)
-            assertFalse(channelState.endOfNewerMessages.value)
-        }
-
-        @Test
-        fun `setEndOfNewerMessages should set to true`() = runTest {
-            channelState.setEndOfNewerMessages(false)
-            channelState.setEndOfNewerMessages(true)
-            assertTrue(channelState.endOfNewerMessages.value)
-        }
-    }
-
-    // endregion
 
     // region RecoveryNeeded
 
@@ -388,7 +226,7 @@ internal class ChannelStateImplNonChannelStatesTest : ChannelStateImplTestBase()
         fun `trimOldestMessages should set endOfOlderMessages to false`() = runTest {
             // given
             val stateWithLimit = createChannelStateWithLimit(50)
-            stateWithLimit.setEndOfOlderMessages(true)
+            stateWithLimit.paginationManager.setEndOfOlderMessages(true)
             val messages = createMessages(81)
             stateWithLimit.setMessages(messages)
             // when
@@ -469,7 +307,7 @@ internal class ChannelStateImplNonChannelStatesTest : ChannelStateImplTestBase()
         fun `trimNewestMessages should set endOfNewerMessages to false`() = runTest {
             // given
             val stateWithLimit = createChannelStateWithLimit(50)
-            stateWithLimit.setEndOfNewerMessages(true)
+            stateWithLimit.paginationManager.setEndOfNewerMessages(true)
             val messages = createMessages(81)
             stateWithLimit.setMessages(messages)
             // when
@@ -518,11 +356,8 @@ internal class ChannelStateImplNonChannelStatesTest : ChannelStateImplTestBase()
         fun `destroy should reset all state to defaults`() = runTest {
             // given - populate various state
             channelState.setMessages(createMessages(5))
-            channelState.setLoading(true)
-            channelState.setLoadingOlderMessages(true)
-            channelState.setLoadingNewerMessages(true)
-            channelState.setEndOfOlderMessages(true)
-            channelState.setEndOfNewerMessages(false)
+            channelState.paginationManager.setEndOfOlderMessages(true)
+            channelState.paginationManager.setEndOfNewerMessages(false)
             channelState.setRecoveryNeeded(true)
             channelState.setInsideSearch(true)
             channelState.setHidden(true)

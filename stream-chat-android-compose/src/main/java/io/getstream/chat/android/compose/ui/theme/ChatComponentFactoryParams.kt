@@ -829,16 +829,12 @@ public data class MessageTextContentParams(
  * @param message The message that contains the quote.
  * @param currentUser The currently logged in user.
  * @param replyMessage The quoted message.
- * @param onLongItemClick Action invoked when a message is long-clicked.
- * @param onQuotedMessageClick Action invoked when the quoted message is clicked.
  * @param modifier Modifier for styling.
  */
 public data class MessageQuotedContentParams(
     val message: Message,
     val currentUser: User?,
     val replyMessage: Message,
-    val onLongItemClick: (Message) -> Unit,
-    val onQuotedMessageClick: (Message) -> Unit,
     val modifier: Modifier = Modifier,
 )
 
@@ -2071,10 +2067,12 @@ public data class ChannelMediaAttachmentsErrorContentParams(
  * Parameters for [ChatComponentFactory.ChannelMediaAttachmentsFloatingHeader].
  *
  * @param label The label for the floating header.
+ * @param visible Whether the floating header is visible.
  * @param modifier Modifier for styling.
  */
 public data class ChannelMediaAttachmentsFloatingHeaderParams(
     val label: String,
+    val visible: Boolean,
     val modifier: Modifier = Modifier,
 )
 

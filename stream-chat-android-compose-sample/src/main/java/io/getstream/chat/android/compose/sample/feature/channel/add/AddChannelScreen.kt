@@ -148,13 +148,13 @@ private fun AddChannelToolbar(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.backgroundElevationElevation1),
+            .background(ChatTheme.colors.backgroundCoreElevation1),
     ) {
         AppToolbar(title = stringResource(id = R.string.add_channel_title), onBack = onBack, elevation = 0.dp)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(ChatTheme.colors.backgroundElevationElevation1)
+                .background(ChatTheme.colors.backgroundCoreElevation1)
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -212,7 +212,7 @@ private fun CreateGroupSection(onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.backgroundElevationElevation1)
+            .background(ChatTheme.colors.backgroundCoreElevation1)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = ripple(),
@@ -251,7 +251,7 @@ private fun SelectedUsersList(
     FlowRow(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.backgroundElevationElevation1)
+            .background(ChatTheme.colors.backgroundCoreElevation1)
             .padding(12.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),

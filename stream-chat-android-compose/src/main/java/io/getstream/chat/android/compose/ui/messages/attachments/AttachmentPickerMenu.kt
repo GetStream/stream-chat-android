@@ -71,7 +71,7 @@ public fun AttachmentPickerMenu(
     composerViewModel: MessageComposerViewModel,
 ) {
     val isPickerVisible = attachmentsPickerViewModel.isPickerVisible
-    val messageMode by composerViewModel.messageMode.collectAsStateWithLifecycle()
+    val composerState by composerViewModel.messageComposerState.collectAsStateWithLifecycle()
 
     var isShowingDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -131,7 +131,7 @@ public fun AttachmentPickerMenu(
             params = AttachmentPickerParams(
                 modifier = Modifier.height(menuHeight),
                 attachmentsPickerViewModel = attachmentsPickerViewModel,
-                messageMode = messageMode,
+                messageMode = composerState.messageMode,
                 actions = actions,
             ),
         )

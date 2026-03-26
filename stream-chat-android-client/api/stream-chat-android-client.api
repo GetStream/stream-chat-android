@@ -3114,6 +3114,7 @@ public final class io/getstream/chat/android/client/internal/offline/repository/
 	public fun select (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectByCidAndUserId (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectBySyncStatus (Lio/getstream/chat/android/models/SyncStatus;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectBySyncStatusOrTypeForChannel (Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectByUserId (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectChunked (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectDraftMessageByCid (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

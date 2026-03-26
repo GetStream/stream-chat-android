@@ -357,7 +357,7 @@ class ChatsActivity : ComponentActivity() {
                                 title = {},
                                 navigationIcon = { CloseButton(onClick = params.onNavigationIconClick) },
                                 colors = TopAppBarDefaults.topAppBarColors(
-                                    containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                                    containerColor = ChatTheme.colors.backgroundCoreElevation1,
                                 ),
                             )
                         }
@@ -499,7 +499,7 @@ class ChatsActivity : ComponentActivity() {
                 navigationIcon = navigationIcon,
                 expandedHeight = 56.dp,
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                    containerColor = ChatTheme.colors.backgroundCoreElevation1,
                 ),
                 actions = {
                     if (infoState is ChannelInfoViewState.Content &&

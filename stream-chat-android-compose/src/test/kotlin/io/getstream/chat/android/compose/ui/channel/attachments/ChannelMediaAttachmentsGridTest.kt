@@ -19,8 +19,8 @@ package io.getstream.chat.android.compose.ui.channel.attachments
 import androidx.annotation.UiThread
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assert
-import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasProgressBarRangeInfo
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
@@ -92,7 +92,7 @@ internal class ChannelMediaAttachmentsGridTest : MockedChatClientTest {
         composeTestRule.onNodeWithText("Today").assertExists()
         composeTestRule.onAllNodesWithText("T")[0].assertExists()
         composeTestRule.onAllNodesWithText("T")[1].assertExists()
-        composeTestRule.onAllNodesWithText("T")[1].assert(hasContentDescription("Play button"))
+        composeTestRule.onAllNodesWithText("T")[1].assert(hasText("0:08"))
     }
 
     @Test

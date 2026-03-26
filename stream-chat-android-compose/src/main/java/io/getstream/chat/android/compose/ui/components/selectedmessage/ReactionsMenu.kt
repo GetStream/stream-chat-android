@@ -96,7 +96,7 @@ public fun SelectedReactionsMenu(
         modifier = modifier,
         sheetState = rememberModalBottomSheetState(),
         shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-        containerColor = ChatTheme.colors.backgroundElevationElevation1,
+        containerColor = ChatTheme.colors.backgroundCoreElevation1,
         scrimColor = ChatTheme.colors.backgroundCoreScrim,
         onDismissRequest = onDismiss,
         dragHandle = { BottomSheetDefaults.DragHandle() },
@@ -210,7 +210,7 @@ private fun ReactionsMenuList(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.backgroundElevationElevation1),
+            .background(ChatTheme.colors.backgroundCoreElevation1),
     ) {
         item(key = "Stream_header") {
             val totalCount = reactionGroups.sumOf(MessageReactionItemState::count)

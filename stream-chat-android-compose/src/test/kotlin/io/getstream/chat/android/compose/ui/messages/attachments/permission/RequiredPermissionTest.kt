@@ -32,9 +32,16 @@ internal class RequiredPermissionTest : PaparazziComposeTest {
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.Companion.PIXEL_2)
 
     @Test
-    fun `required storage permission`() {
+    fun `required media storage permission`() {
         snapshotWithDarkMode {
-            RequiredStoragePermission()
+            RequiredMediaStoragePermission()
+        }
+    }
+
+    @Test
+    fun `required files storage permission`() {
+        snapshotWithDarkMode {
+            RequiredFilesStoragePermission()
         }
     }
 
