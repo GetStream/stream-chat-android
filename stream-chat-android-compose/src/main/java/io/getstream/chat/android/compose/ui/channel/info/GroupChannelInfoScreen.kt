@@ -232,10 +232,7 @@ internal fun GroupChannelInfoTopBar(
         },
         actions = {
             if (infoState is ChannelInfoViewState.Content &&
-                infoState.options.any { option ->
-                    option is ChannelInfoViewState.Content.Option.RenameChannel &&
-                        !option.isReadOnly
-                }
+                infoState.options.any { option -> option is ChannelInfoViewState.Content.Option.EditChannel }
             ) {
                 StreamTextButton(
                     style = StreamButtonStyleDefaults.secondaryOutline,
@@ -593,7 +590,7 @@ internal fun GroupChannelInfoCollapsedMembers() {
             ),
             options = listOf(
                 ChannelInfoViewState.Content.Option.AddMember,
-                ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = false),
+                ChannelInfoViewState.Content.Option.EditChannel(name = channel.name),
                 ChannelInfoViewState.Content.Option.PinnedMessages,
                 ChannelInfoViewState.Content.Option.MediaAttachments,
                 ChannelInfoViewState.Content.Option.FilesAttachments,

@@ -504,10 +504,7 @@ class ChatsActivity : ComponentActivity() {
                 ),
                 actions = {
                     if (infoState is ChannelInfoViewState.Content &&
-                        infoState.options.any { option ->
-                            option is ChannelInfoViewState.Content.Option.RenameChannel &&
-                                !option.isReadOnly
-                        }
+                        infoState.options.any { option -> option is ChannelInfoViewState.Content.Option.EditChannel }
                     ) {
                         OutlinedButton(
                             onClick = onActionClick,

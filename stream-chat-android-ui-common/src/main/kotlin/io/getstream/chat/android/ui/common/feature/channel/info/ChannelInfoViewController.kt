@@ -572,18 +572,7 @@ private fun buildChannelOptionList(
     ) {
         add(ChannelInfoViewState.Content.Option.AddMember)
     }
-    if (singleMember != null) {
-        add(ChannelInfoViewState.Content.Option.UserInfo(user = singleMember.user))
-    } else {
-        add(
-            ChannelInfoViewState.Content.Option.RenameChannel(
-                name = channelData.name,
-                isReadOnly = !channelData.ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL),
-            ),
-        )
-    }
     if (isDmChannel) {
-        // DM channel: user-level mute instead of channel mute, no hide
         add(ChannelInfoViewState.Content.Option.PinnedMessages)
         add(ChannelInfoViewState.Content.Option.MediaAttachments)
         add(ChannelInfoViewState.Content.Option.FilesAttachments)
@@ -595,7 +584,9 @@ private fun buildChannelOptionList(
             add(ChannelInfoViewState.Content.Option.DeleteChannel)
         }
     } else {
-        // Group channel: channel-level mute, leave
+        if (channelData.ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL)) {
+            add(ChannelInfoViewState.Content.Option.EditChannel(name = channelData.name))
+        }
         if (channelData.ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL)) {
             add(ChannelInfoViewState.Content.Option.MuteChannel(isMuted))
         }

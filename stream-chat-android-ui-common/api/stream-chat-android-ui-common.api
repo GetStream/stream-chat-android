@@ -1766,6 +1766,18 @@ public final class io/getstream/chat/android/ui/common/state/channel/info/Channe
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$EditChannel : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$EditChannel;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$EditChannel;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$EditChannel;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$FilesAttachments : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$FilesAttachments;
@@ -1830,32 +1842,6 @@ public final class io/getstream/chat/android/ui/common/state/channel/info/Channe
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$PinnedMessages;
 	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$RenameChannel : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option {
-	public static final field $stable I
-	public fun <init> (Ljava/lang/String;Z)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Z
-	public final fun copy (Ljava/lang/String;Z)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$RenameChannel;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$RenameChannel;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$RenameChannel;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getName ()Ljava/lang/String;
-	public fun hashCode ()I
-	public final fun isReadOnly ()Z
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$UserInfo : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/models/User;)V
-	public final fun component1 ()Lio/getstream/chat/android/models/User;
-	public final fun copy (Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$UserInfo;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$UserInfo;Lio/getstream/chat/android/models/User;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$UserInfo;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getUser ()Lio/getstream/chat/android/models/User;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
