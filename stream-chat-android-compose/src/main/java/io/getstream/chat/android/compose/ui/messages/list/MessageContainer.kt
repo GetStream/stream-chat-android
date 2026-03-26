@@ -28,6 +28,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -77,6 +78,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.MessageAlignment
 import io.getstream.chat.android.compose.state.messages.MessageReactionItemState
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.messages.MessageAnnotation
 import io.getstream.chat.android.compose.ui.components.messages.MessageContent
 import io.getstream.chat.android.compose.ui.components.messages.PollMessageContent
@@ -210,8 +212,14 @@ public fun MessageContainer(
 
     // Remember the message to ensure updated values are captured in the onReply lambda
     val replyMessage by rememberUpdatedState(message)
+    val verticalPadding = when (messageItem.groupPosition) {
+        MessagePosition.TOP -> PaddingValues(top = StreamTokens.spacingXs, bottom = StreamTokens.spacing3xs)
+        MessagePosition.MIDDLE -> PaddingValues(vertical = StreamTokens.spacing3xs)
+        MessagePosition.BOTTOM -> PaddingValues(top = StreamTokens.spacing3xs, bottom = StreamTokens.spacingXs)
+        MessagePosition.NONE -> PaddingValues(vertical = StreamTokens.spacingXs)
+    }
     SwipeToReply(
-        modifier = modifier,
+        modifier = modifier.padding(verticalPadding),
         onReply = { onReply(replyMessage) },
         isSwipeable = isSwipeable,
     ) {
@@ -318,13 +326,13 @@ internal fun RowScope.DefaultMessageAuthor(
     onUserAvatarClick: (() -> Unit)? = null,
 ) {
     val modifier = Modifier
-        .padding(start = 8.dp, end = 8.dp)
-        .size(24.dp)
+        .padding(start = StreamTokens.spacingMd, end = StreamTokens.spacingXs)
+        .size(AvatarSize.Medium)
         .align(Alignment.Bottom)
 
     if (messageItem.isMine) {
-        // By default, the avatar is not show in outgoing messages
-        Spacer(modifier = Modifier.width(8.dp))
+        // By default, the avatar is not shown in outgoing messages
+        Spacer(modifier = Modifier.width(StreamTokens.spacingMd))
     } else if (messageItem.showMessageFooter ||
         messageItem.groupPosition == MessagePosition.BOTTOM ||
         messageItem.groupPosition == MessagePosition.NONE

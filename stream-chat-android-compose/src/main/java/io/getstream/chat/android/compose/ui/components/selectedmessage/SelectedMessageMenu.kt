@@ -117,8 +117,8 @@ public fun SelectedMessageMenu(
     )
     val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItemState)
     val bubbleAlignmentPadding = when (messageAlignment) {
-        MessageAlignment.Start -> Modifier.padding(start = 40.dp)
-        MessageAlignment.End -> Modifier.padding(end = 8.dp)
+        MessageAlignment.Start -> Modifier.padding(start = 56.dp)
+        MessageAlignment.End -> Modifier.padding(end = StreamTokens.spacingMd)
     }
 
     val isInspection = LocalInspectionMode.current
@@ -191,7 +191,7 @@ public fun SelectedMessageMenu(
             Box(
                 modifier = Modifier
                     .weight(1f, fill = false)
-                    .padding(vertical = StreamTokens.spacingXs)
+                    .padding(top = StreamTokens.spacingXs)
                     .then(animation.messageModifier),
             ) {
                 ChatTheme.componentFactory.MessageContainer(
