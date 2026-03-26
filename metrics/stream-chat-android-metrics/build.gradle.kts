@@ -45,6 +45,7 @@ afterEvaluate {
             plugins.apply(composePlugin.pluginId)
             android.buildFeatures.compose = true
             val configurationName = "${flavorName}Implementation"
+            dependencies.add(configurationName, dependencies.platform(libs.androidx.compose.bom))
             dependencies.add(configurationName, libs.androidx.compose.ui)
             dependencies.add(configurationName, libs.androidx.compose.ui.tooling)
             dependencies.add(configurationName, libs.androidx.compose.foundation)
