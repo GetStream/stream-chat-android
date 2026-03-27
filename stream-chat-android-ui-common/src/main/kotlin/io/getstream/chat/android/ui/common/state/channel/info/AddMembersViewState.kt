@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.common.state.channel.info
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.User
 
 /**
@@ -28,6 +29,7 @@ import io.getstream.chat.android.models.User
  * @param selectedUserIds The set of IDs of users selected to be added as members.
  * @param loadedMemberIds The set of IDs of users who are already members of the channel.
  */
+@InternalStreamChatApi
 public data class AddMembersViewState(
     val isLoading: Boolean = true,
     val isLoadingMore: Boolean = false,
