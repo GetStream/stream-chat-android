@@ -46,6 +46,7 @@ import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.compose.state.messages.MessageAlignment
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.AudioRecordAttachmentContentParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -92,6 +93,7 @@ public fun MessageContent(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onUserMentionClick: (User) -> Unit = {},
+    messageAlignment: MessageAlignment = MessageAlignment.Start,
     onLinkClick: ((Message, String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     giphyEphemeralContent: @Composable () -> Unit = {
@@ -117,6 +119,7 @@ public fun MessageContent(
             params = MessageRegularContentParams(
                 message = message,
                 currentUser = currentUser,
+                messageAlignment = messageAlignment,
                 onLongItemClick = onLongItemClick,
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onQuotedMessageClick = onQuotedMessageClick,
@@ -180,6 +183,7 @@ internal fun DefaultMessageDeletedContent(
 internal fun DefaultMessageContent(
     message: Message,
     currentUser: User?,
+    messageAlignment: MessageAlignment = MessageAlignment.Start,
     onLongItemClick: (Message) -> Unit,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit,
@@ -188,7 +192,7 @@ internal fun DefaultMessageContent(
 ) {
     val componentFactory = ChatTheme.componentFactory
 
-    Column {
+    Column(horizontalAlignment = messageAlignment.contentAlignment) {
         val quotedMessage = message.replyTo
         if (quotedMessage != null) {
             componentFactory.MessageQuotedContent(
