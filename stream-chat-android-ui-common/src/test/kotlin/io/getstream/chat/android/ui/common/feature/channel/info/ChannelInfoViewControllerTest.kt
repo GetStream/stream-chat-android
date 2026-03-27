@@ -21,10 +21,12 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.query.AddMembersParams
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.User
@@ -1294,6 +1296,42 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
+    fun `add members with empty set does nothing`() = runTest {
+        val fixture = Fixture()
+        val sut = fixture.get(backgroundScope)
+
+        sut.addMembers(emptySet())
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
+    fun `add members success`() = runTest {
+        val userIds = setOf(randomString(), randomString())
+        val fixture = Fixture()
+            .givenAddMembers(userIds = userIds)
+        val sut = fixture.get(backgroundScope)
+
+        sut.addMembers(userIds)
+
+        launch { fixture.verifyAddMembers(userIds) }
+    }
+
+    @Test
+    fun `add members error`() = runTest {
+        val userIds = setOf(randomString())
+        val fixture = Fixture()
+            .givenAddMembers(userIds = userIds, error = randomGenericError())
+        val sut = fixture.get(backgroundScope)
+
+        sut.addMembers(userIds)
+
+        sut.events.test {
+            assertEquals(ChannelInfoViewEvent.AddMembersError, awaitItem())
+        }
+    }
+
+    @Test
     fun `remove member error`() = runTest {
         val member = randomMember()
         val fixture = Fixture()
@@ -1443,6 +1481,19 @@ private class Fixture {
         }
     }
 
+    fun givenAddMembers(userIds: Set<String>, error: Error? = null) = apply {
+        whenever(
+            channelClient.addMembers(
+                AddMembersParams(
+                    members = userIds.map { MemberData(it) },
+                    systemMessage = null,
+                ),
+            ),
+        ) doAnswer {
+            error?.asCall() ?: mock<Channel>().asCall()
+        }
+    }
+
     fun givenDeleteChannel(error: Error? = null) = apply {
         whenever(channelClient.delete()) doAnswer {
             error?.asCall() ?: mock<Channel>().asCall()
@@ -1490,6 +1541,15 @@ private class Fixture {
 
     fun verifyMemberNotBanned(member: Member) = apply {
         verify(channelClient).unbanUser(targetId = member.getUserId())
+    }
+
+    fun verifyAddMembers(userIds: Set<String>) = apply {
+        verify(channelClient).addMembers(
+            AddMembersParams(
+                members = userIds.map { MemberData(it) },
+                systemMessage = null,
+            ),
+        )
     }
 
     fun verifyMemberRemoved(member: Member) = apply {

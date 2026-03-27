@@ -22,11 +22,13 @@ import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.client.api.state.watchChannelAsState
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.query.AddMembersParams
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.User
@@ -215,6 +217,28 @@ public class ChannelInfoViewController(
             is ChannelInfoViewAction.DeleteChannelConfirmationClick -> deleteChannel()
             is ChannelInfoViewAction.BanMemberConfirmationClick -> banMember(action.memberId, action.timeoutInMinutes)
             is ChannelInfoViewAction.RemoveMemberConfirmationClick -> removeMember(action.memberId)
+        }
+    }
+
+    /**
+     * Adds the given members to the channel.
+     *
+     * @param userIds The set of user IDs to add as members.
+     */
+    public fun addMembers(userIds: Set<String>) {
+        if (userIds.isEmpty()) return
+        logger.d { "[addMembers] userIds: $userIds" }
+        scope.launch {
+            channelClient.addMembers(
+                AddMembersParams(
+                    members = userIds.map { MemberData(it) },
+                    systemMessage = null,
+                ),
+            ).await()
+                .onError { error ->
+                    logger.e { "[addMembers] error: ${error.message}" }
+                    _events.tryEmit(ChannelInfoViewEvent.AddMembersError)
+                }
         }
     }
 

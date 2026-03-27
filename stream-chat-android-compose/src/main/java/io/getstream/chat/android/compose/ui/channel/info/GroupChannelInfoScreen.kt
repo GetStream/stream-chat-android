@@ -56,10 +56,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
+import io.getstream.chat.android.compose.ui.components.FullscreenDialog
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
-import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
-import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
-import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -71,10 +69,12 @@ import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoMemberSectionP
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoTopBarParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
+import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.ui.util.bottomBorder
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.compose.ui.util.topBorder
+import io.getstream.chat.android.compose.viewmodel.channel.AddMembersViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
@@ -100,7 +100,6 @@ import java.util.Date
  * @param modifier The [Modifier] to be applied to this screen.
  * @param currentUser The current logged-in user. Defaults to the current user from the [ChatClient].
  * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
- * @param onAddMembersClick Callback invoked when the "Add Members" button is clicked.
  */
 @Composable
 public fun GroupChannelInfoScreen(
@@ -108,12 +107,13 @@ public fun GroupChannelInfoScreen(
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onNavigationIconClick: () -> Unit = {},
-    onAddMembersClick: () -> Unit = {},
 ) {
     val headerViewModel = viewModel<ChannelHeaderViewModel>(factory = viewModelFactory)
     val infoViewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
     val headerState by headerViewModel.state.collectAsStateWithLifecycle()
     val infoState by infoViewModel.state.collectAsStateWithLifecycle()
+
+    var showAddMembers by remember { mutableStateOf(false) }
 
     GroupChannelInfoScaffold(
         modifier = modifier,
@@ -121,11 +121,26 @@ public fun GroupChannelInfoScreen(
         headerState = headerState,
         infoState = infoState,
         onNavigationIconClick = onNavigationIconClick,
-        onAddMembersClick = onAddMembersClick,
+        onAddMembersClick = { showAddMembers = true },
         onViewAction = infoViewModel::onViewAction,
     )
 
     GroupChannelInfoScreenModal(infoViewModel)
+    if (showAddMembers) {
+        FullscreenDialog(onDismissRequest = { showAddMembers = false }) {
+            ViewModelStore {
+                val addMembersViewModel = viewModel<AddMembersViewModel>(factory = viewModelFactory)
+                AddMembersScreen(
+                    viewModel = addMembersViewModel,
+                    onDismiss = { showAddMembers = false },
+                    onConfirm = { userIds ->
+                        infoViewModel.addMembers(userIds)
+                        showAddMembers = false
+                    },
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -212,15 +227,7 @@ internal fun GroupChannelInfoTopBar(
                 onClick = onNavigationIconClick,
             )
         },
-        actions = {
-            if (infoState is ChannelInfoViewState.Content &&
-                infoState.options.contains(ChannelInfoViewState.Content.Option.AddMember)
-            ) {
-                ChatTheme.componentFactory.GroupChannelInfoAddMembersButton(
-                    params = GroupChannelInfoAddMembersButtonParams(onClick = onAddMembersClick),
-                )
-            }
-        },
+        actions = { /* No trailing action icon */ },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = ChatTheme.colors.backgroundCoreApp,
             scrolledContainerColor = ChatTheme.colors.backgroundCoreApp,
@@ -405,11 +412,8 @@ internal fun GroupChannelInfoMemberSection(
                 color = ChatTheme.colors.textPrimary,
             )
             if (showAddButton) {
-                StreamTextButton(
-                    style = StreamButtonStyleDefaults.secondaryOutline,
-                    size = StreamButtonSize.Small,
-                    text = stringResource(id = R.string.stream_ui_channel_info_member_add_button),
-                    onClick = onAddMembersClick,
+                ChatTheme.componentFactory.GroupChannelInfoAddMembersButton(
+                    params = GroupChannelInfoAddMembersButtonParams(onAddMembersClick),
                 )
             }
         }
