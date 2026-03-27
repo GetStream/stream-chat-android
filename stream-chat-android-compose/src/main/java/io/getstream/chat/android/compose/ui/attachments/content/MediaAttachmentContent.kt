@@ -64,6 +64,7 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import coil3.ColorImage
 import coil3.annotation.ExperimentalCoilApi
@@ -217,7 +218,6 @@ internal fun SingleMediaAttachment(
     onContentItemClick: (MediaAttachmentClickData) -> Unit,
     overlayContent: @Composable (attachmentType: String?) -> Unit,
 ) {
-    val isVideo = attachment.isVideo()
     // Depending on the CDN, images might not contain their original dimensions
     val ratio: Float by remember(key1 = attachment.originalWidth, key2 = attachment.originalHeight) {
         derivedStateOf {
@@ -237,10 +237,7 @@ internal fun SingleMediaAttachment(
         attachment = attachment,
         modifier = modifier
             .applyIf(!shouldBeFullSize) { padding(MessageStyling.messageSectionPadding) }
-            .size(
-                width = 250.dp,
-                height = singleMediaAttachmentHeight(isVideo, ratio),
-            ),
+            .size(singleMediaAttachmentSize(ratio)),
         shape = if (shouldBeFullSize) null else RoundedCornerShape(StreamTokens.radiusLg),
         message = message,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
@@ -513,7 +510,7 @@ internal fun MediaAttachmentContentItem(
                     when (state) {
                         is AsyncImagePainter.State.Empty,
                         is AsyncImagePainter.State.Loading,
-                        -> ShimmerProgressIndicator(
+                            -> ShimmerProgressIndicator(
                             modifier = Modifier.fillMaxSize(),
                         )
 
@@ -639,20 +636,35 @@ public data class MediaAttachmentClickData internal constructor(
 )
 
 /**
- * Calculates the actual single-media attachment height, based on the configurable width, maxHeight and the aspectRatio.
+ * Calculates the single-media attachment size using orientation-based bounding boxes.
  *
- * @param isVideo true if "video", false if "image".
- * @param aspectRatio the desired aspect ratio.
+ * - Landscape (ratio > 1): max 256×192 dp, fills width first.
+ * - Portrait (ratio < 1): max 192×256 dp, fills height first.
+ * - Square (ratio ≈ 1): 256×256 dp.
+ *
+ * Media maintains its aspect ratio and scales to fit the bounding box.
+ *
+ * @param aspectRatio the width-to-height ratio of the media.
  */
-@Composable
-private fun singleMediaAttachmentHeight(isVideo: Boolean, aspectRatio: Float): Dp {
-    val maxHeight = if (isVideo) {
-        400.dp
-    } else {
-        600.dp
+private fun singleMediaAttachmentSize(aspectRatio: Float): DpSize = when {
+    aspectRatio > 1f -> {
+        // Landscape: bounding box 256×192
+        val width = 256.dp
+        val height = (width / aspectRatio).coerceAtMost(192.dp)
+        DpSize(width, height)
     }
-    val heightAccordingAspectRatio = 250.dp / aspectRatio
-    return minOf(heightAccordingAspectRatio, maxHeight)
+
+    aspectRatio < 1f -> {
+        // Portrait: bounding box 192×256
+        val height = 256.dp
+        val width = (height * aspectRatio).coerceAtMost(192.dp)
+        DpSize(width, height)
+    }
+
+    else -> {
+        // Square
+        DpSize(256.dp, 256.dp)
+    }
 }
 
 /**
