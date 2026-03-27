@@ -16,28 +16,22 @@
 
 package io.getstream.chat.android.compose.ui.channel.info
 
-import app.cash.paparazzi.DeviceConfig
-import app.cash.paparazzi.Paparazzi
-import io.getstream.chat.android.compose.ui.PaparazziComposeTest
-import org.junit.Rule
-import org.junit.Test
+import android.content.Context
+import android.net.Uri
+import io.getstream.chat.android.client.internal.file.StreamFileManager
+import java.io.File
+import java.util.UUID
 
-internal class GroupChannelInfoEditTest : PaparazziComposeTest {
+private val fileManager = StreamFileManager()
 
-    @get:Rule
-    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_4A)
-
-    @Test
-    fun placeholder() {
-        snapshotWithDarkMode {
-            GroupChannelEditPlaceholder()
-        }
-    }
-
-    @Test
-    fun filled() {
-        snapshotWithDarkMode {
-            GroupChannelEditFilled()
-        }
-    }
+/**
+ * Copies the content at the given [Uri] into a temporary cache file using the SDK's [StreamFileManager].
+ */
+internal fun Uri.toCacheFile(context: Context): File? {
+    val inputStream = context.contentResolver.openInputStream(this) ?: return null
+    return fileManager.writeFileInTimestampedCache(
+        context = context,
+        fileName = "channel_image_${UUID.randomUUID()}.jpg",
+        source = inputStream,
+    ).getOrNull()
 }
