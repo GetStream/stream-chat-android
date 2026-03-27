@@ -176,22 +176,29 @@ public class StreamFileManager {
      * @param ttlMs Maximum age in milliseconds; older files are always deleted
      * @param maxSizeBytes Soft size cap in bytes; exceeded only temporarily until the next eviction pass
      */
-    public fun evictCacheFiles(context: Context, prefix: String, ttlMs: Long, maxSizeBytes: Long) {
-        val now = System.currentTimeMillis()
-        val files = listFilesInCache(context, prefix).toMutableList()
-        val expired = files.filter { now - it.lastModified() >= ttlMs }
-        expired.forEach { it.delete() }
-        files.removeAll(expired)
+    public suspend fun evictCacheFiles(context: Context, prefix: String, ttlMs: Long, maxSizeBytes: Long): Unit =
+        withContext(DispatcherProvider.IO) {
+            val now = System.currentTimeMillis()
+            val files = listFilesInCache(context, prefix).toMutableList()
+            val expired = files.filter { now - it.lastModified() >= ttlMs }
+            expired.forEach { file ->
+                if (file.delete()) {
+                    files.remove(file)
+                }
+            }
 
-        files.sortBy { it.lastModified() }
-        var totalSize = files.sumOf { it.length() }
-        val iterator = files.iterator()
-        while (totalSize > maxSizeBytes && iterator.hasNext()) {
-            val oldest = iterator.next()
-            totalSize -= oldest.length()
-            oldest.delete()
+            files.sortBy { it.lastModified() }
+            var totalSize = files.sumOf { it.length() }
+            val iterator = files.iterator()
+            while (totalSize > maxSizeBytes && iterator.hasNext()) {
+                val oldest = iterator.next()
+                val size = oldest.length()
+                if (oldest.delete()) {
+                    totalSize -= size
+                    iterator.remove()
+                }
+            }
         }
-    }
 
     /**
      * Clears the Stream cache directory.

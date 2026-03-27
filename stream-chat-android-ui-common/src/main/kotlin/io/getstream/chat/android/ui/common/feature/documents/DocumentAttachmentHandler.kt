@@ -28,21 +28,18 @@ import com.google.android.material.snackbar.Snackbar
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.R
+import io.getstream.chat.android.ui.common.feature.documents.DocumentAttachmentHandler.SNACKBAR_DELAY_MS
 import io.getstream.chat.android.ui.common.internal.file.StreamShareFileManager
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
-import io.getstream.chat.android.uiutils.model.MimeType
 import io.getstream.log.taggedLogger
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
  * Shared handler for opening document attachments.
  *
- * Text-based files (TXT, HTML) are displayed in-app using [TextFilePreviewActivity].
- * All other document types (PDF, Office formats, etc.) are downloaded via [StreamShareFileManager]
- * and opened with an external application.
- *
- * For files larger than 2 MB, a Snackbar with download progress is shown.
- * Smaller files are downloaded silently.
+ * Documents are downloaded via [StreamShareFileManager] and opened with an external application.
+ * If the download takes longer than [SNACKBAR_DELAY_MS], a Snackbar with progress is shown.
  */
 @InternalStreamChatApi
 public object DocumentAttachmentHandler {
@@ -50,7 +47,7 @@ public object DocumentAttachmentHandler {
     private val logger by taggedLogger("Chat:DocumentAttachmentHandler")
     private val shareFileManager = StreamShareFileManager()
 
-    private const val SMALL_FILE_THRESHOLD = 2 * 1024 * 1024 // 2 MB
+    private const val SNACKBAR_DELAY_MS = 500L
 
     /**
      * Opens the given document [attachment].
@@ -59,21 +56,7 @@ public object DocumentAttachmentHandler {
      * @param attachment The document attachment to open.
      */
     public fun openAttachment(context: Context, attachment: Attachment) {
-        val mimeType = attachment.mimeType
-        val url = attachment.assetUrl ?: return
-
-        if (mimeType == MimeType.MIME_TYPE_TXT || mimeType == MimeType.MIME_TYPE_HTML) {
-            context.startActivity(
-                TextFilePreviewActivity.getIntent(
-                    context = context,
-                    url = url,
-                    mimeType = mimeType,
-                    fileName = attachment.name,
-                ),
-            )
-        } else {
-            openWithExternalApp(context, attachment)
-        }
+        openWithExternalApp(context, attachment)
     }
 
     private fun openWithExternalApp(context: Context, attachment: Attachment) {
@@ -82,74 +65,57 @@ public object DocumentAttachmentHandler {
             return
         }
 
-        val isLargeFile = attachment.fileSize > SMALL_FILE_THRESHOLD
+        val rootView = context.findActivity()?.findViewById<android.view.View>(android.R.id.content)
 
         lifecycleOwner.lifecycleScope.launch {
-            if (isLargeFile) {
-                downloadWithProgress(context, attachment)
-            } else {
-                downloadSilently(context, attachment)
-            }
-        }
-    }
-
-    private suspend fun downloadSilently(context: Context, attachment: Attachment) {
-        shareFileManager.writeAttachmentToShareableFile(context, attachment)
-            .onSuccess { uri -> openFileUri(context, uri, attachment) }
-            .onError { error ->
-                logger.e { "[downloadSilently] Failed to download file: ${error.message}" }
-                val msg = context.getString(
-                    R.string.stream_ui_message_list_attachment_download_failed,
-                    attachment.name ?: "",
-                )
-                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    private suspend fun downloadWithProgress(context: Context, attachment: Attachment) {
-        val snackbar = context.findActivity()
-            ?.findViewById<android.view.View>(android.R.id.content)
-            ?.let { rootView ->
-                Snackbar.make(
-                    rootView,
-                    context.getString(
-                        R.string.stream_ui_message_list_attachment_downloading,
-                        MediaStringUtil.convertFileSizeByteCount(0L),
-                        MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong()),
-                    ),
-                    Snackbar.LENGTH_INDEFINITE,
-                ).also { it.show() }
-            }
-
-        shareFileManager.writeAttachmentToShareableFile(
-            context = context,
-            attachment = attachment,
-            onProgress = { bytesDownloaded, totalBytes ->
-                snackbar?.let { sb ->
-                    val downloaded = MediaStringUtil.convertFileSizeByteCount(bytesDownloaded)
-                    val total = MediaStringUtil.convertFileSizeByteCount(totalBytes)
-                    val text = context.getString(
-                        R.string.stream_ui_message_list_attachment_downloading,
-                        downloaded,
-                        total,
-                    )
-                    sb.view.post { sb.setText(text) }
+            var snackbar: Snackbar? = null
+            val snackbarJob = rootView?.let {
+                launch {
+                    delay(SNACKBAR_DELAY_MS)
+                    snackbar = Snackbar.make(
+                        it,
+                        context.getString(
+                            R.string.stream_ui_message_list_attachment_downloading,
+                            MediaStringUtil.convertFileSizeByteCount(0L),
+                            MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong()),
+                        ),
+                        Snackbar.LENGTH_INDEFINITE,
+                    ).also { sb -> sb.show() }
                 }
-            },
-        )
-            .onSuccess { uri ->
-                snackbar?.dismiss()
-                openFileUri(context, uri, attachment)
             }
-            .onError { error ->
-                snackbar?.dismiss()
-                logger.e { "[downloadWithProgress] Failed to download file: ${error.message}" }
-                val msg = context.getString(
-                    R.string.stream_ui_message_list_attachment_download_failed,
-                    attachment.name ?: "",
-                )
-                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-            }
+
+            shareFileManager.writeAttachmentToShareableFile(
+                context = context,
+                attachment = attachment,
+                onProgress = { bytesDownloaded, totalBytes ->
+                    snackbar?.let { sb ->
+                        val downloaded = MediaStringUtil.convertFileSizeByteCount(bytesDownloaded)
+                        val total = MediaStringUtil.convertFileSizeByteCount(totalBytes)
+                        val text = context.getString(
+                            R.string.stream_ui_message_list_attachment_downloading,
+                            downloaded,
+                            total,
+                        )
+                        sb.view.post { sb.setText(text) }
+                    }
+                },
+            )
+                .onSuccess { uri ->
+                    snackbarJob?.cancel()
+                    snackbar?.dismiss()
+                    openFileUri(context, uri, attachment)
+                }
+                .onError { error ->
+                    snackbarJob?.cancel()
+                    snackbar?.dismiss()
+                    logger.e { "[openWithExternalApp] Failed to download file: ${error.message}" }
+                    val msg = context.getString(
+                        R.string.stream_ui_message_list_attachment_download_failed,
+                        attachment.name ?: "",
+                    )
+                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                }
+        }
     }
 
     private fun openFileUri(context: Context, uri: android.net.Uri, attachment: Attachment) {

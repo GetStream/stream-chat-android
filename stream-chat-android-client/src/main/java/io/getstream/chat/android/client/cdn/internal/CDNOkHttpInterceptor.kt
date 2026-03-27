@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.cdn.internal
 import io.getstream.chat.android.client.cdn.CDN
 import io.getstream.chat.android.client.cdn.CDNRequest
 import io.getstream.log.taggedLogger
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -34,7 +33,7 @@ internal class CDNOkHttpInterceptor(private val cdn: CDN) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalUrl = chain.request().url.toString()
         val (url, headers) = try {
-            runBlocking(Dispatchers.IO) {
+            runBlocking {
                 cdn.fileRequest(originalUrl)
             }
         } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
@@ -48,7 +47,7 @@ internal class CDNOkHttpInterceptor(private val cdn: CDN) : Interceptor {
             .url(url)
             .apply {
                 headers?.forEach {
-                    addHeader(it.key, it.value)
+                    header(it.key, it.value)
                 }
             }
             .build()

@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.cdn.internal
 
 import android.net.Uri
+import androidx.core.net.toUri
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DataSpec
@@ -68,7 +69,7 @@ private class CDNDataSource(
         }
         val url = dataSpec.uri.toString()
         val cdnRequest = try {
-            runBlocking(Dispatchers.IO) {
+            runBlocking {
                 cdn.fileRequest(url)
             }
         } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
@@ -80,7 +81,7 @@ private class CDNDataSource(
             cdnRequest.headers?.let { putAll(it) }
         }
         val transformedSpec = dataSpec.buildUpon()
-            .setUri(Uri.parse(cdnRequest.url))
+            .setUri(cdnRequest.url.toUri())
             .setHttpRequestHeaders(mergedHeaders)
             .build()
         return upstream.open(transformedSpec)

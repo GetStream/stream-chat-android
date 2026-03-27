@@ -18,11 +18,15 @@ package io.getstream.chat.android.client.cdn
 
 /**
  * Class defining a CDN (Content Delivery Network) interface.
+ * Override to transform requests loading images/files from the custom CDN.
  */
 public interface CDN {
 
     /**
-     * Creates a request for loading an image from the CDN.
+     * Transforms a request for loading an image from the CDN.
+     *
+     * Implementations that perform blocking or network I/O must use `withContext` to switch to the
+     * appropriate dispatcher (e.g. `Dispatchers.IO`).
      *
      * @param url Original CDN url for the image.
      * @return A [CDNRequest] holding the modified request URL and/or custom headers to include with the request.
@@ -30,7 +34,10 @@ public interface CDN {
     public suspend fun imageRequest(url: String): CDNRequest = CDNRequest(url)
 
     /**
-     * Creates a request for loading a non-image file from the CDN.
+     * Transforms a request for loading a non-image file from the CDN.
+     *
+     * Implementations that perform blocking or network I/O must use `withContext` to switch to the
+     * appropriate dispatcher (e.g. `Dispatchers.IO`).
      *
      * @param url Original CDN url for the file.
      * @return A [CDNRequest] holding the modified request URL and/or custom headers to include with the request.

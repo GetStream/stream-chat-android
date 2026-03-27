@@ -38,7 +38,6 @@ import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.ui.PlayerView
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.cdn.internal.StreamMediaDataSource
-import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentGalleryVideoBinding
