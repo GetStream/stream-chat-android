@@ -90,6 +90,7 @@
 
     <string name="stream_ui_channel_info_contact_title">Contact Info</string>
     <string name="stream_ui_channel_info_group_title">Group Info</string>
+    <string name="stream_ui_channel_info_edit_action">Edit</string>
     <string name="stream_ui_channel_info_member_add_button">Add</string>
     <string name="stream_ui_channel_info_view_all">View all</string>
     <plurals name="stream_ui_channel_info_member_count">
@@ -100,9 +101,20 @@
     <string name="stream_ui_channel_info_member_owner">Owner</string>
     <string name="stream_ui_channel_info_member_moderator">Moderator</string>
     <string name="stream_ui_channel_info_expand_button">%d more</string>
-    <string name="stream_ui_channel_info_copy_user_handle">Copy user handle</string>
     <string name="stream_ui_channel_info_name_field_label">NAME</string>
     <string name="stream_ui_channel_info_name_field_placeholder">Add a group name</string>
+
+    <!-- Channel Info Edit -->
+
+    <string name="stream_ui_channel_info_edit_title">Edit</string>
+    <string name="stream_ui_channel_info_edit_save_action">Save changes</string>
+    <string name="stream_ui_channel_info_edit_name_field_placeholder">Add a group name</string>
+    <string name="stream_ui_channel_info_edit_upload_picture">Upload</string>
+    <string name="stream_ui_channel_info_edit_group_picture">Edit Group Picture</string>
+    <string name="stream_ui_channel_info_edit_choose_from_library">Choose Image</string>
+    <string name="stream_ui_channel_info_edit_take_photo">Take Photo</string>
+    <string name="stream_ui_channel_info_edit_remove_picture">Reset Picture</string>
+    <string name="stream_ui_channel_info_edit_save_error">Failed to save changes</string>
 
     <string name="stream_ui_channel_info_rename_group_error">Failed to rename group</string>
     <string name="stream_ui_channel_info_mute_conversation_error">Failed to switch the conversation mute state</string>

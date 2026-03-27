@@ -16,15 +16,12 @@
 
 package io.getstream.chat.android.compose.viewmodel.channel
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.randomCID
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.jupiter.api.assertInstanceOf
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
 
 internal class ChannelInfoViewModelFactoryTest {
 
@@ -71,12 +68,7 @@ internal class ChannelInfoViewModelFactoryTest {
     }
 
     private class Fixture {
-        private val mockContext: Context = mock {
-            on { applicationContext } doReturn it
-        }
-
         fun get() = ChannelInfoViewModelFactory(
-            context = mockContext,
             cid = randomCID(),
         )
     }

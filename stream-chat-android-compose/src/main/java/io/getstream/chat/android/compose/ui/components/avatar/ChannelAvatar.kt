@@ -59,6 +59,7 @@ import io.getstream.chat.android.ui.common.utils.extensions.isOneToOne
  *
  * @param channel The channel whose avatar will be displayed.
  * @param currentUser The user currently logged in.
+ * @param modifier The modifier to be applied to this layout.
  * @param showIndicator Whether to overlay a status indicator to show whether the user is online for 1:1 channels.
  * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
  */

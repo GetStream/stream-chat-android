@@ -115,6 +115,7 @@ public object StreamDesign {
      * surface behind the avatar; in high-contrast it uses the base surface.
      * @param skeletonLoadingBase Base color for the skeleton loading gradient (placeholder surfaces).
      * @param skeletonLoadingHighlight Highlight for the skeleton loading gradient (moving shimmer).
+     * @param systemCaret System caret color.
      */
     @Immutable
     public data class Colors(
@@ -178,6 +179,7 @@ public object StreamDesign {
         public val avatarPresenceBorder: Color,
         public val skeletonLoadingBase: Color,
         public val skeletonLoadingHighlight: Color,
+        public val systemCaret: Color,
     ) {
 
         /** Default badge background. */
@@ -520,6 +522,7 @@ public object StreamDesign {
                     avatarPresenceBorder = chrome.s0,
                     skeletonLoadingBase = Color.Transparent,
                     skeletonLoadingHighlight = Color(0xBFFFFFFF),
+                    systemCaret = brand.s500,
                 )
             }
 
@@ -595,6 +598,7 @@ public object StreamDesign {
                     avatarPresenceBorder = chrome.s0,
                     skeletonLoadingBase = Color.Transparent,
                     skeletonLoadingHighlight = Color(0xBF000000),
+                    systemCaret = brand.s400,
                 )
             }
         }

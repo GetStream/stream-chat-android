@@ -66,6 +66,7 @@ public class AddMembersViewController(
     private val channelMembers = channelState.flatMapLatest { it.members }
 
     private var searchJob: Job? = null
+    private var loadMoreJob: Job? = null
 
     private val _state = MutableStateFlow(AddMembersViewState())
 
@@ -120,6 +121,7 @@ public class AddMembersViewController(
 
     private fun searchUsers(query: String) {
         searchJob?.cancel()
+        loadMoreJob?.cancel()
         searchJob = scope.launch {
             _state.update { it.copy(isLoading = true) }
             chatClient.queryUsers(query.trim().toSearchRequest(offset = 0))
@@ -137,7 +139,7 @@ public class AddMembersViewController(
 
     private fun loadMore() {
         if (_state.value.isLoading || _state.value.isLoadingMore) return
-        scope.launch {
+        loadMoreJob = scope.launch {
             val currentResult = _state.value.searchResult
             _state.update { it.copy(isLoadingMore = true) }
             chatClient.queryUsers(_state.value.query.trim().toSearchRequest(offset = currentResult.size))

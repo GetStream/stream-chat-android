@@ -32,6 +32,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Lifecycle
@@ -53,13 +55,15 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
     fun snapshot(
         isInDarkMode: Boolean = false,
         contentAlignment: Alignment = Alignment.TopStart,
+        backgroundColor: Color = Color.Unspecified,
         composable: @Composable () -> Unit,
     ) {
         paparazzi.snapshot {
             TestEnvironment {
                 ChatTheme(isInDarkMode = isInDarkMode) {
                     Box(
-                        modifier = Modifier.background(ChatTheme.colors.backgroundCoreApp),
+                        modifier = Modifier
+                            .background(backgroundColor.takeOrElse(ChatTheme.colors::backgroundCoreApp)),
                         contentAlignment = contentAlignment,
                     ) {
                         composable()

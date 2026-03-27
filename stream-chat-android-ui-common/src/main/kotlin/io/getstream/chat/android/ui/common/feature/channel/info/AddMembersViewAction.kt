@@ -16,11 +16,13 @@
 
 package io.getstream.chat.android.ui.common.feature.channel.info
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.User
 
 /**
  * Represents actions that can be performed from the "Add Members" view.
  */
+@InternalStreamChatApi
 public sealed interface AddMembersViewAction {
 
     /**
