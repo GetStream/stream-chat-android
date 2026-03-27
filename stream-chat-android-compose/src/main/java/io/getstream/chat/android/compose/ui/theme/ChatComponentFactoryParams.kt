@@ -1833,7 +1833,7 @@ public data class GroupChannelInfoTopBarParams(
     val infoState: ChannelInfoViewState,
     val listState: LazyListState,
     val onNavigationIconClick: () -> Unit,
-    val onActionClick: () -> Unit,
+    val onActionClick: () -> Unit = {},
 )
 
 /**

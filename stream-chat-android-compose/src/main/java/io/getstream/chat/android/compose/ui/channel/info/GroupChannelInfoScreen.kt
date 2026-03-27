@@ -58,9 +58,12 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.FullscreenDialog
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
+import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoAddMembersButtonParams
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoAvatarContainerParams
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoExpandMembersItemParams
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoMemberItemParams
@@ -99,7 +102,6 @@ import java.util.Date
  * @param modifier The [Modifier] to be applied to this screen.
  * @param currentUser The current logged-in user. Defaults to the current user from the [ChatClient].
  * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
- * @param onActionClick Callback invoked when the action button is clicked.
  */
 @Composable
 public fun GroupChannelInfoScreen(
@@ -107,12 +109,12 @@ public fun GroupChannelInfoScreen(
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onNavigationIconClick: () -> Unit = {},
-    onActionClick: () -> Unit = {},
 ) {
     val headerViewModel = viewModel<ChannelHeaderViewModel>(factory = viewModelFactory)
     val infoViewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
     val headerState by headerViewModel.state.collectAsStateWithLifecycle()
     val infoState by infoViewModel.state.collectAsStateWithLifecycle()
+    var showEditChannel by remember { mutableStateOf(false) }
 
     var showAddMembers by remember { mutableStateOf(false) }
 
@@ -122,10 +124,24 @@ public fun GroupChannelInfoScreen(
         headerState = headerState,
         infoState = infoState,
         onNavigationIconClick = onNavigationIconClick,
-        onActionClick = onActionClick,
+        onActionClick = { showEditChannel = true },
         onAddMembersClick = { showAddMembers = true },
         onViewAction = infoViewModel::onViewAction,
     )
+
+    val channel = (headerState as? ChannelHeaderViewState.Content)?.channel
+    if (showEditChannel && channel != null) {
+        FullscreenDialog(onDismissRequest = { showEditChannel = false }) {
+            GroupChannelEditScreen(
+                channel = channel,
+                onNavigationIconClick = { showEditChannel = false },
+                onSaveChangesClick = {
+                    infoViewModel.onViewAction(ChannelInfoViewAction.RenameChannelClick(name = it))
+                    showEditChannel = false
+                },
+            )
+        }
+    }
 
     GroupChannelInfoScreenModal(infoViewModel)
     if (showAddMembers) {
