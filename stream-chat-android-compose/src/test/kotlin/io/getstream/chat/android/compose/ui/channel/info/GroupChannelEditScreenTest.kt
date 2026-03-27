@@ -16,17 +16,17 @@
 
 package io.getstream.chat.android.compose.ui.channel.info
 
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import org.junit.Rule
 import org.junit.Test
 
-internal class GroupChannelEditTest : PaparazziComposeTest {
+internal class GroupChannelEditScreenTest : PaparazziComposeTest {
 
     @get:Rule
-    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_4A)
+    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
     fun placeholder() {
@@ -50,15 +50,29 @@ internal class GroupChannelEditTest : PaparazziComposeTest {
     }
 
     @Test
-    fun `image picker with remove`() {
-        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+    fun `image picker with remove in light mode`() {
+        snapshot(backgroundColor = Color.Transparent) {
             ImagePickerOptionsWithRemove()
         }
     }
 
     @Test
-    fun `image picker no remove`() {
-        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+    fun `image picker with remove in dark mode`() {
+        snapshot(backgroundColor = Color.Transparent, isInDarkMode = true) {
+            ImagePickerOptionsWithRemove()
+        }
+    }
+
+    @Test
+    fun `image picker no remove in light mode`() {
+        snapshot(backgroundColor = Color.Transparent) {
+            ImagePickerOptionsNoRemove()
+        }
+    }
+
+    @Test
+    fun `image picker no remove in dark mode`() {
+        snapshot(backgroundColor = Color.Transparent, isInDarkMode = true) {
             ImagePickerOptionsNoRemove()
         }
     }

@@ -38,6 +38,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -151,9 +153,9 @@ internal fun GroupChannelEditScreen(
 private fun ImagePickerSheet(
     visible: Boolean,
     showRemoveOption: Boolean,
-    onDismiss: () -> Unit,
-    onImageSelected: (File) -> Unit,
-    onImageRemoved: () -> Unit,
+    onDismiss: () -> Unit = {},
+    onImageSelected: (File) -> Unit = {},
+    onImageRemoved: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -174,8 +176,15 @@ private fun ImagePickerSheet(
         onResult = onImageSelected,
     )
 
+    val previewMode = LocalInspectionMode.current
+    val sheetState = rememberModalBottomSheetState()
+    LaunchedEffect(previewMode) {
+        if (previewMode) sheetState.show()
+    }
+
     if (visible) {
         ModalBottomSheet(
+            sheetState = sheetState,
             onDismissRequest = onDismiss,
             containerColor = ChatTheme.colors.backgroundCoreApp,
         ) {
@@ -455,7 +464,7 @@ internal fun GroupChannelEditSaving() {
     )
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 private fun ImagePickerOptionsPreview() {
     ChatTheme {
@@ -465,10 +474,13 @@ private fun ImagePickerOptionsPreview() {
 
 @Composable
 internal fun ImagePickerOptionsWithRemove() {
-    ImagePickerOptions(showRemoveOption = true)
+    ImagePickerSheet(
+        visible = true,
+        showRemoveOption = true,
+    )
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 private fun ImagePickerOptionsNoRemovePreview() {
     ChatTheme {
@@ -478,5 +490,8 @@ private fun ImagePickerOptionsNoRemovePreview() {
 
 @Composable
 internal fun ImagePickerOptionsNoRemove() {
-    ImagePickerOptions(showRemoveOption = false)
+    ImagePickerSheet(
+        visible = true,
+        showRemoveOption = false,
+    )
 }
