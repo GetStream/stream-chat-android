@@ -43,6 +43,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -80,6 +81,8 @@ import io.getstream.chat.android.compose.viewmodel.channel.AddMembersViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.channel.GroupChannelEditViewModel
+import io.getstream.chat.android.compose.viewmodel.channel.GroupChannelEditViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Member
@@ -114,9 +117,8 @@ public fun GroupChannelInfoScreen(
     val infoViewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
     val headerState by headerViewModel.state.collectAsStateWithLifecycle()
     val infoState by infoViewModel.state.collectAsStateWithLifecycle()
-    var showEditChannel by remember { mutableStateOf(false) }
-
-    var showAddMembers by remember { mutableStateOf(false) }
+    var showEditChannel by rememberSaveable { mutableStateOf(false) }
+    var showAddMembers by rememberSaveable { mutableStateOf(false) }
 
     GroupChannelInfoScaffold(
         modifier = modifier,
@@ -132,18 +134,19 @@ public fun GroupChannelInfoScreen(
     val channel = (headerState as? ChannelHeaderViewState.Content)?.channel
     if (showEditChannel && channel != null) {
         FullscreenDialog(onDismissRequest = { showEditChannel = false }) {
-            GroupChannelEditScreen(
-                channel = channel,
-                onNavigationIconClick = { showEditChannel = false },
-                onSaveChangesClick = {
-                    infoViewModel.onViewAction(ChannelInfoViewAction.RenameChannelClick(name = it))
-                    showEditChannel = false
-                },
-            )
+            ViewModelStore {
+                val editViewModel = viewModel<GroupChannelEditViewModel>(
+                    factory = GroupChannelEditViewModelFactory(cid = channel.cid),
+                )
+                GroupChannelEditScreen(
+                    viewModel = editViewModel,
+                    channel = channel,
+                    onDismiss = { showEditChannel = false },
+                )
+            }
         }
     }
 
-    GroupChannelInfoScreenModal(infoViewModel)
     if (showAddMembers) {
         FullscreenDialog(onDismissRequest = { showAddMembers = false }) {
             ViewModelStore {
@@ -159,6 +162,8 @@ public fun GroupChannelInfoScreen(
             }
         }
     }
+
+    GroupChannelInfoScreenModal(infoViewModel)
 }
 
 @Composable
