@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.viewmodel.channel
 import app.cash.turbine.test
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomMember
-import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewEvent
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewController
@@ -72,7 +71,7 @@ internal class ChannelInfoViewModelTest {
         val fixture = Fixture()
         val sut = fixture.get()
 
-        val action = ChannelInfoViewAction.UserInfoClick(user = randomUser())
+        val action = ChannelInfoViewAction.PinnedMessagesClick
         sut.onViewAction(action)
 
         fixture.verifyControllerOnViewAction(action)
@@ -110,7 +109,6 @@ internal class ChannelInfoViewModelTest {
 
         fun get() = ChannelInfoViewModel(
             cid = randomCID(),
-            copyToClipboardHandler = mock(),
             optionFilter = mock(),
             controllerProvider = { mockController },
         )
