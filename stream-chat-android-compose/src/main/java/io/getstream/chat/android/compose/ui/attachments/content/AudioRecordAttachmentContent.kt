@@ -225,8 +225,11 @@ internal fun AudioRecordAttachmentContentItemBase(
                 modifier = Modifier.weight(1f),
             )
         } else {
+            val isSeeking = isCurrentAttachment && playerState.current.isSeeking
             var currentProgress by remember { mutableFloatStateOf(trackProgress) }
-            LaunchedEffect(attachmentUrl, playing, trackProgress) { currentProgress = trackProgress }
+            LaunchedEffect(trackProgress) {
+                if (!isSeeking) currentProgress = trackProgress
+            }
 
             val timerTextColor = if (playing) ChatTheme.colors.accentPrimary else textColor
             PlaybackTimerText(
