@@ -255,5 +255,8 @@ internal fun Fragment.showError(error: ChannelInfoViewEvent.Error, isGroupChanne
 
         ChannelInfoViewEvent.RemoveMemberError,
         -> R.string.stream_ui_channel_info_remove_member_error
+
+        ChannelInfoViewEvent.AddMembersError,
+        -> R.string.stream_ui_channel_info_add_members_error
     }.let(::showToast)
 }

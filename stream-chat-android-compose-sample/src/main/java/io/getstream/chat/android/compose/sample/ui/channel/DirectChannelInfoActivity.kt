@@ -172,6 +172,9 @@ class DirectChannelInfoActivity : ComponentActivity() {
             ChannelInfoViewEvent.RemoveMemberError,
             -> R.string.stream_ui_channel_info_remove_member_error
 
+            ChannelInfoViewEvent.AddMembersError,
+            -> R.string.stream_ui_channel_info_add_members_error
+
             ChannelInfoViewEvent.BanMemberError,
             -> R.string.stream_ui_channel_info_ban_member_error
 

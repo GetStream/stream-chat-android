@@ -45,6 +45,7 @@ public class ChannelInfoViewModelFactory(
                 optionFilter = optionFilter,
             )
         },
+        AddMembersViewModel::class.java to { AddMembersViewModel(cid = cid) },
     )
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

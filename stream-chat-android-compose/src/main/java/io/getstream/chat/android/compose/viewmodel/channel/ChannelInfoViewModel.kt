@@ -78,4 +78,11 @@ public class ChannelInfoViewModel(
     public fun onMemberViewEvent(event: ChannelInfoMemberViewEvent) {
         controller.onMemberViewEvent(event)
     }
+
+    /**
+     * @see [ChannelInfoViewController.addMembers]
+     */
+    public fun addMembers(userIds: Set<String>) {
+        controller.addMembers(userIds)
+    }
 }

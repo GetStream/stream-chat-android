@@ -267,4 +267,9 @@ public sealed interface ChannelInfoViewEvent {
      * Indicates an error occurred while removing a member.
      */
     public data object RemoveMemberError : Error
+
+    /**
+     * Indicates an error occurred while adding members to the channel.
+     */
+    public data object AddMembersError : Error
 }
