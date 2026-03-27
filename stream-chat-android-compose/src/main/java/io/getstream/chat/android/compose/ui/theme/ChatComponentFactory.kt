@@ -1077,6 +1077,7 @@ public interface ChatComponentFactory {
         DefaultMessageContent(
             message = params.message,
             currentUser = params.currentUser,
+            messageAlignment = params.messageAlignment,
             onLongItemClick = params.onLongItemClick,
             onMediaGalleryPreviewResult = params.onMediaGalleryPreviewResult,
             onQuotedMessageClick = params.onQuotedMessageClick,
