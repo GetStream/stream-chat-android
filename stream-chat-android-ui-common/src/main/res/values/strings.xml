@@ -101,8 +101,12 @@
     <string name="stream_ui_channel_info_member_owner">Owner</string>
     <string name="stream_ui_channel_info_member_moderator">Moderator</string>
     <string name="stream_ui_channel_info_expand_button">%d more</string>
-    <string name="stream_ui_channel_info_name_field_label">NAME</string>
-    <string name="stream_ui_channel_info_name_field_placeholder">Add a group name</string>
+
+    <!-- Channel Info Edit -->
+
+    <string name="stream_ui_channel_info_edit_title">Edit</string>
+    <string name="stream_ui_channel_info_edit_save_action">Save changes</string>
+    <string name="stream_ui_channel_info_edit_name_field_placeholder">Add a group name</string>
 
     <string name="stream_ui_channel_info_rename_group_error">Failed to rename group</string>
     <string name="stream_ui_channel_info_mute_conversation_error">Failed to switch the conversation mute state</string>
