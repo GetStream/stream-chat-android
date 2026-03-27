@@ -101,6 +101,8 @@
     <string name="stream_ui_channel_info_member_owner">Owner</string>
     <string name="stream_ui_channel_info_member_moderator">Moderator</string>
     <string name="stream_ui_channel_info_expand_button">%d more</string>
+    <string name="stream_ui_channel_info_name_field_label">NAME</string>
+    <string name="stream_ui_channel_info_name_field_placeholder">Add a group name</string>
 
     <!-- Channel Info Edit -->
 
