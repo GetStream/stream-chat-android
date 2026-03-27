@@ -21,7 +21,12 @@ import io.getstream.chat.android.models.Attachment
 
 /**
  * Generates a download URI for the given attachment.
+ *
+ * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
+ * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to transform URLs for all image, file,
+ * and download requests.
  */
+@Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
 public fun interface DownloadAttachmentUriGenerator {
 
     /**
@@ -37,7 +42,12 @@ public fun interface DownloadAttachmentUriGenerator {
 /**
  * Default implementation of [DownloadAttachmentUriGenerator] that generates a download URI based on the asset URL
  * or image URL of the attachment.
+ *
+ * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
+ * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to transform URLs for all image, file,
+ * and download requests.
  */
+@Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
 public object DefaultDownloadAttachmentUriGenerator : DownloadAttachmentUriGenerator {
     override fun generateDownloadUri(attachment: Attachment): Uri =
         Uri.parse(attachment.assetUrl ?: attachment.imageUrl)

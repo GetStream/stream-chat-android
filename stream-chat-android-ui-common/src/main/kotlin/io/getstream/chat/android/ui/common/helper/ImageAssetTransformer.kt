@@ -25,8 +25,13 @@ import java.io.File
 import java.nio.ByteBuffer
 
 /**
- * Provides HTTP headers for image loading requests.
+ * Transforms image assets before loading.
+ *
+ * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
+ * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to transform URLs for all image, file,
+ * and download requests.
  */
+@Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
 public interface ImageAssetTransformer {
 
     /**
@@ -51,7 +56,12 @@ public interface ImageAssetTransformer {
 
 /**
  * Default implementation of [ImageAssetTransformer] that doesn't provide any headers.
+ *
+ * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
+ * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to transform URLs for all image, file,
+ * and download requests.
  */
+@Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
 public object DefaultImageAssetTransformer : ImageAssetTransformer {
     override fun transform(asset: Any): Any = asset
 }

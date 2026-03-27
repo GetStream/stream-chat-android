@@ -20,7 +20,12 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
  * Provides HTTP headers for video loading requests.
+ *
+ * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
+ * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to provide headers and transform URLs
+ * for all image, file, and download requests.
  */
+@Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
 public interface VideoHeadersProvider {
 
     /**

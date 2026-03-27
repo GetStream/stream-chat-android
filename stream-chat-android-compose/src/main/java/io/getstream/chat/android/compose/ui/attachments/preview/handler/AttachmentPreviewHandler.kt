@@ -44,12 +44,18 @@ public interface AttachmentPreviewHandler {
          * Builds the default list of file preview providers.
          *
          * @param context The context to start the preview Activity with.
+         * @param useDocumentGView Whether to use Google Docs Viewer for document attachments. When `true`
+         * (default), documents are rendered via Google Docs Viewer. When `false`, text-based files are
+         * rendered in-app and other file types are downloaded and opened with an external application.
          * @return The list handlers that can be used to show a preview for an attachment.
          */
-        public fun defaultAttachmentHandlers(context: Context): List<AttachmentPreviewHandler> {
+        public fun defaultAttachmentHandlers(
+            context: Context,
+            useDocumentGView: Boolean = true,
+        ): List<AttachmentPreviewHandler> {
             return listOf(
                 MediaAttachmentPreviewHandler(context),
-                DocumentAttachmentPreviewHandler(context),
+                DocumentAttachmentPreviewHandler(context, useDocumentGView),
                 UrlAttachmentPreviewHandler(context),
             )
         }

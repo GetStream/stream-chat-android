@@ -71,6 +71,8 @@ import io.getstream.chat.android.client.attachment.AttachmentsSender
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.NativeMediaPlayerImpl
 import io.getstream.chat.android.client.audio.StreamAudioPlayer
+import io.getstream.chat.android.client.cdn.CDN
+import io.getstream.chat.android.client.cdn.internal.StreamMediaDataSource
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.clientstate.DisconnectCause
@@ -293,6 +295,8 @@ internal constructor(
     private val repository: ChatClientRepository,
     private val messageReceiptReporter: MessageReceiptReporter,
     internal val messageReceiptManager: MessageReceiptManager,
+    @InternalStreamChatApi
+    public val cdn: CDN? = null,
 ) {
     private val logger by taggedLogger(TAG)
     private val fileManager = StreamFileManager()
@@ -4731,6 +4735,7 @@ internal constructor(
         private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.CONNECTED
         private var fileTransformer: FileTransformer = NoOpFileTransformer
         private var apiModelTransformers: ApiModelTransformers = ApiModelTransformers()
+        private var cdn: CDN? = null
         private var appName: String? = null
         private var appVersion: String? = null
 
@@ -4859,7 +4864,11 @@ internal constructor(
          *
          * @param shareFileDownloadRequestInterceptor Your [Interceptor] implementation for the share file download
          * call.
+         * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
+         * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to provide headers and transform URLs
+         * for all image, file, and download requests.
          */
+        @Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
         public fun shareFileDownloadRequestInterceptor(shareFileDownloadRequestInterceptor: Interceptor): Builder {
             this.shareFileDownloadRequestInterceptor = shareFileDownloadRequestInterceptor
             return this
@@ -4928,6 +4937,15 @@ internal constructor(
         @InternalStreamChatApi
         public fun forceWsUrl(value: String): Builder = apply {
             forceWsUrl = value
+        }
+
+        /**
+         * Sets a custom [CDN] implementation to be used by the client.
+         *
+         * @param cdn The custom CDN implementation.
+         */
+        public fun cdn(cdn: CDN): Builder = apply {
+            this.cdn = cdn
         }
 
         /**
@@ -5078,6 +5096,7 @@ internal constructor(
                     fileUploader = fileUploader,
                     sendMessageInterceptor = sendMessageInterceptor,
                     shareFileDownloadRequestInterceptor = shareFileDownloadRequestInterceptor,
+                    cdn = cdn,
                     tokenManager = tokenManager,
                     customOkHttpClient = customOkHttpClient,
                     clientDebugger = clientDebugger,
@@ -5090,8 +5109,9 @@ internal constructor(
             val api = module.api()
             val appSettingsManager = AppSettingManager(api)
 
+            val mediaDataSourceFactory = StreamMediaDataSource.factory(appContext, cdn)
             val audioPlayer: AudioPlayer = StreamAudioPlayer(
-                mediaPlayer = NativeMediaPlayerImpl(appContext) {
+                mediaPlayer = NativeMediaPlayerImpl(mediaDataSourceFactory) {
                     ExoPlayer.Builder(appContext)
                         .setAudioAttributes(
                             AudioAttributes.Builder()
@@ -5143,6 +5163,7 @@ internal constructor(
                     messageReceiptRepository = repository,
                     api = api,
                 ),
+                cdn = cdn,
             ).apply {
                 attachmentsSender = AttachmentsSender(
                     context = appContext,
