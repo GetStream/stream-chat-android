@@ -28,6 +28,7 @@ import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomChannelCapabilities
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomSyncStatus
 import org.amshove.kluent.`should be`
@@ -269,6 +270,13 @@ internal class MessageOptionItemVisibilityTest {
                 MessageOptionItemVisibility(),
                 currentUser.takeIf { randomBoolean() },
                 randomMessage(command = AttachmentType.GIPHY, sharedLocation = null),
+                randomChannelCapabilities(),
+                false,
+            ),
+            Arguments.of(
+                MessageOptionItemVisibility(),
+                currentUser.takeIf { randomBoolean() },
+                randomMessage(poll = randomPoll(), command = null, sharedLocation = null),
                 randomChannelCapabilities(),
                 false,
             ),

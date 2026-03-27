@@ -21,6 +21,7 @@ package io.getstream.chat.android.ui.common.utils
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.message.hasSharedLocation
 import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.client.utils.message.isPoll
 import io.getstream.chat.android.client.utils.message.isThreadReply
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Channel
@@ -132,7 +133,7 @@ public fun canEditMessage(
     ownCapabilities: Set<String>,
 ): Boolean = editMessageEnabled &&
     with(ownCapabilities) { ((message.isOwnMessage(currentUser) && canEditOwnMessage()) || canEditAnyMessage()) } &&
-    !message.isGiphyCommand() && !message.hasSharedLocation()
+    !message.isGiphyCommand() && !message.isPoll() && !message.hasSharedLocation()
 
 /**
  * Determines whether the given message can be deleted.
