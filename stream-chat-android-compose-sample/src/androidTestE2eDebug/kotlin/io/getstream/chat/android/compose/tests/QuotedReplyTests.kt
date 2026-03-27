@@ -560,6 +560,7 @@ class QuotedReplyTests : StreamTestCase() {
     }
 
     @AllureId("5898")
+    @Ignore("https://linear.app/stream/issue/AND-1136")
     @Test
     fun test_quotedReplyInThreadAndAlsoInChannel() {
         val quotedText = messagesCount.toString()
