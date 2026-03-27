@@ -42,7 +42,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 
 /**
  * UI for currently selected image attachments, within the [MessageInput].
@@ -76,7 +75,7 @@ private fun ImageAttachmentPreviewContentItem(
     attachment: Attachment,
     onAttachmentRemoved: (Attachment) -> Unit,
 ) {
-    val data = attachment.upload ?: attachment.imagePreviewUrl
+    val data = attachment.upload ?: attachment.imageUrl
 
     Box(
         modifier = Modifier

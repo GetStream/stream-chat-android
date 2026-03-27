@@ -171,6 +171,7 @@ private class FileAttachmentsAdapter(
                             style,
                         )
                     }
+
             else ->
                 StreamUiItemFileAttachmentBinding
                     .inflate(parent.streamThemeInflater, parent, false)

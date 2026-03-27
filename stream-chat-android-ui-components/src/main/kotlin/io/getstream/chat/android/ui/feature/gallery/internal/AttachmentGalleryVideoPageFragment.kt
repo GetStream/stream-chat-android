@@ -262,11 +262,11 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
 
         private const val CONTROLLER_SHOW_TIMEOUT = 2000
 
-        fun create(attachment: Attachment, imageClickListener: () -> Unit = {}): Fragment {
+        fun create(thumbUrl: String?, assetUrl: String?, imageClickListener: () -> Unit = {}): Fragment {
             return AttachmentGalleryVideoPageFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_THUMB_URL, attachment.thumbUrl)
-                    putString(ARG_ASSET_URL, attachment.assetUrl)
+                    putString(ARG_THUMB_URL, thumbUrl)
+                    putString(ARG_ASSET_URL, assetUrl)
                 }
                 this.imageClickListener = imageClickListener
             }

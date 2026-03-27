@@ -5027,7 +5027,8 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageC
 	public static synthetic fun buildNewMessage$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/models/Message;
 	public final fun cancelRecording ()V
 	public final fun clearData ()V
-	public final fun completeRecording ()V
+	public final fun completeRecording (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun completeRecording$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public final fun createPoll (Lio/getstream/chat/android/models/PollConfig;)V
 	public final fun dismissMessageActions ()V
 	public final fun getAlsoSendToChannel ()Lkotlinx/coroutines/flow/MutableStateFlow;

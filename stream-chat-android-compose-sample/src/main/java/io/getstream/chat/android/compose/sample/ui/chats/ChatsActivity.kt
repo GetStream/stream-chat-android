@@ -97,7 +97,6 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewE
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -577,7 +576,7 @@ class ChatsActivity : ComponentActivity() {
         val viewModelFactory = ChannelAttachmentsViewModelFactory(
             cid = cid,
             attachmentTypes = listOf(AttachmentType.IMAGE, AttachmentType.VIDEO),
-            localFilter = { !it.imagePreviewUrl.isNullOrEmpty() && it.titleLink.isNullOrEmpty() },
+            localFilter = { !(it.imageUrl ?: it.thumbUrl).isNullOrEmpty() && it.titleLink.isNullOrEmpty() },
         )
         val viewModel = viewModel<ChannelAttachmentsViewModel>(
             factory = viewModelFactory,
