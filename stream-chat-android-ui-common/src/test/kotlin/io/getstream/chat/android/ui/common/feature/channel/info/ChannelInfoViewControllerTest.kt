@@ -41,7 +41,6 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent.Navigation
-import io.getstream.chat.android.ui.common.helper.CopyToClipboardHandler
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.result.Error
@@ -413,17 +412,6 @@ internal class ChannelInfoViewControllerTest {
                 awaitItem(),
             )
         }
-    }
-
-    @Test
-    fun `user info click`() = runTest {
-        val user = randomUser()
-        val fixture = Fixture()
-        val sut = fixture.get(backgroundScope)
-
-        sut.onViewAction(ChannelInfoViewAction.UserInfoClick(user))
-
-        fixture.verifyCopiedUserHandleToClipboard(text = "@${user.name}")
     }
 
     @Test
@@ -1376,7 +1364,6 @@ private class Fixture {
     }
     private val channelClient: ChannelClient = mock()
     private val chatClient: ChatClient = mock()
-    private val copyToClipboardHandler: CopyToClipboardHandler = mock()
     private var optionFilter: (ChannelInfoViewState.Content.Option) -> Boolean = { true }
 
     fun given(
@@ -1502,10 +1489,6 @@ private class Fixture {
         verifyNoMoreInteractions(channelClient)
     }
 
-    fun verifyCopiedUserHandleToClipboard(text: String) = apply {
-        verify(copyToClipboardHandler).copy(text = text)
-    }
-
     fun verifyMemberBanned(member: Member, timeout: Int?) = apply {
         verify(channelClient).banUser(
             targetId = member.getUserId(),
@@ -1543,7 +1526,6 @@ private class Fixture {
         channelState = MutableStateFlow(channelState),
         channelClient = channelClient,
         globalState = flowOf(globalState),
-        copyToClipboardHandler = copyToClipboardHandler,
     )
 }
 

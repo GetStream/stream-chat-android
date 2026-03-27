@@ -331,7 +331,7 @@ class ChatsActivity : ComponentActivity() {
         onNavigateToFilesAttachments: () -> Unit,
     ) {
         val viewModelFactory = remember(channelId) {
-            ChannelInfoViewModelFactory(context = applicationContext, cid = channelId)
+            ChannelInfoViewModelFactory(cid = channelId)
         }
         val viewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
 
@@ -385,7 +385,7 @@ class ChatsActivity : ComponentActivity() {
         onNavigateToChannel: (cid: String) -> Unit,
     ) {
         val viewModelFactory = remember(channelId) {
-            ChannelInfoViewModelFactory(context = applicationContext, cid = channelId)
+            ChannelInfoViewModelFactory(cid = channelId)
         }
         val viewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
 
