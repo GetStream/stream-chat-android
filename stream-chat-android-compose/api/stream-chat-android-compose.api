@@ -2459,13 +2459,6 @@ public abstract interface class io/getstream/chat/android/compose/ui/messages/li
 	public abstract fun calculateOffset-TemP2vQ (JJ)I
 }
 
-public final class io/getstream/chat/android/compose/ui/messages/preview/internal/ComposableSingletons$MessagePreviewItemKt {
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/preview/internal/ComposableSingletons$MessagePreviewItemKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function4;
-	public fun <init> ()V
-	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
-}
-
 public final class io/getstream/chat/android/compose/ui/pinned/ComposableSingletons$PinnedMessageItemKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/pinned/ComposableSingletons$PinnedMessageItemKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function4;
@@ -2508,6 +2501,15 @@ public final class io/getstream/chat/android/compose/ui/pinned/PinnedMessageItem
 
 public final class io/getstream/chat/android/compose/ui/pinned/PinnedMessageListKt {
 	public static final fun PinnedMessageList (Lio/getstream/chat/android/compose/viewmodel/pinned/PinnedMessageListViewModel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/pinned/internal/ComposableSingletons$DefaultPinnedMessageItemContentKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/pinned/internal/ComposableSingletons$DefaultPinnedMessageItemContentKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function4;
+	public static field lambda-2 Lkotlin/jvm/functions/Function4;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
+	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/AttachmentCameraPickerParams {
@@ -6699,12 +6701,16 @@ public final class io/getstream/chat/android/compose/ui/util/MessageListUtilsKt 
 public abstract interface class io/getstream/chat/android/compose/ui/util/MessagePreviewFormatter {
 	public static final field Companion Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter$Companion;
 	public abstract fun formatDraftMessagePreview (Lio/getstream/chat/android/models/DraftMessage;)Landroidx/compose/ui/text/AnnotatedString;
-	public abstract fun formatMessagePreview (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;Z)Landroidx/compose/ui/text/AnnotatedString;
-	public abstract fun formatMessageTitle (Lio/getstream/chat/android/models/Message;)Landroidx/compose/ui/text/AnnotatedString;
+	public abstract fun formatMessagePreview (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;ZZ)Landroidx/compose/ui/text/AnnotatedString;
+	public abstract fun formatMessageTitle (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;)Landroidx/compose/ui/text/AnnotatedString;
 }
 
 public final class io/getstream/chat/android/compose/ui/util/MessagePreviewFormatter$Companion {
 	public final fun defaultFormatter (Landroid/content/Context;ZLio/getstream/chat/android/compose/ui/theme/StreamDesign$Typography;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;)Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter;
+}
+
+public final class io/getstream/chat/android/compose/ui/util/MessagePreviewFormatter$DefaultImpls {
+	public static synthetic fun formatMessagePreview$default (Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;ZZILjava/lang/Object;)Landroidx/compose/ui/text/AnnotatedString;
 }
 
 public abstract interface class io/getstream/chat/android/compose/ui/util/MessagePreviewIconFactory {

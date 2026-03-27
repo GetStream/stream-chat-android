@@ -322,7 +322,7 @@
 
     <!--  Pinned message list  -->
     <string name="stream_compose_pinned_message_list_empty_title">No pinned messages</string>
-    <string name="stream_compose_pinned_message_list_empty_description"><![CDATA[Long-press an important message and choose <b>Pin to conversation</b>]]></string>
+    <string name="stream_compose_pinned_message_list_empty_description">Long-press a message to pin it to the chat</string>
     <string name="stream_compose_pinned_message_list_results_error">An error occurred</string>
 
     <!--  Message preview (User in mentions / pinned messages / search results)  -->

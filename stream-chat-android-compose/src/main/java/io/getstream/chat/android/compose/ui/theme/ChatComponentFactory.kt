@@ -152,13 +152,13 @@ import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageUnreadSe
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesHelperContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesLoadingMoreIndicator
 import io.getstream.chat.android.compose.ui.messages.list.DefaultSystemMessageContent
-import io.getstream.chat.android.compose.ui.messages.preview.internal.DefaultMessagePreviewItemCenterContent
-import io.getstream.chat.android.compose.ui.messages.preview.internal.DefaultMessagePreviewItemLeadingContent
-import io.getstream.chat.android.compose.ui.messages.preview.internal.DefaultMessagePreviewItemTrailingContent
 import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListEmptyContent
 import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListLoadingContent
 import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListLoadingMoreContent
 import io.getstream.chat.android.compose.ui.pinned.PinnedMessageItem
+import io.getstream.chat.android.compose.ui.pinned.internal.DefaultPinnedMessageItemCenterContent
+import io.getstream.chat.android.compose.ui.pinned.internal.DefaultPinnedMessageItemLeadingContent
+import io.getstream.chat.android.compose.ui.pinned.internal.DefaultPinnedMessageItemTrailingContent
 import io.getstream.chat.android.compose.ui.theme.animation.FadingVisibility
 import io.getstream.chat.android.compose.ui.threads.DefaultThreadListEmptyContent
 import io.getstream.chat.android.compose.ui.threads.DefaultThreadListLoadingContent
@@ -2114,7 +2114,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun RowScope.PinnedMessageListItemLeadingContent(params: PinnedMessageListItemLeadingContentParams) {
-        DefaultMessagePreviewItemLeadingContent(params.message, params.currentUser)
+        DefaultPinnedMessageItemLeadingContent(params.message)
     }
 
     /**
@@ -2127,7 +2127,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun RowScope.PinnedMessageListItemCenterContent(params: PinnedMessageListItemCenterContentParams) {
-        DefaultMessagePreviewItemCenterContent(params.message, params.currentUser)
+        DefaultPinnedMessageItemCenterContent(params.message, params.currentUser)
     }
 
     /**
@@ -2139,7 +2139,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun RowScope.PinnedMessageListItemTrailingContent(params: PinnedMessageListItemTrailingContentParams) {
-        DefaultMessagePreviewItemTrailingContent(params.message)
+        DefaultPinnedMessageItemTrailingContent(params.message)
     }
 
     /**
@@ -2149,7 +2149,6 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun PinnedMessageListItemDivider(params: PinnedMessageListItemDividerParams) {
-        StreamHorizontalDivider()
     }
 
     /**
