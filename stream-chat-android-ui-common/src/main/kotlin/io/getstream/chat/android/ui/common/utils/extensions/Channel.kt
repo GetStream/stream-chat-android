@@ -178,18 +178,17 @@ private fun Channel.nameFromMembers(
     val users = getUsersExcludingCurrent(currentUser)
     return when {
         users.isNotEmpty() -> {
-            val usersCount = users.size
             val userNames = users
-                .sortedBy(User::name)
                 .take(maxMembers)
                 .joinToString { it.name }
-            when (usersCount <= maxMembers) {
+            val overflowCount = members.size - maxMembers
+            when (overflowCount <= 0) {
                 true -> userNames
                 else -> {
                     context.getString(
                         R.string.stream_ui_channel_list_untitled_channel_plus_more,
                         userNames,
-                        usersCount - maxMembers,
+                        overflowCount,
                     )
                 }
             }

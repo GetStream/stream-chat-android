@@ -176,7 +176,7 @@ private object StackedGroupAvatarSpecs {
     }
 }
 
-@Suppress("MagicNumber")
+@Suppress("MagicNumber", "LongMethod")
 @Composable
 private fun StackedGroupAvatar(
     channel: Channel,
@@ -225,9 +225,16 @@ private fun StackedGroupAvatar(
             }
 
             else -> {
+                val displayMembers = remember(channel.members, currentUser?.id) {
+                    if (membersCount > 4) {
+                        channel.members.filter { it.user.id != currentUser?.id }
+                    } else {
+                        channel.members
+                    }
+                }
                 for (i in alignments.indices) {
                     UserAvatar(
-                        user = channel.members[i].user,
+                        user = displayMembers[i].user,
                         showBorder = showBorder,
                         modifier = baseModifier.align(alignments[i]),
                     )
