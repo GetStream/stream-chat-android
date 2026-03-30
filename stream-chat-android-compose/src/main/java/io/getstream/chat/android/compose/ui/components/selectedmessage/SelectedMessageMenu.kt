@@ -42,8 +42,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.semantics.semantics
@@ -250,7 +250,14 @@ private class MenuAnimationState(
         get() = Modifier
             .onGloballyPositioned { coords ->
                 if (coords.isAttached) {
-                    targetBounds = coords.boundsInWindow()
+                    val position = coords.positionInWindow()
+                    val size = coords.size
+                    targetBounds = Rect(
+                        left = position.x,
+                        top = position.y,
+                        right = position.x + size.width,
+                        bottom = position.y + size.height,
+                    )
                 }
             }
             .graphicsLayer {
