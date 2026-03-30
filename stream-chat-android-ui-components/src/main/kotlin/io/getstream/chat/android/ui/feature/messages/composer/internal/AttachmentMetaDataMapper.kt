@@ -22,8 +22,18 @@ import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelp
 import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
-internal fun AttachmentMetaData.toAttachment(context: Context): Attachment {
+/**
+ * Converts this metadata into an [Attachment] ready for upload.
+ *
+ * @param context Used to access the content resolver for caching the file.
+ * @return The attachment, or `null` when the content URI cannot be resolved
+ * (e.g. a cloud-backed file that is not locally available).
+ */
+internal fun AttachmentMetaData.toAttachment(context: Context): Attachment? {
     val fileFromUri = StorageHelper().getCachedFileFromUri(context, this)
+    if (fileFromUri == null && uri != null) {
+        return null
+    }
     val extra = uri?.let { mapOf(EXTRA_SOURCE_URI to it.toString()) } ?: emptyMap()
     return Attachment(
         upload = fileFromUri,

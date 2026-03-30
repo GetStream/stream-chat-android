@@ -164,6 +164,26 @@ public class AttachmentsPickerViewModel @JvmOverloads constructor(
         if (!visible) resetPickerState()
     }
 
+    private val _isShowingAttachments = mutableStateOf(
+        savedStateHandle.get<Boolean>(KEY_IS_SHOWING_ATTACHMENTS) ?: false,
+    )
+
+    /**
+     * Set to `true` when one or more selected attachments could not be resolved (e.g. the
+     * content URI points to a cloud file that is not locally available). The UI layer should
+     * observe this flag and show an appropriate message, then call [clearUnresolvedAttachments]
+     * to reset it.
+     */
+    internal var hasUnresolvedAttachments: Boolean by mutableStateOf(false)
+        private set
+
+    /**
+     * Resets the [hasUnresolvedAttachments] flag after the UI has consumed the event.
+     */
+    internal fun clearUnresolvedAttachments() {
+        hasUnresolvedAttachments = false
+    }
+
     /**
      * Toggles the attachment picker visibility.
      */
@@ -256,6 +276,9 @@ public class AttachmentsPickerViewModel @JvmOverloads constructor(
         viewModelScope.launch {
             val metadata = withContext(DispatcherProvider.IO) { storageHelper.resolveMetadata(uris) }
             val attachments = storageHelper.toAttachments(metadata)
+            if (attachments.size < metadata.size) {
+                hasUnresolvedAttachments = true
+            }
             _submittedAttachments.trySend(
                 SubmittedAttachments(
                     attachments = attachments,

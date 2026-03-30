@@ -43,6 +43,7 @@
     <string name="stream_ui_message_composer_permissions_files_allow_more_visual_media">Allow access to more visual media</string>
 
     <!-- Attachment system picker -->
+    <string name="stream_ui_attachment_picker_error_unresolvable_attachments">Some files could not be loaded and were skipped.</string>
     <string name="stream_ui_message_composer_attachment_picker_files">Files</string>
     <string name="stream_ui_message_composer_attachment_picker_media">Media</string>
     <string name="stream_ui_message_composer_attachment_picker_capture">Capture</string>
@@ -53,6 +54,10 @@
     <string name="stream_ui_message_list_attachment_invalid_url">The load failed due to the invalid url.</string>
     <string name="stream_ui_message_list_attachment_invalid_mime_type">Something went wrong. Unable to open attachment: %s</string>
     <string name="stream_ui_message_list_attachment_display_error">Error. File can\'t be displayed</string>
+    <string name="stream_ui_message_list_attachment_opening">Opening…</string>
+    <string name="stream_ui_message_list_attachment_downloading">Downloading… %1$s / %2$s</string>
+    <string name="stream_ui_message_list_attachment_no_app">No app available to open this file</string>
+    <string name="stream_ui_message_list_attachment_download_failed">Failed to download file: %s</string>
     <string name="stream_ui_message_list_video_display_error">Error. Video can\'t be displayed</string>
     <string name="stream_ui_message_list_error_cannot_open_link">There is no app to view this url:\n%s</string>
     <string name="stream_ui_message_list_footnote_edited_now">just now</string>

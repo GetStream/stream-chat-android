@@ -496,7 +496,7 @@ public class MessageListView : ConstraintLayout {
             }
 
             if (attachment.isGiphy()) {
-                val url = attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl
+                val url = attachment.thumbUrl ?: attachment.titleLink ?: attachment.ogUrl
 
                 if (url != null) {
                     ChatUI.navigator.navigate(WebLinkDestination(context, url))
@@ -507,7 +507,7 @@ public class MessageListView : ConstraintLayout {
                         val filteredAttachments = message.attachments
                             .filter {
                                 (
-                                    it.isImage() && !it.imagePreviewUrl.isNullOrEmpty() ||
+                                    it.isImage() && !it.imageUrl.isNullOrEmpty() ||
                                         it.isVideo() && !it.assetUrl.isNullOrEmpty()
                                     ) &&
                                     !it.hasLink()

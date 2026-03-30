@@ -29,7 +29,6 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentViewBinding
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.MediaAttachmentViewStyle
 import io.getstream.chat.android.ui.font.setTextStyle
@@ -132,11 +131,12 @@ internal class MediaAttachmentView : ConstraintLayout {
      */
     fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
         val url =
-            if (attachment.isImage() ||
-                (attachment.isVideo() && ChatUI.videoThumbnailsEnabled && attachment.thumbUrl != null)
-            ) {
-                attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing)
-                    ?: attachment.titleLink ?: attachment.ogUrl ?: attachment.upload ?: return
+            if (attachment.isImage()) {
+                attachment.imageUrl?.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing)
+                    ?: attachment.upload ?: return
+            } else if (attachment.isVideo() && ChatUI.videoThumbnailsEnabled && attachment.thumbUrl != null) {
+                attachment.thumbUrl?.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing)
+                    ?: return
             } else {
                 null
             }

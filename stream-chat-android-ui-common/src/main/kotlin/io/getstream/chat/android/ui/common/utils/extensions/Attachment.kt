@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.utils.attachment.isAudio
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.attachment.isFile
 import io.getstream.chat.android.client.utils.attachment.isVideo
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
 import io.getstream.chat.android.ui.common.utils.StringUtils
@@ -42,8 +43,42 @@ public fun Attachment.getDisplayableName(): String? {
  *
  * It first checks for the thumbnail URL, and if not present, falls back to the main image URL.
  */
+@Deprecated(
+    message = "Use the appropriate field for your attachment type: " +
+        "imageUrl for image attachments, " +
+        "thumbUrl for video thumbnails and link/giphy previews.",
+    level = DeprecationLevel.WARNING,
+)
 public val Attachment.imagePreviewUrl: String?
     get() = thumbUrl ?: imageUrl
+
+/**
+ * The image URL to display for link attachment previews.
+ *
+ * Prefers [Attachment.thumbUrl] over [Attachment.imageUrl].
+ */
+@InternalStreamChatApi
+public val Attachment.linkPreviewImageUrl: String?
+    get() = thumbUrl ?: imageUrl
+
+/**
+ * The navigation URL for link attachments.
+ *
+ * Prefers [Attachment.titleLink] over [Attachment.ogUrl].
+ */
+@InternalStreamChatApi
+public val Attachment.linkUrl: String?
+    get() = titleLink ?: ogUrl
+
+/**
+ * The fallback preview URL for Giphy attachments when [io.getstream.chat.android.ui.common.utils.giphyInfo]
+ * is not available.
+ *
+ * Falls back through [Attachment.thumbUrl], [Attachment.titleLink], and [Attachment.ogUrl].
+ */
+@InternalStreamChatApi
+public val Attachment.giphyFallbackPreviewUrl: String?
+    get() = thumbUrl ?: titleLink ?: ogUrl
 
 /**
  * Checks if the attachment is of any file type (file, video, audio or audio recording).

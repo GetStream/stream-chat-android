@@ -367,6 +367,75 @@ internal class StreamFileManagerTest {
     }
 
     @Test
+    fun `evictCacheFiles should delete files older than TTL`() = runTest {
+        val freshFile = "TMP_fresh.txt"
+        val expiredFile = "TMP_expired.txt"
+
+        streamFileManager.writeFileInCache(context, freshFile, "fresh".byteInputStream())
+        streamFileManager.writeFileInCache(context, expiredFile, "expired".byteInputStream())
+
+        val expiredResult = streamFileManager.getFileFromCache(context, expiredFile)
+        assertTrue(expiredResult is Result.Success)
+        (expiredResult as Result.Success).value.setLastModified(System.currentTimeMillis() - 10 * 60 * 1000L)
+
+        streamFileManager.evictCacheFiles(context, "TMP", 5 * 60 * 1000L, 100L * 1024 * 1024)
+
+        assertTrue(streamFileManager.getFileFromCache(context, freshFile) is Result.Success)
+        assertTrue(streamFileManager.getFileFromCache(context, expiredFile) is Result.Failure)
+    }
+
+    @Test
+    fun `evictCacheFiles should delete oldest files when size cap exceeded`() = runTest {
+        val oldFile = "TMP_old.txt"
+        val newFile = "TMP_new.txt"
+        val largeContent = "x".repeat(1024)
+
+        streamFileManager.writeFileInCache(context, oldFile, largeContent.byteInputStream())
+        val oldResult = streamFileManager.getFileFromCache(context, oldFile)
+        assertTrue(oldResult is Result.Success)
+        (oldResult as Result.Success).value.setLastModified(System.currentTimeMillis() - 60_000L)
+
+        streamFileManager.writeFileInCache(context, newFile, largeContent.byteInputStream())
+
+        streamFileManager.evictCacheFiles(context, "TMP", 5 * 60 * 1000L, 1500L)
+
+        assertTrue(streamFileManager.getFileFromCache(context, oldFile) is Result.Failure)
+        assertTrue(streamFileManager.getFileFromCache(context, newFile) is Result.Success)
+    }
+
+    @Test
+    fun `evictCacheFiles should keep files within TTL and under size cap`() = runTest {
+        val file1 = "TMP_keep1.txt"
+        val file2 = "TMP_keep2.txt"
+
+        streamFileManager.writeFileInCache(context, file1, "content1".byteInputStream())
+        streamFileManager.writeFileInCache(context, file2, "content2".byteInputStream())
+
+        streamFileManager.evictCacheFiles(context, "TMP", 5 * 60 * 1000L, 100L * 1024 * 1024)
+
+        assertTrue(streamFileManager.getFileFromCache(context, file1) is Result.Success)
+        assertTrue(streamFileManager.getFileFromCache(context, file2) is Result.Success)
+    }
+
+    @Test
+    fun `evictCacheFiles should not affect files with different prefix`() = runTest {
+        val matchFile = "TMP_match.txt"
+        val otherFile = "OTHER_keep.txt"
+
+        streamFileManager.writeFileInCache(context, matchFile, "match".byteInputStream())
+        streamFileManager.writeFileInCache(context, otherFile, "other".byteInputStream())
+
+        val matchResult = streamFileManager.getFileFromCache(context, matchFile)
+        assertTrue(matchResult is Result.Success)
+        (matchResult as Result.Success).value.setLastModified(System.currentTimeMillis() - 10 * 60 * 1000L)
+
+        streamFileManager.evictCacheFiles(context, "TMP", 5 * 60 * 1000L, 100L * 1024 * 1024)
+
+        assertTrue(streamFileManager.getFileFromCache(context, matchFile) is Result.Failure)
+        assertTrue(streamFileManager.getFileFromCache(context, otherFile) is Result.Success)
+    }
+
+    @Test
     fun `clearExternalStorage should delete both photos and videos`() {
         // Create photo and video files
         val photo = streamFileManager.createPhotoInExternalDir(context)

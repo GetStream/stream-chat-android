@@ -23,6 +23,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckedTextView
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.descendants
 import androidx.viewpager2.widget.ViewPager2
@@ -57,6 +58,21 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
      * The list of factories for the tabs that will be displayed in the attachment picker.
      */
     private lateinit var attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory>
+
+    /**
+     * A listener that is invoked when attachment picking has been completed
+     */
+    private var attachmentSelectionListener: AttachmentSelectionListener? = AttachmentSelectionListener { attachments ->
+        val resolved = attachments.mapNotNull { it.toAttachment(requireContext()) }
+        if (resolved.size < attachments.size) {
+            Toast.makeText(
+                requireContext(),
+                R.string.stream_ui_attachment_picker_error_unresolvable_attachments,
+                Toast.LENGTH_LONG,
+            ).show()
+        }
+        attachmentsSelectionListener?.onAttachmentsSelected(resolved)
+    }
 
     /**
      * A listener that is invoked when attachment picking has been completed

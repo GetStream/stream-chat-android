@@ -64,6 +64,9 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.ui.common.utils.extensions.addSchemeToUrlIfNeeded
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.ui.common.utils.extensions.linkPreviewImageUrl
+import io.getstream.chat.android.ui.common.utils.extensions.linkUrl
+import io.getstream.chat.android.uiutils.extension.addSchemeToUrlIfNeeded
 import io.getstream.log.StreamLog
 
 private const val TAG = "ComposerLinkPreview"
@@ -149,10 +152,10 @@ public fun ComposerLinkPreview(
 
 @Composable
 private fun ComposerLinkImagePreview(attachment: Attachment, colors: StreamDesign.Colors) {
-    val imagePreviewUrl = attachment.imagePreviewUrl ?: return
+    val linkPreviewUrl = attachment.linkPreviewImageUrl ?: return
     val shape = RoundedCornerShape(StreamTokens.radiusMd)
     StreamAsyncImage(
-        data = imagePreviewUrl,
+        data = linkPreviewUrl,
         modifier = Modifier
             .size(width = 40.dp, height = 40.dp)
             .clip(shape)

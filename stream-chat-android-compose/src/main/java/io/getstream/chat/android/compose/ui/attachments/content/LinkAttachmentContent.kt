@@ -151,7 +151,7 @@ private fun FullSizeLinkAttachmentContent(
     textColor: Color,
 ) {
     Column(modifier = modifier) {
-        attachment.imagePreviewUrl?.let {
+        attachment.linkPreviewImageUrl?.let {
             LinkAttachmentImagePreview(it, Modifier.height(144.dp))
         }
 

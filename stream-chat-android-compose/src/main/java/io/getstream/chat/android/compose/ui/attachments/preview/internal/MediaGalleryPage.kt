@@ -66,7 +66,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import kotlinx.coroutines.coroutineScope
 import kotlin.math.abs
 
@@ -105,7 +104,7 @@ internal fun MediaGalleryImagePage(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        val data = attachment.imagePreviewUrl
+        val data = attachment.imageUrl
         val context = LocalContext.current
 
         // Ensure we have a new imageRequest in case the data changes

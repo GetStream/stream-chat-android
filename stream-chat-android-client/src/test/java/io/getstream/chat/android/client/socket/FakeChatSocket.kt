@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateForm
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomString
@@ -46,6 +47,7 @@ internal class FakeChatSocket private constructor(
     userScope: UserScope,
     lifecycleObserver: StreamLifecycleObserver,
     networkStateProvider: NetworkStateProvider,
+    serverClockOffset: ServerClockOffset,
     getWebSocketListener: () -> WebSocketListener,
 ) : ChatSocket(
     apiKey,
@@ -55,6 +57,7 @@ internal class FakeChatSocket private constructor(
     userScope,
     lifecycleObserver,
     networkStateProvider,
+    serverClockOffset = serverClockOffset,
 ) {
     private val streamDateFormatter = StreamDateFormatter()
     private val webSocketListener: WebSocketListener by lazy { getWebSocketListener() }
@@ -89,6 +92,7 @@ internal class FakeChatSocket private constructor(
             wssUrl: String = randomString(),
             tokenManager: TokenManager = FakeTokenManager(randomString()),
             networkStateProvider: NetworkStateProvider = mock(),
+            serverClockOffset: ServerClockOffset = ServerClockOffset(),
         ): FakeChatSocket {
             var webSocketListener: WebSocketListener? = null
             val parser: ChatParser = mock()
@@ -107,6 +111,7 @@ internal class FakeChatSocket private constructor(
                 userScope,
                 lifecycleObserver,
                 networkStateProvider,
+                serverClockOffset,
             ) { webSocketListener!! }
         }
     }

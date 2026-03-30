@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.extensions.duration
+import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.common.VideoBadge
@@ -49,7 +50,6 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsVie
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewAction
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.result.Error
 
 /**
@@ -142,7 +142,8 @@ internal fun ChannelMediaAttachmentsItem(
     item: ChannelAttachmentsViewState.Content.Item,
     onClick: () -> Unit,
 ) {
-    val data = item.attachment.upload ?: item.attachment.imagePreviewUrl
+    val data = item.attachment.upload
+        ?: if (item.attachment.isImage()) item.attachment.imageUrl else item.attachment.thumbUrl
     Box(
         modifier = Modifier
             .clickable(onClick = onClick),

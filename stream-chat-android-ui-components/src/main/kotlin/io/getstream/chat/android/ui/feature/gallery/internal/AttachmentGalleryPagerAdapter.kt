@@ -33,8 +33,15 @@ internal class AttachmentGalleryPagerAdapter(
         val attachment = getItem(position)
 
         return when (attachment.type) {
-            AttachmentType.IMAGE -> AttachmentGalleryImagePageFragment.create(attachment, mediaClickListener)
-            AttachmentType.VIDEO -> AttachmentGalleryVideoPageFragment.create(attachment, mediaClickListener)
+            AttachmentType.IMAGE -> AttachmentGalleryImagePageFragment.create(
+                imageUrl = attachment.imageUrl,
+                imageClickListener = mediaClickListener,
+            )
+            AttachmentType.VIDEO -> AttachmentGalleryVideoPageFragment.create(
+                thumbUrl = attachment.thumbUrl,
+                assetUrl = attachment.assetUrl,
+                imageClickListener = mediaClickListener,
+            )
             else -> throw Throwable("Unsupported attachment type")
         }
     }

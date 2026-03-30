@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.user.CredentialConfig
 import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.TokenUtils
+import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.models.ConnectionData
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.GuestUser
@@ -126,6 +127,7 @@ internal class ChatClientConnectionTests {
             retryPolicy = mock(),
             appSettingsManager = mock(),
             chatSocket = fakeChatSocket,
+            serverClockOffset = ServerClockOffset(),
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             mutableClientState = mutableClientState,

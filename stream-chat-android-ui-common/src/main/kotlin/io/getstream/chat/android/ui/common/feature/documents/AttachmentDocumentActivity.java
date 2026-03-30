@@ -27,10 +27,14 @@ import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.ui.common.R;
 import io.getstream.log.StreamLog;
 import io.getstream.log.TaggedLogger;
+import kotlin.Deprecated;
 
 /**
  * An Activity showing attachments such as PDF and Office documents.
  */
+@Deprecated(message = "In future releases, we will stop relying on GView for document viewing and" +
+        " use external apps with Intent-based navigation. If you depend on this class, we " +
+        "recommend migrating away from it.")
 public class AttachmentDocumentActivity extends AppCompatActivity {
 
     private static final String KEY_URL = "url";
