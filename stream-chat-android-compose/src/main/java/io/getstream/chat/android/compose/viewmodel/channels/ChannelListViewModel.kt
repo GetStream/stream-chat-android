@@ -45,12 +45,14 @@ import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.utils.extensions.defaultChannelListFilter
+import io.getstream.chat.android.ui.common.utils.extensions.isOneToOne
 import io.getstream.log.taggedLogger
 import io.getstream.result.call.toUnitCall
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -200,7 +202,7 @@ public class ChannelListViewModel(
         .flatMapLatest { it.channelMutes }
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    private val globalMuted: StateFlow<List<io.getstream.chat.android.models.Mute>> = globalState
+    private val globalMuted: StateFlow<List<Mute>> = globalState
         .flatMapLatest { it.muted }
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
@@ -432,7 +434,8 @@ public class ChannelListViewModel(
                     channelMutes,
                     typingChannels,
                     channelDraftMessages,
-                ) { state, channelMutes, typingChannels, channelDraftMessages ->
+                    globalMuted,
+                ) { state, channelMutes, typingChannels, channelDraftMessages, userMutes ->
                     when (state) {
                         ChannelsStateData.NoQueryActive,
                         ChannelsStateData.Loading,
@@ -457,6 +460,8 @@ public class ChannelListViewModel(
                                 channelItems = createChannelItems(
                                     channels = state.channels,
                                     channelMutes = channelMutes,
+                                    userMutes = userMutes,
+                                    currentUser = user.value,
                                     typingEvents = typingChannels,
                                     draftMessages = channelDraftMessages.takeIf { isDraftMessageEnabled } ?: emptyMap(),
                                 ),
@@ -800,24 +805,40 @@ public class ChannelListViewModel(
      *
      * @param channels The channels to show.
      * @param channelMutes The list of channels muted for the current user.
-     *
+     * @param userMutes The list of users muted by the current user.
+     * @param currentUser The currently logged in user.
      */
+    @Suppress("LongParameterList")
     private fun createChannelItems(
         channels: List<Channel>,
         channelMutes: List<ChannelMute>,
+        userMutes: List<Mute>,
+        currentUser: User?,
         typingEvents: Map<String, TypingEvent>,
         draftMessages: Map<String, DraftMessage>,
     ): List<ItemState.ChannelItemState> {
         val mutedChannelIds = channelMutes.map { channelMute -> channelMute.channel?.cid }.toSet()
+        val mutedUserIds = userMutes.mapNotNullTo(mutableSetOf()) { it.target?.id }
         return channels.map {
             ItemState.ChannelItemState(
                 channel = it,
-                isMuted = it.cid in mutedChannelIds,
+                isMuted = it.cid in mutedChannelIds || it.isOneToOneMutedByUser(currentUser, mutedUserIds),
                 typingUsers = typingEvents[it.cid]?.users ?: emptyList(),
                 draftMessage = draftMessages[it.cid],
             )
         }
     }
+
+    /**
+     * Checks if a 1:1 channel is muted via user mute (i.e. the other member is muted).
+     */
+    private fun Channel.isOneToOneMutedByUser(currentUser: User?, mutedUserIds: Set<String>) =
+        if (mutedUserIds.isEmpty() || currentUser == null || !isOneToOne(currentUser)) {
+            false
+        } else {
+            val otherUser = members.find { it.user.id != currentUser.id }?.user
+            otherUser != null && otherUser.id in mutedUserIds
+        }
 
     internal companion object {
         /**
