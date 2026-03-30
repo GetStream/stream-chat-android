@@ -87,7 +87,7 @@ private fun MediaBadge(
         Icon(
             painter = painterResource(iconRes),
             contentDescription = null,
-            tint = ChatTheme.colors.textInverse,
+            tint = ChatTheme.colors.textOnInverse,
         )
         Text(
             text = if (compact) {
@@ -96,7 +96,7 @@ private fun MediaBadge(
                 durationInSeconds.toPreciseDuration()
             },
             style = ChatTheme.typography.numericMedium,
-            color = ChatTheme.colors.textInverse,
+            color = ChatTheme.colors.textOnInverse,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

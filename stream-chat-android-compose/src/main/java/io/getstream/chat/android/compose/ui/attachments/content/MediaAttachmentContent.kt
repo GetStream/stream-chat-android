@@ -500,7 +500,7 @@ internal fun MediaAttachmentContentItem(
             imageRequest = imageRequest,
             modifier = Modifier
                 .fillMaxSize()
-                .background(ChatTheme.colors.backgroundCoreSurface),
+                .background(ChatTheme.colors.backgroundCoreSurfaceDefault),
             contentScale = ContentScale.Crop,
         ) { asyncImageState ->
             Crossfade(targetState = asyncImageState) { state ->

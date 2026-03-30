@@ -64,17 +64,17 @@ public object StreamDesign {
      * @param textTertiary Lowest priority text.
      * @param textDisabled Disabled text.
      * @param textOnAccent Text on dark or accent backgrounds.
-     * @param textInverse Text on inverse backgrounds.
+     * @param textOnInverse Text on inverse backgrounds.
      * @param textLink Hyperlinks and inline actions.
      * @param backgroundCoreElevation0 Flat surfaces.
      * @param backgroundCoreElevation1 Slightly elevated surfaces.
      * @param backgroundCoreElevation2 Card-like elements.
      * @param backgroundCoreElevation3 Popovers.
-     * @param backgroundCoreElevation4 Dialogs, modals.
-     * @param backgroundCoreSurface Standard section background.
+     * @param backgroundCoreSurfaceDefault Standard section background.
      * @param backgroundCoreSurfaceSubtle Very light section background.
      * @param backgroundCoreSurfaceStrong Stronger section background.
-     * @param backgroundCoreSurfaceCard Card surface backgrounds (e.g. link previews, attachments).
+     * @param backgroundCoreSurfaceCard Card surfaces inside elevated containers like sheets and dialogs.
+     * In dark mode, resolves lighter than the container background to maintain separation.
      * @param backgroundCoreInverse Inverse background for elevated, transient, or high-attention UI
      * surfaces that sit on top of the default app background.
      * @param backgroundCoreOnAccent Surfaces that must remain white across themes
@@ -92,10 +92,13 @@ public object StreamDesign {
      * @param borderCoreOpacitySubtle Image frame border treatment (subtle).
      * @param borderCoreOpacityStrong Image frame border treatment (strong).
      * @param borderCoreOnAccent Borders on accent backgrounds.
-     * @param borderCoreInverse Used on dark backgrounds.
+     * @param borderCoreOnInverse Border on inverse backgrounds.
+     * @param borderCoreOnSurface Border for elements sitting on elevated surfaces.
      * @param borderUtilitySelected Selected overlay border.
-     * @param borderUtilityActive Focus ring or focus border.
+     * @param borderUtilityFocused Focus ring or focus border.
+     * @param borderUtilityActive Active state focus border.
      * @param borderUtilityDisabled Optional disabled border for inputs, buttons, or chips.
+     * @param borderUtilityDisabledOnSurface Border for disabled elements on elevated surfaces.
      * @param borderUtilityError Error state border.
      * @param borderUtilityWarning Warning state border.
      * @param borderUtilitySuccess Success state border.
@@ -112,7 +115,7 @@ public object StreamDesign {
      * @param avatarPaletteText5 Avatar text (slot 5).
      * @param avatarTextPlaceholder Avatar placeholder text.
      * @param avatarPresenceBorder The thin outline around the presence dot. Matches the local
-     * surface behind the avatar; in high-contrast it uses the base surface.
+     * surface behind the avatar.
      * @param skeletonLoadingBase Base color for the skeleton loading gradient (placeholder surfaces).
      * @param skeletonLoadingHighlight Highlight for the skeleton loading gradient (moving shimmer).
      */
@@ -130,14 +133,13 @@ public object StreamDesign {
         public val textTertiary: Color,
         public val textDisabled: Color,
         public val textOnAccent: Color,
-        public val textInverse: Color,
+        public val textOnInverse: Color,
         public val textLink: Color,
         public val backgroundCoreElevation0: Color,
         public val backgroundCoreElevation1: Color,
         public val backgroundCoreElevation2: Color,
         public val backgroundCoreElevation3: Color,
-        public val backgroundCoreElevation4: Color,
-        public val backgroundCoreSurface: Color,
+        public val backgroundCoreSurfaceDefault: Color,
         public val backgroundCoreSurfaceSubtle: Color,
         public val backgroundCoreSurfaceStrong: Color,
         public val backgroundCoreSurfaceCard: Color,
@@ -156,10 +158,13 @@ public object StreamDesign {
         public val borderCoreOpacitySubtle: Color,
         public val borderCoreOpacityStrong: Color,
         public val borderCoreOnAccent: Color,
-        public val borderCoreInverse: Color,
+        public val borderCoreOnInverse: Color,
+        public val borderCoreOnSurface: Color,
         public val borderUtilitySelected: Color,
+        public val borderUtilityFocused: Color,
         public val borderUtilityActive: Color,
         public val borderUtilityDisabled: Color,
+        public val borderUtilityDisabledOnSurface: Color,
         public val borderUtilityError: Color,
         public val borderUtilityWarning: Color,
         public val borderUtilitySuccess: Color,
@@ -199,7 +204,7 @@ public object StreamDesign {
         internal val badgeBgPrimary: Color = accentPrimary
 
         /** Badge outer border. */
-        internal val badgeBorder: Color = borderCoreInverse
+        internal val badgeBorder: Color = borderCoreOnInverse
 
         /** Badge text color. */
         internal val badgeText: Color = textPrimary
@@ -226,13 +231,13 @@ public object StreamDesign {
         internal val buttonPrimaryBorder: Color = brand.s200
 
         /** Primary button text. */
-        internal val buttonPrimaryText: Color = textLink
+        internal val buttonPrimaryText: Color = accentPrimary
 
         /** Primary button text on accent backgrounds. */
         internal val buttonPrimaryTextOnAccent: Color = textOnAccent
 
         /** Secondary button background. */
-        internal val buttonSecondaryBg: Color = backgroundCoreSurface
+        internal val buttonSecondaryBg: Color = backgroundCoreSurfaceDefault
 
         /** Secondary button border. */
         internal val buttonSecondaryBorder: Color = borderCoreDefault
@@ -244,7 +249,7 @@ public object StreamDesign {
         internal val buttonSecondaryTextOnAccent: Color = textPrimary
 
         /** Incoming bubble background. */
-        internal val chatBgIncoming: Color = backgroundCoreSurface
+        internal val chatBgIncoming: Color = backgroundCoreSurfaceDefault
 
         /** Outgoing message bubble background. */
         internal val chatBgOutgoing: Color = brand.s100
@@ -364,7 +369,7 @@ public object StreamDesign {
         internal val controlPlaybackToggleText: Color = textPrimary
 
         /** Play button background. */
-        internal val controlPlayButtonBg: Color = chrome.s1000
+        internal val controlPlayButtonBg: Color = StreamPrimitiveColors.baseBlack.copy(alpha = 0.75f)
 
         /** Play button icon. */
         internal val controlPlayButtonIcon: Color = textOnAccent
@@ -394,10 +399,10 @@ public object StreamDesign {
         internal val controlRemoveBg: Color = backgroundCoreInverse
 
         /** Remove control border. */
-        internal val controlRemoveBorder: Color = borderCoreInverse
+        internal val controlRemoveBorder: Color = borderCoreOnInverse
 
         /** Remove control icon. */
-        internal val controlRemoveIcon: Color = textInverse
+        internal val controlRemoveIcon: Color = textOnInverse
 
         /** Toggle switch track background. */
         internal val controlToggleSwitchBg: Color = accentNeutral
@@ -409,7 +414,7 @@ public object StreamDesign {
         internal val controlToggleSwitchBgSelected: Color = accentPrimary
 
         /** Toggle switch knob color. */
-        internal val controlToggleSwitchKnob: Color = backgroundCoreElevation4
+        internal val controlToggleSwitchKnob: Color = backgroundCoreOnAccent
 
         /** Default send icon color in the input. Uses the brand accent. */
         internal val inputSendIcon: Color = accentPrimary
@@ -423,7 +428,7 @@ public object StreamDesign {
         /** Input field disabled text color. */
         internal val inputTextDisabled: Color = textDisabled
 
-        /** Icons inside the input area (attach, emoji, camera, send when idle). */
+        /** Icons inside the input area (attach, emoji, camera, send when idle). Matches secondary text strength. */
         internal val inputTextIcon: Color = textTertiary
 
         /** Placeholder text for the input. Lower emphasis than main text. */
@@ -432,7 +437,7 @@ public object StreamDesign {
         /** Reaction bar background. */
         internal val reactionBg: Color = backgroundCoreElevation3
 
-        /** Border around unselected reaction chips. Subtle in normal modes, strong in high-contrast. */
+        /** Border around unselected reaction chips. */
         internal val reactionBorder: Color = borderCoreDefault
 
         /** Emoji color inside reaction chips. Uses primary text to stay clearly legible. */
@@ -472,14 +477,13 @@ public object StreamDesign {
                     textTertiary = chrome.s500,
                     textDisabled = chrome.s300,
                     textOnAccent = chrome.s0,
-                    textInverse = chrome.s0,
+                    textOnInverse = chrome.s0,
                     textLink = brand.s500,
                     backgroundCoreElevation0 = chrome.s0,
                     backgroundCoreElevation1 = chrome.s0,
                     backgroundCoreElevation2 = chrome.s0,
                     backgroundCoreElevation3 = chrome.s0,
-                    backgroundCoreElevation4 = chrome.s0,
-                    backgroundCoreSurface = chrome.s100,
+                    backgroundCoreSurfaceDefault = chrome.s100,
                     backgroundCoreSurfaceSubtle = chrome.s50,
                     backgroundCoreSurfaceStrong = chrome.s150,
                     backgroundCoreSurfaceCard = chrome.s50,
@@ -498,10 +502,13 @@ public object StreamDesign {
                     borderCoreOpacitySubtle = StreamPrimitiveColors.slate900.copy(alpha = 0.1f),
                     borderCoreOpacityStrong = StreamPrimitiveColors.slate900.copy(alpha = 0.25f),
                     borderCoreOnAccent = chrome.s0,
-                    borderCoreInverse = chrome.s0,
-                    borderUtilitySelected = brand.s500,
+                    borderCoreOnInverse = chrome.s0,
+                    borderCoreOnSurface = chrome.s300,
+                    borderUtilitySelected = StreamPrimitiveColors.slate900.copy(alpha = 0.15f),
+                    borderUtilityFocused = brand.s150,
                     borderUtilityActive = brand.s500,
                     borderUtilityDisabled = chrome.s100,
+                    borderUtilityDisabledOnSurface = chrome.s150,
                     borderUtilityError = StreamPrimitiveColors.red500,
                     borderUtilityWarning = StreamPrimitiveColors.yellow400,
                     borderUtilitySuccess = StreamPrimitiveColors.green400,
@@ -547,14 +554,13 @@ public object StreamDesign {
                     textTertiary = chrome.s500,
                     textDisabled = chrome.s300,
                     textOnAccent = chrome.s1000,
-                    textInverse = chrome.s0,
+                    textOnInverse = chrome.s0,
                     textLink = brand.s600,
                     backgroundCoreElevation0 = chrome.s0,
                     backgroundCoreElevation1 = chrome.s50,
                     backgroundCoreElevation2 = chrome.s100,
                     backgroundCoreElevation3 = chrome.s200,
-                    backgroundCoreElevation4 = chrome.s300,
-                    backgroundCoreSurface = chrome.s100,
+                    backgroundCoreSurfaceDefault = chrome.s100,
                     backgroundCoreSurfaceSubtle = chrome.s50,
                     backgroundCoreSurfaceStrong = chrome.s150,
                     backgroundCoreSurfaceCard = chrome.s100,
@@ -573,10 +579,13 @@ public object StreamDesign {
                     borderCoreOpacitySubtle = StreamPrimitiveColors.baseWhite.copy(alpha = .2f),
                     borderCoreOpacityStrong = StreamPrimitiveColors.baseWhite.copy(alpha = 0.25f),
                     borderCoreOnAccent = chrome.s1000,
-                    borderCoreInverse = chrome.s0,
-                    borderUtilitySelected = brand.s400,
+                    borderCoreOnInverse = chrome.s0,
+                    borderCoreOnSurface = chrome.s300,
+                    borderUtilitySelected = StreamPrimitiveColors.baseWhite.copy(alpha = 0.15f),
+                    borderUtilityFocused = brand.s150,
                     borderUtilityActive = brand.s400,
                     borderUtilityDisabled = chrome.s100,
+                    borderUtilityDisabledOnSurface = chrome.s150,
                     borderUtilityError = StreamPrimitiveColors.red400,
                     borderUtilityWarning = StreamPrimitiveColors.yellow300,
                     borderUtilitySuccess = StreamPrimitiveColors.green300,

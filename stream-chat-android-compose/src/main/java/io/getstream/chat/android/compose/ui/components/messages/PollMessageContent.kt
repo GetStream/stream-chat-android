@@ -150,7 +150,7 @@ public fun PollMessageContent(
         Box(modifier = modifier) {
             ChatTheme.componentFactory.MessageBubble(
                 params = MessageBubbleParams(
-                    modifier = Modifier.padding(end = 12.dp),
+                    modifier = Modifier.padding(end = StreamTokens.spacingXs),
                     message = message,
                     shape = messageBubbleShape,
                     color = messageBubbleColor,
@@ -171,8 +171,9 @@ public fun PollMessageContent(
             ChatTheme.componentFactory.MessageFailedIcon(
                 params = MessageFailedIconParams(
                     modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.BottomEnd),
+                        .padding(vertical = StreamTokens.spacingXs)
+                        .size(20.dp)
+                        .align(Alignment.TopEnd),
                     message = message,
                 ),
             )
