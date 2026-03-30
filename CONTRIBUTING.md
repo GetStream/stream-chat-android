@@ -36,8 +36,6 @@ If you haven't already, make sure to read our [README](https://github.com/GetStr
 - `stream-chat-android-ui-components-sample`: The main sample app featuring the XML (UI Components) SDK.
 - `stream-chat-android-ui-components`: Our XML (UI Components) SDK that features channels and messages components, as well as other utilities.
 
-- `DEPRECATIONS.md`: List of deprecated code in our SDK and its deprecation process timeline.
-
 These provide corresponding artifacts on [Maven Central](https://search.maven.org/search?q=g:io.getstream) that you can plug into your projects. There are several other modules and files available in the repository and we've outlined them in our [README](https://github.com/GetStream/stream-chat-android/blob/main/README.md), so be sure to check them out.
 
 ### Local Setup

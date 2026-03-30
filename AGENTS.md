@@ -35,7 +35,7 @@ This project delivers **Stream Chat Android**, a modular SDK spanning low-level 
 Prefer module-scoped tasks while iterating; PRs should pass `spotlessCheck`, `detekt`, `apiCheck`, and relevant unit/UI suites before review.
 
 ## Coding principles
-- **API stability**: Public APIs are validated; favour additive changes and mark deprecations with clear migration paths (`DEPRECATIONS.md`).
+- **API stability**: Public APIs are validated; favour additive changes and mark deprecations with clear migration paths.
 - **Offline-first**: Respect sync contracts in offline/state modules—guard race conditions, idempotency, and background workers.
 - **UI parity**: Keep Compose and XML kits behaviourally aligned; update shared fixtures/tests when touching one side.
 - **Performance**: Maintain lazy flows, paging, and baseline profiles; avoid extra recompositions or heavy main-thread work.
@@ -58,7 +58,7 @@ Prefer module-scoped tasks while iterating; PRs should pass `spotlessCheck`, `de
 
 ## Documentation & comments
 - Update module README, `docs/`, or API docs when altering setup, themes, or sample flows.
-- Log deprecations or behavioural shifts in `DEPRECATIONS.md`.
+- Log deprecations or behavioural shifts in release notes via appropriate PR labels.
 - Keep inline comments focused on intent (why), not mechanics; prefer KDoc for public APIs.
 
 ## Security & configuration
@@ -79,5 +79,5 @@ Prefer module-scoped tasks while iterating; PRs should pass `spotlessCheck`, `de
 - [ ] Keep Compose/XML parity when modifying shared UI behaviour.
 - [ ] Run Spotless, Detekt, and `apiDump` before finishing.
 - [ ] Add/refresh unit, UI, or snapshot tests for new behaviour.
-- [ ] Update deprecation docs for user-visible changes.
+- [ ] Label PRs with appropriate release categories (e.g. `pr:breaking-change`) for user-visible changes.
 - [ ] Scrub logs/configs for secrets before committing.
