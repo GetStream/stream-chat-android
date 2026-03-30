@@ -36,7 +36,9 @@ import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.OrFilterObject
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.TypingEvent
@@ -190,6 +192,68 @@ internal class ChannelListViewModelTest {
             assertNull(viewModel.selectedChannel.value)
             verify(chatClient).unmuteChannel("messaging", "channel1")
         }
+
+    @Test
+    fun `Given a DM with a muted user Should mark the channel as muted`() = runTest {
+        val viewModel = Fixture()
+            .givenCurrentUser(currentUser)
+            .givenChannelsQuery()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(directChannel)),
+                loading = false,
+            )
+            .givenChannelMutes()
+            .givenUserMutes(listOf(otherUserMute))
+            .givenTypingChannels()
+            .get(this)
+
+        val channelItem = viewModel.channelsState.channelItems.first() as ItemState.ChannelItemState
+        assertTrue(channelItem.isMuted)
+    }
+
+    @Test
+    fun `Given a DM without a muted user Should not mark the channel as muted`() = runTest {
+        val viewModel = Fixture()
+            .givenCurrentUser(currentUser)
+            .givenChannelsQuery()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(directChannel)),
+                loading = false,
+            )
+            .givenChannelMutes()
+            .givenTypingChannels()
+            .get(this)
+
+        val channelItem = viewModel.channelsState.channelItems.first() as ItemState.ChannelItemState
+        assertFalse(channelItem.isMuted)
+    }
+
+    @Test
+    fun `Given a group channel with a muted user Should not mark the channel as muted`() = runTest {
+        val groupChannel = Channel(
+            type = "messaging",
+            id = "groupChannel",
+            members = listOf(
+                Member(user = currentUser),
+                Member(user = otherUser),
+                Member(user = User(id = "thirdUser")),
+            ),
+        )
+        val viewModel = Fixture()
+            .givenCurrentUser(currentUser)
+            .givenChannelsQuery()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(groupChannel)),
+                loading = false,
+            )
+            .givenChannelMutes()
+            .givenUserMutes(listOf(otherUserMute))
+            .givenTypingChannels()
+            .get(this)
+
+        val channelItem = viewModel.channelsState.channelItems.first() as ItemState.ChannelItemState
+        assertFalse(channelItem.isMuted)
+    }
 
     @Test
     fun `Given channel list in content state When selecting a channel and dismissing the menu Should hide the menu`() =
@@ -569,6 +633,10 @@ internal class ChannelListViewModelTest {
             whenever(globalState.channelMutes) doReturn MutableStateFlow(channelMutes)
         }
 
+        fun givenUserMutes(userMutes: List<Mute> = emptyList()) = apply {
+            whenever(globalState.muted) doReturn MutableStateFlow(userMutes)
+        }
+
         fun givenTypingChannels(typingChannels: Map<String, TypingEvent> = emptyMap()) = apply {
             whenever(globalState.typingChannels) doReturn MutableStateFlow(typingChannels)
         }
@@ -649,6 +717,9 @@ internal class ChannelListViewModelTest {
         )
         private val querySort = QuerySortByField.descByName<Channel>("lastUpdated")
 
+        private val currentUser = User(id = "currentUser")
+        private val otherUser = User(id = "otherUser")
+
         private val channel1: Channel = Channel(
             type = "messaging",
             id = "channel1",
@@ -656,6 +727,21 @@ internal class ChannelListViewModelTest {
         private val channel2: Channel = Channel(
             type = "messaging",
             id = "channel2",
+        )
+        private val directChannel = Channel(
+            type = "messaging",
+            id = "!members-currentUser-otherUser",
+            members = listOf(
+                Member(user = currentUser),
+                Member(user = otherUser),
+            ),
+        )
+        private val otherUserMute = Mute(
+            user = currentUser,
+            target = otherUser,
+            createdAt = Date(),
+            updatedAt = Date(),
+            expires = null,
         )
     }
 }
