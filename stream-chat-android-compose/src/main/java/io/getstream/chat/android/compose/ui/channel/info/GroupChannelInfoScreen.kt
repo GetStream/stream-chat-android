@@ -63,6 +63,7 @@ import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleD
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoAddMembersButtonParams
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoAvatarContainerParams
@@ -567,18 +568,18 @@ internal fun GroupChannelInfoExpandMembersItem(
 @Preview(showBackground = true)
 @Composable
 private fun GroupChannelInfoLoadingPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         GroupChannelInfoLoading()
     }
 }
 
 @Composable
 internal fun GroupChannelInfoLoading() {
-    GroupChannelInfoScaffold(
-        modifier = Modifier.fillMaxSize(),
+    GroupChannelInfoScreen(
+        viewModelFactory = ChannelInfoViewModelFactory(
+            cid = PreviewChannelData.channelWithImage.cid,
+        ),
         currentUser = PreviewUserData.user1,
-        headerState = ChannelHeaderViewState.Loading,
-        infoState = ChannelInfoViewState.Loading,
     )
 }
 
