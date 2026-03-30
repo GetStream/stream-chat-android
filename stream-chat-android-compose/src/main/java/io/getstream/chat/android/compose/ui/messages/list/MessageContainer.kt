@@ -718,8 +718,9 @@ public fun EmojiMessageContent(
             ChatTheme.componentFactory.MessageFailedIcon(
                 params = MessageFailedIconParams(
                     modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.BottomEnd),
+                        .padding(vertical = StreamTokens.spacingXs)
+                        .size(20.dp)
+                        .align(Alignment.TopEnd),
                     message = message,
                 ),
             )
@@ -782,7 +783,7 @@ public fun RegularMessageContent(
         Box(modifier = modifier) {
             ChatTheme.componentFactory.MessageBubble(
                 params = MessageBubbleParams(
-                    modifier = Modifier.padding(end = 12.dp),
+                    modifier = Modifier.padding(end = StreamTokens.spacingXs),
                     message = message,
                     shape = messageBubbleShape,
                     color = messageBubbleColor,
@@ -793,8 +794,9 @@ public fun RegularMessageContent(
             ChatTheme.componentFactory.MessageFailedIcon(
                 params = MessageFailedIconParams(
                     modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.BottomEnd)
+                        .padding(vertical = StreamTokens.spacingXs)
+                        .size(20.dp)
+                        .align(Alignment.TopEnd)
                         .testTag("Stream_MessageFailedIcon"),
                     message = message,
                 ),
