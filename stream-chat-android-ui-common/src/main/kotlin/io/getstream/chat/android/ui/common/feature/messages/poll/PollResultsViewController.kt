@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.extensions.internal.getWinner
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.ui.common.state.messages.poll.PollResultsViewState
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,7 +35,6 @@ import kotlinx.coroutines.flow.asStateFlow
  *
  * @param poll The poll containing the votes to display.
  */
-@OptIn(ExperimentalCoroutinesApi::class)
 @InternalStreamChatApi
 public class PollResultsViewController(
     private val poll: Poll,

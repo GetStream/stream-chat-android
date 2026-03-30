@@ -24,7 +24,6 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import io.getstream.result.Error
 import io.getstream.result.Result
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
@@ -35,7 +34,6 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class ThreadQueryListenerStateTest {
 
     private val message = randomMessage()

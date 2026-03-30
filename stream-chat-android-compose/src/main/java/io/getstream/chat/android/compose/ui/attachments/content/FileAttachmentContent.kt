@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -75,7 +74,6 @@ import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
  * @param showFileSize Whether to show the file size or not.
  * @param onItemClick Lambda called when an item gets clicked.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun FileAttachmentContent(
     attachmentState: AttachmentState,

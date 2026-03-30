@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.internal.state.plugin.state.channel.int
 
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.randomUser
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -26,7 +25,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.util.Date
 
-@ExperimentalCoroutinesApi
 internal class ChannelStateImplTypingTest : ChannelStateImplTestBase() {
 
     @Nested

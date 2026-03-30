@@ -87,7 +87,6 @@ import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomThreadInfo
 import io.getstream.chat.android.randomUser
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -107,7 +106,6 @@ import org.mockito.kotlin.whenever
 import java.util.Date
 
 @Suppress("LargeClass")
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class ChannelEventHandlerImplTest {
 
     private val cid = randomCID()

@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.state.channel.internal
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -25,7 +24,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.util.Date
 
-@ExperimentalCoroutinesApi
 internal class ChannelStateImplPinnedMessagesTest : ChannelStateImplTestBase() {
 
     @Nested
