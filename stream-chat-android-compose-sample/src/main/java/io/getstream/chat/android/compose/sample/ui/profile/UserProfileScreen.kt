@@ -280,7 +280,7 @@ private fun LinearProgressIndicator(
                     modifier = Modifier.fillMaxWidth(),
                     progress = { state.progress },
                     color = ChatTheme.colors.accentPrimary,
-                    trackColor = ChatTheme.colors.backgroundCoreSurface,
+                    trackColor = ChatTheme.colors.backgroundCoreSurfaceDefault,
                     drawStopIndicator = { /* Don't draw the stop indicator */ },
                 )
             }
@@ -289,7 +289,7 @@ private fun LinearProgressIndicator(
                 LinearProgressIndicator(
                     modifier = Modifier.fillMaxWidth(),
                     color = ChatTheme.colors.accentPrimary,
-                    trackColor = ChatTheme.colors.backgroundCoreSurface,
+                    trackColor = ChatTheme.colors.backgroundCoreSurfaceDefault,
                 )
             }
         }

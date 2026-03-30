@@ -164,7 +164,7 @@ internal fun ChannelMediaAttachmentsItem(
                     .align(Alignment.TopStart)
                     .padding(StreamTokens.spacingXs)
                     .size(AvatarSize.Small + borderSize)
-                    .border(borderSize, ChatTheme.colors.borderCoreInverse, CircleShape)
+                    .border(borderSize, ChatTheme.colors.borderCoreOnInverse, CircleShape)
                     .padding(borderSize),
                 user = item.message.user,
             ),

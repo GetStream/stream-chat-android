@@ -2820,7 +2820,7 @@ public interface ChatComponentFactory {
                     .padding(horizontal = StreamTokens.spacingSm, vertical = StreamTokens.spacingXs),
                 text = params.label,
                 style = ChatTheme.typography.captionEmphasis,
-                color = ChatTheme.colors.textInverse,
+                color = ChatTheme.colors.textOnInverse,
             )
         }
     }

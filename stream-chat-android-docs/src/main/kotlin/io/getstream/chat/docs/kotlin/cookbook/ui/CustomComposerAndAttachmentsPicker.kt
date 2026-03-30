@@ -240,7 +240,7 @@ private fun CustomAttachmentsPicker(
                 ),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundCoreSurface),
+            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundCoreSurfaceDefault),
         ) {
             Box(modifier = Modifier.padding(vertical = 24.dp)) {
                 if (shouldShowMenu) {
