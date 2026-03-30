@@ -84,12 +84,13 @@ import java.io.File
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun GroupChannelEditScreen(
-    viewModelFactory: GroupChannelEditViewModelFactory,
     channel: Channel,
-    onDismiss: () -> Unit,
+    onDismiss: () -> Unit = {},
 ) {
     val context = LocalContext.current
-    val viewModel = viewModel<GroupChannelEditViewModel>(factory = viewModelFactory)
+    val viewModel = viewModel<GroupChannelEditViewModel>(
+        factory = GroupChannelEditViewModelFactory(context = context, cid = channel.cid),
+    )
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     var channelName by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -412,15 +413,8 @@ private fun GroupChannelEditPlaceholderPreview() {
 
 @Composable
 internal fun GroupChannelEditPlaceholder() {
-    val context = LocalContext.current
-    val channel = PreviewChannelData.channelWithImage
     GroupChannelEditScreen(
-        viewModelFactory = GroupChannelEditViewModelFactory(
-            context = context,
-            cid = channel.cid,
-        ),
-        channel = channel,
-        onDismiss = {},
+        channel = PreviewChannelData.channelWithImage,
     )
 }
 

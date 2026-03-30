@@ -82,7 +82,6 @@ import io.getstream.chat.android.compose.viewmodel.channel.AddMembersViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
-import io.getstream.chat.android.compose.viewmodel.channel.GroupChannelEditViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Member
@@ -113,7 +112,6 @@ public fun GroupChannelInfoScreen(
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onNavigationIconClick: () -> Unit = {},
 ) {
-    val context = LocalContext.current
     val headerViewModel = viewModel<ChannelHeaderViewModel>(factory = viewModelFactory)
     val infoViewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
     val headerState by headerViewModel.state.collectAsStateWithLifecycle()
@@ -137,10 +135,6 @@ public fun GroupChannelInfoScreen(
         FullscreenDialog(onDismissRequest = { showEditChannel = false }) {
             ViewModelStore {
                 GroupChannelEditScreen(
-                    viewModelFactory = GroupChannelEditViewModelFactory(
-                        context = context,
-                        cid = channel.cid,
-                    ),
                     channel = channel,
                     onDismiss = { showEditChannel = false },
                 )
