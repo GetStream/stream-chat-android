@@ -213,7 +213,7 @@ private fun GiphyLabel(modifier: Modifier) {
     ) {
         Image(
             modifier = Modifier.size(12.dp),
-            painter = painterResource(R.drawable.stream_ic_command_giphy),
+            painter = painterResource(R.drawable.stream_design_ic_giphy),
             contentDescription = null,
             contentScale = ContentScale.Inside,
         )

@@ -26,12 +26,12 @@ internal val Command.isPolychromaticIcon: Boolean get() = name == CommandDefault
 
 internal val Command.iconRes: Int
     @DrawableRes get() = when (name) {
-        CommandDefaults.MUTE -> R.drawable.stream_ic_command_mute
-        CommandDefaults.UNMUTE -> R.drawable.stream_ic_command_unmute
-        CommandDefaults.BAN -> R.drawable.stream_ic_command_ban
-        CommandDefaults.UNBAN -> R.drawable.stream_ic_command_unban
+        CommandDefaults.MUTE -> R.drawable.stream_design_ic_command_mute
+        CommandDefaults.UNMUTE -> R.drawable.stream_design_ic_command_unmute
+        CommandDefaults.BAN -> R.drawable.stream_design_ic_command_ban
+        CommandDefaults.UNBAN -> R.drawable.stream_design_ic_command_unban
         // fallback to the 'giphy' for backwards compatibility
-        else -> R.drawable.stream_ic_command_giphy
+        else -> R.drawable.stream_design_ic_giphy
     }
 
 internal val Command.placeholderRes: Int

@@ -169,7 +169,7 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
             )
 
         fun newHideChannelInstance(context: Context, isGroupChannel: Boolean): ConfirmationDialogFragment = newInstance(
-            iconResId = R.drawable.stream_ic_hide,
+            iconResId = R.drawable.stream_design_ic_eye_off,
             iconTintResId = R.color.stream_ui_grey,
             title = if (isGroupChannel) {
                 context.getString(R.string.stream_ui_channel_info_option_hide_group)

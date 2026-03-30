@@ -65,7 +65,7 @@ internal fun ChannelInfoOptionContent(
             var muted by remember(option) { mutableStateOf(option.isMuted) }
 
             ChannelInfoOptionSwitch(
-                icon = R.drawable.stream_ic_action_mute,
+                icon = R.drawable.stream_design_ic_mute,
                 text = if (isGroupChannel) {
                     stringResource(R.string.stream_ui_channel_info_option_mute_group)
                 } else {
@@ -87,7 +87,7 @@ internal fun ChannelInfoOptionContent(
             var muted by remember(option) { mutableStateOf(option.isMuted) }
 
             ChannelInfoOptionSwitch(
-                icon = R.drawable.stream_ic_action_mute,
+                icon = R.drawable.stream_design_ic_mute,
                 text = stringResource(R.string.stream_ui_channel_info_option_mute_user),
                 checked = muted,
                 onCheckedChange = { checked ->
@@ -104,7 +104,7 @@ internal fun ChannelInfoOptionContent(
         is ChannelInfoViewState.Content.Option.BlockUser -> {
             CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.accentError)) {
                 ChannelInfoOptionButton(
-                    icon = R.drawable.stream_ic_block,
+                    icon = R.drawable.stream_design_ic_no_sign,
                     text = if (option.isBlocked) {
                         stringResource(R.string.stream_ui_channel_info_option_unblock_user)
                     } else {
@@ -123,7 +123,7 @@ internal fun ChannelInfoOptionContent(
 
         is ChannelInfoViewState.Content.Option.HideChannel -> {
             ChannelInfoOptionSwitch(
-                icon = R.drawable.stream_ic_hide,
+                icon = R.drawable.stream_design_ic_eye_off,
                 text = if (isGroupChannel) {
                     stringResource(R.string.stream_ui_channel_info_option_hide_group)
                 } else {
@@ -142,7 +142,7 @@ internal fun ChannelInfoOptionContent(
 
         is ChannelInfoViewState.Content.Option.PinnedMessages -> {
             ChannelInfoOptionNavigationButton(
-                icon = R.drawable.stream_ic_action_pin,
+                icon = R.drawable.stream_design_ic_pin,
                 text = stringResource(R.string.stream_ui_channel_info_option_pinned_messages),
                 onClick = { onViewAction(ChannelInfoViewAction.PinnedMessagesClick) },
             )
@@ -167,7 +167,7 @@ internal fun ChannelInfoOptionContent(
         is ChannelInfoViewState.Content.Option.LeaveChannel -> {
             CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.accentError)) {
                 ChannelInfoOptionButton(
-                    icon = R.drawable.stream_ic_action_leave,
+                    icon = R.drawable.stream_design_ic_leave,
                     text = if (isGroupChannel) {
                         stringResource(R.string.stream_ui_channel_info_option_leave_group)
                     } else {
@@ -181,7 +181,7 @@ internal fun ChannelInfoOptionContent(
         is ChannelInfoViewState.Content.Option.DeleteChannel -> {
             CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.accentError)) {
                 ChannelInfoOptionButton(
-                    icon = R.drawable.stream_ic_action_delete,
+                    icon = R.drawable.stream_design_ic_delete,
                     text = if (isGroupChannel) {
                         stringResource(R.string.stream_ui_channel_info_option_delete_group)
                     } else {

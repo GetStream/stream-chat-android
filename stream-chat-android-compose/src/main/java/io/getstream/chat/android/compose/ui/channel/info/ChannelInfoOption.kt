@@ -172,7 +172,7 @@ internal fun ChannelInfoOptionSwitch(
 private fun ChannelInfoOptionButtonPreview() {
     ChatTheme {
         ChannelInfoOptionButton(
-            icon = R.drawable.stream_ic_action_delete,
+            icon = R.drawable.stream_design_ic_delete,
             text = "Delete",
             onClick = {},
         )
@@ -196,7 +196,7 @@ private fun ChannelInfoOptionNavigationButtonPreview() {
 private fun ChannelInfoOptionSwitchPreview() {
     ChatTheme {
         ChannelInfoOptionSwitch(
-            icon = R.drawable.stream_ic_action_mute,
+            icon = R.drawable.stream_design_ic_mute,
             text = "Mute",
             checked = true,
             onCheckedChange = {},
