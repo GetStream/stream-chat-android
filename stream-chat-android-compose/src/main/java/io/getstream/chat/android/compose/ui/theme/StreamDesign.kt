@@ -73,7 +73,8 @@ public object StreamDesign {
      * @param backgroundCoreSurfaceDefault Standard section background.
      * @param backgroundCoreSurfaceSubtle Very light section background.
      * @param backgroundCoreSurfaceStrong Stronger section background.
-     * @param backgroundCoreSurfaceCard Card surface backgrounds (e.g. link previews, attachments).
+     * @param backgroundCoreSurfaceCard Card surfaces inside elevated containers like sheets and dialogs.
+     * In dark mode, resolves lighter than the container background to maintain separation.
      * @param backgroundCoreInverse Inverse background for elevated, transient, or high-attention UI
      * surfaces that sit on top of the default app background.
      * @param backgroundCoreOnAccent Surfaces that must remain white across themes
@@ -91,7 +92,7 @@ public object StreamDesign {
      * @param borderCoreOpacitySubtle Image frame border treatment (subtle).
      * @param borderCoreOpacityStrong Image frame border treatment (strong).
      * @param borderCoreOnAccent Borders on accent backgrounds.
-     * @param borderCoreOnInverse Used on dark backgrounds.
+     * @param borderCoreOnInverse Border on inverse backgrounds.
      * @param borderCoreOnSurface Border for elements sitting on elevated surfaces.
      * @param borderUtilitySelected Selected overlay border.
      * @param borderUtilityFocused Focus ring or focus border.
@@ -114,7 +115,7 @@ public object StreamDesign {
      * @param avatarPaletteText5 Avatar text (slot 5).
      * @param avatarTextPlaceholder Avatar placeholder text.
      * @param avatarPresenceBorder The thin outline around the presence dot. Matches the local
-     * surface behind the avatar; in high-contrast it uses the base surface.
+     * surface behind the avatar.
      * @param skeletonLoadingBase Base color for the skeleton loading gradient (placeholder surfaces).
      * @param skeletonLoadingHighlight Highlight for the skeleton loading gradient (moving shimmer).
      */
@@ -427,7 +428,7 @@ public object StreamDesign {
         /** Input field disabled text color. */
         internal val inputTextDisabled: Color = textDisabled
 
-        /** Icons inside the input area (attach, emoji, camera, send when idle). */
+        /** Icons inside the input area (attach, emoji, camera, send when idle). Matches secondary text strength. */
         internal val inputTextIcon: Color = textTertiary
 
         /** Placeholder text for the input. Lower emphasis than main text. */
@@ -436,7 +437,7 @@ public object StreamDesign {
         /** Reaction bar background. */
         internal val reactionBg: Color = backgroundCoreElevation3
 
-        /** Border around unselected reaction chips. Subtle in normal modes, strong in high-contrast. */
+        /** Border around unselected reaction chips. */
         internal val reactionBorder: Color = borderCoreDefault
 
         /** Emoji color inside reaction chips. Uses primary text to stay clearly legible. */
