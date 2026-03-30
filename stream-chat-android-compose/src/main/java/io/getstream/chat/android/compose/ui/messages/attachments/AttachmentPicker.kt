@@ -77,6 +77,17 @@ public fun AttachmentPicker(
     BackHandler(onBack = actions.onDismiss)
 
     val context = LocalContext.current
+    val hasUnresolvedAttachments = attachmentsPickerViewModel.hasUnresolvedAttachments
+    LaunchedEffect(hasUnresolvedAttachments) {
+        if (hasUnresolvedAttachments) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.stream_ui_attachment_picker_error_unresolvable_attachments),
+                Toast.LENGTH_LONG,
+            ).show()
+            attachmentsPickerViewModel.clearUnresolvedAttachments()
+        }
+    }
     LaunchedEffect(Unit) {
         attachmentsPickerViewModel.submittedAttachments.collect { submitted ->
             if (submitted.hasUnsupportedFiles) {

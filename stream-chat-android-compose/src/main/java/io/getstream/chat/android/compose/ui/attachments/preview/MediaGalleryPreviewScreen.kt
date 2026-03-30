@@ -365,7 +365,7 @@ public fun MediaGalleryPreviewScreen(
     } else {
         filteredAttachments
             .indexOfFirst {
-                val imagePreviewUrl = it.thumbUrl ?: it.assetUrl
+                val imagePreviewUrl = it.thumbUrl ?: it.imageUrl
                 imagePreviewUrl == selectedAttachmentUrl
             }
             .coerceAtLeast(0)
