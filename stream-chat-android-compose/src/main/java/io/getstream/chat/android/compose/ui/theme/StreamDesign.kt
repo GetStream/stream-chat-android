@@ -94,7 +94,8 @@ public object StreamDesign {
      * @param borderCoreOnInverse Used on dark backgrounds.
      * @param borderCoreOnSurface Border for elements sitting on elevated surfaces.
      * @param borderUtilitySelected Selected overlay border.
-     * @param borderUtilityActive Focus ring or focus border.
+     * @param borderUtilityFocused Focus ring or focus border.
+     * @param borderUtilityActive Active state focus border.
      * @param borderUtilityDisabled Optional disabled border for inputs, buttons, or chips.
      * @param borderUtilityDisabledOnSurface Border for disabled elements on elevated surfaces.
      * @param borderUtilityError Error state border.
@@ -159,6 +160,7 @@ public object StreamDesign {
         public val borderCoreOnInverse: Color,
         public val borderCoreOnSurface: Color,
         public val borderUtilitySelected: Color,
+        public val borderUtilityFocused: Color,
         public val borderUtilityActive: Color,
         public val borderUtilityDisabled: Color,
         public val borderUtilityDisabledOnSurface: Color,
@@ -366,7 +368,7 @@ public object StreamDesign {
         internal val controlPlaybackToggleText: Color = textPrimary
 
         /** Play button background. */
-        internal val controlPlayButtonBg: Color = chrome.s1000
+        internal val controlPlayButtonBg: Color = StreamPrimitiveColors.baseBlack.copy(alpha = 0.75f)
 
         /** Play button icon. */
         internal val controlPlayButtonIcon: Color = textOnAccent
@@ -501,7 +503,8 @@ public object StreamDesign {
                     borderCoreOnAccent = chrome.s0,
                     borderCoreOnInverse = chrome.s0,
                     borderCoreOnSurface = chrome.s300,
-                    borderUtilitySelected = brand.s500,
+                    borderUtilitySelected = StreamPrimitiveColors.slate900.copy(alpha = 0.15f),
+                    borderUtilityFocused = brand.s150,
                     borderUtilityActive = brand.s500,
                     borderUtilityDisabled = chrome.s100,
                     borderUtilityDisabledOnSurface = chrome.s150,
@@ -577,7 +580,8 @@ public object StreamDesign {
                     borderCoreOnAccent = chrome.s1000,
                     borderCoreOnInverse = chrome.s0,
                     borderCoreOnSurface = chrome.s300,
-                    borderUtilitySelected = brand.s400,
+                    borderUtilitySelected = StreamPrimitiveColors.baseWhite.copy(alpha = 0.15f),
+                    borderUtilityFocused = brand.s150,
                     borderUtilityActive = brand.s400,
                     borderUtilityDisabled = chrome.s100,
                     borderUtilityDisabledOnSurface = chrome.s150,
