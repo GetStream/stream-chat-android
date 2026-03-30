@@ -142,6 +142,44 @@ internal class GroupChannelEditViewModelTest {
     }
 
     @Test
+    fun `duplicate gallery import is ignored while already importing`() = runTest {
+        val copyEntered = CountDownLatch(1)
+        val unblockCopy = CountDownLatch(1)
+        val copyCount = java.util.concurrent.atomic.AtomicInteger(0)
+        val blockingCopier = GalleryImageCopier {
+            copyCount.incrementAndGet()
+            copyEntered.countDown()
+            unblockCopy.await()
+            File.createTempFile("gallery", ".jpg").also { it.deleteOnExit() }
+        }
+        val sut = Fixture(galleryImageCopier = blockingCopier).get()
+
+        sut.importGalleryImage(Uri.parse("content://first"))
+        assertTrue(copyEntered.await(5, TimeUnit.SECONDS))
+
+        sut.importGalleryImage(Uri.parse("content://second"))
+        unblockCopy.countDown()
+
+        assertEquals(1, copyCount.get())
+    }
+
+    @Test
+    fun `gallery import failure preserves existing pending image`() = runTest {
+        val existingFile = File.createTempFile("existing", ".jpg").also { it.deleteOnExit() }
+        val failingCopier = GalleryImageCopier { null }
+        val sut = Fixture(galleryImageCopier = failingCopier).get()
+
+        sut.setPendingImage(existingFile)
+        sut.importGalleryImage(Uri.parse("content://bad"))
+
+        sut.state.test {
+            val state = awaitItem()
+            assertEquals(existingFile, state.pendingImageFile)
+            assertFalse(state.removeImage)
+        }
+    }
+
+    @Test
     fun `save is ignored while gallery import is in progress`() = runTest {
         val copyEntered = CountDownLatch(1)
         val unblockCopy = CountDownLatch(1)
