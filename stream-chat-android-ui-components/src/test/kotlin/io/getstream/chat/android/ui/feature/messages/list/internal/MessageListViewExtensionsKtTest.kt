@@ -261,10 +261,10 @@ internal class MessageListViewExtensionsKtTest {
                 false,
             ),
             Arguments.of(
-                randomMessageListViewStyle(),
-                currentUser.takeIf { randomBoolean() },
+                randomMessageListViewStyle(editMessageEnabled = true),
+                currentUser,
                 randomMessage(poll = randomPoll(), command = null, sharedLocation = null),
-                randomChannelCapabilities(),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.UPDATE_ANY_MESSAGE)),
                 false,
             ),
             Arguments.of(

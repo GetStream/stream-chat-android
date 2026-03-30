@@ -274,10 +274,10 @@ internal class MessageOptionItemVisibilityTest {
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(),
-                currentUser.takeIf { randomBoolean() },
+                MessageOptionItemVisibility(isEditMessageVisible = true),
+                currentUser,
                 randomMessage(poll = randomPoll(), command = null, sharedLocation = null),
-                randomChannelCapabilities(),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.UPDATE_ANY_MESSAGE)),
                 false,
             ),
             Arguments.of(

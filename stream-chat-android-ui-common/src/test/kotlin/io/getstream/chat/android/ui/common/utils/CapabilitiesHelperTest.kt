@@ -269,10 +269,10 @@ internal class CapabilitiesHelperTest {
                 false,
             ),
             Arguments.of(
-                randomBoolean(),
-                currentUser.takeIf { randomBoolean() },
+                true,
+                currentUser,
                 randomMessage(poll = randomPoll(), command = null, sharedLocation = null),
-                randomChannelCapabilities(),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.UPDATE_ANY_MESSAGE)),
                 false,
             ),
             Arguments.of(
