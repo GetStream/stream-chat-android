@@ -98,7 +98,12 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     fun setUp() {
         channelStateLegacyImpl.setEndOfNewerMessages(true)
 
-        whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doAnswer { invocation ->
+        whenever(
+            attachmentUrlValidator.updateValidAttachmentsUrl(
+                any<List<Message>>(),
+                any<Map<String, Message>>(),
+            ),
+        ) doAnswer { invocation ->
             invocation.arguments[0] as List<Message>
         }
 
@@ -112,27 +117,36 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     // User watching event
     @Test
-    fun `when user watching event arrives, last message should upsert messages, increment count and appear`() = runTest {
-        val user = User()
-        val newDate = Date(Long.MAX_VALUE)
+    fun `when user watching event arrives, last message should upsert messages, increment count and appear`() =
+        runTest {
+            val user = User()
+            val newDate = Date(Long.MAX_VALUE)
 
-        val newMessage = randomMessage(
-            id = "thisId",
-            createdAt = newDate,
-            silent = false,
-            showInChannel = true,
-        )
+            val newMessage = randomMessage(
+                id = "thisId",
+                createdAt = newDate,
+                silent = false,
+                showInChannel = true,
+            )
 
-        whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(newMessage)
+            whenever(
+                attachmentUrlValidator.updateValidAttachmentsUrl(
+                    any<List<Message>>(),
+                    any<Map<String, Message>>(),
+                ),
+            ) doReturn listOf(newMessage)
 
-        val userStartWatchingEvent = randomNewMessageEvent(user = user, createdAt = newDate, message = newMessage)
+            val userStartWatchingEvent = randomNewMessageEvent(user = user, createdAt = newDate, message = newMessage)
 
-        channelLogic.handleEvent(userStartWatchingEvent)
+            channelLogic.handleEvent(userStartWatchingEvent)
 
-        verify(channelStateLogic).upsertMessage(newMessage)
-        verify(channelStateLogic).updateCurrentUserRead(userStartWatchingEvent.createdAt, userStartWatchingEvent.message)
-        verify(channelStateLogic).setHidden(false)
-    }
+            verify(channelStateLogic).upsertMessage(newMessage)
+            verify(channelStateLogic).updateCurrentUserRead(
+                userStartWatchingEvent.createdAt,
+                userStartWatchingEvent.message,
+            )
+            verify(channelStateLogic).setHidden(false)
+        }
 
     // Message update
     @Test
@@ -154,31 +168,32 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     }
 
     @Test
-    fun `when message update event arrives without poll but original message has poll, poll should be preserved`() = runTest {
-        val poll = randomPoll()
-        val originalMessage = randomMessage(
-            id = randomString(),
-            user = User(id = "otherUserId"),
-            silent = false,
-            showInChannel = true,
-            poll = poll,
-        )
-        channelStateLegacyImpl.setMessages(listOf(originalMessage))
+    fun `when message update event arrives without poll but original message has poll, poll should be preserved`() =
+        runTest {
+            val poll = randomPoll()
+            val originalMessage = randomMessage(
+                id = randomString(),
+                user = User(id = "otherUserId"),
+                silent = false,
+                showInChannel = true,
+                poll = poll,
+            )
+            channelStateLegacyImpl.setMessages(listOf(originalMessage))
 
-        val updatedMessageWithoutPoll = originalMessage.copy(
-            text = "Updated text",
-            poll = null,
-        )
-        val messageUpdateEvent = randomMessageUpdateEvent(message = updatedMessageWithoutPoll)
+            val updatedMessageWithoutPoll = originalMessage.copy(
+                text = "Updated text",
+                poll = null,
+            )
+            val messageUpdateEvent = randomMessageUpdateEvent(message = updatedMessageWithoutPoll)
 
-        channelLogic.handleEvent(messageUpdateEvent)
+            channelLogic.handleEvent(messageUpdateEvent)
 
-        verify(channelStateLogic).upsertMessage(
-            org.mockito.kotlin.argThat { message ->
-                message.poll == poll && message.text == "Updated text"
-            },
-        )
-    }
+            verify(channelStateLogic).upsertMessage(
+                org.mockito.kotlin.argThat { message ->
+                    message.poll == poll && message.text == "Updated text"
+                },
+            )
+        }
 
     @Test
     fun `when message update event arrives with poll, event poll should be used`() = runTest {
@@ -260,20 +275,26 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     // Reaction event
     @Test
-    fun `when reaction event arrives, if message is in the list, the message of the event should be upsert`(): Unit = runTest {
-        val message = randomMessage(
-            showInChannel = true,
-            silent = false,
-        )
-        channelStateLogic.upsertMessages(listOf(message))
-        val reactionEvent = randomReactionNewEvent(user = randomUser(), message = message)
-        whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(message)
+    fun `when reaction event arrives, if message is in the list, the message of the event should be upsert`(): Unit =
+        runTest {
+            val message = randomMessage(
+                showInChannel = true,
+                silent = false,
+            )
+            channelStateLogic.upsertMessages(listOf(message))
+            val reactionEvent = randomReactionNewEvent(user = randomUser(), message = message)
+            whenever(
+                attachmentUrlValidator.updateValidAttachmentsUrl(
+                    any<List<Message>>(),
+                    any<Map<String, Message>>(),
+                ),
+            ) doReturn listOf(message)
 
-        channelLogic.handleEvent(reactionEvent)
+            channelLogic.handleEvent(reactionEvent)
 
-        // Message is propagated
-        verify(channelStateLogic).upsertMessages(listOf(reactionEvent.message))
-    }
+            // Message is propagated
+            verify(channelStateLogic).upsertMessages(listOf(reactionEvent.message))
+        }
 
     // Channel deleted event
     @Test
@@ -318,7 +339,12 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             text = "Updated text",
             createdLocallyAt = null,
         )
-        whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(updatedMessage)
+        whenever(
+            attachmentUrlValidator.updateValidAttachmentsUrl(
+                any<List<Message>>(),
+                any<Map<String, Message>>(),
+            ),
+        ) doReturn listOf(updatedMessage)
 
         val newMessageEvent = randomNewMessageEvent(
             user = currentUser,
@@ -353,7 +379,12 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             text = "Updated text",
             createdLocallyAt = null,
         )
-        whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(updatedMessage)
+        whenever(
+            attachmentUrlValidator.updateValidAttachmentsUrl(
+                any<List<Message>>(),
+                any<Map<String, Message>>(),
+            ),
+        ) doReturn listOf(updatedMessage)
 
         val newMessageEvent = randomNewMessageEvent(
             user = otherUser,

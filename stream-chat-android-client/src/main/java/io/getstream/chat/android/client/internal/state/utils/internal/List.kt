@@ -148,8 +148,9 @@ internal fun <T, ID> List<T>.upsertSortedBounded(
     maxSize: Int,
     idSelector: (T) -> ID,
     comparator: Comparator<in T>,
+    update: (old: T) -> T = { element },
 ): List<T> {
-    val result = upsertSorted(element, idSelector, comparator)
+    val result = upsertSorted(element, idSelector, comparator, update)
     return if (result.size > maxSize) result.takeLast(maxSize) else result
 }
 

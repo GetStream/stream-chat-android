@@ -592,9 +592,9 @@ internal class ChannelEventHandlerImplTest {
 
         handler.handle(event)
 
-        val captor = argumentCaptor<(Message) -> Message>()
-        verify(state).updateMessageById(eq(message.id), captor.capture())
-        val result = captor.firstValue(message)
+        val captor = argumentCaptor<(Message, Message) -> Message>()
+        verify(state).updateMessageFromEvent(eq(message), captor.capture())
+        val result = captor.firstValue(message, message)
         assertEquals(ownReactions, result.ownReactions)
     }
 
@@ -616,9 +616,9 @@ internal class ChannelEventHandlerImplTest {
 
         handler.handle(event)
 
-        val captor = argumentCaptor<(Message) -> Message>()
-        verify(state).updateMessageById(eq(message.id), captor.capture())
-        val result = captor.firstValue(message)
+        val captor = argumentCaptor<(Message, Message) -> Message>()
+        verify(state).updateMessageFromEvent(eq(message), captor.capture())
+        val result = captor.firstValue(message, message)
         assertEquals(ownReactions, result.ownReactions)
     }
 
@@ -640,9 +640,9 @@ internal class ChannelEventHandlerImplTest {
 
         handler.handle(event)
 
-        val captor = argumentCaptor<(Message) -> Message>()
-        verify(state).updateMessageById(eq(message.id), captor.capture())
-        val result = captor.firstValue(message)
+        val captor = argumentCaptor<(Message, Message) -> Message>()
+        verify(state).updateMessageFromEvent(eq(message), captor.capture())
+        val result = captor.firstValue(message, message)
         assertEquals(ownReactions, result.ownReactions)
     }
 
