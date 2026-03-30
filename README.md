@@ -18,10 +18,10 @@
 
 <div align="center">
 
-![stream-chat-android-client](https://img.shields.io/badge/stream--chat--android--client-5.25%20MB-lightgreen)
-![stream-chat-android-offline](https://img.shields.io/badge/stream--chat--android--offline-5.48%20MB-lightgreen)
-![stream-chat-android-ui-components](https://img.shields.io/badge/stream--chat--android--ui--components-10.63%20MB-lightgreen)
-![stream-chat-android-compose](https://img.shields.io/badge/stream--chat--android--compose-12.85%20MB-lightgreen)
+![stream-chat-android-client](https://img.shields.io/badge/stream--chat--android--client-5.26%20MB-lightgreen)
+![stream-chat-android-offline](https://img.shields.io/badge/stream--chat--android--offline-5.49%20MB-lightgreen)
+![stream-chat-android-ui-components](https://img.shields.io/badge/stream--chat--android--ui--components-10.64%20MB-lightgreen)
+![stream-chat-android-compose](https://img.shields.io/badge/stream--chat--android--compose-12.86%20MB-lightgreen)
 
 </div>
 
