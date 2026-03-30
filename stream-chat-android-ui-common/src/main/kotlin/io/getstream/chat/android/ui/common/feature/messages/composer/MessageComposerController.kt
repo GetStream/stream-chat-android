@@ -1021,7 +1021,7 @@ public class MessageComposerController(
      * Completes audio recording and updates the [MessageComposerState.attachments] list.
      *
      * @param onComplete Optional callback invoked with the result of the recording once the recording has been
-     * finalized. On success, the recorded [Attachment] is added to [selectedAttachments] before the callback
+     * finalized. On success, the recorded [Attachment] is added to the attachment list before the callback
      * is invoked, so callers can safely build and send a message using the received attachment.
      */
     public fun completeRecording(onComplete: ((Result<Attachment>) -> Unit)? = null) {
@@ -1029,7 +1029,7 @@ public class MessageComposerController(
             if (onComplete != null) {
                 val result = audioRecordingController.completeRecordingSync()
                 if (result is Result.Success) {
-                    selectedAttachments.value += result.value
+                    addAttachments(listOf(result.value))
                 }
                 onComplete(result)
             } else {

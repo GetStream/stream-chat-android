@@ -31,12 +31,12 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.internal.state.extensions.internal.logic
 import io.getstream.chat.android.client.internal.state.extensions.internal.parseAttachmentNameFromUrl
 import io.getstream.chat.android.client.internal.state.extensions.internal.requestsAsState
 import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
+import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
 import io.getstream.chat.android.client.utils.message.isEphemeral
 import io.getstream.chat.android.core.internal.InternalStreamChatApi

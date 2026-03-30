@@ -77,7 +77,6 @@ import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVis
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageOption
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryDestination
@@ -2244,7 +2243,7 @@ public class MessageListView : ConstraintLayout {
 
         internal companion object {
             fun parseValue(value: Int): NewMessagesBehaviour {
-                return values().find { behaviour -> behaviour.value == value }
+                return entries.find { behaviour -> behaviour.value == value }
                     ?: throw IllegalArgumentException("Unknown behaviour type. It must be either SCROLL_TO_BOTTOM (int 0) or COUNT_UPDATE (int 1)")
             }
         }
@@ -2255,7 +2254,7 @@ public class MessageListView : ConstraintLayout {
 
         internal companion object {
             fun parseValue(value: Int): MessagesStart {
-                return values().find { behaviour -> behaviour.value == value }
+                return entries.find { behaviour -> behaviour.value == value }
                     ?: throw IllegalArgumentException("Unknown messages start type. It must be either BOTTOM (int 0) or TOP (int 1)")
             }
         }

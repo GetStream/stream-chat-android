@@ -40,14 +40,6 @@ import com.valentinilk.shimmer.LocalShimmerTheme
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
-import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
-import io.getstream.chat.android.compose.ui.theme.ChatTheme.autoTranslationEnabled
-import io.getstream.chat.android.compose.ui.theme.ChatTheme.isComposerLinkPreviewEnabled
-import io.getstream.chat.android.compose.ui.theme.ChatTheme.showOriginalTranslationEnabled
-import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
-import io.getstream.chat.android.compose.ui.util.DefaultPollSwitchItemFactory
 import io.getstream.chat.android.compose.ui.util.ImageHeadersInterceptor
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider

@@ -43,11 +43,11 @@ internal val Attachment.stableKey: String
 /**
  * Best available data source for rendering an unsent attachment preview.
  *
- * Prefers [Attachment.upload] (local file), then [imagePreviewUrl] (CDN URL),
- * then [sourceUri] (content URI from the picker).
+ * Prefers [Attachment.upload] (local file), then [Attachment.imageUrl] (CDN URL for images), then [Attachment.thumbUrl]
+ * (CDN URL for video thumbnails), then [sourceUri] (content URI from the picker).
  */
 internal val Attachment.localPreviewData: Any?
-    get() = upload ?: imagePreviewUrl ?: sourceUri
+    get() = upload ?: imageUrl ?: thumbUrl ?: sourceUri
 
 /**
  * Image preview data for a sent or received attachment.

@@ -194,7 +194,7 @@ internal class QuotedMessageBodyBuilderTest {
                         Attachment(
                             type = AttachmentType.GIPHY,
                             name = "Happy Dance",
-                            imageUrl = "https://giphy.com/image.gif",
+                            thumbUrl = "https://giphy.com/image.gif",
                         ),
                     ),
                 ),
@@ -214,7 +214,7 @@ internal class QuotedMessageBodyBuilderTest {
                         Attachment(
                             type = AttachmentType.GIPHY,
                             name = "Happy Dance",
-                            imageUrl = "https://giphy.com/image.gif",
+                            thumbUrl = "https://giphy.com/image.gif",
                         ),
                     ),
                 ),
@@ -304,7 +304,7 @@ internal class QuotedMessageBodyBuilderTest {
                         Attachment(
                             type = AttachmentType.VIDEO,
                             assetUrl = "https://example.com/video.mp4",
-                            imageUrl = "https://example.com/thumb.jpg",
+                            thumbUrl = "https://example.com/thumb.jpg",
                         ),
                     ),
                 ),
@@ -324,7 +324,7 @@ internal class QuotedMessageBodyBuilderTest {
                         Attachment(
                             type = AttachmentType.VIDEO,
                             assetUrl = "https://example.com/video.mp4",
-                            imageUrl = "https://example.com/thumb.jpg",
+                            thumbUrl = "https://example.com/thumb.jpg",
                         ),
                     ),
                 ),

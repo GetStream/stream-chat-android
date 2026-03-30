@@ -18,6 +18,8 @@ package io.getstream.chat.android.compose.viewmodel.messages
 
 import android.net.Uri
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -163,10 +165,6 @@ public class AttachmentsPickerViewModel @JvmOverloads constructor(
         savedStateHandle[KeyPickerVisible] = visible
         if (!visible) resetPickerState()
     }
-
-    private val _isShowingAttachments = mutableStateOf(
-        savedStateHandle.get<Boolean>(KEY_IS_SHOWING_ATTACHMENTS) ?: false,
-    )
 
     /**
      * Set to `true` when one or more selected attachments could not be resolved (e.g. the

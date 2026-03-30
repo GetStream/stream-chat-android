@@ -2566,7 +2566,7 @@ internal constructor(
             // Regular message
             val (type, id) = cid.cidToTypeAndId()
             // Fetch channel lastMessageAt from state, fallback to offline storage
-            val channelState = logicRegistry?.channelStateLogic(type, id)?.listenForChannelState()
+            val channelState = logicRegistry?.channelStateLogic(type, id)?.channelState()
             val lastMessageAt = channelState?.channelData?.value?.lastMessageAt
                 ?: repositoryFacade.selectChannel(cid = cid)?.lastMessageAt
             val lastMessageAtPlusOneMillisecond = lastMessageAt?.let {

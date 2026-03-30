@@ -100,7 +100,6 @@ import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 
 /**
  * Displays a preview of single or multiple video or attachments.
@@ -481,7 +480,7 @@ internal fun MediaAttachmentContentItem(
                             MediaAttachmentClickData(
                                 mediaGalleryPreviewLauncher = mixedMediaPreviewLauncher,
                                 message = message,
-                                selectedAttachmentUrl = attachment.imagePreviewUrl,
+                                selectedAttachmentUrl = attachment.thumbUrl ?: attachment.imageUrl,
                                 videoThumbnailsEnabled = videoThumbnailsEnabled,
                                 downloadAttachmentUriGenerator = downloadAttachmentUriGenerator,
                                 downloadRequestInterceptor = downloadRequestInterceptor,

@@ -30,7 +30,6 @@ import io.getstream.chat.android.ui.common.state.messages.MessageInput
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
-import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 import kotlinx.coroutines.flow.StateFlow

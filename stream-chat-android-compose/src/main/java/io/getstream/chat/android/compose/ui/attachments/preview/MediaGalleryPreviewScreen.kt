@@ -91,7 +91,6 @@ import io.getstream.chat.android.models.Constants
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import kotlinx.coroutines.launch
 import java.util.Date
 
@@ -365,7 +364,10 @@ public fun MediaGalleryPreviewScreen(
         0
     } else {
         filteredAttachments
-            .indexOfFirst { it.imagePreviewUrl == selectedAttachmentUrl }
+            .indexOfFirst {
+                val imagePreviewUrl = it.thumbUrl ?: it.assetUrl
+                imagePreviewUrl == selectedAttachmentUrl
+            }
             .coerceAtLeast(0)
     }
 
@@ -628,7 +630,6 @@ internal fun MediaGalleryPager(
  * @param onLeadingContentClick Callback to be invoked when the leading content is clicked.
  * @param onTrailingContentClick Callback to be invoked when the trailing content is clicked.
  * @param modifier The [Modifier] to be applied to the footer.
- * @param elevation The elevation of the footer.
  * @param backgroundColor The background color of the footer.
  * @param contentColor The content color of the footer.
  * @param config The configuration for the media gallery.

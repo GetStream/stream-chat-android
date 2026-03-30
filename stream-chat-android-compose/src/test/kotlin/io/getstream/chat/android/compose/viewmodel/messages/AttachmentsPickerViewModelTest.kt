@@ -519,79 +519,69 @@ internal class AttachmentsPickerViewModelTest {
     }
 
     @Test
-    fun `Given metadata with unresolvable URIs When getting attachments async Should set hasUnresolvedAttachments`() = runTest {
+    fun `Given unresolvable metadata When resolving URIs Should set hasUnresolvedAttachments`() = runTest {
+        val uris = listOf(imageUri1, imageUri2)
         val metadata = listOf(imageAttachment1, imageAttachment2)
-        val storageHelper: StorageHelperWrapper = mock {
-            whenever(it.getAttachmentsForUpload(metadata)) doReturn listOf(Attachment(type = "image", upload = mock()))
-        }
-        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+        val partialAttachments = listOf(Attachment(type = "image", upload = mock()))
+        whenever(storageHelper.resolveMetadata(uris)) doReturn metadata
+        whenever(storageHelper.toAttachments(metadata)) doReturn partialAttachments
+        val viewModel = createViewModel()
 
         assertFalse(viewModel.hasUnresolvedAttachments)
 
-        var result: List<Attachment>? = null
-        viewModel.getAttachmentsFromMetadataAsync(metadata) { result = it }
-        advanceUntilIdle()
-
-        assertEquals(1, result?.size)
-        assertTrue(viewModel.hasUnresolvedAttachments)
-    }
-
-    @Test
-    fun `Given selected images with unresolvable URIs When getting selected async Should set hasUnresolvedAttachments`() = runTest {
-        val storageHelper: StorageHelperWrapper = mock {
-            whenever(it.getMedia()) doReturn listOf(imageAttachment1, imageAttachment2)
-            whenever(it.getAttachmentsForUpload(any())) doReturn listOf(Attachment(type = "image", upload = mock()))
+        val results = mutableListOf<SubmittedAttachments>()
+        val job = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.submittedAttachments.collect(results::add)
         }
-        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
-
-        viewModel.changeAttachmentState(true)
-        viewModel.loadData()
-        viewModel.changeSelectedAttachments(viewModel.images.first())
-        viewModel.changeSelectedAttachments(viewModel.images.last())
-
-        assertFalse(viewModel.hasUnresolvedAttachments)
-
-        var result: List<Attachment>? = null
-        viewModel.getSelectedAttachmentsAsync { result = it }
+        viewModel.resolveAndSubmitUris(uris)
         advanceUntilIdle()
+        job.cancel()
 
-        assertEquals(1, result?.size)
+        assertEquals(1, results.first().attachments.size)
         assertTrue(viewModel.hasUnresolvedAttachments)
     }
 
     @Test
     fun `Given hasUnresolvedAttachments is true When clearing Should reset to false`() = runTest {
+        val uris = listOf(imageUri1, imageUri2)
         val metadata = listOf(imageAttachment1, imageAttachment2)
-        val storageHelper: StorageHelperWrapper = mock {
-            whenever(it.getAttachmentsForUpload(metadata)) doReturn listOf(Attachment(type = "image", upload = mock()))
-        }
-        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+        whenever(storageHelper.resolveMetadata(uris)) doReturn metadata
+        whenever(storageHelper.toAttachments(metadata)) doReturn listOf(Attachment(type = "image", upload = mock()))
+        val viewModel = createViewModel()
 
-        viewModel.getAttachmentsFromMetadataAsync(metadata) {}
+        val job = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.submittedAttachments.collect {}
+        }
+        viewModel.resolveAndSubmitUris(uris)
         advanceUntilIdle()
         assertTrue(viewModel.hasUnresolvedAttachments)
 
         viewModel.clearUnresolvedAttachments()
         assertFalse(viewModel.hasUnresolvedAttachments)
+        job.cancel()
     }
 
     @Test
-    fun `Given all attachments resolved When getting attachments async Should not set hasUnresolvedAttachments`() = runTest {
+    fun `Given all attachments resolved When resolving URIs Should not set hasUnresolvedAttachments`() = runTest {
+        val uris = listOf(imageUri1, imageUri2)
         val metadata = listOf(imageAttachment1, imageAttachment2)
         val expectedAttachments = listOf(
             Attachment(type = "image", upload = mock()),
             Attachment(type = "image", upload = mock()),
         )
-        val storageHelper: StorageHelperWrapper = mock {
-            whenever(it.getAttachmentsForUpload(metadata)) doReturn expectedAttachments
+        whenever(storageHelper.resolveMetadata(uris)) doReturn metadata
+        whenever(storageHelper.toAttachments(metadata)) doReturn expectedAttachments
+        val viewModel = createViewModel()
+
+        val results = mutableListOf<SubmittedAttachments>()
+        val job = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.submittedAttachments.collect(results::add)
         }
-        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
-
-        var result: List<Attachment>? = null
-        viewModel.getAttachmentsFromMetadataAsync(metadata) { result = it }
+        viewModel.resolveAndSubmitUris(uris)
         advanceUntilIdle()
+        job.cancel()
 
-        assertEquals(2, result?.size)
+        assertEquals(2, results.first().attachments.size)
         assertFalse(viewModel.hasUnresolvedAttachments)
     }
 
