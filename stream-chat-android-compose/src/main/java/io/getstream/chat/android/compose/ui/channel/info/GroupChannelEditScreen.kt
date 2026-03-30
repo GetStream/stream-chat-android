@@ -60,6 +60,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
@@ -70,9 +71,11 @@ import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberC
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.ui.util.bottomBorder
 import io.getstream.chat.android.compose.viewmodel.channel.GroupChannelEditViewEvent
 import io.getstream.chat.android.compose.viewmodel.channel.GroupChannelEditViewModel
+import io.getstream.chat.android.compose.viewmodel.channel.GroupChannelEditViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
@@ -81,11 +84,12 @@ import java.io.File
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun GroupChannelEditScreen(
-    viewModel: GroupChannelEditViewModel,
+    viewModelFactory: GroupChannelEditViewModelFactory,
     channel: Channel,
     onDismiss: () -> Unit,
 ) {
     val context = LocalContext.current
+    val viewModel = viewModel<GroupChannelEditViewModel>(factory = viewModelFactory)
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     var channelName by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -400,15 +404,23 @@ private fun ChannelNameField(
 @Composable
 private fun GroupChannelEditPlaceholderPreview() {
     ChatTheme {
-        GroupChannelEditPlaceholder()
+        ViewModelStore {
+            GroupChannelEditPlaceholder()
+        }
     }
 }
 
 @Composable
 internal fun GroupChannelEditPlaceholder() {
-    GroupChannelEditContent(
-        channel = PreviewChannelData.channelWithImage,
-        channelName = TextFieldValue(text = ""),
+    val context = LocalContext.current
+    val channel = PreviewChannelData.channelWithImage
+    GroupChannelEditScreen(
+        viewModelFactory = GroupChannelEditViewModelFactory(
+            context = context,
+            cid = channel.cid,
+        ),
+        channel = channel,
+        onDismiss = {},
     )
 }
 
