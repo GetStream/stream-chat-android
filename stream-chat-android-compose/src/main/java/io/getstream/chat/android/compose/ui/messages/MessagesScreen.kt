@@ -46,7 +46,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -62,8 +61,9 @@ import io.getstream.chat.android.compose.ui.components.poll.PollAnswersDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollMoreOptionsDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollViewResultDialog
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
-import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageBounds
+import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageSnapshot
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
+import io.getstream.chat.android.compose.ui.messages.list.SelectedMessageSnapshot
 import io.getstream.chat.android.compose.ui.theme.AttachmentPickerMenuParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageListHeaderParams
@@ -302,8 +302,8 @@ public fun MessagesScreen(
 
 @Composable
 private fun MessagesScreenContentBox(content: @Composable BoxScope.() -> Unit) {
-    val selectedMessageBounds = remember { mutableStateOf<Rect?>(null) }
-    CompositionLocalProvider(LocalSelectedMessageBounds provides selectedMessageBounds) {
+    val selectedMessageSnapshot = remember { mutableStateOf<SelectedMessageSnapshot?>(null) }
+    CompositionLocalProvider(LocalSelectedMessageSnapshot provides selectedMessageSnapshot) {
         Box(
             modifier = Modifier
                 .fillMaxSize()

@@ -58,7 +58,7 @@ import androidx.compose.ui.window.DialogWindowProvider
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.state.messages.MessageAlignment
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
-import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageBounds
+import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageSnapshot
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageContainerParams
 import io.getstream.chat.android.compose.ui.theme.MessageMenuHeaderContentParams
@@ -74,6 +74,7 @@ import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
+import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -107,6 +108,7 @@ public fun SelectedMessageMenu(
     currentUser: User? = null,
     onDismiss: () -> Unit = {},
 ) {
+    val selectedMessageSnapshot = LocalSelectedMessageSnapshot.current.value
     val messageItemState = MessageItemState(
         message = message,
         isMine = message.user.id == currentUser?.id,
@@ -114,6 +116,7 @@ public fun SelectedMessageMenu(
         ownCapabilities = ownCapabilities,
         showMessageFooter = false,
         isPreviewMode = true,
+        groupPosition = selectedMessageSnapshot?.groupPosition ?: MessagePosition.NONE,
     )
     val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItemState)
     val bubbleAlignmentPadding = when (messageAlignment) {
@@ -123,7 +126,7 @@ public fun SelectedMessageMenu(
 
     val isInspection = LocalInspectionMode.current
     val animation = rememberMenuAnimation(
-        sourceBounds = LocalSelectedMessageBounds.current?.value,
+        sourceBounds = selectedMessageSnapshot?.bounds,
         messageAlignment = messageAlignment,
     )
     val scope = rememberCoroutineScope()

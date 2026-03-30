@@ -151,7 +151,7 @@ public fun LazyItemScope.MessageItem(
                 params = MessageListModeratedItemContentParams(moderatedMessageItem = messageListItemState),
             )
             is MessageItemState -> {
-                val selectedMessageBounds = LocalSelectedMessageBounds.current
+                val selectedMessageSnapshot = LocalSelectedMessageSnapshot.current
                 var layoutCoords by remember { mutableStateOf<LayoutCoordinates?>(null) }
                 MessageContainer(
                     params = MessageContainerParams(
@@ -161,7 +161,10 @@ public fun LazyItemScope.MessageItem(
                         onLongItemClick = { message ->
                             layoutCoords?.let { coords ->
                                 if (coords.isAttached) {
-                                    selectedMessageBounds?.value = coords.boundsInWindow()
+                                    selectedMessageSnapshot.value = SelectedMessageSnapshot(
+                                        bounds = coords.boundsInWindow(),
+                                        groupPosition = messageListItemState.groupPosition,
+                                    )
                                 }
                             }
                             onLongItemClick(message)
