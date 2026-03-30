@@ -44,7 +44,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -74,12 +73,9 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.bottomBorder
 import io.getstream.chat.android.compose.viewmodel.channel.GroupChannelEditViewEvent
 import io.getstream.chat.android.compose.viewmodel.channel.GroupChannelEditViewModel
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -95,9 +91,6 @@ internal fun GroupChannelEditScreen(
     var channelName by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(text = channel.name, selection = TextRange(channel.name.length)))
     }
-    var pendingImagePath by rememberSaveable { mutableStateOf<String?>(null) }
-    val pendingImageFile = pendingImagePath?.let(::File)
-    var removeImage by rememberSaveable { mutableStateOf(false) }
     var showImagePicker by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(viewModel) {
@@ -115,6 +108,8 @@ internal fun GroupChannelEditScreen(
         }
     }
 
+    val pendingImageFile = state.pendingImageFile
+    val removeImage = state.removeImage
     val displayChannel = remember(channel, pendingImageFile, removeImage) {
         when {
             pendingImageFile != null -> channel.copy(image = Uri.fromFile(pendingImageFile).toString())
@@ -126,10 +121,10 @@ internal fun GroupChannelEditScreen(
     GroupChannelEditContent(
         channel = displayChannel,
         channelName = channelName,
-        isSaving = state.isSaving,
+        isBusy = state.isBusy,
         onChannelNameChange = { channelName = it },
         onNavigationIconClick = onDismiss,
-        onSaveActionClick = { viewModel.save(channelName.text, pendingImageFile, removeImage) },
+        onSaveActionClick = { viewModel.save(channelName.text) },
         onUploadPictureClick = { showImagePicker = true },
     )
 
@@ -137,14 +132,9 @@ internal fun GroupChannelEditScreen(
         visible = showImagePicker,
         showRemoveOption = (channel.image.isNotBlank() || pendingImageFile != null) && !removeImage,
         onDismiss = { showImagePicker = false },
-        onImageSelected = { file ->
-            pendingImagePath = file.absolutePath
-            removeImage = false
-        },
-        onImageRemoved = {
-            pendingImagePath = null
-            removeImage = true
-        },
+        onGalleryUriPicked = viewModel::importGalleryImage,
+        onImageSelected = viewModel::setPendingImage,
+        onImageRemoved = viewModel::removeImage,
     )
 }
 
@@ -154,21 +144,14 @@ private fun ImagePickerSheet(
     visible: Boolean,
     showRemoveOption: Boolean,
     onDismiss: () -> Unit = {},
+    onGalleryUriPicked: (Uri) -> Unit = {},
     onImageSelected: (File) -> Unit = {},
     onImageRemoved: () -> Unit = {},
 ) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-
     val pickMediaLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
     ) { uri ->
-        uri ?: return@rememberLauncherForActivityResult
-        scope.launch(DispatcherProvider.IO) {
-            uri.toCacheFile(context)?.let { file ->
-                withContext(DispatcherProvider.Main) { onImageSelected(file) }
-            }
-        }
+        uri?.let(onGalleryUriPicked)
     }
 
     val capturePhotoLauncher = rememberCaptureMediaLauncher(
@@ -211,7 +194,7 @@ private fun ImagePickerSheet(
 private fun GroupChannelEditContent(
     channel: Channel,
     channelName: TextFieldValue,
-    isSaving: Boolean,
+    isBusy: Boolean = false,
     onChannelNameChange: (TextFieldValue) -> Unit = {},
     onNavigationIconClick: () -> Unit = {},
     onSaveActionClick: () -> Unit = {},
@@ -220,7 +203,7 @@ private fun GroupChannelEditContent(
     Scaffold(
         topBar = {
             GroupChannelEditTopBar(
-                isSaving = isSaving,
+                isBusy = isBusy,
                 onNavigationIconClick = onNavigationIconClick,
                 onSaveActionClick = onSaveActionClick,
             )
@@ -245,12 +228,12 @@ private fun GroupChannelEditContent(
                 onClick = onUploadPictureClick,
                 text = stringResource(R.string.stream_ui_channel_info_edit_upload_picture),
                 style = StreamButtonStyleDefaults.primaryGhost,
-                enabled = !isSaving,
+                enabled = !isBusy,
             )
             Spacer(modifier = Modifier.size(StreamTokens.spacing2xl))
             ChannelNameField(
                 value = channelName,
-                enabled = !isSaving,
+                enabled = !isBusy,
                 onValueChange = onChannelNameChange,
             )
         }
@@ -260,7 +243,7 @@ private fun GroupChannelEditContent(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun GroupChannelEditTopBar(
-    isSaving: Boolean,
+    isBusy: Boolean,
     onNavigationIconClick: () -> Unit,
     onSaveActionClick: () -> Unit,
 ) {
@@ -276,7 +259,7 @@ private fun GroupChannelEditTopBar(
         },
         navigationIcon = { ChannelInfoNavigationIcon(onClick = onNavigationIconClick) },
         actions = {
-            if (isSaving) {
+            if (isBusy) {
                 LoadingIndicator(
                     modifier = Modifier
                         .padding(end = StreamTokens.spacingSm)
@@ -426,7 +409,6 @@ internal fun GroupChannelEditPlaceholder() {
     GroupChannelEditContent(
         channel = PreviewChannelData.channelWithImage,
         channelName = TextFieldValue(text = ""),
-        isSaving = false,
     )
 }
 
@@ -443,24 +425,23 @@ internal fun GroupChannelEditFilled() {
     GroupChannelEditContent(
         channel = PreviewChannelData.channelWithImage.copy(name = "Channel Name"),
         channelName = TextFieldValue(text = "Channel Name"),
-        isSaving = false,
     )
 }
 
 @Preview
 @Composable
-private fun GroupChannelEditSavingPreview() {
+private fun GroupChannelEditBusyPreview() {
     ChatTheme {
-        GroupChannelEditSaving()
+        GroupChannelEditBusy()
     }
 }
 
 @Composable
-internal fun GroupChannelEditSaving() {
+internal fun GroupChannelEditBusy() {
     GroupChannelEditContent(
         channel = PreviewChannelData.channelWithImage.copy(name = "Channel Name"),
         channelName = TextFieldValue(text = "Channel Name"),
-        isSaving = true,
+        isBusy = true,
     )
 }
 

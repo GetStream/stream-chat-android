@@ -43,9 +43,9 @@ internal class GroupChannelEditScreenTest : PaparazziComposeTest {
     }
 
     @Test
-    fun saving() {
+    fun busy() {
         snapshotWithDarkMode {
-            GroupChannelEditSaving()
+            GroupChannelEditBusy()
         }
     }
 

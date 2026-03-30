@@ -113,6 +113,7 @@ public fun GroupChannelInfoScreen(
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onNavigationIconClick: () -> Unit = {},
 ) {
+    val context = LocalContext.current
     val headerViewModel = viewModel<ChannelHeaderViewModel>(factory = viewModelFactory)
     val infoViewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
     val headerState by headerViewModel.state.collectAsStateWithLifecycle()
@@ -136,7 +137,10 @@ public fun GroupChannelInfoScreen(
         FullscreenDialog(onDismissRequest = { showEditChannel = false }) {
             ViewModelStore {
                 val editViewModel = viewModel<GroupChannelEditViewModel>(
-                    factory = GroupChannelEditViewModelFactory(cid = channel.cid),
+                    factory = GroupChannelEditViewModelFactory(
+                        context = context,
+                        cid = channel.cid,
+                    ),
                 )
                 GroupChannelEditScreen(
                     viewModel = editViewModel,
