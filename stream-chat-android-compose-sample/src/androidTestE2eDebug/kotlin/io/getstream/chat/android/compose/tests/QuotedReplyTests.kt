@@ -710,7 +710,7 @@ class QuotedReplyTests : StreamTestCase() {
             userRobot.assertMessages(text = sampleText, count = 0)
         }
         step("WHEN user scrolls up to load one more page") {
-            userRobot.scrollMessageListUp(times = 5)
+            userRobot.scrollMessageListUp(times = 8)
         }
         step("THEN parent message is loaded") {
             userRobot.assertMessages(text = sampleText, count = 1)
