@@ -32,8 +32,10 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.PlayerView
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.cdn.internal.StreamMediaDataSource
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentMediaBinding
 import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
@@ -134,8 +136,13 @@ public class AttachmentMediaActivity : AppCompatActivity() {
         binding.root.applyEdgeToEdgePadding(typeMask = WindowInsetsCompat.Type.systemBars())
     }
 
+    @OptIn(UnstableApi::class)
     private fun createPlayer(): Player {
-        val player = ExoPlayer.Builder(this).build()
+        val cdn = ChatClient.instance().cdn
+        val dataSourceFactory = StreamMediaDataSource.factory(this, cdn)
+        val player = ExoPlayer.Builder(this)
+            .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
+            .build()
         player.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 val isBuffering = playbackState == Player.STATE_BUFFERING

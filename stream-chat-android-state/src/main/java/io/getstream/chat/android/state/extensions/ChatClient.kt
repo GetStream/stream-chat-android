@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
 import io.getstream.chat.android.client.utils.message.isEphemeral
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -279,6 +280,12 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
 /**
  * Downloads the selected attachment to the "Download" folder in the public external storage directory.
  *
+ * If a [CDN][io.getstream.chat.android.client.cdn.CDN] is configured on this [ChatClient], the download URL
+ * and headers are transformed via [CDN.imageRequest][io.getstream.chat.android.client.cdn.CDN.imageRequest] (for
+ * images) or [CDN.fileRequest][io.getstream.chat.android.client.cdn.CDN.fileRequest] (for other files) before
+ * the download is enqueued. CDN transformations are applied after [generateDownloadUri] and before
+ * [interceptRequest], so custom interceptors can override CDN headers.
+ *
  * @param context The context used to access the [DownloadManager].
  * @param attachment The attachment to download.
  * @param generateDownloadUri The function that generates the download URI for the attachment.
@@ -302,13 +309,29 @@ public fun ChatClient.downloadAttachment(
             val subPath = attachment.name ?: attachment.title ?: attachment.parseAttachmentNameFromUrl()
                 ?: createAttachmentFallbackName()
 
-            logger.d { "Downloading attachment. Name: $subPath, Uri: $uri" }
+            // Apply CDN transformation if available
+            val cdnRequest = try {
+                val cdn = this@downloadAttachment.cdn
+                val url = uri.toString()
+                if (attachment.isImage()) cdn?.imageRequest(url) else cdn?.fileRequest(url)
+            } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+                logger.e(e) { "CDN request failed for attachment. Falling back to original URL." }
+                null
+            }
+            val finalUri = cdnRequest?.url?.let(Uri::parse) ?: uri
+
+            logger.d { "Downloading attachment. Name: $subPath, Uri: $finalUri" }
 
             downloadManager.enqueue(
-                DownloadManager.Request(uri)
+                DownloadManager.Request(finalUri)
                     .setTitle(subPath)
                     .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, subPath)
                     .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                    .apply {
+                        cdnRequest?.headers?.forEach { (key, value) ->
+                            addRequestHeader(key, value)
+                        }
+                    }
                     .apply(interceptRequest),
             )
             Result.Success(Unit)

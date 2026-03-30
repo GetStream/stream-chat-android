@@ -48,6 +48,9 @@ import io.getstream.chat.android.compose.ui.attachments.preview.handler.Attachme
 import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
+import io.getstream.chat.android.compose.ui.theme.ChatTheme.autoTranslationEnabled
+import io.getstream.chat.android.compose.ui.theme.ChatTheme.isComposerLinkPreviewEnabled
+import io.getstream.chat.android.compose.ui.theme.ChatTheme.showOriginalTranslationEnabled
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
 import io.getstream.chat.android.compose.ui.util.DefaultPollSwitchItemFactory
 import io.getstream.chat.android.compose.ui.util.ImageHeadersInterceptor
@@ -73,6 +76,7 @@ import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.ReactionPushEmojiFactory
 import io.getstream.chat.android.ui.common.helper.TimeProvider
+import io.getstream.chat.android.ui.common.images.internal.CDNImageInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.model.UserPresence
 import io.getstream.chat.android.ui.common.permissions.SystemAttachmentsPickerConfig
@@ -287,6 +291,10 @@ private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
  * @param userPresence The user presence display configuration.
  * @param componentFactory Provide to customize the stateless components that are used throughout the UI
  * @param attachmentFactories Attachment factories that we provide.
+ * @param useDocumentGView Whether to use Google Docs Viewer (gview) for document attachments. When `true` (default),
+ * documents are rendered via the legacy [AttachmentDocumentActivity] which loads them through Google Docs Viewer.
+ * When `false`, text-based files (TXT, HTML) are rendered in-app and other file types are downloaded and opened with an
+ * external application.
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
  * @param quotedAttachmentFactories Quoted attachment factories that we provide.
  * @param reactionIconFactory Used to create an icon [Painter] for the given reaction type.
@@ -355,8 +363,9 @@ public fun ChatTheme(
     componentFactory: ChatComponentFactory = DefaultChatComponentFactory(),
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaults(),
     messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
+    useDocumentGView: Boolean = true,
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
-        AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
+        AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current, useDocumentGView),
     quotedAttachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultQuotedFactories(),
     reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
     reactionPushEmojiFactory: ReactionPushEmojiFactory = ReactionPushEmojiFactory.defaultFactory(),
@@ -449,14 +458,16 @@ public fun ChatTheme(
     }
 
     val context = LocalContext.current
-    val imageLoader = remember(imageLoaderFactory, asyncImageHeadersProvider) {
-        if (asyncImageHeadersProvider == null) {
+    val cdn = remember { ChatClient.instance().cdn }
+    val imageLoader = remember(imageLoaderFactory, asyncImageHeadersProvider, cdn) {
+        val interceptors = buildList {
+            asyncImageHeadersProvider?.let { add(ImageHeadersInterceptor(it)) }
+            cdn?.let { add(CDNImageInterceptor(it)) }
+        }
+        if (interceptors.isEmpty()) {
             imageLoaderFactory.imageLoader(context.applicationContext)
         } else {
-            imageLoaderFactory.imageLoader(
-                context.applicationContext,
-                listOf(ImageHeadersInterceptor(asyncImageHeadersProvider)),
-            )
+            imageLoaderFactory.imageLoader(context.applicationContext, interceptors)
         }
     }
 

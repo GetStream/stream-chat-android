@@ -37,8 +37,18 @@ internal class ImageHeadersInterceptor(private val headersProvider: AsyncImageHe
         val headers = withContext(Dispatchers.IO) {
             headersProvider.getImageRequestHeaders(url)
         }
+        // Merge: existing headers (from CDN interceptor / sync ImageHeadersProvider) as base,
+        // async provider headers override for same keys.
+        val existingHeaders = chain.request.httpHeaders
+        val mergedHeaders = buildMap {
+            existingHeaders.asMap().forEach { (name, values) ->
+                values.lastOrNull()?.let { put(name, it) }
+            }
+            putAll(headers)
+        }.toNetworkHeaders()
+
         val newRequest = chain.request.newBuilder()
-            .httpHeaders(headers.toNetworkHeaders())
+            .httpHeaders(mergedHeaders)
             .build()
         return chain.withRequest(newRequest).proceed()
     }

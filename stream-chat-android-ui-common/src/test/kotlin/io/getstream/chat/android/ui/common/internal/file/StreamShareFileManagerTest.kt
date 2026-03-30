@@ -120,6 +120,7 @@ internal class StreamShareFileManagerTest {
             .thenReturn(Result.Success(cachedFile))
         whenever(cachedFile.exists()).thenReturn(true)
         whenever(cachedFile.length()).thenReturn(1024L)
+        whenever(cachedFile.lastModified()).thenReturn(System.currentTimeMillis())
 
         // when
         val result = shareFileManager.writeAttachmentToShareableFile(context, attachment)
@@ -287,6 +288,7 @@ internal class StreamShareFileManagerTest {
             .thenReturn(Result.Success(cachedFile))
         whenever(cachedFile.exists()).thenReturn(true)
         whenever(cachedFile.length()).thenReturn(1024L)
+        whenever(cachedFile.lastModified()).thenReturn(System.currentTimeMillis())
 
         // when
         val result = shareFileManager.getShareableUriForAttachment(context, attachment)
@@ -356,6 +358,119 @@ internal class StreamShareFileManagerTest {
         Assert.assertTrue((result as Result.Failure).value is Error.GenericError)
     }
 
+    @Test
+    fun `writeAttachmentToShareableFile treats expired cached file as cache miss`() = runTest {
+        // given
+        val attachment = randomAttachment(
+            assetUrl = "https://example.com/file.pdf",
+            fileSize = 1024,
+            name = "document.pdf",
+        )
+        val cachedFile = mock<File>()
+        whenever(fileManager.getFileFromCache(any(), any()))
+            .thenReturn(Result.Success(cachedFile))
+        whenever(cachedFile.exists()).thenReturn(true)
+        whenever(cachedFile.length()).thenReturn(1024L)
+        whenever(cachedFile.lastModified()).thenReturn(System.currentTimeMillis() - 6 * 60 * 1000L)
+
+        val chatClient = mock<ChatClient>()
+        val downloadedFile = File("path/to/downloaded/file.pdf")
+        val responseBody = TestResponseBody("test content")
+        whenever(chatClient.downloadFile(any())) doReturn TestCall(Result.Success(responseBody))
+        whenever(fileManager.writeFileInCache(any(), any(), any()))
+            .thenReturn(Result.Success(downloadedFile))
+
+        // when
+        val result = shareFileManager.writeAttachmentToShareableFile(
+            context = context,
+            attachment = attachment,
+            chatClient = { chatClient },
+        )
+
+        // then
+        Assert.assertTrue(result.isSuccess)
+    }
+
+    @Test
+    fun `getShareableUriForAttachment returns Error when cached file is expired`() = runTest {
+        // given
+        val attachment = randomAttachment(
+            assetUrl = "https://example.com/file.pdf",
+            fileSize = 1024,
+            name = "document.pdf",
+        )
+        val cachedFile = mock<File>()
+        whenever(fileManager.getFileFromCache(any(), any()))
+            .thenReturn(Result.Success(cachedFile))
+        whenever(cachedFile.exists()).thenReturn(true)
+        whenever(cachedFile.length()).thenReturn(1024L)
+        whenever(cachedFile.lastModified()).thenReturn(System.currentTimeMillis() - 6 * 60 * 1000L)
+
+        // when
+        val result = shareFileManager.getShareableUriForAttachment(context, attachment)
+
+        // then
+        Assert.assertTrue(result.isFailure)
+    }
+
+    @Test
+    fun `writeAttachmentToShareableFile calls evictCacheFiles on cache miss`() = runTest {
+        // given
+        val attachment = randomAttachment(
+            assetUrl = "https://example.com/new-file.pdf",
+            fileSize = 512,
+            name = "new.pdf",
+        )
+        whenever(fileManager.getFileFromCache(any(), any()))
+            .thenReturn(Result.Failure(Error.GenericError("Not cached")))
+
+        val chatClient = mock<ChatClient>()
+        val downloadedFile = File("path/to/new.pdf")
+        val responseBody = TestResponseBody("new content")
+        whenever(chatClient.downloadFile(any())) doReturn TestCall(Result.Success(responseBody))
+        whenever(fileManager.writeFileInCache(any(), any(), any()))
+            .thenReturn(Result.Success(downloadedFile))
+
+        // when
+        shareFileManager.writeAttachmentToShareableFile(
+            context = context,
+            attachment = attachment,
+            chatClient = { chatClient },
+        )
+
+        // then
+        val defaults = ShareCacheConfig()
+        org.mockito.kotlin.verify(fileManager).evictCacheFiles(
+            context,
+            defaults.cacheFilePrefix,
+            defaults.cacheTtlMs,
+            defaults.maxCacheSizeBytes,
+        )
+    }
+
+    @Test
+    fun `writeAttachmentToShareableFile does not call evictCacheFiles on cache hit`() = runTest {
+        // given
+        val attachment = randomAttachment(
+            assetUrl = "https://example.com/file.pdf",
+            fileSize = 1024,
+            name = "document.pdf",
+        )
+        val cachedFile = mock<File>()
+        whenever(fileManager.getFileFromCache(any(), any()))
+            .thenReturn(Result.Success(cachedFile))
+        whenever(cachedFile.exists()).thenReturn(true)
+        whenever(cachedFile.length()).thenReturn(1024L)
+        whenever(cachedFile.lastModified()).thenReturn(System.currentTimeMillis())
+
+        // when
+        shareFileManager.writeAttachmentToShareableFile(context, attachment)
+
+        // then
+        org.mockito.kotlin.verify(fileManager, org.mockito.kotlin.never())
+            .evictCacheFiles(any(), any(), any(), any())
+    }
+
     private fun createTestBitmap(width: Int = 100, height: Int = 100): Bitmap {
         // 1. Define the pixel colors. Here, a simple pattern of red and black.
         val pixels = IntArray(width * height)
@@ -371,6 +486,93 @@ internal class StreamShareFileManagerTest {
 
         // 3. Return the created bitmap
         return bitmap
+    }
+
+    @Test
+    fun `writeAttachmentToShareableFile onProgress receives incremental bytes`() = runTest {
+        // given
+        val content = "A".repeat(2048)
+        val attachment = randomAttachment(
+            assetUrl = "https://example.com/file.bin",
+            fileSize = content.length,
+            name = "file.bin",
+        )
+        val chatClient = mock<ChatClient>()
+        val responseBody = TestResponseBody(content)
+        whenever(fileManager.getFileFromCache(any(), any()))
+            .thenReturn(Result.Failure(Error.GenericError("Not cached")))
+        whenever(chatClient.downloadFile(any())) doReturn TestCall(Result.Success(responseBody))
+        whenever(fileManager.writeFileInCache(any(), any(), any()))
+            .thenAnswer { invocation ->
+                // Consume the stream to trigger onProgress callbacks
+                val inputStream = invocation.getArgument<java.io.InputStream>(2)
+                val buf = ByteArray(512)
+                while (inputStream.read(buf) != -1) { /* drain */ }
+                Result.Success(File("path/to/file.bin"))
+            }
+
+        val progressValues = mutableListOf<Pair<Long, Long>>()
+
+        // when
+        shareFileManager.writeAttachmentToShareableFile(
+            context = context,
+            attachment = attachment,
+            onProgress = { bytesRead, totalBytes -> progressValues.add(bytesRead to totalBytes) },
+            chatClient = { chatClient },
+        )
+
+        // then
+        Assert.assertTrue("onProgress should have been called", progressValues.isNotEmpty())
+        // Bytes should be monotonically increasing
+        for (i in 1 until progressValues.size) {
+            Assert.assertTrue(
+                "bytesRead should increase",
+                progressValues[i].first >= progressValues[i - 1].first,
+            )
+        }
+        // Last bytesRead should equal total content length
+        Assert.assertEquals(content.length.toLong(), progressValues.last().first)
+    }
+
+    @Test
+    fun `writeAttachmentToShareableFile onProgress receives correct totalBytes from attachment fileSize`() = runTest {
+        // given
+        val fileSize = 4096
+        val content = "B".repeat(fileSize)
+        val attachment = randomAttachment(
+            assetUrl = "https://example.com/file.bin",
+            fileSize = fileSize,
+            name = "file.bin",
+        )
+        val chatClient = mock<ChatClient>()
+        val responseBody = TestResponseBody(content)
+        whenever(fileManager.getFileFromCache(any(), any()))
+            .thenReturn(Result.Failure(Error.GenericError("Not cached")))
+        whenever(chatClient.downloadFile(any())) doReturn TestCall(Result.Success(responseBody))
+        whenever(fileManager.writeFileInCache(any(), any(), any()))
+            .thenAnswer { invocation ->
+                val inputStream = invocation.getArgument<java.io.InputStream>(2)
+                val buf = ByteArray(1024)
+                while (inputStream.read(buf) != -1) { /* drain */ }
+                Result.Success(File("path/to/file.bin"))
+            }
+
+        val progressValues = mutableListOf<Pair<Long, Long>>()
+
+        // when
+        shareFileManager.writeAttachmentToShareableFile(
+            context = context,
+            attachment = attachment,
+            onProgress = { bytesRead, totalBytes -> progressValues.add(bytesRead to totalBytes) },
+            chatClient = { chatClient },
+        )
+
+        // then
+        Assert.assertTrue("onProgress should have been called", progressValues.isNotEmpty())
+        // All totalBytes values should match the attachment's fileSize
+        progressValues.forEach { (_, totalBytes) ->
+            Assert.assertEquals(fileSize.toLong(), totalBytes)
+        }
     }
 
     private class TestResponseBody(content: String) : ResponseBody() {
