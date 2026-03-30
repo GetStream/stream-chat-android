@@ -167,7 +167,7 @@ private fun Content(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
-                    .background(ChatTheme.colors.backgroundCoreSurface)
+                    .background(ChatTheme.colors.backgroundCoreSurfaceDefault)
                     .padding(16.dp),
                 state = listState,
                 verticalArrangement = Arrangement.spacedBy(16.dp),

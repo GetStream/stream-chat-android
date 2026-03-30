@@ -171,7 +171,7 @@ private object StackedGroupAvatarSpecs {
 
         return Modifier
             .size(avatarSize + borderWidth)
-            .border(BorderStroke(borderWidth, ChatTheme.colors.borderCoreInverse), CircleShape)
+            .border(BorderStroke(borderWidth, ChatTheme.colors.borderCoreOnInverse), CircleShape)
             .padding(borderWidth)
     }
 }
