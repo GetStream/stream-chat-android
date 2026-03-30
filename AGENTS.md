@@ -21,7 +21,7 @@ This project delivers **Stream Chat Android**, a modular SDK spanning low-level 
 - `*-sample/`, `stream-chat-android-ui-uitests/`, `stream-chat-android-test/` – samples, integration, and shared test harnesses
 - `buildSrc/`, `config/`, `scripts/`, `fastlane/`, `metrics/` – build logic, lint configs, automation, release metrics, CI helpers
 
-> Modules are published; avoid leaking internal types across boundaries without coordinating version policy and changelog updates.
+> Modules are published; avoid leaking internal types across boundaries without coordinating version policy.
 
 ## Build, test, and validation
 - Format/licence: `./gradlew spotlessApply` (auto-fix locally; CI runs `spotlessCheck`)
@@ -35,7 +35,7 @@ This project delivers **Stream Chat Android**, a modular SDK spanning low-level 
 Prefer module-scoped tasks while iterating; PRs should pass `spotlessCheck`, `detekt`, `apiCheck`, and relevant unit/UI suites before review.
 
 ## Coding principles
-- **API stability**: Public APIs are validated; favour additive changes and mark deprecations with clear migration paths (`DEPRECATIONS.md`).
+- **API stability**: Public APIs are validated; favour additive changes and mark deprecations with clear migration paths.
 - **Offline-first**: Respect sync contracts in offline/state modules—guard race conditions, idempotency, and background workers.
 - **UI parity**: Keep Compose and XML kits behaviourally aligned; update shared fixtures/tests when touching one side.
 - **Performance**: Maintain lazy flows, paging, and baseline profiles; avoid extra recompositions or heavy main-thread work.
@@ -58,7 +58,7 @@ Prefer module-scoped tasks while iterating; PRs should pass `spotlessCheck`, `de
 
 ## Documentation & comments
 - Update module README, `docs/`, or API docs when altering setup, themes, or sample flows.
-- Log deprecations or behavioural shifts in `CHANGELOG.md` and `DEPRECATIONS.md`.
+- Log deprecations or behavioural shifts in release notes via appropriate PR labels.
 - Keep inline comments focused on intent (why), not mechanics; prefer KDoc for public APIs.
 
 ## Security & configuration
@@ -67,7 +67,7 @@ Prefer module-scoped tasks while iterating; PRs should pass `spotlessCheck`, `de
 - Sanitise logs and analytics payloads; follow `SECURITY.md` for vulnerability handling.
 
 ## PR & release hygiene
-- Target `develop`; main mirrors released artifacts. Sync with release owners before touching versioning, publishing, or changelog scripts.
+- Target `develop`; main mirrors released artifacts. Sync with release owners before touching versioning or publishing scripts.
 - Keep commits imperative (`compose: Prevent duplicate typing indicators`) and scoped.
 - Include test evidence in PR descriptions: Gradle task output, screenshots/screencasts for UI changes.
 - Run `assemble`, relevant tests, and lint tasks locally before pushing. Update documentation alongside feature toggles.
@@ -79,5 +79,5 @@ Prefer module-scoped tasks while iterating; PRs should pass `spotlessCheck`, `de
 - [ ] Keep Compose/XML parity when modifying shared UI behaviour.
 - [ ] Run Spotless, Detekt, and `apiDump` before finishing.
 - [ ] Add/refresh unit, UI, or snapshot tests for new behaviour.
-- [ ] Update changelog/deprecation docs for user-visible changes.
+- [ ] Label PRs with appropriate release categories (e.g. `pr:breaking-change`) for user-visible changes.
 - [ ] Scrub logs/configs for secrets before committing.
