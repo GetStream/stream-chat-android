@@ -57,7 +57,7 @@ public sealed interface ChannelInfoViewState {
             public data object AddMember : Option
 
             /**
-             * Indicates an option to rename the channel.
+             * Indicates an option to edit the channel (name, image, etc.).
              *
              * @param name The current name of the channel.
              */
