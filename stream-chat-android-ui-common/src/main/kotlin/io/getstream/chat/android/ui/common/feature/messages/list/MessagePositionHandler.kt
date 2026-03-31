@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.list
 
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
+import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.utils.message.isError
 import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -65,8 +67,12 @@ public fun interface MessagePositionHandler {
                     isBeforeDateSeparator: Boolean,
                     _: Boolean,
                 ->
-                val isGroupedWithPrevious = !isAfterDateSeparator && previous.isValidMessageFromUser(message.user)
-                val isGroupedWithNext = !isBeforeDateSeparator && next.isValidMessageFromUser(message.user)
+                val isGroupedWithPrevious = !isAfterDateSeparator &&
+                    previous.isValidMessageFromUser(message.user) &&
+                    !message.exceedsMaxTimeDifference(previous)
+                val isGroupedWithNext = !isBeforeDateSeparator &&
+                    next.isValidMessageFromUser(message.user) &&
+                    !next.exceedsMaxTimeDifference(message)
 
                 when {
                     isGroupedWithNext && !isGroupedWithPrevious -> MessagePosition.TOP
@@ -80,5 +86,14 @@ public fun interface MessagePositionHandler {
         private fun Message?.isValidMessageFromUser(user: User): Boolean {
             return this != null && !this.isSystem() && !this.isError() && this.user.id == user.id
         }
+
+        private fun Message?.exceedsMaxTimeDifference(other: Message?): Boolean {
+            if (this == null || other == null) return false
+            val thisTime = this.getCreatedAtOrDefault(NEVER).time
+            val otherTime = other.getCreatedAtOrDefault(NEVER).time
+            return kotlin.math.abs(thisTime - otherTime) > MAX_TIME_BETWEEN_GROUPED_MESSAGES_MILLIS
+        }
+
+        private const val MAX_TIME_BETWEEN_GROUPED_MESSAGES_MILLIS: Long = 60 * 1000L
     }
 }
