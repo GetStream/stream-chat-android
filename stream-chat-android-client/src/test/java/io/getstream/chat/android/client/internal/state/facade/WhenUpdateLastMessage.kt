@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.internal.state.facade
 
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMessage
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -29,7 +28,6 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
 
-@ExperimentalCoroutinesApi
 internal class WhenUpdateLastMessage : BaseRepositoryFacadeTest() {
 
     @Test

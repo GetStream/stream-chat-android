@@ -79,7 +79,7 @@ internal abstract class PaparazziViewTest : MockedChatClientTest {
     }
 
     private fun snapshotLightAndDark(
-        @LinearLayout.OrientationMode orientation: Int,
+        orientation: Int,
         viewFactory: (Context) -> View,
     ) {
         val lightView = viewFactory(lightContext)

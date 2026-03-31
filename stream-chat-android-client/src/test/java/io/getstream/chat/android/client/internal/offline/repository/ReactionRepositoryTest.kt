@@ -26,7 +26,6 @@ import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineRule
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.coInvoking
 import org.amshove.kluent.`should be equal to`
@@ -40,7 +39,6 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
 
-@ExperimentalCoroutinesApi
 internal class ReactionRepositoryTest {
     @get:Rule
     val testCoroutines: TestCoroutineRule = TestCoroutineRule()

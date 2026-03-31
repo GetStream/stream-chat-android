@@ -49,7 +49,6 @@ import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.result.Result
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -68,7 +67,6 @@ import java.util.concurrent.Executors
 /**
  * Sets up a ChatDomain object with a mocked ChatClient.
  */
-@ExperimentalCoroutinesApi
 internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
     private val streamDateFormatter = StreamDateFormatter()
 

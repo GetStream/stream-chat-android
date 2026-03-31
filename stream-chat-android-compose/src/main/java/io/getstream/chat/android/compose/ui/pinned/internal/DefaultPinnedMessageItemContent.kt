@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.pinned.internal
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -57,7 +56,6 @@ import io.getstream.chat.android.models.User
  * @param trailingContent Customizable composable function that represents the trailing content of a pinned message
  * item, usually information about the date where the message was sent.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun PinnedMessageItemContent(
     message: Message,

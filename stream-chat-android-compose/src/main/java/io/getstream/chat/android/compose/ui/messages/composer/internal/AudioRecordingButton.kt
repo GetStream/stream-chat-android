@@ -71,7 +71,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
@@ -285,7 +284,6 @@ private fun MicButton(
 }
 
 /** Gesture target for the mic button: handles touch, permission gating, and recording hints. */
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun MicButtonGestureArea(
     isVisible: Boolean,

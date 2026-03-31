@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomUser
 import io.getstream.result.Result
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should be equal to`
@@ -37,7 +36,6 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class WhenFetchCurrentUser : BaseChatClientTest() {
 
     @Test
