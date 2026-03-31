@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="20"
+    android:viewportHeight="20">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M12.38 9.38C12.38 8.06 11.31 7 10 7 8.69 7 7.63 8.06 7.63 9.38 7.63 10.67 8.67 11.72 9.96 11.75H10.04C11.33 11.73 12.38 10.67 12.38 9.38ZM10 13.25C9.98 13.25 9.97 13.25 9.95 13.25 9.07 13.26 8.2 13.51 7.45 13.97 6.85 14.33 6.34 14.83 5.96 15.4 7.08 16.25 8.48 16.75 10 16.75 11.52 16.75 12.92 16.25 14.04 15.4 13.66 14.83 13.15 14.33 12.55 13.97 11.8 13.51 10.93 13.26 10.05 13.25 10.03 13.25 10.02 13.25 10 13.25ZM18.25 10C18.25 12.45 17.18 14.65 15.49 16.16 15.48 16.16 15.48 16.16 15.48 16.16 14.02 17.46 12.1 18.25 10 18.25 7.9 18.25 5.98 17.46 4.52 16.16 4.52 16.16 4.51 16.16 4.51 16.16 2.82 14.65 1.75 12.45 1.75 10 1.75 5.44 5.44 1.75 10 1.75 14.56 1.75 18.25 5.44 18.25 10ZM13.88 9.38C13.88 10.53 13.37 11.57 12.56 12.28 12.83 12.4 13.08 12.54 13.34 12.69 14.05 13.13 14.66 13.7 15.15 14.36 16.15 13.19 16.75 11.66 16.75 10 16.75 6.27 13.73 3.25 10 3.25 6.27 3.25 3.25 6.27 3.25 10 3.25 11.66 3.85 13.19 4.85 14.36 5.34 13.7 5.95 13.13 6.67 12.69 6.91 12.54 7.17 12.4 7.44 12.28 6.63 11.57 6.13 10.53 6.13 9.38 6.13 7.23 7.86 5.5 10 5.5 12.14 5.5 13.88 7.23 13.88 9.38Z"/>
+</vector>
