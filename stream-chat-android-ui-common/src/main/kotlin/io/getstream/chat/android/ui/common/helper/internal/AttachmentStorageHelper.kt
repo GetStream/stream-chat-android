@@ -21,6 +21,7 @@ import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import androidx.annotation.WorkerThread
+import io.getstream.chat.android.client.extensions.EXTRA_DURATION
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -76,8 +77,11 @@ public class AttachmentStorageHelper(
      * @return List of lightweight [Attachment]s.
      */
     public fun toAttachments(metaData: List<AttachmentMetaData>): List<Attachment> = metaData.map { meta ->
-        val extra = meta.uri?.let { uri -> meta.extraData + (EXTRA_SOURCE_URI to uri.toString()) }
-            ?: meta.extraData
+        val extra = buildMap {
+            putAll(meta.extraData)
+            meta.uri?.let { uri -> put(EXTRA_SOURCE_URI, uri.toString()) }
+            if (meta.videoLength > 0) put(EXTRA_DURATION, meta.videoLength.toFloat())
+        }
         Attachment(
             type = meta.type,
             name = meta.title ?: "",
