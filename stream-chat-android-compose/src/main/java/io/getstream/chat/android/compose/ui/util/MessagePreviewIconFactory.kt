@@ -63,6 +63,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
         internal const val LOCATION = "location"
         internal const val POLL = "poll"
         internal const val DELETED = "deleted"
+        internal const val GIPHY = "giphy"
     }
 
     @Suppress("LongMethod")
@@ -102,6 +103,14 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
                 Icon(
                     modifier = iconModifier,
                     painter = painterResource(id = R.drawable.stream_compose_ic_file),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textSecondary,
+                )
+            },
+            GIPHY to InlineTextContent(placeholder) {
+                Icon(
+                    modifier = iconModifier,
+                    painter = painterResource(id = R.drawable.stream_compose_ic_giphy),
                     contentDescription = null,
                     tint = ChatTheme.colors.textSecondary,
                 )
