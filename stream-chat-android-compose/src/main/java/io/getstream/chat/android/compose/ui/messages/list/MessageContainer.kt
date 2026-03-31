@@ -32,8 +32,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -59,6 +59,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -66,6 +67,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.view.HapticFeedbackConstantsCompat
@@ -718,8 +720,9 @@ public fun EmojiMessageContent(
             ChatTheme.componentFactory.MessageFailedIcon(
                 params = MessageFailedIconParams(
                     modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.BottomEnd),
+                        .padding(vertical = StreamTokens.spacingXs)
+                        .size(20.dp)
+                        .align(Alignment.TopEnd),
                     message = message,
                 ),
             )
@@ -782,7 +785,7 @@ public fun RegularMessageContent(
         Box(modifier = modifier) {
             ChatTheme.componentFactory.MessageBubble(
                 params = MessageBubbleParams(
-                    modifier = Modifier.padding(end = 12.dp),
+                    modifier = Modifier.padding(end = StreamTokens.spacingXs),
                     message = message,
                     shape = messageBubbleShape,
                     color = messageBubbleColor,
@@ -793,8 +796,9 @@ public fun RegularMessageContent(
             ChatTheme.componentFactory.MessageFailedIcon(
                 params = MessageFailedIconParams(
                     modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.BottomEnd)
+                        .padding(vertical = StreamTokens.spacingXs)
+                        .size(20.dp)
+                        .align(Alignment.TopEnd)
                         .testTag("Stream_MessageFailedIcon"),
                     message = message,
                 ),
@@ -826,6 +830,7 @@ private fun SwipeToReply(
     val offset = remember { Animatable(initialValue = 0f) }
     val scope = rememberCoroutineScope()
     val view = LocalView.current
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
 
     Box(
         modifier = modifier
@@ -836,11 +841,14 @@ private fun SwipeToReply(
             modifier = Modifier
                 .align(Alignment.CenterStart)
                 .onSizeChanged { swipeToReplyWidth = it.width.toFloat() }
-                .offset {
+                .absoluteOffset {
                     val roundToInt = swipeToReplyWidth.roundToInt()
                     IntOffset(
-                        x = (offset.value.roundToInt() - roundToInt)
-                            .coerceIn(-roundToInt, roundToInt),
+                        x = if (isRtl) {
+                            (roundToInt + offset.value.roundToInt()).coerceIn(-roundToInt, roundToInt)
+                        } else {
+                            (offset.value.roundToInt() - roundToInt).coerceIn(-roundToInt, roundToInt)
+                        },
                         y = 0,
                     )
                 },
@@ -855,16 +863,19 @@ private fun SwipeToReply(
             modifier = Modifier
                 .fillMaxWidth()
                 .onSizeChanged { rowWidth = it.width.toFloat() }
-                .offset { IntOffset(x = offset.value.roundToInt(), y = 0) }
-                .pointerInput(swipeToReplyWidth, isSwipeable) {
+                .absoluteOffset { IntOffset(x = offset.value.roundToInt(), y = 0) }
+                .pointerInput(swipeToReplyWidth, isSwipeable, isRtl) {
                     if (isSwipeable) {
                         detectHorizontalDragGestures(
                             onHorizontalDrag = { change, dragAmount ->
                                 // Only consume if horizontal drag dominates vertical
                                 if (change.positionChange().x.absoluteValue > change.positionChange().y.absoluteValue) {
                                     scope.launch {
-                                        val newOffset = (offset.value + dragAmount)
-                                            .coerceIn(0f, maxOf((rowWidth / 2), swipeToReplyWidth))
+                                        val maxSwipe = maxOf((rowWidth / 2), swipeToReplyWidth)
+                                        val newOffset = (offset.value + dragAmount).coerceIn(
+                                            minimumValue = if (isRtl) -maxSwipe else 0f,
+                                            maximumValue = if (isRtl) 0f else maxSwipe,
+                                        )
                                         offset.snapTo(newOffset)
                                     }
                                 } else {
@@ -873,7 +884,7 @@ private fun SwipeToReply(
                             },
                             onDragEnd = {
                                 scope.launch {
-                                    if (offset.value >= swipeToReplyWidth) {
+                                    if (offset.value.absoluteValue >= swipeToReplyWidth) {
                                         view.performHapticFeedback(HapticFeedbackConstantsCompat.CONFIRM)
                                         onReply()
                                     }

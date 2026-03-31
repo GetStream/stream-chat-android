@@ -70,7 +70,7 @@ internal fun ThreadListBanner(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.backgroundCoreSurface)
+            .background(ChatTheme.colors.backgroundCoreSurfaceDefault)
             .then(clickableModifier)
             .padding(StreamTokens.spacingSm),
         horizontalArrangement = Arrangement.spacedBy(

@@ -1825,15 +1825,15 @@ public data class GroupChannelInfoMemberSectionParams(
  * @param headerState The state of the channel header.
  * @param infoState The state of the channel info.
  * @param listState The state of the lazy list.
- * @param onNavigationIconClick Action invoked when the navigation icon is clicked.
- * @param onAddMembersClick Action invoked when the "Add members" button is clicked.
+ * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
+ * @param onActionClick Callback invoked when the action button is clicked.
  */
 public data class GroupChannelInfoTopBarParams(
     val headerState: ChannelHeaderViewState,
     val infoState: ChannelInfoViewState,
     val listState: LazyListState,
     val onNavigationIconClick: () -> Unit,
-    val onAddMembersClick: () -> Unit,
+    val onActionClick: () -> Unit = {},
 )
 
 /**

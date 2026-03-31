@@ -29,6 +29,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -75,7 +76,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.CompoundComponentFactory
 import io.getstream.chat.android.compose.ui.theme.DirectChannelInfoTopBarParams
-import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoAddMembersButtonParams
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoTopBarParams
 import io.getstream.chat.android.compose.ui.theme.TranslationConfig
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.AdaptiveLayoutInfo
@@ -107,6 +107,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
+import io.getstream.chat.android.compose.R as ComposeR
 
 class ChatsActivity : ComponentActivity() {
 
@@ -330,7 +331,7 @@ class ChatsActivity : ComponentActivity() {
         onNavigateToFilesAttachments: () -> Unit,
     ) {
         val viewModelFactory = remember(channelId) {
-            ChannelInfoViewModelFactory(context = applicationContext, cid = channelId)
+            ChannelInfoViewModelFactory(cid = channelId)
         }
         val viewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
 
@@ -384,7 +385,7 @@ class ChatsActivity : ComponentActivity() {
         onNavigateToChannel: (cid: String) -> Unit,
     ) {
         val viewModelFactory = remember(channelId) {
-            ChannelInfoViewModelFactory(context = applicationContext, cid = channelId)
+            ChannelInfoViewModelFactory(cid = channelId)
         }
         val viewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
 
@@ -412,7 +413,7 @@ class ChatsActivity : ComponentActivity() {
                                 infoState = params.infoState,
                                 listState = params.listState,
                                 navigationIcon = { CloseButton(onClick = params.onNavigationIconClick) },
-                                onAddMembersClick = params.onAddMembersClick,
+                                onActionClick = params.onActionClick,
                             )
                         }
                     }
@@ -466,7 +467,7 @@ class ChatsActivity : ComponentActivity() {
         infoState: ChannelInfoViewState,
         listState: LazyListState,
         navigationIcon: @Composable () -> Unit,
-        onAddMembersClick: () -> Unit,
+        onActionClick: () -> Unit,
     ) {
         val elevation by animateDpAsState(
             targetValue = if (listState.canScrollBackward) {
@@ -503,11 +504,13 @@ class ChatsActivity : ComponentActivity() {
                 ),
                 actions = {
                     if (infoState is ChannelInfoViewState.Content &&
-                        infoState.options.contains(ChannelInfoViewState.Content.Option.AddMember)
+                        infoState.options.any { option -> option is ChannelInfoViewState.Content.Option.EditChannel }
                     ) {
-                        ChatTheme.componentFactory.GroupChannelInfoAddMembersButton(
-                            params = GroupChannelInfoAddMembersButtonParams(onClick = onAddMembersClick),
-                        )
+                        OutlinedButton(
+                            onClick = onActionClick,
+                        ) {
+                            Text(text = stringResource(id = ComposeR.string.stream_ui_channel_info_edit_action))
+                        }
                     }
                 },
             )

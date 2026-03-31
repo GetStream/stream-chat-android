@@ -31,9 +31,7 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
-import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent.Navigation
-import io.getstream.chat.android.ui.common.helper.CopyToClipboardHandler
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.log.taggedLogger
@@ -64,7 +62,6 @@ import kotlinx.coroutines.launch
  *
  * @param cid The unique identifier of the channel.
  * @param scope The [CoroutineScope] used for launching coroutines.
- * @param copyToClipboardHandler The [CopyToClipboardHandler] used for copying text to the clipboard.
  * @param optionFilter A filter function for channel options, allowing customization of which options are displayed.
  *                      Defaults to a function that returns true for all options.
  * @param chatClient The [ChatClient] instance used for interacting with the chat API.
@@ -76,7 +73,6 @@ import kotlinx.coroutines.launch
 public class ChannelInfoViewController(
     private val cid: String,
     private val scope: CoroutineScope,
-    private val copyToClipboardHandler: CopyToClipboardHandler,
     private val optionFilter: (option: ChannelInfoViewState.Content.Option) -> Boolean = { true },
     private val chatClient: ChatClient = ChatClient.instance(),
     channelState: Flow<ChannelState> = chatClient
@@ -191,7 +187,6 @@ public class ChannelInfoViewController(
             is ChannelInfoViewAction.ExpandMembersClick -> expandMembers()
             is ChannelInfoViewAction.CollapseMembersClick -> collapseMembers()
             is ChannelInfoViewAction.MemberClick -> memberClick(action)
-            is ChannelInfoViewAction.UserInfoClick -> userInfoClick(action.user)
             is ChannelInfoViewAction.RenameChannelClick -> renameChannel(action.name)
             is ChannelInfoViewAction.PinnedMessagesClick ->
                 _events.tryEmit(ChannelInfoViewEvent.NavigateToPinnedMessages)
@@ -303,12 +298,6 @@ public class ChannelInfoViewController(
                 member = action.member,
             ),
         )
-    }
-
-    private fun userInfoClick(user: User) {
-        logger.d { "[userInfoClick] user: $user" }
-
-        copyToClipboardHandler.copy(text = "@${user.name}")
     }
 
     private fun renameChannel(name: String) {
@@ -572,18 +561,7 @@ private fun buildChannelOptionList(
     ) {
         add(ChannelInfoViewState.Content.Option.AddMember)
     }
-    if (singleMember != null) {
-        add(ChannelInfoViewState.Content.Option.UserInfo(user = singleMember.user))
-    } else {
-        add(
-            ChannelInfoViewState.Content.Option.RenameChannel(
-                name = channelData.name,
-                isReadOnly = !channelData.ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL),
-            ),
-        )
-    }
     if (isDmChannel) {
-        // DM channel: user-level mute instead of channel mute, no hide
         add(ChannelInfoViewState.Content.Option.PinnedMessages)
         add(ChannelInfoViewState.Content.Option.MediaAttachments)
         add(ChannelInfoViewState.Content.Option.FilesAttachments)
@@ -595,7 +573,9 @@ private fun buildChannelOptionList(
             add(ChannelInfoViewState.Content.Option.DeleteChannel)
         }
     } else {
-        // Group channel: channel-level mute, leave
+        if (channelData.ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL)) {
+            add(ChannelInfoViewState.Content.Option.EditChannel(name = channelData.name))
+        }
         if (channelData.ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL)) {
             add(ChannelInfoViewState.Content.Option.MuteChannel(isMuted))
         }
