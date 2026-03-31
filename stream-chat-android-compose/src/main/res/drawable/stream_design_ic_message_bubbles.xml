@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="20"
+    android:viewportHeight="20">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M3.7 3.01C4.93 2.1 6.44 1.66 7.97 1.77 9.49 1.88 10.92 2.54 12.01 3.62 12.57 4.18 13.01 4.84 13.33 5.56 14.23 5.67 15.1 5.98 15.87 6.46 16.78 7.03 17.53 7.81 18.06 8.75 18.58 9.68 18.87 10.74 18.88 11.81 18.89 12.78 18.67 13.73 18.26 14.6L18.82 16.49C18.89 16.72 18.89 16.98 18.83 17.22 18.77 17.46 18.65 17.67 18.47 17.85 18.3 18.02 18.08 18.15 17.84 18.21 17.6 18.27 17.35 18.26 17.11 18.19L15.23 17.64C14.49 17.99 13.7 18.19 12.89 18.24 11.97 18.3 11.05 18.15 10.19 17.82 9.33 17.48 8.56 16.97 7.92 16.31 7.39 15.77 6.97 15.13 6.67 14.45 6.01 14.36 5.37 14.17 4.77 13.89L2.89 14.44C2.65 14.51 2.4 14.52 2.16 14.46 1.92 14.39 1.7 14.27 1.53 14.1 1.35 13.92 1.23 13.7 1.17 13.46 1.11 13.22 1.11 12.97 1.18 12.74L1.74 10.85C1.13 9.57 0.97 8.12 1.28 6.73 1.61 5.24 2.47 3.92 3.7 3.01ZM13.8 7.18C13.82 7.34 13.84 7.5 13.86 7.66 13.97 9.18 13.53 10.7 12.62 11.93 11.71 13.15 10.38 14.01 8.89 14.35 8.71 14.39 8.53 14.42 8.36 14.44 8.54 14.74 8.75 15.01 9 15.27 9.49 15.77 10.08 16.16 10.73 16.42 11.39 16.67 12.09 16.78 12.79 16.74 13.5 16.7 14.18 16.51 14.8 16.17L14.94 16.12C15.08 16.08 15.23 16.07 15.37 16.12L17.31 16.69 16.74 14.74C16.69 14.55 16.71 14.35 16.8 14.18 17.19 13.45 17.39 12.64 17.38 11.82 17.37 11 17.15 10.2 16.75 9.48 16.35 8.77 15.77 8.17 15.08 7.73 14.68 7.49 14.25 7.3 13.8 7.18ZM7.86 3.26C6.69 3.18 5.53 3.51 4.59 4.21 3.65 4.91 3 5.92 2.74 7.06 2.49 8.2 2.65 9.4 3.2 10.43 3.29 10.6 3.31 10.8 3.26 10.99L2.68 12.94 4.63 12.37C4.82 12.31 5.02 12.33 5.2 12.42 5.83 12.76 6.52 12.95 7.22 12.99 7.23 12.99 7.25 12.99 7.26 13 7.69 13.02 8.13 12.98 8.56 12.88 9.71 12.63 10.72 11.97 11.41 11.03 12.11 10.09 12.45 8.94 12.36 7.77 12.27 6.6 11.77 5.51 10.95 4.68 10.12 3.85 9.02 3.35 7.86 3.26Z"/>
+</vector>
