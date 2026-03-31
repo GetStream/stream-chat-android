@@ -761,6 +761,7 @@ public fun RegularMessageContent(
         MessageContent(
             message = message,
             currentUser = messageItem.currentUser,
+            messageAlignment = messageAlignment,
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
