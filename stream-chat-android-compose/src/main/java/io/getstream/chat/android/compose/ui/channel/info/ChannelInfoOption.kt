@@ -184,7 +184,7 @@ private fun ChannelInfoOptionButtonPreview() {
 private fun ChannelInfoOptionNavigationButtonPreview() {
     ChatTheme {
         ChannelInfoOptionNavigationButton(
-            icon = R.drawable.stream_compose_ic_files,
+            icon = R.drawable.stream_design_ic_folder,
             text = "Files",
             onClick = {},
         )

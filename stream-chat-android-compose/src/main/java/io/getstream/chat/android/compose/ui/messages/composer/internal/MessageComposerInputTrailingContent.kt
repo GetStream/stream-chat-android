@@ -130,7 +130,7 @@ internal fun MessageComposerSendButton(
         onClick = onClick,
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_send),
+            painter = painterResource(id = R.drawable.stream_design_ic_send),
             contentDescription = stringResource(id = R.string.stream_compose_message_composer_send_button),
         )
     }
@@ -156,7 +156,7 @@ internal fun MessageComposerSaveButton(
         onClick = onClick,
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
+            painter = painterResource(id = R.drawable.stream_design_ic_checkmark),
             contentDescription = stringResource(id = R.string.stream_compose_message_composer_save_button),
         )
     }

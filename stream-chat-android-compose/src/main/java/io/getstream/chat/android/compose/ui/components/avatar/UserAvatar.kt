@@ -139,7 +139,7 @@ internal fun UserAvatarIconPlaceholder(
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            painter = painterResource(R.drawable.stream_compose_ic_user),
+            painter = painterResource(R.drawable.stream_design_ic_user),
             contentDescription = null,
             tint = foreground,
             modifier = Modifier

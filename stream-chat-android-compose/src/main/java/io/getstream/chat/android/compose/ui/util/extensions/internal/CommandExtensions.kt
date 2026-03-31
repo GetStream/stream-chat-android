@@ -21,17 +21,18 @@ import androidx.annotation.StringRes
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.CommandDefaults
 import io.getstream.chat.android.ui.common.R
+import io.getstream.chat.android.compose.R as ComposeR
 
 internal val Command.isPolychromaticIcon: Boolean get() = name == CommandDefaults.GIPHY
 
 internal val Command.iconRes: Int
     @DrawableRes get() = when (name) {
-        CommandDefaults.MUTE -> R.drawable.stream_design_ic_command_mute
-        CommandDefaults.UNMUTE -> R.drawable.stream_design_ic_command_unmute
-        CommandDefaults.BAN -> R.drawable.stream_design_ic_command_ban
-        CommandDefaults.UNBAN -> R.drawable.stream_design_ic_command_unban
+        CommandDefaults.MUTE -> R.drawable.stream_design_ic_mute
+        CommandDefaults.UNMUTE -> ComposeR.drawable.stream_design_ic_audio
+        CommandDefaults.BAN -> ComposeR.drawable.stream_design_ic_user_remove
+        CommandDefaults.UNBAN -> ComposeR.drawable.stream_design_ic_user_add
         // fallback to the 'giphy' for backwards compatibility
-        else -> R.drawable.stream_design_ic_giphy
+        else -> ComposeR.drawable.stream_design_ic_giphy
     }
 
 internal val Command.placeholderRes: Int

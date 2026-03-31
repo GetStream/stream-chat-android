@@ -156,7 +156,7 @@ private fun Content(
                         style = StreamButtonStyleDefaults.primarySolid,
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.stream_compose_ic_edit),
+                            painter = painterResource(id = R.drawable.stream_design_ic_edit),
                             contentDescription = stringResource(id = R.string.stream_compose_add_answer),
                             modifier = Modifier.size(20.dp),
                         )

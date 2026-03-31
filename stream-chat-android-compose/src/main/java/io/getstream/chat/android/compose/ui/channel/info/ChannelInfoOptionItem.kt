@@ -123,7 +123,7 @@ internal fun ChannelInfoOptionContent(
 
         is ChannelInfoViewState.Content.Option.HideChannel -> {
             ChannelInfoOptionSwitch(
-                icon = R.drawable.stream_design_ic_eye_off,
+                icon = R.drawable.stream_compose_ic_hide,
                 text = if (isGroupChannel) {
                     stringResource(R.string.stream_ui_channel_info_option_hide_group)
                 } else {
@@ -150,7 +150,7 @@ internal fun ChannelInfoOptionContent(
 
         is ChannelInfoViewState.Content.Option.MediaAttachments -> {
             ChannelInfoOptionNavigationButton(
-                icon = R.drawable.stream_compose_ic_media,
+                icon = R.drawable.stream_design_ic_image,
                 text = stringResource(R.string.stream_ui_channel_info_option_media_attachments),
                 onClick = { onViewAction(ChannelInfoViewAction.MediaAttachmentsClick) },
             )
@@ -158,7 +158,7 @@ internal fun ChannelInfoOptionContent(
 
         is ChannelInfoViewState.Content.Option.FilesAttachments -> {
             ChannelInfoOptionNavigationButton(
-                icon = R.drawable.stream_compose_ic_files,
+                icon = R.drawable.stream_design_ic_folder,
                 text = stringResource(R.string.stream_ui_channel_info_option_files_attachments),
                 onClick = { onViewAction(ChannelInfoViewAction.FilesAttachmentsClick) },
             )

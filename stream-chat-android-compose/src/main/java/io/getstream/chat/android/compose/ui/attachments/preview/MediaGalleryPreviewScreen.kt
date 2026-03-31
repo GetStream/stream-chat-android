@@ -731,7 +731,7 @@ internal fun MediaGalleryPreviewCloseIcon(
         size = StreamButtonSize.Medium,
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+            painter = painterResource(id = R.drawable.stream_design_ic_arrow_left),
             contentDescription = stringResource(id = R.string.stream_ui_back_button),
         )
     }
@@ -821,7 +821,7 @@ internal fun MediaGalleryPreviewOptionsIcon(
         size = StreamButtonSize.Medium,
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_menu_vertical),
+            painter = painterResource(id = R.drawable.stream_design_ic_more),
             contentDescription = stringResource(R.string.stream_compose_image_options),
         )
     }
@@ -858,9 +858,9 @@ internal fun MediaGalleryPreviewShareIcon(
         size = StreamButtonSize.Medium,
     ) {
         val painter = if (isSharingInProgress) {
-            R.drawable.stream_compose_ic_clear
+            R.drawable.stream_design_ic_x_circle
         } else {
-            R.drawable.stream_compose_ic_share
+            R.drawable.stream_design_ic_share
         }
         val description = if (isSharingInProgress) {
             R.string.stream_compose_image_preview_cancel_sharing
@@ -944,7 +944,7 @@ internal fun MediaGalleryPreviewPhotosIcon(
         size = StreamButtonSize.Medium,
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_gallery),
+            painter = painterResource(id = R.drawable.stream_design_ic_gallery),
             contentDescription = stringResource(id = R.string.stream_compose_image_preview_photos),
         )
     }

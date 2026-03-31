@@ -427,7 +427,7 @@ internal fun DefaultChannelListEmptyContent(
         verticalArrangement = Arrangement.Center,
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_bubbles),
+            painter = painterResource(id = R.drawable.stream_design_ic_message_bubbles),
             contentDescription = null,
             tint = ChatTheme.colors.textTertiary,
             modifier = Modifier.size(StreamTokens.spacing2xl),

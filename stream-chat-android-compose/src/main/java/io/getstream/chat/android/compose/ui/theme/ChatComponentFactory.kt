@@ -940,7 +940,7 @@ public interface ChatComponentFactory {
     public fun MessageFailedIcon(params: MessageFailedIconParams) {
         Icon(
             modifier = params.modifier,
-            painter = painterResource(id = R.drawable.stream_compose_ic_error),
+            painter = painterResource(id = R.drawable.stream_design_ic_exclamation_circle_fill),
             contentDescription = null,
             tint = ChatTheme.colors.accentError,
         )
@@ -2233,7 +2233,7 @@ public interface ChatComponentFactory {
     public fun BoxScope.MentionListEmptyContent(params: MentionListEmptyContentParams) {
         EmptyContent(
             text = stringResource(UiCommonR.string.stream_ui_mention_list_empty),
-            painter = painterResource(UiCommonR.drawable.stream_compose_ic_mentions),
+            painter = painterResource(R.drawable.stream_design_ic_mention),
             modifier = params.modifier,
         )
     }
@@ -2659,7 +2659,7 @@ public interface ChatComponentFactory {
             modifier = params.modifier,
             title = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_empty_title),
             text = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_empty_text),
-            painter = painterResource(R.drawable.stream_compose_ic_files),
+            painter = painterResource(R.drawable.stream_design_ic_folder),
         )
     }
 
@@ -2781,7 +2781,7 @@ public interface ChatComponentFactory {
             modifier = params.modifier,
             title = stringResource(UiCommonR.string.stream_ui_channel_attachments_media_empty_title),
             text = stringResource(UiCommonR.string.stream_ui_channel_attachments_media_empty_text),
-            painter = painterResource(R.drawable.stream_compose_ic_media),
+            painter = painterResource(R.drawable.stream_design_ic_image),
         )
     }
 
@@ -2885,7 +2885,7 @@ public interface ChatComponentFactory {
                     size = StreamButtonSize.Medium,
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+                        painter = painterResource(id = R.drawable.stream_design_ic_arrow_left),
                         contentDescription = stringResource(id = R.string.stream_compose_cancel),
                     )
                 }

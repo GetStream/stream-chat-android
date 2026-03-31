@@ -93,7 +93,7 @@ internal fun MessageComposerLeadingContent(
             ) {
                 Icon(
                     modifier = Modifier.graphicsLayer { rotationZ = iconRotation },
-                    painter = painterResource(id = R.drawable.stream_compose_ic_add),
+                    painter = painterResource(id = R.drawable.stream_design_ic_plus),
                     contentDescription = stringResource(id = R.string.stream_compose_attachments),
                 )
             }

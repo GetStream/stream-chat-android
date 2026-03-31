@@ -175,7 +175,7 @@ private fun AddMembersHeader(
         ) {
             Icon(
                 modifier = Modifier.size(20.dp),
-                painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+                painter = painterResource(id = R.drawable.stream_design_ic_arrow_left),
                 contentDescription = stringResource(id = R.string.stream_ui_back_button),
             )
         }
@@ -193,8 +193,7 @@ private fun AddMembersHeader(
             enabled = hasSelection,
         ) {
             Icon(
-                modifier = Modifier.size(20.dp),
-                painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
+                painter = painterResource(id = R.drawable.stream_design_ic_checkmark),
                 contentDescription = stringResource(id = R.string.stream_compose_add_members_title),
             )
         }
@@ -311,7 +310,7 @@ private fun AddMembersEmptyState() {
     ) {
         Icon(
             modifier = Modifier.size(48.dp),
-            painter = painterResource(id = R.drawable.stream_compose_ic_search),
+            painter = painterResource(id = R.drawable.stream_design_ic_search),
             tint = ChatTheme.colors.textTertiary,
             contentDescription = null,
         )

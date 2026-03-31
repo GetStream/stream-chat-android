@@ -279,9 +279,9 @@ internal fun PlaybackToggleButton(
 ) {
     val icon =
         if (playing) {
-            painterResource(id = R.drawable.stream_compose_ic_pause)
+            painterResource(id = R.drawable.stream_design_ic_pause_fill)
         } else {
-            painterResource(id = R.drawable.stream_compose_ic_play)
+            painterResource(id = R.drawable.stream_design_ic_play_fill)
         }
 
     StreamButton(

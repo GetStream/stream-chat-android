@@ -637,7 +637,7 @@ class ChatsActivity : ComponentActivity() {
 private fun CloseButton(onClick: () -> Unit) {
     IconButton(onClick = onClick) {
         Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_close),
+            painter = painterResource(id = R.drawable.stream_design_ic_xmark),
             contentDescription = stringResource(id = R.string.stream_compose_cancel),
             tint = ChatTheme.colors.textPrimary,
         )

@@ -101,7 +101,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Test Poll",
-                    iconId = R.drawable.stream_compose_ic_chart,
+                    iconId = R.drawable.stream_design_ic_poll,
                 ),
             ),
             Arguments.of(
@@ -111,7 +111,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = MOCK_LOCATION_STATIC,
-                    iconId = R.drawable.stream_compose_ic_map_pin,
+                    iconId = R.drawable.stream_design_ic_location,
                 ),
             ),
             Arguments.of(
@@ -121,7 +121,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = MOCK_LOCATION_LIVE,
-                    iconId = R.drawable.stream_compose_ic_map_pin,
+                    iconId = R.drawable.stream_design_ic_location,
                 ),
             ),
             Arguments.of(
@@ -141,7 +141,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Check this out",
-                    iconId = R.drawable.stream_compose_ic_link,
+                    iconId = R.drawable.stream_design_ic_link,
                     imagePreviewData = "https://example.com/image.jpg",
                 ),
             ),
@@ -162,7 +162,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Example Site",
-                    iconId = R.drawable.stream_compose_ic_link,
+                    iconId = R.drawable.stream_design_ic_link,
                     imagePreviewData = "https://example.com/image.jpg",
                 ),
             ),
@@ -183,7 +183,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "https://example.com",
-                    iconId = R.drawable.stream_compose_ic_link,
+                    iconId = R.drawable.stream_design_ic_link,
                 ),
             ),
             Arguments.of(
@@ -202,7 +202,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Feeling great!",
-                    iconId = R.drawable.stream_compose_ic_file,
+                    iconId = R.drawable.stream_design_ic_file,
                     imagePreviewData = "https://giphy.com/image.gif",
                 ),
             ),
@@ -222,7 +222,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = MOCK_GIPHY_TAG,
-                    iconId = R.drawable.stream_compose_ic_file,
+                    iconId = R.drawable.stream_design_ic_file,
                     imagePreviewData = "https://giphy.com/image.gif",
                 ),
             ),
@@ -241,7 +241,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Beautiful photo",
-                    iconId = R.drawable.stream_compose_ic_camera,
+                    iconId = R.drawable.stream_design_ic_camera,
                     imagePreviewData = "https://example.com/image.jpg",
                 ),
             ),
@@ -260,7 +260,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Photos: 1",
-                    iconId = R.drawable.stream_compose_ic_camera,
+                    iconId = R.drawable.stream_design_ic_camera,
                     imagePreviewData = "https://example.com/image.jpg",
                 ),
             ),
@@ -277,7 +277,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Check these out",
-                    iconId = R.drawable.stream_compose_ic_camera,
+                    iconId = R.drawable.stream_design_ic_camera,
                 ),
             ),
             Arguments.of(
@@ -293,7 +293,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Photos: 2",
-                    iconId = R.drawable.stream_compose_ic_camera,
+                    iconId = R.drawable.stream_design_ic_camera,
                 ),
             ),
             Arguments.of(
@@ -312,7 +312,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Watch this",
-                    iconId = R.drawable.stream_compose_ic_video_outline,
+                    iconId = R.drawable.stream_design_ic_video,
                     videoPreviewData = "https://example.com/thumb.jpg",
                 ),
             ),
@@ -332,7 +332,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Videos: 1",
-                    iconId = R.drawable.stream_compose_ic_video_outline,
+                    iconId = R.drawable.stream_design_ic_video,
                     videoPreviewData = "https://example.com/thumb.jpg",
                 ),
             ),
@@ -349,7 +349,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Videos: 2",
-                    iconId = R.drawable.stream_compose_ic_video_outline,
+                    iconId = R.drawable.stream_design_ic_video,
                 ),
             ),
             Arguments.of(
@@ -365,7 +365,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Media: 2",
-                    iconId = R.drawable.stream_compose_ic_camera,
+                    iconId = R.drawable.stream_design_ic_camera,
                 ),
             ),
             Arguments.of(
@@ -384,7 +384,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "document.pdf",
-                    iconId = R.drawable.stream_compose_ic_file,
+                    iconId = R.drawable.stream_design_ic_file,
                     previewIcon = FileIconData.Pdf,
                 ),
             ),
@@ -400,7 +400,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "report.docx",
-                    iconId = R.drawable.stream_compose_ic_file,
+                    iconId = R.drawable.stream_design_ic_file,
                     previewIcon = FileIconData.Generic,
                 ),
             ),
@@ -416,7 +416,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Files: 1",
-                    iconId = R.drawable.stream_compose_ic_file,
+                    iconId = R.drawable.stream_design_ic_file,
                     previewIcon = FileIconData.Generic,
                 ),
             ),
@@ -433,7 +433,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Files: 2",
-                    iconId = R.drawable.stream_compose_ic_file,
+                    iconId = R.drawable.stream_design_ic_file,
                 ),
             ),
             Arguments.of(
@@ -451,7 +451,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = MOCK_AUDIO_RECORDING,
-                    iconId = R.drawable.stream_compose_ic_microphone,
+                    iconId = R.drawable.stream_design_ic_voice,
                 ),
             ),
             Arguments.of(
@@ -466,7 +466,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "song.mp3",
-                    iconId = R.drawable.stream_compose_ic_file,
+                    iconId = R.drawable.stream_design_ic_file,
                     previewIcon = FileIconData.Generic,
                 ),
             ),
@@ -483,7 +483,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Files: 2",
-                    iconId = R.drawable.stream_compose_ic_file,
+                    iconId = R.drawable.stream_design_ic_file,
                 ),
             ),
             Arguments.of(
@@ -499,7 +499,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Files: 2",
-                    iconId = R.drawable.stream_compose_ic_file,
+                    iconId = R.drawable.stream_design_ic_file,
                 ),
             ),
             Arguments.of(
@@ -519,7 +519,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Files: 2",
-                    iconId = R.drawable.stream_compose_ic_file,
+                    iconId = R.drawable.stream_design_ic_file,
                 ),
             ),
             Arguments.of(
@@ -539,7 +539,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Files: 2",
-                    iconId = R.drawable.stream_compose_ic_file,
+                    iconId = R.drawable.stream_design_ic_file,
                 ),
             ),
             Arguments.of(
@@ -555,7 +555,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Mixed content",
-                    iconId = R.drawable.stream_compose_ic_file,
+                    iconId = R.drawable.stream_design_ic_file,
                 ),
             ),
             Arguments.of(
@@ -591,7 +591,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Custom content",
-                    iconId = R.drawable.stream_compose_ic_file,
+                    iconId = R.drawable.stream_design_ic_file,
                 ),
             ),
             Arguments.of(
@@ -606,7 +606,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = "Files: 1",
-                    iconId = R.drawable.stream_compose_ic_file,
+                    iconId = R.drawable.stream_design_ic_file,
                 ),
             ),
         )

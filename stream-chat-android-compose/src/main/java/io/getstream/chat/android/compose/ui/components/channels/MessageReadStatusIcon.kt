@@ -168,7 +168,7 @@ private fun IsSentIcon(modifier: Modifier) {
 private fun IsErrorIcon(modifier: Modifier) {
     Icon(
         modifier = modifier.testTag("Stream_MessageReadStatus_isError"),
-        painter = painterResource(id = R.drawable.stream_compose_ic_error),
+        painter = painterResource(id = R.drawable.stream_design_ic_exclamation_circle_fill),
         contentDescription = stringResource(R.string.stream_ui_message_list_semantics_message_status_failed),
         tint = ChatTheme.colors.accentError,
     )

@@ -78,7 +78,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
             VOICE_MESSAGE to InlineTextContent(placeholder) {
                 Icon(
                     modifier = iconModifier,
-                    painter = painterResource(id = R.drawable.stream_compose_ic_mic),
+                    painter = painterResource(id = R.drawable.stream_design_ic_voice),
                     contentDescription = null,
                     tint = ChatTheme.colors.textSecondary,
                 )
@@ -86,7 +86,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
             PHOTO to InlineTextContent(placeholder) {
                 Icon(
                     modifier = iconModifier,
-                    painter = painterResource(id = R.drawable.stream_compose_ic_camera),
+                    painter = painterResource(id = R.drawable.stream_design_ic_camera),
                     contentDescription = null,
                     tint = ChatTheme.colors.textSecondary,
                 )
@@ -94,7 +94,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
             VIDEO to InlineTextContent(placeholder) {
                 Icon(
                     modifier = iconModifier,
-                    painter = painterResource(id = R.drawable.stream_compose_ic_video),
+                    painter = painterResource(id = R.drawable.stream_design_ic_video),
                     contentDescription = null,
                     tint = ChatTheme.colors.textSecondary,
                 )
@@ -102,7 +102,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
             FILE to InlineTextContent(placeholder) {
                 Icon(
                     modifier = iconModifier,
-                    painter = painterResource(id = R.drawable.stream_compose_ic_file),
+                    painter = painterResource(id = R.drawable.stream_design_ic_file),
                     contentDescription = null,
                     tint = ChatTheme.colors.textSecondary,
                 )
@@ -118,7 +118,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
             LINK to InlineTextContent(placeholder) {
                 Icon(
                     modifier = iconModifier,
-                    painter = painterResource(id = R.drawable.stream_compose_ic_link),
+                    painter = painterResource(id = R.drawable.stream_design_ic_link),
                     contentDescription = null,
                     tint = ChatTheme.colors.textSecondary,
                 )
@@ -126,7 +126,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
             LOCATION to InlineTextContent(placeholder) {
                 Icon(
                     modifier = iconModifier,
-                    painter = painterResource(id = R.drawable.stream_compose_ic_map_pin),
+                    painter = painterResource(id = R.drawable.stream_design_ic_location),
                     contentDescription = null,
                     tint = ChatTheme.colors.textSecondary,
                 )
@@ -134,7 +134,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
             POLL to InlineTextContent(placeholder) {
                 Icon(
                     modifier = iconModifier,
-                    painter = painterResource(id = R.drawable.stream_compose_ic_poll),
+                    painter = painterResource(id = R.drawable.stream_design_ic_poll),
                     contentDescription = null,
                     tint = ChatTheme.colors.textSecondary,
                 )
@@ -142,7 +142,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
             DELETED to InlineTextContent(placeholder) {
                 Icon(
                     modifier = iconModifier,
-                    painter = painterResource(id = R.drawable.stream_compose_ic_block),
+                    painter = painterResource(id = R.drawable.stream_design_ic_no_sign),
                     contentDescription = null,
                     tint = ChatTheme.colors.textSecondary,
                 )

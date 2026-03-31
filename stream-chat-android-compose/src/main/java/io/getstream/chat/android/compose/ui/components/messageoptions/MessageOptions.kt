@@ -111,7 +111,7 @@ public fun defaultMessageOptionsState(
         if (visibility.canRetryMessage(currentUser, selectedMessage)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_resend_message,
-                iconPainter = painterResource(R.drawable.stream_compose_ic_resend),
+                iconPainter = painterResource(R.drawable.stream_design_ic_refresh),
                 action = Resend(selectedMessage),
                 destructive = false,
             )
@@ -121,7 +121,7 @@ public fun defaultMessageOptionsState(
         if (visibility.canReplyToMessage(selectedMessage, ownCapabilities)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_reply,
-                iconPainter = painterResource(R.drawable.stream_compose_ic_reply),
+                iconPainter = painterResource(R.drawable.stream_design_ic_reply),
                 action = Reply(selectedMessage),
                 destructive = false,
             )
@@ -131,7 +131,7 @@ public fun defaultMessageOptionsState(
         if (visibility.canThreadReplyToMessage(isInThread, selectedMessage, ownCapabilities)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_thread_reply,
-                iconPainter = painterResource(R.drawable.stream_compose_ic_thread),
+                iconPainter = painterResource(R.drawable.stream_design_ic_thread),
                 action = ThreadReply(selectedMessage),
                 destructive = false,
             )
@@ -151,7 +151,7 @@ public fun defaultMessageOptionsState(
         if (visibility.canCopyMessage(selectedMessage)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_copy_message,
-                iconPainter = painterResource(R.drawable.stream_compose_ic_copy),
+                iconPainter = painterResource(R.drawable.stream_design_ic_copy),
                 action = Copy(selectedMessage),
                 destructive = false,
             )
@@ -161,7 +161,7 @@ public fun defaultMessageOptionsState(
         if (visibility.canEditMessage(currentUser, selectedMessage, ownCapabilities)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_edit_message,
-                iconPainter = painterResource(R.drawable.stream_compose_ic_edit),
+                iconPainter = painterResource(R.drawable.stream_design_ic_edit),
                 action = Edit(selectedMessage),
                 destructive = false,
             )
@@ -171,7 +171,7 @@ public fun defaultMessageOptionsState(
         if (visibility.canFlagMessage(currentUser, selectedMessage, ownCapabilities)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_flag_message,
-                iconPainter = painterResource(R.drawable.stream_compose_ic_flag),
+                iconPainter = painterResource(R.drawable.stream_design_ic_flag),
                 action = Flag(selectedMessage),
                 destructive = false,
             )
@@ -184,9 +184,9 @@ public fun defaultMessageOptionsState(
                 action = Pin(selectedMessage),
                 iconPainter = painterResource(
                     id = if (selectedMessage.pinned) {
-                        R.drawable.stream_compose_ic_unpin
+                        R.drawable.stream_design_ic_unpin
                     } else {
-                        R.drawable.stream_compose_ic_pin
+                        R.drawable.stream_design_ic_pin
                     },
                 ),
                 destructive = false,
@@ -198,7 +198,7 @@ public fun defaultMessageOptionsState(
             val isSenderMuted = currentUser?.mutes?.any { it.target?.id == selectedMessageUserId } == true
             MessageOptionItemState(
                 title = if (isSenderMuted) R.string.stream_compose_unmute_user else R.string.stream_compose_mute_user,
-                iconPainter = painterResource(R.drawable.stream_compose_ic_mute),
+                iconPainter = painterResource(R.drawable.stream_design_ic_mute),
                 action = if (isSenderMuted) UnmuteUser(selectedMessage) else MuteUser(selectedMessage),
                 destructive = false,
             )
@@ -219,7 +219,7 @@ public fun defaultMessageOptionsState(
             }
             MessageOptionItemState(
                 title = title,
-                iconPainter = painterResource(R.drawable.stream_compose_ic_block),
+                iconPainter = painterResource(R.drawable.stream_design_ic_no_sign),
                 action = action,
                 destructive = !isSenderBlocked,
             )
@@ -229,7 +229,7 @@ public fun defaultMessageOptionsState(
         if (visibility.canDeleteMessage(currentUser, selectedMessage, ownCapabilities)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_delete_message,
-                iconPainter = painterResource(R.drawable.stream_compose_ic_delete),
+                iconPainter = painterResource(R.drawable.stream_design_ic_delete),
                 action = Delete(selectedMessage),
                 destructive = true,
             )

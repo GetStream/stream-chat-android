@@ -99,9 +99,9 @@ internal fun VideoPlaybackControls(
             modifier = Modifier.minimumInteractiveComponentSize(),
         ) {
             val icon = if (state.isPlaying) {
-                R.drawable.stream_compose_ic_pause
+                R.drawable.stream_design_ic_pause_fill
             } else {
-                R.drawable.stream_compose_ic_play
+                R.drawable.stream_design_ic_play_fill
             }
             val contentDescription = if (state.isPlaying) {
                 R.string.stream_compose_audio_playback_pause
