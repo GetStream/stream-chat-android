@@ -209,7 +209,7 @@ internal class GroupChannelEditViewModelTest {
         val sut = fixture.get()
 
         sut.events.test {
-            sut.save(name = name)
+            sut.save(name = "  $name  ")
             assertEquals(GroupChannelEditViewEvent.SaveSuccess, awaitItem())
         }
         fixture.verifyUpdatePartial(mapOf("name" to name))

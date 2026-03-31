@@ -118,11 +118,12 @@ internal class GroupChannelEditViewModel(
      * @param name The new channel name.
      */
     fun save(name: String) {
+        val trimmedName = name.trim()
         val snapshot = _state.value
         if (snapshot.isBusy) return
         val imageFile = snapshot.pendingImageFile
         val removeImage = snapshot.removeImage
-        logger.d { "[save] name: $name, imageFile: ${imageFile?.name}, removeImage: $removeImage" }
+        logger.d { "[save] name: $trimmedName, imageFile: ${imageFile?.name}, removeImage: $removeImage" }
         _state.update { it.copy(isSaving = true) }
         viewModelScope.launch {
             val imageUrl = resolveImageUrl(imageFile, removeImage)
@@ -130,7 +131,7 @@ internal class GroupChannelEditViewModel(
                 emitSaveResult(GroupChannelEditViewEvent.SaveError)
                 return@launch
             }
-            val updates = buildUpdates(name, imageUrl)
+            val updates = buildUpdates(trimmedName, imageUrl)
             val result = channelClient.updatePartial(set = updates).await()
             val event = if (result.isSuccess) {
                 GroupChannelEditViewEvent.SaveSuccess
