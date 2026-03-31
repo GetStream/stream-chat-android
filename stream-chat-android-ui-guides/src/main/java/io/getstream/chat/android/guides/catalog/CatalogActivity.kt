@@ -188,7 +188,7 @@ class CatalogActivity : AppCompatActivity() {
                     interactionSource = remember { MutableInteractionSource() },
                 ),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundCoreSurface),
+            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundCoreSurfaceDefault),
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),

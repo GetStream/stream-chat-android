@@ -156,7 +156,7 @@ public fun ChannelItem(
             .fillMaxWidth()
             .wrapContentHeight()
             .semantics { contentDescription = description }
-            .applyIf(isFocused) { border(2.dp, ChatTheme.colors.borderUtilitySelected, shape) }
+            .applyIf(isFocused) { border(2.dp, ChatTheme.colors.borderUtilityFocused, shape) }
             .clip(shape)
             .applyIf(channelItem.isSelected) { background(ChatTheme.colors.backgroundUtilitySelected, shape) }
             .combinedClickable(

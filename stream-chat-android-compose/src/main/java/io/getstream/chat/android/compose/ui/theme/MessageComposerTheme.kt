@@ -86,7 +86,7 @@ public data class ComposerInputFieldTheme(
         ): ComposerInputFieldTheme {
             return ComposerInputFieldTheme(
                 borderShape = RoundedCornerShape(StreamTokens.radius3xl),
-                backgroundColor = colors.backgroundCoreSurface,
+                backgroundColor = colors.backgroundCoreSurfaceDefault,
                 textStyle = typography.bodyDefault.copy(
                     color = colors.textPrimary,
                     textDirection = TextDirection.Content,

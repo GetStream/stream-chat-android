@@ -181,6 +181,11 @@ private fun buildDmChannelActions(
             selectedChannel = selectedChannel,
             viewModel = viewModel,
         ),
+        buildDmPinAction(
+            canPinChannel = optionVisibility.isPinChannelVisible,
+            selectedChannel = selectedChannel,
+            viewModel = viewModel,
+        ),
         buildDmArchiveAction(
             canArchiveChannel = optionVisibility.isArchiveChannelVisible,
             selectedChannel = selectedChannel,
@@ -321,7 +326,7 @@ private fun buildGroupChannelActions(
             selectedChannel = selectedChannel,
             viewModel = viewModel,
         ),
-        buildPinAction(
+        buildGroupPinAction(
             canPinChannel = optionVisibility.isPinChannelVisible,
             selectedChannel = selectedChannel,
             viewModel = viewModel,
@@ -379,23 +384,47 @@ private fun buildGroupChannelActions(
 }
 
 /**
- * Builds the pin action for the channel, based on the current state.
+ * Builds the pin action for DM channels.
  */
 @Composable
-private fun buildPinAction(
+private fun buildDmPinAction(
     canPinChannel: Boolean,
     selectedChannel: Channel,
     viewModel: ChannelListViewModel,
 ): ChannelAction? = when (selectedChannel.isPinned().takeIf { canPinChannel }) {
     false -> PinChannel(
         channel = selectedChannel,
-        label = stringResource(id = R.string.stream_compose_selected_channel_menu_pin_channel),
+        label = stringResource(id = R.string.stream_compose_selected_channel_menu_pin_chat),
         onAction = { viewModel.pinChannel(selectedChannel) },
     )
 
     true -> UnpinChannel(
         channel = selectedChannel,
-        label = stringResource(id = R.string.stream_compose_selected_channel_menu_unpin_channel),
+        label = stringResource(id = R.string.stream_compose_selected_channel_menu_unpin_chat),
+        onAction = { viewModel.unpinChannel(selectedChannel) },
+    )
+
+    null -> null
+}
+
+/**
+ * Builds the pin action for group channels.
+ */
+@Composable
+private fun buildGroupPinAction(
+    canPinChannel: Boolean,
+    selectedChannel: Channel,
+    viewModel: ChannelListViewModel,
+): ChannelAction? = when (selectedChannel.isPinned().takeIf { canPinChannel }) {
+    false -> PinChannel(
+        channel = selectedChannel,
+        label = stringResource(id = R.string.stream_compose_selected_channel_menu_pin_group),
+        onAction = { viewModel.pinChannel(selectedChannel) },
+    )
+
+    true -> UnpinChannel(
+        channel = selectedChannel,
+        label = stringResource(id = R.string.stream_compose_selected_channel_menu_unpin_group),
         onAction = { viewModel.unpinChannel(selectedChannel) },
     )
 
