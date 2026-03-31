@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
+import io.getstream.chat.android.compose.state.messages.MessageAlignment
 import io.getstream.chat.android.compose.state.messages.MessageReactionItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
@@ -787,6 +788,7 @@ public data class MessageDeletedContentParams(
  *
  * @param message The message to display.
  * @param currentUser The currently logged in user.
+ * @param messageAlignment The horizontal alignment of the message in the message list.
  * @param onLongItemClick Action invoked when a message is long-clicked.
  * @param onMediaGalleryPreviewResult Action invoked with the media gallery preview result.
  * @param onQuotedMessageClick Action invoked when a quoted message is clicked.
@@ -796,6 +798,7 @@ public data class MessageDeletedContentParams(
 public data class MessageRegularContentParams(
     val message: Message,
     val currentUser: User?,
+    val messageAlignment: MessageAlignment,
     val onLongItemClick: (Message) -> Unit,
     val onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
     val onQuotedMessageClick: (Message) -> Unit,
@@ -1825,15 +1828,15 @@ public data class GroupChannelInfoMemberSectionParams(
  * @param headerState The state of the channel header.
  * @param infoState The state of the channel info.
  * @param listState The state of the lazy list.
- * @param onNavigationIconClick Action invoked when the navigation icon is clicked.
- * @param onAddMembersClick Action invoked when the "Add members" button is clicked.
+ * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
+ * @param onActionClick Callback invoked when the action button is clicked.
  */
 public data class GroupChannelInfoTopBarParams(
     val headerState: ChannelHeaderViewState,
     val infoState: ChannelInfoViewState,
     val listState: LazyListState,
     val onNavigationIconClick: () -> Unit,
-    val onAddMembersClick: () -> Unit,
+    val onActionClick: () -> Unit = {},
 )
 
 /**

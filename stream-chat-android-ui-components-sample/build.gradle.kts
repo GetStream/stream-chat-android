@@ -156,6 +156,7 @@ dependencies {
     implementation(libs.androidx.preference)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.fragment.ktx)
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material3)
     implementation(libs.stream.push.firebase)
     implementation(libs.stream.push.xiaomi)

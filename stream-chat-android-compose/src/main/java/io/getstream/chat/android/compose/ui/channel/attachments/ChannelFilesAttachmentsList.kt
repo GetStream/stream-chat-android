@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.channel.attachments
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -62,7 +61,6 @@ import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAtta
  * @param itemDivider The composable to display as a divider between items.
  * @param loadingItem The composable to display when more items are being loaded.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun ChannelFilesAttachmentsList(
     viewState: ChannelAttachmentsViewState,

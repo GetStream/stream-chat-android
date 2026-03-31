@@ -17,13 +17,18 @@
 package io.getstream.chat.android.ui.common.helper.internal
 
 import android.content.Context
+import android.graphics.BitmapFactory
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import androidx.annotation.WorkerThread
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.log.taggedLogger
+import java.io.File
 
 /**
  * Handles querying device storage for attachment metadata and converting between
@@ -111,9 +116,17 @@ public class AttachmentStorageHelper(
             logger.w { "[resolveAttachmentFiles] Failed to resolve file for URI: $sourceUri" }
             return@mapNotNull null
         }
+
+        val (width, height) = if (attachment.originalWidth == null && attachment.originalHeight == null) {
+            resolveLocalDimensions(file, attachment)
+        } else {
+            attachment.originalWidth to attachment.originalHeight
+        }
         attachment.copy(
             upload = file,
             extraData = attachment.extraData - EXTRA_SOURCE_URI,
+            originalWidth = width,
+            originalHeight = height,
         )
     }
 
@@ -126,6 +139,37 @@ public class AttachmentStorageHelper(
     @WorkerThread
     public fun resolveMetadata(uris: List<Uri>): List<AttachmentMetaData> =
         storageHelper.getAttachmentsFromUriList(context, uris).let(attachmentFilter::filterAttachments)
+
+    @Suppress("MagicNumber")
+    private fun resolveLocalDimensions(file: File, attachment: Attachment): Pair<Int?, Int?> = when {
+        attachment.isImage() -> {
+            val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            BitmapFactory.decodeFile(file.absolutePath, options)
+            val w = options.outWidth.takeIf { it > 0 }
+            val h = options.outHeight.takeIf { it > 0 }
+            w to h
+        }
+
+        attachment.isVideo() -> {
+            val retriever = MediaMetadataRetriever()
+            try {
+                retriever.setDataSource(file.absolutePath)
+                val w = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
+                    ?.toIntOrNull()?.takeIf { it > 0 }
+                val h = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
+                    ?.toIntOrNull()?.takeIf { it > 0 }
+                val rotation = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)
+                    ?.toIntOrNull() ?: 0
+                if (rotation == 90 || rotation == 270) h to w else w to h
+            } catch (_: Exception) {
+                null to null
+            } finally {
+                retriever.release()
+            }
+        }
+
+        else -> null to null
+    }
 
     public companion object {
         /**

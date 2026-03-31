@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.attachments.preview.internal
 
 import android.annotation.SuppressLint
-import androidx.annotation.OptIn
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -56,7 +55,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.Player
-import androidx.media3.common.util.UnstableApi
 import coil3.compose.AsyncImagePainter
 import coil3.request.ImageRequest
 import io.getstream.chat.android.compose.R
@@ -297,7 +295,6 @@ private fun ErrorIcon(modifier: Modifier) {
  * @param thumbnailUrl The url of the thumbnail to display before the video is played.
  * @param modifier The [Modifier] to be applied to the video player.
  */
-@OptIn(UnstableApi::class)
 @Composable
 internal fun MediaGalleryVideoPage(
     player: Player,
@@ -373,7 +370,7 @@ private fun calculateMaxOffset(imageSize: Size, scale: Float, parentSize: Size):
  * Calculates max offset an image can have on a single axis.
  *
  * @param axisSize The size of the image on a given axis.
- * @param scale The current scale of of the image.
+ * @param scale The current scale of the image.
  * @param parentAxisSize The size of the parent view on a given axis.
  */
 private fun calculateMaxOffsetPerAxis(axisSize: Float, scale: Float, parentAxisSize: Float): Float {

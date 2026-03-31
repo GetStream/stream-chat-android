@@ -25,7 +25,6 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.test.TestCoroutineRule
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
@@ -41,7 +40,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-@ExperimentalCoroutinesApi
 internal class QueryChannelsImplRepositoryTest {
     @get:Rule
     val testCoroutines: TestCoroutineRule = TestCoroutineRule()

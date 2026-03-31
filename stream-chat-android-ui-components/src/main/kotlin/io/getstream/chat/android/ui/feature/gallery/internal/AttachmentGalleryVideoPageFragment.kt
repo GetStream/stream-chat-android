@@ -221,7 +221,6 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
         }
     }
 
-    @OptIn(UnstableApi::class)
     private fun createPlayer(): Player {
         val player = ExoPlayer.Builder(requireContext())
             .setMediaSourceFactory(createMediaSourceFactory())

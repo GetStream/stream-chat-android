@@ -21,7 +21,6 @@ import io.getstream.chat.android.compose.ui.theme.PollFeatureConfig
 import io.getstream.chat.android.compose.ui.theme.PollsConfig
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.ui.common.utils.PollsConstants
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -29,7 +28,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class CreatePollViewModelTest {
 
     companion object {

@@ -28,7 +28,6 @@ import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -47,7 +46,6 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-@ExperimentalCoroutinesApi
 internal class AttachmentsPickerViewModelTest {
 
     @get:Rule

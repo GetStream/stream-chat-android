@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.randomDevice
 import io.getstream.chat.android.randomUser
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -36,7 +35,6 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class PushTokenUpdateHandlerTest {
 
     private lateinit var chatApiMock: ChatApi

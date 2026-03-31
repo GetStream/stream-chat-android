@@ -1077,6 +1077,7 @@ public interface ChatComponentFactory {
         DefaultMessageContent(
             message = params.message,
             currentUser = params.currentUser,
+            messageAlignment = params.messageAlignment,
             onLongItemClick = params.onLongItemClick,
             onMediaGalleryPreviewResult = params.onMediaGalleryPreviewResult,
             onQuotedMessageClick = params.onQuotedMessageClick,
@@ -2500,7 +2501,7 @@ public interface ChatComponentFactory {
             infoState = params.infoState,
             listState = params.listState,
             onNavigationIconClick = params.onNavigationIconClick,
-            onAddMembersClick = params.onAddMembersClick,
+            onActionClick = params.onActionClick,
         )
     }
 

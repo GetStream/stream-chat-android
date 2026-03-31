@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -39,7 +38,6 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
 
-@ExperimentalCoroutinesApi
 internal class MessageRepositoryTests {
 
     private val messageDao: MessageDao = mock()

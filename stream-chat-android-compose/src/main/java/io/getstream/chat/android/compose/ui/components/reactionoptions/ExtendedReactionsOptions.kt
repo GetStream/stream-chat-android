@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.components.reactionoptions
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -71,7 +70,6 @@ internal fun ExtendedReactionsOptions(
 /**
  * Preview for [ExtendedReactionsOptions] with no reaction selected.
  */
-@ExperimentalFoundationApi
 @Preview(showBackground = true, name = "ExtendedReactionOptions Preview")
 @Composable
 internal fun ExtendedReactionOptionsPreview() {
@@ -86,7 +84,6 @@ internal fun ExtendedReactionOptionsPreview() {
 /**
  * Preview for [ExtendedReactionsOptions] with a selected reaction.
  */
-@ExperimentalFoundationApi
 @Preview(showBackground = true, name = "ExtendedReactionOptions Preview (With Own Reaction)")
 @Composable
 internal fun ExtendedReactionOptionsWithOwnReactionPreview() {

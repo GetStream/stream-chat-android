@@ -32,7 +32,6 @@ import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomMessage
 import io.getstream.result.Error
 import io.getstream.result.Result
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
@@ -45,7 +44,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-@ExperimentalCoroutinesApi
 internal class WhenUploadAttachmentsTests {
 
     private val attachmentsSent = mutableListOf(

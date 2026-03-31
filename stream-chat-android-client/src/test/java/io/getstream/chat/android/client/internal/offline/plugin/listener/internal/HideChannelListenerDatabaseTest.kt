@@ -24,7 +24,6 @@ import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.result.Error
 import io.getstream.result.Result
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -34,7 +33,6 @@ import org.mockito.kotlin.reset
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoInteractions
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class HideChannelListenerDatabaseTest {
 
     private val channelRepository: ChannelRepository = mock()

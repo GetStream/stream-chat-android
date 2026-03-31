@@ -28,7 +28,6 @@ import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomUser
 import io.getstream.result.Error
 import io.getstream.result.Result
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -40,7 +39,6 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-@ExperimentalCoroutinesApi
 internal class SendReactionListenerDatabaseTest {
 
     private val currentUser = User()

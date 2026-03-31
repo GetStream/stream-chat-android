@@ -28,7 +28,6 @@ import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineRule
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldNotBeNull
@@ -41,7 +40,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-@ExperimentalCoroutinesApi
 internal class ChannelConfigRepositoryTest {
     @get:Rule
     val testCoroutines: TestCoroutineRule = TestCoroutineRule()

@@ -18,7 +18,6 @@ package io.getstream.chat.android.compose.sample.feature.reminders
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -206,7 +205,6 @@ private fun MessageRemindersEmptyContent(filter: MessageRemindersFilter) {
  * @param onReminderClick Callback invoked when a reminder is clicked.
  * @param onReminderLongClick Callback invoked when a reminder is long-clicked.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun MessageRemindersResultList(
     reminders: List<MessageReminder>,

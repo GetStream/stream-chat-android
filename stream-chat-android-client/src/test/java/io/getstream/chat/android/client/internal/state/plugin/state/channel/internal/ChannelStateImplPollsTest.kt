@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.internal.state.plugin.state.channel.internal
 
 import io.getstream.chat.android.randomPoll
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -26,7 +25,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.util.Date
 
-@ExperimentalCoroutinesApi
 internal class ChannelStateImplPollsTest : ChannelStateImplTestBase() {
 
     @Nested
