@@ -255,6 +255,7 @@ private class DefaultMessagePreviewFormatter(
         }
         val videos = attachments.filter { it.type == AttachmentType.VIDEO }
         val files = attachments.filter { it.type == AttachmentType.FILE }
+        val giphy = attachments.filter { it.type == AttachmentType.GIPHY }
 
         when {
             images.isNotEmpty() -> {
@@ -288,6 +289,12 @@ private class DefaultMessagePreviewFormatter(
                     singleLabelResId = R.string.stream_compose_file_preview,
                     pluralLabelResId = R.plurals.stream_compose_files_preview,
                 )
+            }
+
+            giphy.isNotEmpty() -> {
+                appendInlineContent(DefaultMessagePreviewIconFactory.GIPHY)
+                append(SPACE)
+                append(context.getString(R.string.stream_compose_giphy_preview))
             }
 
             links.isNotEmpty() -> {
