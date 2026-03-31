@@ -34,8 +34,8 @@ internal fun interface GalleryImageCopier {
 }
 
 /**
- * [GalleryImageCopier] that reads the [Uri] via [android.content.ContentResolver] and writes a
- * JPEG into timestamped cache using [StreamFileManager].
+ * [GalleryImageCopier] that reads the [Uri] via [android.content.ContentResolver] and writes an image
+ * into timestamped cache using [StreamFileManager].
  *
  * @param context Used for [android.content.ContentResolver] and cache directory access.
  * @param fileManager Writes the stream into cache.
@@ -49,7 +49,7 @@ internal class ContentResolverImageCopier(
         val inputStream = context.contentResolver.openInputStream(uri) ?: return null
         return fileManager.writeFileInTimestampedCache(
             context = context,
-            fileName = "image_${UUID.randomUUID()}.jpg",
+            fileName = "image_${UUID.randomUUID()}",
             source = inputStream,
         ).getOrNull()
     }
