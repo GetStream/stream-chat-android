@@ -32,7 +32,6 @@ import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.result.Result
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
@@ -43,7 +42,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.util.Date
 
-@ExperimentalCoroutinesApi
 internal class MessageUtilsTest {
 
     @Test

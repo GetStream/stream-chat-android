@@ -22,7 +22,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -75,7 +74,6 @@ import io.getstream.result.Error
  * @param onVideoPlaybackError Callback invoked when there is an error during video playback.
  * @param onSharingError Callback invoked when there is an error during attachment sharing.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ChannelMediaAttachmentsPreviewScreen(
     items: List<ChannelAttachmentsViewState.Content.Item>,

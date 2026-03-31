@@ -24,7 +24,6 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomMessage
 import io.getstream.result.Error
 import io.getstream.result.Result
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argThat
@@ -33,7 +32,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class EditMessageListenerDatabaseTest {
 
     private val userRepository: UserRepository = mock()

@@ -29,7 +29,6 @@ import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
@@ -40,7 +39,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class ChatEventsObservableTest {
 
     companion object {

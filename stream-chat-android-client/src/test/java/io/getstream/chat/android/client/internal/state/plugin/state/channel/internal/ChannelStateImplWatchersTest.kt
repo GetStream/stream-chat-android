@@ -20,7 +20,6 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomUser
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -29,7 +28,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.util.Date
 
-@ExperimentalCoroutinesApi
 internal class ChannelStateImplWatchersTest : ChannelStateImplTestBase() {
 
     @Nested

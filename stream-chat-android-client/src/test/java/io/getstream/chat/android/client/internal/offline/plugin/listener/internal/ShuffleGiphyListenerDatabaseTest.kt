@@ -23,7 +23,6 @@ import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomMessage
 import io.getstream.result.Error
 import io.getstream.result.Result
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -33,7 +32,6 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.reset
 import org.mockito.kotlin.verify
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class ShuffleGiphyListenerDatabaseTest {
 
     private val userRepository: UserRepository = mock()

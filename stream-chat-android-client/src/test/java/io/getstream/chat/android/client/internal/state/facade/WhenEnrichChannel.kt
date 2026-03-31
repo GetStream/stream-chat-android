@@ -20,13 +20,11 @@ import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMessage
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.whenever
 
-@ExperimentalCoroutinesApi
 internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
 
     @Test

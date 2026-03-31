@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.threads
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -63,7 +62,6 @@ import io.getstream.chat.android.previewdata.PreviewThreadData
  * @param onThreadClick Action invoked when the user clicks on the item.
  * @param modifier [Modifier] instance for general styling.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun ThreadItem(
     thread: Thread,

@@ -41,7 +41,6 @@ import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.state.messages.React
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -56,7 +55,6 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
 
-@ExperimentalCoroutinesApi
 internal class MessageListViewModelTest {
 
     @Test
