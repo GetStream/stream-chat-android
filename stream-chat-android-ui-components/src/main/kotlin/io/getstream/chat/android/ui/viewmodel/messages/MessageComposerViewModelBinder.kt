@@ -78,11 +78,11 @@ public class MessageComposerViewModelBinder private constructor(
     private var audioRecordButtonHoldListener: () -> Unit = vm.audioRecordButtonHoldListener
     private var audioRecordButtonLockListener: () -> Unit = vm.audioRecordButtonLockListener
     private var audioRecordButtonCancelListener: () -> Unit = vm.audioRecordButtonCancelListener
-    private var audioRecordButtonReleaseListener: () -> Unit = vm.audioRecordButtonReleaseListener
+    private var audioRecordButtonReleaseListener: (() -> Unit)? = null
     private var audioDeleteButtonClickListener: () -> Unit = vm.audioDeleteButtonClickListener
     private var audioStopButtonClickListener: () -> Unit = vm.audioStopButtonClickListener
     private var audioPlaybackButtonClickListener: () -> Unit = vm.audioPlaybackButtonClickListener
-    private var audioCompleteButtonClickListener: () -> Unit = vm.audioCompleteButtonClickListener
+    private var audioCompleteButtonClickListener: (() -> Unit)? = null
     private var audioSliderDragStartListener: (Float) -> Unit = vm.audioSliderDragStartListener
     private var audioSliderDragStopListener: (Float) -> Unit = vm.audioSliderDragStopListener
 
@@ -313,11 +313,13 @@ public class MessageComposerViewModelBinder private constructor(
             audioRecordButtonHoldListener = audioRecordButtonHoldListener,
             audioRecordButtonLockListener = audioRecordButtonLockListener,
             audioRecordButtonCancelListener = audioRecordButtonCancelListener,
-            audioRecordButtonReleaseListener = audioRecordButtonReleaseListener,
+            audioRecordButtonReleaseListener = audioRecordButtonReleaseListener
+                ?: vm.audioRecordButtonReleaseListener(view.composerStyle.audioRecordingSendOnComplete),
             audioDeleteButtonClickListener = audioDeleteButtonClickListener,
             audioStopButtonClickListener = audioStopButtonClickListener,
             audioPlaybackButtonClickListener = audioPlaybackButtonClickListener,
-            audioCompleteButtonClickListener = audioCompleteButtonClickListener,
+            audioCompleteButtonClickListener = audioCompleteButtonClickListener
+                ?: vm.audioCompleteButtonClickListener(view.composerStyle.audioRecordingSendOnComplete),
             audioSliderDragStartListener = audioSliderDragStartListener,
             audioSliderDragStopListener = audioSliderDragStopListener,
         )

@@ -42,7 +42,6 @@
     </style>
 
     <style name="MessageComposerViewTheme" parent="StreamUi.MessageComposerView">
-        <item name="streamUiMessageComposerAudioRecordingButtonVisible">true</item>
         <item name="streamUiMessageComposerAudioRecordPlayerViewStyle">@style/AudioRecordPlayerViewThemePreview</item>
     </style>
 

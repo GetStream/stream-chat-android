@@ -105,7 +105,6 @@ class MessagesActivity : ComponentActivity() {
             dateFormatter = ChatApp.dateFormatter,
             config = ChatUiConfig(
                 composer = ComposerConfig(
-                    audioRecordingEnabled = true,
                     linkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
                     floatingStyleEnabled = settings.isComposerFloatingStyleEnabled,
                 ),

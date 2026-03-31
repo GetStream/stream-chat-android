@@ -98,11 +98,15 @@ public fun MessageComposerViewModel.bindView(
     audioRecordButtonHoldListener: () -> Unit = this.audioRecordButtonHoldListener,
     audioRecordButtonLockListener: () -> Unit = this.audioRecordButtonLockListener,
     audioRecordButtonCancelListener: () -> Unit = this.audioRecordButtonCancelListener,
-    audioRecordButtonReleaseListener: () -> Unit = this.audioRecordButtonReleaseListener,
+    audioRecordButtonReleaseListener: () -> Unit = this.audioRecordButtonReleaseListener(
+        view.composerStyle.audioRecordingSendOnComplete,
+    ),
     audioDeleteButtonClickListener: () -> Unit = this.audioDeleteButtonClickListener,
     audioStopButtonClickListener: () -> Unit = this.audioStopButtonClickListener,
     audioPlaybackButtonClickListener: () -> Unit = this.audioPlaybackButtonClickListener,
-    audioCompleteButtonClickListener: () -> Unit = this.audioCompleteButtonClickListener,
+    audioCompleteButtonClickListener: () -> Unit = this.audioCompleteButtonClickListener(
+        view.composerStyle.audioRecordingSendOnComplete,
+    ),
     audioSliderDragStartListener: (Float) -> Unit = this.audioSliderDragStartListener,
     audioSliderDragStopListener: (Float) -> Unit = this.audioSliderDragStopListener,
 ) {
@@ -191,6 +195,7 @@ public fun MessageComposerViewModel.bindViewDefaults(
     audioSliderDragStartListener: ((Float) -> Unit)? = null,
     audioSliderDragStopListener: ((Float) -> Unit)? = null,
 ) {
+    val sendOnComplete = view.composerStyle.audioRecordingSendOnComplete
     bindView(
         view = view,
         lifecycleOwner = lifecycleOwner,
@@ -209,11 +214,13 @@ public fun MessageComposerViewModel.bindViewDefaults(
         audioRecordButtonHoldListener = this.audioRecordButtonHoldListener and audioRecordButtonHoldListener,
         audioRecordButtonLockListener = this.audioRecordButtonLockListener and audioRecordButtonLockListener,
         audioRecordButtonCancelListener = this.audioRecordButtonCancelListener and audioRecordButtonCancelListener,
-        audioRecordButtonReleaseListener = this.audioRecordButtonReleaseListener and audioRecordButtonReleaseListener,
+        audioRecordButtonReleaseListener = this.audioRecordButtonReleaseListener(sendOnComplete) and
+            audioRecordButtonReleaseListener,
         audioDeleteButtonClickListener = this.audioDeleteButtonClickListener and audioDeleteButtonClickListener,
         audioStopButtonClickListener = this.audioStopButtonClickListener and audioStopButtonClickListener,
         audioPlaybackButtonClickListener = this.audioPlaybackButtonClickListener and audioPlaybackButtonClickListener,
-        audioCompleteButtonClickListener = this.audioCompleteButtonClickListener and audioCompleteButtonClickListener,
+        audioCompleteButtonClickListener = this.audioCompleteButtonClickListener(sendOnComplete) and
+            audioCompleteButtonClickListener,
         audioSliderDragStartListener = this.audioSliderDragStartListener and audioSliderDragStartListener,
         audioSliderDragStopListener = this.audioSliderDragStopListener and audioSliderDragStopListener,
     )
@@ -254,11 +261,22 @@ internal object MessageComposerViewModelDefaults {
     val MessageComposerViewModel.audioRecordButtonHoldListener: () -> Unit get() = { startRecording() }
     val MessageComposerViewModel.audioRecordButtonLockListener: () -> Unit get() = { lockRecording() }
     val MessageComposerViewModel.audioRecordButtonCancelListener: () -> Unit get() = { cancelRecording() }
-    val MessageComposerViewModel.audioRecordButtonReleaseListener: () -> Unit get() = { sendRecording() }
     val MessageComposerViewModel.audioDeleteButtonClickListener: () -> Unit get() = { cancelRecording() }
     val MessageComposerViewModel.audioStopButtonClickListener: () -> Unit get() = { stopRecording() }
     val MessageComposerViewModel.audioPlaybackButtonClickListener: () -> Unit get() = { toggleRecordingPlayback() }
-    val MessageComposerViewModel.audioCompleteButtonClickListener: () -> Unit get() = { completeRecording() }
     val MessageComposerViewModel.audioSliderDragStartListener: (Float) -> Unit get() = { pauseRecording() }
     val MessageComposerViewModel.audioSliderDragStopListener: (Float) -> Unit get() = { seekRecordingTo(it) }
+
+    fun MessageComposerViewModel.audioRecordButtonReleaseListener(sendOnComplete: Boolean): () -> Unit =
+        defaultAudioRecordingFinishedListener(sendOnComplete)
+
+    fun MessageComposerViewModel.audioCompleteButtonClickListener(sendOnComplete: Boolean): () -> Unit =
+        defaultAudioRecordingFinishedListener(sendOnComplete)
+
+    fun MessageComposerViewModel.defaultAudioRecordingFinishedListener(sendOnComplete: Boolean): () -> Unit =
+        if (sendOnComplete) {
+            { sendRecording() }
+        } else {
+            { completeRecording() }
+        }
 }

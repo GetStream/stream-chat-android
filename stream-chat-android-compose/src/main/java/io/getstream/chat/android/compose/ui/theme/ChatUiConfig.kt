@@ -111,7 +111,7 @@ public data class ChatUiConfig(
  */
 public data class TranslationConfig(
     val enabled: Boolean = false,
-    val showOriginalEnabled: Boolean = false,
+    val showOriginalEnabled: Boolean = true,
 )
 
 /**
@@ -176,8 +176,8 @@ public data class MediaGalleryOptionsConfig(
  * @param floatingStyleEnabled Whether the message composer uses the floating style.
  */
 public data class ComposerConfig(
-    val audioRecordingEnabled: Boolean = false,
-    val audioRecordingSendOnComplete: Boolean = true,
+    val audioRecordingEnabled: Boolean = true,
+    val audioRecordingSendOnComplete: Boolean = false,
     val linkPreviewEnabled: Boolean = false,
     val floatingStyleEnabled: Boolean = false,
 )

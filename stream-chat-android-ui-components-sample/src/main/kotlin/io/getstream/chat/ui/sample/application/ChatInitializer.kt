@@ -117,7 +117,6 @@ class ChatInitializer(
         val messageTranslator = MessageTranslator(client::getCurrentUser, autoTranslationEnabled)
         ChatUI.autoTranslationEnabled = autoTranslationEnabled
         ChatUI.messageTextTransformer = MarkdownTextTransformer(context, messageTranslator)
-        ChatUI.draftMessagesEnabled = true
 
         TransformStyle.viewReactionsStyleTransformer = StyleTransformer { defaultStyle ->
             defaultStyle.copy(
@@ -130,8 +129,6 @@ class ChatInitializer(
 
         TransformStyle.messageComposerStyleTransformer = StyleTransformer { defaultStyle ->
             defaultStyle.copy(
-                audioRecordingButtonVisible = true,
-                audioRecordingButtonEnabled = true,
                 audioRecordingButtonPreferred = true,
             )
         }
