@@ -3308,7 +3308,7 @@ public final class io/getstream/chat/android/ui/common/utils/CapabilitiesHelperK
 	public static final fun canDeleteMessage (ZLio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Message;Ljava/util/Set;)Z
 	public static final fun canEditMessage (ZLio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Message;Ljava/util/Set;)Z
 	public static final fun canFlagMessage (ZLio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Message;Ljava/util/Set;)Z
-	public static final fun canMarkAsUnread (ZLjava/util/Set;)Z
+	public static final fun canMarkAsUnread (ZLio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Message;Ljava/util/Set;)Z
 	public static final fun canMuteUser (ZLio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Channel;)Z
 	public static final fun canPinMessage (ZLio/getstream/chat/android/models/Message;Ljava/util/Set;)Z
 	public static final fun canReplyToMessage (ZLio/getstream/chat/android/models/Message;Ljava/util/Set;)Z

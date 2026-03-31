@@ -111,9 +111,13 @@ internal fun MessageListViewStyle.canBlockUser(
 )
 
 internal fun MessageListViewStyle.canMarkAsUnread(
+    currentUser: User?,
+    message: Message,
     ownCapabilities: Set<String>,
 ): Boolean = canMarkAsUnread(
     markAsUnreadEnabled = markAsUnreadEnabled,
+    currentUser = currentUser,
+    message = message,
     ownCapabilities = ownCapabilities,
 )
 
