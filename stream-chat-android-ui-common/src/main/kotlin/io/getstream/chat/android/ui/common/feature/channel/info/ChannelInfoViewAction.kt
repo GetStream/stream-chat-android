@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.common.feature.channel.info
 
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.User
 
 /**
  * Represents actions that can be performed from the channel information view.
@@ -40,13 +39,6 @@ public sealed interface ChannelInfoViewAction {
      * @param member The member that was clicked.
      */
     public data class MemberClick(val member: Member) : ChannelInfoViewAction
-
-    /**
-     * Represents the user info click action.
-     *
-     * @param user The clicked user.
-     */
-    public data class UserInfoClick(val user: User) : ChannelInfoViewAction
 
     /**
      * Represents the rename channel click action.

@@ -21,7 +21,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -242,7 +241,6 @@ private fun CreateGroupSection(onClick: () -> Unit) {
  * @param selectedUsers The list of selected users.
  * @param onUserClick Action to be invoked when a user is clicked.
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SelectedUsersList(
     selectedUsers: List<User>,

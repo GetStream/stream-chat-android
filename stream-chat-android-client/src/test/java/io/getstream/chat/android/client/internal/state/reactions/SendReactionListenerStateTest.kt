@@ -29,7 +29,6 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.result.Result
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -40,7 +39,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-@ExperimentalCoroutinesApi
 internal class SendReactionListenerStateTest {
 
     companion object {

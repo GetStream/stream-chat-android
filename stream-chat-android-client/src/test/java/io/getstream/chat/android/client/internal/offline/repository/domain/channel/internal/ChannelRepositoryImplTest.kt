@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalCoroutinesApi::class)
-
 package io.getstream.chat.android.client.internal.offline.repository.domain.channel.internal
 
 import io.getstream.chat.android.client.ChatClient
@@ -25,7 +23,6 @@ import io.getstream.chat.android.randomDraftMessageOrNull
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineRule
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach

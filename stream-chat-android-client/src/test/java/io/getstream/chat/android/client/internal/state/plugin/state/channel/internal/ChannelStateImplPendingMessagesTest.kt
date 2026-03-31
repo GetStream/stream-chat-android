@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.internal.state.plugin.state.channel.int
 
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.randomMessage
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -26,7 +25,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.util.Date
 
-@ExperimentalCoroutinesApi
 internal class ChannelStateImplPendingMessagesTest : ChannelStateImplTestBase() {
 
     private fun enablePendingMessages() {

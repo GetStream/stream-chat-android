@@ -105,7 +105,6 @@ import org.mockito.kotlin.whenever
 import java.util.Date
 
 @Suppress("LargeClass")
-@ExperimentalCoroutinesApi
 internal class MessageListControllerTests {
 
     @Test
@@ -1266,6 +1265,7 @@ internal class MessageListControllerTests {
         private val user1 = User(id = "Jc", name = "Jc Miñarro")
         private val user2 = User(id = "NotJc", name = "Not Jc Miñarro")
 
+        @OptIn(ExperimentalCoroutinesApi::class)
         private fun nowDate() = Date(testCoroutines.dispatcher.scheduler.currentTime)
 
         private fun nowMessage(author: User, type: String, text: String = randomString()): Message {

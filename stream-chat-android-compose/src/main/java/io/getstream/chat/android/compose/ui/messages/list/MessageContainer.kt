@@ -20,7 +20,6 @@ import android.text.format.DateUtils
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -32,8 +31,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -59,6 +58,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -66,6 +66,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.view.HapticFeedbackConstantsCompat
@@ -151,7 +152,6 @@ import kotlin.math.roundToInt
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  */
 @Suppress("LongMethod")
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun MessageContainer(
     messageItem: MessageItemState,
@@ -829,6 +829,7 @@ private fun SwipeToReply(
     val offset = remember { Animatable(initialValue = 0f) }
     val scope = rememberCoroutineScope()
     val view = LocalView.current
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
 
     Box(
         modifier = modifier
@@ -839,11 +840,14 @@ private fun SwipeToReply(
             modifier = Modifier
                 .align(Alignment.CenterStart)
                 .onSizeChanged { swipeToReplyWidth = it.width.toFloat() }
-                .offset {
+                .absoluteOffset {
                     val roundToInt = swipeToReplyWidth.roundToInt()
                     IntOffset(
-                        x = (offset.value.roundToInt() - roundToInt)
-                            .coerceIn(-roundToInt, roundToInt),
+                        x = if (isRtl) {
+                            (roundToInt + offset.value.roundToInt()).coerceIn(-roundToInt, roundToInt)
+                        } else {
+                            (offset.value.roundToInt() - roundToInt).coerceIn(-roundToInt, roundToInt)
+                        },
                         y = 0,
                     )
                 },
@@ -858,16 +862,19 @@ private fun SwipeToReply(
             modifier = Modifier
                 .fillMaxWidth()
                 .onSizeChanged { rowWidth = it.width.toFloat() }
-                .offset { IntOffset(x = offset.value.roundToInt(), y = 0) }
-                .pointerInput(swipeToReplyWidth, isSwipeable) {
+                .absoluteOffset { IntOffset(x = offset.value.roundToInt(), y = 0) }
+                .pointerInput(swipeToReplyWidth, isSwipeable, isRtl) {
                     if (isSwipeable) {
                         detectHorizontalDragGestures(
                             onHorizontalDrag = { change, dragAmount ->
                                 // Only consume if horizontal drag dominates vertical
                                 if (change.positionChange().x.absoluteValue > change.positionChange().y.absoluteValue) {
                                     scope.launch {
-                                        val newOffset = (offset.value + dragAmount)
-                                            .coerceIn(0f, maxOf((rowWidth / 2), swipeToReplyWidth))
+                                        val maxSwipe = maxOf((rowWidth / 2), swipeToReplyWidth)
+                                        val newOffset = (offset.value + dragAmount).coerceIn(
+                                            minimumValue = if (isRtl) -maxSwipe else 0f,
+                                            maximumValue = if (isRtl) 0f else maxSwipe,
+                                        )
                                         offset.snapTo(newOffset)
                                     }
                                 } else {
@@ -876,7 +883,7 @@ private fun SwipeToReply(
                             },
                             onDragEnd = {
                                 scope.launch {
-                                    if (offset.value >= swipeToReplyWidth) {
+                                    if (offset.value.absoluteValue >= swipeToReplyWidth) {
                                         view.performHapticFeedback(HapticFeedbackConstantsCompat.CONFIRM)
                                         onReply()
                                     }

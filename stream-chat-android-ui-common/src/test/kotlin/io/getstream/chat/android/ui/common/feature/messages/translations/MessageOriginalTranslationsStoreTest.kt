@@ -17,16 +17,12 @@
 package io.getstream.chat.android.ui.common.feature.messages.translations
 
 import app.cash.turbine.test
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
-import kotlin.time.ExperimentalTime
 
-@ExperimentalTime
-@ExperimentalCoroutinesApi
 internal class MessageOriginalTranslationsStoreTest {
 
     private val testMessageId1 = "test-message-id-1"
