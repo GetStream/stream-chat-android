@@ -82,11 +82,20 @@ public class AudioPlayerController(
             "[togglePlayback] audioHash: $audioHash, currentPlayingId; $currentPlayingId, " +
                 "isCurrentTrack: $isCurrentTrack, isProgressRunning: $isProgressRunning, state: ${curState.stringify()}"
         }
-        when (isCurrentTrack && isProgressRunning) {
-            true -> when (curState.current.isPlaying) {
-                true -> pause()
-                else -> resume()
+
+        val hasPartialProgress = isCurrentTrack && isProgressRunning
+        val isLoadedInPlayer = currentPlayingId == audioHash
+        when {
+            // Audio is partially played and currently loaded -> toggle play/pause
+            hasPartialProgress && isLoadedInPlayer -> {
+                if (curState.current.isPlaying) pause() else resume()
             }
+            // Audio is partially played but another audio is loaded -> save progress and switch
+            hasPartialProgress -> {
+                setState(curState.copy(seekTo = curState.seekTo + (audioHash to curState.current.playingProgress)))
+                play(attachment)
+            }
+            // No prior progress -> start from the beginning
             else -> play(attachment)
         }
     }
@@ -140,6 +149,7 @@ public class AudioPlayerController(
                     isPlaying = audioState == AudioState.PLAYING,
                     isSeeking = true,
                 )
+
                 else -> curState.current
             },
         )
@@ -173,6 +183,7 @@ public class AudioPlayerController(
                     playingProgress = progress,
                     playbackInMs = positionInMs,
                 )
+
                 else -> curState.current
             },
             seekTo = curState.seekTo + (audioHash to progress),
