@@ -2500,7 +2500,7 @@ public interface ChatComponentFactory {
             infoState = params.infoState,
             listState = params.listState,
             onNavigationIconClick = params.onNavigationIconClick,
-            onAddMembersClick = params.onAddMembersClick,
+            onActionClick = params.onActionClick,
         )
     }
 

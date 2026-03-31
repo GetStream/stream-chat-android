@@ -36,10 +36,7 @@ internal fun List<ChannelInfoViewState.Content.Option>.toChannelInfoItems(
             // Not rendered as an option item
             is ChannelInfoViewState.Content.Option.AddMember -> Unit
 
-            // Not applicable in this UI
-            is ChannelInfoViewState.Content.Option.UserInfo -> Unit
-
-            is ChannelInfoViewState.Content.Option.RenameChannel ->
+            is ChannelInfoViewState.Content.Option.EditChannel ->
                 add(ChatInfoItem.ChannelName(option.name))
 
             is ChannelInfoViewState.Content.Option.MuteChannel -> add(

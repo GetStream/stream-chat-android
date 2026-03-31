@@ -248,6 +248,33 @@ internal class AddMembersViewControllerTest {
     }
 
     @Test
+    fun `QueryChanged after LoadMore cancels loadMore job`() = runTest {
+        val initialUsers = listOf(randomUser(), randomUser())
+        val moreUsers = listOf(randomUser())
+        val newSearchUsers = listOf(randomUser())
+        val sut = Fixture()
+            .givenQueryUsers(users = initialUsers) // initial search
+            .givenQueryUsers(users = moreUsers) // loadMore
+            .givenQueryUsers(users = newSearchUsers) // new search after query change
+            .get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // initial state + initial search result
+
+            sut.onViewAction(AddMembersViewAction.LoadMore)
+            skipItems(2) // isLoadingMore + loadMore result
+
+            sut.onViewAction(AddMembersViewAction.QueryChanged("new"))
+            skipItems(1) // query state update
+
+            assertTrue(awaitItem().isLoading)
+            val state = awaitItem()
+            assertFalse(state.isLoading)
+            assertEquals(newSearchUsers, state.searchResult)
+        }
+    }
+
+    @Test
     fun `LoadMore appends results to searchResult`() = runTest {
         val initialUsers = listOf(randomUser(), randomUser())
         val moreUsers = listOf(randomUser(), randomUser())

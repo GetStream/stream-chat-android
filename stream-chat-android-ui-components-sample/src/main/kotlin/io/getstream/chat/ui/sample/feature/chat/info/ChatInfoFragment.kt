@@ -40,7 +40,7 @@ class ChatInfoFragment : Fragment() {
 
     private val args: ChatInfoFragmentArgs by navArgs()
     private val viewModel: ChannelInfoViewModel by viewModels {
-        ChannelInfoViewModelFactory(context = requireContext(), cid = args.cid)
+        ChannelInfoViewModelFactory(cid = args.cid)
     }
     private val adapter: ChatInfoAdapter = ChatInfoAdapter()
 

@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.channel.info
 
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -32,7 +31,7 @@ import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewSta
 
 @Suppress("LongMethod")
 @Composable
-internal fun LazyItemScope.ChannelInfoOptionItem(
+internal fun ChannelInfoOptionItem(
     option: ChannelInfoViewState.Content.Option,
     isGroupChannel: Boolean,
     onViewAction: (action: ChannelInfoViewAction) -> Unit,
@@ -53,25 +52,11 @@ internal fun ChannelInfoOptionContent(
 ) {
     when (option) {
         is ChannelInfoViewState.Content.Option.AddMember -> {
-            // Not rendered as an option, but as a button in the top bar
+            // Not rendered as an option, but as a button in the members section
         }
 
-        is ChannelInfoViewState.Content.Option.UserInfo -> {
-            val user = option.user
-            ChannelInfoUserInfoOption(
-                username = user.name.takeIf(String::isNotBlank) ?: user.id,
-                onClick = { onViewAction(ChannelInfoViewAction.UserInfoClick(user)) },
-            )
-        }
-
-        is ChannelInfoViewState.Content.Option.RenameChannel -> {
-            ChannelInfoNameField(
-                name = option.name,
-                readOnly = option.isReadOnly,
-                onConfirmRenaming = { name ->
-                    onViewAction(ChannelInfoViewAction.RenameChannelClick(name))
-                },
-            )
+        is ChannelInfoViewState.Content.Option.EditChannel -> {
+            // Not rendered as an option, but as an action button in the top bar
         }
 
         is ChannelInfoViewState.Content.Option.MuteChannel -> {
