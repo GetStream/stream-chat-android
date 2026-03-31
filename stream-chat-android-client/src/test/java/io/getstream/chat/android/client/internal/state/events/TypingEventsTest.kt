@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.result.Result
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeInstanceOf
@@ -35,7 +34,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
 
-@ExperimentalCoroutinesApi
 internal class TypingEventsTest {
     companion object {
         @JvmField

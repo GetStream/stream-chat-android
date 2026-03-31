@@ -31,12 +31,10 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineExtension
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.mock
 
-@ExperimentalCoroutinesApi
 internal open class BaseRepositoryFacadeTest {
 
     companion object {

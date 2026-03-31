@@ -18,7 +18,6 @@
 
 package io.getstream.chat.android.compose.ui.channels.list
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
@@ -44,7 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -103,7 +102,6 @@ import java.util.Date
  * @param trailingContent Customizable composable function that represents the trailing content of the a channel item,
  * usually information about the last message and the number of unread messages.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun ChannelItem(
     channelItem: ItemState.ChannelItemState,
@@ -156,7 +154,7 @@ public fun ChannelItem(
             .fillMaxWidth()
             .wrapContentHeight()
             .semantics { contentDescription = description }
-            .applyIf(isFocused) { border(2.dp, ChatTheme.colors.borderUtilitySelected, shape) }
+            .applyIf(isFocused) { border(2.dp, ChatTheme.colors.borderUtilityFocused, shape) }
             .clip(shape)
             .applyIf(channelItem.isSelected) { background(ChatTheme.colors.backgroundUtilitySelected, shape) }
             .combinedClickable(
@@ -386,7 +384,7 @@ private fun MessageRow(
  */
 @Composable
 private fun UserTypingIndicator(users: List<User>, isDirectMessaging: Boolean) {
-    val context = LocalContext.current
+    val resources = LocalResources.current
     val typingText = when {
         isDirectMessaging -> stringResource(R.string.stream_compose_channel_list_typing)
         users.size == 1 -> stringResource(R.string.stream_compose_channel_list_typing_one, users.first().name)
@@ -395,7 +393,7 @@ private fun UserTypingIndicator(users: List<User>, isDirectMessaging: Boolean) {
             users[0].name,
             users[1].name,
         )
-        else -> context.resources.getQuantityString(
+        else -> resources.getQuantityString(
             R.plurals.stream_compose_channel_list_typing_many,
             users.size,
             users.size,

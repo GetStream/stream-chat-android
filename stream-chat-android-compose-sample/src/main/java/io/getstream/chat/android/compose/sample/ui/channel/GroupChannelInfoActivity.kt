@@ -62,7 +62,6 @@ class GroupChannelInfoActivity : ComponentActivity() {
 
     private val viewModelFactory by lazy {
         ChannelInfoViewModelFactory(
-            context = applicationContext,
             cid = channelId,
         )
     }

@@ -137,7 +137,7 @@ private fun LiveLocationSharing(
                 color = if (isOwnMessage) {
                     ChatTheme.colors.brand.s100
                 } else {
-                    ChatTheme.colors.backgroundCoreSurface
+                    ChatTheme.colors.backgroundCoreSurfaceDefault
                 },
             ),
     ) {

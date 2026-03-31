@@ -659,7 +659,7 @@ public fun MessageModerationDialog(
             message = selectedMessage,
             modifier = Modifier.background(
                 shape = MaterialTheme.shapes.medium,
-                color = ChatTheme.colors.backgroundCoreSurface,
+                color = ChatTheme.colors.backgroundCoreSurfaceDefault,
             ),
             onDismissRequest = remember(listViewModel) { { listViewModel.removeOverlay() } },
             onDialogOptionInteraction = remember(listViewModel, composerViewModel) {

@@ -24,12 +24,10 @@ import io.getstream.chat.android.client.internal.offline.repository.factory.inte
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineRule
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 
-@ExperimentalCoroutinesApi
 internal open class BaseRepositoryFacadeIntegrationTest {
 
     @get:Rule

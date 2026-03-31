@@ -148,11 +148,11 @@ private fun PollSwitchListItem(
             .animateContentSize()
             .border(
                 width = 1.dp,
-                color = ChatTheme.colors.backgroundCoreSurface,
+                color = ChatTheme.colors.backgroundCoreSurfaceDefault,
                 shape = RoundedCornerShape(StreamTokens.radiusXl),
             )
             .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
-            .background(ChatTheme.colors.backgroundCoreSurface)
+            .background(ChatTheme.colors.backgroundCoreSurfaceDefault)
             .padding(StreamTokens.spacingMd),
     ) {
         PollSwitchHeader(

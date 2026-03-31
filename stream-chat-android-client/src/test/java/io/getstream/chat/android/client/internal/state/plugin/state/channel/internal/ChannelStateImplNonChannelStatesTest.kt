@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.state.channel.internal
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -25,7 +24,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-@ExperimentalCoroutinesApi
 internal class ChannelStateImplNonChannelStatesTest : ChannelStateImplTestBase() {
 
     // region RecoveryNeeded

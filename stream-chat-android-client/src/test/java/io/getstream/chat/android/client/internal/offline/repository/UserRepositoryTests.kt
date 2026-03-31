@@ -42,7 +42,6 @@ import io.getstream.chat.android.randomPrivacySettings
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineRule
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.test.runTest
@@ -58,7 +57,6 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-@ExperimentalCoroutinesApi
 internal class UserRepositoryTests {
     @get:Rule
     val testCoroutines: TestCoroutineRule = TestCoroutineRule()

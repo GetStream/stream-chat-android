@@ -18,13 +18,11 @@ package io.getstream.chat.android.client.utils
 
 import io.getstream.result.Result
 import io.getstream.result.onSuccessSuspend
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 
-@ExperimentalCoroutinesApi
 internal class ResultTests {
     @Test
     fun `Should execute side effects for onSuccess and onSuccessSuspend`() = runTest {
