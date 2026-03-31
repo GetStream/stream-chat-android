@@ -274,8 +274,8 @@ class CustomLoginActivity : AppCompatActivity() {
             colors = TextFieldDefaults.colors(
                 focusedTextColor = ChatTheme.colors.textPrimary,
                 unfocusedTextColor = ChatTheme.colors.textPrimary,
-                focusedContainerColor = ChatTheme.colors.backgroundCoreSurface,
-                unfocusedContainerColor = ChatTheme.colors.backgroundCoreSurface,
+                focusedContainerColor = ChatTheme.colors.backgroundCoreSurfaceDefault,
+                unfocusedContainerColor = ChatTheme.colors.backgroundCoreSurfaceDefault,
                 cursorColor = ChatTheme.colors.accentPrimary,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,

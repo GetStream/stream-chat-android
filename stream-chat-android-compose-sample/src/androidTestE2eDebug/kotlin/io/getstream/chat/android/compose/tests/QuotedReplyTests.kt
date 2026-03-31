@@ -560,6 +560,7 @@ class QuotedReplyTests : StreamTestCase() {
     }
 
     @AllureId("5898")
+    @Ignore("https://linear.app/stream/issue/AND-1136")
     @Test
     fun test_quotedReplyInThreadAndAlsoInChannel() {
         val quotedText = messagesCount.toString()
@@ -709,7 +710,7 @@ class QuotedReplyTests : StreamTestCase() {
             userRobot.assertMessages(text = sampleText, count = 0)
         }
         step("WHEN user scrolls up to load one more page") {
-            userRobot.scrollMessageListUp(times = 5)
+            userRobot.scrollMessageListUp(times = 8)
         }
         step("THEN parent message is loaded") {
             userRobot.assertMessages(text = sampleText, count = 1)

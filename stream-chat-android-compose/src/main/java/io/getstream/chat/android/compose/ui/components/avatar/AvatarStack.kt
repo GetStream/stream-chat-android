@@ -64,7 +64,7 @@ internal fun UserAvatarStack(
                 params = UserAvatarParams(
                     modifier = Modifier
                         .size(avatarSize + borderSize)
-                        .border(borderSize, colors.borderCoreInverse, CircleShape)
+                        .border(borderSize, colors.borderCoreOnInverse, CircleShape)
                         .padding(borderSize),
                     user = user,
                 ),
