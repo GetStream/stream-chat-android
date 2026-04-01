@@ -97,6 +97,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -584,22 +585,40 @@ internal class ChannelEventHandlerImplTest {
 
     @Test
     fun `When ReactionNewEvent is handled, Then message is updated with preserved ownReactions`() {
-        val ownReactions = listOf(randomReaction())
-        val message = randomMessage(ownReactions = ownReactions)
+        val oldReactions = listOf(randomReaction())
+        val oldMessage = randomMessage(ownReactions = oldReactions)
+        var enrichedResult: Message? = null
+        whenever(state.updateMessageFromEvent(any(), any())).doAnswer { invocation ->
+            val eventMessage = invocation.arguments[0] as Message
+
+            @Suppress("UNCHECKED_CAST")
+            val enrich = invocation.arguments[1] as (Message, Message) -> Message
+            enrichedResult = enrich(oldMessage, eventMessage)
+        }
+
+        val message = randomMessage(ownReactions = listOf(randomReaction()))
         val event = randomReactionNewEvent(cid = cid, message = message)
 
         handler.handle(event)
 
-        val captor = argumentCaptor<(Message, Message) -> Message>()
-        verify(state).updateMessageFromEvent(eq(message), captor.capture())
-        val result = captor.firstValue(message, message)
-        assertEquals(ownReactions, result.ownReactions)
+        verify(state).updateMessageFromEvent(eq(message), any())
+        assertEquals(oldReactions, enrichedResult!!.ownReactions)
     }
 
     @Test
     fun `When ReactionUpdateEvent is handled, Then message is updated`() {
-        val ownReactions = listOf(randomReaction())
-        val message = randomMessage(latestReactions = listOf(randomReaction()), ownReactions = ownReactions)
+        val oldReactions = listOf(randomReaction())
+        val oldMessage = randomMessage(ownReactions = oldReactions)
+        var enrichedResult: Message? = null
+        whenever(state.updateMessageFromEvent(any(), any())).doAnswer { invocation ->
+            val eventMessage = invocation.arguments[0] as Message
+
+            @Suppress("UNCHECKED_CAST")
+            val enrich = invocation.arguments[1] as (Message, Message) -> Message
+            enrichedResult = enrich(oldMessage, eventMessage)
+        }
+
+        val message = randomMessage(latestReactions = listOf(randomReaction()), ownReactions = listOf(randomReaction()))
         val event = ReactionUpdateEvent(
             type = EventType.REACTION_UPDATED,
             createdAt = randomDate(),
@@ -614,16 +633,24 @@ internal class ChannelEventHandlerImplTest {
 
         handler.handle(event)
 
-        val captor = argumentCaptor<(Message, Message) -> Message>()
-        verify(state).updateMessageFromEvent(eq(message), captor.capture())
-        val result = captor.firstValue(message, message)
-        assertEquals(ownReactions, result.ownReactions)
+        verify(state).updateMessageFromEvent(eq(message), any())
+        assertEquals(oldReactions, enrichedResult!!.ownReactions)
     }
 
     @Test
     fun `When ReactionDeletedEvent is handled, Then message is updated`() {
-        val ownReactions = listOf(randomReaction())
-        val message = randomMessage(latestReactions = listOf(randomReaction()), ownReactions = ownReactions)
+        val oldReactions = listOf(randomReaction())
+        val oldMessage = randomMessage(ownReactions = oldReactions)
+        var enrichedResult: Message? = null
+        whenever(state.updateMessageFromEvent(any(), any())).doAnswer { invocation ->
+            val eventMessage = invocation.arguments[0] as Message
+
+            @Suppress("UNCHECKED_CAST")
+            val enrich = invocation.arguments[1] as (Message, Message) -> Message
+            enrichedResult = enrich(oldMessage, eventMessage)
+        }
+
+        val message = randomMessage(latestReactions = listOf(randomReaction()), ownReactions = listOf(randomReaction()))
         val event = ReactionDeletedEvent(
             type = EventType.REACTION_DELETED,
             createdAt = randomDate(),
@@ -638,10 +665,8 @@ internal class ChannelEventHandlerImplTest {
 
         handler.handle(event)
 
-        val captor = argumentCaptor<(Message, Message) -> Message>()
-        verify(state).updateMessageFromEvent(eq(message), captor.capture())
-        val result = captor.firstValue(message, message)
-        assertEquals(ownReactions, result.ownReactions)
+        verify(state).updateMessageFromEvent(eq(message), any())
+        assertEquals(oldReactions, enrichedResult!!.ownReactions)
     }
 
     // endregion

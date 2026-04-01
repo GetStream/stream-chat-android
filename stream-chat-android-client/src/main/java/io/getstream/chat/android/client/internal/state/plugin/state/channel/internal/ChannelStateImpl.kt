@@ -626,6 +626,8 @@ internal class ChannelStateImpl(
 
     /**
      * Updates each message that quotes the given message.
+     * Valid attachment URLs from the existing quoted message are preserved to prevent
+     * unnecessary image reloads caused by CDN signature changes.
      *
      * @param quotedMessage The message whose quoting messages should be updated.
      */
@@ -633,22 +635,27 @@ internal class ChannelStateImpl(
         val quotingMessageIds = _quotedMessagesMap.value[quotedMessage.id]
         if (quotingMessageIds.isNullOrEmpty()) return
 
+        fun preservedReplyTo(existing: Message): Message {
+            val oldReplyTo = existing.replyTo ?: return quotedMessage
+            return preserveAttachmentUrls(quotedMessage, oldReplyTo)
+        }
+
         _messages.update { current ->
             current.updateIf(
                 filter = { it.id in quotingMessageIds },
-                update = { it.copy(replyTo = quotedMessage) },
+                update = { it.copy(replyTo = preservedReplyTo(it)) },
             )
         }
         _cachedLatestMessages.update { current ->
             current.updateIf(
                 filter = { it.id in quotingMessageIds },
-                update = { it.copy(replyTo = quotedMessage) },
+                update = { it.copy(replyTo = preservedReplyTo(it)) },
             )
         }
         _pinnedMessages.update { current ->
             current.updateIf(
                 filter = { it.id in quotingMessageIds },
-                update = { it.copy(replyTo = quotedMessage) },
+                update = { it.copy(replyTo = preservedReplyTo(it)) },
             )
         }
     }

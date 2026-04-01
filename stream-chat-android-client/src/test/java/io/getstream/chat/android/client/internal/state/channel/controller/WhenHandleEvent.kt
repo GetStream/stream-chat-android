@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.internal.state.channel.controller
 
 import io.getstream.chat.android.client.internal.state.event.handler.internal.utils.toChannelUserRead
-import io.getstream.chat.android.client.internal.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.legacy.ChannelLogicLegacyImpl
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.legacy.ChannelStateLogic
@@ -54,7 +53,6 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
 import java.util.Date
 
 internal class WhenHandleEvent : SynchronizedCoroutineTest {
@@ -68,7 +66,6 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     override fun getTestScope(): TestScope = testCoroutines.scope
 
     private val repos: RepositoryFacade = mock()
-    private val attachmentUrlValidator: AttachmentUrlValidator = mock()
 
     private lateinit var channelLogic: ChannelLogic
     private val channelStateLegacyImpl: ChannelStateLegacyImpl = ChannelStateLegacyImpl(
@@ -96,15 +93,6 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     fun setUp() {
         channelStateLegacyImpl.setEndOfNewerMessages(true)
 
-        whenever(
-            attachmentUrlValidator.updateValidAttachmentsUrl(
-                any<List<Message>>(),
-                any<Map<String, Message>>(),
-            ),
-        ) doAnswer { invocation ->
-            invocation.arguments[0] as List<Message>
-        }
-
         channelLogic = ChannelLogicLegacyImpl(
             repos,
             false,
@@ -126,13 +114,6 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
                 silent = false,
                 showInChannel = true,
             )
-
-            whenever(
-                attachmentUrlValidator.updateValidAttachmentsUrl(
-                    any<List<Message>>(),
-                    any<Map<String, Message>>(),
-                ),
-            ) doReturn listOf(newMessage)
 
             val userStartWatchingEvent = randomNewMessageEvent(user = user, createdAt = newDate, message = newMessage)
 
@@ -281,13 +262,6 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             )
             channelStateLogic.upsertMessages(listOf(message))
             val reactionEvent = randomReactionNewEvent(user = randomUser(), message = message)
-            whenever(
-                attachmentUrlValidator.updateValidAttachmentsUrl(
-                    any<List<Message>>(),
-                    any<Map<String, Message>>(),
-                ),
-            ) doReturn listOf(message)
-
             channelLogic.handleEvent(reactionEvent)
 
             // Message is propagated
@@ -337,13 +311,6 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             text = "Updated text",
             createdLocallyAt = null,
         )
-        whenever(
-            attachmentUrlValidator.updateValidAttachmentsUrl(
-                any<List<Message>>(),
-                any<Map<String, Message>>(),
-            ),
-        ) doReturn listOf(updatedMessage)
-
         val newMessageEvent = randomNewMessageEvent(
             user = currentUser,
             message = updatedMessage,
@@ -377,13 +344,6 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             text = "Updated text",
             createdLocallyAt = null,
         )
-        whenever(
-            attachmentUrlValidator.updateValidAttachmentsUrl(
-                any<List<Message>>(),
-                any<Map<String, Message>>(),
-            ),
-        ) doReturn listOf(updatedMessage)
-
         val newMessageEvent = randomNewMessageEvent(
             user = otherUser,
             message = updatedMessage,
