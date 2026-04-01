@@ -51,7 +51,7 @@ private object MessageListUsageSnippet {
                     Column(
                         Modifier.fillMaxSize()
                     ) {
-                        // MessageListHeader(...)
+                        // ChannelHeader(...)
 
                         MessageList(
                             viewModel = listViewModel,

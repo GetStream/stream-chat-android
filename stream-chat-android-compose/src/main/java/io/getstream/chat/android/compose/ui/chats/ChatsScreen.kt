@@ -56,14 +56,14 @@ import io.getstream.chat.android.compose.ui.mentions.MentionList
 import io.getstream.chat.android.compose.ui.messages.BackAction
 import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
-import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
+import io.getstream.chat.android.compose.ui.messages.header.ChannelHeader
 import io.getstream.chat.android.compose.ui.theme.ChannelListHeaderParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListItemContentParams
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.CompoundComponentFactory
 import io.getstream.chat.android.compose.ui.theme.MentionListItemParams
-import io.getstream.chat.android.compose.ui.theme.MessageListHeaderLeadingContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelHeaderLeadingContentParams
 import io.getstream.chat.android.compose.ui.theme.SearchResultItemContentParams
 import io.getstream.chat.android.compose.ui.theme.ThreadListItemParams
 import io.getstream.chat.android.compose.ui.threads.ThreadList
@@ -674,7 +674,7 @@ private fun DefaultDetailTopBarContent(
     val user by viewModel.user.collectAsState()
     val messageMode = viewModel.messageMode
 
-    MessageListHeader(
+    ChannelHeader(
         channel = viewModel.channel,
         currentUser = user,
         connectionState = connectionState,
@@ -686,8 +686,8 @@ private fun DefaultDetailTopBarContent(
             val showNavigationIcon = AdaptiveLayoutInfo.singlePaneWindow() || messageMode is MessageMode.MessageThread
             if (showNavigationIcon) {
                 with(ChatTheme.componentFactory) {
-                    MessageListHeaderLeadingContent(
-                        params = MessageListHeaderLeadingContentParams(
+                    ChannelHeaderLeadingContent(
+                        params = ChannelHeaderLeadingContentParams(
                             onBackPressed = backAction,
                         ),
                     )

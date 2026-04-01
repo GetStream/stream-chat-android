@@ -131,9 +131,9 @@ import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestio
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultUserSuggestionItemCenterContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultUserSuggestionItemLeadingContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.UserSuggestionItem
-import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderCenterContent
-import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderLeadingContent
-import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderTrailingContent
+import io.getstream.chat.android.compose.ui.messages.header.DefaultChannelHeaderCenterContent
+import io.getstream.chat.android.compose.ui.messages.header.DefaultChannelHeaderLeadingContent
+import io.getstream.chat.android.compose.ui.messages.header.DefaultChannelHeaderTrailingContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageAuthor
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageBottom
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageContent
@@ -594,8 +594,8 @@ public interface ChatComponentFactory {
      * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageListHeader(params: MessageListHeaderParams) {
-        io.getstream.chat.android.compose.ui.messages.header.MessageListHeader(
+    public fun ChannelHeader(params: ChannelHeaderParams) {
+        io.getstream.chat.android.compose.ui.messages.header.ChannelHeader(
             channel = params.channel,
             currentUser = params.currentUser,
             connectionState = params.connectionState,
@@ -614,8 +614,8 @@ public interface ChatComponentFactory {
      * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.MessageListHeaderLeadingContent(params: MessageListHeaderLeadingContentParams) {
-        DefaultMessageListHeaderLeadingContent(onBackPressed = params.onBackPressed)
+    public fun RowScope.ChannelHeaderLeadingContent(params: ChannelHeaderLeadingContentParams) {
+        DefaultChannelHeaderLeadingContent(onBackPressed = params.onBackPressed)
     }
 
     /**
@@ -626,8 +626,8 @@ public interface ChatComponentFactory {
      * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.MessageListHeaderCenterContent(params: MessageListHeaderCenterContentParams) {
-        DefaultMessageListHeaderCenterContent(
+    public fun RowScope.ChannelHeaderCenterContent(params: ChannelHeaderCenterContentParams) {
+        DefaultChannelHeaderCenterContent(
             modifier = params.modifier,
             channel = params.channel,
             currentUser = params.currentUser,
@@ -643,8 +643,8 @@ public interface ChatComponentFactory {
      * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.MessageListHeaderTrailingContent(params: MessageListHeaderTrailingContentParams) {
-        DefaultMessageListHeaderTrailingContent(
+    public fun RowScope.ChannelHeaderTrailingContent(params: ChannelHeaderTrailingContentParams) {
+        DefaultChannelHeaderTrailingContent(
             channel = params.channel,
             currentUser = params.currentUser,
             onClick = params.onClick,

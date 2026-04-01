@@ -28,7 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
-import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
+import io.getstream.chat.android.compose.ui.messages.header.ChannelHeader
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageListEmptyContentParams
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
@@ -105,7 +105,7 @@ private fun DraftChannelTopBar(
             modifier = Modifier.fillMaxWidth(),
         )
 
-        is ChannelHeaderViewState.Content -> MessageListHeader(
+        is ChannelHeaderViewState.Content -> ChannelHeader(
             channel = content.channel,
             currentUser = content.currentUser,
             connectionState = content.connectionState,

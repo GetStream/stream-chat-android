@@ -99,7 +99,7 @@ fun CustomComposerAndAttachmentsPicker(cid: String?, onBackClick: () -> Unit = {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
             Scaffold(
                 topBar = {
-                    CustomMessageListHeader(cid = cid, onBackClick = onBackClick)
+                    CustomChannelHeader(cid = cid, onBackClick = onBackClick)
                 },
                 bottomBar = {
                     CustomMessageComposer(

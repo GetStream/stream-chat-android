@@ -66,7 +66,7 @@ import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.list.SelectedMessageSnapshot
 import io.getstream.chat.android.compose.ui.theme.AttachmentPickerMenuParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.MessageListHeaderParams
+import io.getstream.chat.android.compose.ui.theme.ChannelHeaderParams
 import io.getstream.chat.android.compose.ui.theme.MessageMenuParams
 import io.getstream.chat.android.compose.ui.theme.MessageReactionPickerParams
 import io.getstream.chat.android.compose.ui.theme.ReactionsMenuParams
@@ -369,8 +369,8 @@ internal fun DefaultTopBarContent(
     val user by listViewModel.user.collectAsState()
     val messageMode = listViewModel.messageMode
 
-    ChatTheme.componentFactory.MessageListHeader(
-        params = MessageListHeaderParams(
+    ChatTheme.componentFactory.ChannelHeader(
+        params = ChannelHeaderParams(
             channel = listViewModel.channel,
             currentUser = user,
             connectionState = connectionState,

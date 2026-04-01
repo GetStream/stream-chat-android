@@ -19,7 +19,7 @@ package io.getstream.chat.android.compose.ui.messages
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
-import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
+import io.getstream.chat.android.compose.ui.messages.header.ChannelHeader
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewMessageData
@@ -28,7 +28,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import org.junit.Rule
 import org.junit.Test
 
-internal class MessageListHeaderTest : PaparazziComposeTest {
+internal class ChannelHeaderTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
@@ -36,7 +36,7 @@ internal class MessageListHeaderTest : PaparazziComposeTest {
     @Test
     fun `connected state`() {
         snapshotWithDarkMode {
-            MessageListHeader(
+            ChannelHeader(
                 channel = PreviewChannelData.channelWithFewMembers,
                 currentUser = PreviewUserData.user1,
                 connectionState = ConnectionState.Connected,
@@ -47,7 +47,7 @@ internal class MessageListHeaderTest : PaparazziComposeTest {
     @Test
     fun `offline state`() {
         snapshotWithDarkMode {
-            MessageListHeader(
+            ChannelHeader(
                 channel = PreviewChannelData.channelWithFewMembers,
                 currentUser = PreviewUserData.user1,
                 connectionState = ConnectionState.Offline,
@@ -58,7 +58,7 @@ internal class MessageListHeaderTest : PaparazziComposeTest {
     @Test
     fun `thread mode`() {
         snapshotWithDarkMode {
-            MessageListHeader(
+            ChannelHeader(
                 channel = PreviewChannelData.channelWithFewMembers,
                 currentUser = PreviewUserData.user1,
                 connectionState = ConnectionState.Connected,

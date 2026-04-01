@@ -47,9 +47,9 @@ import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.MessageListHeaderCenterContentParams
-import io.getstream.chat.android.compose.ui.theme.MessageListHeaderLeadingContentParams
-import io.getstream.chat.android.compose.ui.theme.MessageListHeaderTrailingContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelHeaderCenterContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelHeaderLeadingContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelHeaderTrailingContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
@@ -63,7 +63,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 
 /**
  * A clean, decoupled UI element that doesn't rely on ViewModels or our custom architecture setup.
- * This allows the user to fully govern how the [MessageListHeader] behaves, by passing in all the
+ * This allows the user to fully govern how the [ChannelHeader] behaves, by passing in all the
  * data that's required to display it and drive its actions, as well as customize the slot APIs.
  *
  * @param channel Channel info to display.
@@ -80,11 +80,11 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * @param onChannelAvatarClick Action handler called when the user taps on the channel avatar.
  * @param leadingContent The content shown at the start of the header, by default a [BackButton].
  * @param centerContent The content shown in the middle of the header and represents the core information, by default
- * [DefaultMessageListHeaderCenterContent].
+ * [DefaultChannelHeaderCenterContent].
  * @param trailingContent The content shown at the end of the header, by default the channel avatar.
  */
 @Composable
-public fun MessageListHeader(
+public fun ChannelHeader(
     channel: Channel,
     currentUser: User?,
     connectionState: ConnectionState,
@@ -99,8 +99,8 @@ public fun MessageListHeader(
     onChannelAvatarClick: ((Channel) -> Unit)? = null,
     leadingContent: @Composable RowScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
-            MessageListHeaderLeadingContent(
-                params = MessageListHeaderLeadingContentParams(
+            ChannelHeaderLeadingContent(
+                params = ChannelHeaderLeadingContentParams(
                     onBackPressed = onBackPressed,
                 ),
             )
@@ -108,8 +108,8 @@ public fun MessageListHeader(
     },
     centerContent: @Composable RowScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
-            MessageListHeaderCenterContent(
-                params = MessageListHeaderCenterContentParams(
+            ChannelHeaderCenterContent(
+                params = ChannelHeaderCenterContentParams(
                     modifier = Modifier.weight(1f),
                     channel = channel,
                     currentUser = currentUser,
@@ -123,8 +123,8 @@ public fun MessageListHeader(
     },
     trailingContent: @Composable RowScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
-            MessageListHeaderTrailingContent(
-                params = MessageListHeaderTrailingContentParams(
+            ChannelHeaderTrailingContent(
+                params = ChannelHeaderTrailingContentParams(
                     channel = channel,
                     currentUser = currentUser,
                     onClick = onChannelAvatarClick,
@@ -155,12 +155,12 @@ public fun MessageListHeader(
 }
 
 /**
- * Represents the leading content of [MessageListHeader]. By default shows a back button.
+ * Represents the leading content of [ChannelHeader]. By default shows a back button.
  *
  * @param onBackPressed Handler that propagates the back button click event.
  */
 @Composable
-internal fun DefaultMessageListHeaderLeadingContent(onBackPressed: () -> Unit) {
+internal fun DefaultChannelHeaderLeadingContent(onBackPressed: () -> Unit) {
     BackButton(
         painter = painterResource(id = R.drawable.stream_design_ic_arrow_left),
         onBackPressed = onBackPressed,
@@ -168,7 +168,7 @@ internal fun DefaultMessageListHeaderLeadingContent(onBackPressed: () -> Unit) {
 }
 
 /**
- * Represents the center content of [MessageListHeader]. By default shows header title, that handles
+ * Represents the center content of [ChannelHeader]. By default shows header title, that handles
  * if we should show a loading view for network, or the channel information.
  *
  * @param channel The channel used for the title information.
@@ -180,7 +180,7 @@ internal fun DefaultMessageListHeaderLeadingContent(onBackPressed: () -> Unit) {
  */
 @Suppress("LongMethod")
 @Composable
-internal fun DefaultMessageListHeaderCenterContent(
+internal fun DefaultChannelHeaderCenterContent(
     channel: Channel,
     currentUser: User?,
     connectionState: ConnectionState,
@@ -229,7 +229,7 @@ internal fun DefaultMessageListHeaderCenterContent(
 
         when (connectionState) {
             is ConnectionState.Connected -> {
-                DefaultMessageListHeaderSubtitle(
+                DefaultChannelHeaderSubtitle(
                     subtitle = subtitle,
                 )
             }
@@ -263,7 +263,7 @@ internal fun DefaultMessageListHeaderCenterContent(
  * @param subtitle The subtitle to show.
  */
 @Composable
-internal fun DefaultMessageListHeaderSubtitle(
+internal fun DefaultChannelHeaderSubtitle(
     subtitle: String,
 ) {
     Text(
@@ -277,14 +277,14 @@ internal fun DefaultMessageListHeaderSubtitle(
 }
 
 /**
- * Represents the trailing content of [MessageListHeader]. By default shows the channel avatar.
+ * Represents the trailing content of [ChannelHeader]. By default shows the channel avatar.
  *
  * @param channel The channel used to display the avatar.
  * @param currentUser The current user. Used for choosing which avatar to display.
  * @param onClick The handler called when the user taps on the channel avatar.
  */
 @Composable
-internal fun DefaultMessageListHeaderTrailingContent(
+internal fun DefaultChannelHeaderTrailingContent(
     channel: Channel,
     currentUser: User?,
     onClick: ((Channel) -> Unit)?,
@@ -302,11 +302,11 @@ internal fun DefaultMessageListHeaderTrailingContent(
     )
 }
 
-@Preview(name = "MessageListHeader Preview (Connected)")
+@Preview(name = "ChannelHeader Preview (Connected)")
 @Composable
-private fun MessageListHeaderConnectedPreview() {
+private fun ChannelHeaderConnectedPreview() {
     ChatTheme {
-        MessageListHeader(
+        ChannelHeader(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
@@ -317,11 +317,11 @@ private fun MessageListHeaderConnectedPreview() {
     }
 }
 
-@Preview(name = "MessageListHeader Preview (Connecting)")
+@Preview(name = "ChannelHeader Preview (Connecting)")
 @Composable
-private fun MessageListHeaderConnectingPreview() {
+private fun ChannelHeaderConnectingPreview() {
     ChatTheme {
-        MessageListHeader(
+        ChannelHeader(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
@@ -332,11 +332,11 @@ private fun MessageListHeaderConnectingPreview() {
     }
 }
 
-@Preview(name = "MessageListHeader Preview (Offline)")
+@Preview(name = "ChannelHeader Preview (Offline)")
 @Composable
-private fun MessageListHeaderOfflinePreview() {
+private fun ChannelHeaderOfflinePreview() {
     ChatTheme {
-        MessageListHeader(
+        ChannelHeader(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
@@ -347,11 +347,11 @@ private fun MessageListHeaderOfflinePreview() {
     }
 }
 
-@Preview(name = "MessageListHeader Preview (User Typing)")
+@Preview(name = "ChannelHeader Preview (User Typing)")
 @Composable
-private fun MessageListHeaderUserTypingPreview() {
+private fun ChannelHeaderUserTypingPreview() {
     ChatTheme {
-        MessageListHeader(
+        ChannelHeader(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
@@ -363,11 +363,11 @@ private fun MessageListHeaderUserTypingPreview() {
     }
 }
 
-@Preview(name = "MessageListHeader Preview (Many Members)")
+@Preview(name = "ChannelHeader Preview (Many Members)")
 @Composable
-private fun MessageListHeaderManyMembersPreview() {
+private fun ChannelHeaderManyMembersPreview() {
     ChatTheme {
-        MessageListHeader(
+        ChannelHeader(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),

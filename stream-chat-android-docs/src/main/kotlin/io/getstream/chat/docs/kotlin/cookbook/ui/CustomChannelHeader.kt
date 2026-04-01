@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
-import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
+import io.getstream.chat.android.compose.ui.messages.header.ChannelHeader
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
@@ -34,7 +34,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.docs.R
 
 @Composable
-fun CustomMessageListHeader(cid: String?, onBackClick: () -> Unit = {}) {
+fun CustomChannelHeader(cid: String?, onBackClick: () -> Unit = {}) {
     cid?.let {
         val viewModel = viewModel(
             modelClass = MessageListViewModel::class.java,
@@ -45,7 +45,7 @@ fun CustomMessageListHeader(cid: String?, onBackClick: () -> Unit = {}) {
         val connectionState by viewModel.connectionState.collectAsStateWithLifecycle()
         val currentUser by viewModel.user.collectAsStateWithLifecycle()
 
-        MessageListHeader(
+        ChannelHeader(
             channel = channel,
             currentUser = currentUser,
             connectionState = connectionState,
