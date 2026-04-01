@@ -83,7 +83,7 @@ internal fun ThreadListBanner(
             is ThreadListBannerState.UnreadThreads -> {
                 Icon(
                     modifier = Modifier.size(16.dp),
-                    painter = painterResource(R.drawable.stream_compose_ic_union),
+                    painter = painterResource(R.drawable.stream_design_ic_refresh),
                     contentDescription = null,
                     tint = color,
                 )
