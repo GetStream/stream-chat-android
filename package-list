@@ -10,6 +10,8 @@ io.getstream.chat.android.client.api.models
 io.getstream.chat.android.client.attachment
 io.getstream.chat.android.client.attachment.worker
 io.getstream.chat.android.client.audio
+io.getstream.chat.android.client.cdn
+io.getstream.chat.android.client.cdn.internal
 io.getstream.chat.android.client.channel
 io.getstream.chat.android.client.channel.state
 io.getstream.chat.android.client.clientstate
