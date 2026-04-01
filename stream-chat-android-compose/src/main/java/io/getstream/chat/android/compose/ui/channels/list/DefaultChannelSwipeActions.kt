@@ -16,24 +16,20 @@
 
 package io.getstream.chat.android.compose.ui.channels.list
 
-import android.content.res.Resources
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
-import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ItemState
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.state.channels.actions.MuteChannel
-import io.getstream.chat.android.ui.common.state.channels.actions.PinChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.UnmuteChannel
-import io.getstream.chat.android.ui.common.state.channels.actions.UnpinChannel
 import kotlinx.coroutines.launch
 
 /**
@@ -41,7 +37,7 @@ import kotlinx.coroutines.launch
  *
  * Shows two actions:
  * - **More** (gray, left): Opens the channel options bottom sheet.
- * - **Primary action** (blue, right): Mute with fallback to Pin.
+ * - **Primary action** (blue, right): Mute/Unmute channel.
  *
  * Each action is a self-executing [ChannelAction] that invokes its handler via
  * [LocalSwipeActionHandler].
@@ -59,7 +55,7 @@ public fun DefaultChannelSwipeActions(channelItem: ItemState.ChannelItemState) {
     if (moreHandler != null) {
         SwipeActionItem(
             icon = painterResource(R.drawable.stream_design_ic_more),
-            label = LocalContext.current.resources.getString(R.string.stream_compose_swipe_action_more),
+            label = LocalResources.current.getString(R.string.stream_compose_swipe_action_more),
             onClick = {
                 scope.launch { coordinator?.closeAll() }
                 moreHandler(channel)
@@ -77,60 +73,38 @@ public fun DefaultChannelSwipeActions(channelItem: ItemState.ChannelItemState) {
         SwipeActionItem(
             icon = painterResource(primaryAction.icon),
             label = primaryAction.label,
-            onClick = { primaryAction.onAction() },
+            onClick = primaryAction.onAction,
             style = SwipeActionStyle.Primary,
         )
     }
 }
 
 /**
- * Resolves and remembers the primary swipe action based on channel capabilities.
+ * Resolves and remembers the primary swipe action (mute/unmute channel).
  *
- * Priority: Mute → Pin.
- *
- * Pin is always available (membership operation, no capability gate).
- * Mute requires [ChannelCapabilities.MUTE_CHANNEL].
+ * Requires [ChannelCapabilities.MUTE_CHANNEL] and `isMuteChannelVisible` in the theme.
  */
 @Composable
 private fun rememberPrimarySwipeAction(
     channel: Channel,
     isMuted: Boolean,
     handler: (ChannelAction) -> Unit,
-): ChannelAction {
+): ChannelAction? {
     val resources = LocalResources.current
     val handlerState = rememberUpdatedState(handler)
-    val isPinned = channel.isPinned()
-    val canMute = channel.ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL)
+    val canMute = ChatTheme.channelOptionsTheme.optionVisibility.isMuteChannelVisible &&
+        channel.ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL)
 
-    return remember(channel.cid, isMuted, isPinned, canMute) {
+    return remember(channel.cid, isMuted, canMute) {
+        if (!canMute) return@remember null
         var resolved: ChannelAction? = null
         val onAction: () -> Unit = { resolved?.let { handlerState.value(it) } }
 
-        resolved = muteAction(channel, isMuted, canMute, resources, onAction)
-            ?: pinAction(channel, isPinned, resources, onAction)
+        resolved = if (isMuted) {
+            UnmuteChannel(channel, resources.getString(R.string.stream_compose_swipe_action_unmute), onAction)
+        } else {
+            MuteChannel(channel, resources.getString(R.string.stream_compose_swipe_action_mute), onAction)
+        }
         resolved
     }
-}
-
-private fun muteAction(
-    channel: Channel,
-    isMuted: Boolean,
-    canMute: Boolean,
-    resources: Resources,
-    onAction: () -> Unit,
-): ChannelAction? = when {
-    !canMute -> null
-    isMuted -> UnmuteChannel(channel, resources.getString(R.string.stream_compose_swipe_action_unmute), onAction)
-    else -> MuteChannel(channel, resources.getString(R.string.stream_compose_swipe_action_mute), onAction)
-}
-
-private fun pinAction(
-    channel: Channel,
-    isPinned: Boolean,
-    resources: Resources,
-    onAction: () -> Unit,
-): ChannelAction = if (isPinned) {
-    UnpinChannel(channel, resources.getString(R.string.stream_compose_swipe_action_unpin), onAction)
-} else {
-    PinChannel(channel, resources.getString(R.string.stream_compose_swipe_action_pin), onAction)
 }
