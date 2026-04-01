@@ -17,7 +17,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
 import io.getstream.chat.android.compose.ui.util.MessageTextFormatter
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -28,7 +28,7 @@ import java.util.Date
 
 abstract class ChatThemeCustomization : AppCompatActivity() {
 
-        protected lateinit var viewModelFactory: MessagesViewModelFactory
+        protected lateinit var viewModelFactory: ChannelViewModelFactory
 
         protected val autoTranslationEnabled = true
 
@@ -54,7 +54,7 @@ private object ChatThemeUsageSnippet {
             setContent {
                 ChatTheme {
                     MessagesScreen(
-                        viewModelFactory = MessagesViewModelFactory(
+                        viewModelFactory = ChannelViewModelFactory(
                             context = this,
                             channelId = "messaging:123",
                             messageLimit = 30
@@ -81,7 +81,7 @@ private object ChatThemeCustomizationSnippet {
             setContent {
                 ChatTheme {
                     MessagesScreen(
-                        viewModelFactory = MessagesViewModelFactory(
+                        viewModelFactory = ChannelViewModelFactory(
                             context = this,
                             channelId = "messaging:123",
                         ),

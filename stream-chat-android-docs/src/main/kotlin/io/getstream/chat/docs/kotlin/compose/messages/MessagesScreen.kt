@@ -12,7 +12,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/#usage)
@@ -29,7 +29,7 @@ private object MessagesScreenUsageSnippet {
             setContent {
                 ChatTheme {
                     MessagesScreen(
-                        viewModelFactory = MessagesViewModelFactory(
+                        viewModelFactory = ChannelViewModelFactory(
                             context = this,
                             channelId = channelId
                         ),
@@ -55,7 +55,7 @@ private object MessagesScreenHandlingActionsSnippet {
             setContent {
                 ChatTheme {
                     MessagesScreen(
-                        viewModelFactory = MessagesViewModelFactory(
+                        viewModelFactory = ChannelViewModelFactory(
                             context = this,
                             channelId = channelId
                         ),
@@ -85,7 +85,7 @@ private object MessagesScreenCustomizationSnippet {
             setContent {
                 ChatTheme {
                     MessagesScreen(
-                        viewModelFactory = MessagesViewModelFactory(
+                        viewModelFactory = ChannelViewModelFactory(
                             context = this,
                             channelId = channelId,
                             messageLimit = 30,
@@ -109,7 +109,7 @@ private object MessageScreenOverridingTheViewModelsSnippet {
 
         // 1
         private val factory by lazy {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = this,
                 channelId = channelId,
                 // Customization options

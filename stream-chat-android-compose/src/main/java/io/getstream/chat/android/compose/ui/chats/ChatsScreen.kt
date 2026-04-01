@@ -79,9 +79,9 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModel
 import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFactory
 import io.getstream.chat.android.models.Channel
@@ -100,10 +100,10 @@ import kotlin.math.abs
  * @param channelListViewModelFactory Factory for creating the [ChannelListViewModel] used for managing channel data.
  * @param mentionListViewModelFactory Factory for creating the [MentionListViewModel] used for managing mentions data.
  * @param threadsViewModelFactory Factory for creating the [ThreadListViewModel] used for managing thread data.
- * @param messagesViewModelFactoryProvider A lambda function that provides a [MessagesViewModelFactory]
+ * @param channelViewModelFactoryProvider A lambda function that provides a [ChannelViewModelFactory]
  * for managing messages within a selected channel.
  * The factory is created dynamically based on the selected channel and message context (if any).
- * When the initial [MessagesViewModelFactory] is requested (before a channel is selected),
+ * When the initial [ChannelViewModelFactory] is requested (before a channel is selected),
  * `channelId`, `messageId`, and `parentMessageId` are `null`.
  * @param title The title displayed in the list pane top bar. Default is `"Stream Chat"`.
  * @param searchMode The current search mode. Default is [SearchMode.None].
@@ -129,7 +129,7 @@ public fun ChatsScreen(
     channelListViewModelFactory: ChannelListViewModelFactory = ChannelListViewModelFactory(),
     mentionListViewModelFactory: MentionListViewModelFactory = MentionListViewModelFactory(),
     threadsViewModelFactory: ThreadsViewModelFactory = ThreadsViewModelFactory(QueryThreadsRequest()),
-    messagesViewModelFactoryProvider: MessagesViewModelFactoryProvider = DefaultMessagesViewModelFactoryProvider(),
+    channelViewModelFactoryProvider: ChannelViewModelFactoryProvider = DefaultChannelViewModelFactoryProvider(),
     title: String = "Stream Chat",
     searchMode: SearchMode = SearchMode.None,
     listContentMode: ChatListContentMode = ChatListContentMode.Channels,
@@ -148,7 +148,7 @@ public fun ChatsScreen(
         )
     },
     listBottomBarContent: @Composable () -> Unit = {},
-    detailTopBarContent: @Composable (viewModelFactory: MessagesViewModelFactory, backAction: BackAction) -> Unit =
+    detailTopBarContent: @Composable (viewModelFactory: ChannelViewModelFactory, backAction: BackAction) -> Unit =
         { viewModelFactory, backAction ->
             DefaultDetailTopBarContent(
                 viewModelFactory = viewModelFactory,
@@ -157,7 +157,7 @@ public fun ChatsScreen(
                 onAvatarClick = onDetailTopBarAvatarClick,
             )
         },
-    detailBottomBarContent: @Composable (viewModelFactory: MessagesViewModelFactory) -> Unit = { viewModelFactory ->
+    detailBottomBarContent: @Composable (viewModelFactory: ChannelViewModelFactory) -> Unit = { viewModelFactory ->
         DefaultDetailBottomBarContent(viewModelFactory = viewModelFactory)
     },
     infoContent: @Composable (arguments: Any?) -> Unit = {},
@@ -276,7 +276,7 @@ public fun ChatsScreen(
 
     val detailPane = remember {
         movableContentOf { selection: ChatMessageSelection ->
-            messagesViewModelFactoryProvider(context, selection)?.let { viewModelFactory ->
+            channelViewModelFactoryProvider(context, selection)?.let { viewModelFactory ->
                 DetailPane(
                     viewModelFactory = viewModelFactory,
                     topBarContent = detailTopBarContent,
@@ -297,7 +297,7 @@ public fun ChatsScreen(
     }
 
     LaunchedEffect(Unit) {
-        navigator.initialSelection(messagesViewModelFactoryProvider, context)?.let { selection ->
+        navigator.initialSelection(channelViewModelFactoryProvider, context)?.let { selection ->
             navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
         }
     }
@@ -445,21 +445,21 @@ public fun ChatsScreen(
 }
 
 /**
- * A lambda function that provides a [MessagesViewModelFactory] for managing messages within a selected channel.
+ * A lambda function that provides a [ChannelViewModelFactory] for managing messages within a selected channel.
  */
-public typealias MessagesViewModelFactoryProvider =
-    (context: Context, selection: ChatMessageSelection) -> MessagesViewModelFactory?
+public typealias ChannelViewModelFactoryProvider =
+    (context: Context, selection: ChatMessageSelection) -> ChannelViewModelFactory?
 
 /**
  * Builds the initial message selection when there are no detail destinations
  * and a factory is provided based on the an empty selection.
  */
 private fun ThreePaneNavigator.initialSelection(
-    messagesViewModelFactoryProvider: MessagesViewModelFactoryProvider,
+    channelViewModelFactoryProvider: ChannelViewModelFactoryProvider,
     context: Context,
 ): ChatMessageSelection? =
     if (destinations.none { destination -> destination.pane == ThreePaneRole.Detail }) {
-        messagesViewModelFactoryProvider(context, ChatMessageSelection())?.let { viewModelFactory ->
+        channelViewModelFactoryProvider(context, ChatMessageSelection())?.let { viewModelFactory ->
             ChatMessageSelection(
                 channelId = viewModelFactory.channelId,
                 messageId = viewModelFactory.messageId,
@@ -664,7 +664,7 @@ private fun DefaultListTopBarContent(
 
 @Composable
 private fun DefaultDetailTopBarContent(
-    viewModelFactory: MessagesViewModelFactory,
+    viewModelFactory: ChannelViewModelFactory,
     backAction: BackAction,
     onTitleClick: ((channel: Channel) -> Unit)?,
     onAvatarClick: ((channel: Channel) -> Unit)?,
@@ -698,7 +698,7 @@ private fun DefaultDetailTopBarContent(
 }
 
 @Composable
-private fun DefaultDetailBottomBarContent(viewModelFactory: MessagesViewModelFactory) {
+private fun DefaultDetailBottomBarContent(viewModelFactory: ChannelViewModelFactory) {
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = viewModelFactory)
     val composerViewModel = viewModel(MessageComposerViewModel::class.java, factory = viewModelFactory)
     val attachmentsPickerViewModel = viewModel(AttachmentsPickerViewModel::class.java, factory = viewModelFactory)
@@ -716,9 +716,9 @@ private fun DefaultDetailBottomBarContent(viewModelFactory: MessagesViewModelFac
 
 @Composable
 private fun DetailPane(
-    viewModelFactory: MessagesViewModelFactory,
-    topBarContent: @Composable (viewModelFactory: MessagesViewModelFactory, onBackPressed: BackAction) -> Unit,
-    bottomBarContent: @Composable (viewModelFactory: MessagesViewModelFactory) -> Unit,
+    viewModelFactory: ChannelViewModelFactory,
+    topBarContent: @Composable (viewModelFactory: ChannelViewModelFactory, onBackPressed: BackAction) -> Unit,
+    bottomBarContent: @Composable (viewModelFactory: ChannelViewModelFactory) -> Unit,
     onBackPress: () -> Unit,
 ) {
     // Ensure the view models are recreated when the user navigates between channels
@@ -745,12 +745,12 @@ private fun InfoPane(
     }
 }
 
-private class DefaultMessagesViewModelFactoryProvider : MessagesViewModelFactoryProvider {
-    override fun invoke(context: Context, selection: ChatMessageSelection): MessagesViewModelFactory? =
+private class DefaultChannelViewModelFactoryProvider : ChannelViewModelFactoryProvider {
+    override fun invoke(context: Context, selection: ChatMessageSelection): ChannelViewModelFactory? =
         if (selection.channelId == null) {
             null
         } else {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = context,
                 channelId = selection.channelId,
                 messageId = selection.messageId,

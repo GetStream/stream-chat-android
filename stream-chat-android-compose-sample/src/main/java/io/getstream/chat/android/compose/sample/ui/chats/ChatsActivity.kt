@@ -86,7 +86,7 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsVie
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModelFactory
 import io.getstream.chat.android.models.AttachmentType
@@ -147,9 +147,9 @@ class ChatsActivity : ComponentActivity() {
         )
     }
 
-    private val messagesViewModelFactory by lazy {
+    private val channelViewModelFactory by lazy {
         channelId?.let { cid ->
-            buildMessagesViewModelFactory(
+            buildChannelViewModelFactory(
                 channelId = cid,
                 messageId = messageId,
                 parentMessageId = parentMessageId,
@@ -184,11 +184,11 @@ class ChatsActivity : ComponentActivity() {
         ChatsScreen(
             navigator = navigator,
             channelListViewModelFactory = channelListViewModelFactory,
-            messagesViewModelFactoryProvider = { _, (channelId, messageId, parentMessageId) ->
+            channelViewModelFactoryProvider = { _, (channelId, messageId, parentMessageId) ->
                 if (channelId == null) {
-                    messagesViewModelFactory
+                    channelViewModelFactory
                 } else {
-                    buildMessagesViewModelFactory(
+                    buildChannelViewModelFactory(
                         channelId = channelId,
                         messageId = messageId,
                         parentMessageId = parentMessageId,
@@ -604,11 +604,11 @@ class ChatsActivity : ComponentActivity() {
         }
     }
 
-    private fun buildMessagesViewModelFactory(
+    private fun buildChannelViewModelFactory(
         channelId: String,
         messageId: String?,
         parentMessageId: String?,
-    ) = MessagesViewModelFactory(
+    ) = ChannelViewModelFactory(
         context = applicationContext,
         channelId = channelId,
         messageId = messageId,

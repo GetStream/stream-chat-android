@@ -33,7 +33,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageComposerInputCenterCont
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 
@@ -45,7 +45,7 @@ private object MessageComposerUsageSnippet {
     class MyActivity : AppCompatActivity() {
 
         val factory by lazy {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = this,
                 channelId = "messaging:123",
             )
@@ -99,7 +99,7 @@ private object MessageComposerHandlingActionsSnippet {
     class MyActivity : AppCompatActivity() {
 
         val factory by lazy {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = this,
                 channelId = "messaging:123",
             )
@@ -135,7 +135,7 @@ private object HandlingTypingUpdatesSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = this,
                 channelId = "messaging:123",
             )
@@ -164,7 +164,7 @@ private object MessageComposerCustomizationSnippet {
     class MyActivity : AppCompatActivity() {
 
         val factory by lazy {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = this,
                 channelId = "messaging:123",
             )

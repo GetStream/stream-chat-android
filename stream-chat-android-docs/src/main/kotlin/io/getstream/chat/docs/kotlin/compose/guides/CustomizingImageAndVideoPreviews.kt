@@ -21,7 +21,7 @@ import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentMediaItemParams
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.docs.R
 
@@ -32,7 +32,7 @@ private object CustomizingImageAndVideoPreviewsSnippet {
 
     class MessagesActivity : AppCompatActivity() {
         private val messageListViewModelFactory by lazy {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = this,
                 channelId = "channelId",
             )

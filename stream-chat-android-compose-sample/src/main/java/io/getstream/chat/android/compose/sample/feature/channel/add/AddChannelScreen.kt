@@ -59,8 +59,8 @@ import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.User
 
 /**
@@ -101,7 +101,7 @@ fun AddChannelScreen(
             state.draftCid?.let { cid ->
                 val context = LocalContext.current
                 val viewModel = remember(cid) {
-                    val factory = MessagesViewModelFactory(context, cid)
+                    val factory = ChannelViewModelFactory(context, cid)
                     factory.create(MessageComposerViewModel::class.java)
                 }
                 MessageComposer(

@@ -81,7 +81,7 @@ import java.io.File
  * @param isComposerLinkPreviewEnabled If the link preview is enabled in the composer.
  * @param isComposerDraftMessageEnabled If the draft message is enabled in the composer.
  */
-public class MessagesViewModelFactory(
+public class ChannelViewModelFactory(
     private val context: Context,
     internal val channelId: String,
     internal val messageId: String? = null,
@@ -202,7 +202,7 @@ public class MessagesViewModelFactory(
                 savedStateHandle = savedStateHandle ?: SavedStateHandle(),
             )
             else -> throw IllegalArgumentException(
-                "MessagesViewModelFactory can only create instances of " +
+                "ChannelViewModelFactory can only create instances of " +
                     "${MessageComposerViewModel::class.java.simpleName}, " +
                     "${MessageListViewModel::class.java.simpleName}, or " +
                     "${AttachmentsPickerViewModel::class.java.simpleName}.",

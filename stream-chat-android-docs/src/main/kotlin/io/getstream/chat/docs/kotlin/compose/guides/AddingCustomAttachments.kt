@@ -40,7 +40,7 @@ import io.getstream.chat.android.compose.ui.theme.CustomAttachmentContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentsParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerLeadingContentParams
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.docs.R
 import java.text.SimpleDateFormat
@@ -84,7 +84,7 @@ private object AddingCustomAttachmentsSnippet {
         channelId: String,
         onBackPressed: () -> Unit = {},
     ) {
-        val factory = MessagesViewModelFactory(
+        val factory = ChannelViewModelFactory(
             context = LocalContext.current,
             channelId = channelId,
         )

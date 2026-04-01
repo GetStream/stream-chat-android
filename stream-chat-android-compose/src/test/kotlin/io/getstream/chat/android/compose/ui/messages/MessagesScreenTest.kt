@@ -24,7 +24,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.test.MockedChatClientTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomUser
@@ -67,7 +67,7 @@ internal class MessagesScreenTest : MockedChatClientTest {
 @Composable
 private fun MessagesScreen() {
     MessagesScreen(
-        viewModelFactory = MessagesViewModelFactory(
+        viewModelFactory = ChannelViewModelFactory(
             context = ApplicationProvider.getApplicationContext(),
             channelId = randomCID(),
         ),

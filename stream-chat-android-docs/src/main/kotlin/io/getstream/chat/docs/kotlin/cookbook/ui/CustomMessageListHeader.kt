@@ -28,7 +28,7 @@ import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 import io.getstream.chat.docs.R
@@ -38,7 +38,7 @@ fun CustomMessageListHeader(cid: String?, onBackClick: () -> Unit = {}) {
     cid?.let {
         val viewModel = viewModel(
             modelClass = MessageListViewModel::class.java,
-            factory = MessagesViewModelFactory(LocalContext.current, channelId = cid)
+            factory = ChannelViewModelFactory(LocalContext.current, channelId = cid)
         )
 
         val channel = viewModel.channel

@@ -44,7 +44,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
 import io.getstream.chat.android.compose.ui.theme.MessageOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
@@ -58,7 +58,7 @@ class MessagesActivity : ComponentActivity() {
     }
 
     private val factory by lazy {
-        MessagesViewModelFactory(
+        ChannelViewModelFactory(
             context = this,
             channelId = cid,
             isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,

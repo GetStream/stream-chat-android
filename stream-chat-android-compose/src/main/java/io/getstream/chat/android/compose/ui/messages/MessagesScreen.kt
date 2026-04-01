@@ -73,9 +73,9 @@ import io.getstream.chat.android.compose.ui.theme.ReactionsMenuParams
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
@@ -134,7 +134,7 @@ import kotlinx.coroutines.launch
 @Suppress("LongMethod")
 @Composable
 public fun MessagesScreen(
-    viewModelFactory: MessagesViewModelFactory,
+    viewModelFactory: ChannelViewModelFactory,
     showHeader: Boolean = true,
     reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
     onBackPressed: () -> Unit = {},
@@ -358,7 +358,7 @@ public typealias BackAction = () -> Unit
 
 @Composable
 internal fun DefaultTopBarContent(
-    viewModelFactory: MessagesViewModelFactory,
+    viewModelFactory: ChannelViewModelFactory,
     backAction: BackAction,
     onHeaderTitleClick: ((channel: Channel) -> Unit)?,
     onChannelAvatarClick: ((Channel) -> Unit)?,
@@ -386,7 +386,7 @@ internal fun DefaultTopBarContent(
 
 @Composable
 internal fun DefaultBottomBarContent(
-    viewModelFactory: MessagesViewModelFactory,
+    viewModelFactory: ChannelViewModelFactory,
     onComposerLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,

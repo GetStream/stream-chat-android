@@ -29,7 +29,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionIconParams
 import io.getstream.chat.android.compose.ui.util.ReactionResolver
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.guides.R
 
 /**
@@ -48,7 +48,7 @@ class MessagesActivity : AppCompatActivity() {
                 componentFactory = CustomComponentFactory(),
             ) {
                 MessagesScreen(
-                    viewModelFactory = MessagesViewModelFactory(
+                    viewModelFactory = ChannelViewModelFactory(
                         context = this,
                         channelId = channelId,
                         threadLoadOlderToNewer = true,

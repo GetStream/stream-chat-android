@@ -43,9 +43,9 @@ import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -86,7 +86,7 @@ class MessagesActivity : AppCompatActivity() {
         threadLoadOlderToNewer: Boolean,
         onBackPressed: () -> Unit = {},
     ) {
-        val factory = MessagesViewModelFactory(
+        val factory = ChannelViewModelFactory(
             context = LocalContext.current,
             channelId = channelId,
             threadLoadOlderToNewer = threadLoadOlderToNewer,

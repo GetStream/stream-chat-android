@@ -33,8 +33,8 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageListEmptyContentParams
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 
 @Composable
@@ -120,7 +120,7 @@ private fun DraftChannelBottomBar(
     onMessageSent: () -> Unit,
 ) {
     val context = LocalContext.current
-    val viewModel = viewModel<MessageComposerViewModel>(key = cid, factory = MessagesViewModelFactory(context, cid))
+    val viewModel = viewModel<MessageComposerViewModel>(key = cid, factory = ChannelViewModelFactory(context, cid))
     MessageComposer(
         viewModel = viewModel,
         onSendMessage = { message ->
