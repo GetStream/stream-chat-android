@@ -115,7 +115,7 @@ internal fun MessageAnnotations(modifier: Modifier) {
             trailingTextColor = ChatTheme.colors.chatTextLink,
         )
         MessageAnnotation(
-            iconId = R.drawable.stream_compose_ic_annotation_reminder,
+            iconId = R.drawable.stream_design_ic_bell,
             text = "Remind me",
             trailingText = "in 2 hours",
         )

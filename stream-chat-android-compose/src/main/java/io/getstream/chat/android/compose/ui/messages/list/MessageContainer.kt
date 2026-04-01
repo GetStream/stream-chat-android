@@ -428,7 +428,7 @@ private fun ReminderAnnotation(item: MessageItemState) {
     if (remindAt != null) {
         val timeProvider = ChatTheme.timeProvider
         MessageAnnotation(
-            iconId = R.drawable.stream_compose_ic_annotation_reminder,
+            iconId = R.drawable.stream_design_ic_bell,
             text = stringResource(R.string.stream_compose_message_list_remind_me),
             trailingText = formatReminderDuration(remindAt.time, timeProvider()),
             contentColor = item.annotationContentColor(),
