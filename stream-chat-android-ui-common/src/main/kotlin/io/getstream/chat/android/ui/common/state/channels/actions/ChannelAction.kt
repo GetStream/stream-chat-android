@@ -94,7 +94,7 @@ public class UnmuteChannel(
     override val onAction: () -> Unit,
 ) : ChannelAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_design_ic_bell
+    override val icon: Int = R.drawable.stream_design_ic_audio
     override val requiredCapability: String = ChannelCapabilities.MUTE_CHANNEL
 }
 
@@ -182,7 +182,7 @@ public class UnmuteUser(
     override val onAction: () -> Unit,
 ) : ChannelAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_design_ic_bell
+    override val icon: Int = R.drawable.stream_design_ic_audio
 }
 
 /**
