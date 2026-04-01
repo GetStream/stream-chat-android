@@ -19,10 +19,20 @@ package io.getstream.chat.android.compose.ui.messages.list
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.geometry.Rect
+import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 
 /**
- * CompositionLocal that provides a mutable holder for the selected message's window-space bounds.
+ * Snapshot of the selected message's window-space bounds and its group position in the list.
  */
-internal val LocalSelectedMessageBounds: ProvidableCompositionLocal<MutableState<Rect?>?> =
-    compositionLocalOf { null }
+internal data class SelectedMessageSnapshot(
+    val bounds: Rect,
+    val groupPosition: MessagePosition,
+)
+
+/**
+ * CompositionLocal that provides a mutable holder for the selected message's snapshot.
+ */
+internal val LocalSelectedMessageSnapshot: ProvidableCompositionLocal<MutableState<SelectedMessageSnapshot?>> =
+    compositionLocalOf { mutableStateOf(null) }
