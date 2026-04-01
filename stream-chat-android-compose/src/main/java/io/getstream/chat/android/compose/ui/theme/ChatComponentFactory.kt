@@ -32,8 +32,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.twotone.Warning
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -47,7 +45,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -2673,7 +2670,7 @@ public interface ChatComponentFactory {
         EmptyContent(
             modifier = params.modifier,
             text = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_load_error),
-            painter = rememberVectorPainter(Icons.TwoTone.Warning),
+            painter = painterResource(R.drawable.stream_design_ic_exclamation_triangle_fill),
         )
     }
 
@@ -2795,7 +2792,7 @@ public interface ChatComponentFactory {
         EmptyContent(
             modifier = params.modifier,
             text = stringResource(UiCommonR.string.stream_ui_channel_attachments_media_load_error),
-            painter = rememberVectorPainter(Icons.TwoTone.Warning),
+            painter = painterResource(R.drawable.stream_design_ic_exclamation_triangle_fill),
         )
     }
 
