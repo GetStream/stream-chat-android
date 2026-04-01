@@ -110,7 +110,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
             GIPHY to InlineTextContent(placeholder) {
                 Icon(
                     modifier = iconModifier,
-                    painter = painterResource(id = R.drawable.stream_compose_ic_giphy),
+                    painter = painterResource(id = R.drawable.stream_design_ic_file),
                     contentDescription = null,
                     tint = ChatTheme.colors.textSecondary,
                 )
