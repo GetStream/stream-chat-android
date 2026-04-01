@@ -21,6 +21,7 @@ import android.net.Uri
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.randomString
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -45,7 +46,7 @@ internal class ContentResolverImageCopierTest {
     }
 
     @Test
-    fun `copyToCache copies bytes from file uri into timestamped cache`() {
+    fun `copyToCache copies bytes from file uri into timestamped cache`() = runTest {
         val bytes = byteArrayOf(0x01, 0x02, 0x03, 0x04)
         val source = File(context.cacheDir, "gallery_src_${randomString()}.jpg")
         source.writeBytes(bytes)
@@ -61,7 +62,7 @@ internal class ContentResolverImageCopierTest {
     }
 
     @Test
-    fun `copyToCache returns null when uri cannot be opened`() {
+    fun `copyToCache returns null when uri cannot be opened`() = runTest {
         val result = copier.copyToCache(Uri.parse("content://${randomString()}/missing"))
         assertNull(result)
     }
