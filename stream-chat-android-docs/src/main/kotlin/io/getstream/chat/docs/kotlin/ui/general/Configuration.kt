@@ -16,7 +16,6 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.helper.DateFormatter
-import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.utils.ChannelNameFormatter
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
@@ -85,17 +84,6 @@ private class ChatUiSnippets {
                 mimeType.contains("video") -> R.drawable.stream_ui_ic_file_mov
                 // Generic icon for other files
                 else -> R.drawable.stream_ui_ic_file
-            }
-        }
-    }
-
-    /**
-     * [Customizing Image Headers](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#adding-extra-headers-to-image-requests)
-     */
-    fun customizingImageHeaders() {
-        ChatUI.imageHeadersProvider = object : ImageHeadersProvider {
-            override fun getImageRequestHeaders(url: String): Map<String, String> {
-                return mapOf("token" to "12345")
             }
         }
     }

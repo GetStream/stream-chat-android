@@ -97,8 +97,6 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
-import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
-import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 
@@ -129,8 +127,6 @@ public fun MediaAttachmentContent(
             it.message,
             it.selectedAttachmentUrl,
             it.videoThumbnailsEnabled,
-            it.downloadAttachmentUriGenerator,
-            it.downloadRequestInterceptor,
             it.streamCdnImageResizing,
             it.skipEnrichUrl,
         )
@@ -443,9 +439,6 @@ internal fun MediaAttachmentContentItem(
     val videoThumbnailsEnabled = ChatTheme.config.messageList.videoThumbnailsEnabled
     val streamCdnImageResizing = ChatTheme.streamCdnImageResizing
 
-    val downloadAttachmentUriGenerator = ChatTheme.streamDownloadAttachmentUriGenerator
-    val downloadRequestInterceptor = ChatTheme.streamDownloadRequestInterceptor
-
     val description = if (isImage) {
         stringResource(R.string.stream_ui_message_list_semantics_message_attachment_image)
     } else if (isVideo) {
@@ -479,8 +472,6 @@ internal fun MediaAttachmentContentItem(
                                 message = message,
                                 selectedAttachmentUrl = attachment.thumbUrl ?: attachment.imageUrl,
                                 videoThumbnailsEnabled = videoThumbnailsEnabled,
-                                downloadAttachmentUriGenerator = downloadAttachmentUriGenerator,
-                                downloadRequestInterceptor = downloadRequestInterceptor,
                                 streamCdnImageResizing = streamCdnImageResizing,
                                 skipEnrichUrl = skipEnrichUrl,
                             ),
@@ -615,9 +606,6 @@ internal fun MediaAttachmentShowMoreOverlay(
  * @param message The message that holds the clicked attachment.
  * @param selectedAttachmentUrl The preview URL of the clicked attachment.
  * @param videoThumbnailsEnabled Whether video thumbnails are enabled.
- * @param downloadAttachmentUriGenerator The [DownloadAttachmentUriGenerator] used to generate URIs for downloading
- * attachments.
- * @param downloadRequestInterceptor The [DownloadRequestInterceptor] used to intercept download requests.
  * @param streamCdnImageResizing The [StreamCdnImageResizing] used to resize images.
  * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the message
  * by deleting an attachment contained within it. Set to false by default.
@@ -628,8 +616,6 @@ public data class MediaAttachmentClickData internal constructor(
     val message: Message,
     val selectedAttachmentUrl: String?,
     val videoThumbnailsEnabled: Boolean,
-    val downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
-    val downloadRequestInterceptor: DownloadRequestInterceptor,
     val streamCdnImageResizing: StreamCdnImageResizing,
     val skipEnrichUrl: Boolean,
 )
@@ -689,8 +675,6 @@ internal fun onMediaAttachmentContentItemClick(
     message: Message,
     selectedAttachmentUrl: String?,
     videoThumbnailsEnabled: Boolean,
-    downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
-    downloadRequestInterceptor: DownloadRequestInterceptor,
     streamCdnImageResizing: StreamCdnImageResizing,
     skipEnrichUrl: Boolean,
 ) {
@@ -699,8 +683,6 @@ internal fun onMediaAttachmentContentItemClick(
             message = message,
             selectedAttachmentUrl = selectedAttachmentUrl,
             videoThumbnailsEnabled = videoThumbnailsEnabled,
-            downloadAttachmentUriGenerator = downloadAttachmentUriGenerator,
-            downloadRequestInterceptor = downloadRequestInterceptor,
             streamCdnImageResizing = streamCdnImageResizing,
             skipEnrichUrl = skipEnrichUrl,
         ),

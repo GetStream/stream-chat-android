@@ -790,13 +790,6 @@ public final class io/getstream/chat/android/ui/common/feature/channel/info/Chan
 	public fun toString ()Ljava/lang/String;
 }
 
-public class io/getstream/chat/android/ui/common/feature/documents/AttachmentDocumentActivity : androidx/appcompat/app/AppCompatActivity {
-	public fun <init> ()V
-	public static fun getIntent (Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;
-	public fun loadDocument (Ljava/lang/String;)V
-	protected fun onCreate (Landroid/os/Bundle;)V
-}
-
 public final class io/getstream/chat/android/ui/common/feature/messages/composer/capabilities/MessageComposerCapabilitiesKt {
 	public static final fun canSendMessage (Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;)Z
 	public static final fun canUploadFile (Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;)Z
@@ -1301,10 +1294,6 @@ public final class io/getstream/chat/android/ui/common/feature/messages/translat
 public final class io/getstream/chat/android/ui/common/feature/threads/ThreadListController$Companion {
 }
 
-public abstract interface class io/getstream/chat/android/ui/common/helper/AsyncImageHeadersProvider {
-	public abstract fun getImageRequestHeaders (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
 public abstract interface class io/getstream/chat/android/ui/common/helper/ClipboardHandler {
 	public abstract fun copyMessage (Lio/getstream/chat/android/models/Message;)V
 }
@@ -1341,32 +1330,6 @@ public final class io/getstream/chat/android/ui/common/helper/DateFormatter$Comp
 	public static synthetic fun from$default (Lio/getstream/chat/android/ui/common/helper/DateFormatter$Companion;Landroid/content/Context;Ljava/util/Locale;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/helper/DateFormatter;
 }
 
-public final class io/getstream/chat/android/ui/common/helper/DefaultDownloadAttachmentUriGenerator : io/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/helper/DefaultDownloadAttachmentUriGenerator;
-	public fun generateDownloadUri (Lio/getstream/chat/android/models/Attachment;)Landroid/net/Uri;
-}
-
-public final class io/getstream/chat/android/ui/common/helper/DefaultImageAssetTransformer : io/getstream/chat/android/ui/common/helper/ImageAssetTransformer {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/helper/DefaultImageAssetTransformer;
-	public fun transform (Ljava/lang/Object;)Ljava/lang/Object;
-}
-
-public final class io/getstream/chat/android/ui/common/helper/DefaultImageHeadersProvider : io/getstream/chat/android/ui/common/helper/ImageHeadersProvider {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/helper/DefaultImageHeadersProvider;
-	public fun getImageRequestHeaders (Ljava/lang/String;)Ljava/util/Map;
-}
-
-public abstract interface class io/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator {
-	public abstract fun generateDownloadUri (Lio/getstream/chat/android/models/Attachment;)Landroid/net/Uri;
-}
-
-public abstract interface class io/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor {
-	public abstract fun intercept (Landroid/app/DownloadManager$Request;)V
-}
-
 public abstract interface class io/getstream/chat/android/ui/common/helper/DurationFormatter {
 	public static final field Companion Lio/getstream/chat/android/ui/common/helper/DurationFormatter$Companion;
 	public abstract fun format (I)Ljava/lang/String;
@@ -1374,14 +1337,6 @@ public abstract interface class io/getstream/chat/android/ui/common/helper/Durat
 
 public final class io/getstream/chat/android/ui/common/helper/DurationFormatter$Companion {
 	public final fun defaultFormatter ()Lio/getstream/chat/android/ui/common/helper/DurationFormatter;
-}
-
-public abstract interface class io/getstream/chat/android/ui/common/helper/ImageAssetTransformer {
-	public abstract fun transform (Ljava/lang/Object;)Ljava/lang/Object;
-}
-
-public abstract interface class io/getstream/chat/android/ui/common/helper/ImageHeadersProvider {
-	public abstract fun getImageRequestHeaders (Ljava/lang/String;)Ljava/util/Map;
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/helper/ReactionPushEmojiFactory {
@@ -1401,10 +1356,6 @@ public abstract interface class io/getstream/chat/android/ui/common/helper/TimeP
 
 public final class io/getstream/chat/android/ui/common/helper/TimeProvider$Companion {
 	public final fun getDEFAULT ()Lio/getstream/chat/android/ui/common/helper/TimeProvider;
-}
-
-public abstract interface class io/getstream/chat/android/ui/common/helper/VideoHeadersProvider {
-	public abstract fun getVideoRequestHeaders (Ljava/lang/String;)Ljava/util/Map;
 }
 
 public final class io/getstream/chat/android/ui/common/helper/internal/AttachmentFilter {
@@ -3444,7 +3395,6 @@ public class io/getstream/chat/android/ui/common/utils/Utils {
 
 public final class io/getstream/chat/android/ui/common/utils/extensions/AttachmentKt {
 	public static final fun getDisplayableName (Lio/getstream/chat/android/models/Attachment;)Ljava/lang/String;
-	public static final fun getImagePreviewUrl (Lio/getstream/chat/android/models/Attachment;)Ljava/lang/String;
 	public static final fun hasLink (Lio/getstream/chat/android/models/Attachment;)Z
 	public static final fun isAnyFileType (Lio/getstream/chat/android/models/Attachment;)Z
 	public static final fun isFailed (Lio/getstream/chat/android/models/Attachment;)Z

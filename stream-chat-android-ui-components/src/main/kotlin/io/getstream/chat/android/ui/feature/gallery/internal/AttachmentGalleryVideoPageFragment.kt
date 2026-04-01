@@ -31,7 +31,6 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.ResolvingDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.source.MediaSource
@@ -245,11 +244,7 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
     @OptIn(UnstableApi::class)
     private fun createMediaSourceFactory(): MediaSource.Factory {
         val cdn = ChatClient.instance().cdn
-        val headers = ChatUI.videoHeadersProvider.getVideoRequestHeaders(assetUrl ?: "")
-        val baseDataSourceFactory = StreamMediaDataSource.factory(requireContext(), cdn)
-        val dataSourceFactory = ResolvingDataSource.Factory(baseDataSourceFactory) { dataSpec ->
-            dataSpec.withAdditionalHeaders(headers)
-        }
+        val dataSourceFactory = StreamMediaDataSource.factory(requireContext(), cdn)
         return DefaultMediaSourceFactory(requireContext())
             .setDataSourceFactory(dataSourceFactory)
     }

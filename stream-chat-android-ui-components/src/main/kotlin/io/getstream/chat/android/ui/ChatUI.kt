@@ -17,17 +17,10 @@
 package io.getstream.chat.android.ui
 
 import android.content.Context
+import io.getstream.chat.android.ui.ChatUI.attachmentFactoryManager
 import io.getstream.chat.android.ui.common.helper.DateFormatter
-import io.getstream.chat.android.ui.common.helper.DefaultDownloadAttachmentUriGenerator
-import io.getstream.chat.android.ui.common.helper.DefaultVideoHeadersProvider
-import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
-import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.helper.DurationFormatter
-import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
-import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.ReactionPushEmojiFactory
-import io.getstream.chat.android.ui.common.helper.VideoHeadersProvider
-import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.utils.ChannelNameFormatter
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager
@@ -56,7 +49,6 @@ import io.getstream.chat.android.ui.widgets.avatar.UserAvatarRenderer
  *
  * @see ChatMessageTextTransformer
  * @see ChatFonts
- * @see ImageHeadersProvider
  */
 public object ChatUI {
     internal lateinit var appContext: Context
@@ -70,61 +62,6 @@ public object ChatUI {
      */
     @JvmStatic
     public var navigator: ChatNavigator = ChatNavigator()
-
-    /**
-     * Provides a custom implementation for loading images.
-     *
-     * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
-     * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to provide headers and transform URLs
-     * for all image, file, and download requests.
-     */
-    @Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
-    @JvmStatic
-    public var imageAssetTransformer: ImageAssetTransformer by StreamImageLoader.instance()::imageAssetTransformer
-
-    /**
-     * Generates a download URI for the given attachment.
-     *
-     * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
-     * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to provide headers and transform URLs
-     * for all image, file, and download requests.
-     */
-    @Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
-    @JvmStatic
-    public var downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator = DefaultDownloadAttachmentUriGenerator
-
-    /**
-     * Intercepts and modifies the download request before it is enqueued.
-     *
-     * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
-     * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to provide headers and transform URLs
-     * for all image, file, and download requests.
-     */
-    @Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
-    @JvmStatic
-    public var downloadRequestInterceptor: DownloadRequestInterceptor = DownloadRequestInterceptor { }
-
-    /**
-     * Provides HTTP headers for image loading requests.
-     *
-     * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
-     * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to provide headers and transform URLs
-     * for all image, file, and download requests.
-     */
-    @Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
-    @JvmStatic
-    public var imageHeadersProvider: ImageHeadersProvider by StreamImageLoader.instance()::imageHeadersProvider
-
-    /**
-     * Provides HTTP headers for video loading requests.
-     *
-     * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
-     * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to provide headers and transform URLs
-     * for all image, file, and download requests.
-     */
-    @Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
-    @JvmStatic
-    public var videoHeadersProvider: VideoHeadersProvider = DefaultVideoHeadersProvider
 
     /**
      * Allows setting default fonts used by UI components.
@@ -241,16 +178,6 @@ public object ChatUI {
      */
     @JvmStatic
     public var draftMessagesEnabled: Boolean = false
-
-    /**
-     * Whether to use Google Docs Viewer (gview) for document attachments.
-     *
-     * When `true` (default), documents are rendered via the legacy [AttachmentDocumentActivity]
-     * which loads them through Google Docs Viewer. When `false`, text-based files (TXT, HTML)
-     * are rendered in-app and other file types are downloaded and opened with an external application.
-     */
-    @JvmStatic
-    public var useDocumentGView: Boolean = true
 
     /**
      * Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,

@@ -110,8 +110,6 @@ import java.util.concurrent.TimeUnit
  * @param fileUploader Optional custom [FileUploader]; if null, a default [StreamFileUploader] is used.
  * @param sendMessageInterceptor Interceptor allowing to override the logic for sending messages with your own custom
  * logic.
- * @param shareFileDownloadRequestInterceptor Optional interceptor to customize file download requests done for the
- * purpose of sharing the file.
  * @param cdn Optional [CDN] implementation for transforming file download URLs and injecting headers.
  * @param tokenManager Manager that provides and refreshes auth tokens for authenticated requests.
  * @param customOkHttpClient Optional base [OkHttpClient] to reuse threads/connection pools and customize networking.
@@ -134,7 +132,6 @@ constructor(
     private val fileTransformer: FileTransformer,
     private val fileUploader: FileUploader?,
     private val sendMessageInterceptor: SendMessageInterceptor?,
-    private val shareFileDownloadRequestInterceptor: Interceptor?,
     private val cdn: CDN?,
     private val tokenManager: TokenManager,
     private val customOkHttpClient: OkHttpClient?,
@@ -393,7 +390,6 @@ constructor(
         val okHttpClient = baseClientBuilder(BASE_TIMEOUT)
             .apply {
                 cdn?.let { addInterceptor(CDNOkHttpInterceptor(it)) }
-                shareFileDownloadRequestInterceptor?.let { addInterceptor(it) }
             }
             .build()
         return Retrofit.Builder()

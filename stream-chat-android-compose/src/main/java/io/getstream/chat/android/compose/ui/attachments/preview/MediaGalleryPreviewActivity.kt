@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.attachments.preview
 
-import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -71,9 +70,6 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnCropImageMode
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageMode
-import io.getstream.chat.android.ui.common.helper.DefaultDownloadAttachmentUriGenerator
-import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
-import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
@@ -163,14 +159,10 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     mediaGallery = intent.getParcelable(KeyConfig) ?: MediaGalleryConfig(),
                 ),
                 streamCdnImageResizing = streamCdnImageResizing,
-                downloadAttachmentUriGenerator = downloadAttachmentUriGenerator,
-                downloadRequestInterceptor = downloadRequestInterceptor,
             ) {
                 SetupEdgeToEdge()
 
                 val (writePermissionState, downloadPayload) = attachmentDownloadState()
-                val downloadAttachmentUriGenerator = ChatTheme.streamDownloadAttachmentUriGenerator
-                val downloadRequestInterceptor = ChatTheme.streamDownloadRequestInterceptor
 
                 // Take the imageLoader from the injector, which is populated by the MediaAttachmentContent. This is a
                 // workaround for the fact that the MediaGalleryPreviewActivity is not a part of the composition tree of
@@ -188,8 +180,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                                 option.action,
                                 writePermissionState,
                                 downloadPayload,
-                                downloadAttachmentUriGenerator::generateDownloadUri,
-                                downloadRequestInterceptor::intercept,
                             )
                         },
                         onRequestShareAttachment = ::onRequestShareAttachment,
@@ -240,8 +230,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      * @param action The action the user selected.
      * @param downloadPayload The attachment to be downloaded.
      * @param writePermissionState The current state of permissions.
-     * @param generateDownloadUri The function to generate the download URI.
-     * @param interceptRequest The function to intercept the download request.
      */
     @Suppress("LongParameterList")
     private fun handleMediaAction(
@@ -249,8 +237,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         action: MediaGalleryPreviewAction,
         writePermissionState: PermissionState,
         downloadPayload: MutableState<Attachment?>,
-        generateDownloadUri: (Attachment) -> Uri,
-        interceptRequest: DownloadManager.Request.() -> Unit,
     ) {
         when (action) {
             is ShowInChat -> {
@@ -283,8 +269,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     payload = attachment,
                     permissionState = writePermissionState,
                     downloadPayload = downloadPayload,
-                    generateDownloadUri = generateDownloadUri,
-                    interceptRequest = interceptRequest,
                 )
             }
         }
@@ -496,17 +480,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         private const val KeyConfig: String = "config"
 
         /**
-         * Used to generate download URIs for attachments.
-         */
-        private var downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator =
-            DefaultDownloadAttachmentUriGenerator
-
-        /**
-         * Used to intercept download requests.
-         */
-        private var downloadRequestInterceptor: DownloadRequestInterceptor = DownloadRequestInterceptor { }
-
-        /**
          * Used to build an [Intent] to start the [MediaGalleryPreviewActivity] with the required data.
          *
          * @param context The context to start the activity with.
@@ -528,14 +501,10 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             message: Message,
             selectedAttachmentUrl: String?,
             videoThumbnailsEnabled: Boolean,
-            downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
-            downloadRequestInterceptor: DownloadRequestInterceptor,
             streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
             skipEnrichUrl: Boolean = false,
             config: MediaGalleryConfig = MediaGalleryConfig(),
         ): Intent {
-            this.downloadAttachmentUriGenerator = downloadAttachmentUriGenerator
-            this.downloadRequestInterceptor = downloadRequestInterceptor
             return Intent(context, MediaGalleryPreviewActivity::class.java).apply {
                 val mediaGalleryPreviewActivityState = message.toMediaGalleryPreviewActivityState()
 

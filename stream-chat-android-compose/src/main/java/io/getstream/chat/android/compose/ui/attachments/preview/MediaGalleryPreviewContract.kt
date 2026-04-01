@@ -22,8 +22,6 @@ import androidx.activity.result.contract.ActivityResultContract
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.theme.MediaGalleryConfig
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
-import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 
 /**
@@ -45,8 +43,6 @@ public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig 
             context,
             message = input.message,
             selectedAttachmentUrl = input.selectedAttachmentUrl,
-            downloadAttachmentUriGenerator = input.downloadAttachmentUriGenerator,
-            downloadRequestInterceptor = input.downloadRequestInterceptor,
             videoThumbnailsEnabled = input.videoThumbnailsEnabled,
             streamCdnImageResizing = input.streamCdnImageResizing,
             skipEnrichUrl = input.skipEnrichUrl,
@@ -68,8 +64,6 @@ public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig 
      *
      * @param message The message containing the attachments.
      * @param selectedAttachmentUrl The preview URL of the selected attachment to display first.
-     * @param downloadAttachmentUriGenerator The URI generator for downloading attachments.
-     * @param downloadRequestInterceptor The request interceptor for downloading attachments.
      * @param videoThumbnailsEnabled Whether video thumbnails will be displayed in previews or not.
      * @param streamCdnImageResizing The CDN image resizing strategy.
      * @param skipEnrichUrl If set to true will skip enriching URLs when you update the message
@@ -79,8 +73,6 @@ public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig 
         public val message: Message,
         public val selectedAttachmentUrl: String? = null,
         public val videoThumbnailsEnabled: Boolean,
-        public val downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
-        public val downloadRequestInterceptor: DownloadRequestInterceptor,
         public val streamCdnImageResizing: StreamCdnImageResizing,
         public val skipEnrichUrl: Boolean = false,
     )

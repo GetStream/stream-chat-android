@@ -26,9 +26,7 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.R
-import io.getstream.chat.android.ui.common.feature.documents.AttachmentDocumentActivity
 import io.getstream.chat.android.ui.common.feature.documents.DocumentAttachmentHandler
 import io.getstream.chat.android.ui.common.model.MimeType
 import io.getstream.chat.android.ui.feature.gallery.AttachmentActivity
@@ -131,12 +129,7 @@ public open class AttachmentDestination(
             }
 
             docMimeType(mimeType) -> {
-                @Suppress("DEPRECATION")
-                if (ChatUI.useDocumentGView) {
-                    start(AttachmentDocumentActivity.getIntent(context, url))
-                } else {
-                    DocumentAttachmentHandler.openAttachment(context, attachment)
-                }
+                DocumentAttachmentHandler.openAttachment(context, attachment)
             }
 
             else -> {

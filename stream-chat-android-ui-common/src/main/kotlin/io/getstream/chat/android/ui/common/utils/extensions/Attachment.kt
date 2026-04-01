@@ -39,20 +39,6 @@ public fun Attachment.getDisplayableName(): String? {
 }
 
 /**
- * Retrieves the image preview URL for the attachment (if available).
- *
- * It first checks for the thumbnail URL, and if not present, falls back to the main image URL.
- */
-@Deprecated(
-    message = "Use the appropriate field for your attachment type: " +
-        "imageUrl for image attachments, " +
-        "thumbUrl for video thumbnails and link/giphy previews.",
-    level = DeprecationLevel.WARNING,
-)
-public val Attachment.imagePreviewUrl: String?
-    get() = thumbUrl ?: imageUrl
-
-/**
  * The image URL to display for link attachment previews.
  *
  * Prefers [Attachment.thumbUrl] over [Attachment.imageUrl].

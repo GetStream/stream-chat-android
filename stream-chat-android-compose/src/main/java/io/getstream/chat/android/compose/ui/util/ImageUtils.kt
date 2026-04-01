@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.util
 
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -40,28 +39,17 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.asPainter
 import coil3.compose.rememberAsyncImagePainter
 import coil3.compose.rememberConstraintsSizeResolver
-import coil3.network.httpHeaders
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.size.Size
 import coil3.size.SizeResolver
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
-import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
-import io.getstream.chat.android.ui.common.images.internal.toNetworkHeaders
 import java.net.SocketTimeoutException
 
-private const val GradientDarkerColorFactor = 1.3f
-private const val GradientLighterColorFactor = 0.7f
 private const val MaxRetries = 3
 
 /**
  * It displays a shimmer effect while loading an image asynchronously using `Coil` and the [LocalStreamImageLoader].
- * The image URL is transformed and some extra headers are provided before loading the image.
- *
- * @see ImageAssetTransformer
- * @see ImageHeadersProvider
  *
  * @param data The data to load the image from. Can be a URL, URI, resource ID, etc.
  * @param contentDescription The description to use for the image.
@@ -87,10 +75,6 @@ internal fun StreamAsyncImage(
 
 /**
  * It displays a shimmer effect while loading an image asynchronously using `Coil` and the [LocalStreamImageLoader].
- * The image URL is transformed and some extra headers are provided before loading the image.
- *
- * @see ImageAssetTransformer
- * @see ImageHeadersProvider
  *
  * @param imageRequest The request to load the image.
  * @param contentDescription The description to use for the image.
@@ -127,10 +111,6 @@ internal fun StreamAsyncImage(
 
 /**
  * Displays an image asynchronously using `Coil` and the [LocalStreamImageLoader].
- * The image URL is transformed and some extra headers are provided before loading the image.
- *
- * @see ImageAssetTransformer
- * @see ImageHeadersProvider
  *
  * @param data The data to load the image from. Can be a URL, URI, resource ID, etc.
  * @param modifier Modifier for styling.
@@ -156,10 +136,6 @@ internal fun StreamAsyncImage(
 
 /**
  * Displays an image asynchronously using `Coil` and the [LocalStreamImageLoader].
- * The image URL is transformed and some extra headers are provided before loading the image.
- *
- * @see ImageAssetTransformer
- * @see ImageHeadersProvider
  *
  * @param imageRequest The request to load the image.
  * @param modifier Modifier for styling.
@@ -177,15 +153,9 @@ internal fun StreamAsyncImage(
     Box(
         modifier = modifier.then(sizeResolver),
     ) {
-        val context = LocalContext.current
-        val imageAssetTransformer = ChatTheme.streamImageAssetTransformer
-        val imageHeaderProvider = ChatTheme.streamImageHeadersProvider
         var fetchRetries by remember { mutableIntStateOf(0) }
         val asyncImagePainter = rememberAsyncImagePainter(
-            model = imageRequest
-                .convertUrl(context, imageAssetTransformer)
-                .provideHeaders(context, imageHeaderProvider)
-                .size(sizeResolver),
+            model = imageRequest.size(sizeResolver),
             imageLoader = LocalStreamImageLoader.current,
             contentScale = contentScale,
         )
@@ -203,33 +173,6 @@ internal fun StreamAsyncImage(
         }
     }
 }
-
-private fun ImageRequest.convertUrl(
-    context: Context,
-    imageAssetTransformer: ImageAssetTransformer,
-): ImageRequest {
-    return this.newBuilder(context)
-        .data(imageAssetTransformer.transform(data))
-        .build()
-}
-
-/**
- * Provides headers to the given [ImageRequest] based on the [ImageHeadersProvider] implementation.
- *
- * @param context The current context.
- * @param imageHeaderProvider The [ImageHeadersProvider] implementation to use.
- * @return The [ImageRequest] with the headers applied.
- */
-private fun ImageRequest.provideHeaders(
-    context: Context,
-    imageHeaderProvider: ImageHeadersProvider,
-): ImageRequest =
-    this.newBuilder(context).apply {
-        httpHeaders(
-            imageHeaderProvider.getImageRequestHeaders(data.toString())
-                .toNetworkHeaders(),
-        )
-    }.build()
 
 /**
  * Set the [SizeResolver] as a new build of the [ImageRequest].
