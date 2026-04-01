@@ -43,7 +43,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  * @param isDraftMessageEnabled If the draft message feature is enabled.
  * @param messageSearchSort Optional sorting for message search results. When `null`, the server-side default is used.
  */
-public class ChannelViewModelFactory(
+public class ChannelListViewModelFactory(
     private val chatClient: ChatClient = ChatClient.instance(),
     private val querySort: QuerySorter<Channel> = QuerySortByField.descByName("last_updated"),
     private val filters: FilterObject? = null,
@@ -60,7 +60,7 @@ public class ChannelViewModelFactory(
      */
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass == ChannelListViewModel::class.java) {
-            "ChannelViewModelFactory can only create instances of ChannelListViewModel"
+            "ChannelListViewModelFactory can only create instances of ChannelListViewModel"
         }
         @Suppress("UNCHECKED_CAST")
         return ChannelListViewModel(

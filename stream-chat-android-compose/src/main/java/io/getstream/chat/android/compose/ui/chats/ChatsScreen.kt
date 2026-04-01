@@ -75,7 +75,7 @@ import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneNavigat
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneRole
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.rememberThreePaneNavigator
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
-import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModel
 import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
@@ -97,7 +97,7 @@ import kotlin.math.abs
  * @param modifier The modifier to be applied to the root layout of the screen.
  * @param navigator The navigator used for managing the navigation between destinations.
  * Defaults to [rememberThreePaneNavigator].
- * @param channelViewModelFactory Factory for creating the [ChannelListViewModel] used for managing channel data.
+ * @param channelListViewModelFactory Factory for creating the [ChannelListViewModel] used for managing channel data.
  * @param mentionListViewModelFactory Factory for creating the [MentionListViewModel] used for managing mentions data.
  * @param threadsViewModelFactory Factory for creating the [ThreadListViewModel] used for managing thread data.
  * @param messagesViewModelFactoryProvider A lambda function that provides a [MessagesViewModelFactory]
@@ -126,7 +126,7 @@ import kotlin.math.abs
 public fun ChatsScreen(
     modifier: Modifier = Modifier,
     navigator: ThreePaneNavigator = rememberThreePaneNavigator(),
-    channelViewModelFactory: ChannelViewModelFactory = ChannelViewModelFactory(),
+    channelListViewModelFactory: ChannelListViewModelFactory = ChannelListViewModelFactory(),
     mentionListViewModelFactory: MentionListViewModelFactory = MentionListViewModelFactory(),
     threadsViewModelFactory: ThreadsViewModelFactory = ThreadsViewModelFactory(QueryThreadsRequest()),
     messagesViewModelFactoryProvider: MessagesViewModelFactoryProvider = DefaultMessagesViewModelFactoryProvider(),
@@ -141,7 +141,7 @@ public fun ChatsScreen(
     onViewChannelInfoClick: (channel: Channel) -> Unit = {},
     listTopBarContent: @Composable () -> Unit = {
         DefaultListTopBarContent(
-            viewModelFactory = channelViewModelFactory,
+            viewModelFactory = channelListViewModelFactory,
             title = title,
             onAvatarClick = onListTopBarAvatarClick,
             onActionClick = onListTopBarActionClick,
@@ -194,7 +194,7 @@ public fun ChatsScreen(
                     when (mode) {
                         ChatListContentMode.Channels -> {
                             ChannelsScreen(
-                                viewModelFactory = channelViewModelFactory,
+                                viewModelFactory = channelListViewModelFactory,
                                 isShowingHeader = false,
                                 searchMode = searchMode,
                                 onChannelClick = { channel ->
@@ -362,7 +362,7 @@ public fun ChatsScreen(
             // Auto-select the first item in the list when it loads on wide screens
             FirstItemLoadHandler(
                 listContentMode = listContentMode,
-                channelViewModelFactory = channelViewModelFactory,
+                channelListViewModelFactory = channelListViewModelFactory,
                 mentionListViewModelFactory = mentionListViewModelFactory,
                 threadsViewModelFactory = threadsViewModelFactory,
             ) { selection ->
@@ -525,14 +525,14 @@ private class CompoundComponentFactory(
 @Composable
 private fun FirstItemLoadHandler(
     listContentMode: ChatListContentMode,
-    channelViewModelFactory: ChannelViewModelFactory,
+    channelListViewModelFactory: ChannelListViewModelFactory,
     mentionListViewModelFactory: MentionListViewModelFactory,
     threadsViewModelFactory: ThreadsViewModelFactory,
     onLoad: (selection: ChatMessageSelection) -> Unit,
 ) {
     when (listContentMode) {
         ChatListContentMode.Channels -> {
-            val viewModel = viewModel(ChannelListViewModel::class.java, factory = channelViewModelFactory)
+            val viewModel = viewModel(ChannelListViewModel::class.java, factory = channelListViewModelFactory)
             FirstChannelLoadHandler(viewModel, onLoad)
         }
 
@@ -642,7 +642,7 @@ private fun <T> FirstItemLoadHandler(
 
 @Composable
 private fun DefaultListTopBarContent(
-    viewModelFactory: ChannelViewModelFactory,
+    viewModelFactory: ChannelListViewModelFactory,
     title: String,
     onAvatarClick: (User?) -> Unit,
     onActionClick: () -> Unit,

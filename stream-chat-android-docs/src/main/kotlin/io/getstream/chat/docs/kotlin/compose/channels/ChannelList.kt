@@ -29,7 +29,7 @@ import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
-import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.models.Channel
 
 /**
@@ -93,7 +93,7 @@ private object ChannelListHandlingActionsSnippet1 {
 private object ChannelListHandlingActionsSnippet2 {
 
     class ChannelsActivity : AppCompatActivity() {
-        val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
+        val listViewModel: ChannelListViewModel by viewModels { ChannelListViewModelFactory() }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -150,7 +150,7 @@ private object ChannelListControllingScrollStateSnippet {
 private object ChannelListCustomizationSnippet {
 
     class ChannelsActivity : AppCompatActivity() {
-        val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
+        val listViewModel: ChannelListViewModel by viewModels { ChannelListViewModelFactory() }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)

@@ -85,7 +85,7 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsVie
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
-import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModelFactory
@@ -130,10 +130,10 @@ class ChatsActivity : ComponentActivity() {
     private val messageId by lazy { intent.getStringExtra(KEY_MESSAGE_ID) }
     private val parentMessageId by lazy { intent.getStringExtra(KEY_PARENT_MESSAGE_ID) }
 
-    private val channelViewModelFactory by lazy {
+    private val channelListViewModelFactory by lazy {
         val chatClient = ChatClient.instance()
         val currentUserId = chatClient.getCurrentUser()?.id ?: ""
-        ChannelViewModelFactory(
+        ChannelListViewModelFactory(
             chatClient = chatClient,
             querySort = QuerySortByField
                 .descByName<Channel>("pinned_at") // pinned channels first
@@ -183,7 +183,7 @@ class ChatsActivity : ComponentActivity() {
         val navigator = rememberThreePaneNavigator()
         ChatsScreen(
             navigator = navigator,
-            channelViewModelFactory = channelViewModelFactory,
+            channelListViewModelFactory = channelListViewModelFactory,
             messagesViewModelFactoryProvider = { _, (channelId, messageId, parentMessageId) ->
                 if (channelId == null) {
                     messagesViewModelFactory

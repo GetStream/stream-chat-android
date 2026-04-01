@@ -20,7 +20,7 @@ import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.channels.list.SearchResultItem
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
-import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.models.User
 
 /**
@@ -29,7 +29,7 @@ import io.getstream.chat.android.models.User
 private object ChannelItemUsageSnippet {
 
     class ChannelsActivity : AppCompatActivity() {
-        val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
+        val listViewModel: ChannelListViewModel by viewModels { ChannelListViewModelFactory() }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -67,7 +67,7 @@ private object ChannelItemUsageSnippet {
 private object ChannelItemHandlingActionsSnippet {
 
     class ChannelsActivity : AppCompatActivity() {
-        val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
+        val listViewModel: ChannelListViewModel by viewModels { ChannelListViewModelFactory() }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -109,7 +109,7 @@ private object ChannelItemHandlingActionsSnippet {
 private object ChannelItemCustomizationSnippet {
 
     class MyActivity : AppCompatActivity() {
-        val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
+        val listViewModel: ChannelListViewModel by viewModels { ChannelListViewModelFactory() }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
