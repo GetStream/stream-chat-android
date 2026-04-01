@@ -114,7 +114,7 @@ internal fun ThreadListBanner(
             is ThreadListBannerState.Error -> {
                 Icon(
                     modifier = Modifier.size(16.dp),
-                    painter = painterResource(R.drawable.stream_design_ic_exclamation_mark),
+                    painter = painterResource(R.drawable.stream_design_ic_exclamation_circle),
                     contentDescription = null,
                     tint = color,
                 )

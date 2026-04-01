@@ -21,6 +21,9 @@
     android:viewportHeight="20"
     android:autoMirrored="true">
     <path
-        android:fillColor="#FF000000"
-        android:pathData="M6.97 3.22C7.26 2.93 7.74 2.93 8.03 3.22L14.28 9.47C14.57 9.76 14.57 10.24 14.28 10.53L8.03 16.78C7.74 17.07 7.26 17.07 6.97 16.78 6.68 16.49 6.68 16.01 6.97 15.72L12.69 10 6.97 4.28C6.68 3.99 6.68 3.51 6.97 3.22Z"/>
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M7.5 3.75L13.75 10 7.5 16.25"/>
 </vector>
