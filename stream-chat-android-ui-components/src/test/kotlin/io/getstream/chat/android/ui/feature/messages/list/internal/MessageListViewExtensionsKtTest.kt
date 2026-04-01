@@ -133,10 +133,12 @@ internal class MessageListViewExtensionsKtTest {
     @MethodSource("canMarkAsUnreadArguments")
     fun `Verify canMarkAsUnread() extension function return proper value`(
         messageListViewStyle: MessageListViewStyle,
+        currentUser: User?,
+        message: Message,
         ownCapabilities: Set<String>,
         expectedResult: Boolean,
     ) {
-        messageListViewStyle.canMarkAsUnread(ownCapabilities) `should be` expectedResult
+        messageListViewStyle.canMarkAsUnread(currentUser, message, ownCapabilities) `should be` expectedResult
     }
 
     @ParameterizedTest
@@ -199,18 +201,35 @@ internal class MessageListViewExtensionsKtTest {
 
         @JvmStatic
         fun canMarkAsUnreadArguments() = listOf(
+            // case: disabled
             Arguments.of(
                 randomMessageListViewStyle(markAsUnreadEnabled = false),
-                randomChannelCapabilities(),
+                currentUser,
+                randomMessage(),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.READ_EVENTS)),
                 false,
             ),
+            // case: no READ_EVENTS capability
             Arguments.of(
-                randomMessageListViewStyle(),
+                randomMessageListViewStyle(markAsUnreadEnabled = true),
+                currentUser,
+                randomMessage(),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.READ_EVENTS)),
                 false,
             ),
+            // case: own message
             Arguments.of(
                 randomMessageListViewStyle(markAsUnreadEnabled = true),
+                currentUser,
+                randomMessage(user = currentUser),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.READ_EVENTS)),
+                false,
+            ),
+            // case: all conditions met
+            Arguments.of(
+                randomMessageListViewStyle(markAsUnreadEnabled = true),
+                currentUser,
+                randomMessage(),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.READ_EVENTS)),
                 true,
             ),

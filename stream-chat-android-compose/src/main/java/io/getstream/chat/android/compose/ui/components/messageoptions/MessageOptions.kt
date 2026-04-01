@@ -138,7 +138,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (visibility.canMarkAsUnread(ownCapabilities)) {
+        if (visibility.canMarkAsUnread(currentUser, selectedMessage, ownCapabilities)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_mark_as_unread,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_mark_as_unread),

@@ -145,10 +145,12 @@ internal class CapabilitiesHelperTest {
     @MethodSource("canMarkAsUnreadArguments")
     fun `Verify canMarkAsUnread() extension function return proper value`(
         localFlag: Boolean,
+        currentUser: User?,
+        message: Message,
         ownCapabilities: Set<String>,
         expectedResult: Boolean,
     ) {
-        canMarkAsUnread(localFlag, ownCapabilities) `should be` expectedResult
+        canMarkAsUnread(localFlag, currentUser, message, ownCapabilities) `should be` expectedResult
     }
 
     @ParameterizedTest
@@ -207,18 +209,35 @@ internal class CapabilitiesHelperTest {
 
         @JvmStatic
         fun canMarkAsUnreadArguments() = listOf(
+            // case: UI flag disabled
             Arguments.of(
                 false,
-                randomChannelCapabilities(),
+                currentUser,
+                randomMessage(),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.READ_EVENTS)),
                 false,
             ),
+            // case: no READ_EVENTS capability
             Arguments.of(
-                randomBoolean(),
+                true,
+                currentUser,
+                randomMessage(),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.READ_EVENTS)),
                 false,
             ),
+            // case: own message
             Arguments.of(
                 true,
+                currentUser,
+                randomMessage(user = currentUser),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.READ_EVENTS)),
+                false,
+            ),
+            // case: all conditions met
+            Arguments.of(
+                true,
+                currentUser,
+                randomMessage(),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.READ_EVENTS)),
                 true,
             ),
