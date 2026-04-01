@@ -24,7 +24,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
-import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionIconParams
@@ -47,7 +47,7 @@ class MessagesActivity : AppCompatActivity() {
                 reactionResolver = CustomReactionResolver(),
                 componentFactory = CustomComponentFactory(),
             ) {
-                MessagesScreen(
+                ChannelScreen(
                     viewModelFactory = ChannelViewModelFactory(
                         context = this,
                         channelId = channelId,

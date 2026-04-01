@@ -32,7 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentMediaItemParams
@@ -62,7 +62,7 @@ class MessagesActivity : ComponentActivity() {
 
         setContent {
             ChatTheme(componentFactory = CustomMediaChatComponentFactory) {
-                MessagesScreen(
+                ChannelScreen(
                     viewModelFactory = channelViewModelFactory,
                     onBackPressed = { finish() },
                 )

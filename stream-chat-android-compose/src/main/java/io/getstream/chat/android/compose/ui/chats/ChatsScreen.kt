@@ -54,7 +54,7 @@ import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.components.EmphasisBox
 import io.getstream.chat.android.compose.ui.mentions.MentionList
 import io.getstream.chat.android.compose.ui.messages.BackAction
-import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.theme.ChannelListHeaderParams
@@ -723,7 +723,7 @@ private fun DetailPane(
 ) {
     // Ensure the view models are recreated when the user navigates between channels
     ViewModelStore(viewModelFactory.channelId, viewModelFactory.messageId, viewModelFactory.parentMessageId) {
-        MessagesScreen(
+        ChannelScreen(
             viewModelFactory = viewModelFactory,
             onBackPressed = onBackPress,
             topBarContent = { backAction -> topBarContent(viewModelFactory, backAction) },

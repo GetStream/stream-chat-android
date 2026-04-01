@@ -7,7 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -17,7 +17,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFact
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/#usage)
  */
-private object MessagesScreenUsageSnippet {
+private object ChannelScreenUsageSnippet {
 
     class MyActivity : AppCompatActivity() {
 
@@ -28,7 +28,7 @@ private object MessagesScreenUsageSnippet {
 
             setContent {
                 ChatTheme {
-                    MessagesScreen(
+                    ChannelScreen(
                         viewModelFactory = ChannelViewModelFactory(
                             context = this,
                             channelId = channelId
@@ -43,7 +43,7 @@ private object MessagesScreenUsageSnippet {
 /**
  * [Handling Actions](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/#handling-actions)
  */
-private object MessagesScreenHandlingActionsSnippet {
+private object ChannelScreenHandlingActionsSnippet {
 
     class MyActivity : AppCompatActivity() {
 
@@ -54,7 +54,7 @@ private object MessagesScreenHandlingActionsSnippet {
 
             setContent {
                 ChatTheme {
-                    MessagesScreen(
+                    ChannelScreen(
                         viewModelFactory = ChannelViewModelFactory(
                             context = this,
                             channelId = channelId
@@ -73,7 +73,7 @@ private object MessagesScreenHandlingActionsSnippet {
 /**
  * [Customization](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/#customization)
  */
-private object MessagesScreenCustomizationSnippet {
+private object ChannelScreenCustomizationSnippet {
 
     class MyActivity : AppCompatActivity() {
 
@@ -84,7 +84,7 @@ private object MessagesScreenCustomizationSnippet {
 
             setContent {
                 ChatTheme {
-                    MessagesScreen(
+                    ChannelScreen(
                         viewModelFactory = ChannelViewModelFactory(
                             context = this,
                             channelId = channelId,
@@ -127,7 +127,7 @@ private object MessageScreenOverridingTheViewModelsSnippet {
 
             setContent {
                 ChatTheme {
-                    MessagesScreen(
+                    ChannelScreen(
                         // 3
                         viewModelFactory = factory,
                         onBackPressed = { finish() },

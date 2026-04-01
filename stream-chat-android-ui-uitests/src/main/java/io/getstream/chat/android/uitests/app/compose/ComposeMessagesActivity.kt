@@ -21,7 +21,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 
@@ -37,7 +37,7 @@ class ComposeMessagesActivity : AppCompatActivity() {
 
         setContent {
             ChatTheme {
-                MessagesScreen(
+                ChannelScreen(
                     viewModelFactory = ChannelViewModelFactory(
                         context = this,
                         channelId = channelId,

@@ -60,7 +60,7 @@ private object AddingCustomAttachmentsSnippet {
             setContent {
                 // Pass a custom ChatComponentFactory to handle custom attachment types
                 ChatTheme(componentFactory = CustomComponentFactory()) {
-                    CustomMessagesScreen(
+                    CustomChannelScreen(
                         channelId = channelId,
                         onBackPressed = { finish() },
                     )
@@ -80,7 +80,7 @@ private object AddingCustomAttachmentsSnippet {
     }
 
     @Composable
-    fun CustomMessagesScreen(
+    fun CustomChannelScreen(
         channelId: String,
         onBackPressed: () -> Unit = {},
     ) {

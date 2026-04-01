@@ -73,7 +73,7 @@ private object ChannelListHandlingActionsSnippet1 {
                                 selectedChannel = it
                             },
                             onChannelClick = {
-                                // Start the MessagesScreen
+                                // Start the ChannelScreen
                             },
                         )
 
@@ -105,7 +105,7 @@ private object ChannelListHandlingActionsSnippet2 {
                             modifier = Modifier.fillMaxSize(),
                             viewModel = listViewModel, // Passing in our ViewModel
                             onChannelClick = {
-                                // Start the MessagesScreen
+                                // Start the ChannelScreen
                             }
                         )
 

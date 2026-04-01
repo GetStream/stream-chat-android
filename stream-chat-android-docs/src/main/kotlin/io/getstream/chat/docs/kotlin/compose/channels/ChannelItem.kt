@@ -82,7 +82,7 @@ private object ChannelItemHandlingActionsSnippet {
                                 channelItem = channelState,
                                 currentUser = user,
                                 onChannelClick = {
-                                    // Start the MessagesScreen
+                                    // Start the ChannelScreen
                                 },
                                 onChannelLongClick = {
                                     listViewModel.selectChannel(it)

@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentMediaItemParams
@@ -44,7 +44,7 @@ private object CustomizingImageAndVideoPreviewsSnippet {
             setContent {
                 // Override the default component factory to customize attachment previews
                 ChatTheme(componentFactory = CustomMediaComponentFactory) {
-                    MessagesScreen(
+                    ChannelScreen(
                         viewModelFactory = messageListViewModelFactory,
                         onBackPressed = { finish() },
                     )

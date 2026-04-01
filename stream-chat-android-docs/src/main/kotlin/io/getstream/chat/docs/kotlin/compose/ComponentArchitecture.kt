@@ -85,7 +85,7 @@ private object ComponentArchitectureBoundComponentUsageSnippet {
                         modifier = Modifier.fillMaxSize(),
                         viewModel = channelListViewModel,
                         onChannelClick = {
-                            // Open the MessagesScreen
+                            // Open the ChannelScreen
                         },
                     )
                 }

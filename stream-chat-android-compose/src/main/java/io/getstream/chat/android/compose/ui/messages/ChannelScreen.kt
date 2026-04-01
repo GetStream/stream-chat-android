@@ -133,7 +133,7 @@ import kotlinx.coroutines.launch
  */
 @Suppress("LongMethod")
 @Composable
-public fun MessagesScreen(
+public fun ChannelScreen(
     viewModelFactory: ChannelViewModelFactory,
     showHeader: Boolean = true,
     reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
@@ -204,7 +204,7 @@ public fun MessagesScreen(
 
     BackHandler(enabled = true, onBack = backAction)
 
-    MessagesScreenContentBox {
+    ChannelScreenContentBox {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -301,7 +301,7 @@ public fun MessagesScreen(
 }
 
 @Composable
-private fun MessagesScreenContentBox(content: @Composable BoxScope.() -> Unit) {
+private fun ChannelScreenContentBox(content: @Composable BoxScope.() -> Unit) {
     val selectedMessageSnapshot = remember { mutableStateOf<SelectedMessageSnapshot?>(null) }
     CompositionLocalProvider(LocalSelectedMessageSnapshot provides selectedMessageSnapshot) {
         Box(
@@ -310,7 +310,7 @@ private fun MessagesScreenContentBox(content: @Composable BoxScope.() -> Unit) {
                 .safeDrawingPadding()
                 // Consume IME inset (even if not needed), to avoid children applying it again on some devices.
                 .consumeWindowInsets(WindowInsets.ime)
-                .testTag("Stream_MessagesScreen"),
+                .testTag("Stream_ChannelScreen"),
             content = content,
         )
     }
@@ -459,7 +459,7 @@ public fun BoxScope.MessageMenus(
 
     val selectedMessage = selectedMessageState?.message ?: Message()
 
-    MessagesScreenMenus(
+    ChannelScreenMenus(
         listViewModel = listViewModel,
         composerViewModel = composerViewModel,
         selectedMessageState = selectedMessageState,
@@ -468,7 +468,7 @@ public fun BoxScope.MessageMenus(
         skipEnrichUrl = skipEnrichUrl,
     )
 
-    MessagesScreenReactionsPicker(
+    ChannelScreenReactionsPicker(
         listViewModel = listViewModel,
         composerViewModel = composerViewModel,
         selectedMessageState = selectedMessageState,
@@ -495,7 +495,7 @@ public fun BoxScope.MessageMenus(
  */
 @Suppress("LongMethod")
 @Composable
-private fun BoxScope.MessagesScreenMenus(
+private fun BoxScope.ChannelScreenMenus(
     listViewModel: MessageListViewModel,
     composerViewModel: MessageComposerViewModel,
     selectedMessageState: SelectedMessageState?,
@@ -602,7 +602,7 @@ private fun BoxScope.MessagesScreenMenus(
  * displayed as a link attachment. False by default.
  */
 @Composable
-private fun MessagesScreenReactionsPicker(
+private fun ChannelScreenReactionsPicker(
     listViewModel: MessageListViewModel,
     composerViewModel: MessageComposerViewModel,
     selectedMessageState: SelectedMessageState?,

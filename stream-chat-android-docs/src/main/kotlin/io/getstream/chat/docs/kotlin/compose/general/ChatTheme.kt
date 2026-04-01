@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
@@ -53,7 +53,7 @@ private object ChatThemeUsageSnippet {
 
             setContent {
                 ChatTheme {
-                    MessagesScreen(
+                    ChannelScreen(
                         viewModelFactory = ChannelViewModelFactory(
                             context = this,
                             channelId = "messaging:123",
@@ -80,7 +80,7 @@ private object ChatThemeCustomizationSnippet {
 
             setContent {
                 ChatTheme {
-                    MessagesScreen(
+                    ChannelScreen(
                         viewModelFactory = ChannelViewModelFactory(
                             context = this,
                             channelId = "messaging:123",
@@ -99,7 +99,7 @@ private object ChatThemeDateFormatterSnippet : ChatThemeCustomization() {
         ChatTheme(
             dateFormatter = buildDateFormatter()
         ) {
-            MessagesScreen(
+            ChannelScreen(
                 viewModelFactory = viewModelFactory,
                 onBackPressed = { finish() },
             )
@@ -155,7 +155,7 @@ private object ChatThemeMessageTextFormatterDefaultSnippet : ChatThemeCustomizat
             typography = typography,
             messageTextFormatter = buildMessageTextFormatter(typography, colors)
         ) {
-            MessagesScreen(
+            ChannelScreen(
                 viewModelFactory = viewModelFactory,
                 onBackPressed = { finish() },
             )
@@ -232,7 +232,7 @@ private object ChatThemeMessageTextFormatterCompositeSnippet : ChatThemeCustomiz
             typography = typography,
             messageTextFormatter = buildMessageTextFormatter(typography, colors)
         ) {
-            MessagesScreen(
+            ChannelScreen(
                 viewModelFactory = viewModelFactory,
                 onBackPressed = { finish() },
             )
