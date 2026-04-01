@@ -69,11 +69,11 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
     @Suppress("LongMethod")
     override fun createPreviewIcons(): Map<String, InlineTextContent> {
         val placeholder = Placeholder(
-            width = 14.sp,
-            height = 14.sp,
+            width = 16.sp,
+            height = 16.sp,
             placeholderVerticalAlign = PlaceholderVerticalAlign.Center,
         )
-        val iconModifier = Modifier.size(14.dp)
+        val iconModifier = Modifier.size(16.dp)
         return mapOf(
             VOICE_MESSAGE to InlineTextContent(placeholder) {
                 Icon(

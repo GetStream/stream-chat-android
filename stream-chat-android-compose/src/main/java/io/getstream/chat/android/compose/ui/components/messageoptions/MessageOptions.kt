@@ -141,7 +141,7 @@ public fun defaultMessageOptionsState(
         if (visibility.canMarkAsUnread(currentUser, selectedMessage, ownCapabilities)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_mark_as_unread,
-                iconPainter = painterResource(R.drawable.stream_compose_ic_mark_as_unread),
+                iconPainter = painterResource(R.drawable.stream_design_ic_notification),
                 action = MarkAsUnread(selectedMessage),
                 destructive = false,
             )
@@ -297,11 +297,16 @@ private fun MessageOptionsPreview(
             syncStatus = syncStatus,
         )
 
+        val ownCapabilities = ChannelCapabilities.toSet() - listOf(
+            ChannelCapabilities.UPDATE_ANY_MESSAGE,
+            ChannelCapabilities.DELETE_ANY_MESSAGE,
+        )
+
         val messageOptionsStateList = defaultMessageOptionsState(
             selectedMessage = selectedMMessage,
             currentUser = currentUser,
             isInThread = false,
-            channel = Channel(ownCapabilities = ChannelCapabilities.toSet()),
+            channel = Channel(ownCapabilities = ownCapabilities),
         )
 
         MessageOptions(options = messageOptionsStateList, onMessageOptionSelected = {})

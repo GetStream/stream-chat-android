@@ -463,7 +463,7 @@ internal fun DefaultChannelSearchEmptyContent(
 ) {
     EmptyContent(
         modifier = modifier,
-        painter = painterResource(id = R.drawable.stream_compose_empty_search_results),
+        painter = painterResource(id = R.drawable.stream_design_ic_message_bubbles),
         text = stringResource(R.string.stream_compose_channel_list_empty_search_results, searchQuery),
     )
 }

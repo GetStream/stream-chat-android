@@ -1423,7 +1423,7 @@ public interface ChatComponentFactory {
         CommandChip(
             modifier = params.modifier.padding(
                 start = StreamTokens.spacingSm,
-                bottom = StreamTokens.spacingSm,
+                bottom = StreamTokens.spacingXs + StreamTokens.spacing3xs,
             ),
             command = activeCommand,
             onDismiss = params.onActiveCommandDismiss,

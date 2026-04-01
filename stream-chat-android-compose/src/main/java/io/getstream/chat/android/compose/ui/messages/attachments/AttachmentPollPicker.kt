@@ -75,7 +75,7 @@ internal fun AttachmentPollPicker(
     ) {
         Icon(
             modifier = Modifier.size(32.dp),
-            painter = painterResource(id = R.drawable.stream_compose_ic_attachment_polls_picker),
+            painter = painterResource(id = R.drawable.stream_design_ic_poll),
             contentDescription = null,
             tint = ChatTheme.colors.textTertiary,
         )

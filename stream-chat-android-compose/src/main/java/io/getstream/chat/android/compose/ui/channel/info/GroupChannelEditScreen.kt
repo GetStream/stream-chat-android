@@ -313,7 +313,7 @@ private fun ImagePickerOptions(
         Spacer(modifier = Modifier.size(StreamTokens.spacingSm))
         PickerOptionButton(
             modifier = Modifier.fillMaxWidth(),
-            iconRes = R.drawable.stream_compose_ic_attachment_camera_picker,
+            iconRes = R.drawable.stream_design_ic_camera,
             textRes = R.string.stream_ui_channel_info_edit_take_photo,
             onClick = onTakePhotoClick,
         )

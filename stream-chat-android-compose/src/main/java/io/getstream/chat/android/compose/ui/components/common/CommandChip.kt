@@ -60,7 +60,7 @@ internal fun CommandChip(
     ) {
         Icon(
             modifier = Modifier.size(12.dp),
-            painter = painterResource(id = R.drawable.stream_compose_ic_command_chip),
+            painter = painterResource(id = R.drawable.stream_design_ic_bolt),
             contentDescription = null,
             tint = ChatTheme.colors.textOnInverse,
         )

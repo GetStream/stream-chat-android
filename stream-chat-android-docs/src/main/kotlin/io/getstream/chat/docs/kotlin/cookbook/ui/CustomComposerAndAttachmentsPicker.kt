@@ -368,7 +368,7 @@ private fun AttachmentsTypeMenuItem(
                     when (pickerMode) {
                         is GalleryPickerMode -> ComposeR.drawable.stream_design_ic_gallery
                         is FilePickerMode -> ComposeR.drawable.stream_design_ic_folder
-                        is CameraPickerMode -> ComposeR.drawable.stream_compose_ic_attachment_camera_picker
+                        is CameraPickerMode -> ComposeR.drawable.stream_design_ic_camera
                         else -> R.drawable.ic_menu
                     }
                 ),
