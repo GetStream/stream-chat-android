@@ -50,7 +50,6 @@ import io.getstream.chat.android.ui.common.state.channels.actions.MuteUser
 import io.getstream.chat.android.ui.common.state.channels.actions.PinChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.UnarchiveChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.UnblockUser
-import io.getstream.chat.android.ui.common.state.channels.actions.UnmuteChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.UnmuteUser
 import io.getstream.chat.android.ui.common.state.channels.actions.UnpinChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
@@ -96,8 +95,8 @@ public fun ChannelOptions(
  *
  * Actions vary by channel type:
  * - **DM:** View Info, Mute/Unmute User, Block/Unblock User, Archive Chat, Delete Chat
- * - **Group (owner):** View Info, Mute/Unmute Group, Archive Group, Delete Group
- * - **Group (member):** View Info, Mute/Unmute Group, Archive Group, Leave Group
+ * - **Group (owner):** View Info, Archive Group, Delete Group
+ * - **Group (member):** View Info, Archive Group, Leave Group
  *
  * @param selectedChannel The currently selected channel.
  * @param isMuted If the channel is muted or not.
@@ -136,7 +135,6 @@ public fun buildDefaultChannelActions(
     } else {
         buildGroupChannelActions(
             selectedChannel = selectedChannel,
-            isMuted = isMuted,
             ownCapabilities = ownCapabilities,
             optionVisibility = optionVisibility,
             channelName = channelName,
@@ -292,14 +290,13 @@ private fun buildDmDeleteAction(
 
 /**
  * Builds channel actions for group channels.
- * - **Owner (has DELETE_CHANNEL):** View Info, Mute/Unmute Group, Archive Group, Delete Group
- * - **Member (no DELETE_CHANNEL):** View Info, Mute/Unmute Group, Archive Group, Leave Group
+ * - **Owner (has DELETE_CHANNEL):** View Info, Archive Group, Delete Group
+ * - **Member (no DELETE_CHANNEL):** View Info, Archive Group, Leave Group
  */
 @Suppress("LongMethod", "LongParameterList")
 @Composable
 private fun buildGroupChannelActions(
     selectedChannel: Channel,
-    isMuted: Boolean,
     ownCapabilities: Set<String>,
     optionVisibility: ChannelOptionItemVisibility,
     channelName: String,
@@ -308,7 +305,6 @@ private fun buildGroupChannelActions(
 ): List<ChannelAction> {
     val canLeaveChannel = ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL)
     val canDeleteChannel = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
-    val canMuteChannel = ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL)
 
     return listOfNotNull(
         if (optionVisibility.isViewInfoVisible) {
@@ -320,12 +316,6 @@ private fun buildGroupChannelActions(
         } else {
             null
         },
-        buildGroupMuteAction(
-            canMuteChannel = optionVisibility.isMuteChannelVisible && canMuteChannel,
-            isMuted = isMuted,
-            selectedChannel = selectedChannel,
-            viewModel = viewModel,
-        ),
         buildGroupPinAction(
             canPinChannel = optionVisibility.isPinChannelVisible,
             selectedChannel = selectedChannel,
@@ -477,33 +467,6 @@ private fun buildGroupArchiveAction(
     )
 
     null -> null
-}
-
-/**
- * Builds the mute action for group channels, using "Mute Group" / "Unmute Group" labels.
- */
-@Composable
-private fun buildGroupMuteAction(
-    canMuteChannel: Boolean,
-    isMuted: Boolean,
-    selectedChannel: Channel,
-    viewModel: ChannelListViewModel,
-): ChannelAction? = if (canMuteChannel) {
-    when (isMuted) {
-        true -> UnmuteChannel(
-            channel = selectedChannel,
-            label = stringResource(id = R.string.stream_compose_selected_channel_menu_unmute_group),
-            onAction = { viewModel.unmuteChannel(selectedChannel) },
-        )
-
-        false -> MuteChannel(
-            channel = selectedChannel,
-            label = stringResource(id = R.string.stream_compose_selected_channel_menu_mute_group),
-            onAction = { viewModel.muteChannel(selectedChannel) },
-        )
-    }
-} else {
-    null
 }
 
 /**
