@@ -31,7 +31,6 @@ import java.util.Date
 /**
  * Base class for ChannelStateImpl tests providing common setup and utilities.
  */
-@ExperimentalCoroutinesApi
 internal abstract class ChannelStateImplTestBase {
 
     protected val userFlow = MutableStateFlow(currentUser)
@@ -114,6 +113,7 @@ internal abstract class ChannelStateImplTestBase {
 
         val currentUser = User(id = "tom", name = "Tom")
 
+        @OptIn(ExperimentalCoroutinesApi::class)
         fun currentTime() = testCoroutines.dispatcher.scheduler.currentTime
     }
 }

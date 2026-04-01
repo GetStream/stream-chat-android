@@ -20,7 +20,6 @@ import android.text.format.DateUtils
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -153,7 +152,6 @@ import kotlin.math.roundToInt
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  */
 @Suppress("LongMethod")
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun MessageContainer(
     messageItem: MessageItemState,
@@ -763,6 +761,7 @@ public fun RegularMessageContent(
         MessageContent(
             message = message,
             currentUser = messageItem.currentUser,
+            messageAlignment = messageAlignment,
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,

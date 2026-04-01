@@ -34,7 +34,6 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomPendingMessage
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomUser
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain same`
@@ -46,7 +45,6 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-@ExperimentalCoroutinesApi
 internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
     @Test

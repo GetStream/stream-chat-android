@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.test
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -26,7 +25,6 @@ import kotlinx.coroutines.test.runTest
  * Test interface that helps to synchronize test coroutine scope and test scope. Use only when [runTest] is not
  * possible.
  */
-@ExperimentalCoroutinesApi
 public interface SynchronizedCoroutineTest {
 
     /** Returns test scope. */
