@@ -57,13 +57,13 @@ import io.getstream.chat.android.compose.ui.messages.BackAction
 import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.ChannelHeader
+import io.getstream.chat.android.compose.ui.theme.ChannelHeaderLeadingContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListHeaderParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListItemContentParams
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.CompoundComponentFactory
 import io.getstream.chat.android.compose.ui.theme.MentionListItemParams
-import io.getstream.chat.android.compose.ui.theme.ChannelHeaderLeadingContentParams
 import io.getstream.chat.android.compose.ui.theme.SearchResultItemContentParams
 import io.getstream.chat.android.compose.ui.theme.ThreadListItemParams
 import io.getstream.chat.android.compose.ui.threads.ThreadList

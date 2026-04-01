@@ -46,10 +46,10 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ChannelHeaderCenterContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelHeaderLeadingContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelHeaderTrailingContentParams
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText

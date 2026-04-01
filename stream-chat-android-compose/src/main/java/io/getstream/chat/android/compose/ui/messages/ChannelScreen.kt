@@ -65,8 +65,8 @@ import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageSn
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.list.SelectedMessageSnapshot
 import io.getstream.chat.android.compose.ui.theme.AttachmentPickerMenuParams
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ChannelHeaderParams
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageMenuParams
 import io.getstream.chat.android.compose.ui.theme.MessageReactionPickerParams
 import io.getstream.chat.android.compose.ui.theme.ReactionsMenuParams
@@ -442,8 +442,8 @@ internal fun DefaultBottomBarContent(
  *
  * @param listViewModel The [MessageListViewModel] used to read state from.
  * @param composerViewModel The [MessageComposerViewModel] used to read state from.
- * @param skipPushNotification If the message should skip triggering a push notification when sent. False by default. Note, only
- * new messages trigger push notifications, updating edited messages does not.
+ * @param skipPushNotification If the message should skip triggering a push notification when sent. False by default.
+ * Note, only new messages trigger push notifications, updating edited messages does not.
  * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
  * displayed as a link attachment. False by default.
  */
@@ -488,12 +488,12 @@ public fun BoxScope.MessageMenus(
  * perform actions.
  * @param selectedMessageState The state of the currently selected message.
  * @param selectedMessage The currently selected message.
- * @param skipPushNotification If the message should skip triggering a push notification when sent. False by default. Note, only
- * new messages trigger push notifications, updating edited messages does not.
+ * @param skipPushNotification If the message should skip triggering a push notification when sent. False by default.
+ * Note, only new messages trigger push notifications, updating edited messages does not.
  * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
  * displayed as a link attachment. False by default.
  */
-@Suppress("LongMethod")
+@Suppress("LongMethod", "LongParameterList")
 @Composable
 private fun BoxScope.ChannelScreenMenus(
     listViewModel: MessageListViewModel,
@@ -596,11 +596,12 @@ private fun BoxScope.ChannelScreenMenus(
  * perform actions.
  * @param selectedMessageState The state of the currently selected message.
  * @param selectedMessage The currently selected message.
- * @param skipPushNotification If the message should skip triggering a push notification when sent. False by default. Note, only
- * new messages trigger push notifications, updating edited messages does not.
+ * @param skipPushNotification If the message should skip triggering a push notification when sent. False by default.
+ * Note, only new messages trigger push notifications, updating edited messages does not.
  * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
  * displayed as a link attachment. False by default.
  */
+@Suppress("LongParameterList")
 @Composable
 private fun ChannelScreenReactionsPicker(
     listViewModel: MessageListViewModel,
