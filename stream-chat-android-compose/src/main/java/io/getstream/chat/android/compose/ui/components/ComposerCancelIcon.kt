@@ -51,9 +51,8 @@ public fun ComposerCancelIcon(
             .padding(2.dp)
             .background(color = colors.controlRemoveBg, shape = CircleShape)
             .size(20.dp)
-            .padding(2.dp)
             .clickable(bounded = false, onClick = onClick),
-        painter = painterResource(R.drawable.stream_design_ic_xmark),
+        painter = painterResource(R.drawable.stream_design_ic_xmark_small),
         contentDescription = stringResource(R.string.stream_compose_cancel),
         tint = colors.controlRemoveIcon,
     )
