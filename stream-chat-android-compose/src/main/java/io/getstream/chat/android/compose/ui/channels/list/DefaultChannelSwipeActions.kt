@@ -22,19 +22,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
-import io.getstream.chat.android.client.extensions.isArchive
 import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ItemState
-import io.getstream.chat.android.compose.ui.util.isDistinct
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
-import io.getstream.chat.android.ui.common.state.channels.actions.ArchiveChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.state.channels.actions.MuteChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.PinChannel
-import io.getstream.chat.android.ui.common.state.channels.actions.UnarchiveChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.UnmuteChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.UnpinChannel
 import kotlinx.coroutines.launch
@@ -44,11 +41,7 @@ import kotlinx.coroutines.launch
  *
  * Shows two actions:
  * - **More** (gray, left): Opens the channel options bottom sheet.
- * - **Primary action** (blue, right): Archive for DMs, Mute for groups — with fallback priority.
- *
- * The primary action is resolved via a priority list:
- * - DM: Archive → Mute → Pin
- * - Group: Mute → Archive → Pin
+ * - **Primary action** (blue, right): Mute with fallback to Pin.
  *
  * Each action is a self-executing [ChannelAction] that invokes its handler via
  * [LocalSwipeActionHandler].
@@ -91,12 +84,11 @@ public fun DefaultChannelSwipeActions(channelItem: ItemState.ChannelItemState) {
 }
 
 /**
- * Resolves and remembers the primary swipe action based on channel type and capabilities.
+ * Resolves and remembers the primary swipe action based on channel capabilities.
  *
- * DM priority: Archive → Mute → Pin.
- * Group priority: Mute → Archive → Pin.
+ * Priority: Mute → Pin.
  *
- * Archive and Pin are always available (membership operations, no capability gate).
+ * Pin is always available (membership operation, no capability gate).
  * Mute requires [ChannelCapabilities.MUTE_CHANNEL].
  */
 @Composable
@@ -104,42 +96,20 @@ private fun rememberPrimarySwipeAction(
     channel: Channel,
     isMuted: Boolean,
     handler: (ChannelAction) -> Unit,
-): ChannelAction? {
-    val resources = LocalContext.current.resources
+): ChannelAction {
+    val resources = LocalResources.current
     val handlerState = rememberUpdatedState(handler)
     val isPinned = channel.isPinned()
-    val isArchived = channel.isArchive()
     val canMute = channel.ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL)
-    val isDM = channel.isDistinct() && channel.members.size == 2
 
-    return remember(channel.cid, isMuted, isPinned, isArchived, canMute, isDM) {
+    return remember(channel.cid, isMuted, isPinned, canMute) {
         var resolved: ChannelAction? = null
         val onAction: () -> Unit = { resolved?.let { handlerState.value(it) } }
 
-        val archiveAction = archiveAction(channel, isArchived, resources, onAction)
-        val muteAction = muteAction(channel, isMuted, canMute, resources, onAction)
-        val pinAction = pinAction(channel, isPinned, resources, onAction)
-
-        val candidates: List<ChannelAction?> = if (isDM) {
-            listOf(archiveAction, muteAction, pinAction)
-        } else {
-            listOf(muteAction, archiveAction, pinAction)
-        }
-
-        resolved = candidates.firstOrNull { it != null }
+        resolved = muteAction(channel, isMuted, canMute, resources, onAction)
+            ?: pinAction(channel, isPinned, resources, onAction)
         resolved
     }
-}
-
-private fun archiveAction(
-    channel: Channel,
-    isArchived: Boolean,
-    resources: Resources,
-    onAction: () -> Unit,
-): ChannelAction = if (isArchived) {
-    UnarchiveChannel(channel, resources.getString(R.string.stream_compose_swipe_action_unarchive), onAction)
-} else {
-    ArchiveChannel(channel, resources.getString(R.string.stream_compose_swipe_action_archive), onAction)
 }
 
 private fun muteAction(
