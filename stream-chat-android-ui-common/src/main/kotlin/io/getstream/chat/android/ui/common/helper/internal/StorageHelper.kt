@@ -310,6 +310,26 @@ public class StorageHelper {
         return mimeType?.startsWith("video") ?: false
     }
 
+    /**
+     * Checks whether the content behind [uri] can be resolved.
+     *
+     * Opens the input stream and immediately closes it without reading any bytes.
+     * Returns `false` when the content provider cannot supply the stream (e.g.
+     * cloud-backed files that are not downloaded to the device).
+     *
+     * Must be called from a background thread.
+     *
+     * @param context The context used to access the content resolver.
+     * @param uri The content URI to check.
+     * @return `true` if the content can be read, `false` otherwise.
+     */
+    @Suppress("TooGenericExceptionCaught")
+    internal fun isUriResolvable(context: Context, uri: Uri): Boolean = try {
+        context.contentResolver.openInputStream(uri)?.use { true } ?: false
+    } catch (_: Exception) {
+        false
+    }
+
     public companion object {
         public const val TIME_FORMAT: String = "HHmmssSSS"
         public const val FILE_NAME_PREFIX: String = "STREAM_"

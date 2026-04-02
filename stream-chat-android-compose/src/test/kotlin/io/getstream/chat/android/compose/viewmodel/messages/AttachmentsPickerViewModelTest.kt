@@ -464,6 +464,7 @@ internal class AttachmentsPickerViewModelTest {
         val metadata = listOf(imageAttachment1, imageAttachment2)
         val expectedAttachments = uris.map(::attachmentWithSourceUri)
         whenever(storageHelper.resolveMetadata(uris)) doReturn metadata
+        whenever(storageHelper.partitionResolvable(metadata)) doReturn (metadata to emptyList())
         whenever(storageHelper.toAttachments(metadata)) doReturn expectedAttachments
         val viewModel = createViewModel()
 
@@ -486,6 +487,7 @@ internal class AttachmentsPickerViewModelTest {
         val filteredMetadata = listOf(imageAttachment1)
         val expectedAttachments = listOf(attachmentWithSourceUri(imageUri1))
         whenever(storageHelper.resolveMetadata(uris)) doReturn filteredMetadata
+        whenever(storageHelper.partitionResolvable(filteredMetadata)) doReturn (filteredMetadata to emptyList())
         whenever(storageHelper.toAttachments(filteredMetadata)) doReturn expectedAttachments
         val viewModel = createViewModel()
 
@@ -517,12 +519,15 @@ internal class AttachmentsPickerViewModelTest {
     }
 
     @Test
-    fun `Given unresolvable metadata When resolving URIs Should set hasUnresolvedAttachments`() = runTest {
+    fun `Given inaccessible URIs When resolving Should set hasUnresolvedAttachments`() = runTest {
         val uris = listOf(imageUri1, imageUri2)
         val metadata = listOf(imageAttachment1, imageAttachment2)
-        val partialAttachments = listOf(Attachment(type = "image", upload = mock()))
+        val accessibleMetadata = listOf(imageAttachment1)
+        val inaccessibleMetadata = listOf(imageAttachment2)
+        val accessibleAttachments = listOf(attachmentWithSourceUri(imageUri1))
         whenever(storageHelper.resolveMetadata(uris)) doReturn metadata
-        whenever(storageHelper.toAttachments(metadata)) doReturn partialAttachments
+        whenever(storageHelper.partitionResolvable(metadata)) doReturn (accessibleMetadata to inaccessibleMetadata)
+        whenever(storageHelper.toAttachments(accessibleMetadata)) doReturn accessibleAttachments
         val viewModel = createViewModel()
 
         assertFalse(viewModel.hasUnresolvedAttachments)
@@ -537,14 +542,18 @@ internal class AttachmentsPickerViewModelTest {
 
         assertEquals(1, results.first().attachments.size)
         assertTrue(viewModel.hasUnresolvedAttachments)
+        assertFalse(results.first().hasUnsupportedFiles)
     }
 
     @Test
     fun `Given hasUnresolvedAttachments is true When clearing Should reset to false`() = runTest {
         val uris = listOf(imageUri1, imageUri2)
         val metadata = listOf(imageAttachment1, imageAttachment2)
+        val accessibleMetadata = listOf(imageAttachment1)
+        val inaccessibleMetadata = listOf(imageAttachment2)
         whenever(storageHelper.resolveMetadata(uris)) doReturn metadata
-        whenever(storageHelper.toAttachments(metadata)) doReturn listOf(Attachment(type = "image", upload = mock()))
+        whenever(storageHelper.partitionResolvable(metadata)) doReturn (accessibleMetadata to inaccessibleMetadata)
+        whenever(storageHelper.toAttachments(accessibleMetadata)) doReturn listOf(attachmentWithSourceUri(imageUri1))
         val viewModel = createViewModel()
 
         val job = launch(UnconfinedTestDispatcher(testScheduler)) {
@@ -560,14 +569,12 @@ internal class AttachmentsPickerViewModelTest {
     }
 
     @Test
-    fun `Given all attachments resolved When resolving URIs Should not set hasUnresolvedAttachments`() = runTest {
+    fun `Given all URIs accessible When resolving Should not set hasUnresolvedAttachments`() = runTest {
         val uris = listOf(imageUri1, imageUri2)
         val metadata = listOf(imageAttachment1, imageAttachment2)
-        val expectedAttachments = listOf(
-            Attachment(type = "image", upload = mock()),
-            Attachment(type = "image", upload = mock()),
-        )
+        val expectedAttachments = uris.map(::attachmentWithSourceUri)
         whenever(storageHelper.resolveMetadata(uris)) doReturn metadata
+        whenever(storageHelper.partitionResolvable(metadata)) doReturn (metadata to emptyList())
         whenever(storageHelper.toAttachments(metadata)) doReturn expectedAttachments
         val viewModel = createViewModel()
 
@@ -581,6 +588,31 @@ internal class AttachmentsPickerViewModelTest {
 
         assertEquals(2, results.first().attachments.size)
         assertFalse(viewModel.hasUnresolvedAttachments)
+    }
+
+    @Test
+    fun `Given unresolvable and unsupported URIs When resolving Should set both flags correctly`() = runTest {
+        val extraUri = Uri.parse("content://media/external/files/999")
+        val uris = listOf(imageUri1, imageUri2, extraUri)
+        val metadata = listOf(imageAttachment1, imageAttachment2)
+        val accessibleMetadata = listOf(imageAttachment1)
+        val inaccessibleMetadata = listOf(imageAttachment2)
+        val accessibleAttachments = listOf(attachmentWithSourceUri(imageUri1))
+        whenever(storageHelper.resolveMetadata(uris)) doReturn metadata
+        whenever(storageHelper.partitionResolvable(metadata)) doReturn (accessibleMetadata to inaccessibleMetadata)
+        whenever(storageHelper.toAttachments(accessibleMetadata)) doReturn accessibleAttachments
+        val viewModel = createViewModel()
+
+        val results = mutableListOf<SubmittedAttachments>()
+        val job = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.submittedAttachments.collect(results::add)
+        }
+        viewModel.resolveAndSubmitUris(uris)
+        advanceUntilIdle()
+        job.cancel()
+
+        assertTrue(viewModel.hasUnresolvedAttachments)
+        assertTrue(results.first().hasUnsupportedFiles)
     }
 
     private fun createViewModel(): AttachmentsPickerViewModel =

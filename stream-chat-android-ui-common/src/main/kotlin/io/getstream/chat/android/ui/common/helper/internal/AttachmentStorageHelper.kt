@@ -140,6 +140,24 @@ public class AttachmentStorageHelper(
     public fun resolveMetadata(uris: List<Uri>): List<AttachmentMetaData> =
         storageHelper.getAttachmentsFromUriList(context, uris).let(attachmentFilter::filterAttachments)
 
+    /**
+     * Partitions [metadata] into resolvable and unresolvable items.
+     *
+     * An item is considered resolvable if its content URI can be opened for reading.
+     * Metadata entries without a URI are treated as resolvable.
+     *
+     * @param metadata The metadata to partition.
+     * @return A [Pair] where the first element contains resolvable items and the
+     * second contains unresolvable items.
+     */
+    @WorkerThread
+    public fun partitionResolvable(
+        metadata: List<AttachmentMetaData>,
+    ): Pair<List<AttachmentMetaData>, List<AttachmentMetaData>> =
+        metadata.partition { meta ->
+            meta.uri?.let { storageHelper.isUriResolvable(context, it) } ?: true
+        }
+
     @Suppress("MagicNumber")
     private fun resolveLocalDimensions(file: File, attachment: Attachment): Pair<Int?, Int?> = when {
         attachment.isImage() -> {
