@@ -302,13 +302,12 @@ internal fun List<ChannelInfoViewState.Content.Option>.filterNavigation() = filt
 }
 
 /**
- * Filters action options: Mute, Hide, Leave, Delete, Block.
+ * Filters action options: Mute, Leave, Delete, Block.
  */
 internal fun List<ChannelInfoViewState.Content.Option>.filterActions() = filter { option ->
     option is ChannelInfoViewState.Content.Option.MuteChannel ||
         option is ChannelInfoViewState.Content.Option.MuteUser ||
         option is ChannelInfoViewState.Content.Option.BlockUser ||
-        option is ChannelInfoViewState.Content.Option.HideChannel ||
         option is ChannelInfoViewState.Content.Option.LeaveChannel ||
         option is ChannelInfoViewState.Content.Option.DeleteChannel
 }
