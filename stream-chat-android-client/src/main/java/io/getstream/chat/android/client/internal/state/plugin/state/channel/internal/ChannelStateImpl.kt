@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
+import io.getstream.chat.android.client.internal.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl.Companion.CACHED_LATEST_MESSAGES_LIMIT
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl.Companion.TRIM_BUFFER
 import io.getstream.chat.android.client.internal.state.utils.internal.combineStates
@@ -88,6 +89,7 @@ internal class ChannelStateImpl(
     private val liveLocations: StateFlow<List<Location>>,
     private val messageLimit: Int?,
     val paginationManager: MessagesPaginationManager = MessagesPaginationManagerImpl(),
+    private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
 ) : ChannelState {
 
     override val cid: String = "$channelType:$channelId"
@@ -321,6 +323,8 @@ internal class ChannelStateImpl(
     /**
      * Upserts a single message into the current state.
      * Uses optimized single-element upsert with binary search insertion.
+     * When updating an existing message, valid attachment URLs from the old message are preserved
+     * to prevent unnecessary image reloads caused by CDN signature changes.
      *
      * @param message The message to upsert.
      */
@@ -334,6 +338,7 @@ internal class ChannelStateImpl(
                 element = message,
                 idSelector = Message::id,
                 comparator = MESSAGE_COMPARATOR,
+                update = { old -> preserveAttachmentUrls(message, old) },
             )
         }
         // Update can be called for "ephemeral" messages (ex. Shuffle Giphy)
@@ -343,6 +348,7 @@ internal class ChannelStateImpl(
                     element = message,
                     idSelector = Message::id,
                     comparator = MESSAGE_COMPARATOR,
+                    update = { old -> preserveAttachmentUrls(message, old) },
                 )
             }
         }
@@ -356,8 +362,11 @@ internal class ChannelStateImpl(
      * This is guaranteed when messages come from API responses or database queries.
      *
      * @param messages The list of messages to upsert (must be sorted by createdAt).
+     * @param preserveAttachmentUrls When `true`, valid attachment URLs from existing messages in state are
+     * preserved to prevent unnecessary image reloads caused by CDN signature changes. Defaults to `false`
+     * for pagination performance; set to `true` for reconnection/sync paths where messages may overlap.
      */
-    fun upsertMessages(messages: List<Message>) {
+    fun upsertMessages(messages: List<Message>, preserveAttachmentUrls: Boolean = false) {
         val messagesToUpsert = messages.filterNot { shouldIgnoreUpsertion(it) }
         if (messagesToUpsert.isEmpty()) return
         for (message in messagesToUpsert) {
@@ -366,8 +375,13 @@ internal class ChannelStateImpl(
             message.poll?.let { registerPollForMessage(it, message.id) }
         }
         _messages.update { current ->
+            val enriched = if (preserveAttachmentUrls) {
+                preserveAttachmentUrls(messagesToUpsert, current)
+            } else {
+                messagesToUpsert
+            }
             current.mergeSorted(
-                other = messagesToUpsert,
+                other = enriched,
                 idSelector = Message::id,
                 comparator = MESSAGE_COMPARATOR,
             )
@@ -377,7 +391,8 @@ internal class ChannelStateImpl(
     /**
      * Upserts a single message into the cached latest messages state.
      * The cached messages are bounded to [CACHED_LATEST_MESSAGES_LIMIT] to prevent unbounded growth
-     * while the user is in search mode.
+     * while the user is in search mode. When updating an existing message, valid attachment URLs
+     * from the old message are preserved to prevent unnecessary image reloads.
      *
      * @param message The message to upsert.
      */
@@ -392,17 +407,22 @@ internal class ChannelStateImpl(
                 maxSize = CACHED_LATEST_MESSAGES_LIMIT,
                 idSelector = Message::id,
                 comparator = MESSAGE_COMPARATOR,
+                update = { old -> preserveAttachmentUrls(message, old) },
             )
         }
     }
 
     /**
      * Updates a message in the current state. Does nothing if the message does not exist.
+     * Valid attachment URLs from the existing message are preserved to prevent unnecessary
+     * image reloads caused by CDN signature changes.
      *
      * @param message The message to update.
      */
     fun updateMessage(message: Message) {
-        updateMessageById(message.id) { message }
+        updateMessageById(message.id) { old ->
+            preserveAttachmentUrls(message, old)
+        }
     }
 
     /**
@@ -417,6 +437,27 @@ internal class ChannelStateImpl(
         _messages.update { it.updateIf({ msg -> msg.id == id }, transform) }
         _cachedLatestMessages.update { it.updateIf({ msg -> msg.id == id }, transform) }
         _pinnedMessages.update { it.updateIf({ msg -> msg.id == id }, transform) }
+    }
+
+    /**
+     * Replaces an existing message with [eventMessage] while preserving valid attachment URLs
+     * from the old message, then applies the [enrich] function for caller-specific field merging.
+     *
+     * Use this for event-driven full-message replacements (e.g. reaction events) where the event
+     * payload may carry attachment URLs with different CDN signatures than the ones already in state.
+     *
+     * @param eventMessage The new message from the event payload.
+     * @param enrich A function that receives the old message and the URL-preserved new message,
+     * returning the final merged message. Typically used to preserve fields like `ownReactions`.
+     */
+    fun updateMessageFromEvent(
+        eventMessage: Message,
+        enrich: (old: Message, new: Message) -> Message,
+    ) {
+        updateMessageById(eventMessage.id) { old ->
+            val urlPreserved = preserveAttachmentUrls(eventMessage, old)
+            enrich(old, urlPreserved)
+        }
     }
 
     /**
@@ -585,6 +626,8 @@ internal class ChannelStateImpl(
 
     /**
      * Updates each message that quotes the given message.
+     * Valid attachment URLs from the existing quoted message are preserved to prevent
+     * unnecessary image reloads caused by CDN signature changes.
      *
      * @param quotedMessage The message whose quoting messages should be updated.
      */
@@ -592,22 +635,27 @@ internal class ChannelStateImpl(
         val quotingMessageIds = _quotedMessagesMap.value[quotedMessage.id]
         if (quotingMessageIds.isNullOrEmpty()) return
 
+        fun preservedReplyTo(existing: Message): Message {
+            val oldReplyTo = existing.replyTo ?: return quotedMessage
+            return preserveAttachmentUrls(quotedMessage, oldReplyTo)
+        }
+
         _messages.update { current ->
             current.updateIf(
                 filter = { it.id in quotingMessageIds },
-                update = { it.copy(replyTo = quotedMessage) },
+                update = { it.copy(replyTo = preservedReplyTo(it)) },
             )
         }
         _cachedLatestMessages.update { current ->
             current.updateIf(
                 filter = { it.id in quotingMessageIds },
-                update = { it.copy(replyTo = quotedMessage) },
+                update = { it.copy(replyTo = preservedReplyTo(it)) },
             )
         }
         _pinnedMessages.update { current ->
             current.updateIf(
                 filter = { it.id in quotingMessageIds },
-                update = { it.copy(replyTo = quotedMessage) },
+                update = { it.copy(replyTo = preservedReplyTo(it)) },
             )
         }
     }
@@ -661,6 +709,8 @@ internal class ChannelStateImpl(
 
     /**
      * Adds pinned messages to the current pinned messages list.
+     * When updating an existing pinned message, valid attachment URLs from the old message
+     * are preserved to prevent unnecessary image reloads caused by CDN signature changes.
      *
      * @param pinnedMessages The list of pinned messages to add.
      */
@@ -679,6 +729,7 @@ internal class ChannelStateImpl(
                     element = pinnedMessage,
                     idSelector = Message::id,
                     comparator = compareBy { it.pinnedAt },
+                    update = { old -> preserveAttachmentUrls(pinnedMessage, old) },
                 )
             }
             result
@@ -1411,14 +1462,24 @@ internal class ChannelStateImpl(
      *
      * Called during reconnection to refresh the "jump to latest" cache with the server's
      * current latest page without disturbing the user's active scroll position.
+     *
+     * @param messages The list of messages to merge.
+     * @param preserveAttachmentUrls When `true`, valid attachment URLs from existing cached messages are
+     * preserved to prevent unnecessary image reloads caused by CDN signature changes. Defaults to `false`;
+     * set to `true` for reconnection/sync paths where messages may overlap.
      */
-    fun upsertCachedLatestMessages(messages: List<Message>) {
+    fun upsertCachedLatestMessages(messages: List<Message>, preserveAttachmentUrls: Boolean = false) {
         if (messages.isEmpty()) return
         val messagesToUpsert = messages.filterNot { shouldIgnoreUpsertion(it) }
         if (messagesToUpsert.isEmpty()) return
         _cachedLatestMessages.update { current ->
+            val enriched = if (preserveAttachmentUrls) {
+                preserveAttachmentUrls(messagesToUpsert, current)
+            } else {
+                messagesToUpsert
+            }
             current.mergeSorted(
-                other = messagesToUpsert,
+                other = enriched,
                 idSelector = Message::id,
                 comparator = MESSAGE_COMPARATOR,
             ).takeLast(CACHED_LATEST_MESSAGES_LIMIT)
@@ -1554,6 +1615,25 @@ internal class ChannelStateImpl(
 
         /** Trim newest messages (end of the sorted list). */
         FROM_NEWEST,
+    }
+
+    /**
+     * Preserves valid attachment URLs from [oldMessage] onto [newMessage].
+     * Prevents unnecessary image reloads when the backend delivers events with different CDN signatures.
+     */
+    private fun preserveAttachmentUrls(newMessage: Message, oldMessage: Message): Message =
+        attachmentUrlValidator.updateValidAttachmentsUrl(newMessage, oldMessage)
+
+    /**
+     * Preserves valid attachment URLs for a batch of messages.
+     * Builds a lookup map from [oldMessages] and enriches each message in [newMessages].
+     */
+    private fun preserveAttachmentUrls(
+        newMessages: List<Message>,
+        oldMessages: List<Message>,
+    ): List<Message> {
+        val oldById = oldMessages.associateBy(Message::id)
+        return attachmentUrlValidator.updateValidAttachmentsUrl(newMessages, oldById)
     }
 
     private companion object {
