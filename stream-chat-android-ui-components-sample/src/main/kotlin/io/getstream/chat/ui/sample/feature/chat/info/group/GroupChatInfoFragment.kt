@@ -208,14 +208,6 @@ class GroupChatInfoFragment : Fragment() {
                 is ChatInfoItem.Option.DeleteChannel ->
                     viewModel.onViewAction(ChannelInfoViewAction.DeleteChannelClick)
 
-                is ChatInfoItem.Option.HideChannel -> viewModel.onViewAction(
-                    if (option.isChecked) {
-                        ChannelInfoViewAction.UnhideChannelClick
-                    } else {
-                        ChannelInfoViewAction.HideChannelClick
-                    },
-                )
-
                 // Not applicable in this UI
                 ChatInfoItem.Option.SharedGroups -> Unit
 

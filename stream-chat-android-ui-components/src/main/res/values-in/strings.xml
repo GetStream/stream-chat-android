@@ -39,7 +39,6 @@
     <string name="stream_ui_channel_list_delete_confirmation_message">Anda yakin ingin menghapus percakapan ini?</string>
     <string name="stream_ui_channel_list_delete_confirmation_positive_button">Hapus</string>
     <string name="stream_ui_channel_list_delete_confirmation_negative_button">Batal</string>
-    <string name="stream_ui_channel_list_error_hide_channel">Gagal menyembunyikan grup</string>
     <string name="stream_ui_channel_list_error_delete_channel">Gagal menghapus grup</string>
     <string name="stream_ui_channel_list_error_leave_channel">Gagal keluar dari grup</string>
     <string name="stream_ui_mention">\@%1$s</string>

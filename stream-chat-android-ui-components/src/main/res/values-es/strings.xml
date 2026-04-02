@@ -43,7 +43,6 @@
   <string name="stream_ui_channel_list_dismiss_dialog">"Cancelar"</string>
   <string name="stream_ui_channel_list_empty">"No hay canales disponibles"</string>
   <string name="stream_ui_channel_list_error_delete_channel">"Fallo al eliminar el canal"</string>
-  <string name="stream_ui_channel_list_error_hide_channel">"Fallo al ocultar el canal"</string>
   <string name="stream_ui_channel_list_error_leave_channel">"Fallo al salir del canal"</string>
   <string name="stream_ui_channel_list_leave_channel">"Salir del grupo"</string>
   <string name="stream_ui_channel_list_view_info">"Ver información"</string>

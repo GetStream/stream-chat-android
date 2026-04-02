@@ -122,25 +122,6 @@ private fun ChannelInfoOptionContent(
             }
         }
 
-        is ChannelInfoViewState.Content.Option.HideChannel -> {
-            ChannelInfoOptionSwitch(
-                icon = R.drawable.stream_design_ic_eye_fill,
-                text = if (isGroupChannel) {
-                    stringResource(R.string.stream_ui_channel_info_option_hide_group)
-                } else {
-                    stringResource(R.string.stream_ui_channel_info_option_hide_conversation)
-                },
-                checked = option.isHidden,
-                onCheckedChange = { checked ->
-                    if (checked) {
-                        onViewAction(ChannelInfoViewAction.HideChannelClick)
-                    } else {
-                        onViewAction(ChannelInfoViewAction.UnhideChannelClick)
-                    }
-                },
-            )
-        }
-
         is ChannelInfoViewState.Content.Option.PinnedMessages -> {
             ChannelInfoOptionNavigationButton(
                 icon = R.drawable.stream_design_ic_pin,
@@ -216,7 +197,6 @@ internal fun ChannelInfoOptionItems(isGroupChannel: Boolean = false) {
     val options = listOf(
         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
         ChannelInfoViewState.Content.Option.MuteUser(isMuted = false),
-        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
         ChannelInfoViewState.Content.Option.PinnedMessages,
         ChannelInfoViewState.Content.Option.MediaAttachments,
         ChannelInfoViewState.Content.Option.FilesAttachments,
