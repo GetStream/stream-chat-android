@@ -1126,6 +1126,12 @@ public final class io/getstream/chat/android/compose/ui/components/TypingIndicat
 	public static final fun TypingIndicator (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/components/attachments/files/ComposableSingletons$FileTypeIconKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/attachments/files/ComposableSingletons$FileTypeIconKt;
+	public fun <init> ()V
+	public final fun getLambda$-1000060634$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class io/getstream/chat/android/compose/ui/components/attachments/files/ComposableSingletons$FilesPickerKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/attachments/files/ComposableSingletons$FilesPickerKt;
 	public fun <init> ()V
