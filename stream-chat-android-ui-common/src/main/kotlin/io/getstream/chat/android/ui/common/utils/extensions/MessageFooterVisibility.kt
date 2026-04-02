@@ -41,7 +41,6 @@ public fun MessageFooterVisibility.shouldShowMessageFooter(
     nextMessage: Message?,
 ): Boolean {
     if (nextMessage == null && this != MessageFooterVisibility.Never) return true
-    if (message.messageTextUpdatedAt != null && this != MessageFooterVisibility.Never) return true
     return when (this) {
         MessageFooterVisibility.Always -> true
         MessageFooterVisibility.LastInGroup -> isLastMessageInGroup

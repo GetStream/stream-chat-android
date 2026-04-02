@@ -172,7 +172,7 @@ internal class MessageFooterVisibilityTest {
     }
 
     @Test
-    fun `LastInGroup should show footer when message is edited`() {
+    fun `LastInGroup should not show footer when message is edited but not last in group`() {
         val message = createMessage(user1, messageTextUpdatedAt = Date())
         val nextMessage = createMessage(user1)
 
@@ -182,7 +182,7 @@ internal class MessageFooterVisibilityTest {
             nextMessage = nextMessage,
         )
 
-        result `should be equal to` true
+        result `should be equal to` false
     }
 
     // Test MessageFooterVisibility.WithTimeDifference
@@ -302,7 +302,7 @@ internal class MessageFooterVisibilityTest {
     }
 
     @Test
-    fun `WithTimeDifference should show footer when message is edited`() {
+    fun `WithTimeDifference should not show footer when message is edited but within threshold`() {
         val message = createMessage(user1, createdAt = Date(1000), messageTextUpdatedAt = Date(1500))
         val nextMessage = createMessage(user1, createdAt = Date(2000))
 
@@ -312,7 +312,7 @@ internal class MessageFooterVisibilityTest {
             nextMessage = nextMessage,
         )
 
-        result `should be equal to` true
+        result `should be equal to` false
     }
 
     @Test
@@ -347,7 +347,7 @@ internal class MessageFooterVisibilityTest {
     }
 
     @Test
-    fun `LastInGroup should show footer when message is edited even if not last in group`() {
+    fun `LastInGroup should not show footer for edited message when not last in group`() {
         val message = createMessage(user1, messageTextUpdatedAt = Date())
         val nextMessage = createMessage(user1)
 
@@ -357,7 +357,7 @@ internal class MessageFooterVisibilityTest {
             nextMessage = nextMessage,
         )
 
-        result `should be equal to` true
+        result `should be equal to` false
     }
 
     // Helper functions
