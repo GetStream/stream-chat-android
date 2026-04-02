@@ -24,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
@@ -34,7 +35,7 @@ import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewSta
 internal fun ChannelInfoOptionItem(
     option: ChannelInfoViewState.Content.Option,
     isGroupChannel: Boolean,
-    onViewAction: (action: ChannelInfoViewAction) -> Unit,
+    onViewAction: (action: ChannelInfoViewAction) -> Unit = {},
 ) {
     ChannelInfoOptionContent(
         option = option,
@@ -190,6 +191,44 @@ private fun ChannelInfoOptionContent(
                     onClick = { onViewAction(ChannelInfoViewAction.DeleteChannelClick) },
                 )
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun DirectChannelInfoOptionItemsPreview() {
+    ChatTheme {
+        ChannelInfoOptionItems()
+    }
+}
+
+@Preview
+@Composable
+private fun GroupChannelInfoOptionItemsPreview() {
+    ChatTheme {
+        ChannelInfoOptionItems(isGroupChannel = true)
+    }
+}
+
+@Composable
+internal fun ChannelInfoOptionItems(isGroupChannel: Boolean = false) {
+    val options = listOf(
+        ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
+        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+        ChannelInfoViewState.Content.Option.PinnedMessages,
+        ChannelInfoViewState.Content.Option.MediaAttachments,
+        ChannelInfoViewState.Content.Option.FilesAttachments,
+        ChannelInfoViewState.Content.Option.BlockUser(isBlocked = false),
+        ChannelInfoViewState.Content.Option.LeaveChannel,
+        ChannelInfoViewState.Content.Option.DeleteChannel,
+    )
+    ChannelInfoSection {
+        options.forEach { option ->
+            ChannelInfoOptionItem(
+                option = option,
+                isGroupChannel = isGroupChannel,
+            )
         }
     }
 }
