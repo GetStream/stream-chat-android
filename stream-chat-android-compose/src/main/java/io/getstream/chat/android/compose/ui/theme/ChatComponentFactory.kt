@@ -2534,7 +2534,7 @@ public interface ChatComponentFactory {
      * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyItemScope.ChannelInfoOptionItem(params: ChannelInfoOptionItemParams) {
+    public fun ChannelInfoOptionItem(params: ChannelInfoOptionItemParams) {
         DefaultChannelInfoOptionItem(
             option = params.option,
             isGroupChannel = params.isGroupChannel,

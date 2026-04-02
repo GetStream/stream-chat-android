@@ -3194,7 +3194,7 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 	public fun ChannelFilesAttachmentsTopBar (Lio/getstream/chat/android/compose/ui/theme/ChannelFilesAttachmentsTopBarParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ChannelInfoMemberInfoModalSheetTopBar (Lio/getstream/chat/android/compose/ui/theme/ChannelInfoMemberInfoModalSheetTopBarParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ChannelInfoMemberOptionItem (Lio/getstream/chat/android/compose/ui/theme/ChannelInfoMemberOptionItemParams;Landroidx/compose/runtime/Composer;I)V
-	public fun ChannelInfoOptionItem (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/compose/ui/theme/ChannelInfoOptionItemParams;Landroidx/compose/runtime/Composer;I)V
+	public fun ChannelInfoOptionItem (Lio/getstream/chat/android/compose/ui/theme/ChannelInfoOptionItemParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ChannelInfoScreenModal (Lio/getstream/chat/android/compose/ui/theme/ChannelInfoScreenModalParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ChannelInfoSeparatorItem (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/compose/ui/theme/ChannelInfoSeparatorItemParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ChannelItemCenterContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/ui/theme/ChannelItemCenterContentParams;Landroidx/compose/runtime/Composer;I)V
@@ -3381,7 +3381,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFacto
 	public static fun ChannelFilesAttachmentsTopBar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ChannelFilesAttachmentsTopBarParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelInfoMemberInfoModalSheetTopBar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ChannelInfoMemberInfoModalSheetTopBarParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelInfoMemberOptionItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ChannelInfoMemberOptionItemParams;Landroidx/compose/runtime/Composer;I)V
-	public static fun ChannelInfoOptionItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/compose/ui/theme/ChannelInfoOptionItemParams;Landroidx/compose/runtime/Composer;I)V
+	public static fun ChannelInfoOptionItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ChannelInfoOptionItemParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelInfoScreenModal (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ChannelInfoScreenModalParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelInfoSeparatorItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/compose/ui/theme/ChannelInfoSeparatorItemParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelItemCenterContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/ui/theme/ChannelItemCenterContentParams;Landroidx/compose/runtime/Composer;I)V

@@ -45,7 +45,7 @@ internal fun ChannelInfoOptionItem(
 
 @Suppress("LongMethod")
 @Composable
-internal fun ChannelInfoOptionContent(
+private fun ChannelInfoOptionContent(
     option: ChannelInfoViewState.Content.Option,
     isGroupChannel: Boolean,
     onViewAction: (action: ChannelInfoViewAction) -> Unit,

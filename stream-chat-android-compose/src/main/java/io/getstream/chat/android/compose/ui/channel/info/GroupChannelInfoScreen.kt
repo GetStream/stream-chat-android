@@ -62,6 +62,7 @@ import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
+import io.getstream.chat.android.compose.ui.theme.ChannelInfoOptionItemParams
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -322,10 +323,12 @@ private fun GroupChannelInfoContent(
                 item {
                     ChannelInfoSection {
                         navigationOptions.forEach { option ->
-                            ChannelInfoOptionContent(
-                                option = option,
-                                isGroupChannel = true,
-                                onViewAction = onViewAction,
+                            ChatTheme.componentFactory.ChannelInfoOptionItem(
+                                params = ChannelInfoOptionItemParams(
+                                    option = option,
+                                    isGroupChannel = true,
+                                    onViewAction = onViewAction,
+                                ),
                             )
                         }
                     }
@@ -354,10 +357,12 @@ private fun GroupChannelInfoContent(
                 item {
                     ChannelInfoSection {
                         actionOptions.forEach { option ->
-                            ChannelInfoOptionContent(
-                                option = option,
-                                isGroupChannel = true,
-                                onViewAction = onViewAction,
+                            ChatTheme.componentFactory.ChannelInfoOptionItem(
+                                params = ChannelInfoOptionItemParams(
+                                    option = option,
+                                    isGroupChannel = true,
+                                    onViewAction = onViewAction,
+                                ),
                             )
                         }
                     }
