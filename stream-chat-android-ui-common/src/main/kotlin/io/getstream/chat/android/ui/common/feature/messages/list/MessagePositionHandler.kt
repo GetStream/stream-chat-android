@@ -23,7 +23,9 @@ import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.feature.messages.list.MessagePositionHandler.Companion.DEFAULT_MAX_GROUP_TIME_MILLIS
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
+import kotlin.math.abs
 
 /**
  * A handler to determine the position of a message inside a group.
@@ -51,14 +53,20 @@ public fun interface MessagePositionHandler {
     ): MessagePosition
 
     public companion object {
+        private const val DEFAULT_MAX_GROUP_TIME_MILLIS: Long = 60 * 1000L
+
         /**
          * The default implementation of the [MessagePositionHandler] interface which can be taken
          * as a reference when implementing a custom one.
          *
+         * @param maxGroupTimeMillis The maximum time difference (in milliseconds) between
+         * consecutive messages from the same user before they are split into separate groups.
+         * Defaults to [DEFAULT_MAX_GROUP_TIME_MILLIS] (60 seconds).
+         *
          * @return The default implementation of [MessagePositionHandler].
          */
         @InternalStreamChatApi
-        public fun defaultHandler(): MessagePositionHandler {
+        public fun defaultHandler(maxGroupTimeMillis: Long = DEFAULT_MAX_GROUP_TIME_MILLIS): MessagePositionHandler {
             return MessagePositionHandler {
                     previous: Message?,
                     message: Message,
@@ -69,10 +77,10 @@ public fun interface MessagePositionHandler {
                 ->
                 val isGroupedWithPrevious = !isAfterDateSeparator &&
                     previous.isValidMessageFromUser(message.user) &&
-                    !message.exceedsMaxTimeDifference(previous)
+                    !message.exceedsMaxTimeDifference(previous, maxGroupTimeMillis)
                 val isGroupedWithNext = !isBeforeDateSeparator &&
                     next.isValidMessageFromUser(message.user) &&
-                    !next.exceedsMaxTimeDifference(message)
+                    !next.exceedsMaxTimeDifference(message, maxGroupTimeMillis)
 
                 when {
                     isGroupedWithNext && !isGroupedWithPrevious -> MessagePosition.TOP
@@ -87,13 +95,11 @@ public fun interface MessagePositionHandler {
             return this != null && !this.isSystem() && !this.isError() && this.user.id == user.id
         }
 
-        private fun Message?.exceedsMaxTimeDifference(other: Message?): Boolean {
+        private fun Message?.exceedsMaxTimeDifference(other: Message?, maxMillis: Long): Boolean {
             if (this == null || other == null) return false
             val thisTime = this.getCreatedAtOrDefault(NEVER).time
             val otherTime = other.getCreatedAtOrDefault(NEVER).time
-            return kotlin.math.abs(thisTime - otherTime) > MAX_TIME_BETWEEN_GROUPED_MESSAGES_MILLIS
+            return abs(thisTime - otherTime) > maxMillis
         }
-
-        private const val MAX_TIME_BETWEEN_GROUPED_MESSAGES_MILLIS: Long = 60 * 1000L
     }
 }
