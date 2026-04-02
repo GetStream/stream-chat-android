@@ -54,17 +54,6 @@ internal fun List<ChannelInfoViewState.Content.Option>.toChannelInfoItems(
             is ChannelInfoViewState.Content.Option.MuteUser -> Unit
             is ChannelInfoViewState.Content.Option.BlockUser -> Unit
 
-            is ChannelInfoViewState.Content.Option.HideChannel -> add(
-                ChatInfoItem.Option.HideChannel(
-                    textResId = if (isGroupChannel) {
-                        R.string.stream_ui_channel_info_option_hide_group
-                    } else {
-                        R.string.stream_ui_channel_info_option_hide_conversation
-                    },
-                    isChecked = option.isHidden,
-                ),
-            )
-
             is ChannelInfoViewState.Content.Option.PinnedMessages -> {
                 add(ChatInfoItem.Option.PinnedMessages)
                 // This option isn't coming from the ViewModel yet, so we add them manually
@@ -112,23 +101,6 @@ internal fun Fragment.showModal(
     onDismiss: ((modal: ChannelInfoViewEvent.Modal) -> Unit)? = null,
 ) {
     when (modal) {
-        is ChannelInfoViewEvent.HideChannelModal ->
-            ConfirmationDialogFragment.newHideChannelInstance(requireContext(), isGroupChannel)
-                .apply {
-                    confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
-                        viewModel.onViewAction(
-                            ChannelInfoViewAction.HideChannelConfirmationClick(clearHistory = true),
-                        )
-                    }
-                    cancelClickListener = ConfirmationDialogFragment.CancelClickListener {
-                        viewModel.onViewAction(
-                            ChannelInfoViewAction.HideChannelConfirmationClick(clearHistory = false),
-                        )
-                    }
-                    onDismissListener = { onDismiss?.invoke(modal) }
-                }
-                .show(parentFragmentManager, ConfirmationDialogFragment.TAG)
-
         is ChannelInfoViewEvent.LeaveChannelModal ->
             ConfirmationDialogFragment.newLeaveChannelInstance(requireContext(), isGroupChannel)
                 .apply {
@@ -221,14 +193,6 @@ internal fun Fragment.showError(error: ChannelInfoViewEvent.Error, isGroupChanne
         ChannelInfoViewEvent.BlockUserError,
         ChannelInfoViewEvent.UnblockUserError,
         -> R.string.stream_ui_channel_info_block_user_error
-
-        ChannelInfoViewEvent.HideChannelError,
-        ChannelInfoViewEvent.UnhideChannelError,
-        -> if (isGroupChannel) {
-            R.string.stream_ui_channel_info_hide_conversation_error
-        } else {
-            R.string.stream_ui_channel_info_hide_group_error
-        }
 
         ChannelInfoViewEvent.LeaveChannelError,
         -> if (isGroupChannel) {

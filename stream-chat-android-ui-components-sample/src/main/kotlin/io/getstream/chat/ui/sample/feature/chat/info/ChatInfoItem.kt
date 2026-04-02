@@ -101,19 +101,6 @@ sealed class ChatInfoItem {
             override val showRightArrow: Boolean = false
         }
 
-        data class HideChannel(
-            @StringRes override val textResId: Int,
-            val isChecked: Boolean,
-        ) : Option() {
-            override val iconResId: Int
-                get() = R.drawable.stream_ui_ic_hide
-
-            override val showRightArrow: Boolean = false
-
-            override val checkedState: Boolean
-                get() = isChecked
-        }
-
         sealed class Stateful : Option() {
             abstract val isChecked: Boolean
 
