@@ -1667,6 +1667,7 @@ public final class io/getstream/chat/android/compose/ui/components/selectedmessa
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/selectedmessage/ComposableSingletons$SelectedMessageMenuKt;
 	public fun <init> ()V
 	public final fun getLambda$-1312161726$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1436712551$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-895544184$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
