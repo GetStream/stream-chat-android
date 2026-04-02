@@ -198,49 +198,82 @@ private fun IsDeliveredIcon(modifier: Modifier) {
 
 @Preview
 @Composable
-private fun MessageReadStateIconSendingPreview() {
+private fun MessageReadStatusIconPendingPreview() {
     ChatTheme {
-        MessageReadStatusIcon(
-            message = PreviewMessageData.message2.copy(syncStatus = SyncStatus.IN_PROGRESS),
-            isMessageRead = false,
-            readCount = 3,
-        )
+        MessageReadStatusIconPending()
     }
+}
+
+@Composable
+internal fun MessageReadStatusIconPending() {
+    MessageReadStatusIcon(
+        message = PreviewMessageData.message2.copy(syncStatus = SyncStatus.IN_PROGRESS),
+        isMessageRead = false,
+    )
 }
 
 @Preview
 @Composable
-private fun MessageReadStateIconSentPreview() {
+private fun MessageReadStatusIconSentPreview() {
     ChatTheme {
-        MessageReadStatusIcon(
-            message = PreviewMessageData.message2.copy(syncStatus = SyncStatus.COMPLETED),
-            isMessageRead = false,
-            readCount = 3,
-        )
+        MessageReadStatusIconSent()
     }
+}
+
+@Composable
+internal fun MessageReadStatusIconSent() {
+    MessageReadStatusIcon(
+        message = PreviewMessageData.message2.copy(syncStatus = SyncStatus.COMPLETED),
+        isMessageRead = false,
+    )
 }
 
 @Preview
 @Composable
-private fun MessageReadStateIconDeliveredPreview() {
+private fun MessageReadStatusIconDeliveredPreview() {
     ChatTheme {
-        MessageReadStatusIcon(
-            message = PreviewMessageData.message2.copy(syncStatus = SyncStatus.COMPLETED),
-            isMessageRead = false,
-            isMessageDelivered = true,
-            readCount = 3,
-        )
+        MessageReadStatusIconDelivered()
     }
+}
+
+@Composable
+internal fun MessageReadStatusIconDelivered() {
+    MessageReadStatusIcon(
+        message = PreviewMessageData.message2.copy(syncStatus = SyncStatus.COMPLETED),
+        isMessageRead = false,
+        isMessageDelivered = true,
+    )
 }
 
 @Preview
 @Composable
-private fun MessageReadStateIconReadPreview() {
+private fun MessageReadStatusIconReadPreview() {
     ChatTheme {
-        MessageReadStatusIcon(
-            message = PreviewMessageData.message2,
-            isMessageRead = true,
-            readCount = 3,
-        )
+        MessageReadStatusIconRead()
     }
+}
+
+@Composable
+internal fun MessageReadStatusIconRead() {
+    MessageReadStatusIcon(
+        message = PreviewMessageData.message2,
+        isMessageRead = true,
+        readCount = 3,
+    )
+}
+
+@Preview
+@Composable
+private fun MessageReadStatusIconErrorPreview() {
+    ChatTheme {
+        MessageReadStatusIconError()
+    }
+}
+
+@Composable
+internal fun MessageReadStatusIconError() {
+    MessageReadStatusIcon(
+        message = PreviewMessageData.message2.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY),
+        isMessageRead = false,
+    )
 }
