@@ -85,13 +85,6 @@ public sealed interface ChannelInfoViewState {
             public data class BlockUser(val isBlocked: Boolean) : Option
 
             /**
-             * Indicates an option to hide the channel.
-             *
-             * @param isHidden Indicates if the channel is hidden.
-             */
-            public data class HideChannel(val isHidden: Boolean) : Option
-
-            /**
              * Indicates an option to view the channel's pinned messages.
              */
             public data object PinnedMessages : Option

@@ -306,26 +306,6 @@ public final class io/getstream/chat/android/ui/common/feature/channel/info/Chan
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$HideChannelClick : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$HideChannelClick;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$HideChannelConfirmationClick : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction {
-	public static final field $stable I
-	public fun <init> (Z)V
-	public final fun component1 ()Z
-	public final fun copy (Z)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$HideChannelConfirmationClick;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$HideChannelConfirmationClick;ZILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$HideChannelConfirmationClick;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getClearHistory ()Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$LeaveChannelClick : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$LeaveChannelClick;
@@ -417,14 +397,6 @@ public final class io/getstream/chat/android/ui/common/feature/channel/info/Chan
 public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$UnblockUserClick : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$UnblockUserClick;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$UnhideChannelClick : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$UnhideChannelClick;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -526,22 +498,6 @@ public final class io/getstream/chat/android/ui/common/feature/channel/info/Chan
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Error : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent {
-}
-
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$HideChannelError : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Error {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$HideChannelError;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$HideChannelModal : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Modal {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$HideChannelModal;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$LeaveChannelError : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Error {
@@ -682,14 +638,6 @@ public final class io/getstream/chat/android/ui/common/feature/channel/info/Chan
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Navigation$Reason$HideChannelSuccess : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Navigation$Reason {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Navigation$Reason$HideChannelSuccess;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Navigation$Reason$LeaveChannelSuccess : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Navigation$Reason {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Navigation$Reason$LeaveChannelSuccess;
@@ -749,14 +697,6 @@ public final class io/getstream/chat/android/ui/common/feature/channel/info/Chan
 public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$UnblockUserError : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Error {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$UnblockUserError;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$UnhideChannelError : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Error {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$UnhideChannelError;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -1742,18 +1682,6 @@ public final class io/getstream/chat/android/ui/common/state/channel/info/Channe
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$FilesAttachments;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$HideChannel : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option {
-	public static final field $stable I
-	public fun <init> (Z)V
-	public final fun component1 ()Z
-	public final fun copy (Z)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$HideChannel;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$HideChannel;ZILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$HideChannel;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public final fun isHidden ()Z
 	public fun toString ()Ljava/lang/String;
 }
 

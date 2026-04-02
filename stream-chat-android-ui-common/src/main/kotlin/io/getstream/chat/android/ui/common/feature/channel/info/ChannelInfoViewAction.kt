@@ -93,23 +93,6 @@ public sealed interface ChannelInfoViewAction {
     public data object UnblockUserClick : ChannelInfoViewAction
 
     /**
-     * Represents the hide channel click action.
-     */
-    public data object HideChannelClick : ChannelInfoViewAction
-
-    /**
-     * Represents the confirmation click action for hiding a channel.
-     *
-     * @param clearHistory Whether to clear the channel history when hiding.
-     */
-    public data class HideChannelConfirmationClick(val clearHistory: Boolean) : ChannelInfoViewAction
-
-    /**
-     * Represents the unhide channel click action.
-     */
-    public data object UnhideChannelClick : ChannelInfoViewAction
-
-    /**
      * Represents the leave channel click action.
      */
     public data object LeaveChannelClick : ChannelInfoViewAction
