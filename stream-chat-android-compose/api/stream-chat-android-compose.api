@@ -6305,6 +6305,12 @@ public final class io/getstream/chat/android/compose/ui/util/ChannelUtilsKt {
 	public static final fun isOneToOne (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;)Z
 }
 
+public final class io/getstream/chat/android/compose/ui/util/ComposableSingletons$MessagePreviewIconFactoryKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/util/ComposableSingletons$MessagePreviewIconFactoryKt;
+	public fun <init> ()V
+	public final fun getLambda$-31551883$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class io/getstream/chat/android/compose/ui/util/ComposableSingletons$SnackbarPopupKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/util/ComposableSingletons$SnackbarPopupKt;
 	public fun <init> ()V

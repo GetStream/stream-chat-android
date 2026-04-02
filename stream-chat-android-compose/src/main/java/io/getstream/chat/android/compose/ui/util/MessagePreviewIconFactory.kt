@@ -16,13 +16,20 @@
 
 package io.getstream.chat.android.compose.ui.util
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.R
@@ -148,5 +155,31 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
                 )
             },
         )
+    }
+}
+
+@Preview
+@Composable
+private fun MessagePreviewIconsPreview() {
+    ChatTheme {
+        MessagePreviewIcons()
+    }
+}
+
+@Composable
+internal fun MessagePreviewIcons() {
+    val icons = ChatTheme.messagePreviewIconFactory.createPreviewIcons()
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        icons.keys.forEach { key ->
+            Text(
+                text = buildAnnotatedString {
+                    appendInlineContent(key)
+                    append(" $key")
+                },
+                inlineContent = icons,
+                style = ChatTheme.typography.captionDefault,
+                color = ChatTheme.colors.textSecondary,
+            )
+        }
     }
 }
