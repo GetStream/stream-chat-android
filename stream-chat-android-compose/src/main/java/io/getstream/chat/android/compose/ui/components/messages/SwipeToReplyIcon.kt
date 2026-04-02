@@ -45,7 +45,7 @@ internal fun SwipeToReplyIcon() {
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            painter = painterResource(R.drawable.stream_compose_ic_reply),
+            painter = painterResource(R.drawable.stream_design_ic_reply),
             contentDescription = "",
             tint = ChatTheme.colors.buttonSecondaryTextOnAccent,
         )

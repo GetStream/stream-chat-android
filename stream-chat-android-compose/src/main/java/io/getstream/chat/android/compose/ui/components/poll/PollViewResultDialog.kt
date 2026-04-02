@@ -262,7 +262,7 @@ private fun PollResultOptionInfo(item: ResultItem) {
         if (item.isWinner) {
             Icon(
                 modifier = Modifier.padding(end = StreamTokens.spacingXs),
-                painter = painterResource(id = R.drawable.stream_compose_ic_trophy),
+                painter = painterResource(id = R.drawable.stream_design_ic_trophy),
                 tint = ChatTheme.colors.textPrimary,
                 contentDescription = stringResource(R.string.stream_compose_poll_winner_badge),
             )

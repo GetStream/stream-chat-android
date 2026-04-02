@@ -92,7 +92,7 @@ fun ChannelsScreenNavigationDrawer(
         Spacer(modifier = Modifier.weight(1f))
         // Sign Out
         NavigationDrawerItem(
-            icon = R.drawable.stream_compose_ic_person,
+            icon = R.drawable.stream_design_ic_account,
             text = stringResource(R.string.navigation_drawer_sign_out),
             onClick = onSignOutClick,
         )

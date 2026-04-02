@@ -73,6 +73,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
@@ -381,6 +382,24 @@ internal fun SelectedMessageMenuForIncomingMessage() {
 internal fun SelectedMessageMenuForOutgoingMessage() {
     SelectedMessageMenuPreview(
         selectedMessage = PreviewMessageData.message1.copy(user = PreviewUserData.user1),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SelectedMessageMenuForFailedMessagePreview() {
+    ChatTheme {
+        SelectedMessageMenuForFailedMessage()
+    }
+}
+
+@Composable
+internal fun SelectedMessageMenuForFailedMessage() {
+    SelectedMessageMenuPreview(
+        selectedMessage = PreviewMessageData.message1.copy(
+            user = PreviewUserData.user1,
+            syncStatus = SyncStatus.FAILED_PERMANENTLY,
+        ),
     )
 }
 

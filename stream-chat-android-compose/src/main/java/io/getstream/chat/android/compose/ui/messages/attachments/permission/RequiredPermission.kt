@@ -50,7 +50,7 @@ internal fun RequiredMediaStoragePermission(
 ) {
     RequiredPermission(
         modifier = modifier,
-        icon = R.drawable.stream_compose_ic_media,
+        icon = R.drawable.stream_design_ic_image,
         title = R.string.stream_ui_message_composer_permission_storage_title,
         message = R.string.stream_ui_message_composer_permission_storage_message,
         onGrantPermissionClick = onGrantPermissionClick,
@@ -64,7 +64,7 @@ internal fun RequiredFilesStoragePermission(
 ) {
     RequiredPermission(
         modifier = modifier,
-        icon = R.drawable.stream_compose_ic_files,
+        icon = R.drawable.stream_design_ic_folder,
         title = R.string.stream_ui_message_composer_permission_storage_title,
         message = R.string.stream_ui_message_composer_permission_storage_message,
         onGrantPermissionClick = onGrantPermissionClick,
@@ -78,7 +78,7 @@ internal fun RequiredCameraPermission(
     val context = LocalContext.current
     RequiredPermission(
         modifier = modifier,
-        icon = R.drawable.stream_compose_ic_attachment_camera_picker,
+        icon = R.drawable.stream_design_ic_camera,
         title = R.string.stream_ui_message_composer_permission_camera_title,
         message = R.string.stream_ui_message_composer_permission_camera_message,
         onGrantPermissionClick = context::openSystemSettings,

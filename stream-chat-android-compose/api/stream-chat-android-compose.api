@@ -788,6 +788,13 @@ public final class io/getstream/chat/android/compose/ui/channel/info/ComposableS
 	public final fun getLambda$2116128524$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
+public final class io/getstream/chat/android/compose/ui/channel/info/ComposableSingletons$ChannelInfoOptionItemKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/channel/info/ComposableSingletons$ChannelInfoOptionItemKt;
+	public fun <init> ()V
+	public final fun getLambda$-1241192189$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1982117825$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class io/getstream/chat/android/compose/ui/channel/info/ComposableSingletons$ChannelInfoOptionKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/channel/info/ComposableSingletons$ChannelInfoOptionKt;
 	public fun <init> ()V
@@ -1119,6 +1126,12 @@ public final class io/getstream/chat/android/compose/ui/components/TypingIndicat
 	public static final fun TypingIndicator (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/components/attachments/files/ComposableSingletons$FileTypeIconKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/attachments/files/ComposableSingletons$FileTypeIconKt;
+	public fun <init> ()V
+	public final fun getLambda$-1000060634$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class io/getstream/chat/android/compose/ui/components/attachments/files/ComposableSingletons$FilesPickerKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/attachments/files/ComposableSingletons$FilesPickerKt;
 	public fun <init> ()V
@@ -1235,7 +1248,11 @@ public final class io/getstream/chat/android/compose/ui/components/channels/Comp
 public final class io/getstream/chat/android/compose/ui/components/channels/ComposableSingletons$MessageReadStatusIconKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/channels/ComposableSingletons$MessageReadStatusIconKt;
 	public fun <init> ()V
-	public final fun getLambda$1252944971$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1237195220$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1450886538$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-273148368$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$492011124$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$702601599$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/components/channels/ComposableSingletons$UnreadCountIndicatorKt {
@@ -1252,6 +1269,12 @@ public final class io/getstream/chat/android/compose/ui/components/channels/Mess
 
 public final class io/getstream/chat/android/compose/ui/components/channels/UnreadCountIndicatorKt {
 	public static final fun UnreadCountIndicator-FNF3uiM (ILandroidx/compose/ui/Modifier;JLandroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/components/common/ComposableSingletons$CheckboxKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/common/ComposableSingletons$CheckboxKt;
+	public fun <init> ()V
+	public final fun getLambda$2116611125$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/components/common/ComposableSingletons$CommandChipKt {
@@ -1296,9 +1319,7 @@ public final class io/getstream/chat/android/compose/ui/components/common/Compos
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/common/ComposableSingletons$RadioControlsKt;
 	public fun <init> ()V
 	public final fun getLambda$-1193458187$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda$-1629111944$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-1642681905$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda$-294159789$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/components/common/MenuOptionItemKt {
@@ -1646,6 +1667,7 @@ public final class io/getstream/chat/android/compose/ui/components/selectedmessa
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/selectedmessage/ComposableSingletons$SelectedMessageMenuKt;
 	public fun <init> ()V
 	public final fun getLambda$-1312161726$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1436712551$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-895544184$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
@@ -1969,7 +1991,10 @@ public final class io/getstream/chat/android/compose/ui/messages/composer/intern
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/composer/internal/ComposableSingletons$AudioRecordingContentKt;
 	public fun <init> ()V
 	public final fun getLambda$-129303699$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1855012696$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-2139230466$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-630641788$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$491551885$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$545156019$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
@@ -1984,7 +2009,6 @@ public final class io/getstream/chat/android/compose/ui/messages/composer/intern
 	public fun <init> ()V
 	public final fun getLambda$-532574374$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1236707361$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda$86585492$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/composer/internal/ComposableSingletons$MessageComposerInputTrailingContentKt {
@@ -3185,7 +3209,7 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 	public fun ChannelFilesAttachmentsTopBar (Lio/getstream/chat/android/compose/ui/theme/ChannelFilesAttachmentsTopBarParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ChannelInfoMemberInfoModalSheetTopBar (Lio/getstream/chat/android/compose/ui/theme/ChannelInfoMemberInfoModalSheetTopBarParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ChannelInfoMemberOptionItem (Lio/getstream/chat/android/compose/ui/theme/ChannelInfoMemberOptionItemParams;Landroidx/compose/runtime/Composer;I)V
-	public fun ChannelInfoOptionItem (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/compose/ui/theme/ChannelInfoOptionItemParams;Landroidx/compose/runtime/Composer;I)V
+	public fun ChannelInfoOptionItem (Lio/getstream/chat/android/compose/ui/theme/ChannelInfoOptionItemParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ChannelInfoScreenModal (Lio/getstream/chat/android/compose/ui/theme/ChannelInfoScreenModalParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ChannelInfoSeparatorItem (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/compose/ui/theme/ChannelInfoSeparatorItemParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ChannelItemCenterContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/ui/theme/ChannelItemCenterContentParams;Landroidx/compose/runtime/Composer;I)V
@@ -3372,7 +3396,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFacto
 	public static fun ChannelFilesAttachmentsTopBar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ChannelFilesAttachmentsTopBarParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelInfoMemberInfoModalSheetTopBar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ChannelInfoMemberInfoModalSheetTopBarParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelInfoMemberOptionItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ChannelInfoMemberOptionItemParams;Landroidx/compose/runtime/Composer;I)V
-	public static fun ChannelInfoOptionItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/compose/ui/theme/ChannelInfoOptionItemParams;Landroidx/compose/runtime/Composer;I)V
+	public static fun ChannelInfoOptionItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ChannelInfoOptionItemParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelInfoScreenModal (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ChannelInfoScreenModalParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelInfoSeparatorItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/compose/ui/theme/ChannelInfoSeparatorItemParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelItemCenterContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/ui/theme/ChannelItemCenterContentParams;Landroidx/compose/runtime/Composer;I)V
@@ -6280,6 +6304,12 @@ public final class io/getstream/chat/android/compose/ui/util/ChannelUtilsKt {
 	public static final fun getReadStatuses (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;)Ljava/util/List;
 	public static final fun isDistinct (Lio/getstream/chat/android/models/Channel;)Z
 	public static final fun isOneToOne (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;)Z
+}
+
+public final class io/getstream/chat/android/compose/ui/util/ComposableSingletons$MessagePreviewIconFactoryKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/util/ComposableSingletons$MessagePreviewIconFactoryKt;
+	public fun <init> ()V
+	public final fun getLambda$-31551883$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/util/ComposableSingletons$SnackbarPopupKt {

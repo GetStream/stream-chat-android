@@ -134,7 +134,7 @@ private fun StreamButtonPreview() {
         ) {
             styles.forEach { style ->
                 Row(horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs)) {
-                    val painter = painterResource(R.drawable.stream_compose_ic_checkmark)
+                    val painter = painterResource(R.drawable.stream_design_ic_checkmark)
                     StreamButton(onClick = {}, style = style) {
                         Icon(painter, null)
                     }

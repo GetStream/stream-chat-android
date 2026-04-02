@@ -17,18 +17,15 @@
 package io.getstream.chat.android.compose.ui.components.attachments.images
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -48,6 +45,7 @@ import coil3.video.VideoFrameDecoder
 import coil3.video.videoFrameMillis
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
+import io.getstream.chat.android.compose.ui.components.common.RadioCheck
 import io.getstream.chat.android.compose.ui.components.common.VideoBadge
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -140,19 +138,14 @@ internal fun DefaultImagesPickerItem(
             contentScale = ContentScale.Crop,
         )
 
-        if (imageItem.isSelected) {
-            SelectedIndicator(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(StreamTokens.spacingXs),
-            )
-        } else {
-            UnselectedIndicator(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(StreamTokens.spacingXs),
-            )
-        }
+        RadioCheck(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(StreamTokens.spacingXs),
+            borderColor = ChatTheme.colors.borderCoreOnAccent,
+            checked = imageItem.isSelected,
+            onCheckedChange = null,
+        )
 
         if (isVideo) {
             VideoBadge(
@@ -169,47 +162,6 @@ internal fun DefaultImagesPickerItem(
  * The time code of the frame to extract from a video.
  */
 private const val VideoFrameMillis = 1000L
-
-@Composable
-private fun SelectedIndicator(
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .size(SelectionIndicatorSize)
-            .background(
-                shape = CircleShape,
-                color = ChatTheme.colors.borderCoreOnAccent,
-            )
-            .padding(2.dp)
-            .background(
-                shape = CircleShape,
-                color = ChatTheme.colors.controlRadioCheckBgSelected,
-            ),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
-            contentDescription = null,
-            tint = ChatTheme.colors.controlRadioCheckIcon,
-        )
-    }
-}
-
-@Composable
-private fun UnselectedIndicator(
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .size(SelectionIndicatorSize)
-            .border(
-                width = 2.dp,
-                shape = CircleShape,
-                color = ChatTheme.colors.borderCoreOnAccent,
-            ),
-    )
-}
 
 /**
  * Default 'pick more' tile to be shown if the user can pick more images.
@@ -232,7 +184,7 @@ private fun DefaultAddMoreItem(onPickMoreClick: () -> Unit) {
         verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs, Alignment.CenterVertically),
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_add),
+            painter = painterResource(id = R.drawable.stream_design_ic_plus),
             contentDescription = null,
             tint = ChatTheme.colors.textPrimary,
         )

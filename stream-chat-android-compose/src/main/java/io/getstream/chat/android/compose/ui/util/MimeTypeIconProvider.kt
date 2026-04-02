@@ -57,6 +57,7 @@ internal object MimeTypeIconProvider {
         MimeType.MIME_TYPE_M4A -> FileIconData.M4a
         MimeType.MIME_TYPE_MP3 -> FileIconData.Mp3
         MimeType.MIME_TYPE_AAC -> FileIconData.Aac
+        MimeType.MIME_TYPE_AUDIO_MP4 -> FileIconData.M4a
 
         MimeType.MIME_TYPE_MOV,
         MimeType.MIME_TYPE_QUICKTIME,

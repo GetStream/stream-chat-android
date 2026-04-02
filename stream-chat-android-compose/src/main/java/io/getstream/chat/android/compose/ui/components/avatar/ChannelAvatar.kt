@@ -288,7 +288,7 @@ internal fun ChannelAvatarPlaceholder(channel: Channel, size: Dp, modifier: Modi
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            painter = painterResource(R.drawable.stream_compose_ic_team),
+            painter = painterResource(R.drawable.stream_design_ic_users),
             contentDescription = null,
             tint = foreground,
             modifier = Modifier

@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -106,7 +105,7 @@ public fun PollCreationHeader(
 @Composable
 internal fun DefaultPollOptionsHeaderLeadingContent(onBackPressed: () -> Unit) {
     BackButton(
-        painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+        painter = painterResource(id = R.drawable.stream_design_ic_arrow_left),
         onBackPressed = onBackPressed,
     )
 }
@@ -138,9 +137,8 @@ internal fun DefaultPollOptionsHeaderTrailingContent(
         style = StreamButtonStyleDefaults.primarySolid,
     ) {
         Icon(
-            painter = painterResource(R.drawable.stream_compose_ic_checkmark),
+            painter = painterResource(R.drawable.stream_design_ic_checkmark),
             contentDescription = stringResource(R.string.stream_compose_poll_title),
-            modifier = Modifier.size(20.dp),
         )
     }
 }

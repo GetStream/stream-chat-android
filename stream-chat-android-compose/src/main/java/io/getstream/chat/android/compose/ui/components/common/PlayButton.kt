@@ -60,7 +60,7 @@ internal fun PlayButton(
     ) {
         Icon(
             modifier = Modifier.Companion.size(size.iconSize),
-            painter = painterResource(id = R.drawable.stream_compose_ic_play),
+            painter = painterResource(id = R.drawable.stream_design_ic_play_fill),
             contentDescription = null,
             tint = colors.controlPlayButtonIcon,
         )

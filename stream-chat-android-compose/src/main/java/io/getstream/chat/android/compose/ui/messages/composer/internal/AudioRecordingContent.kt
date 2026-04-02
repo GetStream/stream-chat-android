@@ -19,8 +19,6 @@ package io.getstream.chat.android.compose.ui.messages.composer.internal
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,10 +29,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,22 +43,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
+import io.getstream.chat.android.compose.ui.components.button.StreamButton
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -144,7 +144,7 @@ internal fun MessageComposerAudioRecordingHoldContent(
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_mic),
+                    painter = painterResource(id = R.drawable.stream_design_ic_voice),
                     contentDescription = null,
                     tint = ChatTheme.colors.accentError,
                 )
@@ -178,7 +178,7 @@ internal fun MessageComposerAudioRecordingLockedContent(
         Row(modifier = RecordingBarModifier, verticalAlignment = Alignment.CenterVertically) {
             Box(modifier = Modifier.size(48.dp), contentAlignment = Alignment.Center) {
                 Icon(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_mic),
+                    painter = painterResource(id = R.drawable.stream_design_ic_voice),
                     contentDescription = null,
                     tint = ChatTheme.colors.accentError,
                 )
@@ -226,9 +226,9 @@ internal fun MessageComposerAudioRecordingOverviewContent(
     Column(modifier = modifier.fillMaxWidth()) {
         Row(modifier = RecordingBarModifier, verticalAlignment = Alignment.CenterVertically) {
             val playbackIcon = if (state.isPlaying) {
-                R.drawable.stream_compose_ic_pause
+                R.drawable.stream_design_ic_pause_fill
             } else {
-                R.drawable.stream_compose_ic_play
+                R.drawable.stream_design_ic_play_fill
             }
             val playbackDescription = stringResource(
                 if (state.isPlaying) {
@@ -300,7 +300,7 @@ private fun RecordingSlideToCancelIndicator(
             style = ChatTheme.typography.bodyDefault.copy(brush = gradientBrush),
         )
         Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_chevron_left),
+            painter = painterResource(id = R.drawable.stream_design_ic_chevron_left),
             contentDescription = null,
             tint = ChatTheme.colors.textTertiary,
         )
@@ -318,70 +318,48 @@ private fun MessageComposerAudioRecordingControlsContent(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        RecordingControlButton(
-            onClick = recordingActions.onDeleteRecording,
-            contentDescription = stringResource(R.string.stream_compose_audio_recording_delete),
-            testTag = "Stream_ComposerDeleteAudioRecordingButton",
-            circleModifier = Modifier.border(1.dp, ChatTheme.colors.buttonSecondaryBorder, CircleShape),
-            iconRes = R.drawable.stream_compose_ic_delete,
-            iconTint = ChatTheme.colors.textPrimary,
-            iconModifier = Modifier.size(ControlIconSize),
-        )
-        if (isStopVisible) {
-            RecordingControlButton(
-                onClick = recordingActions.onStopRecording,
-                contentDescription = stringResource(R.string.stream_compose_audio_recording_stop),
-                testTag = "Stream_ComposerStopAudioRecordingButton",
-                circleModifier = Modifier.border(1.dp, ChatTheme.colors.buttonDestructiveBorder, CircleShape),
-                iconRes = R.drawable.stream_compose_ic_stop,
-                iconTint = ChatTheme.colors.accentError,
-                iconModifier = Modifier.size(ControlIconSize),
-            )
-        }
-        RecordingControlButton(
-            onClick = recordingActions.onConfirmRecording,
-            contentDescription = stringResource(R.string.stream_compose_audio_recording_send),
-            testTag = "Stream_ComposerConfirmAudioRecordingButton",
-            circleModifier = Modifier.background(ChatTheme.colors.buttonPrimaryBg, CircleShape),
-            iconRes = R.drawable.stream_compose_ic_checkmark,
-            iconTint = ChatTheme.colors.buttonPrimaryTextOnAccent,
-        )
-    }
-}
-
-@Suppress("LongParameterList")
-@Composable
-private fun RecordingControlButton(
-    onClick: () -> Unit,
-    contentDescription: String,
-    testTag: String,
-    circleModifier: Modifier,
-    iconRes: Int,
-    iconTint: Color,
-    iconModifier: Modifier = Modifier,
-) {
-    IconButton(
-        onClick = onClick,
-        modifier = Modifier.semantics { this.testTag = testTag },
-    ) {
-        Box(
+        StreamButton(
             modifier = Modifier
-                .size(32.dp)
-                .then(circleModifier),
-            contentAlignment = Alignment.Center,
+                .testTag("Stream_ComposerDeleteAudioRecordingButton")
+                .minimumInteractiveComponentSize(),
+            style = StreamButtonStyleDefaults.secondaryOutline,
+            size = StreamButtonSize.Small,
+            onClick = recordingActions.onDeleteRecording,
         ) {
             Icon(
-                modifier = iconModifier,
-                painter = painterResource(id = iconRes),
-                contentDescription = contentDescription,
-                tint = iconTint,
+                painter = painterResource(R.drawable.stream_design_ic_delete),
+                contentDescription = stringResource(R.string.stream_compose_audio_recording_delete),
+            )
+        }
+        if (isStopVisible) {
+            StreamButton(
+                modifier = Modifier
+                    .testTag("Stream_ComposerStopAudioRecordingButton")
+                    .minimumInteractiveComponentSize(),
+                style = StreamButtonStyleDefaults.destructiveOutline,
+                size = StreamButtonSize.Small,
+                onClick = recordingActions.onStopRecording,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.stream_design_ic_stop_fill),
+                    contentDescription = stringResource(R.string.stream_compose_audio_recording_stop),
+                )
+            }
+        }
+        StreamButton(
+            modifier = Modifier
+                .testTag("Stream_ComposerConfirmAudioRecordingButton")
+                .minimumInteractiveComponentSize(),
+            onClick = recordingActions.onConfirmRecording,
+            size = StreamButtonSize.Small,
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.stream_design_ic_checkmark),
+                contentDescription = stringResource(R.string.stream_compose_audio_recording_send),
             )
         }
     }
 }
-
-/** Size of the icon inside control buttons. */
-private val ControlIconSize = 20.dp
 
 private val RecordingBarModifier = Modifier
     .fillMaxWidth()

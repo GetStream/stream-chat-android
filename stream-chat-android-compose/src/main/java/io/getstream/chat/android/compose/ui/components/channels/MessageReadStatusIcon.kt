@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.components.channels
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +35,7 @@ import io.getstream.chat.android.client.extensions.deliveredReadsOf
 import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.getReadStatuses
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
@@ -121,23 +122,24 @@ private fun IsReadCount(
         stringResource(R.string.stream_ui_message_list_semantics_message_status_read)
     }
     Row(
-        modifier = modifier
-            .semantics { contentDescription = description }
-            .padding(start = 2.dp),
+        modifier = modifier.semantics { contentDescription = description },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         if (showReadCount) {
             Text(
                 text = readCount.toString(),
-                modifier = Modifier.testTag("Stream_MessageReadCount"),
+                modifier = Modifier
+                    .testTag("Stream_MessageReadCount")
+                    .padding(horizontal = StreamTokens.spacing3xs),
                 style = ChatTheme.typography.metadataDefault,
                 color = ChatTheme.colors.chatTextTimestamp,
             )
         }
         Icon(
-            modifier = Modifier.testTag("Stream_MessageReadStatus_isRead"),
-            painter = painterResource(id = R.drawable.stream_compose_message_seen),
+            modifier = Modifier
+                .testTag("Stream_MessageReadStatus_isRead")
+                .size(16.dp),
+            painter = painterResource(id = R.drawable.stream_design_ic_checks),
             contentDescription = null,
             tint = ChatTheme.colors.chatTextRead,
         )
@@ -147,8 +149,10 @@ private fun IsReadCount(
 @Composable
 private fun IsPendingIcon(modifier: Modifier) {
     Icon(
-        modifier = modifier.testTag("Stream_MessageReadStatus_isPending"),
-        painter = painterResource(id = R.drawable.stream_compose_ic_clock),
+        modifier = modifier
+            .testTag("Stream_MessageReadStatus_isPending")
+            .size(16.dp),
+        painter = painterResource(id = R.drawable.stream_design_ic_clock),
         contentDescription = stringResource(R.string.stream_ui_message_list_semantics_message_status_pending),
         tint = ChatTheme.colors.chatTextTimestamp,
     )
@@ -157,8 +161,10 @@ private fun IsPendingIcon(modifier: Modifier) {
 @Composable
 private fun IsSentIcon(modifier: Modifier) {
     Icon(
-        modifier = modifier.testTag("Stream_MessageReadStatus_isSent"),
-        painter = painterResource(id = R.drawable.stream_compose_message_sent),
+        modifier = modifier
+            .testTag("Stream_MessageReadStatus_isSent")
+            .size(16.dp),
+        painter = painterResource(id = R.drawable.stream_design_ic_checkmark),
         contentDescription = stringResource(R.string.stream_ui_message_list_semantics_message_status_sent),
         tint = ChatTheme.colors.chatTextTimestamp,
     )
@@ -167,8 +173,10 @@ private fun IsSentIcon(modifier: Modifier) {
 @Composable
 private fun IsErrorIcon(modifier: Modifier) {
     Icon(
-        modifier = modifier.testTag("Stream_MessageReadStatus_isError"),
-        painter = painterResource(id = R.drawable.stream_compose_ic_error),
+        modifier = modifier
+            .testTag("Stream_MessageReadStatus_isError")
+            .size(16.dp),
+        painter = painterResource(id = R.drawable.stream_design_ic_exclamation_circle_fill),
         contentDescription = stringResource(R.string.stream_ui_message_list_semantics_message_status_failed),
         tint = ChatTheme.colors.accentError,
     )
@@ -177,8 +185,10 @@ private fun IsErrorIcon(modifier: Modifier) {
 @Composable
 private fun IsDeliveredIcon(modifier: Modifier) {
     Icon(
-        modifier = modifier.testTag("Stream_MessageReadStatus_isDelivered"),
-        painter = painterResource(id = R.drawable.stream_compose_message_seen),
+        modifier = modifier
+            .testTag("Stream_MessageReadStatus_isDelivered")
+            .size(16.dp),
+        painter = painterResource(id = R.drawable.stream_design_ic_checks),
         contentDescription = stringResource(
             R.string.stream_ui_message_list_semantics_message_status_delivered,
         ),
@@ -186,19 +196,84 @@ private fun IsDeliveredIcon(modifier: Modifier) {
     )
 }
 
-/**
- * Preview of [MessageReadStatusIcon] for a seen message.
- *
- * Should show a double tick indicator.
- */
-@Preview(showBackground = true, name = "MessageReadStatusIcon Preview (Seen message)")
+@Preview
 @Composable
-private fun SeenMessageReadStatusIcon() {
+private fun MessageReadStatusIconPendingPreview() {
     ChatTheme {
-        MessageReadStatusIcon(
-            message = PreviewMessageData.message2,
-            isMessageRead = true,
-            readCount = 3,
-        )
+        MessageReadStatusIconPending()
     }
+}
+
+@Composable
+internal fun MessageReadStatusIconPending() {
+    MessageReadStatusIcon(
+        message = PreviewMessageData.message2.copy(syncStatus = SyncStatus.IN_PROGRESS),
+        isMessageRead = false,
+    )
+}
+
+@Preview
+@Composable
+private fun MessageReadStatusIconSentPreview() {
+    ChatTheme {
+        MessageReadStatusIconSent()
+    }
+}
+
+@Composable
+internal fun MessageReadStatusIconSent() {
+    MessageReadStatusIcon(
+        message = PreviewMessageData.message2.copy(syncStatus = SyncStatus.COMPLETED),
+        isMessageRead = false,
+    )
+}
+
+@Preview
+@Composable
+private fun MessageReadStatusIconDeliveredPreview() {
+    ChatTheme {
+        MessageReadStatusIconDelivered()
+    }
+}
+
+@Composable
+internal fun MessageReadStatusIconDelivered() {
+    MessageReadStatusIcon(
+        message = PreviewMessageData.message2.copy(syncStatus = SyncStatus.COMPLETED),
+        isMessageRead = false,
+        isMessageDelivered = true,
+    )
+}
+
+@Preview
+@Composable
+private fun MessageReadStatusIconReadPreview() {
+    ChatTheme {
+        MessageReadStatusIconRead()
+    }
+}
+
+@Composable
+internal fun MessageReadStatusIconRead() {
+    MessageReadStatusIcon(
+        message = PreviewMessageData.message2,
+        isMessageRead = true,
+        readCount = 3,
+    )
+}
+
+@Preview
+@Composable
+private fun MessageReadStatusIconErrorPreview() {
+    ChatTheme {
+        MessageReadStatusIconError()
+    }
+}
+
+@Composable
+internal fun MessageReadStatusIconError() {
+    MessageReadStatusIcon(
+        message = PreviewMessageData.message2.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY),
+        isMessageRead = false,
+    )
 }
