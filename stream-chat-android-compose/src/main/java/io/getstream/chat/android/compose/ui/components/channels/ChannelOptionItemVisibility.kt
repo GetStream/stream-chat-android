@@ -22,6 +22,7 @@ package io.getstream.chat.android.compose.ui.components.channels
  * @param isViewInfoVisible Visibility of the view channel info option.
  * @param isLeaveChannelVisible Visibility of the leave channel option.
  * @param isMuteChannelVisible Visibility of the mute channel option.
+ * @param isMuteUserVisible Visibility of the mute user option (DM channels only).
  * @param isArchiveChannelVisible Visibility of the archive channel option.
  * @param isPinChannelVisible Visibility of the pin channel option.
  * @param isDeleteChannelVisible Visibility of the delete channel option.
@@ -32,6 +33,7 @@ public data class ChannelOptionItemVisibility(
     val isViewInfoVisible: Boolean = true,
     val isLeaveChannelVisible: Boolean = true,
     val isMuteChannelVisible: Boolean = true,
+    val isMuteUserVisible: Boolean = true,
     val isArchiveChannelVisible: Boolean = false,
     val isPinChannelVisible: Boolean = false,
     val isDeleteChannelVisible: Boolean = true,

@@ -169,7 +169,7 @@ private fun buildDmChannelActions(
             onViewInfoAction = onViewInfoAction,
         ),
         buildDmMuteUserAction(
-            isVisible = optionVisibility.isMuteChannelVisible,
+            isVisible = optionVisibility.isMuteUserVisible,
             otherUserId = otherUserId,
             selectedChannel = selectedChannel,
             viewModel = viewModel,
