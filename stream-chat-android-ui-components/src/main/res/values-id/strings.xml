@@ -35,7 +35,6 @@
   <string name="stream_ui_channel_list_dismiss_dialog">"Batalkan"</string>
   <string name="stream_ui_channel_list_empty">"Tidak ada grup tersedia"</string>
   <string name="stream_ui_channel_list_error_delete_channel">"Gagal menghapus grup"</string>
-  <string name="stream_ui_channel_list_error_hide_channel">"Gagal menyembunyikan grup"</string>
   <string name="stream_ui_channel_list_error_leave_channel">"Gagal keluar dari grup"</string>
   <string name="stream_ui_channel_list_leave_channel">"Keluar dari Grup"</string>
   <string name="stream_ui_channel_list_view_info">"Lihat info"</string>

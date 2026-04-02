@@ -37,7 +37,6 @@
   <string name="stream_ui_channel_list_dismiss_dialog">"रद्द करें"</string>
   <string name="stream_ui_channel_list_empty">"कोई चैनल उपलब्ध नहीं है"</string>
   <string name="stream_ui_channel_list_error_delete_channel">"चैनल नहीं मिटाया जा सका"</string>
-  <string name="stream_ui_channel_list_error_hide_channel">"चैनल छुपाने में असफल"</string>
   <string name="stream_ui_channel_list_error_leave_channel">"चैनल नहीं छोड़ा जा सका"</string>
   <string name="stream_ui_channel_list_leave_channel">"ग्रुप छोड़ेें"</string>
   <string name="stream_ui_channel_list_view_info">"जानकारी देखें"</string>

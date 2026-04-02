@@ -60,7 +60,6 @@
     <string name="stream_ui_channel_list_delete_confirmation_positive_button">Delete</string>
     <string name="stream_ui_channel_list_delete_confirmation_negative_button">Cancel</string>
     <!-- Errors -->
-    <string name="stream_ui_channel_list_error_hide_channel">Failed to hide channel</string>
     <string name="stream_ui_channel_list_error_delete_channel">Failed to delete channel</string>
     <string name="stream_ui_channel_list_error_leave_channel">Failed to leave channel</string>
     <string name="stream_ui_channel_list_draft_message_label">Draft:</string>
