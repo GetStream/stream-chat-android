@@ -25,18 +25,32 @@ import org.junit.Test
 internal class ChannelInfoOptionItemTest : PaparazziComposeTest {
 
     @get:Rule
-    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_4A)
+    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `direct channel info option items`() {
-        snapshotWithDarkMode {
+    fun `direct channel info option items in light mode`() {
+        snapshot {
             ChannelInfoOptionItems()
         }
     }
 
     @Test
-    fun `group channel info option items`() {
-        snapshotWithDarkMode {
+    fun `direct channel info option items in dark mode`() {
+        snapshot(isInDarkMode = true) {
+            ChannelInfoOptionItems()
+        }
+    }
+
+    @Test
+    fun `group channel info option items in light mode`() {
+        snapshot {
+            ChannelInfoOptionItems(isGroupChannel = true)
+        }
+    }
+
+    @Test
+    fun `group channel info option items in dark mode`() {
+        snapshot(isInDarkMode = true) {
             ChannelInfoOptionItems(isGroupChannel = true)
         }
     }

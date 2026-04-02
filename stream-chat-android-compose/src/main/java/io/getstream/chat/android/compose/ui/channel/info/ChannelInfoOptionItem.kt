@@ -215,6 +215,7 @@ private fun GroupChannelInfoOptionItemsPreview() {
 internal fun ChannelInfoOptionItems(isGroupChannel: Boolean = false) {
     val options = listOf(
         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
+        ChannelInfoViewState.Content.Option.MuteUser(isMuted = false),
         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
         ChannelInfoViewState.Content.Option.PinnedMessages,
         ChannelInfoViewState.Content.Option.MediaAttachments,
