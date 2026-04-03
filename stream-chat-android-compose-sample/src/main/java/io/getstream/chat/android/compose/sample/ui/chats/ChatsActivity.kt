@@ -73,11 +73,9 @@ import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionIte
 import io.getstream.chat.android.compose.ui.theme.ChannelOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.CompoundComponentFactory
 import io.getstream.chat.android.compose.ui.theme.DirectChannelInfoTopBarParams
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoTopBarParams
-import io.getstream.chat.android.compose.ui.theme.TranslationConfig
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.AdaptiveLayoutInfo
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneDestination
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneNavigator
@@ -166,9 +164,6 @@ class ChatsActivity : ComponentActivity() {
         setContent {
             ChatTheme(
                 dateFormatter = ChatApp.dateFormatter,
-                config = ChatUiConfig(
-                    translation = TranslationConfig(enabled = ChatApp.autoTranslationEnabled),
-                ),
                 allowUIAutomationTest = true,
                 componentFactory = CustomChatComponentFactory(),
                 channelOptionsTheme = ChannelOptionsTheme.defaultTheme(
@@ -619,7 +614,6 @@ class ChatsActivity : ComponentActivity() {
         channelId = channelId,
         messageId = messageId,
         parentMessageId = parentMessageId,
-        autoTranslationEnabled = ChatApp.autoTranslationEnabled,
         deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
         isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
     )

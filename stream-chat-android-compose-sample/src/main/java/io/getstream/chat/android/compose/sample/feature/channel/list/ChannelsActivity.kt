@@ -88,8 +88,6 @@ import io.getstream.chat.android.compose.ui.components.channels.buildDefaultChan
 import io.getstream.chat.android.compose.ui.mentions.MentionList
 import io.getstream.chat.android.compose.ui.theme.ChannelOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
-import io.getstream.chat.android.compose.ui.theme.TranslationConfig
 import io.getstream.chat.android.compose.ui.threads.ThreadList
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
@@ -159,9 +157,6 @@ class ChannelsActivity : ComponentActivity() {
 
             ChatTheme(
                 dateFormatter = ChatApp.dateFormatter,
-                config = ChatUiConfig(
-                    translation = TranslationConfig(enabled = ChatApp.autoTranslationEnabled),
-                ),
                 allowUIAutomationTest = true,
                 componentFactory = CustomChatComponentFactory(),
                 channelOptionsTheme = ChannelOptionsTheme.defaultTheme(

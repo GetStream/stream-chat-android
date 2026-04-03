@@ -86,7 +86,7 @@ public class MessagesViewModelFactory(
     internal val channelId: String,
     internal val messageId: String? = null,
     internal val parentMessageId: String? = null,
-    private val autoTranslationEnabled: Boolean = false,
+    private val autoTranslationEnabled: Boolean = true,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
     private val mediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(context.applicationContext),

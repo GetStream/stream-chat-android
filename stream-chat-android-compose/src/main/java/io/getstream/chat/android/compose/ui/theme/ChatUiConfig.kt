@@ -110,7 +110,7 @@ public data class ChatUiConfig(
  * @param showOriginalEnabled Whether users can toggle to see the original (untranslated) text.
  */
 public data class TranslationConfig(
-    val enabled: Boolean = false,
+    val enabled: Boolean = true,
     val showOriginalEnabled: Boolean = true,
 )
 

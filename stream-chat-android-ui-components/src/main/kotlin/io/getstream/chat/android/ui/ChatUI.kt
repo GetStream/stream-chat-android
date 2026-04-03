@@ -230,7 +230,7 @@ public object ChatUI {
      * Whether or not the auto-translation feature is enabled.
      */
     @JvmStatic
-    public var autoTranslationEnabled: Boolean = false
+    public var autoTranslationEnabled: Boolean = true
 
     /**
      * Whether the option to show the original translation is enabled or not.
