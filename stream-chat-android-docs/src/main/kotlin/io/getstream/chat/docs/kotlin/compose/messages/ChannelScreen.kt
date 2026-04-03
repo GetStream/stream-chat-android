@@ -10,12 +10,12 @@ import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 
 /**
- * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/#usage)
+ * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/channel-screen/#usage)
  */
 private object ChannelScreenUsageSnippet {
 
@@ -41,7 +41,7 @@ private object ChannelScreenUsageSnippet {
 }
 
 /**
- * [Handling Actions](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/#handling-actions)
+ * [Handling Actions](https://getstream.io/chat/docs/sdk/android/compose/message-components/channel-screen/#handling-actions)
  */
 private object ChannelScreenHandlingActionsSnippet {
 
@@ -71,7 +71,7 @@ private object ChannelScreenHandlingActionsSnippet {
 }
 
 /**
- * [Customization](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/#customization)
+ * [Customization](https://getstream.io/chat/docs/sdk/android/compose/message-components/channel-screen/#customization)
  */
 private object ChannelScreenCustomizationSnippet {
 
@@ -101,9 +101,9 @@ private object ChannelScreenCustomizationSnippet {
 }
 
 /**
- * [Overriding the ViewModels](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/#customization)
+ * [Overriding the ViewModels](https://getstream.io/chat/docs/sdk/android/compose/message-components/channel-screen/#customization)
  */
-private object MessageScreenOverridingTheViewModelsSnippet {
+private object ChannelScreenOverridingTheViewModelsSnippet {
 
     class MessagesActivity : ComponentActivity() {
 

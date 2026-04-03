@@ -9,14 +9,14 @@ import io.getstream.chat.android.ui.viewmodel.messages.ChannelHeaderViewModelBin
 import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory;
 
 /**
- * [Message List Header](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-header/)
+ * [Message List Header](https://getstream.io/chat/docs/sdk/android/ui/message-components/channel-header/)
  */
-public class MessageListHeader extends Fragment {
+public class ChannelHeader extends Fragment {
 
     private ChannelHeaderView channelHeaderView;
 
     /**
-     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-header/#usage)
+     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/channel-header/#usage)
      */
     public void usage() {
         // Initialize ViewModel
@@ -31,7 +31,7 @@ public class MessageListHeader extends Fragment {
     }
 
     /**
-     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-header/#handling-actions)
+     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/message-components/channel-header/#handling-actions)
      */
     public void handlingActions() {
         channelHeaderView.setBackButtonClickListener(() -> {

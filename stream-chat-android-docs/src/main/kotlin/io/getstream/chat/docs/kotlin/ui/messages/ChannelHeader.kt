@@ -8,14 +8,14 @@ import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
 
 /**
- * [Message List Header](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-header/)
+ * [Message List Header](https://getstream.io/chat/docs/sdk/android/ui/message-components/channel-header/)
  */
-private class MessageListHeader : Fragment() {
+private class ChannelHeader : Fragment() {
 
     private lateinit var channelHeaderView: ChannelHeaderView
 
     /**
-     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-header/#usage)
+     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/channel-header/#usage)
      */
     fun usage() {
         // Initialize ViewModel
@@ -28,7 +28,7 @@ private class MessageListHeader : Fragment() {
     }
 
     /**
-     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-header/#handling-actions)
+     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/message-components/channel-header/#handling-actions)
      */
     fun handlingActions() {
         channelHeaderView.setBackButtonClickListener {
