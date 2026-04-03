@@ -73,7 +73,6 @@ import io.getstream.chat.android.ui.common.state.messages.Resend
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.state.messages.UnblockUser
 import io.getstream.chat.android.ui.common.state.messages.UnmuteUser
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageOption
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
@@ -326,8 +325,6 @@ public class MessageListView : ConstraintLayout {
     private var messageListItemPredicate: MessageListItemPredicate = HiddenMessageListItemPredicate
     private var messageListItemTransformer: MessageListItemTransformer = MessageListItemTransformer { it }
     private var showAvatarPredicate: ShowAvatarPredicate = DefaultShowAvatarPredicate()
-
-    private var deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE
 
     private lateinit var loadMoreListener: EndlessMessageListScrollListener
 
@@ -916,7 +913,6 @@ public class MessageListView : ConstraintLayout {
             messageListViewStyle = style,
             showAvatarPredicate = this.showAvatarPredicate,
             messageBackgroundFactory = messageBackgroundFactory,
-            deletedMessageVisibility = { deletedMessageVisibility },
             getLanguageDisplayName = getLanguageDisplayName,
         )
 
@@ -1842,19 +1838,6 @@ public class MessageListView : ConstraintLayout {
      */
     public fun setErrorEventHandler(handler: ErrorEventHandler) {
         this.errorEventHandler = handler
-    }
-
-    /**
-     * Sets the value used to filter deleted messages.
-     * @see DeletedMessageVisibility
-     *
-     * @param deletedMessageVisibility Changes the visibility of deleted messages.
-     */
-    public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
-        this.deletedMessageVisibility = deletedMessageVisibility
-        if (isAdapterInitialized()) {
-            adapter.notifyItemRangeChanged(0, adapter.itemCount)
-        }
     }
 
     /**

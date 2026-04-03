@@ -85,7 +85,6 @@ import io.getstream.chat.android.ui.common.state.messages.UnblockUser
 import io.getstream.chat.android.ui.common.state.messages.UnmuteUser
 import io.getstream.chat.android.ui.common.state.messages.list.CancelGiphy
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.HasMessageListItemState
@@ -167,7 +166,6 @@ import io.getstream.chat.android.ui.common.state.messages.Flag as FlagMessage
  * @param chatClient The client used to communicate with the API.
  * @param clientState The current state of the SDK.
  * @param channelState The state of the channel.
- * @param deletedMessageVisibility The [DeletedMessageVisibility] to be applied to the list.
  * @param showSystemMessages Determines if the system messages should be shown or not.
  * @param messageFooterVisibility Determines if and when the message footer is visible or not.
  * @param enforceUniqueReactions Determines whether the user can send only a single or multiple reactions to a message.
@@ -190,7 +188,6 @@ public class MessageListController(
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
     public val channelState: StateFlow<ChannelState?>,
-    private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val showSystemMessages: Boolean = true,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
     private val enforceUniqueReactions: Boolean = false,
@@ -405,13 +402,6 @@ public class MessageListController(
     public val messageFooterVisibilityState: StateFlow<MessageFooterVisibility> = _messageFooterVisibilityState
 
     /**
-     * Regulates the visibility of deleted messages.
-     */
-    private val _deletedMessageVisibilityState: MutableStateFlow<DeletedMessageVisibility> =
-        MutableStateFlow(deletedMessageVisibility)
-    public val deletedMessageVisibilityState: StateFlow<DeletedMessageVisibility> = _deletedMessageVisibilityState
-
-    /**
      * Represents the message we wish to scroll to.
      */
     private var focusedMessage: MutableStateFlow<Message?> = MutableStateFlow(null)
@@ -485,7 +475,6 @@ public class MessageListController(
                 channelState.reads,
                 _showSystemMessagesState,
                 _dateSeparatorHandler,
-                _deletedMessageVisibilityState,
                 _messageFooterVisibilityState,
                 _messagePositionHandler,
                 typingUsers,
@@ -500,16 +489,15 @@ public class MessageListController(
                 val reads = data[1] as List<ChannelUserRead>
                 val showSystemMessages = data[2] as Boolean
                 val dateSeparatorHandler = data[3] as DateSeparatorHandler
-                val deletedMessageVisibility = data[4] as DeletedMessageVisibility
-                val messageFooterVisibility = data[5] as MessageFooterVisibility
-                val messagePositionHandler = data[6] as MessagePositionHandler
-                val typingUsers = data[7] as List<User>
-                val focusedMessage = data[8] as Message?
-                val endOfNewerMessages = data[9] as Boolean
-                val unreadLabel = data[10] as UnreadLabel?
-                val members = data[11] as List<Member>
-                val endOfOlderMessages = data[12] as Boolean
-                val messagesInOriginalLanguage = data[13] as Set<String>
+                val messageFooterVisibility = data[4] as MessageFooterVisibility
+                val messagePositionHandler = data[5] as MessagePositionHandler
+                val typingUsers = data[6] as List<User>
+                val focusedMessage = data[7] as Message?
+                val endOfNewerMessages = data[8] as Boolean
+                val unreadLabel = data[9] as UnreadLabel?
+                val members = data[10] as List<Member>
+                val endOfOlderMessages = data[11] as Boolean
+                val messagesInOriginalLanguage = data[12] as Set<String>
 
                 when (state) {
                     is MessagesState.Loading,
@@ -527,12 +515,10 @@ public class MessageListController(
                             messages = filterMessagesToShow(
                                 messages = state.messages,
                                 showSystemMessages = showSystemMessages,
-                                deletedMessageVisibility = deletedMessageVisibility,
                             ),
                             isInThread = false,
                             reads = reads,
                             dateSeparatorHandler = dateSeparatorHandler,
-                            deletedMessageVisibility = deletedMessageVisibility,
                             messageFooterVisibility = messageFooterVisibility,
                             messagePositionHandler = messagePositionHandler,
                             typingUsers = typingUsers,
@@ -800,7 +786,6 @@ public class MessageListController(
                 reads,
                 _showSystemMessagesState,
                 _threadDateSeparatorHandler,
-                _deletedMessageVisibilityState,
                 _messageFooterVisibilityState,
                 _messagePositionHandler,
                 typingUsers,
@@ -813,14 +798,13 @@ public class MessageListController(
                 val reads = data[1] as List<ChannelUserRead>
                 val showSystemMessages = data[2] as Boolean
                 val dateSeparatorHandler = data[3] as DateSeparatorHandler
-                val deletedMessageVisibility = data[4] as DeletedMessageVisibility
-                val messageFooterVisibility = data[5] as MessageFooterVisibility
-                val messagePositionHandler = data[6] as MessagePositionHandler
-                val typingUsers = data[7] as List<User>
-                val focusedMessage = data[8] as Message?
-                val members = data[9] as List<Member>
-                val ownCapabilities = data[10] as Set<String>
-                val messagesInOriginalLanguage = data[11] as Set<String>
+                val messageFooterVisibility = data[4] as MessageFooterVisibility
+                val messagePositionHandler = data[5] as MessagePositionHandler
+                val typingUsers = data[6] as List<User>
+                val focusedMessage = data[7] as Message?
+                val members = data[8] as List<Member>
+                val ownCapabilities = data[9] as Set<String>
+                val messagesInOriginalLanguage = data[10] as Set<String>
 
                 _threadListState.value.copy(
                     isLoading = false,
@@ -828,11 +812,9 @@ public class MessageListController(
                         messages = filterMessagesToShow(
                             messages = messages,
                             showSystemMessages = showSystemMessages,
-                            deletedMessageVisibility = deletedMessageVisibility,
                         ),
                         isInThread = true,
                         reads = reads,
-                        deletedMessageVisibility = deletedMessageVisibility,
                         dateSeparatorHandler = dateSeparatorHandler,
                         messageFooterVisibility = messageFooterVisibility,
                         messagePositionHandler = messagePositionHandler,
@@ -877,7 +859,6 @@ public class MessageListController(
      * @param messages The messages we need to group.
      * @param isInThread If we are in inside a thread.
      * @param reads The list of read states.
-     * @param deletedMessageVisibility Determines visibility of deleted messages.
      * @param dateSeparatorHandler Handler used to determine when the date separator should be visible.
      * @param messageFooterVisibility Determines when the message footer should be visible.
      * @param messagePositionHandler Determines the message position inside a group of messages.
@@ -896,7 +877,6 @@ public class MessageListController(
         messages: List<Message>,
         isInThread: Boolean,
         reads: List<ChannelUserRead>,
-        deletedMessageVisibility: DeletedMessageVisibility,
         dateSeparatorHandler: DateSeparatorHandler,
         messageFooterVisibility: MessageFooterVisibility,
         messagePositionHandler: MessagePositionHandler,
@@ -1007,7 +987,6 @@ public class MessageListController(
                         isInThread = isInThread,
                         isMessageRead = isMessageRead,
                         isMessageDelivered = isMessageDelivered,
-                        deletedMessageVisibility = deletedMessageVisibility,
                         showMessageFooter = shouldShowFooter,
                         messageReadBy = messageReadBy,
                         focusState = if (isMessageFocused) MessageFocused else null,
@@ -1062,32 +1041,16 @@ public class MessageListController(
      *
      * @param messages List of all messages.
      * @param showSystemMessages Whether we should show system messages or not.
-     * @param deletedMessageVisibility The visibility of deleted messages. We filter them out if
-     * [DeletedMessageVisibility.ALWAYS_HIDDEN].
      *
      * @return Filtered messages.
      */
     private fun filterMessagesToShow(
         messages: List<Message>,
         showSystemMessages: Boolean,
-        deletedMessageVisibility: DeletedMessageVisibility,
     ): List<Message> {
-        val currentUser = user.value
-
         return messages.filter { message ->
-            val isDeletedMessage = message.isDeleted()
             val isSystemMessage = message.isSystem() || message.isError()
-
-            when {
-                isDeletedMessage -> when (deletedMessageVisibility) {
-                    DeletedMessageVisibility.ALWAYS_VISIBLE -> true
-                    DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> message.user.id == currentUser?.id
-                    DeletedMessageVisibility.ALWAYS_HIDDEN -> false
-                }
-
-                isSystemMessage -> showSystemMessages
-                else -> true
-            }
+            if (isSystemMessage) showSystemMessages else true
         }
     }
 
@@ -2357,16 +2320,6 @@ public class MessageListController(
      */
     public fun setMessageFooterVisibility(messageFooterVisibility: MessageFooterVisibility) {
         _messageFooterVisibilityState.value = messageFooterVisibility
-    }
-
-    /**
-     * Sets the value used to filter deleted messages.
-     * @see DeletedMessageVisibility
-     *
-     * @param deletedMessageVisibility Changes the visibility of deleted messages.
-     */
-    public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
-        _deletedMessageVisibilityState.value = deletedMessageVisibility
     }
 
     /**

@@ -40,7 +40,6 @@ import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.list.DeleteMessage
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.EditMessage
 import io.getstream.chat.android.ui.common.state.messages.list.SendAnyway
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
@@ -253,9 +252,6 @@ class ChatFragment : Fragment() {
     private fun initMessageListViewModel() {
         val calendar = Calendar.getInstance()
         messageListViewModel.apply {
-            messageListViewModel.setDeletedMessageVisibility(
-                deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER,
-            )
             bindView(binding.messageListView, viewLifecycleOwner)
             setDateSeparatorHandler { previousMessage, message ->
                 if (previousMessage == null) {

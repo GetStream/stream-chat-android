@@ -100,7 +100,6 @@ import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAt
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -620,7 +619,6 @@ class ChatsActivity : ComponentActivity() {
         messageId = messageId,
         parentMessageId = parentMessageId,
         autoTranslationEnabled = ChatApp.autoTranslationEnabled,
-        deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
         isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
     )
 

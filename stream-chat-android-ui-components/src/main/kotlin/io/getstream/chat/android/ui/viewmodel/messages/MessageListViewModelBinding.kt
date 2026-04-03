@@ -55,10 +55,6 @@ public fun MessageListViewModel.bindView(
     view: MessageListView,
     lifecycleOwner: LifecycleOwner,
 ) {
-    deletedMessageVisibility.observe(lifecycleOwner) {
-        view.setDeletedMessageVisibility(it)
-    }
-
     channel.observe(lifecycleOwner) {
         view.updateChannel(it)
     }

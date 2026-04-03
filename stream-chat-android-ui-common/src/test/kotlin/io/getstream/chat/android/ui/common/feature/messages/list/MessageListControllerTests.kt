@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.createDate
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Channel
@@ -63,7 +62,6 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.callFrom
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
@@ -263,26 +261,6 @@ internal class MessageListControllerTests {
         dateSeparatorCount `should be equal to` 0
     }
 
-    // deleted visibility
-    @Test
-    fun `When deleted visibility is never When grouping messages Should not add any deleted messages`() = runTest {
-        var message = 0
-        val messages = randomMessageList {
-            message++
-            randomMessage(deletedAt = if (message % 2 == 0) randomDate() else null)
-        }
-        val messagesState = MutableStateFlow(messages)
-        val controller = Fixture()
-            .givenCurrentUser()
-            .givenChannelQuery()
-            .givenChannelState(messagesState = messagesState)
-            .get(deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_HIDDEN)
-
-        val deletedMessageCount =
-            controller.messageListState.value.messageItems.count { it is MessageItemState && it.message.isDeleted() }
-        deletedMessageCount `should be equal to` 0
-    }
-
     @Test
     fun `When deleted visibility is always When grouping messages Should add all deleted messages`() = runTest {
         var message = 0
@@ -300,26 +278,6 @@ internal class MessageListControllerTests {
         val messagesCount = controller.messageListState.value.messageItems.count { it is MessageItemState }
         messagesCount `should be equal to` 10
     }
-
-    @Test
-    fun `When deleted visibility is current user When grouping messages Should not see other users deleted messages`() =
-        runTest {
-            var message = 0
-            val messages = randomMessageList {
-                message++
-                randomMessage(deletedAt = if (message % 2 == 0) randomDate() else null)
-            }
-            val messagesState = MutableStateFlow(messages)
-            val controller = Fixture()
-                .givenCurrentUser()
-                .givenChannelQuery()
-                .givenChannelState(messagesState = messagesState)
-                .get(deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER)
-
-            val deletedMessageCount =
-                controller.messageListState.value.messageItems.count { it is MessageItemState && it.message.isDeleted() }
-            deletedMessageCount `should be equal to` 0
-        }
 
     // footer visibility
     @Test
@@ -1237,7 +1195,6 @@ internal class MessageListControllerTests {
 
         fun get(
             dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler(),
-            deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
             showSystemMessages: Boolean = true,
         ): MessageListController {
             return MessageListController(
@@ -1245,7 +1202,6 @@ internal class MessageListControllerTests {
                 chatClient = chatClient,
                 clipboardHandler = mock(),
                 dateSeparatorHandler = dateSeparatorHandler,
-                deletedMessageVisibility = deletedMessageVisibility,
                 showSystemMessages = showSystemMessages,
                 threadLoadOrderOlderToNewer = false,
                 channelState = MutableStateFlow(channelState),

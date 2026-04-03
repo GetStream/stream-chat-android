@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.de
 
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.helper.DateFormatter
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.MessageListItemDecoratorProvider
@@ -33,13 +32,13 @@ public interface DecoratorProviderFactory {
     /**
      * Creates a new [DecoratorProvider] for the given [channel].
      */
+    @Suppress("LongParameterList")
     public fun createDecoratorProvider(
         channel: Channel,
         dateFormatter: DateFormatter,
         messageListViewStyle: MessageListViewStyle,
         showAvatarPredicate: MessageListView.ShowAvatarPredicate,
         messageBackgroundFactory: MessageBackgroundFactory,
-        deletedMessageVisibility: () -> DeletedMessageVisibility,
         getLanguageDisplayName: (code: String) -> String,
     ): DecoratorProvider
 
@@ -58,7 +57,6 @@ public interface DecoratorProviderFactory {
                 messageListViewStyle: MessageListViewStyle,
                 showAvatarPredicate: MessageListView.ShowAvatarPredicate,
                 messageBackgroundFactory: MessageBackgroundFactory,
-                deletedMessageVisibility: () -> DeletedMessageVisibility,
                 getLanguageDisplayName: (code: String) -> String,
             ): DecoratorProvider {
                 return MessageListItemDecoratorProvider(
@@ -67,7 +65,6 @@ public interface DecoratorProviderFactory {
                     messageListViewStyle,
                     showAvatarPredicate,
                     messageBackgroundFactory,
-                    deletedMessageVisibility,
                     getLanguageDisplayName,
                     predicate,
                 )
@@ -88,7 +85,6 @@ public operator fun DecoratorProviderFactory.plus(
         messageListViewStyle: MessageListViewStyle,
         showAvatarPredicate: MessageListView.ShowAvatarPredicate,
         messageBackgroundFactory: MessageBackgroundFactory,
-        deletedMessageVisibility: () -> DeletedMessageVisibility,
         getLanguageDisplayName: (code: String) -> String,
     ): DecoratorProvider {
         return this@plus.createDecoratorProvider(
@@ -97,7 +93,6 @@ public operator fun DecoratorProviderFactory.plus(
             messageListViewStyle,
             showAvatarPredicate,
             messageBackgroundFactory,
-            deletedMessageVisibility,
             getLanguageDisplayName,
         ) + other.createDecoratorProvider(
             channel,
@@ -105,7 +100,6 @@ public operator fun DecoratorProviderFactory.plus(
             messageListViewStyle,
             showAvatarPredicate,
             messageBackgroundFactory,
-            deletedMessageVisibility,
             getLanguageDisplayName,
         )
     }

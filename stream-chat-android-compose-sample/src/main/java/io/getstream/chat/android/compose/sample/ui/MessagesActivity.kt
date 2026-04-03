@@ -48,7 +48,6 @@ import io.getstream.chat.android.compose.ui.theme.TranslationConfig
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 
 class MessagesActivity : ComponentActivity() {
 
@@ -64,7 +63,6 @@ class MessagesActivity : ComponentActivity() {
             channelId = cid,
             autoTranslationEnabled = ChatApp.autoTranslationEnabled,
             isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
-            deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
             messageId = intent.getStringExtra(KEY_MESSAGE_ID),
             parentMessageId = intent.getStringExtra(KEY_PARENT_MESSAGE_ID),
             isComposerDraftMessageEnabled = true,

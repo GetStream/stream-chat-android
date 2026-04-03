@@ -34,7 +34,6 @@ import io.getstream.chat.android.previewdata.PreviewChannelUserRead
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
@@ -226,7 +225,6 @@ private val LoadedMessageListState = MessageListState(
             message = PreviewMessageData.messageDeleted.copy(
                 user = PreviewUserData.user1,
             ),
-            deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER,
             showMessageFooter = true,
             ownCapabilities = ChannelCapabilities.toSet(),
         ),
