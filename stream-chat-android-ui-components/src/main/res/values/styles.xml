@@ -1479,9 +1479,10 @@
         <item name="streamUiMessageComposerSendMessageButtonPadding">
             @dimen/stream_ui_message_composer_trailing_content_button_send_message_padding
         </item>
-        <item name="streamUiMessageComposerAudioRecordingButtonVisible">false</item>
+        <item name="streamUiMessageComposerAudioRecordingButtonVisible">true</item>
         <item name="streamUiMessageComposerAudioRecordingButtonEnabled">true</item>
         <item name="streamUiMessageComposerAudioRecordingButtonPreferred">false</item>
+        <item name="streamUiMessageComposerAudioRecordingSendOnComplete">false</item>
         <item name="streamUiMessageComposerAudioRecordingButtonIconDrawable">
             @drawable/stream_ui_ic_mic
         </item>

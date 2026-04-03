@@ -104,7 +104,7 @@ public class ChannelListViewModel(
     private val messageLimit: Int? = null,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
     searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
-    private val isDraftMessageEnabled: Boolean = false,
+    private val isDraftMessageEnabled: Boolean = true,
     private val messageSearchSort: QuerySorter<Message>? = null,
     private val globalState: Flow<GlobalState> = chatClient.globalStateFlow,
 ) : ViewModel() {

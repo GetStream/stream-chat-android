@@ -76,7 +76,7 @@ public data class NotificationConfig @JvmOverloads constructor(
     /**
      * Whether or not the auto-translation feature is enabled.
      */
-    val autoTranslationEnabled: Boolean = false,
+    val autoTranslationEnabled: Boolean = true,
 
     /**
      * A token provider to be used on case of restoring user credentials and an expired token needs to be refreshed.

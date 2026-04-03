@@ -1199,7 +1199,7 @@ public class MessageComposerController(
     public data class Config(
         val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
         val isLinkPreviewEnabled: Boolean = false,
-        val isDraftMessageEnabled: Boolean = false,
+        val isDraftMessageEnabled: Boolean = true,
         val isActiveCommandEnabled: Boolean = false,
     )
 
