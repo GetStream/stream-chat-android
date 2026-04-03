@@ -28,9 +28,9 @@ import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
 
 /**
  * An Activity representing a self-contained chat screen. This Activity is simply
- * a thin wrapper around [MessageListFragment].
+ * a thin wrapper around [ChannelFragment].
  */
-public open class MessageListActivity : AppCompatActivity() {
+public open class ChannelActivity : AppCompatActivity() {
     private lateinit var binding: StreamUiFragmentContainerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,19 +50,19 @@ public open class MessageListActivity : AppCompatActivity() {
             }
             val messageId = intent.getStringExtra(EXTRA_MESSAGE_ID)
             supportFragmentManager.beginTransaction()
-                .replace(R.id.container, createMessageListFragment(cid, messageId))
+                .replace(R.id.container, createChannelFragment(cid, messageId))
                 .commit()
         }
     }
 
     /**
-     * Creates an instance of [MessageListFragment]. Override this method if you want to create an
-     * instance of [MessageListFragment] with custom arguments or if you want to create a subclass
-     * of [MessageListFragment].
+     * Creates an instance of [ChannelFragment]. Override this method if you want to create an
+     * instance of [ChannelFragment] with custom arguments or if you want to create a subclass
+     * of [ChannelFragment].
      */
-    protected open fun createMessageListFragment(cid: String, messageId: String?): MessageListFragment {
-        return MessageListFragment.newInstance(cid) {
-            setFragment(MessageListFragment())
+    protected open fun createChannelFragment(cid: String, messageId: String?): ChannelFragment {
+        return ChannelFragment.newInstance(cid) {
+            setFragment(ChannelFragment())
             showHeader(true)
             messageId(messageId)
         }
@@ -79,7 +79,7 @@ public open class MessageListActivity : AppCompatActivity() {
         private const val EXTRA_MESSAGE_ID: String = "extra_message_id"
 
         /**
-         * Creates an Intent to start the [MessageListActivity] or its subclass.
+         * Creates an Intent to start the [ChannelActivity] or its subclass.
          *
          * @param context The context that will be used in the intent.
          * @param cid The full channel id, i.e. "messaging:123".
@@ -92,7 +92,7 @@ public open class MessageListActivity : AppCompatActivity() {
             context: Context,
             cid: String,
             messageId: String? = null,
-            activityClass: Class<out MessageListActivity> = MessageListActivity::class.java,
+            activityClass: Class<out ChannelActivity> = ChannelActivity::class.java,
         ): Intent {
             return Intent(context, activityClass).apply {
                 putExtra(EXTRA_CID, cid)

@@ -74,7 +74,7 @@ public class TypingIndicatorView : LinearLayout {
             false
         } else {
             userTypingTextView.text = resources.getQuantityString(
-                R.plurals.stream_ui_message_list_header_typing_users,
+                R.plurals.stream_ui_channel_header_typing_users,
                 users.size,
                 users.first().name,
                 users.size - 1,

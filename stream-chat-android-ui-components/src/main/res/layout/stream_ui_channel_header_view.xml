@@ -39,7 +39,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/stream_ui_message_list_header_back_button_content_description"
+            android:contentDescription="@string/stream_ui_channel_header_back_button_content_description"
             android:padding="@dimen/stream_ui_spacing_tiny"
             android:src="@drawable/stream_ui_arrow_left"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -117,7 +117,7 @@
                 android:id="@+id/connectingTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/stream_ui_message_list_header_disconnected"
+                android:text="@string/stream_ui_channel_header_disconnected"
                 android:textAppearance="@style/StreamUiTextAppearance.Footnote"
                 android:textDirection="locale"
                 />
@@ -138,7 +138,7 @@
                 android:id="@+id/offlineTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/stream_ui_message_list_header_offline"
+                android:text="@string/stream_ui_channel_header_offline"
                 android:textAppearance="@style/StreamUiTextAppearance.Footnote"
                 android:textDirection="locale"
                 />
@@ -150,7 +150,7 @@
                 android:background="?selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:text="@string/stream_ui_message_list_header_retry"
+                android:text="@string/stream_ui_channel_header_retry"
                 android:textColor="@color/stream_ui_accent_blue"
                 android:textDirection="locale"
                 android:visibility="gone"
@@ -180,7 +180,7 @@
 
     <io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarView
         android:id="@+id/channelAvatarView"
-        style="?attr/streamUiMessageListHeaderAvatarStyle"
+        style="?attr/streamUiChannelHeaderAvatarStyle"
         android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -50,12 +50,12 @@ import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMes
 import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContent;
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
 import io.getstream.chat.android.ui.helper.TransformStyle;
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelBinder;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelBinding;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelBinding;
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;
 import io.getstream.chat.docs.databinding.MessageComposerLeadingContentBinding;
 import io.getstream.result.call.Call;
 import io.getstream.result.call.CallKt;
@@ -77,7 +77,7 @@ public class MessageComposer extends Fragment {
 
         public void usage1() {
             // Create MessageComposerViewModel for a given channel
-            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+            ViewModelProvider.Factory factory = new ChannelViewModelFactory.Builder(requireContext())
                     .cid("messaging:123")
                     .build();
             ViewModelProvider provider = new ViewModelProvider(this, factory);
@@ -89,7 +89,7 @@ public class MessageComposer extends Fragment {
 
         public void usage2() {
             // Create MessageComposerViewModel for a given channel
-            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+            ViewModelProvider.Factory factory = new ChannelViewModelFactory.Builder(requireContext())
                     .cid("messaging:123")
                     .build();
             ViewModelProvider provider = new ViewModelProvider(this, factory);
@@ -185,7 +185,7 @@ public class MessageComposer extends Fragment {
 
         public void usage3() {
             // Create ViewModels for MessageComposerView and MessageListView
-            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+            ViewModelProvider.Factory factory = new ChannelViewModelFactory.Builder(requireContext())
                     .cid("messaging:123")
                     .build();
             ViewModelProvider provider = new ViewModelProvider(this, factory);
@@ -566,7 +566,7 @@ public class MessageComposer extends Fragment {
             String cid = "messaging:123";
             ChatClient chatClient = ChatClient.instance();
             UserLookupHandler defaultUserLookupHandler = new DefaultUserLookupHandler(chatClient, cid);
-            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+            ViewModelProvider.Factory factory = new ChannelViewModelFactory.Builder(requireContext())
                     .cid(cid)
                     .userLookupHandler(defaultUserLookupHandler)
                     .build();
@@ -594,7 +594,7 @@ public class MessageComposer extends Fragment {
             };
 
             // Create MessageComposerViewModel for a given channel
-            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+            ViewModelProvider.Factory factory = new ChannelViewModelFactory.Builder(requireContext())
                     .cid(cid)
                     .userLookupHandlerCompat(customUserLookupHandler)
                     .build();

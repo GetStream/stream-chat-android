@@ -4,9 +4,9 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelBinding;
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;
 
 /**
  * [Overview](https://getstream.io/chat/docs/sdk/android/ui/overview/)
@@ -20,7 +20,7 @@ public class Overview extends Fragment {
      */
     public void viewModels() {
         // 1
-        ViewModelProvider.Factory factory = new MessageListViewModelFactory
+        ViewModelProvider.Factory factory = new ChannelViewModelFactory
                 .Builder(requireContext())
                 .cid("messaging:123")
                 .build();

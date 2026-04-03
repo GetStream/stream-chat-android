@@ -27,20 +27,20 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamUiMessageListHeaderViewBinding
+import io.getstream.chat.android.ui.databinding.StreamUiChannelHeaderViewBinding
 import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.EMPTY
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
-public class MessageListHeaderView : FrameLayout {
+public class ChannelHeaderView : FrameLayout {
 
-    private val binding = StreamUiMessageListHeaderViewBinding.inflate(streamThemeInflater, this, true)
+    private val binding = StreamUiChannelHeaderViewBinding.inflate(streamThemeInflater, this, true)
 
     private var headerState: HeaderState = createInitialHeaderState(context)
 
-    private lateinit var style: MessageListHeaderViewStyle
+    private lateinit var style: ChannelHeaderViewStyle
 
     public constructor(context: Context) : this(context, null, 0)
 
@@ -93,7 +93,7 @@ public class MessageListHeaderView : FrameLayout {
         reduceHeaderState(
             isTitleEnabled = true,
             normalModeTitle = title,
-            threadModeSubtitle = context.getString(R.string.stream_ui_message_list_header_thread_subtitle, title),
+            threadModeSubtitle = context.getString(R.string.stream_ui_channel_header_thread_subtitle, title),
         )
     }
 
@@ -148,7 +148,7 @@ public class MessageListHeaderView : FrameLayout {
 
     @SuppressLint("CustomViewStyleable")
     private fun init(attrs: AttributeSet?) {
-        style = MessageListHeaderViewStyle(context, attrs)
+        style = ChannelHeaderViewStyle(context, attrs)
 
         configBackground()
         configChannelAvatar()
@@ -333,7 +333,7 @@ public class MessageListHeaderView : FrameLayout {
                 isThread = false,
                 isTitleEnabled = true,
                 normalModeTitle = String.EMPTY,
-                threadModeTitle = context.getString(R.string.stream_ui_message_list_header_thread_title),
+                threadModeTitle = context.getString(R.string.stream_ui_channel_header_thread_title),
                 isSubtitleEnabled = true,
                 normalModeSubtitle = String.EMPTY,
                 threadModeSubtitle = String.EMPTY,

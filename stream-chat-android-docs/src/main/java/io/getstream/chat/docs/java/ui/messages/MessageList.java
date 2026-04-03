@@ -25,9 +25,9 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewHolderFactory;
 import io.getstream.chat.android.ui.helper.TransformStyle;
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelBinding;
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;
 import io.getstream.chat.docs.databinding.TodayMessageListItemBinding;
 
 /**
@@ -39,7 +39,7 @@ public class MessageList extends Fragment {
 
     public void usage() {
         // Init ViewModel
-        ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+        ViewModelProvider.Factory factory = new ChannelViewModelFactory.Builder(requireContext())
                 .cid("messaging:123")
                 .build();
         ViewModelProvider provider = new ViewModelProvider(this, factory);

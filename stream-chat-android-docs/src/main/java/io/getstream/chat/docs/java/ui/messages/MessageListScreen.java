@@ -7,10 +7,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import io.getstream.chat.android.ui.feature.messages.MessageListActivity;
-import io.getstream.chat.android.ui.feature.messages.MessageListFragment;
+import io.getstream.chat.android.ui.feature.messages.ChannelActivity;
+import io.getstream.chat.android.ui.feature.messages.ChannelFragment;
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView;
-import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView;
+import io.getstream.chat.android.ui.feature.messages.header.ChannelHeaderView;
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
 import io.getstream.chat.docs.R;
 import kotlin.Unit;
@@ -26,12 +26,12 @@ public class MessageListScreen {
     class Usage {
 
         public void startActivity(Context context) {
-            context.startActivity(MessageListActivity.createIntent(context, "messaging:123"));
+            context.startActivity(ChannelActivity.createIntent(context, "messaging:123"));
         }
 
-        public final class MyMessageListActivity extends AppCompatActivity {
+        public final class MyChannelActivity extends AppCompatActivity {
 
-            public MyMessageListActivity() {
+            public MyChannelActivity() {
                 super(R.layout.stream_ui_fragment_container);
             }
 
@@ -39,7 +39,7 @@ public class MessageListScreen {
             protected void onCreate(@Nullable Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
                 if (savedInstanceState == null) {
-                    MessageListFragment fragment = MessageListFragment.newInstance("messaging:123", builder -> {
+                    ChannelFragment fragment = ChannelFragment.newInstance("messaging:123", builder -> {
                         builder.showHeader(true);
                         return Unit.INSTANCE;
                     });
@@ -56,16 +56,16 @@ public class MessageListScreen {
      */
     class HandlingActions {
 
-        public final class MyMessageListActivity extends AppCompatActivity implements MessageListFragment.BackPressListener {
+        public final class MyChannelActivity extends AppCompatActivity implements ChannelFragment.BackPressListener {
 
-            public MyMessageListActivity() {
+            public MyChannelActivity() {
                 super(R.layout.stream_ui_fragment_container);
             }
 
             @Override
             protected void onCreate(@Nullable Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
-                // Add MessageListFragment to the layout
+                // Add ChannelFragment to the layout
             }
 
             @Override
@@ -80,15 +80,15 @@ public class MessageListScreen {
      */
     class Customization {
 
-        public final class CustomMessageListFragment extends MessageListFragment {
+        public final class CustomChannelFragment extends ChannelFragment {
 
             @Override
-            protected void setupMessageListHeader(@NonNull MessageListHeaderView messageListHeaderView) {
-                super.setupMessageListHeader(messageListHeaderView);
+            protected void setupChannelHeader(@NonNull ChannelHeaderView channelHeaderView) {
+                super.setupChannelHeader(channelHeaderView);
                 // Customize message list header view
 
                 // For example, set a custom listener for the back button
-                messageListHeaderView.setBackButtonClickListener(() -> {
+                channelHeaderView.setBackButtonClickListener(() -> {
                     // Handle back press
                 });
             }
@@ -106,13 +106,13 @@ public class MessageListScreen {
             }
         }
 
-        public final class CustomMessageListActivity extends MessageListActivity {
+        public final class CustomChannelActivity extends ChannelActivity {
 
             @NonNull
             @Override
-            protected MessageListFragment createMessageListFragment(@NonNull String cid, @Nullable String messageId) {
-                return MessageListFragment.newInstance(cid, builder -> {
-                    builder.setFragment(new CustomMessageListFragment());
+            protected ChannelFragment createChannelFragment(@NonNull String cid, @Nullable String messageId) {
+                return ChannelFragment.newInstance(cid, builder -> {
+                    builder.setFragment(new CustomChannelFragment());
                     builder.customTheme(R.style.StreamUiTheme);
                     builder.showHeader(true);
                     builder.messageId(messageId);
@@ -122,7 +122,7 @@ public class MessageListScreen {
         }
 
         public void startActivity(Context context) {
-            context.startActivity(MessageListActivity.createIntent(context, "messaging:123", null, CustomMessageListActivity.class));
+            context.startActivity(ChannelActivity.createIntent(context, "messaging:123", null, CustomChannelActivity.class));
         }
     }
 }

@@ -2,9 +2,9 @@ package io.getstream.chat.docs.kotlin.ui.messages
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
+import io.getstream.chat.android.ui.feature.messages.header.ChannelHeaderView
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelHeaderViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
 
 /**
@@ -12,35 +12,35 @@ import io.getstream.chat.android.ui.viewmodel.messages.bindView
  */
 private class MessageListHeader : Fragment() {
 
-    private lateinit var messageListHeaderView: MessageListHeaderView
+    private lateinit var channelHeaderView: ChannelHeaderView
 
     /**
      * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-header/#usage)
      */
     fun usage() {
         // Initialize ViewModel
-        val viewModel: MessageListHeaderViewModel by viewModels {
-            MessageListViewModelFactory(requireContext(), cid = "messaging:123")
+        val viewModel: ChannelHeaderViewModel by viewModels {
+            ChannelViewModelFactory(requireContext(), cid = "messaging:123")
         }
 
         // Bind the View and ViewModel
-        viewModel.bindView(messageListHeaderView, viewLifecycleOwner)
+        viewModel.bindView(channelHeaderView, viewLifecycleOwner)
     }
 
     /**
      * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-header/#handling-actions)
      */
     fun handlingActions() {
-        messageListHeaderView.setBackButtonClickListener {
+        channelHeaderView.setBackButtonClickListener {
             // Handle back button click
         }
-        messageListHeaderView.setAvatarClickListener {
+        channelHeaderView.setAvatarClickListener {
             // Handle avatar click
         }
-        messageListHeaderView.setTitleClickListener {
+        channelHeaderView.setTitleClickListener {
             // Handle title click
         }
-        messageListHeaderView.setSubtitleClickListener {
+        channelHeaderView.setSubtitleClickListener {
             // Handle subtitle click
         }
     }

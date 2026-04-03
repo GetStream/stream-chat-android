@@ -61,22 +61,22 @@
     <string name="stream_ui_message_composer_error_file_size">फ़ाइल बहुत बड़ी है - अधिकतम %s एमबी.</string>
     <string name="stream_ui_message_composer_error_attachment_count">अटैचमेंट्स संख्या (%d) पार हो गयी</string>
     <string name="stream_ui_message_composer_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
-  <plurals name="stream_ui_message_list_header_member_count">
+  <plurals name="stream_ui_channel_header_member_count">
     <item quantity="one">"%1d सदस्य"</item>
     <item quantity="other">"%1d सदस्य"</item>
   </plurals>
-  <plurals name="stream_ui_message_list_header_typing_users">
+  <plurals name="stream_ui_channel_header_typing_users">
     <item quantity="one">"%s लिख रहे/रहीं हैं"</item>
     <item quantity="other">"%s and %d अन्य लिख रहें हैं"</item>
   </plurals>
-  <string name="stream_ui_message_list_header_back_button_content_description">"पिछला बटन"</string>
-  <string name="stream_ui_message_list_header_disconnected">"नेटवर्क खोजा जा रहा है"</string>
-  <string name="stream_ui_message_list_header_member_count_online">"%1$s, %2$d ऑनलाइन"</string>
-  <string name="stream_ui_message_list_header_offline">"ऑफलाइन…"</string>
-  <string name="stream_ui_message_list_header_retry">"पुनः प्रयास करें"</string>
-  <string name="stream_ui_message_list_header_thread_subtitle">"%1$s के साथ"</string>
-  <string name="stream_ui_message_list_header_thread_title">"चर्चा पर जवाब दें"</string>
-  <string name="stream_ui_message_list_header_untitled_channel">"बिना नाम वाला चैनल"</string>
+  <string name="stream_ui_channel_header_back_button_content_description">"पिछला बटन"</string>
+  <string name="stream_ui_channel_header_disconnected">"नेटवर्क खोजा जा रहा है"</string>
+  <string name="stream_ui_channel_header_member_count_online">"%1$s, %2$d ऑनलाइन"</string>
+  <string name="stream_ui_channel_header_offline">"ऑफलाइन…"</string>
+  <string name="stream_ui_channel_header_retry">"पुनः प्रयास करें"</string>
+  <string name="stream_ui_channel_header_thread_subtitle">"%1$s के साथ"</string>
+  <string name="stream_ui_channel_header_thread_title">"चर्चा पर जवाब दें"</string>
+  <string name="stream_ui_channel_header_untitled_channel">"बिना नाम वाला चैनल"</string>
   <plurals name="stream_ui_message_list_message_reactions">
     <item quantity="one">"%d प्रतिक्रिया"</item>
     <item quantity="other">"%d प्रतिक्रियायें"</item>

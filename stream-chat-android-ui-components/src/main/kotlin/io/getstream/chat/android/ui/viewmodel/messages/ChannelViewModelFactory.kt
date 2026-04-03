@@ -47,7 +47,7 @@ import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 
 /**
- * A ViewModel factory for MessageListViewModel, MessageListHeaderViewModel and MessageComposerViewModel.
+ * A ViewModel factory for MessageListViewModel, ChannelHeaderViewModel and MessageComposerViewModel.
  *
  * @param cid The current channel ID, to load the messages from.
  * @param messageId The message ID to which we want to scroll to when opening the message list.
@@ -72,11 +72,11 @@ import java.io.File
  * @param threadLoadOlderToNewer Configures if the thread should be loaded from older to newer messages.
  * @param isComposerDraftMessagesEnabled Configures if the composer should support draft messages.
  *
- * @see MessageListHeaderViewModel
+ * @see ChannelHeaderViewModel
  * @see MessageListViewModel
  * @see MessageComposerViewModel
  */
-public class MessageListViewModelFactory @JvmOverloads constructor(
+public class ChannelViewModelFactory @JvmOverloads constructor(
     context: Context,
     private val cid: String,
     private val messageId: String? = null,
@@ -120,7 +120,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
 
     private fun <T : ViewModel> createInternal(modelClass: Class<T>, savedStateHandle: SavedStateHandle): T {
         val viewModel: ViewModel = when (modelClass) {
-            MessageListHeaderViewModel::class.java -> MessageListHeaderViewModel(cid, messageId = messageId)
+            ChannelHeaderViewModel::class.java -> ChannelHeaderViewModel(cid, messageId = messageId)
             MessageListViewModel::class.java -> MessageListViewModel(
                 messageListController = MessageListController(
                     cid = cid,
@@ -160,8 +160,8 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                 ),
             )
             else -> throw IllegalArgumentException(
-                "MessageListViewModelFactory can only create instances of the following classes: " +
-                    "${MessageListHeaderViewModel::class.java.simpleName}, " +
+                "ChannelViewModelFactory can only create instances of the following classes: " +
+                    "${ChannelHeaderViewModel::class.java.simpleName}, " +
                     "${MessageListViewModel::class.java.simpleName}, or " +
                     "${MessageComposerViewModel::class.java.simpleName}.",
             )
@@ -257,11 +257,11 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
         }
 
         /**
-         * Builds [MessageListViewModelFactory] instance.
+         * Builds [ChannelViewModelFactory] instance.
          */
         public fun build(): ViewModelProvider.Factory {
             val cid = cid ?: error("Channel cid should not be null")
-            return MessageListViewModelFactory(
+            return ChannelViewModelFactory(
                 context = context,
                 cid = cid,
                 messageId = messageId,
