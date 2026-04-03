@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextDirection
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 
 /**
@@ -87,10 +86,7 @@ public data class ComposerInputFieldTheme(
             return ComposerInputFieldTheme(
                 borderShape = RoundedCornerShape(StreamTokens.radius3xl),
                 backgroundColor = colors.backgroundCoreSurfaceDefault,
-                textStyle = typography.bodyDefault.copy(
-                    color = colors.textPrimary,
-                    textDirection = TextDirection.Content,
-                ),
+                textStyle = typography.bodyDefault.copy(color = colors.textPrimary),
                 cursorBrushColor = colors.accentPrimary,
                 mentionStyleFactory = mentionStyleFactory,
             )
