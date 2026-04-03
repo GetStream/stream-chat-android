@@ -162,7 +162,7 @@ public fun MessageListHeader(
 @Composable
 internal fun DefaultMessageListHeaderLeadingContent(onBackPressed: () -> Unit) {
     BackButton(
-        painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+        painter = painterResource(id = R.drawable.stream_design_ic_arrow_left),
         onBackPressed = onBackPressed,
     )
 }

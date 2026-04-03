@@ -76,7 +76,7 @@ internal fun ScrollToBottomButton(
             ),
         ) {
             Icon(
-                painter = painterResource(R.drawable.stream_compose_ic_arrow_down),
+                painter = painterResource(R.drawable.stream_design_ic_arrow_down),
                 contentDescription = stringResource(R.string.stream_compose_scroll_to_bottom),
             )
         }

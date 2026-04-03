@@ -100,27 +100,27 @@ internal fun MessageAnnotation(
 internal fun MessageAnnotations(modifier: Modifier) {
     Column(modifier) {
         MessageAnnotation(
-            iconId = R.drawable.stream_compose_ic_annotation_pin,
+            iconId = R.drawable.stream_design_ic_pin,
             text = "Pinned by You",
         )
         MessageAnnotation(
-            iconId = R.drawable.stream_compose_ic_annotation_bookmark,
+            iconId = R.drawable.stream_design_ic_save,
             text = "Saved for later",
             contentColor = ChatTheme.colors.accentPrimary,
         )
         MessageAnnotation(
-            iconId = R.drawable.stream_compose_ic_annotation_arrow_up_right,
+            iconId = R.drawable.stream_design_ic_arrow_up_right,
             text = "Also sent to the channel",
             trailingText = "View",
             trailingTextColor = ChatTheme.colors.chatTextLink,
         )
         MessageAnnotation(
-            iconId = R.drawable.stream_compose_ic_annotation_reminder,
+            iconId = R.drawable.stream_design_ic_bell,
             text = "Remind me",
             trailingText = "in 2 hours",
         )
         MessageAnnotation(
-            iconId = R.drawable.stream_compose_ic_annotation_translated,
+            iconId = R.drawable.stream_design_ic_translate,
             text = "Translated",
             trailingText = "View original",
             trailingTextColor = ChatTheme.colors.chatTextLink,

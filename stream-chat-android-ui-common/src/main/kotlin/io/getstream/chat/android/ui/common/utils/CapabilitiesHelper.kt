@@ -241,15 +241,20 @@ public fun canBlockUser(
  * Messages can be marked as unread when:
  * - Mark as unread functionality is enabled in the UI configuration
  * - The user has the capability to receive read events in the channel
+ * - The message was not sent by the current user (users cannot mark their own messages as unread)
  *
  * @param markAsUnreadEnabled Whether the mark as unread feature is enabled in the UI.
+ * @param currentUser The currently authenticated user.
+ * @param message The message to check for mark as unread eligibility.
  * @param ownCapabilities The set of capabilities the current user has in the channel.
- * @return `true` if messages can be marked as unread, `false` otherwise.
+ * @return `true` if the message can be marked as unread, `false` otherwise.
  */
 public fun canMarkAsUnread(
     markAsUnreadEnabled: Boolean,
+    currentUser: User?,
+    message: Message,
     ownCapabilities: Set<String>,
-): Boolean = markAsUnreadEnabled && ownCapabilities.canMarkAsUnread()
+): Boolean = markAsUnreadEnabled && ownCapabilities.canMarkAsUnread() && !message.isOwnMessage(currentUser)
 
 /**
  * Determines whether the given message can be retried.

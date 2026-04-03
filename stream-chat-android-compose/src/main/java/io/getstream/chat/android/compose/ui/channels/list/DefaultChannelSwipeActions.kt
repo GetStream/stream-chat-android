@@ -65,7 +65,7 @@ public fun DefaultChannelSwipeActions(channelItem: ItemState.ChannelItemState) {
 
     if (moreHandler != null) {
         SwipeActionItem(
-            icon = painterResource(R.drawable.stream_compose_ic_more_options),
+            icon = painterResource(R.drawable.stream_design_ic_more),
             label = LocalContext.current.resources.getString(R.string.stream_compose_swipe_action_more),
             onClick = {
                 scope.launch { coordinator?.closeAll() }

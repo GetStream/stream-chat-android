@@ -44,7 +44,6 @@ import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
 import io.getstream.chat.android.compose.ui.theme.MessageOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
-import io.getstream.chat.android.compose.ui.theme.TranslationConfig
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
@@ -62,7 +61,6 @@ class MessagesActivity : ComponentActivity() {
         MessagesViewModelFactory(
             context = this,
             channelId = cid,
-            autoTranslationEnabled = ChatApp.autoTranslationEnabled,
             isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
             deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
             messageId = intent.getStringExtra(KEY_MESSAGE_ID),
@@ -105,11 +103,9 @@ class MessagesActivity : ComponentActivity() {
             dateFormatter = ChatApp.dateFormatter,
             config = ChatUiConfig(
                 composer = ComposerConfig(
-                    audioRecordingEnabled = true,
                     linkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
                     floatingStyleEnabled = settings.isComposerFloatingStyleEnabled,
                 ),
-                translation = TranslationConfig(enabled = ChatApp.autoTranslationEnabled),
                 attachmentPicker = AttachmentPickerConfig(useSystemPicker = settings.isSystemAttachmentPickerEnabled),
             ),
             allowUIAutomationTest = true,

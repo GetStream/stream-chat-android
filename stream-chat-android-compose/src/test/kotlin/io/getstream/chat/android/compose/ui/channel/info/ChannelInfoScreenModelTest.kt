@@ -33,46 +33,6 @@ internal class ChannelInfoScreenModelTest : PaparazziComposeTest {
     )
 
     @Test
-    fun `hide direct channel`() {
-        snapshot {
-            ChannelInfoScreenModal(
-                modal = ChannelInfoViewEvent.HideChannelModal,
-                isGroupChannel = false,
-            )
-        }
-    }
-
-    @Test
-    fun `hide direct channel in dark mode`() {
-        snapshot(isInDarkMode = true) {
-            ChannelInfoScreenModal(
-                modal = ChannelInfoViewEvent.HideChannelModal,
-                isGroupChannel = false,
-            )
-        }
-    }
-
-    @Test
-    fun `hide group channel`() {
-        snapshot {
-            ChannelInfoScreenModal(
-                modal = ChannelInfoViewEvent.HideChannelModal,
-                isGroupChannel = true,
-            )
-        }
-    }
-
-    @Test
-    fun `hide group channel in dark mode`() {
-        snapshot(isInDarkMode = true) {
-            ChannelInfoScreenModal(
-                modal = ChannelInfoViewEvent.HideChannelModal,
-                isGroupChannel = true,
-            )
-        }
-    }
-
-    @Test
     fun `leave direct channel`() {
         snapshot {
             ChannelInfoScreenModal(

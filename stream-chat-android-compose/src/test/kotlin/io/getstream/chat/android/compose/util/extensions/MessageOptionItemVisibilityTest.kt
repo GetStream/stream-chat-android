@@ -150,10 +150,12 @@ internal class MessageOptionItemVisibilityTest {
     @MethodSource("canMarkAsUnreadArguments")
     fun `Verify canMarkAsUnread() extension function return proper value`(
         messageOptionItemVisibility: MessageOptionItemVisibility,
+        currentUser: User?,
+        message: Message,
         ownCapabilities: Set<String>,
         expectedResult: Boolean,
     ) {
-        messageOptionItemVisibility.canMarkAsUnread(ownCapabilities) `should be` expectedResult
+        messageOptionItemVisibility.canMarkAsUnread(currentUser, message, ownCapabilities) `should be` expectedResult
     }
 
     @ParameterizedTest
@@ -212,18 +214,35 @@ internal class MessageOptionItemVisibilityTest {
 
         @JvmStatic
         fun canMarkAsUnreadArguments() = listOf(
+            // case: visibility disabled
             Arguments.of(
                 MessageOptionItemVisibility(isMarkAsUnreadVisible = false),
-                randomChannelCapabilities(),
+                currentUser,
+                randomMessage(),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.READ_EVENTS)),
                 false,
             ),
+            // case: no READ_EVENTS capability
             Arguments.of(
-                MessageOptionItemVisibility(),
+                MessageOptionItemVisibility(isMarkAsUnreadVisible = true),
+                currentUser,
+                randomMessage(),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.READ_EVENTS)),
                 false,
             ),
+            // case: own message
             Arguments.of(
                 MessageOptionItemVisibility(isMarkAsUnreadVisible = true),
+                currentUser,
+                randomMessage(user = currentUser),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.READ_EVENTS)),
+                false,
+            ),
+            // case: all conditions met
+            Arguments.of(
+                MessageOptionItemVisibility(isMarkAsUnreadVisible = true),
+                currentUser,
+                randomMessage(),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.READ_EVENTS)),
                 true,
             ),

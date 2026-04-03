@@ -97,7 +97,7 @@ public fun MessageMenuHeader(
                 modifier = Modifier,
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.stream_compose_ic_plus),
+                    painter = painterResource(R.drawable.stream_design_ic_plus),
                     contentDescription = LocalContext.current.getString(R.string.stream_compose_show_more_reactions),
                 )
             }

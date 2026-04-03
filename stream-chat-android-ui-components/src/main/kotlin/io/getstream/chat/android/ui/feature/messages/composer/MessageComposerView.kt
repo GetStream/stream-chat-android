@@ -87,6 +87,9 @@ public class MessageComposerView : ConstraintLayout {
      */
     private lateinit var validationErrorRenderer: ValidationErrorRenderer
 
+    internal val composerStyle: MessageComposerViewStyle
+        get() = messageComposerContext.style
+
     /**
      * Click listener for the send message button.
      */

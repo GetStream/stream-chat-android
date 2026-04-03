@@ -40,7 +40,7 @@ public fun interface ClipboardHandler {
  */
 public class ClipboardHandlerImpl(
     private val clipboardManager: ClipboardManager,
-    private val autoTranslationEnabled: Boolean = false,
+    private val autoTranslationEnabled: Boolean = true,
     private val getCurrentUser: () -> User? = { null },
 ) : ClipboardHandler {
 

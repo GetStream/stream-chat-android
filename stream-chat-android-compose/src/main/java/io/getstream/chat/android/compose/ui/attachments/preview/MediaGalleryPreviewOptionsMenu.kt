@@ -182,7 +182,7 @@ internal fun defaultMediaOptions(
         val option = MediaGalleryPreviewOption(
             title = stringResource(id = R.string.stream_compose_media_gallery_preview_reply),
             titleColor = ChatTheme.colors.textPrimary,
-            iconPainter = painterResource(id = R.drawable.stream_compose_ic_reply),
+            iconPainter = painterResource(id = R.drawable.stream_design_ic_reply),
             iconColor = ChatTheme.colors.textPrimary,
             action = Reply(message),
             isEnabled = true,
@@ -193,7 +193,7 @@ internal fun defaultMediaOptions(
         val option = MediaGalleryPreviewOption(
             title = stringResource(id = R.string.stream_compose_media_gallery_preview_show_in_chat),
             titleColor = ChatTheme.colors.textPrimary,
-            iconPainter = painterResource(id = R.drawable.stream_compose_ic_show_in_chat),
+            iconPainter = painterResource(id = R.drawable.stream_design_ic_message_bubble),
             iconColor = ChatTheme.colors.textPrimary,
             action = ShowInChat(message),
             isEnabled = true,
@@ -205,7 +205,7 @@ internal fun defaultMediaOptions(
         val option = MediaGalleryPreviewOption(
             title = stringResource(id = R.string.stream_compose_media_gallery_preview_save_image),
             titleColor = color,
-            iconPainter = painterResource(id = R.drawable.stream_compose_ic_download),
+            iconPainter = painterResource(id = R.drawable.stream_design_ic_arrow_down_circle),
             iconColor = color,
             action = SaveMedia(message),
             isEnabled = isConnected,
@@ -217,7 +217,7 @@ internal fun defaultMediaOptions(
         val option = MediaGalleryPreviewOption(
             title = stringResource(id = R.string.stream_compose_media_gallery_preview_delete),
             titleColor = color,
-            iconPainter = painterResource(id = R.drawable.stream_compose_ic_delete),
+            iconPainter = painterResource(id = R.drawable.stream_design_ic_delete),
             iconColor = color,
             action = Delete(message),
             isEnabled = isConnected,

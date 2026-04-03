@@ -82,7 +82,7 @@ public fun GiphyMessageContent(
             horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
         ) {
             Icon(
-                painter = painterResource(R.drawable.stream_compose_ic_eye_open),
+                painter = painterResource(R.drawable.stream_design_ic_eye_fill),
                 contentDescription = null,
                 tint = colors.chatTextOutgoing,
             )

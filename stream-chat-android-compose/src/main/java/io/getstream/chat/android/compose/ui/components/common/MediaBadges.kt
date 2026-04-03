@@ -21,6 +21,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -44,7 +46,7 @@ internal fun VideoBadge(
 ) {
     MediaBadge(
         durationInSeconds = durationInSeconds,
-        iconRes = R.drawable.stream_compose_ic_video,
+        iconRes = R.drawable.stream_design_ic_video_fill,
         modifier = modifier,
         compact = compact,
     )
@@ -58,7 +60,7 @@ internal fun AudioBadge(
 ) {
     MediaBadge(
         durationInSeconds = durationInSeconds,
-        iconRes = R.drawable.stream_compose_ic_mic_solid,
+        iconRes = R.drawable.stream_design_ic_voice_fill,
         modifier = modifier,
         compact = compact,
     )
@@ -85,6 +87,7 @@ private fun MediaBadge(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
+            modifier = Modifier.size(12.dp),
             painter = painterResource(iconRes),
             contentDescription = null,
             tint = ChatTheme.colors.textOnInverse,

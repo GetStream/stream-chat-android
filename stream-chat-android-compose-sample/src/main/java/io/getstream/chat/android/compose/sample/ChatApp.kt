@@ -76,8 +76,6 @@ class ChatApp : Application() {
         lateinit var sharedLocationService: SharedLocationService
             private set
 
-        public const val autoTranslationEnabled: Boolean = true
-
         public const val isComposerLinkPreviewEnabled: Boolean = true
     }
 }

@@ -398,8 +398,8 @@ internal class ChannelEventHandlerImpl(
     }
 
     private fun updateMessageWithReaction(message: Message) {
-        state.updateMessageById(message.id) { oldMessage ->
-            message.copy(ownReactions = oldMessage.ownReactions)
+        state.updateMessageFromEvent(message) { old, new ->
+            new.copy(ownReactions = old.ownReactions)
         }
     }
 

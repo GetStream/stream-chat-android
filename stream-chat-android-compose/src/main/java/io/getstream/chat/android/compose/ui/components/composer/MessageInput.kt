@@ -218,6 +218,7 @@ private fun MessageInputTop(
             if (showAttachments) {
                 ChatTheme.componentFactory.MessageComposerAttachments(
                     params = MessageComposerAttachmentsParams(
+                        modifier = Modifier.fillMaxWidth(),
                         attachments = attachments,
                         onAttachmentRemoved = onAttachmentRemoved,
                     ),

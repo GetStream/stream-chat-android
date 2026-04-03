@@ -60,7 +60,6 @@
     <string name="stream_ui_channel_list_delete_confirmation_positive_button">Delete</string>
     <string name="stream_ui_channel_list_delete_confirmation_negative_button">Cancel</string>
     <!-- Errors -->
-    <string name="stream_ui_channel_list_error_hide_channel">Failed to hide channel</string>
     <string name="stream_ui_channel_list_error_delete_channel">Failed to delete channel</string>
     <string name="stream_ui_channel_list_error_leave_channel">Failed to leave channel</string>
     <string name="stream_ui_channel_list_draft_message_label">Draft:</string>
@@ -109,7 +108,7 @@
 
     <!-- Audio Recording -->
     <string name="stream_ui_message_composer_slide_to_cancel">Slide to cancel</string>
-    <string name="stream_ui_message_composer_hold_to_record">Hold to record. Release to send</string>
+    <string name="stream_ui_message_composer_hold_to_record">Hold to record. Release to send.</string>
 
     <string name="stream_ui_message_list_empty">No messages</string>
     <string name="stream_ui_message_list_download_started">Download started</string>

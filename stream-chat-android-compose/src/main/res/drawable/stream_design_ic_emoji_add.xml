@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="20"
+    android:viewportHeight="20">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M1.75 10C1.75 5.44 5.44 1.75 10 1.75 10.41 1.75 10.75 2.09 10.75 2.5 10.75 2.91 10.41 3.25 10 3.25 6.27 3.25 3.25 6.27 3.25 10 3.25 13.73 6.27 16.75 10 16.75 13.73 16.75 16.75 13.73 16.75 10 16.75 9.59 17.09 9.25 17.5 9.25 17.91 9.25 18.25 9.59 18.25 10 18.25 14.56 14.56 18.25 10 18.25 5.44 18.25 1.75 14.56 1.75 10Z"/>
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M7.19 9.38C7.71 9.38 8.13 8.96 8.13 8.44 8.13 7.92 7.71 7.5 7.19 7.5 6.67 7.5 6.25 7.92 6.25 8.44 6.25 8.96 6.67 9.38 7.19 9.38Z"/>
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M12.81 9.38C13.33 9.38 13.75 8.96 13.75 8.44 13.75 7.92 13.33 7.5 12.81 7.5 12.29 7.5 11.88 7.92 11.88 8.44 11.88 8.96 12.29 9.38 12.81 9.38Z"/>
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M12.48 11.5C12.68 11.14 13.14 11.02 13.5 11.23 13.86 11.43 13.98 11.89 13.77 12.25 13.01 13.57 11.69 14.5 10 14.5 8.31 14.5 6.99 13.57 6.23 12.25 6.02 11.89 6.14 11.43 6.5 11.23 6.86 11.02 7.32 11.14 7.52 11.5 8.06 12.42 8.92 13 10 13 11.08 13 11.94 12.42 12.48 11.5Z"/>
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M15.08 6.88V4.92H13.13C12.71 4.92 12.38 4.58 12.38 4.17 12.38 3.75 12.71 3.42 13.13 3.42H15.08V1.46C15.08 1.04 15.42 0.71 15.83 0.71 16.25 0.71 16.58 1.04 16.58 1.46V3.42H18.54C18.96 3.42 19.29 3.75 19.29 4.17 19.29 4.58 18.96 4.92 18.54 4.92H16.58V6.88C16.58 7.29 16.25 7.63 15.83 7.63 15.42 7.63 15.08 7.29 15.08 6.88Z"/>
+</vector>

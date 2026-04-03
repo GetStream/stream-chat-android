@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.internal.state.plugin.state.channel.int
 
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.randomUser
@@ -767,6 +768,131 @@ internal class ChannelStateImplMessagesTest : ChannelStateImplTestBase() {
             val regular2 = createMessage(2, timestamp = 2000L)
             channelState.setMessages(listOf(regular1, regular2))
             assertEquals(listOf(regular1.id, regular2.id), channelState.messages.value.map { it.id })
+        }
+    }
+
+    // endregion
+
+    // region Attachment URL preservation
+
+    @Nested
+    inner class AttachmentUrlPreservation {
+
+        private val streamCdnImageUrl = "https://images.stream-io-cdn.com/image.jpg"
+        private val newStreamCdnImageUrl = "https://images.stream-io-cdn.com/image.jpg?token=new"
+
+        private fun createMessageWithAttachment(
+            index: Int,
+            imageUrl: String,
+            timestamp: Long = currentTime() + index * 1000L,
+        ) = createMessage(index, timestamp = timestamp).copy(
+            attachments = mutableListOf(
+                Attachment(
+                    type = "image",
+                    imageUrl = imageUrl,
+                    name = "photo.jpg",
+                    mimeType = "image/jpeg",
+                ),
+            ),
+        )
+
+        @Test
+        fun `upsertMessage should preserve valid attachment imageUrl when updating existing message`() = runTest {
+            val original = createMessageWithAttachment(1, imageUrl = streamCdnImageUrl)
+            channelState.setMessages(listOf(original))
+
+            val updated = createMessageWithAttachment(1, imageUrl = newStreamCdnImageUrl)
+            channelState.upsertMessage(updated)
+
+            val result = channelState.messages.value.first()
+            assertEquals(streamCdnImageUrl, result.attachments.first().imageUrl)
+        }
+
+        @Test
+        fun `upsertMessage should not preserve attachment url for new message`() = runTest {
+            val newMsg = createMessageWithAttachment(1, imageUrl = newStreamCdnImageUrl)
+            channelState.upsertMessage(newMsg)
+
+            val result = channelState.messages.value.first()
+            assertEquals(newStreamCdnImageUrl, result.attachments.first().imageUrl)
+        }
+
+        @Test
+        fun `upsertMessages with preserveAttachmentUrls should preserve valid imageUrl`() = runTest {
+            val original = createMessageWithAttachment(1, imageUrl = streamCdnImageUrl, timestamp = 1000)
+            channelState.setMessages(listOf(original))
+
+            val updated = createMessageWithAttachment(1, imageUrl = newStreamCdnImageUrl, timestamp = 1000)
+            channelState.upsertMessages(listOf(updated), preserveAttachmentUrls = true)
+
+            val result = channelState.messages.value.first()
+            assertEquals(streamCdnImageUrl, result.attachments.first().imageUrl)
+        }
+
+        @Test
+        fun `upsertMessages without flag should not preserve imageUrl`() = runTest {
+            val original = createMessageWithAttachment(1, imageUrl = streamCdnImageUrl, timestamp = 1000)
+            channelState.setMessages(listOf(original))
+
+            val updated = createMessageWithAttachment(1, imageUrl = newStreamCdnImageUrl, timestamp = 1000)
+            channelState.upsertMessages(listOf(updated))
+
+            val result = channelState.messages.value.first()
+            assertEquals(newStreamCdnImageUrl, result.attachments.first().imageUrl)
+        }
+
+        @Test
+        fun `updateMessage should preserve valid attachment imageUrl`() = runTest {
+            val original = createMessageWithAttachment(1, imageUrl = streamCdnImageUrl)
+            channelState.setMessages(listOf(original))
+
+            val updated = createMessageWithAttachment(1, imageUrl = newStreamCdnImageUrl)
+            channelState.updateMessage(updated)
+
+            val result = channelState.messages.value.first()
+            assertEquals(streamCdnImageUrl, result.attachments.first().imageUrl)
+        }
+
+        @Test
+        fun `updateMessageFromEvent should preserve valid attachment imageUrl`() = runTest {
+            val original = createMessageWithAttachment(1, imageUrl = streamCdnImageUrl)
+            channelState.setMessages(listOf(original))
+
+            val eventMsg = createMessageWithAttachment(1, imageUrl = newStreamCdnImageUrl)
+            channelState.updateMessageFromEvent(eventMsg) { _, new -> new }
+
+            val result = channelState.messages.value.first()
+            assertEquals(streamCdnImageUrl, result.attachments.first().imageUrl)
+        }
+
+        @Test
+        fun `updateMessageFromEvent should apply enrich lambda after url validation`() = runTest {
+            val ownReactions = listOf(io.getstream.chat.android.randomReaction())
+            val original = createMessageWithAttachment(1, imageUrl = streamCdnImageUrl)
+                .copy(ownReactions = ownReactions)
+            channelState.setMessages(listOf(original))
+
+            val eventMsg = createMessageWithAttachment(1, imageUrl = newStreamCdnImageUrl)
+                .copy(ownReactions = emptyList())
+            channelState.updateMessageFromEvent(eventMsg) { old, new ->
+                new.copy(ownReactions = old.ownReactions)
+            }
+
+            val result = channelState.messages.value.first()
+            assertEquals(streamCdnImageUrl, result.attachments.first().imageUrl)
+            assertEquals(ownReactions, result.ownReactions)
+        }
+
+        @Test
+        fun `updateMessageFromEvent should do nothing if message does not exist`() = runTest {
+            val original = createMessage(1)
+            channelState.setMessages(listOf(original))
+
+            val eventMsg = createMessageWithAttachment(999, imageUrl = newStreamCdnImageUrl)
+            channelState.updateMessageFromEvent(eventMsg) { _, new -> new }
+
+            assertEquals(1, channelState.messages.value.size)
+            assertEquals(original.id, channelState.messages.value.first().id)
         }
     }
 

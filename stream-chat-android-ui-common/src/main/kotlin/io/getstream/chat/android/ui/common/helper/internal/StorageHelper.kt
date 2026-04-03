@@ -177,13 +177,15 @@ public class StorageHelper {
                 MediaStore.Files.FileColumns.DISPLAY_NAME,
                 MediaStore.Files.FileColumns.MIME_TYPE,
                 MediaStore.Files.FileColumns.SIZE,
+                MediaStore.Files.FileColumns.DURATION,
             )
             context.contentResolver.query(uri, columns, null, null, null)
                 ?.use { cursor ->
-                    if (cursor != null && cursor.moveToFirst()) {
+                    if (cursor.moveToFirst()) {
                         val displayNameIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME)
                         val fileSizeIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE)
                         val mimeTypeIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE)
+                        val durationIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.DURATION)
 
                         val displayName = if (displayNameIndex != -1 && !cursor.isNull(displayNameIndex)) {
                             cursor.getString(displayNameIndex)
@@ -203,6 +205,12 @@ public class StorageHelper {
                             context.contentResolver.getType(uri)
                         }
 
+                        val duration = if (durationIndex != -1 && !cursor.isNull(durationIndex)) {
+                            cursor.getLong(durationIndex)
+                        } else {
+                            0L
+                        }
+
                         AttachmentMetaData(
                             uri = uri,
                             type = getModelType(mimeType),
@@ -210,6 +218,7 @@ public class StorageHelper {
                             title = displayName,
                         ).apply {
                             size = fileSize
+                            videoLength = duration / MILISECOND_IN_A_SECOND
                         }
                     } else {
                         null
@@ -268,7 +277,7 @@ public class StorageHelper {
             null
         }
 
-        val duration = if (durationIndex != -1 && !cursor.isNull(fileSizeIndex)) {
+        val duration = if (durationIndex != -1 && !cursor.isNull(durationIndex)) {
             cursor.getLong(durationIndex)
         } else {
             0L

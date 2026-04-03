@@ -33,7 +33,6 @@ import io.getstream.chat.android.client.api.state.QueryChannelsState
 import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.client.api.state.queryChannelsAsState
 import io.getstream.chat.android.client.errors.extractCause
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.DraftMessage
@@ -333,26 +332,6 @@ public class ChannelListViewModel(
     }
 
     /**
-     * Hides the given channel.
-     */
-    public fun hideChannel(channel: Channel) {
-        val (channelType, channelId) = channel.cid.cidToTypeAndId()
-        chatClient.hideChannel(
-            channelType = channelType,
-            channelId = channelId,
-            clearHistory = false,
-        ).enqueue(
-            onError = { error ->
-                logger.e {
-                    "Could not hide channel with id: ${channel.id}. " +
-                        "Error: ${error.message}. Cause: ${error.extractCause()}"
-                }
-                _errorEvents.postValue(Event(ErrorEvent.HideChannelError(error)))
-            },
-        )
-    }
-
-    /**
      * Marks all of the channels as read.
      */
     public fun markAllRead() {
@@ -488,13 +467,6 @@ public class ChannelListViewModel(
          * @param streamError Contains error data such as a [Throwable] and a message.
          */
         public data class DeleteChannelError(override val streamError: Error) : ErrorEvent(streamError)
-
-        /**
-         * Event for errors upon hiding a channel.
-         *
-         * @param streamError Contains error data such as a [Throwable] and a message.
-         */
-        public data class HideChannelError(override val streamError: Error) : ErrorEvent(streamError)
     }
 
     public companion object {

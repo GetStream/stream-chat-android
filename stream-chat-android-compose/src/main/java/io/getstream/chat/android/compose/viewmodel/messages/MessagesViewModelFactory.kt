@@ -86,7 +86,7 @@ public class MessagesViewModelFactory(
     internal val channelId: String,
     internal val messageId: String? = null,
     internal val parentMessageId: String? = null,
-    private val autoTranslationEnabled: Boolean = false,
+    private val autoTranslationEnabled: Boolean = true,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
     private val mediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(context.applicationContext),
@@ -111,7 +111,7 @@ public class MessagesViewModelFactory(
     private val showThreadSeparatorInEmptyThread: Boolean = false,
     private val threadLoadOlderToNewer: Boolean = false,
     private val isComposerLinkPreviewEnabled: Boolean = false,
-    private val isComposerDraftMessageEnabled: Boolean = false,
+    private val isComposerDraftMessageEnabled: Boolean = true,
 ) : ViewModelProvider.Factory {
 
     private val channelStateFlow: StateFlow<ChannelState?> by lazy {

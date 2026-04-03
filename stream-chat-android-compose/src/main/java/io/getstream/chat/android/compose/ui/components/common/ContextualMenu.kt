@@ -154,7 +154,7 @@ private fun MenuItemPreview(enabled: Boolean, destructive: Boolean) {
         label = "{{ label }}",
         destructive = destructive,
         enabled = enabled,
-        leadingIcon = painterResource(R.drawable.stream_compose_ic_copy),
-        trailingIcon = painterResource(R.drawable.stream_compose_ic_checkmark),
+        leadingIcon = painterResource(R.drawable.stream_design_ic_copy),
+        trailingIcon = painterResource(R.drawable.stream_design_ic_checkmark),
     ) {}
 }

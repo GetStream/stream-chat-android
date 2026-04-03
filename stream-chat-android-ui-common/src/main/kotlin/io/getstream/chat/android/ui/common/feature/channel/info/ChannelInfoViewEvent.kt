@@ -29,11 +29,6 @@ public sealed interface ChannelInfoViewEvent {
     public sealed interface Modal : ChannelInfoViewEvent
 
     /**
-     * Indicates an event to present a modal for hiding a channel.
-     */
-    public data object HideChannelModal : Modal
-
-    /**
      * Indicates an event to present a modal for leaving a channel.
      */
     public data object LeaveChannelModal : Modal
@@ -141,11 +136,6 @@ public sealed interface ChannelInfoViewEvent {
          */
         public sealed interface Reason {
             /**
-             * Indicates the channel was successfully hidden.
-             */
-            public data object HideChannelSuccess : Reason
-
-            /**
              * Indicates the user successfully left the channel.
              */
             public data object LeaveChannelSuccess : Reason
@@ -232,16 +222,6 @@ public sealed interface ChannelInfoViewEvent {
      * Indicates an error occurred while unmuting a channel.
      */
     public data object UnmuteChannelError : Error
-
-    /**
-     * Indicates an error occurred while hiding a channel.
-     */
-    public data object HideChannelError : Error
-
-    /**
-     * Indicates an error occurred while unhiding a channel.
-     */
-    public data object UnhideChannelError : Error
 
     /**
      * Indicates an error occurred while leaving a channel.

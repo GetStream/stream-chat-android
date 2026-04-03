@@ -17,8 +17,8 @@
 package io.getstream.chat.android.compose.ui.components.common
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -57,21 +57,22 @@ internal fun CommandChip(
             .clickable(onClick = onDismiss)
             .padding(horizontal = StreamTokens.spacingXs, vertical = StreamTokens.spacing2xs),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
     ) {
         Icon(
             modifier = Modifier.size(12.dp),
-            painter = painterResource(id = R.drawable.stream_compose_ic_command_chip),
+            painter = painterResource(id = R.drawable.stream_design_ic_bolt),
             contentDescription = null,
             tint = ChatTheme.colors.textOnInverse,
         )
+        Spacer(modifier = Modifier.size(StreamTokens.spacing2xs))
         Text(
             text = command.name.uppercase(Locale.ROOT),
             style = ChatTheme.typography.metadataEmphasis,
             color = ChatTheme.colors.textOnInverse,
         )
+        Spacer(modifier = Modifier.size(StreamTokens.spacing3xs))
         Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_command_chip_cancel),
+            painter = painterResource(id = R.drawable.stream_design_ic_xmark_small),
             contentDescription = stringResource(id = R.string.stream_compose_cancel),
             tint = ChatTheme.colors.textOnInverse,
         )

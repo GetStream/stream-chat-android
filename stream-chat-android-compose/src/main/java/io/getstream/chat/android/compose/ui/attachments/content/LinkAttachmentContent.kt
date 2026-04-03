@@ -279,7 +279,7 @@ private fun AttachmentLink(link: String, color: Color, modifier: Modifier = Modi
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            painter = painterResource(R.drawable.stream_compose_ic_link),
+            painter = painterResource(R.drawable.stream_design_ic_link),
             contentDescription = null,
             modifier = Modifier.size(12.dp),
             tint = color,

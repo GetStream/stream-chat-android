@@ -19,13 +19,16 @@ package io.getstream.chat.android.ui.common.helper.internal
 import android.content.Context
 import android.net.Uri
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
@@ -166,7 +169,7 @@ internal class AttachmentStorageHelperTest {
     }
 
     @Test
-    fun `resolveAttachmentFiles skips attachment with existing upload`() {
+    fun `resolveAttachmentFiles skips attachment with existing upload`() = runTest {
         val existingFile = mock<File>()
         val attachment = Attachment(upload = existingFile, type = "image")
 
@@ -176,7 +179,7 @@ internal class AttachmentStorageHelperTest {
     }
 
     @Test
-    fun `resolveAttachmentFiles skips attachment without source URI`() {
+    fun `resolveAttachmentFiles skips attachment without source URI`() = runTest {
         val attachment = Attachment(type = "image", extraData = emptyMap())
 
         val result = sut.resolveAttachmentFiles(listOf(attachment))
@@ -185,7 +188,7 @@ internal class AttachmentStorageHelperTest {
     }
 
     @Test
-    fun `resolveAttachmentFiles resolves file from source URI`() {
+    fun `resolveAttachmentFiles resolves file from source URI`() = runTest {
         val cachedFile = mock<File>()
         val sourceUri = "content://media/external/images/42"
         val parsedUri = mock<Uri>()
@@ -208,7 +211,7 @@ internal class AttachmentStorageHelperTest {
     }
 
     @Test
-    fun `resolveAttachmentFiles reconstructs metadata from attachment fields`() {
+    fun `resolveAttachmentFiles reconstructs metadata from attachment fields`() = runTest {
         val sourceUri = "content://media/external/images/42"
         val parsedUri = mock<Uri>()
         val attachment = Attachment(
@@ -237,7 +240,7 @@ internal class AttachmentStorageHelperTest {
     }
 
     @Test
-    fun `resolveAttachmentFiles drops attachment when file resolution fails`() {
+    fun `resolveAttachmentFiles drops attachment when file resolution fails`() = runTest {
         val sourceUri = "content://media/external/images/42"
         val parsedUri = mock<Uri>()
         val attachment = Attachment(
@@ -255,7 +258,7 @@ internal class AttachmentStorageHelperTest {
     }
 
     @Test
-    fun `resolveAttachmentFiles processes resolved, deferred, and missing-URI attachments independently`() {
+    fun `resolveAttachmentFiles processes resolved, deferred, and missing-URI attachments independently`() = runTest {
         val existingFile = mock<File>()
         val cachedFile = mock<File>()
         val parsedUri = mock<Uri>()
@@ -362,5 +365,11 @@ internal class AttachmentStorageHelperTest {
 
         assertEquals(emptyList<AttachmentMetaData>(), resolvable)
         assertEquals(emptyList<AttachmentMetaData>(), unresolvable)
+    }
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutineExtension = TestCoroutineExtension()
     }
 }

@@ -276,7 +276,7 @@ private fun GroupChannelEditTopBar(
                     onClick = onSaveActionClick,
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
+                        painter = painterResource(id = R.drawable.stream_design_ic_checkmark),
                         contentDescription = stringResource(id = R.string.stream_ui_channel_info_edit_save_action),
                     )
                 }
@@ -313,13 +313,13 @@ private fun ImagePickerOptions(
         Spacer(modifier = Modifier.size(StreamTokens.spacingSm))
         PickerOptionButton(
             modifier = Modifier.fillMaxWidth(),
-            iconRes = R.drawable.stream_compose_ic_attachment_camera_picker,
+            iconRes = R.drawable.stream_design_ic_camera,
             textRes = R.string.stream_ui_channel_info_edit_take_photo,
             onClick = onTakePhotoClick,
         )
         PickerOptionButton(
             modifier = Modifier.fillMaxWidth(),
-            iconRes = R.drawable.stream_compose_ic_media,
+            iconRes = R.drawable.stream_design_ic_image,
             textRes = R.string.stream_ui_channel_info_edit_choose_from_library,
             onClick = onChooseFromLibraryClick,
         )
@@ -327,7 +327,7 @@ private fun ImagePickerOptions(
             PickerOptionButton(
                 modifier = Modifier.fillMaxWidth(),
                 destructive = true,
-                iconRes = R.drawable.stream_ic_action_delete,
+                iconRes = R.drawable.stream_design_ic_delete,
                 textRes = R.string.stream_ui_channel_info_edit_remove_picture,
                 onClick = onRemovePictureClick,
             )

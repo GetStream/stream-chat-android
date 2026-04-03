@@ -19,6 +19,8 @@ package io.getstream.chat.android.compose.viewmodel.channel
 import android.content.Context
 import android.net.Uri
 import io.getstream.chat.android.client.internal.file.StreamFileManager
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.UUID
 
@@ -30,7 +32,7 @@ internal fun interface GalleryImageCopier {
      * @param uri The content or file [Uri] to read.
      * @return A file in app cache, or `null` if the [Uri] cannot be read or written.
      */
-    fun copyToCache(uri: Uri): File?
+    suspend fun copyToCache(uri: Uri): File?
 }
 
 /**
@@ -45,9 +47,9 @@ internal class ContentResolverImageCopier(
     private val fileManager: StreamFileManager = StreamFileManager(),
 ) : GalleryImageCopier {
 
-    override fun copyToCache(uri: Uri): File? {
-        val inputStream = context.contentResolver.openInputStream(uri) ?: return null
-        return fileManager.writeFileInTimestampedCache(
+    override suspend fun copyToCache(uri: Uri): File? = withContext(DispatcherProvider.IO) {
+        val inputStream = context.contentResolver.openInputStream(uri) ?: return@withContext null
+        fileManager.writeFileInTimestampedCache(
             context = context,
             fileName = "image_${UUID.randomUUID()}",
             source = inputStream,

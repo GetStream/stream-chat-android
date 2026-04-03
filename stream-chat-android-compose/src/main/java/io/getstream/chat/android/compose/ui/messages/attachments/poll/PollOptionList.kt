@@ -144,7 +144,7 @@ private fun ReorderableScope.PollOptionRow(
             onClick = {},
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.stream_compose_ic_drag_handle),
+                painter = painterResource(id = R.drawable.stream_design_ic_reorder),
                 contentDescription = null,
                 tint = colors.inputTextIcon,
                 modifier = Modifier.size(20.dp),
@@ -177,7 +177,7 @@ private fun ReorderableScope.PollOptionRow(
 
         IconButton(onClick = onRemove) {
             Icon(
-                painter = painterResource(R.drawable.stream_compose_ic_circle_minus),
+                painter = painterResource(R.drawable.stream_design_ic_minus_circle),
                 contentDescription = null,
                 tint = colors.inputTextIcon,
                 modifier = Modifier.size(20.dp),

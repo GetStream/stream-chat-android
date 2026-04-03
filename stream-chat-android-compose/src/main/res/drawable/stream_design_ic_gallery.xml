@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="20"
+    android:viewportHeight="20">
+    <path
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M8.13 3.75H4.38C4.03 3.75 3.75 4.03 3.75 4.38V8.13C3.75 8.47 4.03 8.75 4.38 8.75H8.13C8.47 8.75 8.75 8.47 8.75 8.13V4.38C8.75 4.03 8.47 3.75 8.13 3.75Z"/>
+    <path
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M15.63 3.75H11.88C11.53 3.75 11.25 4.03 11.25 4.38V8.13C11.25 8.47 11.53 8.75 11.88 8.75H15.63C15.97 8.75 16.25 8.47 16.25 8.13V4.38C16.25 4.03 15.97 3.75 15.63 3.75Z"/>
+    <path
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M8.13 11.25H4.38C4.03 11.25 3.75 11.53 3.75 11.88V15.63C3.75 15.97 4.03 16.25 4.38 16.25H8.13C8.47 16.25 8.75 15.97 8.75 15.63V11.88C8.75 11.53 8.47 11.25 8.13 11.25Z"/>
+    <path
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M15.63 11.25H11.88C11.53 11.25 11.25 11.53 11.25 11.88V15.63C11.25 15.97 11.53 16.25 11.88 16.25H15.63C15.97 16.25 16.25 15.97 16.25 15.63V11.88C16.25 11.53 15.97 11.25 15.63 11.25Z"/>
+</vector>
