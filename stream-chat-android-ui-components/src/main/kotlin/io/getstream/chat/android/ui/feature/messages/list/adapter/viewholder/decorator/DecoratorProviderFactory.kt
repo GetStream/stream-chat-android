@@ -31,6 +31,13 @@ public interface DecoratorProviderFactory {
 
     /**
      * Creates a new [DecoratorProvider] for the given [channel].
+     *
+     * @param channel The channel whose messages are being decorated.
+     * @param dateFormatter Formatter used to render message timestamps.
+     * @param messageListViewStyle Style configuration for the message list.
+     * @param showAvatarPredicate Predicate invoked per message to decide avatar visibility.
+     * @param messageBackgroundFactory Factory for message background drawables.
+     * @param getLanguageDisplayName Resolves a language code to its display name.
      */
     @Suppress("LongParameterList")
     public fun createDecoratorProvider(
