@@ -17,9 +17,14 @@
 package io.getstream.chat.android.compose.ui.components.attachments.files
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,9 +33,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamPrimitiveColors
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
 @Composable
 internal fun FileTypeIcon(data: FileIconData, modifier: Modifier = Modifier) {
@@ -58,3 +66,24 @@ internal fun FileTypeIcon(data: FileIconData, modifier: Modifier = Modifier) {
 }
 
 private const val IconLabelFontSize = 8
+
+@Preview
+@Composable
+private fun FileTypeIconsPreview() {
+    ChatTheme {
+        FileTypeIcons()
+    }
+}
+
+@Composable
+internal fun FileTypeIcons() {
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(36.dp),
+        contentPadding = PaddingValues(StreamTokens.spacingXs),
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+    ) {
+        items(FileIconData.entries) { data ->
+            FileTypeIcon(data)
+        }
+    }
+}

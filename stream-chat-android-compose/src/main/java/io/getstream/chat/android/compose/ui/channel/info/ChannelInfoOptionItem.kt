@@ -24,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
@@ -34,7 +35,7 @@ import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewSta
 internal fun ChannelInfoOptionItem(
     option: ChannelInfoViewState.Content.Option,
     isGroupChannel: Boolean,
-    onViewAction: (action: ChannelInfoViewAction) -> Unit,
+    onViewAction: (action: ChannelInfoViewAction) -> Unit = {},
 ) {
     ChannelInfoOptionContent(
         option = option,
@@ -45,7 +46,7 @@ internal fun ChannelInfoOptionItem(
 
 @Suppress("LongMethod")
 @Composable
-internal fun ChannelInfoOptionContent(
+private fun ChannelInfoOptionContent(
     option: ChannelInfoViewState.Content.Option,
     isGroupChannel: Boolean,
     onViewAction: (action: ChannelInfoViewAction) -> Unit,
@@ -65,7 +66,7 @@ internal fun ChannelInfoOptionContent(
             var muted by remember(option) { mutableStateOf(option.isMuted) }
 
             ChannelInfoOptionSwitch(
-                icon = R.drawable.stream_ic_action_mute,
+                icon = R.drawable.stream_design_ic_mute,
                 text = if (isGroupChannel) {
                     stringResource(R.string.stream_ui_channel_info_option_mute_group)
                 } else {
@@ -87,7 +88,7 @@ internal fun ChannelInfoOptionContent(
             var muted by remember(option) { mutableStateOf(option.isMuted) }
 
             ChannelInfoOptionSwitch(
-                icon = R.drawable.stream_ic_action_mute,
+                icon = R.drawable.stream_design_ic_mute,
                 text = stringResource(R.string.stream_ui_channel_info_option_mute_user),
                 checked = muted,
                 onCheckedChange = { checked ->
@@ -104,7 +105,7 @@ internal fun ChannelInfoOptionContent(
         is ChannelInfoViewState.Content.Option.BlockUser -> {
             CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.accentError)) {
                 ChannelInfoOptionButton(
-                    icon = R.drawable.stream_ic_block,
+                    icon = R.drawable.stream_design_ic_no_sign,
                     text = if (option.isBlocked) {
                         stringResource(R.string.stream_ui_channel_info_option_unblock_user)
                     } else {
@@ -121,28 +122,9 @@ internal fun ChannelInfoOptionContent(
             }
         }
 
-        is ChannelInfoViewState.Content.Option.HideChannel -> {
-            ChannelInfoOptionSwitch(
-                icon = R.drawable.stream_ic_hide,
-                text = if (isGroupChannel) {
-                    stringResource(R.string.stream_ui_channel_info_option_hide_group)
-                } else {
-                    stringResource(R.string.stream_ui_channel_info_option_hide_conversation)
-                },
-                checked = option.isHidden,
-                onCheckedChange = { checked ->
-                    if (checked) {
-                        onViewAction(ChannelInfoViewAction.HideChannelClick)
-                    } else {
-                        onViewAction(ChannelInfoViewAction.UnhideChannelClick)
-                    }
-                },
-            )
-        }
-
         is ChannelInfoViewState.Content.Option.PinnedMessages -> {
             ChannelInfoOptionNavigationButton(
-                icon = R.drawable.stream_ic_action_pin,
+                icon = R.drawable.stream_design_ic_pin,
                 text = stringResource(R.string.stream_ui_channel_info_option_pinned_messages),
                 onClick = { onViewAction(ChannelInfoViewAction.PinnedMessagesClick) },
             )
@@ -150,7 +132,7 @@ internal fun ChannelInfoOptionContent(
 
         is ChannelInfoViewState.Content.Option.MediaAttachments -> {
             ChannelInfoOptionNavigationButton(
-                icon = R.drawable.stream_compose_ic_media,
+                icon = R.drawable.stream_design_ic_image,
                 text = stringResource(R.string.stream_ui_channel_info_option_media_attachments),
                 onClick = { onViewAction(ChannelInfoViewAction.MediaAttachmentsClick) },
             )
@@ -158,7 +140,7 @@ internal fun ChannelInfoOptionContent(
 
         is ChannelInfoViewState.Content.Option.FilesAttachments -> {
             ChannelInfoOptionNavigationButton(
-                icon = R.drawable.stream_compose_ic_files,
+                icon = R.drawable.stream_design_ic_folder,
                 text = stringResource(R.string.stream_ui_channel_info_option_files_attachments),
                 onClick = { onViewAction(ChannelInfoViewAction.FilesAttachmentsClick) },
             )
@@ -167,7 +149,7 @@ internal fun ChannelInfoOptionContent(
         is ChannelInfoViewState.Content.Option.LeaveChannel -> {
             CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.accentError)) {
                 ChannelInfoOptionButton(
-                    icon = R.drawable.stream_ic_action_leave,
+                    icon = R.drawable.stream_design_ic_leave,
                     text = if (isGroupChannel) {
                         stringResource(R.string.stream_ui_channel_info_option_leave_group)
                     } else {
@@ -181,7 +163,7 @@ internal fun ChannelInfoOptionContent(
         is ChannelInfoViewState.Content.Option.DeleteChannel -> {
             CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.accentError)) {
                 ChannelInfoOptionButton(
-                    icon = R.drawable.stream_ic_action_delete,
+                    icon = R.drawable.stream_design_ic_delete,
                     text = if (isGroupChannel) {
                         stringResource(R.string.stream_ui_channel_info_option_delete_group)
                     } else {
@@ -190,6 +172,44 @@ internal fun ChannelInfoOptionContent(
                     onClick = { onViewAction(ChannelInfoViewAction.DeleteChannelClick) },
                 )
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun DirectChannelInfoOptionItemsPreview() {
+    ChatTheme {
+        ChannelInfoOptionItems()
+    }
+}
+
+@Preview
+@Composable
+private fun GroupChannelInfoOptionItemsPreview() {
+    ChatTheme {
+        ChannelInfoOptionItems(isGroupChannel = true)
+    }
+}
+
+@Composable
+internal fun ChannelInfoOptionItems(isGroupChannel: Boolean = false) {
+    val options = listOf(
+        ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
+        ChannelInfoViewState.Content.Option.MuteUser(isMuted = false),
+        ChannelInfoViewState.Content.Option.PinnedMessages,
+        ChannelInfoViewState.Content.Option.MediaAttachments,
+        ChannelInfoViewState.Content.Option.FilesAttachments,
+        ChannelInfoViewState.Content.Option.BlockUser(isBlocked = false),
+        ChannelInfoViewState.Content.Option.LeaveChannel,
+        ChannelInfoViewState.Content.Option.DeleteChannel,
+    )
+    ChannelInfoSection {
+        options.forEach { option ->
+            ChannelInfoOptionItem(
+                option = option,
+                isGroupChannel = isGroupChannel,
+            )
         }
     }
 }

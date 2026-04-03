@@ -173,14 +173,6 @@ class ChatInfoFragment : Fragment() {
                 is ChatInfoItem.Option.DeleteChannel ->
                     viewModel.onViewAction(ChannelInfoViewAction.DeleteChannelClick)
 
-                is ChatInfoItem.Option.HideChannel -> viewModel.onViewAction(
-                    if (option.isChecked) {
-                        ChannelInfoViewAction.UnhideChannelClick
-                    } else {
-                        ChannelInfoViewAction.HideChannelClick
-                    },
-                )
-
                 // Already handled
                 is ChatInfoItem.Option.Stateful.MuteChannel -> Unit
             }

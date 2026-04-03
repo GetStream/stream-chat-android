@@ -637,7 +637,7 @@ class ChatsActivity : ComponentActivity() {
 private fun CloseButton(onClick: () -> Unit) {
     IconButton(onClick = onClick) {
         Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_close),
+            painter = painterResource(id = R.drawable.stream_design_ic_xmark),
             contentDescription = stringResource(id = R.string.stream_compose_cancel),
             tint = ChatTheme.colors.textPrimary,
         )
@@ -737,10 +737,6 @@ private fun Context.showError(error: ChannelInfoViewEvent.Error) {
         ChannelInfoViewEvent.BlockUserError,
         ChannelInfoViewEvent.UnblockUserError,
         -> R.string.stream_ui_channel_info_block_user_error
-
-        ChannelInfoViewEvent.HideChannelError,
-        ChannelInfoViewEvent.UnhideChannelError,
-        -> R.string.stream_ui_channel_info_hide_conversation_error
 
         ChannelInfoViewEvent.LeaveChannelError,
         -> R.string.stream_ui_channel_info_leave_conversation_error

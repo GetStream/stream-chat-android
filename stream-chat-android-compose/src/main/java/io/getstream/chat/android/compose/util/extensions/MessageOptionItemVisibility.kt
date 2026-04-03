@@ -122,9 +122,13 @@ internal fun MessageOptionItemVisibility.canBlockUser(
 )
 
 internal fun MessageOptionItemVisibility.canMarkAsUnread(
+    currentUser: User?,
+    message: Message,
     ownCapabilities: Set<String>,
 ): Boolean = canMarkAsUnread(
     markAsUnreadEnabled = isMarkAsUnreadVisible,
+    currentUser = currentUser,
+    message = message,
     ownCapabilities = ownCapabilities,
 )
 

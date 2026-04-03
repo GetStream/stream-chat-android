@@ -21,13 +21,16 @@ import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import androidx.annotation.WorkerThread
+import io.getstream.chat.android.client.extensions.EXTRA_DURATION
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.log.taggedLogger
+import kotlinx.coroutines.withContext
 import java.io.File
 
 /**
@@ -76,8 +79,11 @@ public class AttachmentStorageHelper(
      * @return List of lightweight [Attachment]s.
      */
     public fun toAttachments(metaData: List<AttachmentMetaData>): List<Attachment> = metaData.map { meta ->
-        val extra = meta.uri?.let { uri -> meta.extraData + (EXTRA_SOURCE_URI to uri.toString()) }
-            ?: meta.extraData
+        val extra = buildMap {
+            putAll(meta.extraData)
+            meta.uri?.let { uri -> put(EXTRA_SOURCE_URI, uri.toString()) }
+            if (meta.videoLength > 0) put(EXTRA_DURATION, meta.videoLength.toFloat())
+        }
         Attachment(
             type = meta.type,
             name = meta.title ?: "",
@@ -98,37 +104,37 @@ public class AttachmentStorageHelper(
      * @param attachments The attachments to resolve.
      * @return Attachments with [Attachment.upload] populated for every entry that had a source URI.
      */
-    @WorkerThread
-    public fun resolveAttachmentFiles(
-        attachments: List<Attachment>,
-    ): List<Attachment> = attachments.mapNotNull { attachment ->
-        if (attachment.upload != null) return@mapNotNull attachment
-        val sourceUri = (attachment.extraData[EXTRA_SOURCE_URI] as? String)
-            ?.let(Uri::parse) ?: return@mapNotNull attachment
-        val metaData = AttachmentMetaData(
-            uri = sourceUri,
-            type = attachment.type,
-            mimeType = attachment.mimeType,
-            title = attachment.name,
-        ).apply { size = attachment.fileSize.toLong() }
-        val file = storageHelper.getCachedFileFromUri(context, metaData)
-        if (file == null) {
-            logger.w { "[resolveAttachmentFiles] Failed to resolve file for URI: $sourceUri" }
-            return@mapNotNull null
-        }
+    public suspend fun resolveAttachmentFiles(attachments: List<Attachment>): List<Attachment> =
+        withContext(DispatcherProvider.IO) {
+            attachments.mapNotNull { attachment ->
+                if (attachment.upload != null) return@mapNotNull attachment
+                val sourceUri = (attachment.extraData[EXTRA_SOURCE_URI] as? String)
+                    ?.let(Uri::parse) ?: return@mapNotNull attachment
+                val metaData = AttachmentMetaData(
+                    uri = sourceUri,
+                    type = attachment.type,
+                    mimeType = attachment.mimeType,
+                    title = attachment.name,
+                ).apply { size = attachment.fileSize.toLong() }
+                val file = storageHelper.getCachedFileFromUri(context, metaData)
+                if (file == null) {
+                    logger.w { "[resolveAttachmentFiles] Failed to resolve file for URI: $sourceUri" }
+                    return@mapNotNull null
+                }
 
-        val (width, height) = if (attachment.originalWidth == null && attachment.originalHeight == null) {
-            resolveLocalDimensions(file, attachment)
-        } else {
-            attachment.originalWidth to attachment.originalHeight
+                val (width, height) = if (attachment.originalWidth == null && attachment.originalHeight == null) {
+                    resolveLocalDimensions(file, attachment)
+                } else {
+                    attachment.originalWidth to attachment.originalHeight
+                }
+                attachment.copy(
+                    upload = file,
+                    extraData = attachment.extraData - EXTRA_SOURCE_URI,
+                    originalWidth = width,
+                    originalHeight = height,
+                )
+            }
         }
-        attachment.copy(
-            upload = file,
-            extraData = attachment.extraData - EXTRA_SOURCE_URI,
-            originalWidth = width,
-            originalHeight = height,
-        )
-    }
 
     /**
      * Resolves a list of file [Uri]s into [AttachmentMetaData].

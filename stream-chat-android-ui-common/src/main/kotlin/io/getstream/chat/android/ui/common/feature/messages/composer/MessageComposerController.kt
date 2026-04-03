@@ -746,9 +746,7 @@ public class MessageComposerController(
 
         if (resolveAttachments != null) {
             scope.launch {
-                val resolved = withContext(DispatcherProvider.IO) {
-                    resolveAttachments(preparedMessage.attachments)
-                }
+                val resolved = resolveAttachments(preparedMessage.attachments)
                 enqueueSendMessage(preparedMessage.copy(attachments = resolved), callback)
             }
         } else {
@@ -763,8 +761,7 @@ public class MessageComposerController(
     ) {
         scope.launch {
             val resolvedMessage = resolveAttachments?.let { resolve ->
-                val resolved = withContext(DispatcherProvider.IO) { resolve(message.attachments) }
-                message.copy(attachments = resolved)
+                message.copy(attachments = resolve(message.attachments))
             } ?: message
             chatClient.editMessage(channelType, channelId, resolvedMessage).enqueue(callback)
         }

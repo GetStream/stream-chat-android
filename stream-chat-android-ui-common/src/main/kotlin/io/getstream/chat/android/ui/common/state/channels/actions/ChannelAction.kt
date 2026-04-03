@@ -54,7 +54,7 @@ public class ViewInfo(
     override val onAction: () -> Unit,
 ) : ChannelAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_action_view_info
+    override val icon: Int = R.drawable.stream_design_ic_info
 }
 
 /**
@@ -67,7 +67,7 @@ public class LeaveGroup(
     override val confirmationPopup: ConfirmationPopup? = null,
 ) : ChannelAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_action_leave
+    override val icon: Int = R.drawable.stream_design_ic_leave
     override val requiredCapability: String = ChannelCapabilities.LEAVE_CHANNEL
     override val isDestructive: Boolean = true
 }
@@ -81,7 +81,7 @@ public class MuteChannel(
     override val onAction: () -> Unit,
 ) : ChannelAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_action_mute
+    override val icon: Int = R.drawable.stream_design_ic_mute
     override val requiredCapability: String = ChannelCapabilities.MUTE_CHANNEL
 }
 
@@ -94,7 +94,7 @@ public class UnmuteChannel(
     override val onAction: () -> Unit,
 ) : ChannelAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_action_unmute
+    override val icon: Int = R.drawable.stream_design_ic_audio
     override val requiredCapability: String = ChannelCapabilities.MUTE_CHANNEL
 }
 
@@ -108,7 +108,7 @@ public class DeleteConversation(
     override val confirmationPopup: ConfirmationPopup? = null,
 ) : ChannelAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_action_delete
+    override val icon: Int = R.drawable.stream_design_ic_delete
     override val requiredCapability: String = ChannelCapabilities.DELETE_CHANNEL
     override val isDestructive: Boolean = true
 }
@@ -122,7 +122,7 @@ public class PinChannel(
     override val onAction: () -> Unit,
 ) : ChannelAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_action_pin
+    override val icon: Int = R.drawable.stream_design_ic_pin
 }
 
 /**
@@ -134,7 +134,7 @@ public class UnpinChannel(
     override val onAction: () -> Unit,
 ) : ChannelAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_action_unpin
+    override val icon: Int = R.drawable.stream_design_ic_unpin
 }
 
 /**
@@ -146,7 +146,7 @@ public class ArchiveChannel(
     override val onAction: () -> Unit,
 ) : ChannelAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_action_archive
+    override val icon: Int = R.drawable.stream_design_ic_archive
 }
 
 /**
@@ -158,7 +158,7 @@ public class UnarchiveChannel(
     override val onAction: () -> Unit,
 ) : ChannelAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_action_unarchive
+    override val icon: Int = R.drawable.stream_design_ic_unarchive
 }
 
 /**
@@ -170,7 +170,7 @@ public class MuteUser(
     override val onAction: () -> Unit,
 ) : ChannelAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_action_mute
+    override val icon: Int = R.drawable.stream_design_ic_mute
 }
 
 /**
@@ -182,7 +182,7 @@ public class UnmuteUser(
     override val onAction: () -> Unit,
 ) : ChannelAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_action_unmute
+    override val icon: Int = R.drawable.stream_design_ic_audio
 }
 
 /**
@@ -194,7 +194,7 @@ public class BlockUser(
     override val onAction: () -> Unit,
 ) : ChannelAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_action_block
+    override val icon: Int = R.drawable.stream_design_ic_no_sign
 }
 
 /**
@@ -206,5 +206,5 @@ public class UnblockUser(
     override val onAction: () -> Unit,
 ) : ChannelAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_action_block
+    override val icon: Int = R.drawable.stream_design_ic_no_sign
 }

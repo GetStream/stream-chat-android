@@ -94,10 +94,7 @@ class ChatInitializer(
         )
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
-        val chatClientConfig = ChatClientConfig(
-            userPresence = true,
-            useLegacyChannelLogic = false,
-        )
+        val chatClientConfig = ChatClientConfig(userPresence = true)
 
         val client = ChatClient.Builder(apiKey, context)
             .loggerHandler(FirebaseLogger)

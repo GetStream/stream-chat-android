@@ -69,7 +69,6 @@ public class ChannelListView : FrameLayout {
 
     private var errorEventHandler = ErrorEventHandler { errorEvent ->
         when (errorEvent) {
-            is ChannelListViewModel.ErrorEvent.HideChannelError -> R.string.stream_ui_channel_list_error_hide_channel
             is ChannelListViewModel.ErrorEvent.DeleteChannelError -> R.string.stream_ui_channel_list_error_delete_channel
             is ChannelListViewModel.ErrorEvent.LeaveChannelError -> R.string.stream_ui_channel_list_error_leave_channel
         }.let(::showToast)

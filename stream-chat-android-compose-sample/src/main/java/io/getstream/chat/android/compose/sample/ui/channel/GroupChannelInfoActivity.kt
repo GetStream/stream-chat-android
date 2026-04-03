@@ -159,10 +159,6 @@ class GroupChannelInfoActivity : ComponentActivity() {
             ChannelInfoViewEvent.UnblockUserError,
             -> R.string.stream_ui_channel_info_block_user_error
 
-            ChannelInfoViewEvent.HideChannelError,
-            ChannelInfoViewEvent.UnhideChannelError,
-            -> R.string.stream_ui_channel_info_hide_group_error
-
             ChannelInfoViewEvent.LeaveChannelError,
             -> R.string.stream_ui_channel_info_leave_group_error
 

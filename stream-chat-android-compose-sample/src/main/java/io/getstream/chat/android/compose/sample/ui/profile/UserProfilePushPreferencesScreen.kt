@@ -269,7 +269,7 @@ private fun ActionButtons(
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
+                        painter = painterResource(id = R.drawable.stream_design_ic_checkmark),
                         contentDescription = null,
                         tint = Color.White,
                         modifier = Modifier.size(18.dp),

@@ -69,14 +69,14 @@ internal class QuotedMessageBodyBuilder(
 
             poll != null -> {
                 QuotedMessageBody(
-                    iconId = R.drawable.stream_compose_ic_chart,
+                    iconId = R.drawable.stream_design_ic_poll,
                     text = poll.name,
                 )
             }
 
             sharedLocation != null -> {
                 QuotedMessageBody(
-                    iconId = R.drawable.stream_compose_ic_map_pin,
+                    iconId = R.drawable.stream_design_ic_location,
                     text = resources.getString(sharedLocation.getMessageTextResId()),
                 )
             }
@@ -99,7 +99,7 @@ internal class QuotedMessageBodyBuilder(
             summary.linkAttachment != null && summary.fileCount == 0 -> {
                 QuotedMessageBody(
                     text = messageText.ifBlank { summary.linkAttachment.run { titleLink ?: ogUrl } }.orEmpty(),
-                    iconId = R.drawable.stream_compose_ic_link,
+                    iconId = R.drawable.stream_design_ic_link,
                     imagePreviewData = summary.linkAttachment.imagePreviewUrl,
                 )
             }
@@ -110,7 +110,7 @@ internal class QuotedMessageBodyBuilder(
                     text = messageText.ifBlank {
                         resources.getString(R.string.stream_compose_quoted_message_giphy_tag)
                     },
-                    iconId = R.drawable.stream_compose_ic_file,
+                    iconId = R.drawable.stream_design_ic_file,
                     imagePreviewData = summary.giphyAttachment.imagePreviewUrl,
                 )
             }
@@ -120,7 +120,7 @@ internal class QuotedMessageBodyBuilder(
                     text = messageText.ifBlank {
                         resources.getQuantityString(R.plurals.stream_compose_quoted_message_images, size, size)
                     },
-                    iconId = R.drawable.stream_compose_ic_camera,
+                    iconId = R.drawable.stream_design_ic_camera,
                     imagePreviewData = summary.mediaPreviewData?.takeIf { summary.fileCount == 1 },
                 )
             }
@@ -130,7 +130,7 @@ internal class QuotedMessageBodyBuilder(
                     text = messageText.ifBlank {
                         resources.getQuantityString(R.plurals.stream_compose_quoted_message_videos, size, size)
                     },
-                    iconId = R.drawable.stream_compose_ic_video_outline,
+                    iconId = R.drawable.stream_design_ic_video,
                     videoPreviewData = summary.mediaPreviewData?.takeIf { summary.fileCount == 1 },
                 )
             }
@@ -140,21 +140,21 @@ internal class QuotedMessageBodyBuilder(
                     text = messageText.ifBlank {
                         resources.getString(R.string.stream_compose_quoted_message_media, size)
                     },
-                    iconId = R.drawable.stream_compose_ic_camera,
+                    iconId = R.drawable.stream_design_ic_camera,
                 )
             }
 
             summary.audioRecordingAttachment != null && size == 1 -> {
                 QuotedMessageBody(
                     text = messageText.ifBlank { textForAudioRecording(summary.audioRecordingAttachment) },
-                    iconId = R.drawable.stream_compose_ic_microphone,
+                    iconId = R.drawable.stream_design_ic_voice,
                 )
             }
 
             summary.fileAttachment != null && size == 1 -> {
                 QuotedMessageBody(
                     text = messageText.ifBlank { textForFile(summary.fileAttachment) },
-                    iconId = R.drawable.stream_compose_ic_file,
+                    iconId = R.drawable.stream_design_ic_file,
                     previewIcon = MimeTypeIconProvider.getIcon(summary.fileAttachment.mimeType),
                 )
             }
@@ -164,7 +164,7 @@ internal class QuotedMessageBodyBuilder(
                     text = messageText.ifBlank {
                         resources.getQuantityString(R.plurals.stream_compose_quoted_message_files, size, size)
                     },
-                    iconId = R.drawable.stream_compose_ic_file,
+                    iconId = R.drawable.stream_design_ic_file,
                 )
             }
         }

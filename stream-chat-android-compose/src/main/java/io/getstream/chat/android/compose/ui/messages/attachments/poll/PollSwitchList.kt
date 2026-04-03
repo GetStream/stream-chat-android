@@ -272,7 +272,7 @@ private fun Stepper(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         StepperButton(
-            iconRes = R.drawable.stream_compose_ic_minus,
+            iconRes = R.drawable.stream_design_ic_minus,
             contentDescription = stringResource(R.string.stream_compose_poll_option_limit_votes_decrease),
             enabled = currentValue > range.first,
             onClick = { onTextChange((currentValue - 1).coerceIn(range).toString()) },
@@ -297,7 +297,7 @@ private fun Stepper(
             cursorBrush = SolidColor(colors.accentPrimary),
         )
         StepperButton(
-            iconRes = R.drawable.stream_compose_ic_plus,
+            iconRes = R.drawable.stream_design_ic_plus,
             contentDescription = stringResource(R.string.stream_compose_poll_option_limit_votes_increase),
             enabled = currentValue < range.last,
             onClick = { onTextChange((currentValue + 1).coerceIn(range).toString()) },

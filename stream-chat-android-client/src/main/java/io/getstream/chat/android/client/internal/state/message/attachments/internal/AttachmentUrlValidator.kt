@@ -32,7 +32,7 @@ internal class AttachmentUrlValidator(private val attachmentHelper: AttachmentHe
         return newMessages.map { newMessage -> updateValidAttachmentsUrl(newMessage, oldMessages[newMessage.id]) }
     }
 
-    private fun updateValidAttachmentsUrl(newMessage: Message, oldMessage: Message?): Message {
+    internal fun updateValidAttachmentsUrl(newMessage: Message, oldMessage: Message?): Message {
         return if (newMessage.attachments.isEmpty() || oldMessage == null) {
             newMessage
         } else {

@@ -313,20 +313,20 @@ internal class ChannelLogicImpl(
                     // User's window was already trimmed away from the latest (insideSearch set by
                     // trimNewestMessages, or a prior jump-to-message). Stay at current position;
                     // refresh the "jump to latest" cache with the server's current latest page.
-                    state.upsertCachedLatestMessages(sortedMessages)
+                    state.upsertCachedLatestMessages(sortedMessages, preserveAttachmentUrls = true)
                 }
                 hasGap(currentMessages, sortedMessages) -> {
                     // Incoming page is newer than the current window with no overlap. Inserting the
                     // incoming messages would create a fragmented list. Instead, treat the user's
                     // position as a mid-page: store the incoming as the "latest" cache and signal the UI.
-                    state.upsertCachedLatestMessages(sortedMessages)
+                    state.upsertCachedLatestMessages(sortedMessages, preserveAttachmentUrls = true)
                     state.setInsideSearch(true)
                     state.paginationManager.setEndOfNewerMessages(false)
                 }
                 else -> {
                     // Incoming messages are contiguous with (or overlap) the current window.
                     // Upsert preserves the user's scroll position while adding/updating messages.
-                    state.upsertMessages(sortedMessages)
+                    state.upsertMessages(sortedMessages, preserveAttachmentUrls = true)
                     state.paginationManager.setEndOfOlderMessages(channel.messages.size < messageLimit)
                 }
             }
@@ -382,7 +382,7 @@ internal class ChannelLogicImpl(
             }
 
             query.isFilteringNewerMessages() -> {
-                // Loading newer messages - upsert
+                // Loading newer messages - append
                 state.upsertMessages(channel.messages)
                 state.trimOldestMessages()
                 val endReached = query.messagesLimit() > channel.messages.size
@@ -394,7 +394,7 @@ internal class ChannelLogicImpl(
             }
 
             query.filteringOlderMessages() -> {
-                // Loading older messages - prepend; ceiling does not change
+                // Loading older messages - prepend
                 state.upsertMessages(channel.messages)
                 state.trimNewestMessages()
             }

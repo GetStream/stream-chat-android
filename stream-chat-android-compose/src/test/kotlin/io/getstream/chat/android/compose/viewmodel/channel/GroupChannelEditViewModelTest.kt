@@ -28,6 +28,7 @@ import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.CoroutineCall
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,13 +37,13 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -51,18 +52,16 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.io.File
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class GroupChannelEditViewModelTest {
 
-    @Before
+    @BeforeEach
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         Dispatchers.resetMain()
     }
@@ -143,24 +142,22 @@ internal class GroupChannelEditViewModelTest {
 
     @Test
     fun `duplicate gallery import is ignored while already importing`() = runTest {
-        val copyEntered = CountDownLatch(1)
-        val unblockCopy = CountDownLatch(1)
-        val copyCount = java.util.concurrent.atomic.AtomicInteger(0)
-        val blockingCopier = GalleryImageCopier {
-            copyCount.incrementAndGet()
-            copyEntered.countDown()
-            unblockCopy.await()
+        val gate = CompletableDeferred<Unit>()
+        var copyCount = 0
+        val suspendingCopier = GalleryImageCopier {
+            copyCount++
+            gate.await()
             File.createTempFile("gallery", ".jpg").also { it.deleteOnExit() }
         }
-        val sut = Fixture(galleryImageCopier = blockingCopier).get()
+        val sut = Fixture(galleryImageCopier = suspendingCopier).get()
 
         sut.importGalleryImage(Uri.parse("content://first"))
-        assertTrue(copyEntered.await(5, TimeUnit.SECONDS))
+        assertTrue(sut.state.value.isImporting)
 
         sut.importGalleryImage(Uri.parse("content://second"))
-        unblockCopy.countDown()
 
-        assertEquals(1, copyCount.get())
+        gate.complete(Unit)
+        assertEquals(1, copyCount)
     }
 
     @Test
@@ -181,24 +178,22 @@ internal class GroupChannelEditViewModelTest {
 
     @Test
     fun `save is ignored while gallery import is in progress`() = runTest {
-        val copyEntered = CountDownLatch(1)
-        val unblockCopy = CountDownLatch(1)
-        val blockingCopier = GalleryImageCopier {
-            copyEntered.countDown()
-            unblockCopy.await()
+        val gate = CompletableDeferred<Unit>()
+        val suspendingCopier = GalleryImageCopier {
+            gate.await()
             File.createTempFile("gallery", ".jpg").also { it.deleteOnExit() }
         }
-        val fixture = Fixture(galleryImageCopier = blockingCopier).givenUpdatePartial()
+        val fixture = Fixture(galleryImageCopier = suspendingCopier).givenUpdatePartial()
         val sut = fixture.get()
         sut.importGalleryImage(Uri.parse("content://test"))
 
-        assertTrue(copyEntered.await(5, TimeUnit.SECONDS))
+        assertTrue(sut.state.value.isBusy)
 
         sut.events.test {
             sut.save(name = randomString())
             expectNoEvents()
         }
-        unblockCopy.countDown()
+        gate.complete(Unit)
         fixture.verifyUpdatePartialNeverCalled()
     }
 

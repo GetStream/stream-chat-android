@@ -182,7 +182,7 @@ public fun SearchInput(
 internal fun DefaultSearchLeadingIcon() {
     Icon(
         modifier = Modifier.padding(end = StreamTokens.spacingXs),
-        painter = painterResource(id = R.drawable.stream_compose_ic_search),
+        painter = painterResource(id = R.drawable.stream_design_ic_search),
         contentDescription = null,
         tint = ChatTheme.colors.textTertiary,
     )
@@ -212,7 +212,7 @@ internal fun DefaultSearchClearButton(onClick: () -> Unit) {
         onClick = onClick,
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_clear),
+            painter = painterResource(id = R.drawable.stream_design_ic_x_circle),
             contentDescription = stringResource(id = R.string.stream_compose_search_input_cancel),
             tint = ChatTheme.colors.textTertiary,
         )

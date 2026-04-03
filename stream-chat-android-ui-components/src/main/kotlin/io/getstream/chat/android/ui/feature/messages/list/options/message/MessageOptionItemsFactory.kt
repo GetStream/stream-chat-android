@@ -139,7 +139,7 @@ public open class DefaultMessageOptionItemsFactory(
             } else {
                 null
             },
-            if (style.canMarkAsUnread(ownCapabilities)) {
+            if (style.canMarkAsUnread(currentUser, selectedMessage, ownCapabilities)) {
                 MessageOptionItem(
                     optionText = context.getString(R.string.stream_ui_message_list_mark_as_unread),
                     optionIcon = context.getDrawableCompat(style.markAsUnreadIcon)!!,

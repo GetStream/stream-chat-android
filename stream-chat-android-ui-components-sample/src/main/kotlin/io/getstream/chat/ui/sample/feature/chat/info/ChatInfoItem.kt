@@ -62,14 +62,14 @@ sealed class ChatInfoItem {
 
         data object SharedMedia : Option() {
             override val iconResId: Int
-                get() = R.drawable.stream_ic_media
+                get() = R.drawable.stream_ui_ic_gallery
             override val textResId: Int
                 get() = R.string.stream_ui_channel_info_option_media_attachments
         }
 
         data object SharedFiles : Option() {
             override val iconResId: Int
-                get() = R.drawable.stream_ic_files
+                get() = R.drawable.stream_ui_ic_folder
             override val textResId: Int
                 get() = R.string.stream_ui_channel_info_option_files_attachments
         }
@@ -99,19 +99,6 @@ sealed class ChatInfoItem {
             override val textColorResId: Int
                 get() = R.color.stream_ui_accent_red
             override val showRightArrow: Boolean = false
-        }
-
-        data class HideChannel(
-            @StringRes override val textResId: Int,
-            val isChecked: Boolean,
-        ) : Option() {
-            override val iconResId: Int
-                get() = R.drawable.stream_ic_hide
-
-            override val showRightArrow: Boolean = false
-
-            override val checkedState: Boolean
-                get() = isChecked
         }
 
         sealed class Stateful : Option() {

@@ -35,9 +35,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -151,7 +152,7 @@ public fun LazyItemScope.MessageItem(
                 params = MessageListModeratedItemContentParams(moderatedMessageItem = messageListItemState),
             )
             is MessageItemState -> {
-                val selectedMessageBounds = LocalSelectedMessageBounds.current
+                val selectedMessageSnapshot = LocalSelectedMessageSnapshot.current
                 var layoutCoords by remember { mutableStateOf<LayoutCoordinates?>(null) }
                 MessageContainer(
                     params = MessageContainerParams(
@@ -161,7 +162,16 @@ public fun LazyItemScope.MessageItem(
                         onLongItemClick = { message ->
                             layoutCoords?.let { coords ->
                                 if (coords.isAttached) {
-                                    selectedMessageBounds?.value = coords.boundsInWindow()
+                                    val position = coords.positionInWindow()
+                                    selectedMessageSnapshot.value = SelectedMessageSnapshot(
+                                        bounds = Rect(
+                                            left = position.x,
+                                            top = position.y,
+                                            right = position.x + coords.size.width,
+                                            bottom = position.y + coords.size.height,
+                                        ),
+                                        groupPosition = messageListItemState.groupPosition,
+                                    )
                                 }
                             }
                             onLongItemClick(message)

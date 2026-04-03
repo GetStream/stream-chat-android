@@ -399,7 +399,7 @@ internal class ChannelLogicImplTest {
             sut.onQueryChannelResult(query, Result.Success(channel))
             // Then
             verify(stateImpl, never()).setMessages(any())
-            verify(stateImpl, never()).upsertMessages(any())
+            verify(stateImpl, never()).upsertMessages(any(), any())
             verify(stateImpl, never()).clearCachedLatestMessages()
             verify(stateImpl, never()).setInsideSearch(any())
         }
@@ -1279,9 +1279,9 @@ internal class ChannelLogicImplTest {
                 watcherCount = 0,
             )
             sut.updateDataForChannel(channel = channel, messageLimit = 30)
-            verify(stateImpl).upsertMessages(listOf(incomingMsg))
+            verify(stateImpl).upsertMessages(listOf(incomingMsg), preserveAttachmentUrls = true)
             verify(stateImpl, never()).setMessages(any())
-            verify(stateImpl, never()).upsertCachedLatestMessages(any())
+            verify(stateImpl, never()).upsertCachedLatestMessages(any(), any())
             verify(paginationManager, never()).setEndOfNewerMessages(any())
         }
 
@@ -1301,11 +1301,11 @@ internal class ChannelLogicImplTest {
                 watcherCount = 0,
             )
             sut.updateDataForChannel(channel = channel, messageLimit = 30)
-            verify(stateImpl).upsertCachedLatestMessages(listOf(incomingMsg))
+            verify(stateImpl).upsertCachedLatestMessages(listOf(incomingMsg), preserveAttachmentUrls = true)
             verify(stateImpl).setInsideSearch(true)
             verify(paginationManager).setEndOfNewerMessages(false)
             verify(stateImpl, never()).setMessages(any())
-            verify(stateImpl, never()).upsertMessages(any())
+            verify(stateImpl, never()).upsertMessages(any(), any())
             verify(paginationManager, never()).setEndOfOlderMessages(any())
         }
 
@@ -1326,9 +1326,9 @@ internal class ChannelLogicImplTest {
                 watcherCount = 0,
             )
             sut.updateDataForChannel(channel = channel, messageLimit = 30)
-            verify(stateImpl).upsertCachedLatestMessages(listOf(incomingMsg))
+            verify(stateImpl).upsertCachedLatestMessages(listOf(incomingMsg), preserveAttachmentUrls = true)
             verify(stateImpl, never()).setMessages(any())
-            verify(stateImpl, never()).upsertMessages(any())
+            verify(stateImpl, never()).upsertMessages(any(), any())
             verify(stateImpl, never()).setInsideSearch(any())
             verify(paginationManager, never()).setEndOfNewerMessages(any())
         }
@@ -1350,8 +1350,8 @@ internal class ChannelLogicImplTest {
             )
             sut.updateDataForChannel(channel = channel, messageLimit = 30, shouldRefreshMessages = true)
             verify(stateImpl).setMessages(listOf(incomingMsg))
-            verify(stateImpl, never()).upsertMessages(any())
-            verify(stateImpl, never()).upsertCachedLatestMessages(any())
+            verify(stateImpl, never()).upsertMessages(any(), any())
+            verify(stateImpl, never()).upsertCachedLatestMessages(any(), any())
         }
     }
 

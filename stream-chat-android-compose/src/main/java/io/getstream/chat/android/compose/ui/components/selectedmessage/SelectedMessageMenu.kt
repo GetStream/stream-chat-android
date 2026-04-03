@@ -22,6 +22,9 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,21 +32,21 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.semantics.semantics
@@ -55,10 +58,11 @@ import androidx.compose.ui.util.lerp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
+import androidx.compose.ui.zIndex
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.state.messages.MessageAlignment
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
-import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageBounds
+import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageSnapshot
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageContainerParams
 import io.getstream.chat.android.compose.ui.theme.MessageMenuHeaderContentParams
@@ -69,15 +73,18 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
+import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.roundToInt
 
 /**
  * Represents the options user can take after selecting a message.
@@ -107,6 +114,7 @@ public fun SelectedMessageMenu(
     currentUser: User? = null,
     onDismiss: () -> Unit = {},
 ) {
+    val selectedMessageSnapshot = LocalSelectedMessageSnapshot.current.value
     val messageItemState = MessageItemState(
         message = message,
         isMine = message.user.id == currentUser?.id,
@@ -114,6 +122,7 @@ public fun SelectedMessageMenu(
         ownCapabilities = ownCapabilities,
         showMessageFooter = false,
         isPreviewMode = true,
+        groupPosition = selectedMessageSnapshot?.groupPosition ?: MessagePosition.NONE,
     )
     val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItemState)
     val bubbleAlignmentPadding = when (messageAlignment) {
@@ -122,9 +131,11 @@ public fun SelectedMessageMenu(
     }
 
     val isInspection = LocalInspectionMode.current
+    val scrollState = remember(::UnclippedScrollState)
     val animation = rememberMenuAnimation(
-        sourceBounds = LocalSelectedMessageBounds.current?.value,
+        sourceBounds = selectedMessageSnapshot?.bounds,
         messageAlignment = messageAlignment,
+        scrollState = scrollState,
     )
     val scope = rememberCoroutineScope()
     val animatedDismiss: () -> Unit = remember(animation, onDismiss, scope) {
@@ -188,15 +199,17 @@ public fun SelectedMessageMenu(
                     ),
                 )
             }
+
             Box(
                 modifier = Modifier
+                    .zIndex(-1f)
                     .weight(1f, fill = false)
                     .padding(top = StreamTokens.spacingXs)
-                    .then(animation.messageModifier),
+                    .then(animation.messageModifier())
+                    .unclippedVerticalScroll(scrollState),
             ) {
                 ChatTheme.componentFactory.MessageContainer(
                     params = MessageContainerParams(
-                        modifier = Modifier.wrapContentHeight(align = Alignment.Top, unbounded = true),
                         messageItem = messageItemState,
                         reactionSorting = ReactionSortingByLastReactionAt,
                     ),
@@ -220,6 +233,39 @@ public fun SelectedMessageMenu(
     }
 }
 
+@Stable
+private class UnclippedScrollState {
+    var offset by mutableFloatStateOf(0f)
+        private set
+    private var maxScroll = 0f
+
+    fun consumeDelta(delta: Float): Float {
+        val old = offset
+        offset = (old - delta).coerceIn(0f, maxScroll)
+        return old - offset
+    }
+
+    fun updateMaxScroll(contentHeight: Int, containerHeight: Int) {
+        maxScroll = (contentHeight - containerHeight).toFloat().coerceAtLeast(0f)
+    }
+}
+
+/** Scrollable modifier that does not clip overflowing content. */
+@Composable
+private fun Modifier.unclippedVerticalScroll(state: UnclippedScrollState): Modifier {
+    return scrollable(
+        state = rememberScrollableState(state::consumeDelta),
+        orientation = Orientation.Vertical,
+    ).layout { measurable, constraints ->
+        val placeable = measurable.measure(constraints.copy(maxHeight = Int.MAX_VALUE))
+        val height = placeable.height.coerceAtMost(constraints.maxHeight)
+        state.updateMaxScroll(placeable.height, height)
+        layout(placeable.width, height) {
+            placeable.place(0, -state.offset.roundToInt())
+        }
+    }
+}
+
 private const val BackgroundBlur = 50
 private const val DimAmount = 0.6f
 
@@ -237,17 +283,25 @@ private const val DimAmount = 0.6f
 private class MenuAnimationState(
     private val sourceBounds: Rect?,
     private val messageAlignment: MessageAlignment,
+    private val scrollState: UnclippedScrollState,
 ) {
     private val message = Animatable(0f)
     private val peripheral = Animatable(0f)
 
     private var targetBounds: Rect? by mutableStateOf(null)
 
-    val messageModifier: Modifier
-        get() = Modifier
+    fun messageModifier(): Modifier =
+        Modifier
             .onGloballyPositioned { coords ->
                 if (coords.isAttached) {
-                    targetBounds = coords.boundsInWindow()
+                    val position = coords.positionInWindow()
+                    val size = coords.size
+                    targetBounds = Rect(
+                        left = position.x,
+                        top = position.y,
+                        right = position.x + size.width,
+                        bottom = position.y + size.height,
+                    )
                 }
             }
             .graphicsLayer {
@@ -259,7 +313,7 @@ private class MenuAnimationState(
                         MessageAlignment.Start -> lerp(source.left - target.left, 0f, progress)
                         MessageAlignment.End -> lerp(source.right - target.right, 0f, progress)
                     }
-                    translationY = lerp(source.top - target.top, 0f, progress)
+                    translationY = lerp(source.top - target.top + scrollState.offset, 0f, progress)
                 }
             }
 
@@ -294,8 +348,12 @@ private class MenuAnimationState(
 }
 
 @Composable
-private fun rememberMenuAnimation(sourceBounds: Rect?, messageAlignment: MessageAlignment): MenuAnimationState =
-    remember { MenuAnimationState(sourceBounds, messageAlignment) }
+private fun rememberMenuAnimation(
+    sourceBounds: Rect?,
+    messageAlignment: MessageAlignment,
+    scrollState: UnclippedScrollState,
+): MenuAnimationState =
+    remember { MenuAnimationState(sourceBounds, messageAlignment, scrollState) }
 
 @Preview(showBackground = true)
 @Composable
@@ -324,6 +382,24 @@ internal fun SelectedMessageMenuForIncomingMessage() {
 internal fun SelectedMessageMenuForOutgoingMessage() {
     SelectedMessageMenuPreview(
         selectedMessage = PreviewMessageData.message1.copy(user = PreviewUserData.user1),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SelectedMessageMenuForFailedMessagePreview() {
+    ChatTheme {
+        SelectedMessageMenuForFailedMessage()
+    }
+}
+
+@Composable
+internal fun SelectedMessageMenuForFailedMessage() {
+    SelectedMessageMenuPreview(
+        selectedMessage = PreviewMessageData.message1.copy(
+            user = PreviewUserData.user1,
+            syncStatus = SyncStatus.FAILED_PERMANENTLY,
+        ),
     )
 }
 

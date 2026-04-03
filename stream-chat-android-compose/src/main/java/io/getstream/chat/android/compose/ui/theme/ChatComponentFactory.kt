@@ -32,8 +32,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.twotone.Warning
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -47,7 +45,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -940,7 +937,7 @@ public interface ChatComponentFactory {
     public fun MessageFailedIcon(params: MessageFailedIconParams) {
         Icon(
             modifier = params.modifier,
-            painter = painterResource(id = R.drawable.stream_compose_ic_error),
+            painter = painterResource(id = R.drawable.stream_design_ic_exclamation_circle_fill),
             contentDescription = null,
             tint = ChatTheme.colors.accentError,
         )
@@ -1426,7 +1423,7 @@ public interface ChatComponentFactory {
         CommandChip(
             modifier = params.modifier.padding(
                 start = StreamTokens.spacingSm,
-                bottom = StreamTokens.spacingSm,
+                bottom = StreamTokens.spacingXs + StreamTokens.spacing3xs,
             ),
             command = activeCommand,
             onDismiss = params.onActiveCommandDismiss,
@@ -2233,7 +2230,7 @@ public interface ChatComponentFactory {
     public fun BoxScope.MentionListEmptyContent(params: MentionListEmptyContentParams) {
         EmptyContent(
             text = stringResource(UiCommonR.string.stream_ui_mention_list_empty),
-            painter = painterResource(UiCommonR.drawable.stream_compose_ic_mentions),
+            painter = painterResource(R.drawable.stream_design_ic_mention),
             modifier = params.modifier,
         )
     }
@@ -2537,7 +2534,7 @@ public interface ChatComponentFactory {
      * @param params Parameters for this component.
      */
     @Composable
-    public fun LazyItemScope.ChannelInfoOptionItem(params: ChannelInfoOptionItemParams) {
+    public fun ChannelInfoOptionItem(params: ChannelInfoOptionItemParams) {
         DefaultChannelInfoOptionItem(
             option = params.option,
             isGroupChannel = params.isGroupChannel,
@@ -2659,7 +2656,7 @@ public interface ChatComponentFactory {
             modifier = params.modifier,
             title = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_empty_title),
             text = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_empty_text),
-            painter = painterResource(R.drawable.stream_compose_ic_files),
+            painter = painterResource(R.drawable.stream_design_ic_folder),
         )
     }
 
@@ -2673,7 +2670,7 @@ public interface ChatComponentFactory {
         EmptyContent(
             modifier = params.modifier,
             text = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_load_error),
-            painter = rememberVectorPainter(Icons.TwoTone.Warning),
+            painter = painterResource(R.drawable.stream_design_ic_exclamation_triangle_fill),
         )
     }
 
@@ -2781,7 +2778,7 @@ public interface ChatComponentFactory {
             modifier = params.modifier,
             title = stringResource(UiCommonR.string.stream_ui_channel_attachments_media_empty_title),
             text = stringResource(UiCommonR.string.stream_ui_channel_attachments_media_empty_text),
-            painter = painterResource(R.drawable.stream_compose_ic_media),
+            painter = painterResource(R.drawable.stream_design_ic_image),
         )
     }
 
@@ -2795,7 +2792,7 @@ public interface ChatComponentFactory {
         EmptyContent(
             modifier = params.modifier,
             text = stringResource(UiCommonR.string.stream_ui_channel_attachments_media_load_error),
-            painter = rememberVectorPainter(Icons.TwoTone.Warning),
+            painter = painterResource(R.drawable.stream_design_ic_exclamation_triangle_fill),
         )
     }
 
@@ -2885,7 +2882,7 @@ public interface ChatComponentFactory {
                     size = StreamButtonSize.Medium,
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+                        painter = painterResource(id = R.drawable.stream_design_ic_arrow_left),
                         contentDescription = stringResource(id = R.string.stream_compose_cancel),
                     )
                 }

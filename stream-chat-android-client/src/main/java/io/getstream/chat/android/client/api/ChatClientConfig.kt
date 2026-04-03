@@ -73,7 +73,7 @@ import io.getstream.chat.android.models.TimeDuration
  * @param useLegacyChannelLogic When set to true, the SDK uses the legacy channel state management logic for
  * handling channel updates and events. This may be necessary for compatibility with existing implementations.
  * When set to false, the SDK employs the new channel state management logic, which includes optimizations and
- * performance improvements. Default is true.
+ * performance improvements. Default is false.
  *
  * @param offlineEnabled Flag to enable or disable offline support. Default is `true`.
  *
@@ -88,7 +88,7 @@ public data class ChatClientConfig @JvmOverloads constructor(
     public val syncMaxThreshold: TimeDuration = TimeDuration.hours(hours = 12),
     public val now: () -> Long = { System.currentTimeMillis() },
     public val messageLimitConfig: MessageLimitConfig = MessageLimitConfig(),
-    public val useLegacyChannelLogic: Boolean = true,
+    public val useLegacyChannelLogic: Boolean = false,
 )
 
 /**
