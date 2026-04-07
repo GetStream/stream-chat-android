@@ -85,7 +85,7 @@ internal class ConfigAdapter(
                 "automod" -> automod = reader.nextString()
                 "automod_behavior" -> automodBehavior = reader.nextString()
                 "blocklist_behavior" -> blocklistBehavior = reader.nextString()
-                "commands" -> commands = parseCommandList(reader)
+                "commands" -> commands = JsonParsingUtils.parseList(reader, commandAdapter)
                 "user_message_reminders" -> userMessageReminders = reader.nextBoolean()
                 "shared_locations" -> sharedLocations = reader.nextBoolean()
                 "mark_messages_pending" -> markMessagesPending = reader.nextBoolean()
@@ -181,19 +181,5 @@ internal class ConfigAdapter(
 
     override fun toJson(p0: JsonWriter, p1: Config?) {
         error("Serialization not supported for direct-to-domain path")
-    }
-
-    private fun parseCommandList(reader: JsonReader): MutableList<Command> {
-        val list = mutableListOf<Command>()
-        if (reader.peek() == JsonReader.Token.BEGIN_ARRAY) {
-            reader.beginArray()
-            while (reader.hasNext()) {
-                commandAdapter.fromJson(reader)?.let { list.add(it) }
-            }
-            reader.endArray()
-        } else {
-            reader.skipValue()
-        }
-        return list
     }
 }

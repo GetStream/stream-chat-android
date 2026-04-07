@@ -79,14 +79,14 @@ internal class PollAdapter(
                 "id" -> id = reader.nextString()
                 "name" -> name = reader.nextString()
                 "description" -> description = reader.nextString()
-                "options" -> options = parseOptionsList(reader)
+                "options" -> options = JsonParsingUtils.parseList(reader, optionAdapter)
                 "voting_visibility" -> votingVisibility = reader.nextString()
                 "enforce_unique_vote" -> enforceUniqueVote = reader.nextBoolean()
                 "max_votes_allowed" -> maxVotesAllowed = reader.nextInt()
                 "allow_user_suggested_options" -> allowUserSuggestedOptions = reader.nextBoolean()
                 "allow_answers" -> allowAnswers = reader.nextBoolean()
                 "vote_count" -> voteCount = reader.nextInt()
-                "vote_counts_by_option" -> voteCountsByOption = parseIntMap(reader)
+                "vote_counts_by_option" -> voteCountsByOption = JsonParsingUtils.parseIntMap(reader)
                 "latest_votes_by_option" -> latestVotesByOption = parseParsedVotesMap(reader)
                 "own_votes" -> ownVotes = parseParsedVotesList(reader)
                 "created_at" -> createdAt = dateAdapter.fromJson(reader)
@@ -239,21 +239,6 @@ internal class PollAdapter(
         user = user,
     )
 
-    private fun parseOptionsList(reader: JsonReader): List<Option>? {
-        if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
-        if (reader.peek() != JsonReader.Token.BEGIN_ARRAY) {
-            reader.skipValue()
-            return null
-        }
-        reader.beginArray()
-        val list = mutableListOf<Option>()
-        while (reader.hasNext()) {
-            optionAdapter.fromJson(reader)?.let { list.add(it) }
-        }
-        reader.endArray()
-        return list
-    }
-
     private fun parseParsedVotesList(reader: JsonReader): List<ParsedVoteDto>? {
         if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
         if (reader.peek() != JsonReader.Token.BEGIN_ARRAY) {
@@ -327,22 +312,6 @@ internal class PollAdapter(
         while (reader.hasNext()) {
             val key = reader.nextName()
             parseParsedVotesList(reader)?.let { map[key] = it }
-        }
-        reader.endObject()
-        return map
-    }
-
-    private fun parseIntMap(reader: JsonReader): Map<String, Int>? {
-        if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
-        if (reader.peek() != JsonReader.Token.BEGIN_OBJECT) {
-            reader.skipValue()
-            return null
-        }
-        reader.beginObject()
-        val map = mutableMapOf<String, Int>()
-        while (reader.hasNext()) {
-            val key = reader.nextName()
-            map[key] = reader.nextInt()
         }
         reader.endObject()
         return map

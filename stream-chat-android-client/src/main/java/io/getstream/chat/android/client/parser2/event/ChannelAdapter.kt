@@ -87,25 +87,25 @@ internal class ChannelAdapter(
                 "name" -> name = reader.nextString()
                 "image" -> image = reader.nextString()
                 "watcher_count" -> watcherCount = reader.nextInt()
-                "filter_tags" -> filterTags = parseStringList(reader)
+                "filter_tags" -> filterTags = JsonParsingUtils.parseStringList(reader)
                 "frozen" -> frozen = reader.nextBoolean()
                 "last_message_at" -> lastMessageAt = dateAdapter.fromJson(reader)
                 "created_at" -> createdAt = dateAdapter.fromJson(reader)
                 "deleted_at" -> deletedAt = dateAdapter.fromJson(reader)
                 "updated_at" -> updatedAt = dateAdapter.fromJson(reader)
                 "member_count" -> memberCount = reader.nextInt()
-                "messages" -> messages = parseMessageList(reader)
-                "members" -> members = parseMemberList(reader)
-                "watchers" -> watchers = parseUserList(reader)
+                "messages" -> messages = JsonParsingUtils.parseList(reader, messageAdapter)
+                "members" -> members = JsonParsingUtils.parseList(reader, memberAdapter)
+                "watchers" -> watchers = JsonParsingUtils.parseList(reader, userAdapter)
                 "read" -> read = parseChannelUserReadList(reader)
                 "config" -> config = configAdapter.fromJson(reader)
                 "created_by" -> createdBy = userAdapter.fromJson(reader)
                 "team" -> team = reader.nextString()
                 "cooldown" -> cooldown = reader.nextInt()
-                "pinned_messages" -> pinnedMessages = parseMessageList(reader)
-                "own_capabilities" -> ownCapabilities = parseStringList(reader)
+                "pinned_messages" -> pinnedMessages = JsonParsingUtils.parseList(reader, messageAdapter)
+                "own_capabilities" -> ownCapabilities = JsonParsingUtils.parseStringList(reader)
                 "membership" -> membership = memberAdapter.fromJson(reader)
-                "active_live_locations" -> activeLiveLocations = parseLocationList(reader)
+                "active_live_locations" -> activeLiveLocations = JsonParsingUtils.parseList(reader, locationAdapter)
                 "message_count" -> messageCount = reader.nextInt()
                 else -> reader.readJsonValue()?.let { value ->
                     val map = extraData ?: mutableMapOf<String, Any>().also { extraData = it }
@@ -179,88 +179,19 @@ internal class ChannelAdapter(
             .let(channelTransformer::transform)
     }
 
-    private fun parseMessageList(reader: JsonReader): List<Message>? {
-        return if (reader.peek() == JsonReader.Token.BEGIN_ARRAY) {
-            reader.beginArray()
-            buildList {
-                while (reader.hasNext()) {
-                    messageAdapter.fromJson(reader)?.let { add(it) }
-                }
-            }.also { reader.endArray() }
-        } else {
-            reader.skipValue()
-            null
-        }
-    }
-
-    private fun parseMemberList(reader: JsonReader): List<Member>? {
-        return if (reader.peek() == JsonReader.Token.BEGIN_ARRAY) {
-            reader.beginArray()
-            buildList {
-                while (reader.hasNext()) {
-                    memberAdapter.fromJson(reader)?.let { add(it) }
-                }
-            }.also { reader.endArray() }
-        } else {
-            reader.skipValue()
-            null
-        }
-    }
-
-    private fun parseUserList(reader: JsonReader): List<User>? {
-        return if (reader.peek() == JsonReader.Token.BEGIN_ARRAY) {
-            reader.beginArray()
-            buildList {
-                while (reader.hasNext()) {
-                    userAdapter.fromJson(reader)?.let { add(it) }
-                }
-            }.also { reader.endArray() }
-        } else {
-            reader.skipValue()
-            null
-        }
-    }
-
-    private fun parseLocationList(reader: JsonReader): List<Location>? {
-        return if (reader.peek() == JsonReader.Token.BEGIN_ARRAY) {
-            reader.beginArray()
-            buildList {
-                while (reader.hasNext()) {
-                    locationAdapter.fromJson(reader)?.let { add(it) }
-                }
-            }.also { reader.endArray() }
-        } else {
-            reader.skipValue()
-            null
-        }
-    }
-
-    private fun parseStringList(reader: JsonReader): List<String>? {
-        return if (reader.peek() == JsonReader.Token.BEGIN_ARRAY) {
-            reader.beginArray()
-            buildList {
-                while (reader.hasNext()) {
-                    add(reader.nextString())
-                }
-            }.also { reader.endArray() }
-        } else {
-            reader.skipValue()
-            null
-        }
-    }
-
     private fun parseChannelUserReadList(reader: JsonReader): List<ChannelUserRead>? {
-        return if (reader.peek() == JsonReader.Token.BEGIN_ARRAY) {
-            reader.beginArray()
-            buildList {
-                while (reader.hasNext()) {
-                    parseChannelUserRead(reader)?.let { add(it) }
-                }
-            }.also { reader.endArray() }
-        } else {
+        if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
+        if (reader.peek() != JsonReader.Token.BEGIN_ARRAY) {
             reader.skipValue()
-            null
+            return null
         }
+        reader.beginArray()
+        val list = mutableListOf<ChannelUserRead>()
+        while (reader.hasNext()) {
+            parseChannelUserRead(reader)?.let { list.add(it) }
+        }
+        reader.endArray()
+        return list
     }
 
     @Suppress("ThrowsCount")

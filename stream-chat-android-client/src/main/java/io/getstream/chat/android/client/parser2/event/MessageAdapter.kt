@@ -105,18 +105,18 @@ internal class MessageAdapter(
         while (reader.hasNext()) {
             val key = reader.nextName()
             when (key) {
-                "attachments" -> attachments = parseAttachmentsList(reader)
+                "attachments" -> attachments = JsonParsingUtils.parseList(reader, attachmentAdapter)
                 "channel" -> channel = channelInfoAdapter.fromJson(reader)
                 "cid" -> cid = reader.nextString()
                 "command" -> command = reader.nextString()
                 "created_at" -> createdAt = dateAdapter.fromJson(reader)
                 "deleted_at" -> deletedAt = dateAdapter.fromJson(reader)
                 "html" -> html = reader.nextString()
-                "i18n" -> i18n = parseStringMap(reader)
+                "i18n" -> i18n = JsonParsingUtils.parseStringMap(reader)
                 "id" -> id = reader.nextString()
-                "latest_reactions" -> latestReactions = parseReactionsList(reader)
-                "mentioned_users" -> mentionedUsers = parseUsersList(reader)
-                "own_reactions" -> ownReactions = parseReactionsList(reader)
+                "latest_reactions" -> latestReactions = JsonParsingUtils.parseList(reader, reactionAdapter)
+                "mentioned_users" -> mentionedUsers = JsonParsingUtils.parseList(reader, userAdapter)
+                "own_reactions" -> ownReactions = JsonParsingUtils.parseList(reader, reactionAdapter)
                 "parent_id" -> parentId = reader.nextString()
                 "pin_expires" -> pinExpires = dateAdapter.fromJson(reader)
                 "pinned" -> pinned = reader.nextBoolean()
@@ -130,8 +130,8 @@ internal class MessageAdapter(
                 }
 
                 "quoted_message_id" -> quotedMessageId = reader.nextString()
-                "reaction_counts" -> reactionCounts = parseIntMap(reader)
-                "reaction_scores" -> reactionScores = parseIntMap(reader)
+                "reaction_counts" -> reactionCounts = JsonParsingUtils.parseIntMap(reader)
+                "reaction_scores" -> reactionScores = JsonParsingUtils.parseIntMap(reader)
                 "reaction_groups" -> reactionGroups = reactionGroupAdapter.parseReactionGroupsMap(reader)
                 "reply_count" -> replyCount = reader.nextInt()
                 "deleted_reply_count" -> deletedReplyCount = reader.nextInt()
@@ -139,7 +139,7 @@ internal class MessageAdapter(
                 "show_in_channel" -> showInChannel = reader.nextBoolean()
                 "silent" -> silent = reader.nextBoolean()
                 "text" -> text = reader.nextString()
-                "thread_participants" -> threadParticipants = parseUsersList(reader)
+                "thread_participants" -> threadParticipants = JsonParsingUtils.parseList(reader, userAdapter)
                 "type" -> type = reader.nextString()
                 "updated_at" -> updatedAt = dateAdapter.fromJson(reader)
                 "user" -> user = userAdapter.fromJson(reader)
@@ -306,83 +306,6 @@ internal class MessageAdapter(
             deletedForMe = deletedForMe ?: false,
             extraData = extraData ?: emptyMap(),
         ).let(messageTransformer::transform)
-    }
-
-    private fun parseAttachmentsList(reader: JsonReader): List<Attachment>? {
-        if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
-        if (reader.peek() != JsonReader.Token.BEGIN_ARRAY) {
-            reader.skipValue()
-            return null
-        }
-        reader.beginArray()
-        val list = mutableListOf<Attachment>()
-        while (reader.hasNext()) {
-            attachmentAdapter.fromJson(reader)?.let { list.add(it) }
-        }
-        reader.endArray()
-        return list
-    }
-
-    private fun parseReactionsList(reader: JsonReader): List<Reaction>? {
-        if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
-        if (reader.peek() != JsonReader.Token.BEGIN_ARRAY) {
-            reader.skipValue()
-            return null
-        }
-        reader.beginArray()
-        val list = mutableListOf<Reaction>()
-        while (reader.hasNext()) {
-            reactionAdapter.fromJson(reader)?.let { list.add(it) }
-        }
-        reader.endArray()
-        return list
-    }
-
-    private fun parseUsersList(reader: JsonReader): List<User>? {
-        if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
-        if (reader.peek() != JsonReader.Token.BEGIN_ARRAY) {
-            reader.skipValue()
-            return null
-        }
-        reader.beginArray()
-        val list = mutableListOf<User>()
-        while (reader.hasNext()) {
-            userAdapter.fromJson(reader)?.let { list.add(it) }
-        }
-        reader.endArray()
-        return list
-    }
-
-    private fun parseIntMap(reader: JsonReader): Map<String, Int>? {
-        if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
-        if (reader.peek() != JsonReader.Token.BEGIN_OBJECT) {
-            reader.skipValue()
-            return null
-        }
-        reader.beginObject()
-        val map = mutableMapOf<String, Int>()
-        while (reader.hasNext()) {
-            val key = reader.nextName()
-            map[key] = reader.nextInt()
-        }
-        reader.endObject()
-        return map
-    }
-
-    private fun parseStringMap(reader: JsonReader): Map<String, String>? {
-        if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
-        if (reader.peek() != JsonReader.Token.BEGIN_OBJECT) {
-            reader.skipValue()
-            return null
-        }
-        reader.beginObject()
-        val map = mutableMapOf<String, String>()
-        while (reader.hasNext()) {
-            val key = reader.nextName()
-            map[key] = reader.nextString()
-        }
-        reader.endObject()
-        return map
     }
 
     private fun parseMemberChannelRole(reader: JsonReader): String? {

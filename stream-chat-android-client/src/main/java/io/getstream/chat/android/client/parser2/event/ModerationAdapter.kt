@@ -40,8 +40,8 @@ internal class ModerationAdapter : JsonAdapter<Moderation>() {
             when (reader.nextName()) {
                 "action" -> action = reader.nextString()
                 "original_text" -> originalText = reader.nextString()
-                "text_harms" -> textHarms = parseStringList(reader)
-                "image_harms" -> imageHarms = parseStringList(reader)
+                "text_harms" -> textHarms = JsonParsingUtils.parseStringList(reader)
+                "image_harms" -> imageHarms = JsonParsingUtils.parseStringList(reader)
                 "blocklist_matched" -> blocklistMatched = reader.nextString()
                 "semantic_filter_matched" -> semanticFilterMatched = reader.nextString()
                 "platform_circumvented" -> platformCircumvented = reader.nextBoolean()
@@ -66,20 +66,6 @@ internal class ModerationAdapter : JsonAdapter<Moderation>() {
             semanticFilterMatched = semanticFilterMatched,
             platformCircumvented = platformCircumvented ?: false,
         )
-    }
-
-    private fun parseStringList(reader: JsonReader): List<String>? {
-        return if (reader.peek() == JsonReader.Token.BEGIN_ARRAY) {
-            reader.beginArray()
-            buildList {
-                while (reader.hasNext()) {
-                    add(reader.nextString())
-                }
-            }.also { reader.endArray() }
-        } else {
-            reader.skipValue()
-            null
-        }
     }
 
     override fun toJson(p0: JsonWriter, p1: Moderation?) {

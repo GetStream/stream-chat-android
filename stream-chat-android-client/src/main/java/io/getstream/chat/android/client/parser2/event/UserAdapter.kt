@@ -64,10 +64,10 @@ internal class UserAdapter(
             when (key) {
                 "avg_response_time" -> avgResponseTime = reader.nextLong()
                 "banned" -> banned = reader.nextBoolean()
-                "blocked_user_ids" -> blockedUserIds = parseStringList(reader)
+                "blocked_user_ids" -> blockedUserIds = JsonParsingUtils.parseStringList(reader)
                 "created_at" -> createdAt = dateAdapter.fromJson(reader)
                 "deactivated_at" -> deactivatedAt = dateAdapter.fromJson(reader)
-                "devices" -> devices = parseDevicesList(reader)
+                "devices" -> devices = JsonParsingUtils.parseList(reader, deviceAdapter)
                 "id" -> id = reader.nextString()
                 "image" -> image = reader.nextString()
                 "invisible" -> invisible = reader.nextBoolean()
@@ -77,8 +77,8 @@ internal class UserAdapter(
                 "online" -> online = reader.nextBoolean()
                 "privacy_settings" -> privacySettings = privacySettingsAdapter.fromJson(reader)
                 "role" -> role = reader.nextString()
-                "teams" -> teams = parseStringList(reader)
-                "teams_role" -> teamsRole = parseStringMap(reader)
+                "teams" -> teams = JsonParsingUtils.parseStringList(reader)
+                "teams_role" -> teamsRole = JsonParsingUtils.parseStringMap(reader)
                 "updated_at" -> updatedAt = dateAdapter.fromJson(reader)
 
                 // The following are not part of the UserResponse (they are part of OwnUserResponse):
@@ -143,52 +143,6 @@ internal class UserAdapter(
             avgResponseTime = avgResponseTime,
             extraData = extraData?.toMap() ?: emptyMap(),
         ).let(userTransformer::transform)
-    }
-
-    private fun parseDevicesList(reader: JsonReader): List<Device>? {
-        if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
-        if (reader.peek() != JsonReader.Token.BEGIN_ARRAY) {
-            reader.skipValue()
-            return null
-        }
-        reader.beginArray()
-        val list = mutableListOf<Device>()
-        while (reader.hasNext()) {
-            deviceAdapter.fromJson(reader)?.let { list.add(it) }
-        }
-        reader.endArray()
-        return list
-    }
-
-    private fun parseStringList(reader: JsonReader): List<String>? {
-        if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
-        if (reader.peek() != JsonReader.Token.BEGIN_ARRAY) {
-            reader.skipValue()
-            return null
-        }
-        reader.beginArray()
-        val list = mutableListOf<String>()
-        while (reader.hasNext()) {
-            list.add(reader.nextString())
-        }
-        reader.endArray()
-        return list
-    }
-
-    private fun parseStringMap(reader: JsonReader): Map<String, String>? {
-        if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
-        if (reader.peek() != JsonReader.Token.BEGIN_OBJECT) {
-            reader.skipValue()
-            return null
-        }
-        reader.beginObject()
-        val map = mutableMapOf<String, String>()
-        while (reader.hasNext()) {
-            val key = reader.nextName()
-            map[key] = reader.nextString()
-        }
-        reader.endObject()
-        return map
     }
 
     override fun toJson(p0: JsonWriter, p1: User?) {
