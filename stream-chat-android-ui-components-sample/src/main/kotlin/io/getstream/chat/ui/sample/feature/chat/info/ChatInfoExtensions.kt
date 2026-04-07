@@ -184,9 +184,9 @@ internal fun Fragment.showError(error: ChannelInfoViewEvent.Error, isGroupChanne
         ChannelInfoViewEvent.MuteChannelError,
         ChannelInfoViewEvent.UnmuteChannelError,
         -> if (isGroupChannel) {
-            UiCommonR.string.stream_ui_channel_info_mute_conversation_error
-        } else {
             UiCommonR.string.stream_ui_channel_info_mute_group_error
+        } else {
+            UiCommonR.string.stream_ui_channel_info_mute_conversation_error
         }
 
         ChannelInfoViewEvent.MuteUserError,
@@ -199,16 +199,16 @@ internal fun Fragment.showError(error: ChannelInfoViewEvent.Error, isGroupChanne
 
         ChannelInfoViewEvent.LeaveChannelError,
         -> if (isGroupChannel) {
-            UiCommonR.string.stream_ui_channel_info_leave_conversation_error
-        } else {
             UiCommonR.string.stream_ui_channel_info_leave_group_error
+        } else {
+            UiCommonR.string.stream_ui_channel_info_leave_conversation_error
         }
 
         ChannelInfoViewEvent.DeleteChannelError,
         -> if (isGroupChannel) {
-            UiCommonR.string.stream_ui_channel_info_delete_conversation_error
-        } else {
             UiCommonR.string.stream_ui_channel_info_delete_group_error
+        } else {
+            UiCommonR.string.stream_ui_channel_info_delete_conversation_error
         }
 
         ChannelInfoViewEvent.BanMemberError,
