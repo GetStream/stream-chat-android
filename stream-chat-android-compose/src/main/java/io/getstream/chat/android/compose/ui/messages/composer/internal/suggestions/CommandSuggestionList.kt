@@ -90,6 +90,8 @@ internal fun CommandSuggestionList() {
             PreviewCommandData.command1,
             PreviewCommandData.command2,
             PreviewCommandData.command3,
+            PreviewCommandData.command4,
+            PreviewCommandData.command5,
         ),
     )
 }

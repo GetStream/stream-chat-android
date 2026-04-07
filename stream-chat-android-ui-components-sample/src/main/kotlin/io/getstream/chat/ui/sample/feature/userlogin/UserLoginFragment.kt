@@ -31,6 +31,7 @@ import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.FragmentUserLoginBinding
+import io.getstream.chat.android.ui.R as UiR
 
 class UserLoginFragment : Fragment() {
 
@@ -72,7 +73,7 @@ class UserLoginFragment : Fragment() {
                     requireContext(),
                     LinearLayoutManager.VERTICAL,
                 ).apply {
-                    setDrawable(requireContext().getDrawable(R.drawable.stream_ui_divider)!!)
+                    setDrawable(requireContext().getDrawable(UiR.drawable.stream_ui_divider)!!)
                 },
             )
         }

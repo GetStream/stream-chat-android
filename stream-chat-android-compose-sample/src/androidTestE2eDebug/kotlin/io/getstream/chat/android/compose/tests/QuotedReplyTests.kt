@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.tests
 
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.robots.assertDeletedMessage
 import io.getstream.chat.android.compose.robots.assertGiphyImage
 import io.getstream.chat.android.compose.robots.assertInvalidCommandMessage
@@ -33,6 +32,7 @@ import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
 import org.junit.Ignore
 import org.junit.Test
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 class QuotedReplyTests : StreamTestCase() {
 
@@ -244,7 +244,7 @@ class QuotedReplyTests : StreamTestCase() {
         step("AND deleted message is shown in quoted reply bubble") {
             userRobot.assertQuotedMessage(
                 text = quoteReply,
-                quote = appContext.getString(R.string.stream_ui_message_list_message_deleted),
+                quote = appContext.getString(UiCommonR.string.stream_ui_message_list_message_deleted),
             )
         }
     }
@@ -292,7 +292,7 @@ class QuotedReplyTests : StreamTestCase() {
         step("AND deleted message is shown in quoted reply bubble") {
             userRobot.assertQuotedMessage(
                 text = quoteReply,
-                quote = appContext.getString(R.string.stream_ui_message_list_message_deleted),
+                quote = appContext.getString(UiCommonR.string.stream_ui_message_list_message_deleted),
             )
         }
     }
@@ -637,7 +637,7 @@ class QuotedReplyTests : StreamTestCase() {
         step("AND deleted message is shown in quoted reply bubble") {
             userRobot.assertQuotedMessage(
                 text = quoteReply,
-                quote = appContext.getString(R.string.stream_ui_message_list_message_deleted),
+                quote = appContext.getString(UiCommonR.string.stream_ui_message_list_message_deleted),
             )
         }
     }
@@ -686,7 +686,7 @@ class QuotedReplyTests : StreamTestCase() {
         step("AND deleted message is shown in quoted reply bubble") {
             userRobot.assertQuotedMessage(
                 text = quoteReply,
-                quote = appContext.getString(R.string.stream_ui_message_list_message_deleted),
+                quote = appContext.getString(UiCommonR.string.stream_ui_message_list_message_deleted),
             )
         }
     }

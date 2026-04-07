@@ -21,7 +21,6 @@ import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.VotingVisibility
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.utils.PollsConstants
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,6 +33,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * ViewModel class for creating a poll.
@@ -67,7 +67,7 @@ public class CreatePollViewModel : ViewModel() {
             !allowMultipleVotes || maxAnswer == null -> null
             maxAnswer
                 !in PollsConstants.MULTIPLE_ANSWERS_RANGE ->
-                R.string.stream_ui_poll_multiple_answers_error
+                UiCommonR.string.stream_ui_poll_multiple_answers_error
 
             else -> null
         }

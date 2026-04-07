@@ -2512,7 +2512,7 @@ public interface ChatComponentFactory {
         StreamTextButton(
             style = StreamButtonStyleDefaults.secondaryOutline,
             size = StreamButtonSize.Small,
-            text = stringResource(id = R.string.stream_ui_channel_info_member_add_button),
+            text = stringResource(id = UiCommonR.string.stream_ui_channel_info_member_add_button),
             onClick = params.onClick,
         )
     }
@@ -2622,7 +2622,7 @@ public interface ChatComponentFactory {
         CenterAlignedTopAppBar(
             title = {
                 Text(
-                    text = stringResource(R.string.stream_ui_channel_attachments_files_title),
+                    text = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_title),
                     style = ChatTheme.typography.headingSmall,
                     maxLines = 1,
                 )
@@ -2744,7 +2744,7 @@ public interface ChatComponentFactory {
         CenterAlignedTopAppBar(
             title = {
                 Text(
-                    text = stringResource(R.string.stream_ui_channel_attachments_media_title),
+                    text = stringResource(UiCommonR.string.stream_ui_channel_attachments_media_title),
                     style = ChatTheme.typography.headingSmall,
                     maxLines = 1,
                 )

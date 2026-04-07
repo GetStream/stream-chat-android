@@ -50,6 +50,7 @@ import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.utils.extensions.use
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 public class MessageReplyView : FrameLayout {
     private val binding: StreamUiMessageReplyViewBinding =
@@ -234,7 +235,7 @@ public class MessageReplyView : FrameLayout {
         val attachment = message.attachments.lastOrNull()
         val displayedText = message.getTranslatedText()
         binding.replyText.text = if (message.isDeleted()) {
-            context.getString(R.string.stream_ui_message_list_message_deleted)
+            context.getString(UiCommonR.string.stream_ui_message_list_message_deleted)
         } else if (poll != null) {
             context.getString(R.string.stream_ui_quoted_message_poll, poll.name)
         } else if (attachment == null || displayedText.isNotBlank()) {

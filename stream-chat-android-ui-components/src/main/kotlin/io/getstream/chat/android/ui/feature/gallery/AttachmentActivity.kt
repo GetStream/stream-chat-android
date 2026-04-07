@@ -36,6 +36,7 @@ import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.load
 import io.getstream.log.taggedLogger
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * An Activity showing attachments such as websites, youtube and giphy.
@@ -65,7 +66,7 @@ public class AttachmentActivity : AppCompatActivity() {
             logger.e { "This file can't be displayed. TYPE or URL is missing." }
             Toast.makeText(
                 this,
-                getString(R.string.stream_ui_message_list_attachment_display_error),
+                getString(UiCommonR.string.stream_ui_message_list_attachment_display_error),
                 Toast.LENGTH_SHORT,
             ).show()
             return

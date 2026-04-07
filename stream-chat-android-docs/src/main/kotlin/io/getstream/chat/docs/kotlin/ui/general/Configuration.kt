@@ -36,10 +36,11 @@ import io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarRenderer
 import io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarViewProvider
 import io.getstream.chat.android.ui.widgets.avatar.UserAvatarRenderer
 import io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
-import io.getstream.chat.docs.R
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
+import io.getstream.chat.android.ui.R as UiR
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * [General Configuration](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/)
@@ -53,9 +54,9 @@ private class ChatUiSnippets {
      */
     fun customReactions() {
         // Create a drawable for the non-selected reaction option
-        val loveDrawable = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)!!
+        val loveDrawable = ContextCompat.getDrawable(context, UiR.drawable.stream_ui_ic_reaction_love)!!
         // Create a drawable for the selected reaction option and set a tint to it
-        val loveDrawableSelected = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)!!
+        val loveDrawableSelected = ContextCompat.getDrawable(context, UiR.drawable.stream_ui_ic_reaction_love)!!
             .mutate()
             .apply { setTint(Color.RED) }
 
@@ -75,15 +76,15 @@ private class ChatUiSnippets {
         ChatUI.mimeTypeIconProvider = MimeTypeIconProvider { mimeType ->
             when {
                 // Generic icon for missing MIME type
-                mimeType == null -> R.drawable.stream_ui_ic_file
+                mimeType == null -> UiR.drawable.stream_ui_ic_file
                 // Special icon for XLS files
-                mimeType == "application/vnd.ms-excel" -> R.drawable.stream_ui_ic_file_xls
+                mimeType == "application/vnd.ms-excel" -> UiR.drawable.stream_ui_ic_file_xls
                 // Generic icon for audio files
-                mimeType.contains("audio") -> R.drawable.stream_ui_ic_file_mp3
+                mimeType.contains("audio") -> UiR.drawable.stream_ui_ic_file_mp3
                 // Generic icon for video files
-                mimeType.contains("video") -> R.drawable.stream_ui_ic_file_mov
+                mimeType.contains("video") -> UiR.drawable.stream_ui_ic_file_mov
                 // Generic icon for other files
-                else -> R.drawable.stream_ui_ic_file
+                else -> UiR.drawable.stream_ui_ic_file
             }
         }
     }
@@ -104,7 +105,7 @@ private class ChatUiSnippets {
             ChatUI.fonts = object : ChatFonts {
 
                 // Fetch the font you want to use
-                val font = ResourcesCompat.getFont(context, R.font.stream_roboto_regular)
+                val font = ResourcesCompat.getFont(context, UiCommonR.font.stream_roboto_regular)
 
                 override fun setFont(textStyle: TextStyle, textView: TextView) {
                     textView.setTypeface(font, Typeface.BOLD)

@@ -43,9 +43,9 @@ import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
-import io.getstream.chat.docs.R
 import io.getstream.chat.docs.databinding.MessageComposerLeadingContentBinding
 import io.getstream.result.call.map
+import io.getstream.chat.android.ui.R as UiR
 
 /**
  * [Message Composer](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer)
@@ -236,7 +236,7 @@ private object MessageComposer : Fragment() {
             TransformStyle.messageComposerStyleTransformer = StyleTransformer { viewStyle ->
                 viewStyle.copy(
                     messageInputTextStyle = viewStyle.messageInputTextStyle.copy(
-                        color = ContextCompat.getColor(context, R.color.stream_ui_accent_red)
+                        color = ContextCompat.getColor(context, UiR.color.stream_ui_accent_red)
                     )
                 )
             }

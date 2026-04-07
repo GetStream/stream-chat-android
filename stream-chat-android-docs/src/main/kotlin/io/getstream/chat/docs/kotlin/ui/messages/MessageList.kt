@@ -29,12 +29,12 @@ import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
-import io.getstream.chat.docs.R
 import io.getstream.chat.docs.databinding.TodayMessageListItemBinding
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.concurrent.TimeUnit
+import io.getstream.chat.android.ui.R as UiR
 
 /**
  * [Message List](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list/)
@@ -156,7 +156,7 @@ class MessageListViewSnippets : Fragment() {
                 scrollButtonViewStyle = defaultViewStyle.scrollButtonViewStyle.copy(
                     scrollButtonColor = Color.RED,
                     scrollButtonUnreadEnabled = false,
-                    scrollButtonIcon = ContextCompat.getDrawable(requireContext(), R.drawable.stream_ui_ic_clock)!!,
+                    scrollButtonIcon = ContextCompat.getDrawable(requireContext(), UiR.drawable.stream_ui_ic_clock)!!,
                 ),
             )
         }

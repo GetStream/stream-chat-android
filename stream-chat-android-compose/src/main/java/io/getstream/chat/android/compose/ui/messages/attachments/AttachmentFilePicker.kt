@@ -61,6 +61,7 @@ import io.getstream.chat.android.ui.common.permissions.FilesAccess
 import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.openSystemSettings
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 @Suppress("LongMethod")
 @Composable
@@ -104,8 +105,8 @@ internal fun AttachmentFilePicker(
         )
         StreamSnackbarHost(hostState = snackBarHostState)
     }
-    val snackbarMessage = stringResource(id = R.string.stream_ui_message_composer_permission_setting_message)
-    val snackbarAction = stringResource(id = R.string.stream_ui_message_composer_permissions_setting_button)
+    val snackbarMessage = stringResource(id = UiCommonR.string.stream_ui_message_composer_permission_setting_message)
+    val snackbarAction = stringResource(id = UiCommonR.string.stream_ui_message_composer_permissions_setting_button)
     LaunchedEffect(showPermanentlyDeniedSnackBar) {
         if (showPermanentlyDeniedSnackBar) {
             val result = snackBarHostState.showSnackbar(
@@ -172,7 +173,7 @@ private fun FilesAccessContent(
 @Composable
 private fun GrantVisualMediaAccessButton(onClick: () -> Unit) {
     RequestAdditionalAccessButton(
-        textId = R.string.stream_ui_message_composer_permissions_files_allow_visual_media_access,
+        textId = UiCommonR.string.stream_ui_message_composer_permissions_files_allow_visual_media_access,
         onClick = onClick,
     )
 }
@@ -180,7 +181,7 @@ private fun GrantVisualMediaAccessButton(onClick: () -> Unit) {
 @Composable
 private fun AllowMoreVisualMediaButton(onClick: () -> Unit) {
     RequestAdditionalAccessButton(
-        textId = R.string.stream_ui_message_composer_permissions_files_allow_more_visual_media,
+        textId = UiCommonR.string.stream_ui_message_composer_permissions_files_allow_more_visual_media,
         onClick = onClick,
     )
 }
@@ -188,7 +189,7 @@ private fun AllowMoreVisualMediaButton(onClick: () -> Unit) {
 @Composable
 private fun GrantAudioAccessButton(onClick: () -> Unit) {
     RequestAdditionalAccessButton(
-        textId = R.string.stream_ui_message_composer_permissions_files_allow_audio_access,
+        textId = UiCommonR.string.stream_ui_message_composer_permissions_files_allow_audio_access,
         onClick = onClick,
     )
 }

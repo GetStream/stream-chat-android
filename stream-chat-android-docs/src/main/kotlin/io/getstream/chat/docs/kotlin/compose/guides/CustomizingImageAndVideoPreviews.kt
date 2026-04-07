@@ -23,7 +23,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentMediaItemParams
 import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.models.AttachmentType
-import io.getstream.chat.docs.R
+import io.getstream.chat.android.compose.R as ComposeR
 
 /**
  * [Customizing Image and Video Previews](https://getstream.io/chat/docs/sdk/android/compose/guides/guides/customizing-image-and-video-previews/)
@@ -59,7 +59,7 @@ private object CustomizingImageAndVideoPreviewsSnippet {
                     modifier = Modifier
                         .padding(2.dp)
                         .fillMaxSize(0.8f),
-                    painter = painterResource(id = R.drawable.stream_design_ic_play_fill),
+                    painter = painterResource(id = ComposeR.drawable.stream_design_ic_play_fill),
                     tint = Color.White,
                     contentDescription = null,
                 )
