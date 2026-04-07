@@ -35,7 +35,6 @@ import io.getstream.chat.android.ui.common.feature.messages.list.MessageListCont
 import io.getstream.chat.android.ui.common.feature.messages.list.MessagePositionHandler
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
@@ -151,12 +150,6 @@ public class MessageListViewModel(
      */
     public val messageFooterVisibilityState: MessageFooterVisibility by messageListController
         .messageFooterVisibilityState.asState(viewModelScope)
-
-    /**
-     * Regulates the visibility of deleted messages.
-     */
-    public val deletedMessageVisibilityState: DeletedMessageVisibility by messageListController
-        .deletedMessageVisibilityState.asState(viewModelScope)
 
     /**
      * Flow of one-shot events such as action successes and errors.
@@ -601,16 +594,6 @@ public class MessageListViewModel(
      */
     public fun setMessageFooterVisibility(messageFooterVisibility: MessageFooterVisibility) {
         messageListController.setMessageFooterVisibility(messageFooterVisibility)
-    }
-
-    /**
-     * Sets the value used to filter deleted messages.
-     * @see DeletedMessageVisibility
-     *
-     * @param deletedMessageVisibility Changes the visibility of deleted messages.
-     */
-    public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
-        messageListController.setDeletedMessageVisibility(deletedMessageVisibility)
     }
 
     /**

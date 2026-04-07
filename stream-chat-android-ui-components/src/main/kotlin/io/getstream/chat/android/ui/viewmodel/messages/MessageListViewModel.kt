@@ -38,7 +38,6 @@ import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHa
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.feature.messages.list.MessagePositionHandler
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
@@ -109,12 +108,6 @@ public class MessageListViewModel(
      */
     public val messageFooterVisibilityState: LiveData<MessageFooterVisibility> = messageListController
         .messageFooterVisibilityState.asLiveData()
-
-    /**
-     * Regulates the visibility of deleted messages.
-     */
-    public val deletedMessageVisibility: LiveData<DeletedMessageVisibility> =
-        messageListController.deletedMessageVisibilityState.asLiveData()
 
     /**
      * Represents the current state of the message list that is a product of multiple sources.
@@ -474,16 +467,6 @@ public class MessageListViewModel(
      */
     private fun onNormalModeEntered() {
         messageListController.enterNormalMode()
-    }
-
-    /**
-     * Sets the value used to filter deleted messages.
-     * @see DeletedMessageVisibility
-     *
-     * @param deletedMessageVisibility Determines the visibility of deleted messages.
-     */
-    public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
-        messageListController.setDeletedMessageVisibility(deletedMessageVisibility)
     }
 
     /**

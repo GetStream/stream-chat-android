@@ -110,7 +110,6 @@ import io.getstream.chat.android.compose.ui.components.messages.MessageComposerQ
 import io.getstream.chat.android.compose.ui.components.messages.MessageFooter
 import io.getstream.chat.android.compose.ui.components.messages.MessageText
 import io.getstream.chat.android.compose.ui.components.messages.MessageThreadFooter
-import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisibilityContent
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.ScrollToBottomButton
 import io.getstream.chat.android.compose.ui.components.messages.SegmentedMessageReactions
@@ -1124,18 +1123,6 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun MessageFooterUploadingContent(params: MessageFooterUploadingContentParams) {
-    }
-
-    /**
-     * The default content of the only-visible-to-you footer message.
-     *
-     * @param params Parameters for this component.
-     */
-    @Composable
-    public fun MessageFooterOnlyVisibleToYouContent(params: MessageFooterOnlyVisibleToYouContentParams) {
-        OwnedMessageVisibilityContent(
-            message = params.messageItem.message,
-        )
     }
 
     /**

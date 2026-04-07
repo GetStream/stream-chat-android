@@ -852,15 +852,6 @@ public data class MessageFooterUploadingContentParams(
 )
 
 /**
- * Parameters for [ChatComponentFactory.MessageFooterOnlyVisibleToYouContent].
- *
- * @param messageItem The message item state.
- */
-public data class MessageFooterOnlyVisibleToYouContentParams(
-    val messageItem: MessageItemState,
-)
-
-/**
  * Parameters for [ChatComponentFactory.MessageFooterContent].
  *
  * @param messageItem The message item state.

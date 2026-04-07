@@ -39,7 +39,6 @@ import io.getstream.chat.android.ui.common.feature.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.helper.ClipboardHandler
 import io.getstream.chat.android.ui.common.helper.ClipboardHandlerImpl
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
@@ -68,7 +67,6 @@ import java.io.File
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
  * @param showSystemMessages If we should show system message items in the list.
- * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
  * @param dateSeparatorHandler Handler that determines when the date separators should be visible.
  * @param threadDateSeparatorHandler Handler that determines when the thread date separators should be visible.
@@ -101,7 +99,6 @@ public class ChannelViewModelFactory(
     private val enforceUniqueReactions: Boolean = false,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val showSystemMessages: Boolean = true,
-    private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
     private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler(),
     private val threadDateSeparatorHandler: DateSeparatorHandler =
@@ -187,7 +184,6 @@ public class ChannelViewModelFactory(
                     channelState = channelStateFlow,
                     enforceUniqueReactions = enforceUniqueReactions,
                     showSystemMessages = showSystemMessages,
-                    deletedMessageVisibility = deletedMessageVisibility,
                     messageFooterVisibility = messageFooterVisibility,
                     dateSeparatorHandler = dateSeparatorHandler,
                     threadDateSeparatorHandler = threadDateSeparatorHandler,

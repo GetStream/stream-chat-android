@@ -47,7 +47,6 @@ import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 
 class MessagesActivity : ComponentActivity() {
 
@@ -62,7 +61,6 @@ class MessagesActivity : ComponentActivity() {
             context = this,
             channelId = cid,
             isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
-            deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
             messageId = intent.getStringExtra(KEY_MESSAGE_ID),
             parentMessageId = intent.getStringExtra(KEY_PARENT_MESSAGE_ID),
             isComposerDraftMessageEnabled = true,

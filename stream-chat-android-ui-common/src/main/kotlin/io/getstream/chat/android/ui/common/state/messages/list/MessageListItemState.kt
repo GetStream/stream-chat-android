@@ -65,8 +65,6 @@ public sealed class HasMessageListItemState : MessageListItemState() {
  * @param groupPosition The [MessagePosition] of the item inside a group.
  * @param isMessageRead Whether the message has been read or not.
  * @param isMessageDelivered Whether the message has been delivered or not.
- * @param deletedMessageVisibility The [DeletedMessageVisibility] which determines the visibility of deleted messages in
- * the UI.
  * @param focusState The current [MessageFocusState] of the message, used to focus the message in the ui.
  * @param messageReadBy The list of [ChannelUserRead] for the message.
  * @param showOriginalText If the original text of the message should be shown in the UI instead of its translation (if
@@ -84,7 +82,6 @@ public data class MessageItemState(
     public val groupPosition: MessagePosition = MessagePosition.NONE,
     public val isMessageRead: Boolean = false,
     public val isMessageDelivered: Boolean = false,
-    public val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_HIDDEN,
     public val focusState: MessageFocusState? = null,
     public val messageReadBy: List<ChannelUserRead> = emptyList(),
     public val showOriginalText: Boolean = false,
