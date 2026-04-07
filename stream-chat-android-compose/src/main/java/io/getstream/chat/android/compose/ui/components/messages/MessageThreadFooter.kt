@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
@@ -54,6 +55,7 @@ public fun MessageThreadFooter(
     text: String,
     messageAlignment: MessageAlignment,
     modifier: Modifier = Modifier,
+    textColor: Color = ChatTheme.colors.chatTextLink,
 ) {
     Row(
         modifier = modifier,
@@ -69,7 +71,7 @@ public fun MessageThreadFooter(
             modifier = Modifier.testTag("Stream_ThreadRepliesLabel"),
             text = text,
             style = ChatTheme.typography.captionEmphasis,
-            color = ChatTheme.colors.chatTextLink,
+            color = textColor,
         )
 
         if (messageAlignment == MessageAlignment.End) {
