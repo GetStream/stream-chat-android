@@ -1,0 +1,231 @@
+/*
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.getstream.chat.android.client.parser2
+
+import com.squareup.moshi.JsonDataException
+import com.squareup.moshi.Moshi
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
+import io.getstream.chat.android.client.api2.mapping.EventMapping
+import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
+import io.getstream.chat.android.client.parser2.adapters.DateAdapter
+import io.getstream.chat.android.client.parser2.event.AttachmentAdapter
+import io.getstream.chat.android.client.parser2.event.ChannelInfoAdapter
+import io.getstream.chat.android.client.parser2.event.DeviceAdapter
+import io.getstream.chat.android.client.parser2.event.LocationAdapter
+import io.getstream.chat.android.client.parser2.event.MessageAdapter
+import io.getstream.chat.android.client.parser2.event.MessageModerationDetailsAdapter
+import io.getstream.chat.android.client.parser2.event.MessageReminderInfoAdapter
+import io.getstream.chat.android.client.parser2.event.ModerationAdapter
+import io.getstream.chat.android.client.parser2.event.NewMessageEventAdapter
+import io.getstream.chat.android.client.parser2.event.OptionAdapter
+import io.getstream.chat.android.client.parser2.event.PollAdapter
+import io.getstream.chat.android.client.parser2.event.PrivacySettingsAdapter
+import io.getstream.chat.android.client.parser2.event.ReactionAdapter
+import io.getstream.chat.android.client.parser2.event.ReactionGroupAdapter
+import io.getstream.chat.android.client.parser2.event.UserAdapter
+import io.getstream.chat.android.client.parser2.testdata.NewMessageEventTestData
+import io.getstream.chat.android.models.NoOpChannelTransformer
+import io.getstream.chat.android.models.NoOpMessageTransformer
+import io.getstream.chat.android.models.NoOpUserTransformer
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import java.util.Date
+
+internal class NewMessageEventParsingTest {
+
+    private val parser = ParserFactory.createMoshiChatParser()
+
+    private val domainMapping = DomainMapping(
+        currentUserIdProvider = { "" },
+        channelTransformer = NoOpChannelTransformer,
+        messageTransformer = NoOpMessageTransformer,
+        userTransformer = NoOpUserTransformer,
+    )
+
+    private val eventMapping = EventMapping(domainMapping)
+
+    private val moshi = Moshi.Builder().add(DateAdapter()).build()
+    private val dateAdapter = moshi.adapter(Date::class.java)
+
+    private val deviceAdapter = DeviceAdapter()
+    private val privacySettingsAdapter = PrivacySettingsAdapter()
+    private val userAdapter = UserAdapter(
+        deviceAdapter = deviceAdapter,
+        privacySettingsAdapter = privacySettingsAdapter,
+        dateAdapter = dateAdapter,
+        userTransformer = NoOpUserTransformer,
+    )
+    private val reactionAdapter = ReactionAdapter(
+        userAdapter = userAdapter,
+        dateAdapter = dateAdapter,
+    )
+    private val reactionGroupAdapter = ReactionGroupAdapter(
+        dateAdapter = dateAdapter,
+    )
+    private val attachmentAdapter = AttachmentAdapter()
+    private val channelInfoAdapter = ChannelInfoAdapter()
+    private val moderationDetailsAdapter = MessageModerationDetailsAdapter()
+    private val moderationAdapter = ModerationAdapter()
+    private val optionAdapter = OptionAdapter()
+    private val pollAdapter = PollAdapter(
+        userAdapter = userAdapter,
+        optionAdapter = optionAdapter,
+        dateAdapter = dateAdapter,
+        currentUserIdProvider = { "" },
+    )
+    private val reminderAdapter = MessageReminderInfoAdapter(
+        dateAdapter = dateAdapter,
+    )
+    private val locationAdapter = LocationAdapter(
+        dateAdapter = dateAdapter,
+    )
+    private val messageAdapter = MessageAdapter(
+        attachmentAdapter = attachmentAdapter,
+        channelInfoAdapter = channelInfoAdapter,
+        reactionAdapter = reactionAdapter,
+        reactionGroupAdapter = reactionGroupAdapter,
+        userAdapter = userAdapter,
+        moderationDetailsAdapter = moderationDetailsAdapter,
+        moderationAdapter = moderationAdapter,
+        pollAdapter = pollAdapter,
+        reminderAdapter = reminderAdapter,
+        locationAdapter = locationAdapter,
+        dateAdapter = dateAdapter,
+        messageTransformer = NoOpMessageTransformer,
+    )
+
+    private val adapter = NewMessageEventAdapter(
+        messageAdapter = messageAdapter,
+        userAdapter = userAdapter,
+    )
+
+    // region DTO path (JSON → NewMessageEventDto → NewMessageEvent)
+
+    @Test
+    fun `DTO path - deserializes all fields`() {
+        val dto = parser.fromJson(NewMessageEventTestData.jsonAllFields, NewMessageEventDto::class.java)
+        val event = with(eventMapping) { dto.toDomain() }
+        assertEquals(NewMessageEventTestData.expectedAllFields, event)
+    }
+
+    @Test
+    fun `DTO path - deserializes with optional fields missing`() {
+        val dto = parser.fromJson(NewMessageEventTestData.jsonOptionalFieldsMissing, NewMessageEventDto::class.java)
+        val event = with(eventMapping) { dto.toDomain() }
+        assertEquals(NewMessageEventTestData.expectedOptionalFieldsMissing, event)
+    }
+
+    // endregion
+
+    // region Direct path (JSON → NewMessageEvent via NewMessageEventAdapter)
+
+    @Test
+    fun `Direct path - deserializes all fields`() {
+        val event = adapter.fromJson(NewMessageEventTestData.jsonAllFields)
+        assertEquals(NewMessageEventTestData.expectedAllFields, event)
+    }
+
+    @Test
+    fun `Direct path - deserializes with optional fields missing`() {
+        val event = adapter.fromJson(NewMessageEventTestData.jsonOptionalFieldsMissing)
+        assertEquals(NewMessageEventTestData.expectedOptionalFieldsMissing, event)
+    }
+
+    // endregion
+
+    // region Error message parity (both paths must throw identical errors)
+
+    @Test
+    fun `Both paths - same error message on missing type`() {
+        val dtoException = assertThrows<JsonDataException> {
+            parser.fromJson(NewMessageEventTestData.jsonMissingType, NewMessageEventDto::class.java)
+        }
+        val directException = assertThrows<JsonDataException> {
+            adapter.fromJson(NewMessageEventTestData.jsonMissingType)
+        }
+        assertEquals(dtoException.message, directException.message)
+    }
+
+    @Test
+    fun `Both paths - same error message on missing created_at`() {
+        val dtoException = assertThrows<JsonDataException> {
+            parser.fromJson(NewMessageEventTestData.jsonMissingCreatedAt, NewMessageEventDto::class.java)
+        }
+        val directException = assertThrows<JsonDataException> {
+            adapter.fromJson(NewMessageEventTestData.jsonMissingCreatedAt)
+        }
+        assertEquals(dtoException.message, directException.message)
+    }
+
+    @Test
+    fun `Both paths - same error message on missing user`() {
+        val dtoException = assertThrows<JsonDataException> {
+            parser.fromJson(NewMessageEventTestData.jsonMissingUser, NewMessageEventDto::class.java)
+        }
+        val directException = assertThrows<JsonDataException> {
+            adapter.fromJson(NewMessageEventTestData.jsonMissingUser)
+        }
+        assertEquals(dtoException.message, directException.message)
+    }
+
+    @Test
+    fun `Both paths - same error message on missing cid`() {
+        val dtoException = assertThrows<JsonDataException> {
+            parser.fromJson(NewMessageEventTestData.jsonMissingCid, NewMessageEventDto::class.java)
+        }
+        val directException = assertThrows<JsonDataException> {
+            adapter.fromJson(NewMessageEventTestData.jsonMissingCid)
+        }
+        assertEquals(dtoException.message, directException.message)
+    }
+
+    @Test
+    fun `Both paths - same error message on missing channel_type`() {
+        val dtoException = assertThrows<JsonDataException> {
+            parser.fromJson(NewMessageEventTestData.jsonMissingChannelType, NewMessageEventDto::class.java)
+        }
+        val directException = assertThrows<JsonDataException> {
+            adapter.fromJson(NewMessageEventTestData.jsonMissingChannelType)
+        }
+        assertEquals(dtoException.message, directException.message)
+    }
+
+    @Test
+    fun `Both paths - same error message on missing channel_id`() {
+        val dtoException = assertThrows<JsonDataException> {
+            parser.fromJson(NewMessageEventTestData.jsonMissingChannelId, NewMessageEventDto::class.java)
+        }
+        val directException = assertThrows<JsonDataException> {
+            adapter.fromJson(NewMessageEventTestData.jsonMissingChannelId)
+        }
+        assertEquals(dtoException.message, directException.message)
+    }
+
+    @Test
+    fun `Both paths - same error message on missing message`() {
+        val dtoException = assertThrows<JsonDataException> {
+            parser.fromJson(NewMessageEventTestData.jsonMissingMessage, NewMessageEventDto::class.java)
+        }
+        val directException = assertThrows<JsonDataException> {
+            adapter.fromJson(NewMessageEventTestData.jsonMissingMessage)
+        }
+        assertEquals(dtoException.message, directException.message)
+    }
+
+    // endregion
+}
