@@ -19,7 +19,7 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.feature.search.SearchInputView
 import io.getstream.chat.android.ui.feature.search.list.SearchResultListView
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel
-import io.getstream.chat.docs.R
+import io.getstream.chat.android.ui.R as UiR
 
 class Screens {
 
@@ -32,11 +32,11 @@ class Screens {
 
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
-                setContentView(R.layout.stream_ui_fragment_container)
+                setContentView(UiR.layout.stream_ui_fragment_container)
 
                 if (savedInstanceState == null) {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.container, ChannelListFragment.newInstance())
+                        .replace(UiR.id.container, ChannelListFragment.newInstance())
                         .commit()
                 }
             }
@@ -92,7 +92,7 @@ class Screens {
             override fun createChannelListFragment(): ChannelListFragment {
                 return ChannelListFragment.newInstance {
                     setFragment(CustomChannelListFragment())
-                    customTheme(R.style.StreamUiTheme)
+                    customTheme(UiR.style.StreamUiTheme)
                     showSearch(true)
                     showHeader(true)
                     headerTitle("Title")
@@ -149,11 +149,11 @@ class Screens {
 
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
-                setContentView(R.layout.stream_ui_fragment_container)
+                setContentView(UiR.layout.stream_ui_fragment_container)
 
                 if (savedInstanceState == null) {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.container, ChannelFragment.newInstance(cid = "channelType:channelId") {})
+                        .replace(UiR.id.container, ChannelFragment.newInstance(cid = "channelType:channelId") {})
                         .commit()
                 }
             }
@@ -192,7 +192,7 @@ class Screens {
             override fun createChannelFragment(cid: String, messageId: String?): ChannelFragment {
                 return ChannelFragment.newInstance(cid) {
                     setFragment(CustomChannelFragment())
-                    customTheme(R.style.StreamUiTheme)
+                    customTheme(UiR.style.StreamUiTheme)
                     showHeader(true)
                     messageId(messageId)
                 }

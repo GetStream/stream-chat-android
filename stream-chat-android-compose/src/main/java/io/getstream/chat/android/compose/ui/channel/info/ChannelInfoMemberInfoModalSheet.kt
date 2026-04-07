@@ -41,7 +41,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoMemberInfoModalSheetTopBarParams
@@ -63,6 +62,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -192,16 +192,16 @@ internal fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
 
 private fun Member.getBanExpirationText(context: Context): String {
     val expires = banExpires
-        ?: return context.getString(R.string.stream_ui_channel_info_member_modal_ban_no_expiration)
+        ?: return context.getString(UiCommonR.string.stream_ui_channel_info_member_modal_ban_no_expiration)
 
     val currentTime = System.currentTimeMillis()
     val diffInMillis = expires.time - currentTime
 
     return if (diffInMillis <= 0) {
-        context.getString(R.string.stream_ui_channel_info_member_modal_ban_expired)
+        context.getString(UiCommonR.string.stream_ui_channel_info_member_modal_ban_expired)
     } else {
         context.getString(
-            R.string.stream_ui_channel_info_member_modal_ban_expires_at,
+            UiCommonR.string.stream_ui_channel_info_member_modal_ban_expires_at,
             DateUtils.getRelativeTimeSpanString(
                 expires.time,
                 currentTime,

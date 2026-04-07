@@ -26,6 +26,7 @@ import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelFacto
 import io.getstream.chat.android.ui.viewmodel.channels.bindView
 import io.getstream.chat.docs.R
 import io.getstream.chat.docs.databinding.CustomChannelListItemBinding
+import io.getstream.chat.android.ui.R as UiR
 
 /**
  * [Channel List](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list/)
@@ -76,10 +77,10 @@ private class ChannelList : Fragment() {
             defaultStyle.copy(
                 optionsEnabled = false,
                 foregroundLayoutColor = Color.LTGRAY,
-                indicatorReadIcon = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_flag)!!,
+                indicatorReadIcon = ContextCompat.getDrawable(context, UiR.drawable.stream_ui_ic_flag)!!,
                 channelTitleText = defaultStyle.channelTitleText.copy(
                     color = Color.BLUE,
-                    size = context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_large),
+                    size = context.resources.getDimensionPixelSize(UiR.dimen.stream_ui_text_large),
                 ),
                 unreadMessageCounterBackgroundColor = Color.BLUE,
             )

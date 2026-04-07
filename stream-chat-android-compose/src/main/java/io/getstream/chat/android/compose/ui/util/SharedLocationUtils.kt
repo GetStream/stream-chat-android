@@ -17,13 +17,13 @@
 package io.getstream.chat.android.compose.ui.util
 
 import androidx.annotation.StringRes
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.models.Location
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 @StringRes
 internal fun Location.getMessageTextResId(): Int =
     if (endAt == null) {
-        R.string.stream_ui_location_static_message_text
+        UiCommonR.string.stream_ui_location_static_message_text
     } else {
-        R.string.stream_ui_location_live_message_text
+        UiCommonR.string.stream_ui_location_live_message_text
     }

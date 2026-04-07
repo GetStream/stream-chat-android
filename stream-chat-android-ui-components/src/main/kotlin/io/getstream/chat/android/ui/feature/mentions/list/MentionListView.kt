@@ -31,6 +31,7 @@ import io.getstream.chat.android.ui.feature.mentions.list.internal.MentionListAd
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.widgets.EndlessScrollListener
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * View used to display messages that contain a mention.
@@ -118,7 +119,7 @@ public class MentionListView : ViewFlipper {
      * Shows a generic error message.
      */
     public fun showError() {
-        Toast.makeText(context, R.string.stream_ui_mention_list_error, Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, UiCommonR.string.stream_ui_mention_list_error, Toast.LENGTH_SHORT).show()
     }
 
     /**

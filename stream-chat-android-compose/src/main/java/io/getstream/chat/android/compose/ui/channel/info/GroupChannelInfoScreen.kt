@@ -55,7 +55,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.FullscreenDialog
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
@@ -96,6 +95,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderView
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import kotlinx.coroutines.flow.collectLatest
 import java.util.Date
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * A stateful screen component that displays the channel info for a group channel,
@@ -237,7 +237,7 @@ internal fun GroupChannelInfoTopBar(
         modifier = Modifier.bottomBorder(color = ChatTheme.colors.borderCoreSubtle),
         title = {
             Text(
-                text = stringResource(R.string.stream_ui_channel_info_group_title),
+                text = stringResource(UiCommonR.string.stream_ui_channel_info_group_title),
                 style = ChatTheme.typography.headingMedium,
                 maxLines = 1,
             )
@@ -253,7 +253,7 @@ internal fun GroupChannelInfoTopBar(
             ) {
                 StreamTextButton(
                     style = StreamButtonStyleDefaults.secondaryOutline,
-                    text = stringResource(id = R.string.stream_ui_channel_info_edit_action),
+                    text = stringResource(id = UiCommonR.string.stream_ui_channel_info_edit_action),
                     onClick = onActionClick,
                 )
             }
@@ -403,7 +403,7 @@ internal fun GroupChannelInfoAvatarContainer(
         Spacer(modifier = Modifier.height(StreamTokens.spacingXs))
         Text(
             text = stringResource(
-                R.string.stream_ui_channel_info_member_count_online,
+                UiCommonR.string.stream_ui_channel_info_member_count_online,
                 totalMembers,
                 onlineCount,
             ),
@@ -438,7 +438,7 @@ internal fun GroupChannelInfoMemberSection(
         ) {
             Text(
                 text = pluralStringResource(
-                    R.plurals.stream_ui_channel_info_member_count,
+                    UiCommonR.plurals.stream_ui_channel_info_member_count,
                     totalMemberCount,
                     totalMemberCount,
                 ),
@@ -520,10 +520,10 @@ internal fun GroupChannelInfoMemberItem(
             )
         }
         val role = if (isOwner) {
-            stringResource(id = R.string.stream_ui_channel_info_member_owner)
+            stringResource(id = UiCommonR.string.stream_ui_channel_info_member_owner)
         } else {
             when (val role = member.channelRole) {
-                "channel_moderator" -> stringResource(id = R.string.stream_ui_channel_info_member_moderator)
+                "channel_moderator" -> stringResource(id = UiCommonR.string.stream_ui_channel_info_member_moderator)
                 "channel_member" -> ""
                 else -> role.orEmpty()
             }
@@ -553,7 +553,7 @@ internal fun GroupChannelInfoExpandMembersItem(
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = stringResource(R.string.stream_ui_channel_info_view_all),
+            text = stringResource(UiCommonR.string.stream_ui_channel_info_view_all),
             style = ChatTheme.typography.bodyEmphasis,
             color = ChatTheme.colors.buttonSecondaryText,
         )

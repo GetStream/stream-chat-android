@@ -35,6 +35,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * The main attachment picker component that allows users to select and attach files to messages.
@@ -82,7 +83,7 @@ public fun AttachmentPicker(
         if (hasUnresolvedAttachments) {
             Toast.makeText(
                 context,
-                context.getString(R.string.stream_ui_attachment_picker_error_unresolvable_attachments),
+                context.getString(UiCommonR.string.stream_ui_attachment_picker_error_unresolvable_attachments),
                 Toast.LENGTH_LONG,
             ).show()
             attachmentsPickerViewModel.clearUnresolvedAttachments()

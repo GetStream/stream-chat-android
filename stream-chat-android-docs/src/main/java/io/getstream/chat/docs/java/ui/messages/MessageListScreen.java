@@ -12,7 +12,6 @@ import io.getstream.chat.android.ui.feature.messages.ChannelFragment;
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView;
 import io.getstream.chat.android.ui.feature.messages.header.ChannelHeaderView;
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
-import io.getstream.chat.docs.R;
 import kotlin.Unit;
 
 /**
@@ -32,7 +31,7 @@ public class MessageListScreen {
         public final class MyChannelActivity extends AppCompatActivity {
 
             public MyChannelActivity() {
-                super(R.layout.stream_ui_fragment_container);
+                super(io.getstream.chat.android.ui.R.layout.stream_ui_fragment_container);
             }
 
             @Override
@@ -44,7 +43,7 @@ public class MessageListScreen {
                         return Unit.INSTANCE;
                     });
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.container, fragment)
+                            .replace(io.getstream.chat.android.ui.R.id.container, fragment)
                             .commit();
                 }
             }
@@ -59,7 +58,7 @@ public class MessageListScreen {
         public final class MyChannelActivity extends AppCompatActivity implements ChannelFragment.BackPressListener {
 
             public MyChannelActivity() {
-                super(R.layout.stream_ui_fragment_container);
+                super(io.getstream.chat.android.ui.R.layout.stream_ui_fragment_container);
             }
 
             @Override
@@ -113,7 +112,7 @@ public class MessageListScreen {
             protected ChannelFragment createChannelFragment(@NonNull String cid, @Nullable String messageId) {
                 return ChannelFragment.newInstance(cid, builder -> {
                     builder.setFragment(new CustomChannelFragment());
-                    builder.customTheme(R.style.StreamUiTheme);
+                    builder.customTheme(io.getstream.chat.android.ui.R.style.StreamUiTheme);
                     builder.showHeader(true);
                     builder.messageId(messageId);
                     return Unit.INSTANCE;

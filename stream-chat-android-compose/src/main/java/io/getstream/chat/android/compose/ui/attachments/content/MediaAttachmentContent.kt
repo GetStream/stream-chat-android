@@ -101,6 +101,7 @@ import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Displays a preview of single or multiple video or attachments.
@@ -168,7 +169,7 @@ public fun MediaAttachmentContent(
         } else {
             val gridSpacing = StreamTokens.spacing2xs
             val description =
-                stringResource(R.string.stream_ui_message_list_semantics_message_attachments, attachments.size)
+                stringResource(UiCommonR.string.stream_ui_message_list_semantics_message_attachments, attachments.size)
             Row(
                 modifier = Modifier
                     .semantics { this.contentDescription = description }
@@ -447,9 +448,9 @@ internal fun MediaAttachmentContentItem(
     val downloadRequestInterceptor = ChatTheme.streamDownloadRequestInterceptor
 
     val description = if (isImage) {
-        stringResource(R.string.stream_ui_message_list_semantics_message_attachment_image)
+        stringResource(UiCommonR.string.stream_ui_message_list_semantics_message_attachment_image)
     } else if (isVideo) {
-        stringResource(R.string.stream_ui_message_list_semantics_message_attachment_video)
+        stringResource(UiCommonR.string.stream_ui_message_list_semantics_message_attachment_video)
     } else {
         null
     }
@@ -538,7 +539,7 @@ internal fun MediaAttachmentContentItem(
                                     modifier = Modifier.fillMaxSize(0.4f),
                                     painter = painterResource(R.drawable.stream_design_ic_image),
                                     contentDescription = stringResource(
-                                        id = R.string.stream_ui_message_list_attachment_load_failed,
+                                        id = UiCommonR.string.stream_ui_message_list_attachment_load_failed,
                                     ),
                                 )
                                 overlayContent(attachment.type)

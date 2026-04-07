@@ -26,7 +26,6 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.feature.channel.draft.DraftChannelActivity
 import io.getstream.chat.android.compose.sample.ui.MessagesActivity
 import io.getstream.chat.android.compose.sample.ui.channel.attachments.ChannelFilesAttachmentsActivity
@@ -38,6 +37,7 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import kotlinx.coroutines.flow.collectLatest
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Activity showing information about a group channel (chat).
@@ -145,37 +145,37 @@ class GroupChannelInfoActivity : ComponentActivity() {
     private fun showError(error: ChannelInfoViewEvent.Error) {
         val message = when (error) {
             ChannelInfoViewEvent.RenameChannelError,
-            -> R.string.stream_ui_channel_info_rename_group_error
+            -> UiCommonR.string.stream_ui_channel_info_rename_group_error
 
             ChannelInfoViewEvent.MuteChannelError,
             ChannelInfoViewEvent.UnmuteChannelError,
-            -> R.string.stream_ui_channel_info_mute_group_error
+            -> UiCommonR.string.stream_ui_channel_info_mute_group_error
 
             ChannelInfoViewEvent.MuteUserError,
             ChannelInfoViewEvent.UnmuteUserError,
-            -> R.string.stream_ui_channel_info_mute_user_error
+            -> UiCommonR.string.stream_ui_channel_info_mute_user_error
 
             ChannelInfoViewEvent.BlockUserError,
             ChannelInfoViewEvent.UnblockUserError,
-            -> R.string.stream_ui_channel_info_block_user_error
+            -> UiCommonR.string.stream_ui_channel_info_block_user_error
 
             ChannelInfoViewEvent.LeaveChannelError,
-            -> R.string.stream_ui_channel_info_leave_group_error
+            -> UiCommonR.string.stream_ui_channel_info_leave_group_error
 
             ChannelInfoViewEvent.DeleteChannelError,
-            -> R.string.stream_ui_channel_info_delete_group_error
+            -> UiCommonR.string.stream_ui_channel_info_delete_group_error
 
             ChannelInfoViewEvent.BanMemberError,
-            -> R.string.stream_ui_channel_info_ban_member_error
+            -> UiCommonR.string.stream_ui_channel_info_ban_member_error
 
             ChannelInfoViewEvent.UnbanMemberError,
-            -> R.string.stream_ui_channel_info_unban_member_error
+            -> UiCommonR.string.stream_ui_channel_info_unban_member_error
 
             ChannelInfoViewEvent.RemoveMemberError,
-            -> R.string.stream_ui_channel_info_remove_member_error
+            -> UiCommonR.string.stream_ui_channel_info_remove_member_error
 
             ChannelInfoViewEvent.AddMembersError,
-            -> R.string.stream_ui_channel_info_add_members_error
+            -> UiCommonR.string.stream_ui_channel_info_add_members_error
         }
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }

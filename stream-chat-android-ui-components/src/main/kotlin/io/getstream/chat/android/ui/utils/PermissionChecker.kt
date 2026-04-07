@@ -28,12 +28,12 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.permissionx.guolindev.PermissionX
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.common.R
 import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
 import io.getstream.chat.android.ui.common.utils.openSystemSettings
 import io.getstream.chat.android.ui.utils.extensions.activity
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 private const val SNACKBAR_ELEVATION_IN_DP = 20
 
@@ -120,12 +120,14 @@ public class PermissionChecker {
         PermissionX.init(activity)
             .permissions(permissions.asList())
             .onExplainRequestReason { _, _ ->
-                val title = view.context.getString(R.string.stream_ui_message_composer_permission_storage_title)
-                val message = view.context.getString(R.string.stream_ui_message_composer_permission_storage_message)
+                val title = view.context.getString(UiCommonR.string.stream_ui_message_composer_permission_storage_title)
+                val message = view.context
+                    .getString(UiCommonR.string.stream_ui_message_composer_permission_storage_message)
                 showPermissionRationaleDialog(view.context, title, message)
             }
             .onForwardToSettings { _, _ ->
-                val message = view.context.getString(R.string.stream_ui_message_composer_permission_setting_message)
+                val message = view.context
+                    .getString(UiCommonR.string.stream_ui_message_composer_permission_setting_message)
                 showPermissionDeniedSnackbar(view, message)
             }
             .request { _, granted, denied ->
@@ -154,9 +156,9 @@ public class PermissionChecker {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || Environment.isExternalStorageLegacy()) {
             checkPermissions(
                 view,
-                view.context.getString(R.string.stream_ui_message_composer_permission_storage_title),
-                view.context.getString(R.string.stream_ui_message_composer_permission_storage_message),
-                view.context.getString(R.string.stream_ui_message_composer_permission_setting_message),
+                view.context.getString(UiCommonR.string.stream_ui_message_composer_permission_storage_title),
+                view.context.getString(UiCommonR.string.stream_ui_message_composer_permission_storage_message),
+                view.context.getString(UiCommonR.string.stream_ui_message_composer_permission_setting_message),
                 listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                 onPermissionDenied,
                 onPermissionGranted,
@@ -173,9 +175,9 @@ public class PermissionChecker {
     ) {
         checkPermissions(
             view,
-            view.context.getString(R.string.stream_ui_message_composer_permission_camera_title),
-            view.context.getString(R.string.stream_ui_message_composer_permission_camera_message),
-            view.context.getString(R.string.stream_ui_message_composer_permission_camera_message),
+            view.context.getString(UiCommonR.string.stream_ui_message_composer_permission_camera_title),
+            view.context.getString(UiCommonR.string.stream_ui_message_composer_permission_camera_message),
+            view.context.getString(UiCommonR.string.stream_ui_message_composer_permission_camera_message),
             listOf(Manifest.permission.CAMERA),
             onPermissionDenied,
             onPermissionGranted,
@@ -189,9 +191,9 @@ public class PermissionChecker {
     ) {
         checkPermissions(
             view,
-            view.context.getString(R.string.stream_ui_message_composer_permission_audio_record_title),
-            view.context.getString(R.string.stream_ui_message_composer_permission_audio_record_message),
-            view.context.getString(R.string.stream_ui_message_composer_permission_audio_record_message),
+            view.context.getString(UiCommonR.string.stream_ui_message_composer_permission_audio_record_title),
+            view.context.getString(UiCommonR.string.stream_ui_message_composer_permission_audio_record_message),
+            view.context.getString(UiCommonR.string.stream_ui_message_composer_permission_audio_record_message),
             listOf(Manifest.permission.RECORD_AUDIO),
             onPermissionDenied,
             onPermissionGranted,
@@ -255,7 +257,7 @@ public class PermissionChecker {
         snackbarMessage: String,
     ) {
         Snackbar.make(view, snackbarMessage, Snackbar.LENGTH_LONG).apply {
-            setAction(R.string.stream_ui_message_composer_permissions_setting_button) {
+            setAction(UiCommonR.string.stream_ui_message_composer_permissions_setting_button) {
                 context.openSystemSettings()
             }
             addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {

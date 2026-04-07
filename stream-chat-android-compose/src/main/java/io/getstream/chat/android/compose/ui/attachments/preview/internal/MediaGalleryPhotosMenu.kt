@@ -63,6 +63,7 @@ import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePrevie
 import io.getstream.chat.android.compose.ui.util.isCompleted
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Composable displaying a grid of media attachments in a bottom sheet layout.
@@ -262,7 +263,7 @@ private fun ErrorIcon(modifier: Modifier) {
             tint = ChatTheme.colors.textDisabled,
             modifier = Modifier.fillMaxSize(fraction = 0.4f),
             painter = painterResource(R.drawable.stream_design_ic_image),
-            contentDescription = stringResource(R.string.stream_ui_message_list_attachment_load_failed),
+            contentDescription = stringResource(UiCommonR.string.stream_ui_message_list_attachment_load_failed),
         )
     }
 }

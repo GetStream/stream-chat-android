@@ -83,6 +83,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.utils.PollsConstants
 import io.getstream.chat.android.ui.common.utils.extensions.getSubtitle
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Message content for the poll, which distinguishes the owner and users and allows them to interact.
@@ -296,7 +297,7 @@ private fun PollButtons(
     Column(verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs)) {
         if (poll.options.size > PollsConstants.MAX_NUMBER_OF_VISIBLE_OPTIONS) {
             PollOptionButton(
-                text = stringResource(id = R.string.stream_ui_poll_action_see_all, poll.options.size),
+                text = stringResource(id = UiCommonR.string.stream_ui_poll_action_see_all, poll.options.size),
                 style = ghostButtonStyle,
                 onButtonClicked = { selectPoll(message, poll, PollSelectionType.MoreOption) },
             )
@@ -328,7 +329,7 @@ private fun PollButtons(
             if (poll.answers.isNotEmpty()) {
                 PollOptionButton(
                     text = pluralStringResource(
-                        R.plurals.stream_ui_poll_action_view_comments,
+                        UiCommonR.plurals.stream_ui_poll_action_view_comments,
                         poll.answers.size,
                         poll.answers.size,
                     ),

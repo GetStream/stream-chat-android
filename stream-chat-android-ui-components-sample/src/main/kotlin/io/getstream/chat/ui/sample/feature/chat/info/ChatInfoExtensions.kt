@@ -26,6 +26,7 @@ import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.feature.chat.info.group.member.GroupChatInfoMemberOptionsDialogFragment
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 @Suppress("LongMethod")
 internal fun List<ChannelInfoViewState.Content.Option>.toChannelInfoItems(
@@ -42,9 +43,9 @@ internal fun List<ChannelInfoViewState.Content.Option>.toChannelInfoItems(
             is ChannelInfoViewState.Content.Option.MuteChannel -> add(
                 ChatInfoItem.Option.Stateful.MuteChannel(
                     textResId = if (isGroupChannel) {
-                        R.string.stream_ui_channel_info_option_mute_group
+                        UiCommonR.string.stream_ui_channel_info_option_mute_group
                     } else {
-                        R.string.stream_ui_channel_info_option_mute_conversation
+                        UiCommonR.string.stream_ui_channel_info_option_mute_conversation
                     },
                     isChecked = option.isMuted,
                 ),
@@ -73,9 +74,9 @@ internal fun List<ChannelInfoViewState.Content.Option>.toChannelInfoItems(
             is ChannelInfoViewState.Content.Option.LeaveChannel -> add(
                 ChatInfoItem.Option.LeaveChannel(
                     textResId = if (isGroupChannel) {
-                        R.string.stream_ui_channel_info_option_leave_group
+                        UiCommonR.string.stream_ui_channel_info_option_leave_group
                     } else {
-                        R.string.stream_ui_channel_info_option_leave_conversation
+                        UiCommonR.string.stream_ui_channel_info_option_leave_conversation
                     },
                 ),
             )
@@ -83,9 +84,9 @@ internal fun List<ChannelInfoViewState.Content.Option>.toChannelInfoItems(
             is ChannelInfoViewState.Content.Option.DeleteChannel -> add(
                 ChatInfoItem.Option.DeleteChannel(
                     textResId = if (isGroupChannel) {
-                        R.string.stream_ui_channel_info_option_delete_group
+                        UiCommonR.string.stream_ui_channel_info_option_delete_group
                     } else {
-                        R.string.stream_ui_channel_info_option_delete_conversation
+                        UiCommonR.string.stream_ui_channel_info_option_delete_conversation
                     },
                 ),
             )
@@ -131,21 +132,23 @@ internal fun Fragment.showModal(
                 getString(
                     when (timeout) {
                         ChannelInfoViewEvent.BanMemberModal.Timeout.OneHour ->
-                            R.string.stream_ui_channel_info_ban_member_modal_timeout_one_hour
+                            UiCommonR.string.stream_ui_channel_info_ban_member_modal_timeout_one_hour
 
                         ChannelInfoViewEvent.BanMemberModal.Timeout.OneDay ->
-                            R.string.stream_ui_channel_info_ban_member_modal_timeout_one_day
+                            UiCommonR.string.stream_ui_channel_info_ban_member_modal_timeout_one_day
 
                         ChannelInfoViewEvent.BanMemberModal.Timeout.OneWeek ->
-                            R.string.stream_ui_channel_info_ban_member_modal_timeout_one_week
+                            UiCommonR.string.stream_ui_channel_info_ban_member_modal_timeout_one_week
 
                         ChannelInfoViewEvent.BanMemberModal.Timeout.NoTimeout ->
-                            R.string.stream_ui_channel_info_ban_member_modal_no_timeout
+                            UiCommonR.string.stream_ui_channel_info_ban_member_modal_no_timeout
                     },
                 )
             }
             MaterialAlertDialogBuilder(requireContext())
-                .setTitle(getString(R.string.stream_ui_channel_info_ban_member_modal_title, modal.member.user.name))
+                .setTitle(
+                    getString(UiCommonR.string.stream_ui_channel_info_ban_member_modal_title, modal.member.user.name),
+                )
                 .setItems(items.toTypedArray()) { _, which ->
                     val timeout = modal.timeouts[which]
                     viewModel.onViewAction(
@@ -176,48 +179,48 @@ internal fun Fragment.showModal(
 internal fun Fragment.showError(error: ChannelInfoViewEvent.Error, isGroupChannel: Boolean) {
     when (error) {
         ChannelInfoViewEvent.RenameChannelError,
-        -> R.string.stream_ui_channel_info_rename_group_error
+        -> UiCommonR.string.stream_ui_channel_info_rename_group_error
 
         ChannelInfoViewEvent.MuteChannelError,
         ChannelInfoViewEvent.UnmuteChannelError,
         -> if (isGroupChannel) {
-            R.string.stream_ui_channel_info_mute_conversation_error
+            UiCommonR.string.stream_ui_channel_info_mute_conversation_error
         } else {
-            R.string.stream_ui_channel_info_mute_group_error
+            UiCommonR.string.stream_ui_channel_info_mute_group_error
         }
 
         ChannelInfoViewEvent.MuteUserError,
         ChannelInfoViewEvent.UnmuteUserError,
-        -> R.string.stream_ui_channel_info_mute_user_error
+        -> UiCommonR.string.stream_ui_channel_info_mute_user_error
 
         ChannelInfoViewEvent.BlockUserError,
         ChannelInfoViewEvent.UnblockUserError,
-        -> R.string.stream_ui_channel_info_block_user_error
+        -> UiCommonR.string.stream_ui_channel_info_block_user_error
 
         ChannelInfoViewEvent.LeaveChannelError,
         -> if (isGroupChannel) {
-            R.string.stream_ui_channel_info_leave_conversation_error
+            UiCommonR.string.stream_ui_channel_info_leave_conversation_error
         } else {
-            R.string.stream_ui_channel_info_leave_group_error
+            UiCommonR.string.stream_ui_channel_info_leave_group_error
         }
 
         ChannelInfoViewEvent.DeleteChannelError,
         -> if (isGroupChannel) {
-            R.string.stream_ui_channel_info_delete_conversation_error
+            UiCommonR.string.stream_ui_channel_info_delete_conversation_error
         } else {
-            R.string.stream_ui_channel_info_delete_group_error
+            UiCommonR.string.stream_ui_channel_info_delete_group_error
         }
 
         ChannelInfoViewEvent.BanMemberError,
-        -> R.string.stream_ui_channel_info_ban_member_error
+        -> UiCommonR.string.stream_ui_channel_info_ban_member_error
 
         ChannelInfoViewEvent.UnbanMemberError,
-        -> R.string.stream_ui_channel_info_unban_member_error
+        -> UiCommonR.string.stream_ui_channel_info_unban_member_error
 
         ChannelInfoViewEvent.RemoveMemberError,
-        -> R.string.stream_ui_channel_info_remove_member_error
+        -> UiCommonR.string.stream_ui_channel_info_remove_member_error
 
         ChannelInfoViewEvent.AddMembersError,
-        -> R.string.stream_ui_channel_info_add_members_error
+        -> UiCommonR.string.stream_ui_channel_info_add_members_error
     }.let(::showToast)
 }

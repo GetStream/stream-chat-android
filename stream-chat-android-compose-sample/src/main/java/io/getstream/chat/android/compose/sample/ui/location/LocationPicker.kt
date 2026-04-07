@@ -65,7 +65,6 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.sample.ui.component.MapWebView
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModel
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
@@ -73,6 +72,7 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import kotlinx.coroutines.tasks.await
 import java.util.Date
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 @Composable
 internal fun LocationPicker(
@@ -267,7 +267,7 @@ private fun LocationPermissionRequired(
             colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.accentPrimary),
             onClick = onClick,
         ) {
-            Text(stringResource(id = R.string.stream_ui_message_composer_grant_permission_button))
+            Text(stringResource(id = UiCommonR.string.stream_ui_message_composer_grant_permission_button))
         }
     }
 }

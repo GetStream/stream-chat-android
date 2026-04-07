@@ -8,7 +8,7 @@ import io.getstream.chat.android.ui.feature.messages.ChannelFragment
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
 import io.getstream.chat.android.ui.feature.messages.header.ChannelHeaderView
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
-import io.getstream.chat.docs.R
+import io.getstream.chat.android.ui.R as UiR
 
 /**
  * [Message List Screen](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-screen/)
@@ -24,7 +24,7 @@ class MessageListScreen {
             context.startActivity(ChannelActivity.createIntent(context, cid = "messaging:123"))
         }
 
-        class MyChannelActivity : AppCompatActivity(R.layout.stream_ui_fragment_container) {
+        class MyChannelActivity : AppCompatActivity(UiR.layout.stream_ui_fragment_container) {
 
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
@@ -33,7 +33,7 @@ class MessageListScreen {
                         showHeader(true)
                     }
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.container, fragment)
+                        .replace(UiR.id.container, fragment)
                         .commit()
                 }
             }
@@ -45,7 +45,7 @@ class MessageListScreen {
      */
     fun handlingActions() {
 
-        class MyChannelActivity : AppCompatActivity(R.layout.stream_ui_fragment_container), ChannelFragment.BackPressListener {
+        class MyChannelActivity : AppCompatActivity(UiR.layout.stream_ui_fragment_container), ChannelFragment.BackPressListener {
 
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
@@ -91,7 +91,7 @@ class MessageListScreen {
             override fun createChannelFragment(cid: String, messageId: String?): ChannelFragment {
                 return ChannelFragment.newInstance(cid) {
                     setFragment(CustomChannelFragment())
-                    customTheme(R.style.StreamUiTheme)
+                    customTheme(UiR.style.StreamUiTheme)
                     showHeader(true)
                     messageId(messageId)
                 }

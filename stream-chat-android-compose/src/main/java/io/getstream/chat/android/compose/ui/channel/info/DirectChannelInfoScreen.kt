@@ -46,7 +46,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoOptionItemParams
@@ -73,6 +72,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderView
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import kotlinx.coroutines.flow.collectLatest
 import java.util.Date
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * A stateful screen component that displays the channel info for a direct channel,
@@ -169,7 +169,7 @@ internal fun DirectChannelInfoTopBar(
         modifier = Modifier.bottomBorder(color = ChatTheme.colors.borderCoreSubtle),
         title = {
             Text(
-                text = stringResource(R.string.stream_ui_channel_info_contact_title),
+                text = stringResource(UiCommonR.string.stream_ui_channel_info_contact_title),
                 style = ChatTheme.typography.headingMedium,
                 maxLines = 1,
             )

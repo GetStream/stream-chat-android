@@ -37,6 +37,7 @@ import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageRe
 import io.getstream.chat.android.ui.common.utils.extensions.giphyFallbackPreviewUrl
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 import io.getstream.chat.android.ui.common.utils.extensions.linkPreviewImageUrl
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 internal class QuotedMessageBodyBuilder(
     private val resources: Resources,
@@ -64,7 +65,7 @@ internal class QuotedMessageBodyBuilder(
         return when {
             message.isDeleted() -> {
                 QuotedMessageBody(
-                    text = resources.getString(R.string.stream_ui_message_list_message_deleted),
+                    text = resources.getString(UiCommonR.string.stream_ui_message_list_message_deleted),
                 )
             }
 

@@ -40,6 +40,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.internal.AttachmentDialogPagerAdapter
 import io.getstream.chat.android.ui.feature.messages.composer.internal.toAttachment
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Represent the bottom sheet dialog that allows users to pick attachments.
@@ -235,7 +236,7 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
         if (resolved.size < selectedAttachments.size) {
             Toast.makeText(
                 requireContext(),
-                R.string.stream_ui_attachment_picker_error_unresolvable_attachments,
+                UiCommonR.string.stream_ui_attachment_picker_error_unresolvable_attachments,
                 Toast.LENGTH_LONG,
             ).show()
         }

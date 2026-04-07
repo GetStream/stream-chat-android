@@ -51,7 +51,6 @@ import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
-import io.getstream.chat.android.compose.sample.R.string.stream_ui_message_list_video_display_error
 import io.getstream.chat.android.compose.sample.feature.channel.ChannelConstants.CHANNEL_ARG_DRAFT
 import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
@@ -105,6 +104,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import io.getstream.chat.android.compose.R as ComposeR
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 class ChatsActivity : ComponentActivity() {
 
@@ -480,7 +480,7 @@ class ChatsActivity : ComponentActivity() {
                 title = {
                     Column {
                         Text(
-                            text = stringResource(R.string.stream_ui_channel_info_group_title),
+                            text = stringResource(UiCommonR.string.stream_ui_channel_info_group_title),
                             style = ChatTheme.typography.headingMedium,
                             color = ChatTheme.colors.textPrimary,
                         )
@@ -503,7 +503,7 @@ class ChatsActivity : ComponentActivity() {
                         OutlinedButton(
                             onClick = onActionClick,
                         ) {
-                            Text(text = stringResource(id = ComposeR.string.stream_ui_channel_info_edit_action))
+                            Text(text = stringResource(id = UiCommonR.string.stream_ui_channel_info_edit_action))
                         }
                     }
                 },
@@ -578,14 +578,14 @@ class ChatsActivity : ComponentActivity() {
             onVideoPlaybackError = {
                 Toast.makeText(
                     applicationContext,
-                    stream_ui_message_list_video_display_error,
+                    UiCommonR.string.stream_ui_message_list_video_display_error,
                     Toast.LENGTH_SHORT,
                 ).show()
             },
             onSharingError = {
                 Toast.makeText(
                     applicationContext,
-                    R.string.stream_compose_media_gallery_preview_could_not_share_attachment,
+                    ComposeR.string.stream_compose_media_gallery_preview_could_not_share_attachment,
                     Toast.LENGTH_SHORT,
                 ).show()
             },
@@ -630,8 +630,8 @@ class ChatsActivity : ComponentActivity() {
 private fun CloseButton(onClick: () -> Unit) {
     IconButton(onClick = onClick) {
         Icon(
-            painter = painterResource(id = R.drawable.stream_design_ic_xmark),
-            contentDescription = stringResource(id = R.string.stream_compose_cancel),
+            painter = painterResource(id = ComposeR.drawable.stream_design_ic_xmark),
+            contentDescription = stringResource(id = ComposeR.string.stream_compose_cancel),
             tint = ChatTheme.colors.textPrimary,
         )
     }
@@ -717,37 +717,37 @@ private fun ThreePaneNavigator.navigateToChannel(
 private fun Context.showError(error: ChannelInfoViewEvent.Error) {
     val message = when (error) {
         ChannelInfoViewEvent.RenameChannelError,
-        -> R.string.stream_ui_channel_info_rename_group_error
+        -> UiCommonR.string.stream_ui_channel_info_rename_group_error
 
         ChannelInfoViewEvent.MuteChannelError,
         ChannelInfoViewEvent.UnmuteChannelError,
-        -> R.string.stream_ui_channel_info_mute_conversation_error
+        -> UiCommonR.string.stream_ui_channel_info_mute_conversation_error
 
         ChannelInfoViewEvent.MuteUserError,
         ChannelInfoViewEvent.UnmuteUserError,
-        -> R.string.stream_ui_channel_info_mute_user_error
+        -> UiCommonR.string.stream_ui_channel_info_mute_user_error
 
         ChannelInfoViewEvent.BlockUserError,
         ChannelInfoViewEvent.UnblockUserError,
-        -> R.string.stream_ui_channel_info_block_user_error
+        -> UiCommonR.string.stream_ui_channel_info_block_user_error
 
         ChannelInfoViewEvent.LeaveChannelError,
-        -> R.string.stream_ui_channel_info_leave_conversation_error
+        -> UiCommonR.string.stream_ui_channel_info_leave_conversation_error
 
         ChannelInfoViewEvent.DeleteChannelError,
-        -> R.string.stream_ui_channel_info_delete_conversation_error
+        -> UiCommonR.string.stream_ui_channel_info_delete_conversation_error
 
         ChannelInfoViewEvent.BanMemberError,
-        -> R.string.stream_ui_channel_info_ban_member_error
+        -> UiCommonR.string.stream_ui_channel_info_ban_member_error
 
         ChannelInfoViewEvent.UnbanMemberError,
-        -> R.string.stream_ui_channel_info_unban_member_error
+        -> UiCommonR.string.stream_ui_channel_info_unban_member_error
 
         ChannelInfoViewEvent.RemoveMemberError,
-        -> R.string.stream_ui_channel_info_remove_member_error
+        -> UiCommonR.string.stream_ui_channel_info_remove_member_error
 
         ChannelInfoViewEvent.AddMembersError,
-        -> R.string.stream_ui_channel_info_add_members_error
+        -> UiCommonR.string.stream_ui_channel_info_add_members_error
     }
     Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
 }

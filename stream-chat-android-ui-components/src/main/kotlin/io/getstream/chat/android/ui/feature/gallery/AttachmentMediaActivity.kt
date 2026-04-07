@@ -42,6 +42,7 @@ import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.log.taggedLogger
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * An Activity playing attachments such as audio and video.
@@ -188,7 +189,7 @@ public class AttachmentMediaActivity : AppCompatActivity() {
     private fun showPlaybackError() {
         Toast.makeText(
             this,
-            R.string.stream_ui_message_list_attachment_display_error,
+            UiCommonR.string.stream_ui_message_list_attachment_display_error,
             Toast.LENGTH_SHORT,
         ).show()
     }

@@ -37,6 +37,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.ui.sample.R
+import io.getstream.chat.android.ui.R as UiR
 
 fun Activity.showToast(text: String) {
     Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
@@ -101,7 +102,7 @@ fun Fragment.initToolbar(toolbar: Toolbar) {
             setDisplayHomeAsUpEnabled(true)
 
             ContextCompat.getDrawable(requireContext(), R.drawable.ic_icon_left)?.apply {
-                setTint(ContextCompat.getColor(requireContext(), R.color.stream_ui_black))
+                setTint(ContextCompat.getColor(requireContext(), UiR.color.stream_ui_black))
             }?.let(toolbar::setNavigationIcon)
 
             toolbar.setNavigationOnClickListener {
@@ -115,7 +116,7 @@ fun BottomNavigationView.setBadgeNumber(@IdRes menuItemId: Int, badgeNumber: Int
     getOrCreateBadge(menuItemId).apply {
         horizontalOffset = -context.getDimensionPixelSize(R.dimen.badge_horizontal_offset)
         verticalOffset = context.getDimensionPixelSize(R.dimen.badge_vertical_offset)
-        backgroundColor = context.getColorFromRes(R.color.stream_ui_accent_red)
+        backgroundColor = context.getColorFromRes(UiR.color.stream_ui_accent_red)
         isVisible = badgeNumber > 0
         number = badgeNumber
     }

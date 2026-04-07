@@ -49,6 +49,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.attachments.preview.internal.StreamMediaPlayerContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.common.R as UiCommonR
 /**
  * An Activity that is capable of playing video/audio stream.
  */
@@ -77,7 +78,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
                     onPlaybackError = {
                         Toast.makeText(
                             this,
-                            R.string.stream_ui_message_list_attachment_display_error,
+                            UiCommonR.string.stream_ui_message_list_attachment_display_error,
                             Toast.LENGTH_SHORT,
                         ).show()
                         finish()
