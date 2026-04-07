@@ -1050,7 +1050,7 @@ public class MessageListController(
     ): List<Message> {
         return messages.filter { message ->
             val isSystemMessage = message.isSystem() || message.isError()
-            if (isSystemMessage) showSystemMessages else true
+            !isSystemMessage || showSystemMessages
         }
     }
 

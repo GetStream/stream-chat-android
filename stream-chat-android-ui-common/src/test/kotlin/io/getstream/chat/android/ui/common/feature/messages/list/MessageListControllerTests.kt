@@ -262,7 +262,7 @@ internal class MessageListControllerTests {
     }
 
     @Test
-    fun `When deleted visibility is always When grouping messages Should add all deleted messages`() = runTest {
+    fun `When grouping messages Should include all deleted messages`() = runTest {
         var message = 0
         val messages = randomMessageList {
             message++
