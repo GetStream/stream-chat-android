@@ -422,7 +422,7 @@ private fun MicButtonVisual(
     ) {
         Icon(
             modifier = Modifier.testTag("Stream_ComposerRecordAudioButton"),
-            painter = painterResource(id = R.drawable.stream_compose_ic_mic),
+            painter = painterResource(id = R.drawable.stream_design_ic_voice),
             contentDescription = null,
             tint = ChatTheme.colors.textPrimary,
         )
@@ -516,9 +516,9 @@ internal fun MessageComposerAudioRecordingFloatingLockIcon(
             Icon(
                 painter = painterResource(
                     id = if (isLocked) {
-                        R.drawable.stream_compose_ic_lock_closed
+                        R.drawable.stream_design_ic_lock
                     } else {
-                        R.drawable.stream_compose_ic_lock_open
+                        R.drawable.stream_design_ic_unlock
                     },
                 ),
                 contentDescription = stringResource(
@@ -532,7 +532,7 @@ internal fun MessageComposerAudioRecordingFloatingLockIcon(
             )
             if (!isLocked) {
                 Icon(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_chevron_top),
+                    painter = painterResource(id = R.drawable.stream_design_ic_chevron_up),
                     contentDescription = null,
                     tint = ChatTheme.colors.textSecondary,
                 )

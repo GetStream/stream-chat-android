@@ -26,10 +26,10 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.client.api.state.EventObserver
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelHeaderViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatPreviewBinding
@@ -85,13 +85,13 @@ class ChatPreviewFragment : Fragment() {
     }
 
     private fun initializeChatPreview(cid: String) {
-        val factory = MessageListViewModelFactory(requireContext(), cid)
-        val messageListHeaderViewModel = factory.create(MessageListHeaderViewModel::class.java)
+        val factory = ChannelViewModelFactory(requireContext(), cid)
+        val channelHeaderViewModel = factory.create(ChannelHeaderViewModel::class.java)
         val messageListViewModel = factory.create(MessageListViewModel::class.java)
         val messageComposerViewModel = factory.create(MessageComposerViewModel::class.java)
 
         binding.messagesHeaderView.apply {
-            messageListHeaderViewModel.bindView(this, viewLifecycleOwner)
+            channelHeaderViewModel.bindView(this, viewLifecycleOwner)
 
             setAvatarClickListener {
                 navigateToChatInfo(cid)

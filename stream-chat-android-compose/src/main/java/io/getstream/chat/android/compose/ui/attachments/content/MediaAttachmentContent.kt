@@ -527,7 +527,7 @@ internal fun MediaAttachmentContentItem(
                                 Icon(
                                     tint = ChatTheme.colors.textDisabled,
                                     modifier = Modifier.fillMaxSize(0.4f),
-                                    painter = painterResource(R.drawable.stream_compose_ic_image_picker),
+                                    painter = painterResource(R.drawable.stream_design_ic_image),
                                     contentDescription = stringResource(
                                         id = R.string.stream_ui_message_list_attachment_load_failed,
                                     ),

@@ -16,7 +16,7 @@ import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicke
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/attachments-picker/#usage)
@@ -25,7 +25,7 @@ private object AttachmentsPickerUsageSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = this,
                 channelId = "messaging:123",
             )
@@ -77,7 +77,7 @@ private object AttachmentsPickerHandlingActionsSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = this,
                 channelId = "messaging:123",
             )
@@ -125,7 +125,7 @@ private object AttachmentsPickerCustomizationSnippet {
 
     class CustomPickerTabExample : AppCompatActivity() {
         val factory by lazy {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = this,
                 channelId = "messaging:123",
             )

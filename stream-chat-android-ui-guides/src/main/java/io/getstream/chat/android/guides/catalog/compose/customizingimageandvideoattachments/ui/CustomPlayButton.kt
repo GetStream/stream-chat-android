@@ -39,7 +39,7 @@ internal fun CustomPlayButton(modifier: Modifier) {
             modifier = Modifier
                 .padding(2.dp)
                 .fillMaxSize(0.8f),
-            painter = painterResource(id = R.drawable.stream_compose_ic_play),
+            painter = painterResource(id = R.drawable.stream_design_ic_play_fill),
             tint = Color.White,
             contentDescription = null,
         )

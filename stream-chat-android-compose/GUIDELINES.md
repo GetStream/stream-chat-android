@@ -15,6 +15,7 @@
   * [Customization Options](#customization-options)
   * [Slot APIs](#slot-apis)
 * [Drawable colors](#drawable-colors)
+* [Icon System](ICONS.md)
 * [Component Previews](#component-previews)  
 
 ## Motivation

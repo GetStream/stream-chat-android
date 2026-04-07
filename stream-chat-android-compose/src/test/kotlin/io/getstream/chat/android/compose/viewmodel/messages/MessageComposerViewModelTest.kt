@@ -446,7 +446,7 @@ internal class MessageComposerViewModelTest {
         private val clientState: ClientState = mock()
         private val channelState: ChannelState = mock()
         private val storageHelper: AttachmentStorageHelper = mock {
-            on { resolveAttachmentFiles(any()) } doAnswer { it.getArgument(0) }
+            onBlocking { resolveAttachmentFiles(any()) } doAnswer { it.getArgument(0) }
         }
         private val appSettings: AppSettings = AppSettings(
             app = App(

@@ -153,7 +153,7 @@ internal fun DefaultMessageDeletedContent(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            painter = painterResource(R.drawable.stream_compose_ic_block),
+            painter = painterResource(R.drawable.stream_design_ic_no_sign),
             contentDescription = null,
             tint = contentColor,
             modifier = Modifier.size(16.dp),
@@ -178,7 +178,7 @@ internal fun DefaultMessageDeletedContent(
  */
 @Composable
 @Suppress("LongMethod")
-internal fun DefaultMessageContent(
+internal fun DefaultMessageRegularContent(
     message: Message,
     currentUser: User?,
     messageAlignment: MessageAlignment = MessageAlignment.Start,

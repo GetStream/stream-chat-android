@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="20"
+    android:viewportHeight="20">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M0 10c0-5.52 4.48-10 10-10h0c5.52 0 10 4.48 10 10v0c0 5.52-4.48 10-10 10h0c-5.52 0-10-4.48-10-10z"/>
+    <path
+        android:fillColor="#FF000000"
+        android:fillType="evenOdd"
+        android:pathData="M6.6 5.5H13.4V14.5H6.6L6.6 5.5Z"/>
+    <path
+        android:fillColor="#FF04FF8E"
+        android:pathData="M5.24 5.17H6.6V14.83H5.24V5.17Z"/>
+    <path
+        android:fillColor="#FF8E2EFF"
+        android:pathData="M13.4 7.83H14.76V14.83H13.4V7.83Z"/>
+    <path
+        android:fillColor="#FF00C5FF"
+        android:pathData="M5.24 14.5H14.76V15.83H5.24V14.5Z"/>
+    <path
+        android:fillColor="#FFFFF152"
+        android:pathData="M5.24 4.17H10.68V5.5H5.24V4.17Z"/>
+    <path
+        android:fillColor="#FFFF5B5B"
+        android:pathData="M13.4 6.83V5.5H12.04V4.17H10.68V8.17H14.76V6.83"/>
+    <path
+        android:fillColor="#FF551C99"
+        android:pathData="M13.4 9.5V8.17H14.76"/>
+    <path
+        android:fillColor="#FF999131"
+        android:fillType="evenOdd"
+        android:pathData="M10.68 4.17V5.5H9.32"/>
+</vector>

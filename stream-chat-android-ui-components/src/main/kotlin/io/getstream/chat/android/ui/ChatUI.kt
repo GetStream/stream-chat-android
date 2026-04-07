@@ -177,7 +177,7 @@ public object ChatUI {
      * Whether draft messages are enabled.
      */
     @JvmStatic
-    public var draftMessagesEnabled: Boolean = false
+    public var draftMessagesEnabled: Boolean = true
 
     /**
      * Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,
@@ -192,13 +192,13 @@ public object ChatUI {
      * Whether or not the auto-translation feature is enabled.
      */
     @JvmStatic
-    public var autoTranslationEnabled: Boolean = false
+    public var autoTranslationEnabled: Boolean = true
 
     /**
      * Whether the option to show the original translation is enabled or not.
      */
     @JvmStatic
-    public var showOriginalTranslationEnabled: Boolean = false
+    public var showOriginalTranslationEnabled: Boolean = true
 
     /**
      * Provides a custom renderer for user avatars.

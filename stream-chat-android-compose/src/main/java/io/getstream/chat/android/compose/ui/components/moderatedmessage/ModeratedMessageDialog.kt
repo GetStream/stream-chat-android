@@ -119,7 +119,7 @@ internal fun DefaultModeratedDialogOptions(
 internal fun DefaultModeratedMessageDialogTitle() {
     Spacer(modifier = Modifier.height(12.dp))
 
-    val painter = painterResource(id = R.drawable.stream_compose_ic_flag)
+    val painter = painterResource(id = R.drawable.stream_design_ic_flag)
     Image(
         painter = painter,
         contentDescription = "",

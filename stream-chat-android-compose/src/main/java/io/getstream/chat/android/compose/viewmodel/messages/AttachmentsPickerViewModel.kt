@@ -267,20 +267,28 @@ public class AttachmentsPickerViewModel @JvmOverloads constructor(
      * Resolves [uris] from a system picker into [Attachment]s and emits the result
      * via [submittedAttachments].
      *
+     * URIs whose content is inaccessible (e.g. cloud-backed files not downloaded to
+     * the device) are detected via a lightweight accessibility check and excluded
+     * from the result. When any URI is inaccessible, [hasUnresolvedAttachments] is
+     * set so the UI layer can display an appropriate message.
+     *
      * @param uris Content URIs returned by the system picker.
      */
     public fun resolveAndSubmitUris(uris: List<Uri>) {
         if (uris.isEmpty()) return
         viewModelScope.launch {
-            val metadata = withContext(DispatcherProvider.IO) { storageHelper.resolveMetadata(uris) }
-            val attachments = storageHelper.toAttachments(metadata)
-            if (attachments.size < metadata.size) {
+            val (accessible, inaccessible) = withContext(DispatcherProvider.IO) {
+                val metadata = storageHelper.resolveMetadata(uris)
+                storageHelper.partitionResolvable(metadata)
+            }
+            if (inaccessible.isNotEmpty()) {
                 hasUnresolvedAttachments = true
             }
+            val attachments = storageHelper.toAttachments(accessible)
             _submittedAttachments.trySend(
                 SubmittedAttachments(
                     attachments = attachments,
-                    hasUnsupportedFiles = metadata.size < uris.size,
+                    hasUnsupportedFiles = (accessible.size + inaccessible.size) < uris.size,
                 ),
             )
         }

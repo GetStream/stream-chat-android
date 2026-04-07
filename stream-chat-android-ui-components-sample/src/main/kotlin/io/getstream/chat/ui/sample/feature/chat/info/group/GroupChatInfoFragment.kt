@@ -30,8 +30,8 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewE
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.ui.viewmodel.channel.ChannelInfoViewModelFactory
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelHeaderViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
@@ -51,8 +51,8 @@ class GroupChatInfoFragment : Fragment() {
     private val viewModel: ChannelInfoViewModel by viewModels {
         ChannelInfoViewModelFactory(cid = args.cid)
     }
-    private val headerViewModel: MessageListHeaderViewModel by viewModels {
-        MessageListViewModelFactory(requireContext(), args.cid)
+    private val headerViewModel: ChannelHeaderViewModel by viewModels {
+        ChannelViewModelFactory(requireContext(), args.cid)
     }
     private val adapter: GroupChatInfoAdapter = GroupChatInfoAdapter()
 
@@ -207,14 +207,6 @@ class GroupChatInfoFragment : Fragment() {
 
                 is ChatInfoItem.Option.DeleteChannel ->
                     viewModel.onViewAction(ChannelInfoViewAction.DeleteChannelClick)
-
-                is ChatInfoItem.Option.HideChannel -> viewModel.onViewAction(
-                    if (option.isChecked) {
-                        ChannelInfoViewAction.UnhideChannelClick
-                    } else {
-                        ChannelInfoViewAction.HideChannelClick
-                    },
-                )
 
                 // Not applicable in this UI
                 ChatInfoItem.Option.SharedGroups -> Unit

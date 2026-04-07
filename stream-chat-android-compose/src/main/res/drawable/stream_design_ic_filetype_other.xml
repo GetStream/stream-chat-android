@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="40dp"
+    android:autoMirrored="true"
+    android:viewportWidth="32"
+    android:viewportHeight="40">
+    <path
+        android:fillColor="#FF888888"
+        android:pathData="M0 4C0 1.79 1.79 0 4 0H22.4L32 10V36C32 38.21 30.21 40 28 40H4C1.79 40 0 38.21 0 36V4Z"/>
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillAlpha="0.5"
+        android:pathData="M32 10H25.4C23.74 10 22.4 8.66 22.4 7V0L32 10Z"/>
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M8 14c0-0.21 0.08-0.42 0.23-0.57 0.15-0.15 0.35-0.23 0.57-0.23h12.8c0.21 0 0.42 0.08 0.57 0.23 0.15 0.15 0.23 0.35 0.23 0.57v0c0 0.21-0.08 0.42-0.23 0.57-0.15 0.15-0.35 0.23-0.57 0.23h-12.8c-0.21 0-0.42-0.08-0.57-0.23-0.15-0.15-0.23-0.35-0.23-0.57z"/>
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M8 22c0-0.21 0.08-0.42 0.23-0.57 0.15-0.15 0.35-0.23 0.57-0.23h12.8c0.21 0 0.42 0.08 0.57 0.23 0.15 0.15 0.23 0.35 0.23 0.57v0c0 0.21-0.08 0.42-0.23 0.57-0.15 0.15-0.35 0.23-0.57 0.23h-12.8c-0.21 0-0.42-0.08-0.57-0.23-0.15-0.15-0.23-0.35-0.23-0.57z"/>
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M8 18c0-0.21 0.08-0.42 0.23-0.57 0.15-0.15 0.35-0.23 0.57-0.23h8c0.21 0 0.42 0.08 0.57 0.23 0.15 0.15 0.23 0.35 0.23 0.57v0c0 0.21-0.08 0.42-0.23 0.57-0.15 0.15-0.35 0.23-0.57 0.23h-8c-0.21 0-0.42-0.08-0.57-0.23-0.15-0.15-0.23-0.35-0.23-0.57z"/>
+</vector>

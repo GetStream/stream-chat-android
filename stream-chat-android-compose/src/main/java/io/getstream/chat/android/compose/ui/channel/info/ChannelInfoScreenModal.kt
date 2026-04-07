@@ -16,12 +16,10 @@
 
 package io.getstream.chat.android.compose.ui.channel.info
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -61,29 +59,6 @@ internal fun ChannelInfoScreenModal(
                 modal = modal,
                 onMemberViewEvent = { event ->
                     onMemberViewEvent(event)
-                    onDismiss()
-                },
-                onDismiss = onDismiss,
-            )
-        }
-
-        ChannelInfoViewEvent.HideChannelModal -> {
-            var clearHistory by remember { mutableStateOf(false) }
-            SimpleDialog(
-                title = if (isGroupChannel) {
-                    stringResource(R.string.stream_ui_channel_info_option_hide_group)
-                } else {
-                    stringResource(R.string.stream_ui_channel_info_option_hide_conversation)
-                },
-                text = {
-                    HideChannelModalText(
-                        isGroupChannel = isGroupChannel,
-                        clearHistory = clearHistory,
-                        onClearHistoryClick = { clearHistory = !clearHistory },
-                    )
-                },
-                onConfirmClick = {
-                    onViewAction(ChannelInfoViewAction.HideChannelConfirmationClick(clearHistory))
                     onDismiss()
                 },
                 onDismiss = onDismiss,
@@ -181,48 +156,6 @@ internal fun ChannelInfoScreenModal(
 }
 
 @Composable
-private fun HideChannelModalText(
-    isGroupChannel: Boolean,
-    clearHistory: Boolean,
-    onClearHistoryClick: () -> Unit,
-) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            text = if (isGroupChannel) {
-                stringResource(R.string.stream_ui_channel_info_hide_group_modal_message)
-            } else {
-                stringResource(R.string.stream_ui_channel_info_hide_conversation_modal_message)
-            },
-            color = ChatTheme.colors.textPrimary,
-            style = ChatTheme.typography.bodyDefault,
-        )
-        Row(
-            modifier = Modifier
-                .clickable(onClick = onClearHistoryClick)
-                .padding(end = 16.dp, top = 8.dp, bottom = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Checkbox(
-                checked = clearHistory,
-                onCheckedChange = null,
-            )
-            Text(
-                text = if (isGroupChannel) {
-                    stringResource(R.string.stream_ui_channel_info_hide_group_modal_clear_history)
-                } else {
-                    stringResource(R.string.stream_ui_channel_info_hide_conversation_modal_clear_history)
-                },
-                color = ChatTheme.colors.textSecondary,
-                style = ChatTheme.typography.bodyDefault,
-            )
-        }
-    }
-}
-
-@Composable
 private fun BanMemberModalText(
     modal: ChannelInfoViewEvent.BanMemberModal,
     selectedTimeout: Timeout,
@@ -261,28 +194,6 @@ private fun BanMemberModalText(
                 Text(text = label)
             }
         }
-    }
-}
-
-@Preview
-@Composable
-private fun ChannelInfoScreenModalHideDirectChannelPreview() {
-    ChatTheme {
-        ChannelInfoScreenModal(
-            modal = ChannelInfoViewEvent.HideChannelModal,
-            isGroupChannel = false,
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun ChannelInfoScreenModalHideGroupChannelPreview() {
-    ChatTheme {
-        ChannelInfoScreenModal(
-            modal = ChannelInfoViewEvent.HideChannelModal,
-            isGroupChannel = true,
-        )
     }
 }
 

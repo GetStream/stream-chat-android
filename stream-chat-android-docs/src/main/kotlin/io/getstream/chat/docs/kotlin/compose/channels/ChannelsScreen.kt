@@ -11,7 +11,7 @@ import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
-import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.querysort.QuerySortByField
 
@@ -80,7 +80,7 @@ private object ChannelsScreenCustomizationSnippet {
             setContent {
                 ChatTheme {
                     ChannelsScreen(
-                        viewModelFactory = ChannelViewModelFactory(
+                        viewModelFactory = ChannelListViewModelFactory(
                             filters = Filters.and(
                                 Filters.eq("type", "messaging"),
                                 Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
@@ -108,7 +108,7 @@ private object ChannelsScreenOverridingViewModelsSnippet {
     class ChannelsActivity : AppCompatActivity() {
 
         private val factory by lazy {
-            ChannelViewModelFactory(
+            ChannelListViewModelFactory(
                 chatClient = ChatClient.instance(),
                 querySort = QuerySortByField.descByName("last_updated"),
                 filters = null

@@ -168,23 +168,6 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
                 cancelText = context.getString(R.string.cancel),
             )
 
-        fun newHideChannelInstance(context: Context, isGroupChannel: Boolean): ConfirmationDialogFragment = newInstance(
-            iconResId = R.drawable.stream_ic_hide,
-            iconTintResId = R.color.stream_ui_grey,
-            title = if (isGroupChannel) {
-                context.getString(R.string.stream_ui_channel_info_option_hide_group)
-            } else {
-                context.getString(R.string.stream_ui_channel_info_option_hide_conversation)
-            },
-            description = if (isGroupChannel) {
-                context.getString(R.string.stream_ui_channel_info_hide_group_modal_message)
-            } else {
-                context.getString(R.string.stream_ui_channel_info_hide_conversation_modal_message)
-            },
-            confirmText = context.getString(R.string.clear_history),
-            cancelText = context.getString(R.string.keep_history),
-        )
-
         fun newRemoveMemberInstance(context: Context, member: Member): ConfirmationDialogFragment = newInstance(
             iconResId = R.drawable.ic_delete,
             iconTintResId = R.color.red,

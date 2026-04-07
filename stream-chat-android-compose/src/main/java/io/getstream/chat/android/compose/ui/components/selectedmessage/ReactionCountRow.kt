@@ -78,7 +78,7 @@ internal fun ReactionCountRow(
                 count = null,
                 icon = {
                     Icon(
-                        painter = painterResource(R.drawable.stream_compose_ic_reaction_add),
+                        painter = painterResource(R.drawable.stream_design_ic_emoji_add),
                         contentDescription = stringResource(R.string.stream_compose_reactions_add),
                         tint = ChatTheme.colors.controlChipText,
                     )

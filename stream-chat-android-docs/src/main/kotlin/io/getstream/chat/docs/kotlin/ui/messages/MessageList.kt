@@ -26,8 +26,8 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.helper.StyleTransformer
 import io.getstream.chat.android.ui.helper.TransformStyle
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
 import io.getstream.chat.docs.R
 import io.getstream.chat.docs.databinding.TodayMessageListItemBinding
@@ -49,7 +49,7 @@ class MessageListViewSnippets : Fragment() {
     fun usage() {
         // Init ViewModel
         val viewModel: MessageListViewModel by viewModels {
-            MessageListViewModelFactory(requireContext(), cid = "messaging:123")
+            ChannelViewModelFactory(requireContext(), cid = "messaging:123")
         }
 
         // Bind View and ViewModel

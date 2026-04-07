@@ -697,152 +697,6 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun `hide channel click`() = runTest {
-        val fixture = Fixture().given(isHidden = false)
-        val sut = fixture.get(backgroundScope)
-
-        sut.state.test {
-            skipItems(2) // Skip initial states
-
-            sut.events.test {
-                sut.onViewAction(ChannelInfoViewAction.HideChannelClick)
-
-                assertEquals(ChannelInfoViewEvent.HideChannelModal, awaitItem())
-            }
-        }
-
-        launch { fixture.verifyNoMoreInteractions() }
-    }
-
-    @Test
-    fun `hide channel success`() = runTest {
-        val fixture = Fixture().given(isHidden = false)
-        val sut = fixture.get(backgroundScope)
-
-        sut.state.test {
-            skipItems(1) // Skip initial state
-
-            assertEquals(
-                ChannelInfoViewState.Content(
-                    members = emptyMembers(),
-                    options = listOf(
-                        ChannelInfoViewState.Content.Option.PinnedMessages,
-                        ChannelInfoViewState.Content.Option.MediaAttachments,
-                        ChannelInfoViewState.Content.Option.FilesAttachments,
-
-                    ),
-                ),
-                awaitItem(),
-            )
-
-            val clearHistory = true
-            fixture.givenHideChannel(clearHistory)
-
-            sut.onViewAction(ChannelInfoViewAction.HideChannelConfirmationClick(clearHistory = clearHistory))
-
-            sut.events.test {
-                assertEquals(
-                    ChannelInfoViewEvent.NavigateUp(reason = Navigation.Reason.HideChannelSuccess),
-                    awaitItem(),
-                )
-            }
-        }
-    }
-
-    @Test
-    fun `hide channel error`() = runTest {
-        val fixture = Fixture().given(isHidden = false)
-        val sut = fixture.get(backgroundScope)
-
-        sut.state.test {
-            skipItems(1) // Skip initial state
-
-            assertEquals(
-                ChannelInfoViewState.Content(
-                    members = emptyMembers(),
-                    options = listOf(
-                        ChannelInfoViewState.Content.Option.PinnedMessages,
-                        ChannelInfoViewState.Content.Option.MediaAttachments,
-                        ChannelInfoViewState.Content.Option.FilesAttachments,
-
-                    ),
-                ),
-                awaitItem(),
-            )
-
-            val clearHistory = true
-            fixture.givenHideChannel(
-                clearHistory = clearHistory,
-                error = randomGenericError(),
-            )
-
-            sut.onViewAction(ChannelInfoViewAction.HideChannelConfirmationClick(clearHistory = clearHistory))
-
-            sut.events.test {
-                assertEquals(ChannelInfoViewEvent.HideChannelError, awaitItem())
-            }
-        }
-    }
-
-    @Test
-    fun `unhide channel`() = runTest {
-        val fixture = Fixture().given(isHidden = true)
-        val sut = fixture.get(backgroundScope)
-
-        sut.state.test {
-            skipItems(1) // Skip initial state
-
-            assertEquals(
-                ChannelInfoViewState.Content(
-                    members = emptyMembers(),
-                    options = listOf(
-                        ChannelInfoViewState.Content.Option.PinnedMessages,
-                        ChannelInfoViewState.Content.Option.MediaAttachments,
-                        ChannelInfoViewState.Content.Option.FilesAttachments,
-
-                    ),
-                ),
-                awaitItem(),
-            )
-
-            fixture.givenUnhideChannel()
-
-            sut.onViewAction(ChannelInfoViewAction.UnhideChannelClick)
-        }
-    }
-
-    @Test
-    fun `unhide channel error`() = runTest {
-        val fixture = Fixture().given(isHidden = true)
-        val sut = fixture.get(backgroundScope)
-
-        sut.state.test {
-            skipItems(1) // Skip initial state
-
-            assertEquals(
-                ChannelInfoViewState.Content(
-                    members = emptyMembers(),
-                    options = listOf(
-                        ChannelInfoViewState.Content.Option.PinnedMessages,
-                        ChannelInfoViewState.Content.Option.MediaAttachments,
-                        ChannelInfoViewState.Content.Option.FilesAttachments,
-
-                    ),
-                ),
-                awaitItem(),
-            )
-
-            fixture.givenUnhideChannel(error = randomGenericError())
-
-            sut.onViewAction(ChannelInfoViewAction.UnhideChannelClick)
-
-            sut.events.test {
-                assertEquals(ChannelInfoViewEvent.UnhideChannelError, awaitItem())
-            }
-        }
-    }
-
-    @Test
     fun `leave channel click`() = runTest {
         val fixture = Fixture()
         val sut = fixture.get(backgroundScope)
@@ -1349,12 +1203,10 @@ private class Fixture {
     private val channelData = MutableStateFlow(ChannelData(type = "", id = ""))
     private val channelMembers = MutableStateFlow(emptyList<Member>())
     private val channelMuted = MutableStateFlow(false)
-    private val channelHidden = MutableStateFlow(false)
     private val channelState: ChannelState = mock {
         on { channelData } doReturn channelData
         on { members } doReturn channelMembers
         on { muted } doReturn channelMuted
-        on { hidden } doReturn channelHidden
     }
     private val mutedUsers = MutableStateFlow(emptyList<Mute>())
     private val blockedUserIds = MutableStateFlow(emptyList<String>())
@@ -1370,7 +1222,6 @@ private class Fixture {
         currentUser: User? = null,
         channel: Channel? = null,
         isMuted: Boolean? = null,
-        isHidden: Boolean? = null,
     ) = apply {
         if (currentUser != null) {
             whenever(chatClient.getCurrentUser()) doReturn currentUser
@@ -1381,9 +1232,6 @@ private class Fixture {
         }
         if (isMuted != null) {
             channelMuted.value = isMuted
-        }
-        if (isHidden != null) {
-            channelHidden.value = isHidden
         }
     }
 
@@ -1410,24 +1258,6 @@ private class Fixture {
             error?.asCall()
                 ?: Unit.asCall().also {
                     channelMuted.value = false
-                }
-        }
-    }
-
-    fun givenHideChannel(clearHistory: Boolean, error: Error? = null) = apply {
-        whenever(channelClient.hide(clearHistory)) doAnswer {
-            error?.asCall()
-                ?: Unit.asCall().also {
-                    channelHidden.value = true
-                }
-        }
-    }
-
-    fun givenUnhideChannel(error: Error? = null) = apply {
-        whenever(channelClient.show()) doAnswer {
-            error?.asCall()
-                ?: Unit.asCall().also {
-                    channelHidden.value = false
                 }
         }
     }

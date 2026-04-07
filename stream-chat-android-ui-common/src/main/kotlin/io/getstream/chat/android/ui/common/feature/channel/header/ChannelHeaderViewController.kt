@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 
-// The XML SDK has its own ViewModel for the MessageListHeaderView.
+// The XML SDK has its own ViewModel for the ChannelHeaderView.
 // This class can be later shared after a refactor of the XML SDK.
 /**
  * Controller responsible for managing the state of the channel header.

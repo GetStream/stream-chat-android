@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.messages
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
+import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenuForFailedMessage
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenuForIncomingMessage
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenuForOutgoingMessage
 import org.junit.Rule
@@ -54,6 +55,20 @@ internal class SelectedMessageMenuTest : PaparazziComposeTest {
     fun `their message in dark mode`() {
         snapshot(isInDarkMode = true) {
             SelectedMessageMenuForIncomingMessage()
+        }
+    }
+
+    @Test
+    fun `failed message`() {
+        snapshot(isInDarkMode = false) {
+            SelectedMessageMenuForFailedMessage()
+        }
+    }
+
+    @Test
+    fun `failed message in dark mode`() {
+        snapshot(isInDarkMode = true) {
+            SelectedMessageMenuForFailedMessage()
         }
     }
 }

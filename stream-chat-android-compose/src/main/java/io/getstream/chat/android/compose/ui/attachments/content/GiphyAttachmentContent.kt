@@ -207,13 +207,18 @@ private fun GiphyLabel(modifier: Modifier) {
     Row(
         modifier = modifier
             .background(colors.badgeBgOverlay, RoundedCornerShape(StreamTokens.radiusLg))
-            .padding(horizontal = StreamTokens.spacingXs, vertical = StreamTokens.spacing2xs),
+            .padding(
+                top = StreamTokens.spacing2xs,
+                bottom = StreamTokens.spacing2xs,
+                start = StreamTokens.spacing2xs,
+                end = StreamTokens.spacingXs,
+            ),
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
-            modifier = Modifier.size(12.dp),
-            painter = painterResource(R.drawable.stream_ic_command_giphy),
+            modifier = Modifier.size(16.dp),
+            painter = painterResource(R.drawable.stream_design_ic_giphy),
             contentDescription = null,
             contentScale = ContentScale.Inside,
         )

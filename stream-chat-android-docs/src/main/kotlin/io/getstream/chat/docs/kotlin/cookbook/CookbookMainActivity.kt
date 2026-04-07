@@ -10,7 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.docs.kotlin.cookbook.ui.CustomChannelListScreen
 import io.getstream.chat.docs.kotlin.cookbook.ui.CustomComposerAndAttachmentsPicker
-import io.getstream.chat.docs.kotlin.cookbook.ui.CustomMessageListHeader
+import io.getstream.chat.docs.kotlin.cookbook.ui.CustomChannelHeader
 import io.getstream.chat.docs.kotlin.cookbook.ui.CustomMessageListScreen
 import io.getstream.chat.docs.kotlin.cookbook.ui.theme.CookbookTheme
 import io.getstream.chat.docs.kotlin.cookbook.utils.connectUser
@@ -36,7 +36,7 @@ class CookbookMainActivity : ComponentActivity() {
                         CustomChannelListScreen(
                             navigateToMessageList = { cid ->
                                 // navController.navigate(AppScreens.CustomMessageList.routeWithArg(cid))
-                                // navController.navigate(AppScreens.CustomMessageListHeader.routeWithArg(cid))
+                                // navController.navigate(AppScreens.CustomChannelHeader.routeWithArg(cid))
                                 navController.navigate(AppScreens.CustomMessageComposer.routeWithArg(cid))
                             }
                         )
@@ -48,9 +48,9 @@ class CookbookMainActivity : ComponentActivity() {
                         )
                     }
 
-                    composable(AppScreens.CustomMessageListHeader.route) { backStackEntry ->
+                    composable(AppScreens.CustomChannelHeader.route) { backStackEntry ->
                         ChatTheme {
-                            CustomMessageListHeader(
+                            CustomChannelHeader(
                                 cid = backStackEntry.arguments?.getString("cid"),
                                 onBackClick = { navController.popBackStack() }
                             )
@@ -79,12 +79,12 @@ class CookbookMainActivity : ComponentActivity() {
 enum class AppScreens(val route: String) {
     CustomChannelList("channel_list"),
     CustomMessageList("message_list/{cid}"),
-    CustomMessageListHeader("message_header/{cid}"),
+    CustomChannelHeader("message_header/{cid}"),
     CustomMessageComposer("message_composer/{cid}");
 
     fun routeWithArg(argValue: Any): String = when (this) {
         CustomMessageList -> this.route.replace("{cid}", argValue.toString())
-        CustomMessageListHeader -> this.route.replace("{cid}", argValue.toString())
+        CustomChannelHeader -> this.route.replace("{cid}", argValue.toString())
         CustomMessageComposer -> this.route.replace("{cid}", argValue.toString())
         else -> this.route
     }

@@ -39,9 +39,9 @@ import io.getstream.chat.android.ui.feature.messages.composer.content.MessageCom
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.helper.StyleTransformer
 import io.getstream.chat.android.ui.helper.TransformStyle
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
 import io.getstream.chat.docs.R
 import io.getstream.chat.docs.databinding.MessageComposerLeadingContentBinding
@@ -62,7 +62,7 @@ private object MessageComposer : Fragment() {
 
         fun usage1() {
             // Create MessageComposerViewModel for a given channel
-            val factory = MessageListViewModelFactory(requireContext(), cid = "messaging:123")
+            val factory = ChannelViewModelFactory(requireContext(), cid = "messaging:123")
             val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
 
             // Bind MessageComposerViewModel with MessageComposerView
@@ -81,7 +81,7 @@ private object MessageComposer : Fragment() {
 
         fun usage2() {
             // Create ViewModels for MessageComposerView and MessageListView
-            val factory = MessageListViewModelFactory(requireContext(), cid = "messaging:123")
+            val factory = ChannelViewModelFactory(requireContext(), cid = "messaging:123")
             val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
             val messageListViewModel: MessageListViewModel by viewModels { factory }
 
@@ -407,7 +407,7 @@ private object MessageComposer : Fragment() {
             val cid = "messaging:123"
             val defaultUserLookupHandler = DefaultUserLookupHandler(chatClient, cid)
 
-            val factory = MessageListViewModelFactory(
+            val factory = ChannelViewModelFactory(
                 context = requireContext(), cid = cid, userLookupHandler = defaultUserLookupHandler
             )
             val viewModel: MessageComposerViewModel by viewModels { factory }
@@ -420,7 +420,7 @@ private object MessageComposer : Fragment() {
                 queryMembers(query)
             }
 
-            val factory = MessageListViewModelFactory(
+            val factory = ChannelViewModelFactory(
                 context = requireContext(),
                 cid = cid,
                 userLookupHandler = customUserLookupHandler

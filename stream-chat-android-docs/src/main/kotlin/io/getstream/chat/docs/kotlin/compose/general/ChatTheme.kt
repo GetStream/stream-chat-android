@@ -12,12 +12,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
 import io.getstream.chat.android.compose.ui.util.MessageTextFormatter
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -28,7 +28,7 @@ import java.util.Date
 
 abstract class ChatThemeCustomization : AppCompatActivity() {
 
-        protected lateinit var viewModelFactory: MessagesViewModelFactory
+        protected lateinit var viewModelFactory: ChannelViewModelFactory
 
         protected val autoTranslationEnabled = true
 
@@ -53,8 +53,8 @@ private object ChatThemeUsageSnippet {
 
             setContent {
                 ChatTheme {
-                    MessagesScreen(
-                        viewModelFactory = MessagesViewModelFactory(
+                    ChannelScreen(
+                        viewModelFactory = ChannelViewModelFactory(
                             context = this,
                             channelId = "messaging:123",
                             messageLimit = 30
@@ -80,8 +80,8 @@ private object ChatThemeCustomizationSnippet {
 
             setContent {
                 ChatTheme {
-                    MessagesScreen(
-                        viewModelFactory = MessagesViewModelFactory(
+                    ChannelScreen(
+                        viewModelFactory = ChannelViewModelFactory(
                             context = this,
                             channelId = "messaging:123",
                         ),
@@ -99,7 +99,7 @@ private object ChatThemeDateFormatterSnippet : ChatThemeCustomization() {
         ChatTheme(
             dateFormatter = buildDateFormatter()
         ) {
-            MessagesScreen(
+            ChannelScreen(
                 viewModelFactory = viewModelFactory,
                 onBackPressed = { finish() },
             )
@@ -155,7 +155,7 @@ private object ChatThemeMessageTextFormatterDefaultSnippet : ChatThemeCustomizat
             typography = typography,
             messageTextFormatter = buildMessageTextFormatter(typography, colors)
         ) {
-            MessagesScreen(
+            ChannelScreen(
                 viewModelFactory = viewModelFactory,
                 onBackPressed = { finish() },
             )
@@ -232,7 +232,7 @@ private object ChatThemeMessageTextFormatterCompositeSnippet : ChatThemeCustomiz
             typography = typography,
             messageTextFormatter = buildMessageTextFormatter(typography, colors)
         ) {
-            MessagesScreen(
+            ChannelScreen(
                 viewModelFactory = viewModelFactory,
                 onBackPressed = { finish() },
             )

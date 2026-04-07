@@ -150,7 +150,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
                     onClick = { onBackPressed() },
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+                        painter = painterResource(id = R.drawable.stream_design_ic_arrow_left),
                         contentDescription = null,
                         tint = Color.White,
                     )

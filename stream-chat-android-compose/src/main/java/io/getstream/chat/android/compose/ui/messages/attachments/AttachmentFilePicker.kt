@@ -213,7 +213,7 @@ private fun RequestAdditionalAccessButton(
                 color = ChatTheme.colors.textPrimary,
             )
             Icon(
-                painter = painterResource(id = R.drawable.stream_compose_ic_chevron_right),
+                painter = painterResource(id = R.drawable.stream_design_ic_chevron_right),
                 contentDescription = null,
                 tint = ChatTheme.colors.textSecondary,
             )

@@ -146,30 +146,6 @@ internal class ChannelListViewModelTest {
     }
 
     @Test
-    fun `Given channel list in content state When hiding a channel Should hide the channel`() = runTest {
-        val chatClient: ChatClient = mock()
-        val channelClient: ChannelClient = mock()
-
-        val viewModel = Fixture(chatClient, channelClient)
-            .givenCurrentUser()
-            .givenChannelsQuery()
-            .givenChannelsState(
-                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
-                loading = false,
-            )
-            .givenChannelMutes()
-            .givenHideChannel()
-            .get()
-
-        viewModel.hideChannel(channel1)
-
-        verify(chatClient).hideChannel(
-            channelType = channel1.type,
-            channelId = channel1.id,
-        )
-    }
-
-    @Test
     fun `Given channel list in content state and the current user is online When loading more channels Should load more channels`() =
         runTest {
             val nextPageRequest = QueryChannelsRequest(
@@ -275,10 +251,6 @@ internal class ChannelListViewModelTest {
 
         fun givenDeleteChannel() = apply {
             whenever(channelClient.delete()) doReturn Channel().asCall()
-        }
-
-        fun givenHideChannel() = apply {
-            whenever(chatClient.hideChannel(any(), any(), any())) doReturn Unit.asCall()
         }
 
         fun givenChannelsState(

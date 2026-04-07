@@ -57,7 +57,7 @@ import kotlinx.coroutines.launch
  * Controller responsible for managing the state and events related to channel information.
  *
  * It provides functionality to observe channel data, members, and perform
- * various channel-related actions such as renaming, muting, hiding, leaving, and deleting the channel.
+ * various channel-related actions such as renaming, muting, leaving, and deleting the channel.
  * It also handles state updates and emits events for UI consumption.
  *
  * @param cid The unique identifier of the channel.
@@ -112,17 +112,15 @@ public class ChannelInfoViewController(
                         },
                         channel.members.onEach { logger.d { "[onMembers] size: ${it.size}" } },
                         channel.muted.onEach { logger.d { "[onMuted] $it" } },
-                        channel.hidden.onEach { logger.d { "[onHidden] $it" } },
                         ::ChannelBaseData,
                     ),
                     global.muted,
                     global.blockedUserIds,
-                ) { data4, mutedUsers, blockedUserIds ->
+                ) { data3, mutedUsers, blockedUserIds ->
                     ChannelInfoData(
-                        channelData = data4.channelData,
-                        members = data4.members,
-                        isMuted = data4.isMuted,
-                        isHidden = data4.isHidden,
+                        channelData = data3.channelData,
+                        members = data3.members,
+                        isMuted = data3.isMuted,
                         mutedUsers = mutedUsers,
                         blockedUserIds = blockedUserIds,
                     )
@@ -164,7 +162,6 @@ public class ChannelInfoViewController(
                     channelData = data.channelData,
                     singleMember = singleMember,
                     isMuted = data.isMuted,
-                    isHidden = data.isHidden,
                     mutedUsers = data.mutedUsers,
                     blockedUserIds = data.blockedUserIds,
                 ).mapNotNull { option ->
@@ -203,9 +200,6 @@ public class ChannelInfoViewController(
             is ChannelInfoViewAction.UnmuteUserClick -> unmuteUser()
             is ChannelInfoViewAction.BlockUserClick -> blockUser()
             is ChannelInfoViewAction.UnblockUserClick -> unblockUser()
-            is ChannelInfoViewAction.HideChannelClick -> _events.tryEmit(ChannelInfoViewEvent.HideChannelModal)
-            is ChannelInfoViewAction.HideChannelConfirmationClick -> setChannelHide(hide = true, action.clearHistory)
-            is ChannelInfoViewAction.UnhideChannelClick -> setChannelHide(hide = false)
             is ChannelInfoViewAction.LeaveChannelClick -> _events.tryEmit(ChannelInfoViewEvent.LeaveChannelModal)
             is ChannelInfoViewAction.LeaveChannelConfirmationClick -> leaveChannel(action.quitMessage)
             is ChannelInfoViewAction.DeleteChannelClick -> _events.tryEmit(ChannelInfoViewEvent.DeleteChannelModal)
@@ -386,33 +380,6 @@ public class ChannelInfoViewController(
         }
     }
 
-    private fun setChannelHide(hide: Boolean, clearHistory: Boolean = false) {
-        logger.d { "[setChannelHide] hide: $hide, clearHistory: $clearHistory" }
-
-        val onError: (Error) -> Unit = { error ->
-            logger.e { "[setChannelHide] error: ${error.message}" }
-            _events.tryEmit(
-                if (hide) {
-                    ChannelInfoViewEvent.HideChannelError
-                } else {
-                    ChannelInfoViewEvent.UnhideChannelError
-                },
-            )
-        }
-
-        scope.launch {
-            if (hide) {
-                channelClient.hide(clearHistory)
-                    .await()
-                    .onSuccess {
-                        _events.tryEmit(ChannelInfoViewEvent.NavigateUp(reason = Navigation.Reason.HideChannelSuccess))
-                    }
-            } else {
-                channelClient.show().await()
-            }.onError(onError)
-        }
-    }
-
     private fun leaveChannel(quitMessage: Message?) {
         logger.d { "[leaveChannel] quitMessage: ${quitMessage?.text}" }
 
@@ -522,14 +489,12 @@ private data class ChannelBaseData(
     val channelData: ChannelData,
     val members: List<Member>,
     val isMuted: Boolean,
-    val isHidden: Boolean,
 )
 
 private data class ChannelInfoData(
     val channelData: ChannelData,
     val members: List<Member>,
     val isMuted: Boolean,
-    val isHidden: Boolean,
     val mutedUsers: List<Mute>,
     val blockedUserIds: List<String>,
 )
@@ -546,12 +511,10 @@ private val ChannelData.isGroupChannel: Boolean
 private val ChannelData.isDistinct: Boolean
     get() = id.startsWith("!members")
 
-@Suppress("LongParameterList")
 private fun buildChannelOptionList(
     channelData: ChannelData,
     singleMember: Member?,
     isMuted: Boolean,
-    isHidden: Boolean,
     mutedUsers: List<Mute>,
     blockedUserIds: List<String>,
 ) = buildList {

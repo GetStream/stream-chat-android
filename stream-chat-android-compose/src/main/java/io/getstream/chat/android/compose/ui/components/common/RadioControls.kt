@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.animation.FadingVisibility
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.ifNotNull
 
@@ -53,7 +54,14 @@ internal fun RadioButton(
         Box(
             modifier = Modifier
                 .size(10.dp)
-                .background(ChatTheme.colors.controlRadioButtonIndicator, CircleShape),
+                .background(
+                    color = if (enabled) {
+                        ChatTheme.colors.controlRadioButtonIndicator
+                    } else {
+                        ChatTheme.colors.textDisabled
+                    },
+                    shape = CircleShape,
+                ),
         )
     }
 }
@@ -74,9 +82,9 @@ internal fun RadioCheck(
         enabled = enabled,
     ) {
         Icon(
-            modifier = Modifier.size(12.dp),
-            painter = painterResource(R.drawable.stream_compose_ic_checkmark),
-            tint = ChatTheme.colors.controlRadioCheckIcon,
+            modifier = Modifier.size(16.dp),
+            painter = painterResource(R.drawable.stream_design_ic_checkmark),
+            tint = if (enabled) ChatTheme.colors.controlRadioCheckIcon else ChatTheme.colors.textDisabled,
             contentDescription = null,
         )
     }
@@ -112,8 +120,10 @@ private fun RadioControlBase(
             },
         contentAlignment = Alignment.Center,
     ) {
-        if (checked) {
-            content()
+        FadingVisibility(checked) {
+            if (checked) {
+                content()
+            }
         }
     }
 }
@@ -123,7 +133,7 @@ private fun RadioControlBase(
 private fun RadioButtonPreview() {
     ChatTheme {
         Row(
-            Modifier.padding(16.dp),
+            modifier = Modifier.padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             RadioButton(checked = false, enabled = true, onCheckedChange = {})
@@ -139,7 +149,7 @@ private fun RadioButtonPreview() {
 private fun RadioCheckPreview() {
     ChatTheme {
         Row(
-            Modifier.padding(16.dp),
+            modifier = Modifier.padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             RadioCheck(checked = false, enabled = true, onCheckedChange = {})

@@ -196,27 +196,27 @@ private data class AttachmentPickerModeInfo(
 
 private val AttachmentPickerModeInfos = mapOf(
     GalleryPickerMode::class to AttachmentPickerModeInfo(
-        icon = R.drawable.stream_compose_ic_media,
+        icon = R.drawable.stream_design_ic_image,
         contentDescription = R.string.stream_compose_attachment_media_picker,
         testTag = "Stream_AttachmentPickerImagesTab",
     ),
     CameraPickerMode::class to AttachmentPickerModeInfo(
-        icon = R.drawable.stream_compose_ic_attachment_camera_picker,
+        icon = R.drawable.stream_design_ic_camera,
         contentDescription = R.string.stream_compose_attachment_camera_picker,
         testTag = "Stream_AttachmentPickerMediaCaptureTab",
     ),
     FilePickerMode::class to AttachmentPickerModeInfo(
-        icon = R.drawable.stream_compose_ic_files,
+        icon = R.drawable.stream_design_ic_folder,
         contentDescription = R.string.stream_compose_attachment_file_picker,
         testTag = "Stream_AttachmentPickerFilesTab",
     ),
     PollPickerMode::class to AttachmentPickerModeInfo(
-        icon = R.drawable.stream_compose_ic_attachment_polls_picker,
+        icon = R.drawable.stream_design_ic_poll,
         contentDescription = R.string.stream_compose_attachment_polls_picker,
         testTag = "Stream_AttachmentPickerPollsTab",
     ),
     CommandPickerMode::class to AttachmentPickerModeInfo(
-        icon = R.drawable.stream_compose_ic_attachment_commands_picker,
+        icon = R.drawable.stream_design_ic_command,
         contentDescription = R.string.stream_compose_attachment_commands_picker,
         testTag = "Stream_AttachmentPickerCommandsTab",
     ),

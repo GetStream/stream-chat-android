@@ -158,10 +158,6 @@ class DirectChannelInfoActivity : ComponentActivity() {
             ChannelInfoViewEvent.UnblockUserError,
             -> R.string.stream_ui_channel_info_block_user_error
 
-            ChannelInfoViewEvent.HideChannelError,
-            ChannelInfoViewEvent.UnhideChannelError,
-            -> R.string.stream_ui_channel_info_hide_conversation_error
-
             ChannelInfoViewEvent.LeaveChannelError,
             -> R.string.stream_ui_channel_info_leave_conversation_error
 

@@ -159,7 +159,12 @@ internal class ChannelStateLogicTest {
     private lateinit var spyMutableGlobalState: MutableGlobalState
 
     private val attachmentUrlValidator: AttachmentUrlValidator = mock {
-        on(it.updateValidAttachmentsUrl(any(), any())) doAnswer { invocationOnMock ->
+        on(
+            it.updateValidAttachmentsUrl(
+                any<List<Message>>(),
+                any<Map<String, Message>>(),
+            ),
+        ) doAnswer { invocationOnMock ->
             invocationOnMock.arguments[0] as List<Message>
         }
     }

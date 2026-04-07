@@ -49,6 +49,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.theme.ChannelInfoOptionItemParams
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.DirectChannelInfoAvatarContainerParams
@@ -188,6 +189,7 @@ internal fun DirectChannelInfoTopBar(
     )
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun DirectChannelInfoContent(
     state: ChannelInfoViewState,
@@ -227,10 +229,12 @@ private fun DirectChannelInfoContent(
                 item {
                     ChannelInfoSection {
                         navigationOptions.forEach { option ->
-                            ChannelInfoOptionContent(
-                                option = option,
-                                isGroupChannel = false,
-                                onViewAction = onViewAction,
+                            ChatTheme.componentFactory.ChannelInfoOptionItem(
+                                params = ChannelInfoOptionItemParams(
+                                    option = option,
+                                    isGroupChannel = false,
+                                    onViewAction = onViewAction,
+                                ),
                             )
                         }
                     }
@@ -240,10 +244,12 @@ private fun DirectChannelInfoContent(
                 item {
                     ChannelInfoSection {
                         actionOptions.forEach { option ->
-                            ChannelInfoOptionContent(
-                                option = option,
-                                isGroupChannel = false,
-                                onViewAction = onViewAction,
+                            ChatTheme.componentFactory.ChannelInfoOptionItem(
+                                params = ChannelInfoOptionItemParams(
+                                    option = option,
+                                    isGroupChannel = false,
+                                    onViewAction = onViewAction,
+                                ),
                             )
                         }
                     }
@@ -296,13 +302,12 @@ internal fun List<ChannelInfoViewState.Content.Option>.filterNavigation() = filt
 }
 
 /**
- * Filters action options: Mute, Hide, Leave, Delete, Block.
+ * Filters action options: Mute, Leave, Delete, Block.
  */
 internal fun List<ChannelInfoViewState.Content.Option>.filterActions() = filter { option ->
     option is ChannelInfoViewState.Content.Option.MuteChannel ||
         option is ChannelInfoViewState.Content.Option.MuteUser ||
         option is ChannelInfoViewState.Content.Option.BlockUser ||
-        option is ChannelInfoViewState.Content.Option.HideChannel ||
         option is ChannelInfoViewState.Content.Option.LeaveChannel ||
         option is ChannelInfoViewState.Content.Option.DeleteChannel
 }

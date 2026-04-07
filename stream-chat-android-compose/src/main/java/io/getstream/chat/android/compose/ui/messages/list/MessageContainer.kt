@@ -377,7 +377,7 @@ private fun SavedForLaterAnnotation(item: MessageItemState) {
     val reminder = item.message.reminder
     if (reminder != null && reminder.remindAt == null) {
         MessageAnnotation(
-            iconId = R.drawable.stream_compose_ic_annotation_bookmark,
+            iconId = R.drawable.stream_design_ic_save,
             text = stringResource(R.string.stream_compose_message_list_saved_for_later),
             contentColor = item.annotationContentColor(default = ChatTheme.colors.accentPrimary),
         )
@@ -395,7 +395,7 @@ private fun PinnedAnnotation(item: MessageItemState) {
             message.pinnedBy?.name
         }
         MessageAnnotation(
-            iconId = R.drawable.stream_compose_ic_annotation_pin,
+            iconId = R.drawable.stream_design_ic_pin,
             text = pinnedByUser?.let { stringResource(R.string.stream_compose_pinned_to_channel_by, it) }
                 ?: stringResource(R.string.stream_compose_pinned_to_channel),
             contentColor = item.annotationContentColor(),
@@ -412,7 +412,7 @@ private fun ShowInChannelAnnotation(item: MessageItemState, onThreadClick: (Mess
             R.string.stream_compose_replied_to_thread
         }
         MessageAnnotation(
-            iconId = R.drawable.stream_compose_ic_annotation_arrow_up_right,
+            iconId = R.drawable.stream_design_ic_arrow_up_right,
             text = stringResource(alsoSendToChannelTextRes),
             trailingText = stringResource(R.string.stream_compose_message_list_view),
             contentColor = item.annotationContentColor(),
@@ -428,7 +428,7 @@ private fun ReminderAnnotation(item: MessageItemState) {
     if (remindAt != null) {
         val timeProvider = ChatTheme.timeProvider
         MessageAnnotation(
-            iconId = R.drawable.stream_compose_ic_annotation_reminder,
+            iconId = R.drawable.stream_design_ic_bell,
             text = stringResource(R.string.stream_compose_message_list_remind_me),
             trailingText = formatReminderDuration(remindAt.time, timeProvider()),
             contentColor = item.annotationContentColor(),
@@ -450,7 +450,7 @@ private fun TranslationAnnotation(item: MessageItemState) {
     if (isTranslatable && shouldBeTranslated && translatedText != message.text) {
         if (config.showOriginalEnabled) {
             MessageAnnotation(
-                iconId = R.drawable.stream_compose_ic_annotation_translated,
+                iconId = R.drawable.stream_design_ic_translate,
                 text = stringResource(R.string.stream_compose_message_list_auto_translated),
                 contentColor = item.annotationContentColor(),
                 trailingText = if (item.showOriginalText) {
@@ -465,7 +465,7 @@ private fun TranslationAnnotation(item: MessageItemState) {
             )
         } else {
             MessageAnnotation(
-                iconId = R.drawable.stream_compose_ic_annotation_translated,
+                iconId = R.drawable.stream_design_ic_translate,
                 text = stringResource(R.string.stream_compose_message_list_auto_translated),
                 contentColor = item.annotationContentColor(),
             )

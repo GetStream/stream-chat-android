@@ -143,7 +143,7 @@ private fun MediaGalleryPhotosMenuHeader(onDismiss: () -> Unit) {
                     bounded = false,
                     onClick = onDismiss,
                 ),
-            painter = painterResource(id = R.drawable.stream_compose_ic_close),
+            painter = painterResource(id = R.drawable.stream_design_ic_xmark),
             contentDescription = stringResource(id = R.string.stream_compose_cancel),
             tint = ChatTheme.colors.textPrimary,
         )
@@ -261,7 +261,7 @@ private fun ErrorIcon(modifier: Modifier) {
         Icon(
             tint = ChatTheme.colors.textDisabled,
             modifier = Modifier.fillMaxSize(fraction = 0.4f),
-            painter = painterResource(R.drawable.stream_compose_ic_image_picker),
+            painter = painterResource(R.drawable.stream_design_ic_image),
             contentDescription = stringResource(R.string.stream_ui_message_list_attachment_load_failed),
         )
     }

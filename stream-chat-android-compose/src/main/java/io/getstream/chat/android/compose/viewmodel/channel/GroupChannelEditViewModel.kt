@@ -23,7 +23,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.internal.file.StreamFileManager
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +32,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 
 /**
@@ -43,8 +41,7 @@ import java.io.File
  * channel name in a single save action.
  *
  * @param cid The full channel identifier (e.g., "messaging:123").
- * @param galleryImageCopier Copies a picked [Uri] to a local cache [File]; invoked on IO from
- * [importGalleryImage].
+ * @param galleryImageCopier Copies a picked [Uri] to a local cache [File].
  * @param chatClient The [ChatClient] instance used for API calls.
  */
 internal class GroupChannelEditViewModel(
@@ -67,7 +64,7 @@ internal class GroupChannelEditViewModel(
     val events: SharedFlow<GroupChannelEditViewEvent> = _events.asSharedFlow()
 
     /**
-     * Copies a gallery [Uri] to app cache on a background thread.
+     * Copies a gallery [Uri] to app cache via [GalleryImageCopier].
      * Sets [GroupChannelEditViewState.isImporting] for the duration of the copy;
      * [save] is ignored while that flag is true. On success the resulting [File] is stored in
      * [GroupChannelEditViewState.pendingImageFile].
@@ -78,7 +75,7 @@ internal class GroupChannelEditViewModel(
         if (_state.value.isImporting) return
         _state.update { it.copy(isImporting = true) }
         viewModelScope.launch {
-            val file = withContext(DispatcherProvider.IO) { galleryImageCopier.copyToCache(uri) }
+            val file = galleryImageCopier.copyToCache(uri)
             _state.update {
                 it.copy(
                     isImporting = false,

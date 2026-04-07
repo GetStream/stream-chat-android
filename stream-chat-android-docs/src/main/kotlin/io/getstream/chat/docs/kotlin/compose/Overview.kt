@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 
 /**
  * [ViewModels](https://getstream.io/chat/docs/sdk/android/compose/overview/#viewmodels)
@@ -24,7 +24,7 @@ private object OverviewViewModelsSnippet {
     class MyActivity : AppCompatActivity() {
         // 1
         val factory by lazy {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = this,
                 chatClient = ChatClient.instance(),
                 channelId = "messaging:123",

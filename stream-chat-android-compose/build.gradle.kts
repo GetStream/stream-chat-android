@@ -20,7 +20,7 @@ android {
         consumerProguardFiles("consumer-rules.pro")
     }
 
-    resourcePrefix = "stream_compose_"
+    resourcePrefix = "stream_"
 
     lint {
         disable += "MissingTranslation"

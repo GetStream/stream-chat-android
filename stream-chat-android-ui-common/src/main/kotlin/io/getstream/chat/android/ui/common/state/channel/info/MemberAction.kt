@@ -49,7 +49,7 @@ public class SendDirectMessage(
     override val onAction: () -> Unit,
 ) : MemberAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_chat_bubble
+    override val icon: Int = R.drawable.stream_design_ic_message_bubble
 }
 
 /**
@@ -61,7 +61,7 @@ public class MuteUser(
     override val onAction: () -> Unit,
 ) : MemberAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_action_mute
+    override val icon: Int = R.drawable.stream_design_ic_mute
 }
 
 /**
@@ -73,7 +73,7 @@ public class UnmuteUser(
     override val onAction: () -> Unit,
 ) : MemberAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_action_mute
+    override val icon: Int = R.drawable.stream_design_ic_mute
 }
 
 /**
@@ -85,7 +85,7 @@ public class BlockUser(
     override val onAction: () -> Unit,
 ) : MemberAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_block
+    override val icon: Int = R.drawable.stream_design_ic_no_sign
 }
 
 /**
@@ -97,7 +97,7 @@ public class UnblockUser(
     override val onAction: () -> Unit,
 ) : MemberAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_block
+    override val icon: Int = R.drawable.stream_design_ic_no_sign
 }
 
 /**
@@ -109,7 +109,7 @@ public class BanMember(
     override val onAction: () -> Unit,
 ) : MemberAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_ban
+    override val icon: Int = R.drawable.stream_design_ic_minus_circle
     override val isDestructive: Boolean = true
 }
 
@@ -122,7 +122,7 @@ public class UnbanMember(
     override val onAction: () -> Unit,
 ) : MemberAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_ban
+    override val icon: Int = R.drawable.stream_design_ic_minus_circle
     override val isDestructive: Boolean = true
 }
 
@@ -135,6 +135,6 @@ public class RemoveMember(
     override val onAction: () -> Unit,
 ) : MemberAction {
     @DrawableRes
-    override val icon: Int = R.drawable.stream_ic_action_leave
+    override val icon: Int = R.drawable.stream_design_ic_leave
     override val isDestructive: Boolean = true
 }

@@ -177,13 +177,15 @@ public class StorageHelper {
                 MediaStore.Files.FileColumns.DISPLAY_NAME,
                 MediaStore.Files.FileColumns.MIME_TYPE,
                 MediaStore.Files.FileColumns.SIZE,
+                MediaStore.Files.FileColumns.DURATION,
             )
             context.contentResolver.query(uri, columns, null, null, null)
                 ?.use { cursor ->
-                    if (cursor != null && cursor.moveToFirst()) {
+                    if (cursor.moveToFirst()) {
                         val displayNameIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME)
                         val fileSizeIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE)
                         val mimeTypeIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE)
+                        val durationIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.DURATION)
 
                         val displayName = if (displayNameIndex != -1 && !cursor.isNull(displayNameIndex)) {
                             cursor.getString(displayNameIndex)
@@ -203,6 +205,12 @@ public class StorageHelper {
                             context.contentResolver.getType(uri)
                         }
 
+                        val duration = if (durationIndex != -1 && !cursor.isNull(durationIndex)) {
+                            cursor.getLong(durationIndex)
+                        } else {
+                            0L
+                        }
+
                         AttachmentMetaData(
                             uri = uri,
                             type = getModelType(mimeType),
@@ -210,6 +218,7 @@ public class StorageHelper {
                             title = displayName,
                         ).apply {
                             size = fileSize
+                            videoLength = duration / MILISECOND_IN_A_SECOND
                         }
                     } else {
                         null
@@ -268,7 +277,7 @@ public class StorageHelper {
             null
         }
 
-        val duration = if (durationIndex != -1 && !cursor.isNull(fileSizeIndex)) {
+        val duration = if (durationIndex != -1 && !cursor.isNull(durationIndex)) {
             cursor.getLong(durationIndex)
         } else {
             0L
@@ -308,6 +317,26 @@ public class StorageHelper {
 
     private fun isVideo(mimeType: String?): Boolean {
         return mimeType?.startsWith("video") ?: false
+    }
+
+    /**
+     * Checks whether the content behind [uri] can be resolved.
+     *
+     * Opens the input stream and immediately closes it without reading any bytes.
+     * Returns `false` when the content provider cannot supply the stream (e.g.
+     * cloud-backed files that are not downloaded to the device).
+     *
+     * Must be called from a background thread.
+     *
+     * @param context The context used to access the content resolver.
+     * @param uri The content URI to check.
+     * @return `true` if the content can be read, `false` otherwise.
+     */
+    @Suppress("TooGenericExceptionCaught")
+    internal fun isUriResolvable(context: Context, uri: Uri): Boolean = try {
+        context.contentResolver.openInputStream(uri)?.use { true } ?: false
+    } catch (_: Exception) {
+        false
     }
 
     public companion object {

@@ -260,7 +260,7 @@ private fun PinnedMessages(
 internal fun DefaultPinnedMessageListEmptyContent(modifier: Modifier = Modifier) {
     EmptyContent(
         text = stringResource(id = R.string.stream_compose_pinned_message_list_empty_description),
-        painter = painterResource(R.drawable.stream_compose_ic_pin),
+        painter = painterResource(R.drawable.stream_design_ic_pin),
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = StreamTokens.spacingMd),

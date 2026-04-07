@@ -26,10 +26,10 @@ import io.getstream.chat.android.guides.databinding.ActivityBuildingMessagesScre
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelHeaderViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
 
 /**
@@ -39,14 +39,14 @@ class MessagesActivity : AppCompatActivity() {
     private lateinit var binding: ActivityBuildingMessagesScreenBinding
 
     // Create ViewModels for the Views
-    private val factory: MessageListViewModelFactory by lazy {
-        MessageListViewModelFactory(
+    private val factory: ChannelViewModelFactory by lazy {
+        ChannelViewModelFactory(
             context = applicationContext,
             cid = requireNotNull(intent.getStringExtra(EXTRA_CID)),
             threadLoadOlderToNewer = false,
         )
     }
-    private val messageListHeaderViewModel: MessageListHeaderViewModel by viewModels { factory }
+    private val channelHeaderViewModel: ChannelHeaderViewModel by viewModels { factory }
     private val messageListViewModel: MessageListViewModel by viewModels { factory }
     private val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
 
@@ -57,7 +57,7 @@ class MessagesActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Bind the ViewModels with the Views
-        messageListHeaderViewModel.bindView(binding.messageListHeaderView, this)
+        channelHeaderViewModel.bindView(binding.channelHeaderView, this)
         messageListViewModel.bindView(binding.messageListView, this)
         messageComposerViewModel.bindView(binding.messageComposerView, this)
 
@@ -65,11 +65,11 @@ class MessagesActivity : AppCompatActivity() {
         messageListViewModel.mode.observe(this) { mode ->
             when (mode) {
                 is MessageMode.MessageThread -> {
-                    messageListHeaderViewModel.setActiveThread(mode.parentMessage)
+                    channelHeaderViewModel.setActiveThread(mode.parentMessage)
                     messageComposerViewModel.setMessageMode(MessageMode.MessageThread(mode.parentMessage))
                 }
                 is MessageMode.Normal -> {
-                    messageListHeaderViewModel.resetThread()
+                    channelHeaderViewModel.resetThread()
                     messageComposerViewModel.leaveThread()
                 }
             }
@@ -96,7 +96,7 @@ class MessagesActivity : AppCompatActivity() {
         val backHandler = {
             messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
         }
-        binding.messageListHeaderView.setBackButtonClickListener(backHandler)
+        binding.channelHeaderView.setBackButtonClickListener(backHandler)
 
         // Override the default Activity's back button behaviour
         onBackPressedDispatcher.addCallback(

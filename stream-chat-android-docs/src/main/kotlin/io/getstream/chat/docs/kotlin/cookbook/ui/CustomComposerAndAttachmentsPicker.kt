@@ -57,7 +57,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageComposerInputTrailingCo
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
@@ -67,7 +67,7 @@ import io.getstream.chat.android.compose.R as ComposeR
 @Composable
 fun CustomComposerAndAttachmentsPicker(cid: String?, onBackClick: () -> Unit = {}) {
     cid?.let {
-        val viewModelFactory = MessagesViewModelFactory(LocalContext.current, channelId = cid)
+        val viewModelFactory = ChannelViewModelFactory(LocalContext.current, channelId = cid)
         val listViewModel = viewModel(
             modelClass = MessageListViewModel::class.java,
             factory = viewModelFactory,
@@ -99,7 +99,7 @@ fun CustomComposerAndAttachmentsPicker(cid: String?, onBackClick: () -> Unit = {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
             Scaffold(
                 topBar = {
-                    CustomMessageListHeader(cid = cid, onBackClick = onBackClick)
+                    CustomChannelHeader(cid = cid, onBackClick = onBackClick)
                 },
                 bottomBar = {
                     CustomMessageComposer(
@@ -366,9 +366,9 @@ private fun AttachmentsTypeMenuItem(
             Icon(
                 painter = painterResource(
                     when (pickerMode) {
-                        is GalleryPickerMode -> ComposeR.drawable.stream_compose_ic_media
-                        is FilePickerMode -> ComposeR.drawable.stream_compose_ic_files
-                        is CameraPickerMode -> ComposeR.drawable.stream_compose_ic_attachment_camera_picker
+                        is GalleryPickerMode -> ComposeR.drawable.stream_design_ic_gallery
+                        is FilePickerMode -> ComposeR.drawable.stream_design_ic_folder
+                        is CameraPickerMode -> ComposeR.drawable.stream_design_ic_camera
                         else -> R.drawable.ic_menu
                     }
                 ),

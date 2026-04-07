@@ -52,7 +52,7 @@ public fun OwnedMessageVisibilityContent(
             modifier = Modifier
                 .padding(end = 4.dp)
                 .size(12.dp),
-            painter = painterResource(id = R.drawable.stream_compose_ic_visible_to_you),
+            painter = painterResource(id = R.drawable.stream_design_ic_eye_fill),
             contentDescription = null,
         )
 

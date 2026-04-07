@@ -118,7 +118,7 @@ private fun AttachmentCameraPickerContent(
     ) {
         Icon(
             modifier = Modifier.size(32.dp),
-            painter = painterResource(id = R.drawable.stream_compose_ic_attachment_camera_picker),
+            painter = painterResource(id = R.drawable.stream_design_ic_camera),
             contentDescription = null,
             tint = ChatTheme.colors.textTertiary,
         )

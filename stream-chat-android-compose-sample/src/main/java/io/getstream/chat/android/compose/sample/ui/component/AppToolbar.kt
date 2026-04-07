@@ -71,7 +71,7 @@ fun AppToolbar(
             IconButton(onClick = onBack) {
                 Icon(
                     modifier = Modifier.size(24.dp),
-                    painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+                    painter = painterResource(id = R.drawable.stream_design_ic_arrow_left),
                     contentDescription = "Back",
                     tint = ChatTheme.colors.textPrimary,
                 )

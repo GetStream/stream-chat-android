@@ -64,7 +64,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.SearchResultItemContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
-import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -113,7 +113,7 @@ public fun ChannelList(
     contentPadding: PaddingValues = PaddingValues(),
     viewModel: ChannelListViewModel = viewModel(
         factory =
-        ChannelViewModelFactory(
+        ChannelListViewModelFactory(
             ChatClient.instance(),
             QuerySortByField.descByName("last_updated"),
             filters = null,
@@ -427,7 +427,7 @@ internal fun DefaultChannelListEmptyContent(
         verticalArrangement = Arrangement.Center,
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_bubbles),
+            painter = painterResource(id = R.drawable.stream_design_ic_message_bubbles),
             contentDescription = null,
             tint = ChatTheme.colors.textTertiary,
             modifier = Modifier.size(StreamTokens.spacing2xl),
@@ -463,7 +463,7 @@ internal fun DefaultChannelSearchEmptyContent(
 ) {
     EmptyContent(
         modifier = modifier,
-        painter = painterResource(id = R.drawable.stream_compose_empty_search_results),
+        painter = painterResource(id = R.drawable.stream_design_ic_message_bubbles),
         text = stringResource(R.string.stream_compose_channel_list_empty_search_results, searchQuery),
     )
 }
