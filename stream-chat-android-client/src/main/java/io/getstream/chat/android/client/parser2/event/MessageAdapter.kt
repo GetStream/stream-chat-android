@@ -272,7 +272,6 @@ internal class MessageAdapter(
             i18n = i18n ?: emptyMap(),
             id = id,
             latestReactions = filteredLatestReactions,
-            mentionedUsersIds = mentionedUsers.map { it.id },
             mentionedUsers = mentionedUsers,
             ownReactions = filteredOwnReactions,
             parentId = parentId,
