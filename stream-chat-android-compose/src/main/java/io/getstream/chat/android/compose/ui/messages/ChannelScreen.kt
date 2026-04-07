@@ -104,7 +104,7 @@ import io.getstream.chat.android.ui.common.state.messages.updateMessage
 import kotlinx.coroutines.launch
 
 /**
- * Default root Messages screen component, that provides the necessary ViewModels and
+ * Default root Channel screen component, that provides the necessary ViewModels and
  * connects all the data handling operations, as well as some basic actions, like back pressed handling.
  *
  * Because this screen can be shown only if there is an active/selected Channel, the user must provide
