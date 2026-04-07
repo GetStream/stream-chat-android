@@ -23,8 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Basic back button, that shows an icon and calls [onBackPressed] when tapped.
@@ -45,7 +45,7 @@ public fun BackButton(
     ) {
         Icon(
             painter = painter,
-            contentDescription = stringResource(R.string.stream_ui_back_button),
+            contentDescription = stringResource(UiCommonR.string.stream_ui_back_button),
             tint = ChatTheme.colors.textPrimary,
         )
     }

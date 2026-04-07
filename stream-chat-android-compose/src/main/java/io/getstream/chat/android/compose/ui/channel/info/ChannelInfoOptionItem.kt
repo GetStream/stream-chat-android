@@ -29,6 +29,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 @Suppress("LongMethod")
 @Composable
@@ -68,9 +69,9 @@ private fun ChannelInfoOptionContent(
             ChannelInfoOptionSwitch(
                 icon = R.drawable.stream_design_ic_mute,
                 text = if (isGroupChannel) {
-                    stringResource(R.string.stream_ui_channel_info_option_mute_group)
+                    stringResource(UiCommonR.string.stream_ui_channel_info_option_mute_group)
                 } else {
-                    stringResource(R.string.stream_ui_channel_info_option_mute_conversation)
+                    stringResource(UiCommonR.string.stream_ui_channel_info_option_mute_conversation)
                 },
                 checked = muted,
                 onCheckedChange = { checked ->
@@ -89,7 +90,7 @@ private fun ChannelInfoOptionContent(
 
             ChannelInfoOptionSwitch(
                 icon = R.drawable.stream_design_ic_mute,
-                text = stringResource(R.string.stream_ui_channel_info_option_mute_user),
+                text = stringResource(UiCommonR.string.stream_ui_channel_info_option_mute_user),
                 checked = muted,
                 onCheckedChange = { checked ->
                     muted = checked
@@ -107,9 +108,9 @@ private fun ChannelInfoOptionContent(
                 ChannelInfoOptionButton(
                     icon = R.drawable.stream_design_ic_no_sign,
                     text = if (option.isBlocked) {
-                        stringResource(R.string.stream_ui_channel_info_option_unblock_user)
+                        stringResource(UiCommonR.string.stream_ui_channel_info_option_unblock_user)
                     } else {
-                        stringResource(R.string.stream_ui_channel_info_option_block_user)
+                        stringResource(UiCommonR.string.stream_ui_channel_info_option_block_user)
                     },
                     onClick = {
                         if (option.isBlocked) {
@@ -125,7 +126,7 @@ private fun ChannelInfoOptionContent(
         is ChannelInfoViewState.Content.Option.PinnedMessages -> {
             ChannelInfoOptionNavigationButton(
                 icon = R.drawable.stream_design_ic_pin,
-                text = stringResource(R.string.stream_ui_channel_info_option_pinned_messages),
+                text = stringResource(UiCommonR.string.stream_ui_channel_info_option_pinned_messages),
                 onClick = { onViewAction(ChannelInfoViewAction.PinnedMessagesClick) },
             )
         }
@@ -133,7 +134,7 @@ private fun ChannelInfoOptionContent(
         is ChannelInfoViewState.Content.Option.MediaAttachments -> {
             ChannelInfoOptionNavigationButton(
                 icon = R.drawable.stream_design_ic_image,
-                text = stringResource(R.string.stream_ui_channel_info_option_media_attachments),
+                text = stringResource(UiCommonR.string.stream_ui_channel_info_option_media_attachments),
                 onClick = { onViewAction(ChannelInfoViewAction.MediaAttachmentsClick) },
             )
         }
@@ -141,7 +142,7 @@ private fun ChannelInfoOptionContent(
         is ChannelInfoViewState.Content.Option.FilesAttachments -> {
             ChannelInfoOptionNavigationButton(
                 icon = R.drawable.stream_design_ic_folder,
-                text = stringResource(R.string.stream_ui_channel_info_option_files_attachments),
+                text = stringResource(UiCommonR.string.stream_ui_channel_info_option_files_attachments),
                 onClick = { onViewAction(ChannelInfoViewAction.FilesAttachmentsClick) },
             )
         }
@@ -151,9 +152,9 @@ private fun ChannelInfoOptionContent(
                 ChannelInfoOptionButton(
                     icon = R.drawable.stream_design_ic_leave,
                     text = if (isGroupChannel) {
-                        stringResource(R.string.stream_ui_channel_info_option_leave_group)
+                        stringResource(UiCommonR.string.stream_ui_channel_info_option_leave_group)
                     } else {
-                        stringResource(R.string.stream_ui_channel_info_option_leave_conversation)
+                        stringResource(UiCommonR.string.stream_ui_channel_info_option_leave_conversation)
                     },
                     onClick = { onViewAction(ChannelInfoViewAction.LeaveChannelClick) },
                 )
@@ -165,9 +166,9 @@ private fun ChannelInfoOptionContent(
                 ChannelInfoOptionButton(
                     icon = R.drawable.stream_design_ic_delete,
                     text = if (isGroupChannel) {
-                        stringResource(R.string.stream_ui_channel_info_option_delete_group)
+                        stringResource(UiCommonR.string.stream_ui_channel_info_option_delete_group)
                     } else {
-                        stringResource(R.string.stream_ui_channel_info_option_delete_conversation)
+                        stringResource(UiCommonR.string.stream_ui_channel_info_option_delete_conversation)
                     },
                     onClick = { onViewAction(ChannelInfoViewAction.DeleteChannelClick) },
                 )

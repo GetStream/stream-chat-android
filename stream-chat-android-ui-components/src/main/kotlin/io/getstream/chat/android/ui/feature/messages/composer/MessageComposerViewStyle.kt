@@ -46,6 +46,7 @@ import io.getstream.chat.android.ui.utils.extensions.getDimensionOrNull
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 import io.getstream.chat.android.ui.utils.extensions.getEnum
 import io.getstream.chat.android.ui.utils.extensions.use
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Style for [MessageComposerView].
@@ -887,7 +888,7 @@ public data class MessageComposerViewStyle(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePadding,
                     )?.toInt()
 
-                val mediumTypeface = ResourcesCompat.getFont(context, R.font.stream_roboto_medium) ?: Typeface.DEFAULT
+                val mediumTypeface = ResourcesCompat.getFont(context, UiCommonR.font.stream_roboto_medium) ?: Typeface.DEFAULT
 
                 val messageReplyShowUserAvatar = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyShowUserAvatar,

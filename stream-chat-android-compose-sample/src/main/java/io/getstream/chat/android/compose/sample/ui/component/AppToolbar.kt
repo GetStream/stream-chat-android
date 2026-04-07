@@ -38,8 +38,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.R as ComposeR
 
 /**
  * Composable rendering the default app toolbar.
@@ -71,7 +71,7 @@ fun AppToolbar(
             IconButton(onClick = onBack) {
                 Icon(
                     modifier = Modifier.size(24.dp),
-                    painter = painterResource(id = R.drawable.stream_design_ic_arrow_left),
+                    painter = painterResource(id = ComposeR.drawable.stream_design_ic_arrow_left),
                     contentDescription = "Back",
                     tint = ChatTheme.colors.textPrimary,
                 )

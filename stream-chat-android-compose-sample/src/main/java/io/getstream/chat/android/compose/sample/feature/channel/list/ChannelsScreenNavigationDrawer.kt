@@ -47,6 +47,7 @@ import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.compose.R as ComposeR
 
 @Suppress("LongParameterList")
 @Composable
@@ -92,7 +93,7 @@ fun ChannelsScreenNavigationDrawer(
         Spacer(modifier = Modifier.weight(1f))
         // Sign Out
         NavigationDrawerItem(
-            icon = R.drawable.stream_design_ic_account,
+            icon = ComposeR.drawable.stream_design_ic_account,
             text = stringResource(R.string.navigation_drawer_sign_out),
             onClick = onSignOutClick,
         )

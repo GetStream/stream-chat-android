@@ -80,6 +80,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import java.io.File
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,7 +106,7 @@ internal fun GroupChannelEditScreen(
                 GroupChannelEditViewEvent.SaveError -> {
                     Toast.makeText(
                         context,
-                        context.getString(R.string.stream_ui_channel_info_edit_save_error),
+                        context.getString(UiCommonR.string.stream_ui_channel_info_edit_save_error),
                         Toast.LENGTH_SHORT,
                     ).show()
                 }
@@ -231,7 +232,7 @@ private fun GroupChannelEditContent(
             Spacer(modifier = Modifier.size(StreamTokens.spacingXs))
             StreamTextButton(
                 onClick = onUploadPictureClick,
-                text = stringResource(R.string.stream_ui_channel_info_edit_upload_picture),
+                text = stringResource(UiCommonR.string.stream_ui_channel_info_edit_upload_picture),
                 style = StreamButtonStyleDefaults.primaryGhost,
                 enabled = !isBusy,
             )
@@ -257,7 +258,7 @@ private fun GroupChannelEditTopBar(
         modifier = Modifier.bottomBorder(color = colors.borderCoreSubtle),
         title = {
             Text(
-                text = stringResource(R.string.stream_ui_channel_info_edit_title),
+                text = stringResource(UiCommonR.string.stream_ui_channel_info_edit_title),
                 style = ChatTheme.typography.headingMedium,
                 maxLines = 1,
             )
@@ -277,7 +278,9 @@ private fun GroupChannelEditTopBar(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.stream_design_ic_checkmark),
-                        contentDescription = stringResource(id = R.string.stream_ui_channel_info_edit_save_action),
+                        contentDescription = stringResource(
+                            id = UiCommonR.string.stream_ui_channel_info_edit_save_action,
+                        ),
                     )
                 }
             }
@@ -306,7 +309,7 @@ private fun ImagePickerOptions(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = stringResource(R.string.stream_ui_channel_info_edit_group_picture),
+            text = stringResource(UiCommonR.string.stream_ui_channel_info_edit_group_picture),
             style = ChatTheme.typography.headingSmall,
             color = ChatTheme.colors.textPrimary,
         )
@@ -314,13 +317,13 @@ private fun ImagePickerOptions(
         PickerOptionButton(
             modifier = Modifier.fillMaxWidth(),
             iconRes = R.drawable.stream_design_ic_camera,
-            textRes = R.string.stream_ui_channel_info_edit_take_photo,
+            textRes = UiCommonR.string.stream_ui_channel_info_edit_take_photo,
             onClick = onTakePhotoClick,
         )
         PickerOptionButton(
             modifier = Modifier.fillMaxWidth(),
             iconRes = R.drawable.stream_design_ic_image,
-            textRes = R.string.stream_ui_channel_info_edit_choose_from_library,
+            textRes = UiCommonR.string.stream_ui_channel_info_edit_choose_from_library,
             onClick = onChooseFromLibraryClick,
         )
         if (showRemoveOption) {
@@ -328,7 +331,7 @@ private fun ImagePickerOptions(
                 modifier = Modifier.fillMaxWidth(),
                 destructive = true,
                 iconRes = R.drawable.stream_design_ic_delete,
-                textRes = R.string.stream_ui_channel_info_edit_remove_picture,
+                textRes = UiCommonR.string.stream_ui_channel_info_edit_remove_picture,
                 onClick = onRemovePictureClick,
             )
         }
@@ -380,7 +383,7 @@ private fun ChannelNameField(
         textStyle = ChatTheme.typography.bodyDefault,
         placeholder = {
             Text(
-                text = stringResource(R.string.stream_ui_channel_info_edit_name_field_placeholder),
+                text = stringResource(UiCommonR.string.stream_ui_channel_info_edit_name_field_placeholder),
                 style = ChatTheme.typography.bodyDefault,
             )
         },

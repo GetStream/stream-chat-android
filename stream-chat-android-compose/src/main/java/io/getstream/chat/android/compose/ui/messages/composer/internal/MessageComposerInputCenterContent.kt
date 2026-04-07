@@ -51,10 +51,10 @@ import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedInputText
 import io.getstream.chat.android.compose.ui.util.extensions.internal.placeholderRes
-import io.getstream.chat.android.ui.common.R
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 @Composable
 internal fun MessageComposerInputCenterContent(
@@ -132,9 +132,9 @@ private fun TextFieldPlaceholder(
     @StringRes activeCommandDescriptionRes: Int?,
 ) {
     val text = if (canSendMessage) {
-        stringResource(activeCommandDescriptionRes ?: R.string.stream_ui_message_composer_placeholder_default)
+        stringResource(activeCommandDescriptionRes ?: UiCommonR.string.stream_ui_message_composer_placeholder_default)
     } else {
-        stringResource(R.string.stream_ui_message_composer_placeholder_cannot_send_messages)
+        stringResource(UiCommonR.string.stream_ui_message_composer_placeholder_cannot_send_messages)
     }
     Text(
         text = text,

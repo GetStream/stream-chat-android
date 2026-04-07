@@ -37,6 +37,7 @@ import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Represent the bottom sheet dialog that allows users to pick attachments.
@@ -124,7 +125,7 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
             createPollViewModel.multipleAnswersError.collectLatest { error ->
                 binding.multipleAnswersCount.error = error?.let {
                     getString(
-                        R.string.stream_ui_poll_multiple_answers_error,
+                        UiCommonR.string.stream_ui_poll_multiple_answers_error,
                         PollsConstants.MIN_NUMBER_OF_MULTIPLE_ANSWERS.toString(),
                         PollsConstants.MAX_NUMBER_OF_MULTIPLE_ANSWERS.toString(),
                     )

@@ -63,6 +63,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.feature.channel.info.AddMembersViewAction
 import io.getstream.chat.android.ui.common.state.channel.info.AddMembersViewState
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * A screen that allows users to search for and add members to a channel.
@@ -176,7 +177,7 @@ private fun AddMembersHeader(
             Icon(
                 modifier = Modifier.size(20.dp),
                 painter = painterResource(id = R.drawable.stream_design_ic_arrow_left),
-                contentDescription = stringResource(id = R.string.stream_ui_back_button),
+                contentDescription = stringResource(id = UiCommonR.string.stream_ui_back_button),
             )
         }
         Text(

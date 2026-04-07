@@ -33,6 +33,7 @@ import io.getstream.chat.android.ui.helper.ViewStyle
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getDimension
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Style for view holders used inside [MessageListView] allowing to customize message "reply" view.
@@ -89,7 +90,8 @@ public data class MessageReplyStyle(
                 R.styleable.MessageListView_streamUiMessageReplyLinkBackgroundColorTheirs,
                 VALUE_NOT_SET,
             )
-            val mediumTypeface = ResourcesCompat.getFont(context, R.font.stream_roboto_medium) ?: Typeface.DEFAULT
+            val mediumTypeface =
+                ResourcesCompat.getFont(context, UiCommonR.font.stream_roboto_medium) ?: Typeface.DEFAULT
             val textStyleMine = TextStyle.Builder(attributes)
                 .size(
                     R.styleable.MessageListView_streamUiMessageReplyTextSizeMine,

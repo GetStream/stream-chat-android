@@ -42,6 +42,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewMessageData
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Shows a delivery status indicator for a particular message.
@@ -117,9 +118,9 @@ private fun IsReadCount(
 ) {
     val showReadCount = readCount > 1 && ChatTheme.config.messageList.readCountEnabled
     val description = if (showReadCount) {
-        stringResource(R.string.stream_ui_message_list_semantics_message_status_read_by, readCount)
+        stringResource(UiCommonR.string.stream_ui_message_list_semantics_message_status_read_by, readCount)
     } else {
-        stringResource(R.string.stream_ui_message_list_semantics_message_status_read)
+        stringResource(UiCommonR.string.stream_ui_message_list_semantics_message_status_read)
     }
     Row(
         modifier = modifier.semantics { contentDescription = description },
@@ -153,7 +154,7 @@ private fun IsPendingIcon(modifier: Modifier) {
             .testTag("Stream_MessageReadStatus_isPending")
             .size(16.dp),
         painter = painterResource(id = R.drawable.stream_design_ic_clock),
-        contentDescription = stringResource(R.string.stream_ui_message_list_semantics_message_status_pending),
+        contentDescription = stringResource(UiCommonR.string.stream_ui_message_list_semantics_message_status_pending),
         tint = ChatTheme.colors.chatTextTimestamp,
     )
 }
@@ -165,7 +166,7 @@ private fun IsSentIcon(modifier: Modifier) {
             .testTag("Stream_MessageReadStatus_isSent")
             .size(16.dp),
         painter = painterResource(id = R.drawable.stream_design_ic_checkmark),
-        contentDescription = stringResource(R.string.stream_ui_message_list_semantics_message_status_sent),
+        contentDescription = stringResource(UiCommonR.string.stream_ui_message_list_semantics_message_status_sent),
         tint = ChatTheme.colors.chatTextTimestamp,
     )
 }
@@ -177,7 +178,7 @@ private fun IsErrorIcon(modifier: Modifier) {
             .testTag("Stream_MessageReadStatus_isError")
             .size(16.dp),
         painter = painterResource(id = R.drawable.stream_design_ic_exclamation_circle_fill),
-        contentDescription = stringResource(R.string.stream_ui_message_list_semantics_message_status_failed),
+        contentDescription = stringResource(UiCommonR.string.stream_ui_message_list_semantics_message_status_failed),
         tint = ChatTheme.colors.accentError,
     )
 }
@@ -190,7 +191,7 @@ private fun IsDeliveredIcon(modifier: Modifier) {
             .size(16.dp),
         painter = painterResource(id = R.drawable.stream_design_ic_checks),
         contentDescription = stringResource(
-            R.string.stream_ui_message_list_semantics_message_status_delivered,
+            UiCommonR.string.stream_ui_message_list_semantics_message_status_delivered,
         ),
         tint = ChatTheme.colors.chatTextTimestamp,
     )

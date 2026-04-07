@@ -32,6 +32,7 @@ import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 import io.getstream.chat.android.ui.utils.extensions.use
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Controls how video attachments are displayed inside of the [AttachmentGalleryActivity].
@@ -87,7 +88,7 @@ public data class AttachmentGalleryOptionsViewStyle(
                 .font(
                     R.styleable.AttachmentOptionsView_streamUiAttachmentOptionTextFontAssets,
                     R.styleable.AttachmentOptionsView_streamUiAttachmentOptionTextFont,
-                    ResourcesCompat.getFont(context, R.font.stream_roboto_medium) ?: Typeface.DEFAULT,
+                    ResourcesCompat.getFont(context, UiCommonR.font.stream_roboto_medium) ?: Typeface.DEFAULT,
                 )
                 .style(
                     R.styleable.AttachmentOptionsView_streamUiAttachmentOptionTextStyle,

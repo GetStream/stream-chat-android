@@ -32,6 +32,8 @@ import io.getstream.chat.ui.sample.databinding.ChatInfoOptionItemBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoSeparatorItemBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoStatefulOptionItemBinding
 import io.getstream.chat.ui.sample.feature.chat.info.group.GroupChatInfoAdapter
+import io.getstream.chat.android.ui.R as UiR
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 abstract class BaseViewHolder<T : ChatInfoItem>(
     itemView: View,
@@ -138,18 +140,18 @@ class ChatInfoGroupMemberViewHolder(
             binding.nameTextView.text = user.name
             binding.nameTextView.setTextColor(
                 if (banned) {
-                    itemView.context.getColorFromRes(R.color.stream_ui_accent_red)
+                    itemView.context.getColorFromRes(UiR.color.stream_ui_accent_red)
                 } else {
-                    itemView.context.getColorFromRes(R.color.stream_ui_text_color_primary)
+                    itemView.context.getColorFromRes(UiR.color.stream_ui_text_color_primary)
                 },
             )
             binding.mutedIcon.isVisible = notificationsMuted == true
             binding.onlineTextView.text = user.getLastSeenText(itemView.context)
             binding.onlineTextView.setTextColor(
                 if (banned) {
-                    itemView.context.getColorFromRes(R.color.stream_ui_accent_red)
+                    itemView.context.getColorFromRes(UiR.color.stream_ui_accent_red)
                 } else {
-                    itemView.context.getColorFromRes(R.color.stream_ui_text_color_secondary)
+                    itemView.context.getColorFromRes(UiR.color.stream_ui_text_color_secondary)
                 },
             )
 
@@ -177,7 +179,7 @@ class ChatInfoMembersSeparatorViewHolder(
 
     override fun bind(item: ChatInfoItem.MembersSeparator) {
         binding.membersSeparatorTextView.text =
-            itemView.context.getString(R.string.stream_ui_channel_info_expand_button, item.membersToShow)
+            itemView.context.getString(UiCommonR.string.stream_ui_channel_info_expand_button, item.membersToShow)
     }
 }
 

@@ -34,11 +34,12 @@ import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberV
 import io.getstream.chat.android.ui.utils.extensions.getLastSeenText
 import io.getstream.chat.android.ui.viewmodel.channel.ChannelInfoMemberViewModel
 import io.getstream.chat.android.ui.viewmodel.channel.ChannelInfoMemberViewModelFactory
-import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.databinding.ChatInfoGroupMemberOptionsFragmentBinding
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 import java.util.Date
+import io.getstream.chat.android.ui.R as UiR
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
 
@@ -58,7 +59,7 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
         return binding.root
     }
 
-    override fun getTheme(): Int = R.style.StreamUiBottomSheetDialogTheme
+    override fun getTheme(): Int = UiR.style.StreamUiBottomSheetDialogTheme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -66,15 +67,15 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun formatBanExpiry(banExpires: Date?): String {
-        if (banExpires == null) return getString(R.string.stream_ui_channel_info_member_modal_ban_no_expiration)
+        if (banExpires == null) return getString(UiCommonR.string.stream_ui_channel_info_member_modal_ban_no_expiration)
         val currentTime = System.currentTimeMillis()
         val diffInMillis = banExpires.time - currentTime
 
         return if (diffInMillis <= 0) {
-            getString(R.string.stream_ui_channel_info_member_modal_ban_expired)
+            getString(UiCommonR.string.stream_ui_channel_info_member_modal_ban_expired)
         } else {
             getString(
-                R.string.stream_ui_channel_info_member_modal_ban_expires_at,
+                UiCommonR.string.stream_ui_channel_info_member_modal_ban_expires_at,
                 DateUtils.getRelativeTimeSpanString(
                     banExpires.time,
                     currentTime,
@@ -125,14 +126,14 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
                         optionBan.isVisible = true
                         if (member.banned) {
                             optionBan.setOnOptionText(
-                                getString(R.string.stream_ui_channel_info_member_modal_option_unban_member),
+                                getString(UiCommonR.string.stream_ui_channel_info_member_modal_option_unban_member),
                             )
                             optionBan.setOnClickListener {
                                 viewModel.onViewAction(ChannelInfoMemberViewAction.UnbanMemberClick)
                             }
                         } else {
                             optionBan.setOnOptionText(
-                                getString(R.string.stream_ui_channel_info_member_modal_option_ban_member),
+                                getString(UiCommonR.string.stream_ui_channel_info_member_modal_option_ban_member),
                             )
                             optionBan.setOnClickListener {
                                 viewModel.onViewAction(ChannelInfoMemberViewAction.BanMemberClick)

@@ -18,7 +18,6 @@ package io.getstream.chat.android.compose.ui.channel.info
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewAction
@@ -31,6 +30,7 @@ import io.getstream.chat.android.ui.common.state.channel.info.SendDirectMessage
 import io.getstream.chat.android.ui.common.state.channel.info.UnbanMember
 import io.getstream.chat.android.ui.common.state.channel.info.UnblockUser
 import io.getstream.chat.android.ui.common.state.channel.info.UnmuteUser
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Builds the default list of member actions for the member info modal sheet.
@@ -57,7 +57,7 @@ public fun buildDefaultMemberActions(
     return listOfNotNull(
         SendDirectMessage(
             member = member,
-            label = stringResource(R.string.stream_ui_channel_info_member_modal_option_message_member),
+            label = stringResource(UiCommonR.string.stream_ui_channel_info_member_modal_option_message_member),
             onAction = { onViewAction(ChannelInfoMemberViewAction.MessageMemberClick) },
         ),
         buildMuteAction(member, isMuted, onViewAction),
@@ -70,7 +70,7 @@ public fun buildDefaultMemberActions(
         if (capabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS)) {
             RemoveMember(
                 member = member,
-                label = stringResource(R.string.stream_ui_channel_info_member_modal_option_remove_member),
+                label = stringResource(UiCommonR.string.stream_ui_channel_info_member_modal_option_remove_member),
                 onAction = { onViewAction(ChannelInfoMemberViewAction.RemoveMemberClick) },
             )
         } else {
@@ -87,13 +87,13 @@ private fun buildMuteAction(
 ): MemberAction = if (isMuted) {
     UnmuteUser(
         member = member,
-        label = stringResource(R.string.stream_ui_channel_info_member_modal_option_unmute_user),
+        label = stringResource(UiCommonR.string.stream_ui_channel_info_member_modal_option_unmute_user),
         onAction = { onViewAction(ChannelInfoMemberViewAction.UnmuteUserClick) },
     )
 } else {
     MuteUser(
         member = member,
-        label = stringResource(R.string.stream_ui_channel_info_member_modal_option_mute_user),
+        label = stringResource(UiCommonR.string.stream_ui_channel_info_member_modal_option_mute_user),
         onAction = { onViewAction(ChannelInfoMemberViewAction.MuteUserClick) },
     )
 }
@@ -106,13 +106,13 @@ private fun buildBlockAction(
 ): MemberAction = if (isBlocked) {
     UnblockUser(
         member = member,
-        label = stringResource(R.string.stream_ui_channel_info_member_modal_option_unblock_user),
+        label = stringResource(UiCommonR.string.stream_ui_channel_info_member_modal_option_unblock_user),
         onAction = { onViewAction(ChannelInfoMemberViewAction.UnblockUserClick) },
     )
 } else {
     BlockUser(
         member = member,
-        label = stringResource(R.string.stream_ui_channel_info_member_modal_option_block_user),
+        label = stringResource(UiCommonR.string.stream_ui_channel_info_member_modal_option_block_user),
         onAction = { onViewAction(ChannelInfoMemberViewAction.BlockUserClick) },
     )
 }
@@ -127,13 +127,13 @@ private fun buildBanAction(
     return if (member.banned) {
         UnbanMember(
             member = member,
-            label = stringResource(R.string.stream_ui_channel_info_member_modal_option_unban_member),
+            label = stringResource(UiCommonR.string.stream_ui_channel_info_member_modal_option_unban_member),
             onAction = { onViewAction(ChannelInfoMemberViewAction.UnbanMemberClick) },
         )
     } else {
         BanMember(
             member = member,
-            label = stringResource(R.string.stream_ui_channel_info_member_modal_option_ban_member),
+            label = stringResource(UiCommonR.string.stream_ui_channel_info_member_modal_option_ban_member),
             onAction = { onViewAction(ChannelInfoMemberViewAction.BanMemberClick) },
         )
     }
