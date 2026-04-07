@@ -85,8 +85,8 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsVie
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
-import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModelFactory
 import io.getstream.chat.android.models.AttachmentType
@@ -130,10 +130,10 @@ class ChatsActivity : ComponentActivity() {
     private val messageId by lazy { intent.getStringExtra(KEY_MESSAGE_ID) }
     private val parentMessageId by lazy { intent.getStringExtra(KEY_PARENT_MESSAGE_ID) }
 
-    private val channelViewModelFactory by lazy {
+    private val channelListViewModelFactory by lazy {
         val chatClient = ChatClient.instance()
         val currentUserId = chatClient.getCurrentUser()?.id ?: ""
-        ChannelViewModelFactory(
+        ChannelListViewModelFactory(
             chatClient = chatClient,
             querySort = QuerySortByField
                 .descByName<Channel>("pinned_at") // pinned channels first
@@ -147,9 +147,9 @@ class ChatsActivity : ComponentActivity() {
         )
     }
 
-    private val messagesViewModelFactory by lazy {
+    private val channelViewModelFactory by lazy {
         channelId?.let { cid ->
-            buildMessagesViewModelFactory(
+            buildChannelViewModelFactory(
                 channelId = cid,
                 messageId = messageId,
                 parentMessageId = parentMessageId,
@@ -183,12 +183,12 @@ class ChatsActivity : ComponentActivity() {
         val navigator = rememberThreePaneNavigator()
         ChatsScreen(
             navigator = navigator,
-            channelViewModelFactory = channelViewModelFactory,
-            messagesViewModelFactoryProvider = { _, (channelId, messageId, parentMessageId) ->
+            channelListViewModelFactory = channelListViewModelFactory,
+            channelViewModelFactoryProvider = { _, (channelId, messageId, parentMessageId) ->
                 if (channelId == null) {
-                    messagesViewModelFactory
+                    channelViewModelFactory
                 } else {
-                    buildMessagesViewModelFactory(
+                    buildChannelViewModelFactory(
                         channelId = channelId,
                         messageId = messageId,
                         parentMessageId = parentMessageId,
@@ -604,11 +604,11 @@ class ChatsActivity : ComponentActivity() {
         }
     }
 
-    private fun buildMessagesViewModelFactory(
+    private fun buildChannelViewModelFactory(
         channelId: String,
         messageId: String?,
         parentMessageId: String?,
-    ) = MessagesViewModelFactory(
+    ) = ChannelViewModelFactory(
         context = applicationContext,
         channelId = channelId,
         messageId = messageId,

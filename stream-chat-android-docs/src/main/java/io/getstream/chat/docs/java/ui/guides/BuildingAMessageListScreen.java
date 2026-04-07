@@ -9,15 +9,15 @@ import io.getstream.chat.android.ui.common.state.messages.Edit;
 import io.getstream.chat.android.ui.common.state.messages.MessageMode;
 import io.getstream.chat.android.ui.common.state.messages.Reply;
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView;
-import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView;
+import io.getstream.chat.android.ui.feature.messages.header.ChannelHeaderView;
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelHeaderViewModel;
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelHeaderViewModelBinding;
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelBinding;
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel;
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModelBinding;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelBinding;
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;
 
 /**
  * [Building A Message List Screen](https://getstream.io/chat/docs/sdk/android/ui/guides/building-message-list-screen/)
@@ -25,21 +25,21 @@ import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFacto
 public class BuildingAMessageListScreen extends Fragment {
 
     private MessageListView messageListView;
-    private MessageListHeaderView messageListHeaderView;
+    private ChannelHeaderView channelHeaderView;
     private MessageComposerView messageComposerView;
 
     public void usage() {
         // Create ViewModels for the Views
-        ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+        ViewModelProvider.Factory factory = new ChannelViewModelFactory.Builder(requireContext())
                 .cid("messaging:123")
                 .build();
         ViewModelProvider provider = new ViewModelProvider(this, factory);
-        MessageListHeaderViewModel messageListHeaderViewModel = provider.get(MessageListHeaderViewModel.class);
+        ChannelHeaderViewModel channelHeaderViewModel = provider.get(ChannelHeaderViewModel.class);
         MessageListViewModel messageListViewModel = provider.get(MessageListViewModel.class);
         MessageComposerViewModel messageComposerViewModel = provider.get(MessageComposerViewModel.class);
 
         // Bind the ViewModels with the Views
-        MessageListHeaderViewModelBinding.bind(messageListHeaderViewModel, messageListHeaderView, getViewLifecycleOwner());
+        ChannelHeaderViewModelBinding.bind(channelHeaderViewModel, channelHeaderView, getViewLifecycleOwner());
         MessageListViewModelBinding.bind(messageListViewModel, messageListView, getViewLifecycleOwner());
         MessageComposerViewModelBinding.bind(messageComposerViewModel, messageComposerView, getViewLifecycleOwner());
 
@@ -47,10 +47,10 @@ public class BuildingAMessageListScreen extends Fragment {
         messageListViewModel.getMode().observe(getViewLifecycleOwner(), mode -> {
             if (mode instanceof MessageMode.MessageThread) {
                 Message parentMessage = ((MessageMode.MessageThread) mode).getParentMessage();
-                messageListHeaderViewModel.setActiveThread(parentMessage);
+                channelHeaderViewModel.setActiveThread(parentMessage);
                 messageComposerViewModel.setMessageMode(new MessageMode.MessageThread(parentMessage, null));
             } else if (mode instanceof MessageMode.Normal) {
-                messageListHeaderViewModel.resetThread();
+                channelHeaderViewModel.resetThread();
                 messageComposerViewModel.leaveThread();
             }
         });
@@ -73,10 +73,10 @@ public class BuildingAMessageListScreen extends Fragment {
         });
 
         // Handle back button behaviour correctly when you're in a thread
-        MessageListHeaderView.OnClickListener backHandler = () -> {
+        ChannelHeaderView.OnClickListener backHandler = () -> {
             messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed.INSTANCE);
         };
-        messageListHeaderView.setBackButtonClickListener(backHandler);
+        channelHeaderView.setBackButtonClickListener(backHandler);
 
         // Override the default Activity's back button behaviour
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {

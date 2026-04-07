@@ -65,17 +65,17 @@ import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageSn
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.list.SelectedMessageSnapshot
 import io.getstream.chat.android.compose.ui.theme.AttachmentPickerMenuParams
+import io.getstream.chat.android.compose.ui.theme.ChannelHeaderParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.MessageListHeaderParams
 import io.getstream.chat.android.compose.ui.theme.MessageMenuParams
 import io.getstream.chat.android.compose.ui.theme.MessageReactionPickerParams
 import io.getstream.chat.android.compose.ui.theme.ReactionsMenuParams
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
@@ -133,8 +133,8 @@ import kotlinx.coroutines.launch
  */
 @Suppress("LongMethod")
 @Composable
-public fun MessagesScreen(
-    viewModelFactory: MessagesViewModelFactory,
+public fun ChannelScreen(
+    viewModelFactory: ChannelViewModelFactory,
     showHeader: Boolean = true,
     reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
     onBackPressed: () -> Unit = {},
@@ -204,7 +204,7 @@ public fun MessagesScreen(
 
     BackHandler(enabled = true, onBack = backAction)
 
-    MessagesScreenContentBox {
+    ChannelScreenContentBox {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -301,7 +301,7 @@ public fun MessagesScreen(
 }
 
 @Composable
-private fun MessagesScreenContentBox(content: @Composable BoxScope.() -> Unit) {
+private fun ChannelScreenContentBox(content: @Composable BoxScope.() -> Unit) {
     val selectedMessageSnapshot = remember { mutableStateOf<SelectedMessageSnapshot?>(null) }
     CompositionLocalProvider(LocalSelectedMessageSnapshot provides selectedMessageSnapshot) {
         Box(
@@ -310,7 +310,7 @@ private fun MessagesScreenContentBox(content: @Composable BoxScope.() -> Unit) {
                 .safeDrawingPadding()
                 // Consume IME inset (even if not needed), to avoid children applying it again on some devices.
                 .consumeWindowInsets(WindowInsets.ime)
-                .testTag("Stream_MessagesScreen"),
+                .testTag("Stream_ChannelScreen"),
             content = content,
         )
     }
@@ -358,7 +358,7 @@ public typealias BackAction = () -> Unit
 
 @Composable
 internal fun DefaultTopBarContent(
-    viewModelFactory: MessagesViewModelFactory,
+    viewModelFactory: ChannelViewModelFactory,
     backAction: BackAction,
     onHeaderTitleClick: ((channel: Channel) -> Unit)?,
     onChannelAvatarClick: ((Channel) -> Unit)?,
@@ -369,8 +369,8 @@ internal fun DefaultTopBarContent(
     val user by listViewModel.user.collectAsState()
     val messageMode = listViewModel.messageMode
 
-    ChatTheme.componentFactory.MessageListHeader(
-        params = MessageListHeaderParams(
+    ChatTheme.componentFactory.ChannelHeader(
+        params = ChannelHeaderParams(
             channel = listViewModel.channel,
             currentUser = user,
             connectionState = connectionState,
@@ -386,7 +386,7 @@ internal fun DefaultTopBarContent(
 
 @Composable
 internal fun DefaultBottomBarContent(
-    viewModelFactory: MessagesViewModelFactory,
+    viewModelFactory: ChannelViewModelFactory,
     onComposerLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
@@ -442,8 +442,8 @@ internal fun DefaultBottomBarContent(
  *
  * @param listViewModel The [MessageListViewModel] used to read state from.
  * @param composerViewModel The [MessageComposerViewModel] used to read state from.
- * @param skipPushNotification If the message should skip triggering a push notification when sent. False by default. Note, only
- * new messages trigger push notifications, updating edited messages does not.
+ * @param skipPushNotification If the message should skip triggering a push notification when sent. False by default.
+ * Note, only new messages trigger push notifications, updating edited messages does not.
  * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
  * displayed as a link attachment. False by default.
  */
@@ -459,7 +459,7 @@ public fun BoxScope.MessageMenus(
 
     val selectedMessage = selectedMessageState?.message ?: Message()
 
-    MessagesScreenMenus(
+    ChannelScreenMenus(
         listViewModel = listViewModel,
         composerViewModel = composerViewModel,
         selectedMessageState = selectedMessageState,
@@ -468,7 +468,7 @@ public fun BoxScope.MessageMenus(
         skipEnrichUrl = skipEnrichUrl,
     )
 
-    MessagesScreenReactionsPicker(
+    ChannelScreenReactionsPicker(
         listViewModel = listViewModel,
         composerViewModel = composerViewModel,
         selectedMessageState = selectedMessageState,
@@ -488,14 +488,14 @@ public fun BoxScope.MessageMenus(
  * perform actions.
  * @param selectedMessageState The state of the currently selected message.
  * @param selectedMessage The currently selected message.
- * @param skipPushNotification If the message should skip triggering a push notification when sent. False by default. Note, only
- * new messages trigger push notifications, updating edited messages does not.
+ * @param skipPushNotification If the message should skip triggering a push notification when sent. False by default.
+ * Note, only new messages trigger push notifications, updating edited messages does not.
  * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
  * displayed as a link attachment. False by default.
  */
-@Suppress("LongMethod")
+@Suppress("LongMethod", "LongParameterList")
 @Composable
-private fun BoxScope.MessagesScreenMenus(
+private fun BoxScope.ChannelScreenMenus(
     listViewModel: MessageListViewModel,
     composerViewModel: MessageComposerViewModel,
     selectedMessageState: SelectedMessageState?,
@@ -596,13 +596,14 @@ private fun BoxScope.MessagesScreenMenus(
  * perform actions.
  * @param selectedMessageState The state of the currently selected message.
  * @param selectedMessage The currently selected message.
- * @param skipPushNotification If the message should skip triggering a push notification when sent. False by default. Note, only
- * new messages trigger push notifications, updating edited messages does not.
+ * @param skipPushNotification If the message should skip triggering a push notification when sent. False by default.
+ * Note, only new messages trigger push notifications, updating edited messages does not.
  * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
  * displayed as a link attachment. False by default.
  */
+@Suppress("LongParameterList")
 @Composable
-private fun MessagesScreenReactionsPicker(
+private fun ChannelScreenReactionsPicker(
     listViewModel: MessageListViewModel,
     composerViewModel: MessageComposerViewModel,
     selectedMessageState: SelectedMessageState?,

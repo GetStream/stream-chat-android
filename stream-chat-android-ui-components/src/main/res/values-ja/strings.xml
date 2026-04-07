@@ -60,21 +60,21 @@
     <string name="stream_ui_message_composer_error_file_size">ファイルが大きすぎます- 最大%s。</string>
     <string name="stream_ui_message_composer_error_attachment_count">添付ファイルの制限を超えました：%d個のファイル以上を添付することはできません</string>
     <string name="stream_ui_message_composer_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
-  <plurals name="stream_ui_message_list_header_member_count">
+  <plurals name="stream_ui_channel_header_member_count">
     <item quantity="other">"%1d人のメンバー"</item>
   </plurals>
-  <plurals name="stream_ui_message_list_header_typing_users">
+  <plurals name="stream_ui_channel_header_typing_users">
     <item quantity="one">"%sが入力しています"</item>
     <item quantity="other">"%sと%d人が入力しています"</item>
   </plurals>
-  <string name="stream_ui_message_list_header_back_button_content_description">"戻るボタン"</string>
-  <string name="stream_ui_message_list_header_disconnected">"ネットワークを検索中"</string>
-  <string name="stream_ui_message_list_header_member_count_online">"%1$s, %2$d人がオンライン"</string>
-  <string name="stream_ui_message_list_header_offline">"オフライン。。。"</string>
-  <string name="stream_ui_message_list_header_retry">"再試行する"</string>
-  <string name="stream_ui_message_list_header_thread_subtitle">"と%s"</string>
-  <string name="stream_ui_message_list_header_thread_title">"スレッド返信"</string>
-  <string name="stream_ui_message_list_header_untitled_channel">"名前のないチャンネル"</string>
+  <string name="stream_ui_channel_header_back_button_content_description">"戻るボタン"</string>
+  <string name="stream_ui_channel_header_disconnected">"ネットワークを検索中"</string>
+  <string name="stream_ui_channel_header_member_count_online">"%1$s, %2$d人がオンライン"</string>
+  <string name="stream_ui_channel_header_offline">"オフライン。。。"</string>
+  <string name="stream_ui_channel_header_retry">"再試行する"</string>
+  <string name="stream_ui_channel_header_thread_subtitle">"と%s"</string>
+  <string name="stream_ui_channel_header_thread_title">"スレッド返信"</string>
+  <string name="stream_ui_channel_header_untitled_channel">"名前のないチャンネル"</string>
   <plurals name="stream_ui_message_list_message_reactions">
     <item quantity="other">"%dメッセージのリアクション"</item>
   </plurals>

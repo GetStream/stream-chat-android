@@ -54,7 +54,7 @@ import io.getstream.chat.android.compose.ui.theme.ChannelMenuParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
-import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
@@ -84,7 +84,7 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
 @Composable
 @Suppress("LongMethod")
 public fun ChannelsScreen(
-    viewModelFactory: ChannelViewModelFactory = ChannelViewModelFactory(),
+    viewModelFactory: ChannelListViewModelFactory = ChannelListViewModelFactory(),
     viewModelKey: String? = null,
     title: String = "Chats",
     isShowingHeader: Boolean = true,

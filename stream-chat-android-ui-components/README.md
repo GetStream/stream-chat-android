@@ -27,7 +27,7 @@ You'll find the detailed documentation for the components on our website:
 - [Channel List Header View](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list-header/)
 - [Message List Screen](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-screen/)
 - [Message List View](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list/)
-- [Message List Header View](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-header/)
+- [Channel Header View](https://getstream.io/chat/docs/sdk/android/ui/message-components/channel-header/)
 - [Message Composer View](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer/)
 - [Mention List View](https://getstream.io/chat/docs/sdk/android/ui/utility-components/mention-list-view/)
 - [Pinned Message List View](https://getstream.io/chat/docs/sdk/android/ui/utility-components/pinned-message-list-view/)

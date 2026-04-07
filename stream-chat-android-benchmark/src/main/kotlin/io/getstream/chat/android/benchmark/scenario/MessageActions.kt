@@ -29,7 +29,7 @@ fun MacrobenchmarkScope.messagesExplore() = device.apply {
 }
 
 fun MacrobenchmarkScope.messagesWaitForContent() = device.apply {
-    wait(Until.hasObject(By.res("Stream_MessagesScreen")), STANDARD_TIMEOUT)
+    wait(Until.hasObject(By.res("Stream_ChannelScreen")), STANDARD_TIMEOUT)
 }
 
 fun MacrobenchmarkScope.messagesScrollDownUp() = device.apply {

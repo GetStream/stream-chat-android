@@ -194,11 +194,11 @@
 
     <issue
         id="ResourceName"
-        message="Resource named &apos;`MessageListHeaderView`&apos; does not start with the project&apos;s resource prefix &apos;`stream_ui_`&apos;; rename to &apos;`StreamUiMessageListHeaderView`&apos; ?"
-        errorLine1="    &lt;declare-styleable name=&quot;MessageListHeaderView&quot; parent=&quot;AvatarView&quot;>"
+        message="Resource named &apos;`ChannelHeaderView`&apos; does not start with the project&apos;s resource prefix &apos;`stream_ui_`&apos;; rename to &apos;`StreamUiChannelHeaderView`&apos; ?"
+        errorLine1="    &lt;declare-styleable name=&quot;ChannelHeaderView&quot; parent=&quot;AvatarView&quot;>"
         errorLine2="                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/res/values/attrs_message_list_header_view.xml"
+            file="src/main/res/values/attrs_channel_header_view.xml"
             line="19"
             column="24"/>
     </issue>
@@ -796,7 +796,7 @@
     <issue
         id="MissingQuantity"
         message="For locale &quot;it&quot; (Italian) the following quantity should also be defined: `many`"
-        errorLine1="  &lt;plurals name=&quot;stream_ui_message_list_header_member_count&quot;>"
+        errorLine1="  &lt;plurals name=&quot;stream_ui_channel_header_member_count&quot;>"
         errorLine2="  ^">
         <location
             file="src/main/res/values-it/strings.xml"
@@ -807,7 +807,7 @@
     <issue
         id="MissingQuantity"
         message="For locale &quot;fr&quot; (French) the following quantity should also be defined: `many` (e.g. &quot;1000000 de jours&quot;)"
-        errorLine1="  &lt;plurals name=&quot;stream_ui_message_list_header_member_count&quot;>"
+        errorLine1="  &lt;plurals name=&quot;stream_ui_channel_header_member_count&quot;>"
         errorLine2="  ^">
         <location
             file="src/main/res/values-fr/strings.xml"
@@ -818,7 +818,7 @@
     <issue
         id="MissingQuantity"
         message="For locale &quot;it&quot; (Italian) the following quantity should also be defined: `many`"
-        errorLine1="  &lt;plurals name=&quot;stream_ui_message_list_header_typing_users&quot;>"
+        errorLine1="  &lt;plurals name=&quot;stream_ui_channel_header_typing_users&quot;>"
         errorLine2="  ^">
         <location
             file="src/main/res/values-it/strings.xml"
@@ -829,7 +829,7 @@
     <issue
         id="MissingQuantity"
         message="For locale &quot;fr&quot; (French) the following quantity should also be defined: `many` (e.g. &quot;1000000 de jours&quot;)"
-        errorLine1="  &lt;plurals name=&quot;stream_ui_message_list_header_typing_users&quot;>"
+        errorLine1="  &lt;plurals name=&quot;stream_ui_channel_header_typing_users&quot;>"
         errorLine2="  ^">
         <location
             file="src/main/res/values-fr/strings.xml"
@@ -840,7 +840,7 @@
     <issue
         id="MissingQuantity"
         message="For locale &quot;es&quot; (Spanish) the following quantity should also be defined: `many`"
-        errorLine1="  &lt;plurals name=&quot;stream_ui_message_list_header_member_count&quot;>"
+        errorLine1="  &lt;plurals name=&quot;stream_ui_channel_header_member_count&quot;>"
         errorLine2="  ^">
         <location
             file="src/main/res/values-es/strings.xml"
@@ -862,7 +862,7 @@
     <issue
         id="MissingQuantity"
         message="For locale &quot;es&quot; (Spanish) the following quantity should also be defined: `many`"
-        errorLine1="  &lt;plurals name=&quot;stream_ui_message_list_header_typing_users&quot;>"
+        errorLine1="  &lt;plurals name=&quot;stream_ui_channel_header_typing_users&quot;>"
         errorLine2="  ^">
         <location
             file="src/main/res/values-es/strings.xml"
@@ -1060,7 +1060,7 @@
     <issue
         id="PluralsCandidate"
         message="Formatting %d followed by words (&quot;Online&quot;): This should probably be a plural rather than a string"
-        errorLine1="    &lt;string name=&quot;stream_ui_message_list_header_member_count_online&quot;>%1$s, %2$d Online&lt;/string>"
+        errorLine1="    &lt;string name=&quot;stream_ui_channel_header_member_count_online&quot;>%1$s, %2$d Online&lt;/string>"
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-en/strings.xml"
@@ -1082,7 +1082,7 @@
     <issue
         id="PluralsCandidate"
         message="Formatting %d followed by words (&quot;Online&quot;): This should probably be a plural rather than a string"
-        errorLine1="    &lt;string name=&quot;stream_ui_message_list_header_member_count_online&quot;>%1$s, %2$d Online&lt;/string>"
+        errorLine1="    &lt;string name=&quot;stream_ui_channel_header_member_count_online&quot;>%1$s, %2$d Online&lt;/string>"
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
@@ -1093,7 +1093,7 @@
     <issue
         id="UnusedQuantity"
         message="For language &quot;id&quot; (Indonesian) the following quantities are not relevant: `one`"
-        errorLine1="  &lt;plurals name=&quot;stream_ui_message_list_header_typing_users&quot;>"
+        errorLine1="  &lt;plurals name=&quot;stream_ui_channel_header_typing_users&quot;>"
         errorLine2="  ^">
         <location
             file="src/main/res/values-id/strings.xml"
@@ -1104,7 +1104,7 @@
     <issue
         id="UnusedQuantity"
         message="For language &quot;ja&quot; (Japanese) the following quantities are not relevant: `one`"
-        errorLine1="  &lt;plurals name=&quot;stream_ui_message_list_header_typing_users&quot;>"
+        errorLine1="  &lt;plurals name=&quot;stream_ui_channel_header_typing_users&quot;>"
         errorLine2="  ^">
         <location
             file="src/main/res/values-ja/strings.xml"
@@ -1115,7 +1115,7 @@
     <issue
         id="UnusedQuantity"
         message="For language &quot;ko&quot; (Korean) the following quantities are not relevant: `one`"
-        errorLine1="  &lt;plurals name=&quot;stream_ui_message_list_header_typing_users&quot;>"
+        errorLine1="  &lt;plurals name=&quot;stream_ui_channel_header_typing_users&quot;>"
         errorLine2="  ^">
         <location
             file="src/main/res/values-ko/strings.xml"

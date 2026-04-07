@@ -3,10 +3,10 @@ package io.getstream.chat.docs.kotlin.ui.messages
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import io.getstream.chat.android.ui.feature.messages.MessageListActivity
-import io.getstream.chat.android.ui.feature.messages.MessageListFragment
+import io.getstream.chat.android.ui.feature.messages.ChannelActivity
+import io.getstream.chat.android.ui.feature.messages.ChannelFragment
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
-import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
+import io.getstream.chat.android.ui.feature.messages.header.ChannelHeaderView
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.docs.R
 
@@ -21,15 +21,15 @@ class MessageListScreen {
     fun usage() {
 
         fun startActivity(context: Context) {
-            context.startActivity(MessageListActivity.createIntent(context, cid = "messaging:123"))
+            context.startActivity(ChannelActivity.createIntent(context, cid = "messaging:123"))
         }
 
-        class MyMessageListActivity : AppCompatActivity(R.layout.stream_ui_fragment_container) {
+        class MyChannelActivity : AppCompatActivity(R.layout.stream_ui_fragment_container) {
 
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
                 if (savedInstanceState == null) {
-                    val fragment = MessageListFragment.newInstance(cid = "messaging:123") {
+                    val fragment = ChannelFragment.newInstance(cid = "messaging:123") {
                         showHeader(true)
                     }
                     supportFragmentManager.beginTransaction()
@@ -45,11 +45,11 @@ class MessageListScreen {
      */
     fun handlingActions() {
 
-        class MyMessageListActivity : AppCompatActivity(R.layout.stream_ui_fragment_container), MessageListFragment.BackPressListener {
+        class MyChannelActivity : AppCompatActivity(R.layout.stream_ui_fragment_container), ChannelFragment.BackPressListener {
 
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
-                // Add MessageListFragment to the layout
+                // Add ChannelFragment to the layout
             }
 
             override fun onBackPress() {
@@ -63,14 +63,14 @@ class MessageListScreen {
      */
     fun customization() {
 
-        class CustomMessageListFragment : MessageListFragment() {
+        class CustomChannelFragment : ChannelFragment() {
 
-            override fun setupMessageListHeader(messageListHeaderView: MessageListHeaderView) {
-                super.setupMessageListHeader(messageListHeaderView)
+            override fun setupChannelHeader(channelHeaderView: ChannelHeaderView) {
+                super.setupChannelHeader(channelHeaderView)
                 // Customize message list header view
 
                 // For example, set a custom listener for the back button
-                messageListHeaderView.setBackButtonClickListener {
+                channelHeaderView.setBackButtonClickListener {
                     // Handle back press
                 }
             }
@@ -86,11 +86,11 @@ class MessageListScreen {
             }
         }
 
-        class CustomMessageListActivity : MessageListActivity() {
+        class CustomChannelActivity : ChannelActivity() {
 
-            override fun createMessageListFragment(cid: String, messageId: String?): MessageListFragment {
-                return MessageListFragment.newInstance(cid) {
-                    setFragment(CustomMessageListFragment())
+            override fun createChannelFragment(cid: String, messageId: String?): ChannelFragment {
+                return ChannelFragment.newInstance(cid) {
+                    setFragment(CustomChannelFragment())
                     customTheme(R.style.StreamUiTheme)
                     showHeader(true)
                     messageId(messageId)
@@ -100,10 +100,10 @@ class MessageListScreen {
 
         fun startActivity(context: Context) {
             context.startActivity(
-                MessageListActivity.createIntent(
+                ChannelActivity.createIntent(
                     context = context,
                     cid = "messaging:123",
-                    activityClass = CustomMessageListActivity::class.java
+                    activityClass = CustomChannelActivity::class.java
                 )
             )
         }

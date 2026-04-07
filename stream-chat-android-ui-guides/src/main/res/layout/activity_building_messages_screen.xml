@@ -19,8 +19,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
-        android:id="@+id/messageListHeaderView"
+    <io.getstream.chat.android.ui.feature.messages.header.ChannelHeaderView
+        android:id="@+id/channelHeaderView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -35,7 +35,7 @@
         app:layout_constraintBottom_toTopOf="@+id/messageComposerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messageListHeaderView" />
+        app:layout_constraintTop_toBottomOf="@+id/channelHeaderView" />
 
     <io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
         android:id="@+id/messageComposerView"

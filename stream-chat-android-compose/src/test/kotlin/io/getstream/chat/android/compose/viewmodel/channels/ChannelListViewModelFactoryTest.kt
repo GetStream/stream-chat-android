@@ -25,7 +25,7 @@ import org.junit.jupiter.api.assertInstanceOf
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 
-internal class ChannelViewModelFactoryTest {
+internal class ChannelListViewModelFactoryTest {
 
     @Test
     fun `create should return correct instance`() {
@@ -45,7 +45,7 @@ internal class ChannelViewModelFactoryTest {
         }
 
         assertEquals(
-            "ChannelViewModelFactory can only create instances of ChannelListViewModel",
+            "ChannelListViewModelFactory can only create instances of ChannelListViewModel",
             exception.message,
         )
     }
@@ -55,8 +55,8 @@ internal class ChannelViewModelFactoryTest {
             on { clientState } doReturn mock()
         }
 
-        fun get(): ChannelViewModelFactory {
-            return ChannelViewModelFactory(
+        fun get(): ChannelListViewModelFactory {
+            return ChannelListViewModelFactory(
                 chatClient = mockChatClient,
             )
         }

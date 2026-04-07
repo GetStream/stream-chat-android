@@ -30,7 +30,7 @@ import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
+import io.getstream.chat.android.ui.feature.messages.header.ChannelHeaderView
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -39,7 +39,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 
 /**
- * ViewModel class for [MessageListHeaderView].
+ * ViewModel class for [ChannelHeaderView].
  *
  * @param cid The CID of the current channel.
  * @param chatClient An instance of the low level chat client.
@@ -48,7 +48,7 @@ import kotlinx.coroutines.flow.map
  * @param messageId The id of a message we wish to scroll to in messages list. Used to control the number of channel
  * queries executed on screen initialization.
  */
-public class MessageListHeaderViewModel(
+public class ChannelHeaderViewModel(
     private val cid: String,
     private val chatClient: ChatClient = ChatClient.instance(),
     clientState: ClientState = chatClient.clientState,
