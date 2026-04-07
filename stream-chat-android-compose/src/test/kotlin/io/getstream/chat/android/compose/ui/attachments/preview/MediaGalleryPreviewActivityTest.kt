@@ -37,7 +37,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.test.TestCall
-import io.getstream.chat.android.ui.common.helper.DefaultDownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -194,8 +193,6 @@ internal class MediaGalleryPreviewActivityTest : MockedChatClientTest {
         input = MediaGalleryPreviewContract.Input(
             message = message,
             videoThumbnailsEnabled = true,
-            downloadAttachmentUriGenerator = DefaultDownloadAttachmentUriGenerator,
-            downloadRequestInterceptor = {},
             streamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
         ),
     ).also {

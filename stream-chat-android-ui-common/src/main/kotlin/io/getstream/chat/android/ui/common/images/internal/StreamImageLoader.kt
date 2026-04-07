@@ -25,17 +25,12 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.Px
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.disposable.Disposable
-import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
-import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 
 @InternalStreamChatApi
 public sealed interface StreamImageLoader {
     public companion object {
         public fun instance(): StreamImageLoader = CoilStreamImageLoader
     }
-
-    public var imageHeadersProvider: ImageHeadersProvider
-    public var imageAssetTransformer: ImageAssetTransformer
 
     @Suppress("LongParameterList")
     public fun load(

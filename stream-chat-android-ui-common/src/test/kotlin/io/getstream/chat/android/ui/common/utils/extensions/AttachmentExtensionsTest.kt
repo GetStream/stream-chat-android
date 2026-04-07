@@ -24,46 +24,6 @@ import org.junit.Test
 @Suppress("DEPRECATION")
 internal class AttachmentExtensionsTest {
 
-    @Test
-    fun `imagePreviewUrl returns thumbUrl when both thumbUrl and imageUrl are set`() {
-        val attachment = Attachment(
-            thumbUrl = "https://cdn.example.com/thumb.jpg",
-            imageUrl = "https://cdn.example.com/image.jpg",
-        )
-
-        assertEquals("https://cdn.example.com/thumb.jpg", attachment.imagePreviewUrl)
-    }
-
-    @Test
-    fun `imagePreviewUrl returns thumbUrl when imageUrl is null`() {
-        val attachment = Attachment(
-            thumbUrl = "https://cdn.example.com/thumb.jpg",
-            imageUrl = null,
-        )
-
-        assertEquals("https://cdn.example.com/thumb.jpg", attachment.imagePreviewUrl)
-    }
-
-    @Test
-    fun `imagePreviewUrl returns imageUrl when thumbUrl is null`() {
-        val attachment = Attachment(
-            thumbUrl = null,
-            imageUrl = "https://cdn.example.com/image.jpg",
-        )
-
-        assertEquals("https://cdn.example.com/image.jpg", attachment.imagePreviewUrl)
-    }
-
-    @Test
-    fun `imagePreviewUrl returns null when both are null`() {
-        val attachment = Attachment(
-            thumbUrl = null,
-            imageUrl = null,
-        )
-
-        assertNull(attachment.imagePreviewUrl)
-    }
-
     // linkPreviewImageUrl tests
 
     @Test

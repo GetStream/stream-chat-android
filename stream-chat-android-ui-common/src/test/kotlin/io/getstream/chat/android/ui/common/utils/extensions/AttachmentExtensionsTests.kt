@@ -113,54 +113,6 @@ internal class AttachmentExtensionsTests {
     }
 
     @Test
-    fun `imagePreviewUrl should return thumbUrl when present`() {
-        // Given
-        val thumbUrl = randomString()
-        val imageUrl = randomString()
-        val attachment = randomAttachment(
-            thumbUrl = thumbUrl,
-            imageUrl = imageUrl,
-        )
-
-        // When
-        val previewUrl = attachment.imagePreviewUrl
-
-        // Then
-        Assertions.assertEquals(thumbUrl, previewUrl)
-    }
-
-    @Test
-    fun `imagePreviewUrl should return imageUrl when thumbUrl is null`() {
-        // Given
-        val imageUrl = randomString()
-        val attachment = randomAttachment(
-            thumbUrl = null,
-            imageUrl = imageUrl,
-        )
-
-        // When
-        val previewUrl = attachment.imagePreviewUrl
-
-        // Then
-        Assertions.assertEquals(imageUrl, previewUrl)
-    }
-
-    @Test
-    fun `imagePreviewUrl should return null when both thumbUrl and imageUrl are null`() {
-        // Given
-        val attachment = randomAttachment(
-            thumbUrl = null,
-            imageUrl = null,
-        )
-
-        // When
-        val previewUrl = attachment.imagePreviewUrl
-
-        // Then
-        Assertions.assertNull(previewUrl)
-    }
-
-    @Test
     fun `isAnyFileType should return true when uploadId is present`() {
         // Given
         val attachment = randomAttachment(
