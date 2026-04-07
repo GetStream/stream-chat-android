@@ -31,13 +31,13 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.ResolvingDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.ui.PlayerView
-import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.cdn.internal.StreamMediaDataSource
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentGalleryVideoBinding
@@ -244,8 +244,9 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
 
     @OptIn(UnstableApi::class)
     private fun createMediaSourceFactory(): MediaSource.Factory {
+        val cdn = ChatClient.instance().cdn
         val headers = ChatUI.videoHeadersProvider.getVideoRequestHeaders(assetUrl ?: "")
-        val baseDataSourceFactory = DefaultDataSource.Factory(requireContext())
+        val baseDataSourceFactory = StreamMediaDataSource.factory(requireContext(), cdn)
         val dataSourceFactory = ResolvingDataSource.Factory(baseDataSourceFactory) { dataSpec ->
             dataSpec.withAdditionalHeaders(headers)
         }
@@ -259,11 +260,11 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
 
         private const val CONTROLLER_SHOW_TIMEOUT = 2000
 
-        fun create(attachment: Attachment, imageClickListener: () -> Unit = {}): Fragment {
+        fun create(thumbUrl: String?, assetUrl: String?, imageClickListener: () -> Unit = {}): Fragment {
             return AttachmentGalleryVideoPageFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_THUMB_URL, attachment.thumbUrl)
-                    putString(ARG_ASSET_URL, attachment.assetUrl)
+                    putString(ARG_THUMB_URL, thumbUrl)
+                    putString(ARG_ASSET_URL, assetUrl)
                 }
                 this.imageClickListener = imageClickListener
             }

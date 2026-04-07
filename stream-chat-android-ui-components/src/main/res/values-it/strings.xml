@@ -58,21 +58,21 @@
     <string name="stream_ui_message_composer_error_file_size">File troppo grande - max %s.</string>
     <string name="stream_ui_message_composer_error_attachment_count">Attenzione: il limite massimo di %d file è stato superato.</string>
     <string name="stream_ui_message_composer_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
-  <plurals name="stream_ui_message_list_header_member_count">
+  <plurals name="stream_ui_channel_header_member_count">
     <item quantity="one">"%1d Membro"</item>
     <item quantity="other">"%1d Membri"</item>
   </plurals>
-  <plurals name="stream_ui_message_list_header_typing_users">
+  <plurals name="stream_ui_channel_header_typing_users">
     <item quantity="one">"%s sta scrivendo"</item>
     <item quantity="other">"%s e altri %d stanno scrivendo"</item>
   </plurals>
-  <string name="stream_ui_message_list_header_back_button_content_description">"Tasto indietro"</string>
-  <string name="stream_ui_message_list_header_disconnected">"Attendo la rete"</string>
-  <string name="stream_ui_message_list_header_offline">"Disconnesso…"</string>
-  <string name="stream_ui_message_list_header_retry">"Riprova"</string>
-  <string name="stream_ui_message_list_header_thread_subtitle">"con %1$s"</string>
-  <string name="stream_ui_message_list_header_thread_title">"Rispondi nella conversazione"</string>
-  <string name="stream_ui_message_list_header_untitled_channel">"Canale senza nome"</string>
+  <string name="stream_ui_channel_header_back_button_content_description">"Tasto indietro"</string>
+  <string name="stream_ui_channel_header_disconnected">"Attendo la rete"</string>
+  <string name="stream_ui_channel_header_offline">"Disconnesso…"</string>
+  <string name="stream_ui_channel_header_retry">"Riprova"</string>
+  <string name="stream_ui_channel_header_thread_subtitle">"con %1$s"</string>
+  <string name="stream_ui_channel_header_thread_title">"Rispondi nella conversazione"</string>
+  <string name="stream_ui_channel_header_untitled_channel">"Canale senza nome"</string>
   <plurals name="stream_ui_message_list_message_reactions">
     <item quantity="one">"%d Reazione al messaggio"</item>
     <item quantity="other">"%d Reazioni al messaggio"</item>

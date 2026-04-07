@@ -165,6 +165,42 @@ public class StreamFileManager {
     }
 
     /**
+     * Evicts cached files matching [prefix] based on a time-to-live and a total size cap.
+     *
+     * 1. Deletes every file whose `lastModified` is older than [ttlMs] milliseconds.
+     * 2. If the remaining files exceed [maxSizeBytes] in total, deletes the oldest
+     *    files first until the total drops below the cap.
+     *
+     * @param context Android context for cache directory access
+     * @param prefix Filename prefix that identifies files subject to eviction
+     * @param ttlMs Maximum age in milliseconds; older files are always deleted
+     * @param maxSizeBytes Soft size cap in bytes; exceeded only temporarily until the next eviction pass
+     */
+    public suspend fun evictCacheFiles(context: Context, prefix: String, ttlMs: Long, maxSizeBytes: Long): Unit =
+        withContext(DispatcherProvider.IO) {
+            val now = System.currentTimeMillis()
+            val files = listFilesInCache(context, prefix).toMutableList()
+            val expired = files.filter { now - it.lastModified() >= ttlMs }
+            expired.forEach { file ->
+                if (file.delete()) {
+                    files.remove(file)
+                }
+            }
+
+            files.sortBy { it.lastModified() }
+            var totalSize = files.sumOf { it.length() }
+            val iterator = files.iterator()
+            while (totalSize > maxSizeBytes && iterator.hasNext()) {
+                val oldest = iterator.next()
+                val size = oldest.length()
+                if (oldest.delete()) {
+                    totalSize -= size
+                    iterator.remove()
+                }
+            }
+        }
+
+    /**
      * Clears the Stream cache directory.
      *
      * @param context Android context for cache directory access
@@ -355,6 +391,20 @@ public class StreamFileManager {
         } catch (e: Exception) {
             Result.Failure(Error.ThrowableError("Could not get or create cache directory.", e))
         }
+    }
+
+    /**
+     * Lists files in the Stream cache directory whose names start with the given [prefix].
+     *
+     * @param context Android context for cache directory access
+     * @param prefix Filename prefix to filter by
+     * @return List of matching files, or an empty list if the directory doesn't exist
+     */
+    private fun listFilesInCache(context: Context, prefix: String): List<File> {
+        val cacheDir = getStreamCacheDir(context)
+        return cacheDir.listFiles { file ->
+            file.isFile && file.name.startsWith(prefix)
+        }?.toList() ?: emptyList()
     }
 
     @Suppress("TooGenericExceptionCaught")

@@ -64,7 +64,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.SearchResultItemContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
-import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -113,7 +113,7 @@ public fun ChannelList(
     contentPadding: PaddingValues = PaddingValues(),
     viewModel: ChannelListViewModel = viewModel(
         factory =
-        ChannelViewModelFactory(
+        ChannelListViewModelFactory(
             ChatClient.instance(),
             QuerySortByField.descByName("last_updated"),
             filters = null,

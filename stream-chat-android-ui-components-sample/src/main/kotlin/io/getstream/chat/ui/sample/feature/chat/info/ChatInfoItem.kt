@@ -21,6 +21,8 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.ui.sample.R
+import io.getstream.chat.android.ui.R as UiR
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 sealed class ChatInfoItem {
 
@@ -44,10 +46,10 @@ sealed class ChatInfoItem {
         abstract val textResId: Int
 
         @get:ColorRes
-        open val tintResId: Int = R.color.stream_ui_grey
+        open val tintResId: Int = UiR.color.stream_ui_grey
 
         @get:ColorRes
-        open val textColorResId: Int = R.color.stream_ui_text_color_primary
+        open val textColorResId: Int = UiR.color.stream_ui_text_color_primary
 
         open val showRightArrow: Boolean = true
 
@@ -55,23 +57,23 @@ sealed class ChatInfoItem {
 
         data object PinnedMessages : Option() {
             override val iconResId: Int
-                get() = R.drawable.stream_ui_ic_pin
+                get() = UiR.drawable.stream_ui_ic_pin
             override val textResId: Int
-                get() = R.string.stream_ui_channel_info_option_pinned_messages
+                get() = UiCommonR.string.stream_ui_channel_info_option_pinned_messages
         }
 
         data object SharedMedia : Option() {
             override val iconResId: Int
                 get() = R.drawable.stream_ui_ic_gallery
             override val textResId: Int
-                get() = R.string.stream_ui_channel_info_option_media_attachments
+                get() = UiCommonR.string.stream_ui_channel_info_option_media_attachments
         }
 
         data object SharedFiles : Option() {
             override val iconResId: Int
                 get() = R.drawable.stream_ui_ic_folder
             override val textResId: Int
-                get() = R.string.stream_ui_channel_info_option_files_attachments
+                get() = UiCommonR.string.stream_ui_channel_info_option_files_attachments
         }
 
         data object SharedGroups : Option() {
@@ -85,9 +87,9 @@ sealed class ChatInfoItem {
             override val iconResId: Int
                 get() = R.drawable.ic_delete
             override val tintResId: Int
-                get() = R.color.stream_ui_accent_red
+                get() = UiR.color.stream_ui_accent_red
             override val textColorResId: Int
-                get() = R.color.stream_ui_accent_red
+                get() = UiR.color.stream_ui_accent_red
             override val showRightArrow: Boolean = false
         }
 
@@ -95,9 +97,9 @@ sealed class ChatInfoItem {
             override val iconResId: Int
                 get() = R.drawable.ic_leave_group
             override val tintResId: Int
-                get() = R.color.stream_ui_accent_red
+                get() = UiR.color.stream_ui_accent_red
             override val textColorResId: Int
-                get() = R.color.stream_ui_accent_red
+                get() = UiR.color.stream_ui_accent_red
             override val showRightArrow: Boolean = false
         }
 

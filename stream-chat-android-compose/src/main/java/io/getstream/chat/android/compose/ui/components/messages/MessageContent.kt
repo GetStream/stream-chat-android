@@ -178,7 +178,7 @@ internal fun DefaultMessageDeletedContent(
  */
 @Composable
 @Suppress("LongMethod")
-internal fun DefaultMessageContent(
+internal fun DefaultMessageRegularContent(
     message: Message,
     currentUser: User?,
     messageAlignment: MessageAlignment = MessageAlignment.Start,

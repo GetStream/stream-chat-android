@@ -270,8 +270,8 @@
         <item name="streamUiGlobalAvatarTextColor">@color/stream_ui_white</item>
         <item name="streamUiMessageListItemAvatarStyle">@style/StreamUi.MessageList.Item.Avatar
         </item>
-        <item name="streamUiMessageListHeaderAvatarStyle">
-            @style/StreamUi.MessageList.Header.Avatar
+        <item name="streamUiChannelHeaderAvatarStyle">
+            @style/StreamUi.ChannelHeader.Avatar
         </item>
         <item name="streamUiChannelListViewStyle">@style/StreamUi.ChannelListView</item>
         <item name="streamUiChannelListItemAvatarStyle">@style/StreamUi.ChannelList.Item.Avatar
@@ -706,7 +706,7 @@
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_initials</item>
     </style>
 
-    <style name="StreamUi.MessageList.Header.Avatar" parent="StreamUi.BaseAvatar">
+    <style name="StreamUi.ChannelHeader.Avatar" parent="StreamUi.BaseAvatar">
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
@@ -726,7 +726,7 @@
         <item name="streamUiActionButtonIcon">@drawable/stream_ui_ic_pen</item>
         <item name="streamUiActionBackgroundTint">@color/stream_ui_icon_button_background_selector
         </item>
-        <item name="streamUiMessageListHeaderSeparatorBackgroundDrawable">
+        <item name="streamUiChannelHeaderSeparatorBackgroundDrawable">
             @drawable/stream_ui_divider
         </item>
     </style>
@@ -912,51 +912,51 @@
         <item name="streamUiChannelActionsCancelEnabled">true</item>
     </style>
 
-    <style name="StreamUi.MessageListHeader" parent="StreamUi">
+    <style name="StreamUi.ChannelHeader" parent="StreamUi">
         <!-- Title text style -->
-        <item name="streamUiMessageListHeaderTitleTextSize">@dimen/stream_ui_text_large</item>
-        <item name="streamUiMessageListHeaderTitleTextColor">@color/stream_ui_text_color_primary
+        <item name="streamUiChannelHeaderTitleTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiChannelHeaderTitleTextColor">@color/stream_ui_text_color_primary
         </item>
-        <item name="streamUiMessageListHeaderTitleTextStyle">bold</item>
+        <item name="streamUiChannelHeaderTitleTextStyle">bold</item>
 
         <!-- Offline text style -->
-        <item name="streamUiMessageListHeaderOfflineLabelTextSize">@dimen/stream_ui_text_small
+        <item name="streamUiChannelHeaderOfflineLabelTextSize">@dimen/stream_ui_text_small
         </item>
-        <item name="streamUiMessageListHeaderOfflineLabelTextColor">
+        <item name="streamUiChannelHeaderOfflineLabelTextColor">
             @color/stream_ui_text_color_secondary
         </item>
-        <item name="streamUiMessageListHeaderOfflineLabelTextStyle">normal</item>
+        <item name="streamUiChannelHeaderOfflineLabelTextStyle">normal</item>
 
         <!-- Searching for network text style -->
-        <item name="streamUiMessageListHeaderSearchingForNetworkLabelTextSize">
+        <item name="streamUiChannelHeaderSearchingForNetworkLabelTextSize">
             @dimen/stream_ui_text_small
         </item>
-        <item name="streamUiMessageListHeaderSearchingForNetworkLabelColor">
+        <item name="streamUiChannelHeaderSearchingForNetworkLabelColor">
             @color/stream_ui_text_color_secondary
         </item>
-        <item name="streamUiMessageListHeaderSearchingForNetworkLabelTextStyle">normal</item>
+        <item name="streamUiChannelHeaderSearchingForNetworkLabelTextStyle">normal</item>
 
         <!-- Online text style -->
-        <item name="streamUiMessageListHeaderDefaultLabelTextSize">@dimen/stream_ui_text_small
+        <item name="streamUiChannelHeaderDefaultLabelTextSize">@dimen/stream_ui_text_small
         </item>
-        <item name="streamUiMessageListHeaderDefaultLabelTextColor">
+        <item name="streamUiChannelHeaderDefaultLabelTextColor">
             @color/stream_ui_text_color_secondary
         </item>
-        <item name="streamUiMessageListHeaderDefaultLabelTextStyle">normal</item>
+        <item name="streamUiChannelHeaderDefaultLabelTextStyle">normal</item>
 
-        <item name="streamUiMessageListHeaderShowUserAvatar">true</item>
-        <item name="streamUiMessageListHeaderBackButtonIcon">@drawable/stream_ui_arrow_left</item>
-        <item name="streamUiMessageListHeaderShowBackButton">true</item>
-        <item name="streamUiMessageListHeaderShowBackButtonBadge">false</item>
-        <item name="streamUiMessageListHeaderBackButtonBadgeBackgroundColor">
+        <item name="streamUiChannelHeaderShowUserAvatar">true</item>
+        <item name="streamUiChannelHeaderBackButtonIcon">@drawable/stream_ui_arrow_left</item>
+        <item name="streamUiChannelHeaderShowBackButton">true</item>
+        <item name="streamUiChannelHeaderShowBackButtonBadge">false</item>
+        <item name="streamUiChannelHeaderBackButtonBadgeBackgroundColor">
             @color/stream_ui_accent_red
         </item>
-        <item name="streamUiMessageListHeaderShowSearchingForNetworkProgressBar">true</item>
-        <item name="streamUiMessageListHeaderSearchingForNetworkProgressBarTint">
+        <item name="streamUiChannelHeaderShowSearchingForNetworkProgressBar">true</item>
+        <item name="streamUiChannelHeaderSearchingForNetworkProgressBarTint">
             @color/stream_ui_accent_blue
         </item>
 
-        <item name="streamUiMessageListHeaderSeparatorBackgroundDrawable">
+        <item name="streamUiChannelHeaderSeparatorBackgroundDrawable">
             @drawable/stream_ui_divider
         </item>
     </style>
@@ -1479,9 +1479,10 @@
         <item name="streamUiMessageComposerSendMessageButtonPadding">
             @dimen/stream_ui_message_composer_trailing_content_button_send_message_padding
         </item>
-        <item name="streamUiMessageComposerAudioRecordingButtonVisible">false</item>
+        <item name="streamUiMessageComposerAudioRecordingButtonVisible">true</item>
         <item name="streamUiMessageComposerAudioRecordingButtonEnabled">true</item>
         <item name="streamUiMessageComposerAudioRecordingButtonPreferred">false</item>
+        <item name="streamUiMessageComposerAudioRecordingSendOnComplete">false</item>
         <item name="streamUiMessageComposerAudioRecordingButtonIconDrawable">
             @drawable/stream_ui_ic_mic
         </item>

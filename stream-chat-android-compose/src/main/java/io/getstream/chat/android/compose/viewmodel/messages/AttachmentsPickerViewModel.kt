@@ -18,6 +18,8 @@ package io.getstream.chat.android.compose.viewmodel.messages
 
 import android.net.Uri
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -165,6 +167,22 @@ public class AttachmentsPickerViewModel @JvmOverloads constructor(
     }
 
     /**
+     * Set to `true` when one or more selected attachments could not be resolved (e.g. the
+     * content URI points to a cloud file that is not locally available). The UI layer should
+     * observe this flag and show an appropriate message, then call [clearUnresolvedAttachments]
+     * to reset it.
+     */
+    internal var hasUnresolvedAttachments: Boolean by mutableStateOf(false)
+        private set
+
+    /**
+     * Resets the [hasUnresolvedAttachments] flag after the UI has consumed the event.
+     */
+    internal fun clearUnresolvedAttachments() {
+        hasUnresolvedAttachments = false
+    }
+
+    /**
      * Toggles the attachment picker visibility.
      */
     public fun togglePickerVisibility() {
@@ -249,17 +267,28 @@ public class AttachmentsPickerViewModel @JvmOverloads constructor(
      * Resolves [uris] from a system picker into [Attachment]s and emits the result
      * via [submittedAttachments].
      *
+     * URIs whose content is inaccessible (e.g. cloud-backed files not downloaded to
+     * the device) are detected via a lightweight accessibility check and excluded
+     * from the result. When any URI is inaccessible, [hasUnresolvedAttachments] is
+     * set so the UI layer can display an appropriate message.
+     *
      * @param uris Content URIs returned by the system picker.
      */
     public fun resolveAndSubmitUris(uris: List<Uri>) {
         if (uris.isEmpty()) return
         viewModelScope.launch {
-            val metadata = withContext(DispatcherProvider.IO) { storageHelper.resolveMetadata(uris) }
-            val attachments = storageHelper.toAttachments(metadata)
+            val (accessible, inaccessible) = withContext(DispatcherProvider.IO) {
+                val metadata = storageHelper.resolveMetadata(uris)
+                storageHelper.partitionResolvable(metadata)
+            }
+            if (inaccessible.isNotEmpty()) {
+                hasUnresolvedAttachments = true
+            }
+            val attachments = storageHelper.toAttachments(accessible)
             _submittedAttachments.trySend(
                 SubmittedAttachments(
                     attachments = attachments,
-                    hasUnsupportedFiles = metadata.size < uris.size,
+                    hasUnsupportedFiles = (accessible.size + inaccessible.size) < uris.size,
                 ),
             )
         }

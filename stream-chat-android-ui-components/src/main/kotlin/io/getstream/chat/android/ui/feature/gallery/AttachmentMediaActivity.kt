@@ -32,14 +32,17 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.PlayerView
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.cdn.internal.StreamMediaDataSource
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentMediaBinding
 import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.log.taggedLogger
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * An Activity playing attachments such as audio and video.
@@ -134,8 +137,13 @@ public class AttachmentMediaActivity : AppCompatActivity() {
         binding.root.applyEdgeToEdgePadding(typeMask = WindowInsetsCompat.Type.systemBars())
     }
 
+    @OptIn(UnstableApi::class)
     private fun createPlayer(): Player {
-        val player = ExoPlayer.Builder(this).build()
+        val cdn = ChatClient.instance().cdn
+        val dataSourceFactory = StreamMediaDataSource.factory(this, cdn)
+        val player = ExoPlayer.Builder(this)
+            .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
+            .build()
         player.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 val isBuffering = playbackState == Player.STATE_BUFFERING
@@ -181,7 +189,7 @@ public class AttachmentMediaActivity : AppCompatActivity() {
     private fun showPlaybackError() {
         Toast.makeText(
             this,
-            R.string.stream_ui_message_list_attachment_display_error,
+            UiCommonR.string.stream_ui_message_list_attachment_display_error,
             Toast.LENGTH_SHORT,
         ).show()
     }

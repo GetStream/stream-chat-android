@@ -40,4 +40,16 @@ public object PreviewCommandData {
         args = "[@username]",
         set = "moderation_set",
     )
+    public val command4: Command = Command(
+        name = "ban",
+        description = "Ban a user",
+        args = "[@username]",
+        set = "moderation_set",
+    )
+    public val command5: Command = Command(
+        name = "unban",
+        description = "Unban a user",
+        args = "[@username]",
+        set = "moderation_set",
+    )
 }

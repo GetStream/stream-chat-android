@@ -33,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -43,6 +42,7 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMembe
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent.BanMemberModal.Timeout
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 @Suppress("LongMethod")
 @Composable
@@ -68,14 +68,14 @@ internal fun ChannelInfoScreenModal(
         ChannelInfoViewEvent.DeleteChannelModal -> {
             SimpleDialog(
                 title = if (isGroupChannel) {
-                    stringResource(R.string.stream_ui_channel_info_option_delete_group)
+                    stringResource(UiCommonR.string.stream_ui_channel_info_option_delete_group)
                 } else {
-                    stringResource(R.string.stream_ui_channel_info_option_delete_conversation)
+                    stringResource(UiCommonR.string.stream_ui_channel_info_option_delete_conversation)
                 },
                 message = if (isGroupChannel) {
-                    stringResource(R.string.stream_ui_channel_info_delete_group_modal_message)
+                    stringResource(UiCommonR.string.stream_ui_channel_info_delete_group_modal_message)
                 } else {
-                    stringResource(R.string.stream_ui_channel_info_delete_conversation_modal_message)
+                    stringResource(UiCommonR.string.stream_ui_channel_info_delete_conversation_modal_message)
                 },
                 onPositiveAction = {
                     onViewAction(ChannelInfoViewAction.DeleteChannelConfirmationClick)
@@ -88,14 +88,14 @@ internal fun ChannelInfoScreenModal(
         ChannelInfoViewEvent.LeaveChannelModal -> {
             SimpleDialog(
                 title = if (isGroupChannel) {
-                    stringResource(R.string.stream_ui_channel_info_option_leave_group)
+                    stringResource(UiCommonR.string.stream_ui_channel_info_option_leave_group)
                 } else {
-                    stringResource(R.string.stream_ui_channel_info_option_leave_conversation)
+                    stringResource(UiCommonR.string.stream_ui_channel_info_option_leave_conversation)
                 },
                 message = if (isGroupChannel) {
-                    stringResource(R.string.stream_ui_channel_info_leave_group_modal_message)
+                    stringResource(UiCommonR.string.stream_ui_channel_info_leave_group_modal_message)
                 } else {
-                    stringResource(R.string.stream_ui_channel_info_leave_conversation_modal_message)
+                    stringResource(UiCommonR.string.stream_ui_channel_info_leave_conversation_modal_message)
                 },
                 onPositiveAction = {
                     // TODO Get quit message configuration from ChatTheme
@@ -112,7 +112,7 @@ internal fun ChannelInfoScreenModal(
 
             SimpleDialog(
                 title = stringResource(
-                    R.string.stream_ui_channel_info_ban_member_modal_title,
+                    UiCommonR.string.stream_ui_channel_info_ban_member_modal_title,
                     member.user.name.takeIf(String::isNotBlank) ?: member.user.id,
                 ),
                 text = {
@@ -138,9 +138,9 @@ internal fun ChannelInfoScreenModal(
         is ChannelInfoViewEvent.RemoveMemberModal -> {
             val member = modal.member
             SimpleDialog(
-                title = stringResource(R.string.stream_ui_channel_info_member_modal_option_remove_member),
+                title = stringResource(UiCommonR.string.stream_ui_channel_info_member_modal_option_remove_member),
                 message = stringResource(
-                    R.string.stream_ui_channel_info_remove_member_modal_message,
+                    UiCommonR.string.stream_ui_channel_info_remove_member_modal_message,
                     member.user.name.takeIf(String::isNotBlank) ?: member.getUserId(),
                 ),
                 onPositiveAction = {
@@ -179,16 +179,16 @@ private fun BanMemberModalText(
                 val label = stringResource(
                     when (timeout) {
                         Timeout.OneHour ->
-                            R.string.stream_ui_channel_info_ban_member_modal_timeout_one_hour
+                            UiCommonR.string.stream_ui_channel_info_ban_member_modal_timeout_one_hour
 
                         Timeout.OneDay ->
-                            R.string.stream_ui_channel_info_ban_member_modal_timeout_one_day
+                            UiCommonR.string.stream_ui_channel_info_ban_member_modal_timeout_one_day
 
                         Timeout.OneWeek ->
-                            R.string.stream_ui_channel_info_ban_member_modal_timeout_one_week
+                            UiCommonR.string.stream_ui_channel_info_ban_member_modal_timeout_one_week
 
                         Timeout.NoTimeout ->
-                            R.string.stream_ui_channel_info_ban_member_modal_no_timeout
+                            UiCommonR.string.stream_ui_channel_info_ban_member_modal_no_timeout
                     },
                 )
                 Text(text = label)

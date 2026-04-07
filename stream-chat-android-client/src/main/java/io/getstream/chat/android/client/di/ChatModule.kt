@@ -56,6 +56,8 @@ import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
+import io.getstream.chat.android.client.cdn.CDN
+import io.getstream.chat.android.client.cdn.internal.CDNOkHttpInterceptor
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.debugger.ChatClientDebugger
 import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
@@ -82,6 +84,7 @@ import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
 import io.getstream.chat.android.client.user.CurrentUserFetcher
 import io.getstream.chat.android.client.utils.HeadersUtil
+import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.models.UserId
 import io.getstream.log.StreamLog
 import okhttp3.Interceptor
@@ -109,12 +112,14 @@ import java.util.concurrent.TimeUnit
  * logic.
  * @param shareFileDownloadRequestInterceptor Optional interceptor to customize file download requests done for the
  * purpose of sharing the file.
+ * @param cdn Optional [CDN] implementation for transforming file download URLs and injecting headers.
  * @param tokenManager Manager that provides and refreshes auth tokens for authenticated requests.
  * @param customOkHttpClient Optional base [OkHttpClient] to reuse threads/connection pools and customize networking.
  * @param clientDebugger Optional hooks for debugging client state, sockets, and network operations.
  * @param lifecycle Host [Lifecycle] used to observe app foreground/background and manage socket behavior.
  * @param appName Optional app name added to default headers for tracking.
  * @param appVersion Optional app version added to default headers for tracking.
+ * @param serverClockOffset Shared clock-offset tracker used by the socket layer for time synchronisation.
  */
 @Suppress("TooManyFunctions")
 internal class ChatModule
@@ -130,12 +135,14 @@ constructor(
     private val fileUploader: FileUploader?,
     private val sendMessageInterceptor: SendMessageInterceptor?,
     private val shareFileDownloadRequestInterceptor: Interceptor?,
+    private val cdn: CDN?,
     private val tokenManager: TokenManager,
     private val customOkHttpClient: OkHttpClient?,
     private val clientDebugger: ChatClientDebugger?,
     private val lifecycle: Lifecycle,
     private val appName: String?,
     private val appVersion: String?,
+    private val serverClockOffset: ServerClockOffset,
 ) {
 
     private val headersUtil = HeadersUtil(appContext, appName, appVersion)
@@ -310,6 +317,7 @@ constructor(
         lifecycleObserver,
         networkStateProvider,
         clientDebugger,
+        serverClockOffset,
     )
 
     private fun buildApi(chatConfig: ChatApiConfig): ChatApi = ProxyChatApi(
@@ -384,6 +392,7 @@ constructor(
     private fun buildFileDownloadApi(): FileDownloadApi {
         val okHttpClient = baseClientBuilder(BASE_TIMEOUT)
             .apply {
+                cdn?.let { addInterceptor(CDNOkHttpInterceptor(it)) }
                 shareFileDownloadRequestInterceptor?.let { addInterceptor(it) }
             }
             .build()

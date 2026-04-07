@@ -70,6 +70,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
 import io.getstream.result.Error
 import kotlinx.coroutines.launch
+import io.getstream.chat.android.compose.R as ComposeR
 
 /**
  * An Activity that allows users to manually log in to an environment with an API key,
@@ -245,7 +246,7 @@ class CustomLoginActivity : AppCompatActivity() {
                     onClick = onClick,
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.stream_design_ic_arrow_left),
+                        painter = painterResource(id = ComposeR.drawable.stream_design_ic_arrow_left),
                         contentDescription = null,
                         tint = Color.Black,
                     )

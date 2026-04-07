@@ -76,7 +76,6 @@ import io.getstream.chat.android.ui.common.state.messages.UnmuteUser
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageOption
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryDestination
@@ -493,7 +492,7 @@ public class MessageListView : ConstraintLayout {
             }
 
             if (attachment.isGiphy()) {
-                val url = attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl
+                val url = attachment.thumbUrl ?: attachment.titleLink ?: attachment.ogUrl
 
                 if (url != null) {
                     ChatUI.navigator.navigate(WebLinkDestination(context, url))
@@ -504,7 +503,7 @@ public class MessageListView : ConstraintLayout {
                         val filteredAttachments = message.attachments
                             .filter {
                                 (
-                                    it.isImage() && !it.imagePreviewUrl.isNullOrEmpty() ||
+                                    it.isImage() && !it.imageUrl.isNullOrEmpty() ||
                                         it.isVideo() && !it.assetUrl.isNullOrEmpty()
                                     ) &&
                                     !it.hasLink()
@@ -2227,7 +2226,7 @@ public class MessageListView : ConstraintLayout {
 
         internal companion object {
             fun parseValue(value: Int): NewMessagesBehaviour {
-                return values().find { behaviour -> behaviour.value == value }
+                return entries.find { behaviour -> behaviour.value == value }
                     ?: throw IllegalArgumentException("Unknown behaviour type. It must be either SCROLL_TO_BOTTOM (int 0) or COUNT_UPDATE (int 1)")
             }
         }
@@ -2238,7 +2237,7 @@ public class MessageListView : ConstraintLayout {
 
         internal companion object {
             fun parseValue(value: Int): MessagesStart {
-                return values().find { behaviour -> behaviour.value == value }
+                return entries.find { behaviour -> behaviour.value == value }
                     ?: throw IllegalArgumentException("Unknown messages start type. It must be either BOTTOM (int 0) or TOP (int 1)")
             }
         }

@@ -34,11 +34,11 @@ import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.ui.common.utils.openSystemSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Wrapper around Accompanist's [rememberPermissionState].
@@ -68,8 +68,8 @@ internal fun rememberAudioRecordingPermission(): AudioRecordingPermission {
     }
     if (showDenied) {
         SimpleDialog(
-            title = stringResource(id = R.string.stream_ui_message_composer_permission_audio_record_title),
-            message = stringResource(id = R.string.stream_ui_message_composer_permission_audio_record_message),
+            title = stringResource(id = UiCommonR.string.stream_ui_message_composer_permission_audio_record_title),
+            message = stringResource(id = UiCommonR.string.stream_ui_message_composer_permission_audio_record_message),
             onDismiss = { showDenied = false },
             onPositiveAction = { showDenied = false },
             showDismissButton = false,
@@ -141,8 +141,8 @@ private fun rememberPermissionRationale(): PermissionRationaleState {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val message = stringResource(R.string.stream_ui_message_composer_permission_audio_record_message)
-    val actionLabel = stringResource(R.string.stream_ui_message_composer_permissions_setting_button)
+    val message = stringResource(UiCommonR.string.stream_ui_message_composer_permission_audio_record_message)
+    val actionLabel = stringResource(UiCommonR.string.stream_ui_message_composer_permissions_setting_button)
     return remember(snackbarHostState, scope, context, message, actionLabel) {
         PermissionRationaleState(
             snackbarHostState = snackbarHostState,

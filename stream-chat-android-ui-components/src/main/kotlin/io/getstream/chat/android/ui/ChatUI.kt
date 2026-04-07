@@ -73,31 +73,56 @@ public object ChatUI {
 
     /**
      * Provides a custom implementation for loading images.
+     *
+     * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
+     * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to provide headers and transform URLs
+     * for all image, file, and download requests.
      */
+    @Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
     @JvmStatic
     public var imageAssetTransformer: ImageAssetTransformer by StreamImageLoader.instance()::imageAssetTransformer
 
     /**
      * Generates a download URI for the given attachment.
+     *
+     * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
+     * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to provide headers and transform URLs
+     * for all image, file, and download requests.
      */
+    @Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
     @JvmStatic
     public var downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator = DefaultDownloadAttachmentUriGenerator
 
     /**
      * Intercepts and modifies the download request before it is enqueued.
+     *
+     * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
+     * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to provide headers and transform URLs
+     * for all image, file, and download requests.
      */
+    @Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
     @JvmStatic
     public var downloadRequestInterceptor: DownloadRequestInterceptor = DownloadRequestInterceptor { }
 
     /**
      * Provides HTTP headers for image loading requests.
+     *
+     * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
+     * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to provide headers and transform URLs
+     * for all image, file, and download requests.
      */
+    @Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
     @JvmStatic
     public var imageHeadersProvider: ImageHeadersProvider by StreamImageLoader.instance()::imageHeadersProvider
 
     /**
      * Provides HTTP headers for video loading requests.
+     *
+     * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
+     * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to provide headers and transform URLs
+     * for all image, file, and download requests.
      */
+    @Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
     @JvmStatic
     public var videoHeadersProvider: VideoHeadersProvider = DefaultVideoHeadersProvider
 
@@ -215,7 +240,17 @@ public object ChatUI {
      * Whether draft messages are enabled.
      */
     @JvmStatic
-    public var draftMessagesEnabled: Boolean = false
+    public var draftMessagesEnabled: Boolean = true
+
+    /**
+     * Whether to use Google Docs Viewer (gview) for document attachments.
+     *
+     * When `true` (default), documents are rendered via the legacy [AttachmentDocumentActivity]
+     * which loads them through Google Docs Viewer. When `false`, text-based files (TXT, HTML)
+     * are rendered in-app and other file types are downloaded and opened with an external application.
+     */
+    @JvmStatic
+    public var useDocumentGView: Boolean = true
 
     /**
      * Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,
@@ -230,13 +265,13 @@ public object ChatUI {
      * Whether or not the auto-translation feature is enabled.
      */
     @JvmStatic
-    public var autoTranslationEnabled: Boolean = false
+    public var autoTranslationEnabled: Boolean = true
 
     /**
      * Whether the option to show the original translation is enabled or not.
      */
     @JvmStatic
-    public var showOriginalTranslationEnabled: Boolean = false
+    public var showOriginalTranslationEnabled: Boolean = true
 
     /**
      * Provides a custom renderer for user avatars.

@@ -39,6 +39,7 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 internal class QuotedMessageBodyBuilderTest {
 
@@ -194,7 +195,7 @@ internal class QuotedMessageBodyBuilderTest {
                         Attachment(
                             type = AttachmentType.GIPHY,
                             name = "Happy Dance",
-                            imageUrl = "https://giphy.com/image.gif",
+                            thumbUrl = "https://giphy.com/image.gif",
                         ),
                     ),
                 ),
@@ -214,7 +215,7 @@ internal class QuotedMessageBodyBuilderTest {
                         Attachment(
                             type = AttachmentType.GIPHY,
                             name = "Happy Dance",
-                            imageUrl = "https://giphy.com/image.gif",
+                            thumbUrl = "https://giphy.com/image.gif",
                         ),
                     ),
                 ),
@@ -304,7 +305,7 @@ internal class QuotedMessageBodyBuilderTest {
                         Attachment(
                             type = AttachmentType.VIDEO,
                             assetUrl = "https://example.com/video.mp4",
-                            imageUrl = "https://example.com/thumb.jpg",
+                            thumbUrl = "https://example.com/thumb.jpg",
                         ),
                     ),
                 ),
@@ -324,7 +325,7 @@ internal class QuotedMessageBodyBuilderTest {
                         Attachment(
                             type = AttachmentType.VIDEO,
                             assetUrl = "https://example.com/video.mp4",
-                            imageUrl = "https://example.com/thumb.jpg",
+                            thumbUrl = "https://example.com/thumb.jpg",
                         ),
                     ),
                 ),
@@ -614,9 +615,15 @@ internal class QuotedMessageBodyBuilderTest {
         private fun mockResources(): Resources {
             val resources: Resources = mock()
 
-            whenever(resources.getString(R.string.stream_ui_message_list_message_deleted)) doReturn MOCK_MESSAGE_DELETED
-            whenever(resources.getString(R.string.stream_ui_location_static_message_text)) doReturn MOCK_LOCATION_STATIC
-            whenever(resources.getString(R.string.stream_ui_location_live_message_text)) doReturn MOCK_LOCATION_LIVE
+            whenever(
+                resources.getString(UiCommonR.string.stream_ui_message_list_message_deleted),
+            ) doReturn MOCK_MESSAGE_DELETED
+            whenever(
+                resources.getString(UiCommonR.string.stream_ui_location_static_message_text),
+            ) doReturn MOCK_LOCATION_STATIC
+            whenever(
+                resources.getString(UiCommonR.string.stream_ui_location_live_message_text),
+            ) doReturn MOCK_LOCATION_LIVE
             whenever(resources.getString(R.string.stream_compose_quoted_message_giphy_tag)) doReturn MOCK_GIPHY_TAG
             whenever(
                 resources.getString(

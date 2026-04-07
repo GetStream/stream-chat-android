@@ -156,7 +156,7 @@ public fun ChannelListHeader(
  * We show the avatar if the user is available, otherwise we add a spacer to make sure the alignment is correct.
  */
 @Composable
-internal fun DefaultChannelHeaderLeadingContent(
+internal fun DefaultChannelListHeaderLeadingContent(
     currentUser: User?,
     onAvatarClick: (User?) -> Unit,
 ) {

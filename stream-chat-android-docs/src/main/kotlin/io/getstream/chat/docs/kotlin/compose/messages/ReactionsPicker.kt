@@ -14,7 +14,7 @@ import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsP
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsPickerState
 
 /**
@@ -24,7 +24,7 @@ private object ReactionsPickerUsageSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = this,
                 channelId = "messaging:123",
             )
@@ -71,7 +71,7 @@ private object ReactionsPickerHandlingActionsSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = this,
                 channelId = "messaging:123",
             )
@@ -119,7 +119,7 @@ private object ReactionsPickerCustomizationSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = this,
                 channelId = "messaging:123",
             )

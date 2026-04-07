@@ -17,13 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentMediaItemParams
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.models.AttachmentType
-import io.getstream.chat.docs.R
+import io.getstream.chat.android.compose.R as ComposeR
 
 /**
  * [Customizing Image and Video Previews](https://getstream.io/chat/docs/sdk/android/compose/guides/guides/customizing-image-and-video-previews/)
@@ -32,7 +32,7 @@ private object CustomizingImageAndVideoPreviewsSnippet {
 
     class MessagesActivity : AppCompatActivity() {
         private val messageListViewModelFactory by lazy {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = this,
                 channelId = "channelId",
             )
@@ -44,7 +44,7 @@ private object CustomizingImageAndVideoPreviewsSnippet {
             setContent {
                 // Override the default component factory to customize attachment previews
                 ChatTheme(componentFactory = CustomMediaComponentFactory) {
-                    MessagesScreen(
+                    ChannelScreen(
                         viewModelFactory = messageListViewModelFactory,
                         onBackPressed = { finish() },
                     )
@@ -59,7 +59,7 @@ private object CustomizingImageAndVideoPreviewsSnippet {
                     modifier = Modifier
                         .padding(2.dp)
                         .fillMaxSize(0.8f),
-                    painter = painterResource(id = R.drawable.stream_design_ic_play_fill),
+                    painter = painterResource(id = ComposeR.drawable.stream_design_ic_play_fill),
                     tint = Color.White,
                     contentDescription = null,
                 )

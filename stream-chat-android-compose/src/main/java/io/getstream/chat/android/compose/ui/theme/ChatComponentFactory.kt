@@ -60,8 +60,8 @@ import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMo
 import io.getstream.chat.android.compose.ui.attachments.content.UnsupportedAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfoNavigationIcon
-import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderCenterContent
+import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderTrailingContent
 import io.getstream.chat.android.compose.ui.channels.info.DefaultSelectedChannelMenuHeaderContent
 import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
@@ -103,8 +103,8 @@ import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicato
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
 import io.getstream.chat.android.compose.ui.components.messages.ClusteredMessageReactions
-import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDeletedContent
+import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageRegularContent
 import io.getstream.chat.android.compose.ui.components.messages.GiphyMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageComposerQuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.MessageFooter
@@ -130,9 +130,9 @@ import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestio
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultUserSuggestionItemCenterContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultUserSuggestionItemLeadingContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.UserSuggestionItem
-import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderCenterContent
-import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderLeadingContent
-import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderTrailingContent
+import io.getstream.chat.android.compose.ui.messages.header.DefaultChannelHeaderCenterContent
+import io.getstream.chat.android.compose.ui.messages.header.DefaultChannelHeaderLeadingContent
+import io.getstream.chat.android.compose.ui.messages.header.DefaultChannelHeaderTrailingContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageAuthor
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageBottom
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageContent
@@ -260,7 +260,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun RowScope.ChannelListHeaderLeadingContent(params: ChannelListHeaderLeadingContentParams) {
-        DefaultChannelHeaderLeadingContent(
+        DefaultChannelListHeaderLeadingContent(
             currentUser = params.currentUser,
             onAvatarClick = params.onAvatarClick,
         )
@@ -593,8 +593,8 @@ public interface ChatComponentFactory {
      * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageListHeader(params: MessageListHeaderParams) {
-        io.getstream.chat.android.compose.ui.messages.header.MessageListHeader(
+    public fun ChannelHeader(params: ChannelHeaderParams) {
+        io.getstream.chat.android.compose.ui.messages.header.ChannelHeader(
             channel = params.channel,
             currentUser = params.currentUser,
             connectionState = params.connectionState,
@@ -613,8 +613,8 @@ public interface ChatComponentFactory {
      * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.MessageListHeaderLeadingContent(params: MessageListHeaderLeadingContentParams) {
-        DefaultMessageListHeaderLeadingContent(onBackPressed = params.onBackPressed)
+    public fun RowScope.ChannelHeaderLeadingContent(params: ChannelHeaderLeadingContentParams) {
+        DefaultChannelHeaderLeadingContent(onBackPressed = params.onBackPressed)
     }
 
     /**
@@ -625,8 +625,8 @@ public interface ChatComponentFactory {
      * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.MessageListHeaderCenterContent(params: MessageListHeaderCenterContentParams) {
-        DefaultMessageListHeaderCenterContent(
+    public fun RowScope.ChannelHeaderCenterContent(params: ChannelHeaderCenterContentParams) {
+        DefaultChannelHeaderCenterContent(
             modifier = params.modifier,
             channel = params.channel,
             currentUser = params.currentUser,
@@ -642,8 +642,8 @@ public interface ChatComponentFactory {
      * @param params Parameters for this component.
      */
     @Composable
-    public fun RowScope.MessageListHeaderTrailingContent(params: MessageListHeaderTrailingContentParams) {
-        DefaultMessageListHeaderTrailingContent(
+    public fun RowScope.ChannelHeaderTrailingContent(params: ChannelHeaderTrailingContentParams) {
+        DefaultChannelHeaderTrailingContent(
             channel = params.channel,
             currentUser = params.currentUser,
             onClick = params.onClick,
@@ -1070,7 +1070,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun MessageRegularContent(params: MessageRegularContentParams) {
-        DefaultMessageContent(
+        DefaultMessageRegularContent(
             message = params.message,
             currentUser = params.currentUser,
             messageAlignment = params.messageAlignment,
@@ -2499,7 +2499,7 @@ public interface ChatComponentFactory {
         StreamTextButton(
             style = StreamButtonStyleDefaults.secondaryOutline,
             size = StreamButtonSize.Small,
-            text = stringResource(id = R.string.stream_ui_channel_info_member_add_button),
+            text = stringResource(id = UiCommonR.string.stream_ui_channel_info_member_add_button),
             onClick = params.onClick,
         )
     }
@@ -2609,7 +2609,7 @@ public interface ChatComponentFactory {
         CenterAlignedTopAppBar(
             title = {
                 Text(
-                    text = stringResource(R.string.stream_ui_channel_attachments_files_title),
+                    text = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_title),
                     style = ChatTheme.typography.headingSmall,
                     maxLines = 1,
                 )
@@ -2731,7 +2731,7 @@ public interface ChatComponentFactory {
         CenterAlignedTopAppBar(
             title = {
                 Text(
-                    text = stringResource(R.string.stream_ui_channel_attachments_media_title),
+                    text = stringResource(UiCommonR.string.stream_ui_channel_attachments_media_title),
                     style = ChatTheme.typography.headingSmall,
                     maxLines = 1,
                 )

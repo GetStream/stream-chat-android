@@ -31,6 +31,7 @@ import io.getstream.chat.android.ui.feature.messages.list.options.message.Messag
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.application.MessageTranslator
 import io.getstream.chat.ui.sample.util.extensions.applyTint
+import io.getstream.chat.android.ui.R as UiR
 
 internal object CustomMessageOptions {
 
@@ -141,7 +142,7 @@ private class TranslationOption private constructor() {
             context: Context,
             selectedMessage: Message,
         ): MessageOptionItem {
-            val iconColor = ContextCompat.getColor(context, R.color.stream_ui_grey)
+            val iconColor = ContextCompat.getColor(context, UiR.color.stream_ui_grey)
             val icon = ContextCompat.getDrawable(context, R.drawable.ic_translate) ?: error("Drawable not found")
             val iconTinted = icon.applyTint(iconColor)
 

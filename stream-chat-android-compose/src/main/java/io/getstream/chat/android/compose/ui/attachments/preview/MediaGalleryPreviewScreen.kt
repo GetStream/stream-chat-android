@@ -91,9 +91,9 @@ import io.getstream.chat.android.models.Constants
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import kotlinx.coroutines.launch
 import java.util.Date
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * A stateful composable function rendering a screen for previewing visual media attachments (images and videos).
@@ -365,7 +365,10 @@ public fun MediaGalleryPreviewScreen(
         0
     } else {
         filteredAttachments
-            .indexOfFirst { it.imagePreviewUrl == selectedAttachmentUrl }
+            .indexOfFirst {
+                val imagePreviewUrl = it.thumbUrl ?: it.imageUrl
+                imagePreviewUrl == selectedAttachmentUrl
+            }
             .coerceAtLeast(0)
     }
 
@@ -380,7 +383,7 @@ public fun MediaGalleryPreviewScreen(
         }
     }
 
-    val playbackErrorText = stringResource(R.string.stream_ui_message_list_video_display_error)
+    val playbackErrorText = stringResource(UiCommonR.string.stream_ui_message_list_video_display_error)
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     var isImmersive by remember { mutableStateOf(false) }
@@ -628,7 +631,6 @@ internal fun MediaGalleryPager(
  * @param onLeadingContentClick Callback to be invoked when the leading content is clicked.
  * @param onTrailingContentClick Callback to be invoked when the trailing content is clicked.
  * @param modifier The [Modifier] to be applied to the footer.
- * @param elevation The elevation of the footer.
  * @param backgroundColor The background color of the footer.
  * @param contentColor The content color of the footer.
  * @param config The configuration for the media gallery.
@@ -732,7 +734,7 @@ internal fun MediaGalleryPreviewCloseIcon(
     ) {
         Icon(
             painter = painterResource(id = R.drawable.stream_design_ic_arrow_left),
-            contentDescription = stringResource(id = R.string.stream_ui_back_button),
+            contentDescription = stringResource(id = UiCommonR.string.stream_ui_back_button),
         )
     }
 }

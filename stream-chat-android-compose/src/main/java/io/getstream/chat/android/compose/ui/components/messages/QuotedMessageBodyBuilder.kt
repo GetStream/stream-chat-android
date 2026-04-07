@@ -34,8 +34,10 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.helper.DurationFormatter
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
+import io.getstream.chat.android.ui.common.utils.extensions.giphyFallbackPreviewUrl
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.ui.common.utils.extensions.linkPreviewImageUrl
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 internal class QuotedMessageBodyBuilder(
     private val resources: Resources,
@@ -63,7 +65,7 @@ internal class QuotedMessageBodyBuilder(
         return when {
             message.isDeleted() -> {
                 QuotedMessageBody(
-                    text = resources.getString(R.string.stream_ui_message_list_message_deleted),
+                    text = resources.getString(UiCommonR.string.stream_ui_message_list_message_deleted),
                 )
             }
 
@@ -100,7 +102,7 @@ internal class QuotedMessageBodyBuilder(
                 QuotedMessageBody(
                     text = messageText.ifBlank { summary.linkAttachment.run { titleLink ?: ogUrl } }.orEmpty(),
                     iconId = R.drawable.stream_design_ic_link,
-                    imagePreviewData = summary.linkAttachment.imagePreviewUrl,
+                    imagePreviewData = summary.linkAttachment.linkPreviewImageUrl,
                 )
             }
 
@@ -111,7 +113,7 @@ internal class QuotedMessageBodyBuilder(
                         resources.getString(R.string.stream_compose_quoted_message_giphy_tag)
                     },
                     iconId = R.drawable.stream_design_ic_file,
-                    imagePreviewData = summary.giphyAttachment.imagePreviewUrl,
+                    imagePreviewData = summary.giphyAttachment.giphyFallbackPreviewUrl,
                 )
             }
 
@@ -200,14 +202,14 @@ internal class QuotedMessageBodyBuilder(
                 type == AttachmentType.IMAGE -> {
                     imageCount++
                     fileCount++
-                    mediaPreviewData = attachment.upload ?: attachment.imagePreviewUrl
+                    mediaPreviewData = attachment.upload ?: attachment.imageUrl
                         ?.applyStreamCdnImageResizingIfEnabled(streamCdnImageResizing)
                 }
 
                 type == AttachmentType.VIDEO -> {
                     videoCount++
                     fileCount++
-                    mediaPreviewData = attachment.upload ?: attachment.imagePreviewUrl
+                    mediaPreviewData = attachment.upload ?: attachment.thumbUrl
                 }
 
                 type == AttachmentType.AUDIO_RECORDING -> {

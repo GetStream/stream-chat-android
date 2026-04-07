@@ -26,15 +26,15 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.helper.StyleTransformer
 import io.getstream.chat.android.ui.helper.TransformStyle
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
-import io.getstream.chat.docs.R
 import io.getstream.chat.docs.databinding.TodayMessageListItemBinding
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.concurrent.TimeUnit
+import io.getstream.chat.android.ui.R as UiR
 
 /**
  * [Message List](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list/)
@@ -49,7 +49,7 @@ class MessageListViewSnippets : Fragment() {
     fun usage() {
         // Init ViewModel
         val viewModel: MessageListViewModel by viewModels {
-            MessageListViewModelFactory(requireContext(), cid = "messaging:123")
+            ChannelViewModelFactory(requireContext(), cid = "messaging:123")
         }
 
         // Bind View and ViewModel
@@ -156,7 +156,7 @@ class MessageListViewSnippets : Fragment() {
                 scrollButtonViewStyle = defaultViewStyle.scrollButtonViewStyle.copy(
                     scrollButtonColor = Color.RED,
                     scrollButtonUnreadEnabled = false,
-                    scrollButtonIcon = ContextCompat.getDrawable(requireContext(), R.drawable.stream_ui_ic_clock)!!,
+                    scrollButtonIcon = ContextCompat.getDrawable(requireContext(), UiR.drawable.stream_ui_ic_clock)!!,
                 ),
             )
         }

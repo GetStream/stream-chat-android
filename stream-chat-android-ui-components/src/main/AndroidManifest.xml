@@ -59,7 +59,7 @@
             />
 
         <activity
-            android:name=".feature.messages.MessageListActivity"
+            android:name=".feature.messages.ChannelActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="false"
             />

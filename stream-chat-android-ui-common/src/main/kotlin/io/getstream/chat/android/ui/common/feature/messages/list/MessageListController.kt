@@ -227,7 +227,7 @@ public class MessageListController(
      */
     public val unreadLabelState: MutableStateFlow<UnreadLabel?> = MutableStateFlow(null)
     private val showUnreadButtonState = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
-    private val updateUnreadLabelState = MutableStateFlow(true)
+    private var lastProcessedReadMessageId: String? = null
     private val originalTranslationsStore by lazy { MessageOriginalTranslationsStore.forChannel(cid) }
 
     /**
@@ -572,44 +572,32 @@ public class MessageListController(
     /**
      * Observes and updates the unread label state by combining multiple data sources:
      * - Button visibility preference ([showUnreadButtonState])
-     * - Update trigger state ([updateUnreadLabelState])
      * - Channel state with all messages
      * - User read state ([ChannelUserRead])
      *
-     * The unread label is only calculated when all of the following conditions are met:
-     * 1. Updates are enabled ([updateUnreadLabelState] is true)
-     * 2. Not started for a thread ([isStartedForThread] is false)
-     * 3. The last read message ID has changed from the previous state
+     * The unread label is recalculated whenever [ChannelUserRead.lastReadMessageId] changes,
+     * but the result is "sticky": a null calculation never overwrites a non-null label.
+     * This ensures the separator persists when the user auto-reads messages by scrolling,
+     * while still reacting to mark-as-unread events (which move [lastReadMessageId] backward
+     * and produce a new non-null label).
      *
-     * Once conditions are met, delegates the actual calculation to [UnreadLabelCalculator] which
-     * handles the complex logic of determining unread message state, including edge cases for
-     * own messages, mark as unread functionality, and offline/pending message scenarios.
-     *
-     * After calculation, updates [unreadLabelState] and resets the update trigger to prevent
-     * unnecessary recalculations until the next state change.
+     * Delegates the actual calculation to [UnreadLabelCalculator] which handles the complex
+     * logic of determining unread message state, including edge cases for own messages,
+     * mark as unread functionality, and offline/pending message scenarios.
      */
     @Suppress("MagicNumber")
     private fun observeUnreadLabelState() {
         combine(
             showUnreadButtonState.onStart { emit(true) },
-            updateUnreadLabelState,
             channelState.filterNotNull(),
             channelState.filterNotNull().flatMapLatest { it.read },
-        ) { data ->
-            val shouldShowButton = data[0] as Boolean
-            val shouldUpdateLabelState = data[1] as Boolean
-            val channel = data[2] as ChannelState
-            val read = data[3] as ChannelUserRead?
-
-            // Only proceed with calculation if all conditions are met
+        ) { shouldShowButton, channel, read ->
             read
-                ?.takeIf { shouldUpdateLabelState }
                 ?.takeIf { !isStartedForThread }
-                ?.takeIf {
-                    val previousUnreadMessageId = unreadLabelState.value?.lastReadMessageId
-                    it.lastReadMessageId != null && previousUnreadMessageId != it.lastReadMessageId
-                }
+                ?.takeIf { it.lastReadMessageId != null && lastProcessedReadMessageId != it.lastReadMessageId }
                 ?.let { channelUserRead ->
+                    lastProcessedReadMessageId = channelUserRead.lastReadMessageId
+
                     // Delegate to the calculator for the complex unread label logic
                     val unreadLabel = unreadLabelCalculator.calculateUnreadLabel(
                         channelUserRead = channelUserRead,
@@ -618,10 +606,11 @@ public class MessageListController(
                         shouldShowButton = shouldShowButton,
                     )
 
-                    // Update the state with the calculated label
-                    unreadLabelState.value = unreadLabel
-                    // Prevent recalculation until the next trigger
-                    updateUnreadLabelState.value = false
+                    // Only update the label if the calculator produced a non-null result. This makes the label sticky:
+                    // once shown, it persists until the user leaves the channel.
+                    if (unreadLabel != null) {
+                        unreadLabelState.value = unreadLabel
+                    }
                 }
         }.launchIn(scope)
     }
@@ -1798,9 +1787,7 @@ public class MessageListController(
                         ErrorEvent.MarkUnreadError(it)
                     }
                 } else {
-                    // Emit with shouldShowButton = false
                     showUnreadButtonState.tryEmit(false)
-                    updateUnreadLabelState.value = true
                 }
             }
         }

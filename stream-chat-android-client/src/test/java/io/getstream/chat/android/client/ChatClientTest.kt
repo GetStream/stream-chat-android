@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.socket.FakeChatSocket
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.TokenUtils
+import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.EventType
@@ -138,6 +139,7 @@ internal class ChatClientTest {
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
             chatSocket = fakeChatSocket,
+            serverClockOffset = ServerClockOffset(),
             pluginFactories = emptyList(),
             mutableClientState = Mother.mockedClientState(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,

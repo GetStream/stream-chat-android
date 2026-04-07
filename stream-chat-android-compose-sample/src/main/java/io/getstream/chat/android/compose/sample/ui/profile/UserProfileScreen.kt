@@ -78,7 +78,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.component.PaneRow
 import io.getstream.chat.android.compose.sample.ui.component.PaneTitle
 import io.getstream.chat.android.compose.ui.components.BackButton
@@ -95,6 +94,7 @@ import io.getstream.chat.android.models.User
 import kotlinx.coroutines.flow.collectLatest
 import java.io.File
 import java.util.Calendar
+import io.getstream.chat.android.compose.R as ComposeR
 
 @Suppress("LongMethod")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -254,7 +254,7 @@ private fun TopBar(onNavigationIconClick: () -> Unit) {
         title = {},
         navigationIcon = {
             BackButton(
-                painter = painterResource(id = R.drawable.stream_design_ic_arrow_left),
+                painter = painterResource(id = ComposeR.drawable.stream_design_ic_arrow_left),
                 onBackPressed = onNavigationIconClick,
             )
         },

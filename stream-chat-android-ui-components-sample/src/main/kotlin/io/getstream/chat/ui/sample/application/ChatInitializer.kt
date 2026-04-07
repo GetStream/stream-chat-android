@@ -42,10 +42,7 @@ import io.getstream.chat.ui.sample.debugger.CustomChatClientDebugger
 import io.getstream.chat.ui.sample.feature.HostActivity
 import io.getstream.chat.ui.sample.feature.chat.messagelist.decorator.CustomDecoratorProviderFactory
 
-class ChatInitializer(
-    private val context: Context,
-    private val autoTranslationEnabled: Boolean,
-) {
+class ChatInitializer(private val context: Context) {
 
     @Suppress("UNUSED_VARIABLE")
     fun init(apiKey: String) {
@@ -64,7 +61,6 @@ class ChatInitializer(
                         providerName = "chat-android-xiaomi",
                     ),
                 ),
-                autoTranslationEnabled = autoTranslationEnabled,
             )
         val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
             context = context,
@@ -111,10 +107,8 @@ class ChatInitializer(
             .build()
 
         // Using markdown as text transformer
-        val messageTranslator = MessageTranslator(client::getCurrentUser, autoTranslationEnabled)
-        ChatUI.autoTranslationEnabled = autoTranslationEnabled
+        val messageTranslator = MessageTranslator(client::getCurrentUser, autoTranslationEnabled = true)
         ChatUI.messageTextTransformer = MarkdownTextTransformer(context, messageTranslator)
-        ChatUI.draftMessagesEnabled = true
 
         TransformStyle.viewReactionsStyleTransformer = StyleTransformer { defaultStyle ->
             defaultStyle.copy(
@@ -127,8 +121,6 @@ class ChatInitializer(
 
         TransformStyle.messageComposerStyleTransformer = StyleTransformer { defaultStyle ->
             defaultStyle.copy(
-                audioRecordingButtonVisible = true,
-                audioRecordingButtonEnabled = true,
                 audioRecordingButtonPreferred = true,
             )
         }

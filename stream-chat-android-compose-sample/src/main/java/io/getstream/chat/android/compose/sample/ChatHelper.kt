@@ -59,7 +59,6 @@ object ChatHelper {
                     providerName = "chat-android-firebase",
                 ),
             ),
-            autoTranslationEnabled = ChatApp.autoTranslationEnabled,
         )
         val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
             context = context,

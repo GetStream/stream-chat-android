@@ -31,7 +31,7 @@
         <attr name="streamUiMessageListFileAttachmentStyle" format="reference" />
         <attr name="streamUiMessageListUnsupportedAttachmentStyle" format="reference" />
         <attr name="streamUiMessageListItemAvatarStyle" format="reference" />
-        <attr name="streamUiMessageListHeaderAvatarStyle" format="reference" />
+        <attr name="streamUiChannelHeaderAvatarStyle" format="reference" />
         <attr name="streamUiChannelListItemAvatarStyle" format="reference" />
         <attr name="streamUiMentionListStyle" format="reference" />
         <attr name="streamUiMentionPreviewItemAvatarStyle" format="reference" />
@@ -48,7 +48,7 @@
         <attr name="streamUiMessageOptionsAvatarStyle" format="reference" />
         <attr name="streamUiReplyAvatarStyle" format="reference" />
         <attr name="streamUiThreadAvatarStyle" format="reference" />
-        <attr name="streamUiMessageListHeaderStyle" format="reference" />
+        <attr name="streamUiChannelHeaderStyle" format="reference" />
         <attr name="streamUiSearchInputViewStyle" format="reference" />
         <attr name="streamUiSearchResultListViewStyle" format="reference" />
         <attr name="streamUiSuggestionListViewStyle" format="reference" />

@@ -307,6 +307,66 @@ internal class AttachmentStorageHelperTest {
         assertEquals(emptyList<AttachmentMetaData>(), result)
     }
 
+    @Test
+    fun `partitionResolvable puts all items in resolvable when all URIs are readable`() {
+        val uri1 = mock<Uri>()
+        val uri2 = mock<Uri>()
+        val meta1 = AttachmentMetaData(uri = uri1, type = "image", mimeType = "image/jpeg", title = "a.jpg")
+        val meta2 = AttachmentMetaData(uri = uri2, type = "image", mimeType = "image/png", title = "b.png")
+        whenever(storageHelper.isUriResolvable(context, uri1)) doReturn true
+        whenever(storageHelper.isUriResolvable(context, uri2)) doReturn true
+
+        val (resolvable, unresolvable) = sut.partitionResolvable(listOf(meta1, meta2))
+
+        assertEquals(listOf(meta1, meta2), resolvable)
+        assertEquals(emptyList<AttachmentMetaData>(), unresolvable)
+    }
+
+    @Test
+    fun `partitionResolvable separates unresolvable URIs`() {
+        val uri1 = mock<Uri>()
+        val uri2 = mock<Uri>()
+        val meta1 = AttachmentMetaData(uri = uri1, type = "image", mimeType = "image/jpeg", title = "a.jpg")
+        val meta2 = AttachmentMetaData(uri = uri2, type = "file", mimeType = "application/pdf", title = "b.pdf")
+        whenever(storageHelper.isUriResolvable(context, uri1)) doReturn true
+        whenever(storageHelper.isUriResolvable(context, uri2)) doReturn false
+
+        val (resolvable, unresolvable) = sut.partitionResolvable(listOf(meta1, meta2))
+
+        assertEquals(listOf(meta1), resolvable)
+        assertEquals(listOf(meta2), unresolvable)
+    }
+
+    @Test
+    fun `partitionResolvable puts all items in unresolvable when no URIs are readable`() {
+        val uri1 = mock<Uri>()
+        val meta1 = AttachmentMetaData(uri = uri1, type = "file", mimeType = "application/pdf", title = "a.pdf")
+        whenever(storageHelper.isUriResolvable(context, uri1)) doReturn false
+
+        val (resolvable, unresolvable) = sut.partitionResolvable(listOf(meta1))
+
+        assertEquals(emptyList<AttachmentMetaData>(), resolvable)
+        assertEquals(listOf(meta1), unresolvable)
+    }
+
+    @Test
+    fun `partitionResolvable treats metadata without URI as resolvable`() {
+        val meta = AttachmentMetaData(type = "file", mimeType = "application/pdf", title = "doc.pdf")
+
+        val (resolvable, unresolvable) = sut.partitionResolvable(listOf(meta))
+
+        assertEquals(listOf(meta), resolvable)
+        assertEquals(emptyList<AttachmentMetaData>(), unresolvable)
+    }
+
+    @Test
+    fun `partitionResolvable returns empty pair for empty input`() {
+        val (resolvable, unresolvable) = sut.partitionResolvable(emptyList())
+
+        assertEquals(emptyList<AttachmentMetaData>(), resolvable)
+        assertEquals(emptyList<AttachmentMetaData>(), unresolvable)
+    }
+
     companion object {
         @JvmField
         @RegisterExtension

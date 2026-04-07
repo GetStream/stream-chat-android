@@ -34,7 +34,7 @@ import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponent
 import io.getstream.chat.android.compose.sample.ui.component.CustomMentionStyleFactory
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
-import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.theme.AttachmentPickerConfig
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
@@ -44,8 +44,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
 import io.getstream.chat.android.compose.ui.theme.MessageOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
-import io.getstream.chat.android.compose.ui.theme.TranslationConfig
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
 
@@ -58,10 +57,9 @@ class MessagesActivity : ComponentActivity() {
     }
 
     private val factory by lazy {
-        MessagesViewModelFactory(
+        ChannelViewModelFactory(
             context = this,
             channelId = cid,
-            autoTranslationEnabled = ChatApp.autoTranslationEnabled,
             isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
             messageId = intent.getStringExtra(KEY_MESSAGE_ID),
             parentMessageId = intent.getStringExtra(KEY_PARENT_MESSAGE_ID),
@@ -103,11 +101,9 @@ class MessagesActivity : ComponentActivity() {
             dateFormatter = ChatApp.dateFormatter,
             config = ChatUiConfig(
                 composer = ComposerConfig(
-                    audioRecordingEnabled = true,
                     linkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
                     floatingStyleEnabled = settings.isComposerFloatingStyleEnabled,
                 ),
-                translation = TranslationConfig(enabled = ChatApp.autoTranslationEnabled),
                 attachmentPicker = AttachmentPickerConfig(useSystemPicker = settings.isSystemAttachmentPickerEnabled),
             ),
             allowUIAutomationTest = true,
@@ -123,7 +119,7 @@ class MessagesActivity : ComponentActivity() {
 
     @Composable
     private fun SetupContent() {
-        MessagesScreen(
+        ChannelScreen(
             viewModelFactory = factory,
             reactionSorting = ReactionSortingByLastReactionAt,
             onBackPressed = { finish() },

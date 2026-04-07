@@ -60,6 +60,7 @@ import io.getstream.chat.android.ui.common.helper.DurationFormatter
 import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.TimeProvider
+import io.getstream.chat.android.ui.common.images.internal.CDNImageInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.utils.ChannelNameFormatter
 import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
@@ -174,6 +175,11 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param typography The set of typography styles we provide, wrapped in [StreamDesign.Typography].
  * @param rippleConfiguration Defines the appearance for ripples.
  * @param componentFactory Provide to customize the stateless components that are used throughout the UI
+ * @param attachmentFactories Attachment factories that we provide.
+ * @param useDocumentGView Whether to use Google Docs Viewer (gview) for document attachments. When `true` (default),
+ * documents are rendered via the legacy [AttachmentDocumentActivity] which loads them through Google Docs Viewer.
+ * When `false`, text-based files (TXT, HTML) are rendered in-app and other file types are downloaded and opened with an
+ * external application.
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
  * @param reactionResolver Provides available reactions and resolves reaction types to emoji codes.
  * @param reactionOptionsTheme [ReactionOptionsTheme] Theme for the reaction option list in the selected message menu.
@@ -225,8 +231,9 @@ public fun ChatTheme(
         lightTheme = !isInDarkMode,
     ),
     componentFactory: ChatComponentFactory = DefaultChatComponentFactory(),
+    useDocumentGView: Boolean = true,
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
-        AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
+        AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current, useDocumentGView),
     reactionResolver: ReactionResolver = ReactionResolver.defaultResolver(),
     reactionOptionsTheme: ReactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
     messagePreviewIconFactory: MessagePreviewIconFactory = MessagePreviewIconFactory.defaultFactory(),
@@ -270,14 +277,16 @@ public fun ChatTheme(
     }
 
     val context = LocalContext.current
-    val imageLoader = remember(imageLoaderFactory, asyncImageHeadersProvider) {
-        if (asyncImageHeadersProvider == null) {
+    val cdn = remember { ChatClient.instance().cdn }
+    val imageLoader = remember(imageLoaderFactory, asyncImageHeadersProvider, cdn) {
+        val interceptors = buildList {
+            asyncImageHeadersProvider?.let { add(ImageHeadersInterceptor(it)) }
+            cdn?.let { add(CDNImageInterceptor(it)) }
+        }
+        if (interceptors.isEmpty()) {
             imageLoaderFactory.imageLoader(context.applicationContext)
         } else {
-            imageLoaderFactory.imageLoader(
-                context.applicationContext,
-                listOf(ImageHeadersInterceptor(asyncImageHeadersProvider)),
-            )
+            imageLoaderFactory.imageLoader(context.applicationContext, interceptors)
         }
     }
 

@@ -110,8 +110,8 @@ public data class ChatUiConfig(
  * @param showOriginalEnabled Whether users can toggle to see the original (untranslated) text.
  */
 public data class TranslationConfig(
-    val enabled: Boolean = false,
-    val showOriginalEnabled: Boolean = false,
+    val enabled: Boolean = true,
+    val showOriginalEnabled: Boolean = true,
 )
 
 /**
@@ -176,8 +176,8 @@ public data class MediaGalleryOptionsConfig(
  * @param floatingStyleEnabled Whether the message composer uses the floating style.
  */
 public data class ComposerConfig(
-    val audioRecordingEnabled: Boolean = false,
-    val audioRecordingSendOnComplete: Boolean = true,
+    val audioRecordingEnabled: Boolean = true,
+    val audioRecordingSendOnComplete: Boolean = false,
     val linkPreviewEnabled: Boolean = false,
     val floatingStyleEnabled: Boolean = false,
 )

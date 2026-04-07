@@ -1015,12 +1015,23 @@ public class MessageComposerController(
     }
 
     /**
-     * Completes audio recording and moves [MessageComposerState.recording] state to [RecordingState.Complete].
-     * Also, it wil update [MessageComposerState.attachments] list.
+     * Completes audio recording and updates the [MessageComposerState.attachments] list.
+     *
+     * @param onComplete Optional callback invoked with the result of the recording once the recording has been
+     * finalized. On success, the recorded [Attachment] is added to the attachment list before the callback
+     * is invoked, so callers can safely build and send a message using the received attachment.
      */
-    public fun completeRecording() {
+    public fun completeRecording(onComplete: ((Result<Attachment>) -> Unit)? = null) {
         scope.launch {
-            audioRecordingController.completeRecording()
+            if (onComplete != null) {
+                val result = audioRecordingController.completeRecordingSync()
+                if (result is Result.Success) {
+                    addAttachments(listOf(result.value))
+                }
+                onComplete(result)
+            } else {
+                audioRecordingController.completeRecording()
+            }
         }
     }
 
@@ -1199,7 +1210,7 @@ public class MessageComposerController(
     public data class Config(
         val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
         val isLinkPreviewEnabled: Boolean = false,
-        val isDraftMessageEnabled: Boolean = false,
+        val isDraftMessageEnabled: Boolean = true,
         val isActiveCommandEnabled: Boolean = false,
     )
 

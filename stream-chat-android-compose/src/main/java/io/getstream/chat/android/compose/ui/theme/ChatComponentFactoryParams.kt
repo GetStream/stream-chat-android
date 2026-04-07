@@ -358,7 +358,7 @@ public data class SearchResultItemTrailingContentParams(
 )
 
 /**
- * Parameters for [ChatComponentFactory.MessageListHeader].
+ * Parameters for [ChatComponentFactory.ChannelHeader].
  *
  * @param channel The channel to display header for.
  * @param connectionState The current connection state.
@@ -370,7 +370,7 @@ public data class SearchResultItemTrailingContentParams(
  * @param onHeaderTitleClick Action invoked when the header title is clicked.
  * @param onChannelAvatarClick Action invoked when the channel avatar is clicked.
  */
-public data class MessageListHeaderParams(
+public data class ChannelHeaderParams(
     val channel: Channel,
     val connectionState: ConnectionState,
     val modifier: Modifier = Modifier,
@@ -383,16 +383,16 @@ public data class MessageListHeaderParams(
 )
 
 /**
- * Parameters for [ChatComponentFactory.MessageListHeaderLeadingContent].
+ * Parameters for [ChatComponentFactory.ChannelHeaderLeadingContent].
  *
  * @param onBackPressed Action invoked when the back button is pressed.
  */
-public data class MessageListHeaderLeadingContentParams(
+public data class ChannelHeaderLeadingContentParams(
     val onBackPressed: () -> Unit,
 )
 
 /**
- * Parameters for [ChatComponentFactory.MessageListHeaderCenterContent].
+ * Parameters for [ChatComponentFactory.ChannelHeaderCenterContent].
  *
  * @param channel The channel to display.
  * @param connectionState The current connection state.
@@ -402,7 +402,7 @@ public data class MessageListHeaderLeadingContentParams(
  * @param messageMode The current message mode.
  * @param onClick Action invoked when the header is clicked.
  */
-public data class MessageListHeaderCenterContentParams(
+public data class ChannelHeaderCenterContentParams(
     val channel: Channel,
     val connectionState: ConnectionState,
     val modifier: Modifier = Modifier,
@@ -413,13 +413,13 @@ public data class MessageListHeaderCenterContentParams(
 )
 
 /**
- * Parameters for [ChatComponentFactory.MessageListHeaderTrailingContent].
+ * Parameters for [ChatComponentFactory.ChannelHeaderTrailingContent].
  *
  * @param channel The channel to display.
  * @param currentUser The currently logged in user.
  * @param onClick Action invoked when the trailing content is clicked.
  */
-public data class MessageListHeaderTrailingContentParams(
+public data class ChannelHeaderTrailingContentParams(
     val channel: Channel,
     val currentUser: User?,
     val onClick: ((Channel) -> Unit)? = null,

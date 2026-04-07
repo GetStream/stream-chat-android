@@ -108,7 +108,7 @@
 
     <!-- Audio Recording -->
     <string name="stream_ui_message_composer_slide_to_cancel">Slide to cancel</string>
-    <string name="stream_ui_message_composer_hold_to_record">Hold to record. Release to send</string>
+    <string name="stream_ui_message_composer_hold_to_record">Hold to record. Release to send.</string>
 
     <string name="stream_ui_message_list_empty">No messages</string>
     <string name="stream_ui_message_list_download_started">Download started</string>
@@ -203,23 +203,23 @@
     <string name="stream_ui_poll_show_all_votes">Show All</string>
     <string name="stream_ui_poll_option_results_error">An error occurred while loading the poll option results. Please try again later.</string>
     <!-- Header Title -->
-    <string name="stream_ui_message_list_header_thread_title">Thread Reply</string>
-    <string name="stream_ui_message_list_header_untitled_channel">Channel without name</string>
+    <string name="stream_ui_channel_header_thread_title">Thread Reply</string>
+    <string name="stream_ui_channel_header_untitled_channel">Channel without name</string>
     <!-- Header Subtitle -->
-    <string name="stream_ui_message_list_header_thread_subtitle">with %1$s</string>
-    <string name="stream_ui_message_list_header_disconnected">Waiting for network</string>
-    <string name="stream_ui_message_list_header_offline">Disconnected</string>
-    <string name="stream_ui_message_list_header_retry">Try Again</string>
-    <string name="stream_ui_message_list_header_member_count_online">%1$s, %2$d Online</string>
-    <plurals name="stream_ui_message_list_header_member_count">
+    <string name="stream_ui_channel_header_thread_subtitle">with %1$s</string>
+    <string name="stream_ui_channel_header_disconnected">Waiting for network</string>
+    <string name="stream_ui_channel_header_offline">Disconnected</string>
+    <string name="stream_ui_channel_header_retry">Try Again</string>
+    <string name="stream_ui_channel_header_member_count_online">%1$s, %2$d Online</string>
+    <plurals name="stream_ui_channel_header_member_count">
         <item quantity="one">%1d Member</item>
         <item quantity="other">%1d Members</item>
     </plurals>
-    <plurals name="stream_ui_message_list_header_typing_users">
+    <plurals name="stream_ui_channel_header_typing_users">
         <item quantity="one">%s is typing</item>
         <item quantity="other">%s and %d more are typing</item>
     </plurals>
-    <string name="stream_ui_message_list_header_back_button_content_description">Back button</string>
+    <string name="stream_ui_channel_header_back_button_content_description">Back button</string>
     <string name="stream_ui_pinned_message_list_empty_title">No pinned messages</string>
     <string name="stream_ui_pinned_message_list_empty_description"><![CDATA[Long-press an important message and choose <b>Pin to conversation</b>]]></string>
     <string name="stream_ui_pinned_message_list_results_error">An error occurred</string>

@@ -53,6 +53,7 @@ import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 private const val DefaultNumberOfPicturesPerRow = 3
 private val ItemShape = RoundedCornerShape(2.dp)
@@ -189,7 +190,7 @@ private fun DefaultAddMoreItem(onPickMoreClick: () -> Unit) {
             tint = ChatTheme.colors.textPrimary,
         )
         Text(
-            text = stringResource(R.string.stream_ui_message_composer_permissions_visual_media_add_more),
+            text = stringResource(UiCommonR.string.stream_ui_message_composer_permissions_visual_media_add_more),
             style = ChatTheme.typography.captionEmphasis,
             color = ChatTheme.colors.textPrimary,
         )

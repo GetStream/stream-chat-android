@@ -69,7 +69,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.utils.extensions.addSchemeToUrlIfNeeded
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.ui.common.utils.extensions.linkPreviewImageUrl
 
 /**
  * Builds a link attachment message, which shows the link image preview, the title of the link
@@ -151,7 +151,7 @@ private fun FullSizeLinkAttachmentContent(
     textColor: Color,
 ) {
     Column(modifier = modifier) {
-        attachment.imagePreviewUrl?.let {
+        attachment.linkPreviewImageUrl?.let {
             LinkAttachmentImagePreview(it, Modifier.height(144.dp))
         }
 
@@ -207,7 +207,7 @@ private fun CompactLinkAttachmentContent(
         ),
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {
-        attachment.imagePreviewUrl?.let {
+        attachment.linkPreviewImageUrl?.let {
             LinkAttachmentImagePreview(
                 imageUrl = it,
                 modifier = Modifier

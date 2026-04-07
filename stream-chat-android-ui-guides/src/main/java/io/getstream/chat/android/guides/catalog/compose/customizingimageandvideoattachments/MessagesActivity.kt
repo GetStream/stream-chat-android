@@ -32,11 +32,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentMediaItemParams
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.guides.catalog.compose.customizingimageandvideoattachments.ui.CustomPlayButton
 import io.getstream.chat.android.models.AttachmentType
 
@@ -49,8 +49,8 @@ private const val PlayButtonAspectRatio = 1.20f
  */
 class MessagesActivity : ComponentActivity() {
 
-    private val messagesViewModelFactory by lazy {
-        MessagesViewModelFactory(
+    private val channelViewModelFactory by lazy {
+        ChannelViewModelFactory(
             context = this,
             requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
             threadLoadOlderToNewer = true,
@@ -62,8 +62,8 @@ class MessagesActivity : ComponentActivity() {
 
         setContent {
             ChatTheme(componentFactory = CustomMediaChatComponentFactory) {
-                MessagesScreen(
-                    viewModelFactory = messagesViewModelFactory,
+                ChannelScreen(
+                    viewModelFactory = channelViewModelFactory,
                     onBackPressed = { finish() },
                 )
             }

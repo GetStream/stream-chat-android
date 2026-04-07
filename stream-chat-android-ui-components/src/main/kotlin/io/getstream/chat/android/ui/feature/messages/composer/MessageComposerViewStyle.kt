@@ -46,6 +46,7 @@ import io.getstream.chat.android.ui.utils.extensions.getDimensionOrNull
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 import io.getstream.chat.android.ui.utils.extensions.getEnum
 import io.getstream.chat.android.ui.utils.extensions.use
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Style for [MessageComposerView].
@@ -99,6 +100,8 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @param audioRecordingButtonEnabled If the button to record audio is enabled.
  * @param audioRecordingButtonPreferred If the button to record audio is displayed over send button while input is
  * empty.
+ * @param audioRecordingSendOnComplete If `true`, finishing a recording (mic release or complete action) sends the
+ * message immediately. If `false`, the recording is attached for manual send.
  * @param audioRecordingButtonIconDrawable The icon for the button to record audio.
  * @param audioRecordingButtonIconTintList The tint list for the button to record audio.
  * @param audioRecordingButtonWidth The width of the button to record audio.
@@ -259,6 +262,7 @@ public data class MessageComposerViewStyle(
     public val audioRecordingButtonVisible: Boolean,
     public val audioRecordingButtonEnabled: Boolean,
     public val audioRecordingButtonPreferred: Boolean,
+    public val audioRecordingSendOnComplete: Boolean,
     public val audioRecordingButtonIconDrawable: Drawable,
     public val audioRecordingButtonIconTintList: ColorStateList?,
     @Px public val audioRecordingButtonWidth: Int,
@@ -761,10 +765,14 @@ public data class MessageComposerViewStyle(
                 )
                 val audioRecordingButtonVisible = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonVisible,
-                    false,
+                    true,
                 )
                 val audioRecordingButtonPreferred = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonPreferred,
+                    false,
+                )
+                val audioRecordingSendOnComplete = a.getBoolean(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSendOnComplete,
                     false,
                 )
                 val audioRecordingButtonIconDrawable = a.getDrawableCompat(
@@ -880,7 +888,7 @@ public data class MessageComposerViewStyle(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePadding,
                     )?.toInt()
 
-                val mediumTypeface = ResourcesCompat.getFont(context, R.font.stream_roboto_medium) ?: Typeface.DEFAULT
+                val mediumTypeface = ResourcesCompat.getFont(context, UiCommonR.font.stream_roboto_medium) ?: Typeface.DEFAULT
 
                 val messageReplyShowUserAvatar = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyShowUserAvatar,
@@ -1062,6 +1070,7 @@ public data class MessageComposerViewStyle(
                     audioRecordingButtonEnabled = audioRecordingButtonEnabled,
                     audioRecordingButtonVisible = audioRecordingButtonVisible,
                     audioRecordingButtonPreferred = audioRecordingButtonPreferred,
+                    audioRecordingSendOnComplete = audioRecordingSendOnComplete,
                     audioRecordingButtonIconDrawable = audioRecordingButtonIconDrawable,
                     audioRecordingButtonIconTintList = audioRecordingButtonIconTintList,
                     audioRecordingButtonWidth = audioRecordingButtonWidth,

@@ -23,6 +23,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckedTextView
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.descendants
 import androidx.viewpager2.widget.ViewPager2
@@ -39,6 +40,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.internal.AttachmentDialogPagerAdapter
 import io.getstream.chat.android.ui.feature.messages.composer.internal.toAttachment
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Represent the bottom sheet dialog that allows users to pick attachments.
@@ -93,9 +95,7 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface) {
         if (::style.isInitialized && style.saveAttachmentsOnDismiss) {
-            attachmentsSelectionListener?.onAttachmentsSelected(
-                selectedAttachments.map { it.toAttachment(requireContext()) },
-            )
+            attachmentsSelectionListener?.onAttachmentsSelected(resolveSelectedAttachments())
         }
         super.onDismiss(dialog)
     }
@@ -117,9 +117,7 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
         binding.attachButton.setImageDrawable(style.submitAttachmentsButtonIconDrawable)
         binding.attachButton.isEnabled = false
         binding.attachButton.setOnClickListener {
-            attachmentsSelectionListener?.onAttachmentsSelected(
-                selectedAttachments.map { it.toAttachment(requireContext()) },
-            )
+            attachmentsSelectionListener?.onAttachmentsSelected(resolveSelectedAttachments())
             dismiss()
         }
     }
@@ -162,9 +160,7 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
             }
 
             override fun onSelectedAttachmentsSubmitted() {
-                attachmentsSelectionListener?.onAttachmentsSelected(
-                    selectedAttachments.map { it.toAttachment(requireContext()) },
-                )
+                attachmentsSelectionListener?.onAttachmentsSelected(resolveSelectedAttachments())
                 dismiss()
             }
 
@@ -233,6 +229,18 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
      */
     public fun setPollSubmissionListener(pollSubmissionListener: PollSubmissionListener) {
         this.pollSubmissionListener = pollSubmissionListener
+    }
+
+    private fun resolveSelectedAttachments(): List<Attachment> {
+        val resolved = selectedAttachments.mapNotNull { it.toAttachment(requireContext()) }
+        if (resolved.size < selectedAttachments.size) {
+            Toast.makeText(
+                requireContext(),
+                UiCommonR.string.stream_ui_attachment_picker_error_unresolvable_attachments,
+                Toast.LENGTH_LONG,
+            ).show()
+        }
+        return resolved
     }
 
     private fun setSelectedTab(checkedTextView: CheckedTextView, pagePosition: Int) {

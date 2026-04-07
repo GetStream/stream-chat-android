@@ -44,6 +44,7 @@ import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Style for view holders used inside [MessageListView].
@@ -274,8 +275,10 @@ public data class MessageListItemStyle(
                     context.getColorCompat(DEFAULT_LINK_BACKGROUND_COLOR),
                 )
 
-            val mediumTypeface = ResourcesCompat.getFont(context, R.font.stream_roboto_medium) ?: Typeface.DEFAULT
-            val boldTypeface = ResourcesCompat.getFont(context, R.font.stream_roboto_bold) ?: Typeface.DEFAULT_BOLD
+            val mediumTypeface =
+                ResourcesCompat.getFont(context, UiCommonR.font.stream_roboto_medium) ?: Typeface.DEFAULT
+            val boldTypeface =
+                ResourcesCompat.getFont(context, UiCommonR.font.stream_roboto_bold) ?: Typeface.DEFAULT_BOLD
 
             val textStyleMine = TextStyle.Builder(attributes)
                 .size(

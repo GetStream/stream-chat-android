@@ -139,6 +139,7 @@ public class StreamStatePluginFactory(
             userPresence = config.userPresence,
             isAutomaticSyncOnReconnectEnabled = config.isAutomaticSyncOnReconnectEnabled,
             syncMaxThreshold = config.syncMaxThreshold,
+            serverClockOffset = chatClient.serverClockOffset,
             now = { System.currentTimeMillis() },
         )
 
