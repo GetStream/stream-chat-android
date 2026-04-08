@@ -18,7 +18,6 @@ import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
 import io.getstream.chat.android.compose.ui.util.MessageTextFormatter
 import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
-import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.helper.DateFormatter
@@ -192,17 +191,9 @@ private object ChatThemeMessageTextFormatterDefaultSnippet : ChatThemeCustomizat
                 message: Message,
                 currentUser: User?,
                 isDirectMessaging: Boolean,
-                includeSenderName: Boolean,
             ): AnnotatedString {
                 return buildAnnotatedString {
                     append(message.text)
-                    // add your custom styling here
-                }
-            }
-
-            override fun formatDraftMessagePreview(draftMessage: DraftMessage): AnnotatedString {
-                return buildAnnotatedString {
-                    append(draftMessage.text)
                     // add your custom styling here
                 }
             }

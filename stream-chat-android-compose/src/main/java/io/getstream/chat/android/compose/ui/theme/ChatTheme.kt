@@ -198,7 +198,6 @@ public fun ChatTheme(
         context = LocalContext.current,
         typography = typography,
         autoTranslationEnabled = config.translation.enabled,
-        colors = colors,
     ),
     searchResultNameFormatter: SearchResultNameFormatter = SearchResultNameFormatter.defaultFormatter(),
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
