@@ -60,8 +60,6 @@ import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMo
 import io.getstream.chat.android.compose.ui.attachments.content.UnsupportedAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfoNavigationIcon
-import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderCenterContent
-import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderTrailingContent
 import io.getstream.chat.android.compose.ui.channels.info.DefaultSelectedChannelMenuHeaderContent
 import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
@@ -80,6 +78,8 @@ import io.getstream.chat.android.compose.ui.channels.list.DefaultSearchResultIte
 import io.getstream.chat.android.compose.ui.channels.list.LocalSwipeRevealCoordinator
 import io.getstream.chat.android.compose.ui.channels.list.SearchResultItem
 import io.getstream.chat.android.compose.ui.channels.list.SwipeableChannelItem
+import io.getstream.chat.android.compose.ui.components.DefaultListHeaderCenterContent
+import io.getstream.chat.android.compose.ui.components.DefaultListHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.components.DefaultSearchClearButton
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLabel
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLeadingIcon
@@ -260,7 +260,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun RowScope.ChannelListHeaderLeadingContent(params: ChannelListHeaderLeadingContentParams) {
-        DefaultChannelListHeaderLeadingContent(
+        DefaultListHeaderLeadingContent(
             currentUser = params.currentUser,
             onAvatarClick = params.onAvatarClick,
         )
@@ -276,7 +276,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun RowScope.ChannelListHeaderCenterContent(params: ChannelListHeaderCenterContentParams) {
-        DefaultChannelListHeaderCenterContent(
+        DefaultListHeaderCenterContent(
             connectionState = params.connectionState,
             title = params.title,
         )
@@ -2039,6 +2039,23 @@ public interface ChatComponentFactory {
             itemHeight = params.itemHeight,
             verticalAlignment = params.verticalAlignment,
             horizontalArrangement = params.horizontalArrangement,
+        )
+    }
+
+    /**
+     * The default header shown above the thread list.
+     * Displays the user avatar and a title, typically "Threads", with no trailing action button.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ThreadListHeader(params: ThreadListHeaderParams) {
+        io.getstream.chat.android.compose.ui.threads.ThreadListHeader(
+            modifier = params.modifier,
+            title = params.title,
+            currentUser = params.currentUser,
+            connectionState = params.connectionState,
+            onAvatarClick = params.onAvatarClick,
         )
     }
 

@@ -16,41 +16,21 @@
 
 package io.getstream.chat.android.compose.ui.channels.header
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
-import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.components.ListHeader
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.theme.ChannelListHeaderCenterContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListHeaderLeadingContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListHeaderTrailingContentParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
-import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewUserData
@@ -111,104 +91,12 @@ public fun ChannelListHeader(
         }
     },
 ) {
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        color = ChatTheme.colors.backgroundCoreElevation1,
-    ) {
-        Column {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(StreamTokens.spacingSm),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
-            ) {
-                leadingContent()
-
-                centerContent()
-
-                trailingContent()
-            }
-            HorizontalDivider(
-                thickness = 1.dp,
-                color = ChatTheme.colors.borderCoreDefault,
-            )
-        }
-    }
-}
-
-/**
- * Represents the default leading content of a channel list header, which is the currently logged-in user avatar.
- *
- * We show the avatar if the user is available, otherwise we add a spacer to make sure the alignment is correct.
- */
-@Composable
-internal fun DefaultChannelListHeaderLeadingContent(
-    currentUser: User?,
-    onAvatarClick: (User?) -> Unit,
-) {
-    if (currentUser != null) {
-        Box(
-            modifier = Modifier
-                .size(AvatarSize.ExtraLarge)
-                .clip(CircleShape)
-                .clickable { onAvatarClick(currentUser) },
-            contentAlignment = Alignment.Center,
-        ) {
-            ChatTheme.componentFactory.UserAvatar(
-                params = UserAvatarParams(
-                    modifier = Modifier
-                        .size(AvatarSize.Large)
-                        .testTag("Stream_UserAvatar"),
-                    user = currentUser,
-                ),
-            )
-        }
-    } else {
-        Spacer(modifier = Modifier.size(AvatarSize.ExtraLarge))
-    }
-}
-
-/**
- * Represents the channel header's center slot. It either shows a [Text] if [connectionState] is
- * [ConnectionState.CONNECTED], or a [NetworkLoadingIndicator] if there is no connections.
- *
- * @param connectionState The state of WebSocket connection.
- * @param title The title to show.
- */
-@Composable
-internal fun RowScope.DefaultChannelListHeaderCenterContent(
-    connectionState: ConnectionState,
-    title: String,
-) {
-    when (connectionState) {
-        is ConnectionState.Connected -> {
-            Text(
-                modifier = Modifier
-                    .weight(1f)
-                    .wrapContentWidth()
-                    .padding(horizontal = StreamTokens.spacingMd),
-                text = title,
-                style = ChatTheme.typography.headingSmall,
-                maxLines = 1,
-                color = ChatTheme.colors.textPrimary,
-            )
-        }
-
-        is ConnectionState.Connecting -> NetworkLoadingIndicator(modifier = Modifier.weight(1f))
-        is ConnectionState.Offline -> {
-            Text(
-                modifier = Modifier
-                    .weight(1f)
-                    .wrapContentWidth()
-                    .padding(horizontal = StreamTokens.spacingMd),
-                text = stringResource(R.string.stream_compose_disconnected),
-                style = ChatTheme.typography.headingSmall,
-                maxLines = 1,
-                color = ChatTheme.colors.textPrimary,
-            )
-        }
-    }
+    ListHeader(
+        modifier = modifier,
+        leadingContent = leadingContent,
+        centerContent = centerContent,
+        trailingContent = trailingContent,
+    )
 }
 
 /**
