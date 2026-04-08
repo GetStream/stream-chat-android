@@ -16,11 +16,9 @@
 
 package io.getstream.chat.android.compose.sample.ui.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.compose.sample.ui.location.LocationComponentFactory
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
@@ -40,11 +38,6 @@ class CustomChatComponentFactory(
     override fun LazyItemScope.ChannelListItemContent(params: ChannelListItemContentParams) {
         val coordinator = LocalSwipeRevealCoordinator.current
         val swipeEnabled = ChatTheme.config.channelList.swipeActionsEnabled && coordinator != null
-        val pinnedModifier = if (params.channelItem.channel.isPinned()) {
-            Modifier.background(color = ChatTheme.colors.backgroundCoreHighlight)
-        } else {
-            Modifier
-        }
 
         if (swipeEnabled) {
             SwipeableChannelItem(
@@ -54,7 +47,6 @@ class CustomChatComponentFactory(
                 swipeActions = { ChannelSwipeActions(ChannelSwipeActionsParams(params.channelItem)) },
             ) {
                 ChannelItem(
-                    modifier = pinnedModifier,
                     channelItem = params.channelItem,
                     currentUser = params.currentUser,
                     onChannelClick = params.onChannelClick,
@@ -63,7 +55,7 @@ class CustomChatComponentFactory(
             }
         } else {
             ChannelItem(
-                modifier = Modifier.animateItem().then(pinnedModifier),
+                modifier = Modifier.animateItem(),
                 channelItem = params.channelItem,
                 currentUser = params.currentUser,
                 onChannelClick = params.onChannelClick,
