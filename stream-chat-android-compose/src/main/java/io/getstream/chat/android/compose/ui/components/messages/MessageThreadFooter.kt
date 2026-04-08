@@ -48,6 +48,7 @@ import kotlin.math.round
  * @param text Text of the label.
  * @param messageAlignment The alignment of the message, used for the content orientation.
  * @param modifier Modifier for styling.
+ * @param textColor Color of the thread replies label text.
  */
 @Composable
 public fun MessageThreadFooter(
