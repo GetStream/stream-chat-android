@@ -17,11 +17,11 @@
 package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,7 +29,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -52,6 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.StreamSwitch
+import io.getstream.chat.android.compose.ui.components.poll.PollSection
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.applyIf
@@ -142,18 +142,9 @@ private fun PollSwitchListItem(
     onCheckedChange: (Boolean) -> Unit,
     childContent: (@Composable () -> Unit)? = null,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .animateContentSize()
-            .border(
-                width = 1.dp,
-                color = ChatTheme.colors.backgroundCoreSurfaceDefault,
-                shape = RoundedCornerShape(StreamTokens.radiusXl),
-            )
-            .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
-            .background(ChatTheme.colors.backgroundCoreSurfaceDefault)
-            .padding(StreamTokens.spacingMd),
+    PollSection(
+        modifier = Modifier.animateContentSize(),
+        contentPadding = PaddingValues(StreamTokens.spacingMd),
     ) {
         PollSwitchHeader(
             title = title,
