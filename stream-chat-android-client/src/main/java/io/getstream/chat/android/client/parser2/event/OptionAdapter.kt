@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2.event
 
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.models.Option
@@ -37,26 +36,13 @@ internal class OptionAdapter : JsonAdapter<Option>() {
             when (key) {
                 "id" -> id = reader.nextString()
                 "text" -> text = reader.nextString()
-                else -> reader.readJsonValue()?.let { value ->
-                    val map = extraData ?: mutableMapOf<String, Any>().also { extraData = it }
-                    map[key] = value
-                }
+                else -> extraData = JsonParsingUtils.accumulateExtraData(key, reader, extraData)
             }
         }
         reader.endObject()
 
-        if (id == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'id' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (text == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'text' missing at ${reader.path} at ${reader.path}",
-            )
-        }
+        JsonParsingUtils.requireField(id, "id", reader)
+        JsonParsingUtils.requireField(text, "text", reader)
 
         return Option(
             id = id,

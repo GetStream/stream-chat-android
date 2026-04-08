@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2.event
 
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.models.Location
@@ -52,24 +51,12 @@ internal class LocationAdapter(
         }
         reader.endObject()
 
-        if (channelCid == null) {
-            throw JsonDataException("Required value 'channel_cid' missing at ${reader.path}")
-        }
-        if (messageId == null) {
-            throw JsonDataException("Required value 'message_id' missing at ${reader.path}")
-        }
-        if (userId == null) {
-            throw JsonDataException("Required value 'user_id' missing at ${reader.path}")
-        }
-        if (latitude == null) {
-            throw JsonDataException("Required value 'latitude' missing at ${reader.path}")
-        }
-        if (longitude == null) {
-            throw JsonDataException("Required value 'longitude' missing at ${reader.path}")
-        }
-        if (createdByDeviceId == null) {
-            throw JsonDataException("Required value 'created_by_device_id' missing at ${reader.path}")
-        }
+        JsonParsingUtils.requireField(channelCid, "channel_cid", reader)
+        JsonParsingUtils.requireField(messageId, "message_id", reader)
+        JsonParsingUtils.requireField(userId, "user_id", reader)
+        JsonParsingUtils.requireField(latitude, "latitude", reader)
+        JsonParsingUtils.requireField(longitude, "longitude", reader)
+        JsonParsingUtils.requireField(createdByDeviceId, "created_by_device_id", reader)
 
         return Location(
             cid = channelCid,

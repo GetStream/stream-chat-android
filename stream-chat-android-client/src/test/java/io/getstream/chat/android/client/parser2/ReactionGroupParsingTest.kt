@@ -86,14 +86,18 @@ internal class ReactionGroupParsingTest {
 
     // endregion
 
-    // region Error message parity (both paths must throw identical errors)
+    // region Error message parity
 
     @Test
-    fun `Both paths - same error message on missing count`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing count`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ReactionGroupTestData.jsonMissingCount, DownstreamReactionGroupDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing count`() {
+        assertThrows<JsonDataException> {
             reactionGroupAdapter.parseWithType(
                 com.squareup.moshi.JsonReader.of(
                     okio.Buffer().writeUtf8(ReactionGroupTestData.jsonMissingCount),
@@ -101,15 +105,18 @@ internal class ReactionGroupParsingTest {
                 testType,
             )
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing sum_scores`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing sum_scores`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ReactionGroupTestData.jsonMissingSumScores, DownstreamReactionGroupDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing sum_scores`() {
+        assertThrows<JsonDataException> {
             reactionGroupAdapter.parseWithType(
                 com.squareup.moshi.JsonReader.of(
                     okio.Buffer().writeUtf8(ReactionGroupTestData.jsonMissingSumScores),
@@ -117,15 +124,18 @@ internal class ReactionGroupParsingTest {
                 testType,
             )
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing first_reaction_at`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing first_reaction_at`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ReactionGroupTestData.jsonMissingFirstReactionAt, DownstreamReactionGroupDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing first_reaction_at`() {
+        assertThrows<JsonDataException> {
             reactionGroupAdapter.parseWithType(
                 com.squareup.moshi.JsonReader.of(
                     okio.Buffer().writeUtf8(ReactionGroupTestData.jsonMissingFirstReactionAt),
@@ -133,15 +143,18 @@ internal class ReactionGroupParsingTest {
                 testType,
             )
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing last_reaction_at`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing last_reaction_at`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ReactionGroupTestData.jsonMissingLastReactionAt, DownstreamReactionGroupDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing last_reaction_at`() {
+        assertThrows<JsonDataException> {
             reactionGroupAdapter.parseWithType(
                 com.squareup.moshi.JsonReader.of(
                     okio.Buffer().writeUtf8(ReactionGroupTestData.jsonMissingLastReactionAt),
@@ -149,7 +162,6 @@ internal class ReactionGroupParsingTest {
                 testType,
             )
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     // endregion

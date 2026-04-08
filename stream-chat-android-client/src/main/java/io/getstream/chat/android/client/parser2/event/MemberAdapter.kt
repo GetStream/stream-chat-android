@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2.event
 
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.models.Member
@@ -68,20 +67,12 @@ internal class MemberAdapter(
                 "ban_expires" -> banExpires = dateAdapter.fromJson(reader)
                 "pinned_at" -> pinnedAt = dateAdapter.fromJson(reader)
                 "archived_at" -> archivedAt = dateAdapter.fromJson(reader)
-                else -> reader.readJsonValue()?.let { value ->
-                    val map = extraData ?: mutableMapOf<String, Any>().also { extraData = it }
-                    map[key] = value
-                }
+                else -> extraData = JsonParsingUtils.accumulateExtraData(key, reader, extraData)
             }
         }
         reader.endObject()
 
-        if (user == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'user' missing at ${reader.path} at ${reader.path}",
-            )
-        }
+        JsonParsingUtils.requireField(user, "user", reader)
 
         return Member(
             user = user,

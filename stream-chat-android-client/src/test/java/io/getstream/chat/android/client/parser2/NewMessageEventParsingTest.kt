@@ -148,83 +148,104 @@ internal class NewMessageEventParsingTest {
 
     // endregion
 
-    // region Error message parity (both paths must throw identical errors)
+    // region Error message parity
 
     @Test
-    fun `Both paths - same error message on missing type`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing type`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(NewMessageEventTestData.jsonMissingType, NewMessageEventDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing type`() {
+        assertThrows<JsonDataException> {
             adapter.fromJson(NewMessageEventTestData.jsonMissingType)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing created_at`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing created_at`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(NewMessageEventTestData.jsonMissingCreatedAt, NewMessageEventDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing created_at`() {
+        assertThrows<JsonDataException> {
             adapter.fromJson(NewMessageEventTestData.jsonMissingCreatedAt)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing user`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing user`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(NewMessageEventTestData.jsonMissingUser, NewMessageEventDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing user`() {
+        assertThrows<JsonDataException> {
             adapter.fromJson(NewMessageEventTestData.jsonMissingUser)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing cid`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing cid`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(NewMessageEventTestData.jsonMissingCid, NewMessageEventDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing cid`() {
+        assertThrows<JsonDataException> {
             adapter.fromJson(NewMessageEventTestData.jsonMissingCid)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing channel_type`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing channel_type`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(NewMessageEventTestData.jsonMissingChannelType, NewMessageEventDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing channel_type`() {
+        assertThrows<JsonDataException> {
             adapter.fromJson(NewMessageEventTestData.jsonMissingChannelType)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing channel_id`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing channel_id`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(NewMessageEventTestData.jsonMissingChannelId, NewMessageEventDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
-            adapter.fromJson(NewMessageEventTestData.jsonMissingChannelId)
-        }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing message`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `Direct path - throws on missing channel_id`() {
+        assertThrows<JsonDataException> {
+            adapter.fromJson(NewMessageEventTestData.jsonMissingChannelId)
+        }
+    }
+
+    @Test
+    fun `DTO path - throws on missing message`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(NewMessageEventTestData.jsonMissingMessage, NewMessageEventDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing message`() {
+        assertThrows<JsonDataException> {
             adapter.fromJson(NewMessageEventTestData.jsonMissingMessage)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     // endregion

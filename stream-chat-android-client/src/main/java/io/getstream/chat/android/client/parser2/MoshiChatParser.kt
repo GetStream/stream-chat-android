@@ -59,6 +59,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 internal class MoshiChatParser(
     private val eventMapping: EventMapping,
     private val dtoMapping: DtoMapping,
+    private val directEventParser: DirectEventParser,
 ) : ChatParser {
 
     private val moshi: Moshi by lazy {
@@ -141,8 +142,12 @@ internal class MoshiChatParser(
 
     private val chatEventDtoAdapter = moshi.adapter(ChatEventDto::class.java)
 
-    private fun parseAndProcessEvent(raw: String): ChatEvent = with(eventMapping) {
-        val event = chatEventDtoAdapter.fromJson(raw)!!.toDomain()
-        return event.enrichIfNeeded()
+    private fun parseAndProcessEvent(raw: String): ChatEvent {
+        val directEvent = directEventParser.parse(raw)
+        if (directEvent != null) {
+            // Direct adapters handle enrichment inline — no enrichIfNeeded() needed.
+            return directEvent
+        }
+        return with(eventMapping) { chatEventDtoAdapter.fromJson(raw)!!.toDomain() }.enrichIfNeeded()
     }
 }

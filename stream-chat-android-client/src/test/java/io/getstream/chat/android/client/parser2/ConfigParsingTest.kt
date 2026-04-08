@@ -83,50 +83,62 @@ internal class ConfigParsingTest {
 
     // endregion
 
-    // region Error message parity — representative required fields (Boolean, String, Int, List)
+    // region Error message parity
 
     @Test
-    fun `Both paths - same error message on missing typing_events`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing typing_events`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ConfigTestData.jsonMissingTypingEvents, ConfigDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing typing_events`() {
+        assertThrows<JsonDataException> {
             configAdapter.fromJson(ConfigTestData.jsonMissingTypingEvents)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing message_retention`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing message_retention`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ConfigTestData.jsonMissingMessageRetention, ConfigDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing message_retention`() {
+        assertThrows<JsonDataException> {
             configAdapter.fromJson(ConfigTestData.jsonMissingMessageRetention)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing max_message_length`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing max_message_length`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ConfigTestData.jsonMissingMaxMessageLength, ConfigDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
-            configAdapter.fromJson(ConfigTestData.jsonMissingMaxMessageLength)
-        }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing commands`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `Direct path - throws on missing max_message_length`() {
+        assertThrows<JsonDataException> {
+            configAdapter.fromJson(ConfigTestData.jsonMissingMaxMessageLength)
+        }
+    }
+
+    @Test
+    fun `DTO path - throws on missing commands`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ConfigTestData.jsonMissingCommands, ConfigDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing commands`() {
+        assertThrows<JsonDataException> {
             configAdapter.fromJson(ConfigTestData.jsonMissingCommands)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     // endregion

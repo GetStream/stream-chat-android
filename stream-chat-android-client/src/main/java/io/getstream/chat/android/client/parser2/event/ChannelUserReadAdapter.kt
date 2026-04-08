@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2.event
 
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.models.ChannelUserRead
@@ -53,15 +52,9 @@ internal class ChannelUserReadAdapter(
         }
         reader.endObject()
 
-        if (user == null) {
-            throw JsonDataException("Required value 'user' missing at ${reader.path}")
-        }
-        if (lastRead == null) {
-            throw JsonDataException("Required value 'last_read' missing at ${reader.path}")
-        }
-        if (unreadMessages == null) {
-            throw JsonDataException("Required value 'unread_messages' missing at ${reader.path}")
-        }
+        JsonParsingUtils.requireField(user, "user", reader)
+        JsonParsingUtils.requireField(lastRead, "last_read", reader)
+        JsonParsingUtils.requireField(unreadMessages, "unread_messages", reader)
 
         return ChannelUserRead(
             user = user,

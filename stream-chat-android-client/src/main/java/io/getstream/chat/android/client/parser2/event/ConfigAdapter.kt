@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2.event
 
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.models.Command
@@ -94,60 +93,24 @@ internal class ConfigAdapter(
         }
         reader.endObject()
 
-        if (typingEvents == null) {
-            throw JsonDataException("Required value 'typing_events' missing at ${reader.path}")
-        }
-        if (readEvents == null) {
-            throw JsonDataException("Required value 'read_events' missing at ${reader.path}")
-        }
-        if (connectEvents == null) {
-            throw JsonDataException("Required value 'connect_events' missing at ${reader.path}")
-        }
-        if (search == null) {
-            throw JsonDataException("Required value 'search' missing at ${reader.path}")
-        }
-        if (reactions == null) {
-            throw JsonDataException("Required value 'reactions' missing at ${reader.path}")
-        }
-        if (replies == null) {
-            throw JsonDataException("Required value 'replies' missing at ${reader.path}")
-        }
-        if (mutes == null) {
-            throw JsonDataException("Required value 'mutes' missing at ${reader.path}")
-        }
-        if (uploads == null) {
-            throw JsonDataException("Required value 'uploads' missing at ${reader.path}")
-        }
-        if (urlEnrichment == null) {
-            throw JsonDataException("Required value 'url_enrichment' missing at ${reader.path}")
-        }
-        if (customEvents == null) {
-            throw JsonDataException("Required value 'custom_events' missing at ${reader.path}")
-        }
-        if (pushNotifications == null) {
-            throw JsonDataException("Required value 'push_notifications' missing at ${reader.path}")
-        }
-        if (polls == null) {
-            throw JsonDataException("Required value 'polls' missing at ${reader.path}")
-        }
-        if (messageRetention == null) {
-            throw JsonDataException("Required value 'message_retention' missing at ${reader.path}")
-        }
-        if (maxMessageLength == null) {
-            throw JsonDataException("Required value 'max_message_length' missing at ${reader.path}")
-        }
-        if (automod == null) {
-            throw JsonDataException("Required value 'automod' missing at ${reader.path}")
-        }
-        if (automodBehavior == null) {
-            throw JsonDataException("Required value 'automod_behavior' missing at ${reader.path}")
-        }
-        if (commands == null) {
-            throw JsonDataException("Required value 'commands' missing at ${reader.path}")
-        }
-        if (markMessagesPending == null) {
-            throw JsonDataException("Required value 'mark_messages_pending' missing at ${reader.path}")
-        }
+        JsonParsingUtils.requireField(typingEvents, "typing_events", reader)
+        JsonParsingUtils.requireField(readEvents, "read_events", reader)
+        JsonParsingUtils.requireField(connectEvents, "connect_events", reader)
+        JsonParsingUtils.requireField(search, "search", reader)
+        JsonParsingUtils.requireField(reactions, "reactions", reader)
+        JsonParsingUtils.requireField(replies, "replies", reader)
+        JsonParsingUtils.requireField(mutes, "mutes", reader)
+        JsonParsingUtils.requireField(uploads, "uploads", reader)
+        JsonParsingUtils.requireField(urlEnrichment, "url_enrichment", reader)
+        JsonParsingUtils.requireField(customEvents, "custom_events", reader)
+        JsonParsingUtils.requireField(pushNotifications, "push_notifications", reader)
+        JsonParsingUtils.requireField(polls, "polls", reader)
+        JsonParsingUtils.requireField(messageRetention, "message_retention", reader)
+        JsonParsingUtils.requireField(maxMessageLength, "max_message_length", reader)
+        JsonParsingUtils.requireField(automod, "automod", reader)
+        JsonParsingUtils.requireField(automodBehavior, "automod_behavior", reader)
+        JsonParsingUtils.requireField(commands, "commands", reader)
+        JsonParsingUtils.requireField(markMessagesPending, "mark_messages_pending", reader)
 
         return Config(
             createdAt = createdAt,

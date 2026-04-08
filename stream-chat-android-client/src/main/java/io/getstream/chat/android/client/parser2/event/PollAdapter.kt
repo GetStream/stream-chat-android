@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2.event
 
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.models.Answer
@@ -96,86 +95,23 @@ internal class PollAdapter(
                 "latest_answers" -> answers = parseParsedVotesList(reader)
                 "created_by" -> createdBy = userAdapter.fromJson(reader)
                 "created_by_id" -> reader.skipValue()
-                else -> reader.readJsonValue()?.let { value ->
-                    val map = extraData ?: mutableMapOf<String, Any>().also { extraData = it }
-                    map[key] = value
-                }
+                else -> extraData = JsonParsingUtils.accumulateExtraData(key, reader, extraData)
             }
         }
         reader.endObject()
 
-        if (id == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'id' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (name == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'name' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (description == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'description' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (options == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'options_' (JSON name 'options') missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (enforceUniqueVote == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'enforce_unique_vote' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (allowUserSuggestedOptions == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'allow_user_suggested_options' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (allowAnswers == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'allow_answers' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (voteCount == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'vote_count' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (ownVotes == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'own_votes' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (createdAt == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'created_at' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (updatedAt == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'updated_at' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (answersCount == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'answers_count' missing at ${reader.path} at ${reader.path}",
-            )
-        }
+        JsonParsingUtils.requireField(id, "id", reader)
+        JsonParsingUtils.requireField(name, "name", reader)
+        JsonParsingUtils.requireField(description, "description", reader)
+        JsonParsingUtils.requireField(options, "options", reader)
+        JsonParsingUtils.requireField(enforceUniqueVote, "enforce_unique_vote", reader)
+        JsonParsingUtils.requireField(allowUserSuggestedOptions, "allow_user_suggested_options", reader)
+        JsonParsingUtils.requireField(allowAnswers, "allow_answers", reader)
+        JsonParsingUtils.requireField(voteCount, "vote_count", reader)
+        JsonParsingUtils.requireField(ownVotes, "own_votes", reader)
+        JsonParsingUtils.requireField(createdAt, "created_at", reader)
+        JsonParsingUtils.requireField(updatedAt, "updated_at", reader)
+        JsonParsingUtils.requireField(answersCount, "answers_count", reader)
 
         val ownUserId = currentUserIdProvider() ?: ownVotes.firstOrNull()?.user?.id
 

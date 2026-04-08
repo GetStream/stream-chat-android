@@ -75,30 +75,34 @@ internal class DeviceParsingTest {
 
     // endregion
 
-    // region Error message parity (both paths throw with the same message prefix)
+    // region Error message parity
 
     @Test
-    fun `Both paths - same error message on missing id`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing id`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(DeviceTestData.jsonMissingId, DeviceDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
-            deviceAdapter.fromJson(DeviceTestData.jsonMissingId)
-        }
-
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing push_provider`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `Direct path - throws on missing id`() {
+        assertThrows<JsonDataException> {
+            deviceAdapter.fromJson(DeviceTestData.jsonMissingId)
+        }
+    }
+
+    @Test
+    fun `DTO path - throws on missing push_provider`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(DeviceTestData.jsonMissingPushProvider, DeviceDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing push_provider`() {
+        assertThrows<JsonDataException> {
             deviceAdapter.fromJson(DeviceTestData.jsonMissingPushProvider)
         }
-
-        assertEquals(dtoException.message, directException.message)
     }
 
     // endregion

@@ -67,10 +67,7 @@ internal class AttachmentAdapter : JsonAdapter<Attachment>() {
                 "type" -> type = reader.nextString()
                 "original_height" -> originalHeight = reader.nextInt()
                 "original_width" -> originalWidth = reader.nextInt()
-                else -> reader.readJsonValue()?.let { value ->
-                    val map = extraData ?: mutableMapOf<String, Any>().also { extraData = it }
-                    map[key] = value
-                }
+                else -> extraData = JsonParsingUtils.accumulateExtraData(key, reader, extraData)
             }
         }
         reader.endObject()

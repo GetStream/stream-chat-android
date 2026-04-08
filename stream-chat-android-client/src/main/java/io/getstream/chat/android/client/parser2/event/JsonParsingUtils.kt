@@ -17,13 +17,45 @@
 package io.getstream.chat.android.client.parser2.event
 
 import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 /**
- * Utility functions for parsing JSON arrays and maps with consistent null-handling.
- * All methods follow Pattern A: explicit NULL check, type validation, and return nullable types.
+ * Utility functions for parsing JSON with consistent null-handling.
  */
 internal object JsonParsingUtils {
+
+    /**
+     * Throws [JsonDataException] if [value] is null. Enables smart-cast via contract.
+     * The error format matches Moshi codegen's `Util.missingProperty` when invoked through `fromJsonValue`,
+     * ensuring parity between the DTO and direct parsing paths.
+     */
+    @OptIn(ExperimentalContracts::class)
+    fun <T> requireField(value: T?, fieldName: String, reader: JsonReader): T {
+        contract { returns() implies (value != null) }
+        return value ?: throw JsonDataException(
+            "Required value '$fieldName' missing at ${reader.path}",
+        )
+    }
+
+    /** Reads a nullable Int (returns null if JSON value is null). */
+    fun readNullableInt(reader: JsonReader): Int? {
+        return if (reader.peek() == JsonReader.Token.NULL) reader.nextNull() else reader.nextInt()
+    }
+
+    /** Accumulates a key-value pair into an extra data map, lazily creating it if needed. */
+    fun accumulateExtraData(
+        key: String,
+        reader: JsonReader,
+        extraData: MutableMap<String, Any>?,
+    ): MutableMap<String, Any>? {
+        val value = reader.readJsonValue() ?: return extraData
+        val map = extraData ?: mutableMapOf()
+        map[key] = value
+        return map
+    }
 
     /**
      * Parses a JSON array of strings.

@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2.event
 
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.DeliveryReceipts
@@ -62,9 +61,7 @@ internal class PrivacySettingsAdapter : JsonAdapter<PrivacySettings>() {
             }
         }
         reader.endObject()
-        if (enabled == null) {
-            throw JsonDataException("Required value 'enabled' missing at ${reader.path}")
-        }
+        JsonParsingUtils.requireField(enabled, "enabled", reader)
         return TypingIndicators(enabled = enabled)
     }
 
@@ -79,9 +76,7 @@ internal class PrivacySettingsAdapter : JsonAdapter<PrivacySettings>() {
             }
         }
         reader.endObject()
-        if (enabled == null) {
-            throw JsonDataException("Required value 'enabled' missing at ${reader.path}")
-        }
+        JsonParsingUtils.requireField(enabled, "enabled", reader)
         return DeliveryReceipts(enabled = enabled)
     }
 
@@ -96,9 +91,7 @@ internal class PrivacySettingsAdapter : JsonAdapter<PrivacySettings>() {
             }
         }
         reader.endObject()
-        if (enabled == null) {
-            throw JsonDataException("Required value 'enabled' missing at ${reader.path}")
-        }
+        JsonParsingUtils.requireField(enabled, "enabled", reader)
         return ReadReceipts(enabled = enabled)
     }
 

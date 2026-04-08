@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2.event
 
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.models.MessageReminderInfo
@@ -44,12 +43,8 @@ internal class MessageReminderInfoAdapter(
         }
         reader.endObject()
 
-        if (createdAt == null) {
-            throw JsonDataException("Required value 'created_at' missing at ${reader.path}")
-        }
-        if (updatedAt == null) {
-            throw JsonDataException("Required value 'updated_at' missing at ${reader.path}")
-        }
+        JsonParsingUtils.requireField(createdAt, "created_at", reader)
+        JsonParsingUtils.requireField(updatedAt, "updated_at", reader)
 
         return MessageReminderInfo(
             remindAt = remindAt,

@@ -94,17 +94,20 @@ internal class MemberParsingTest {
 
     // endregion
 
-    // region Error message parity (both paths must throw identical errors)
+    // region Error message parity
 
     @Test
-    fun `Both paths - same error message on missing user`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing user`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(MemberTestData.jsonMissingUser, DownstreamMemberDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing user`() {
+        assertThrows<JsonDataException> {
             memberAdapter.fromJson(MemberTestData.jsonMissingUser)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     // endregion

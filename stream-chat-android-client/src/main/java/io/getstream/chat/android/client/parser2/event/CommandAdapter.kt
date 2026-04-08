@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2.event
 
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.models.Command
@@ -43,18 +42,10 @@ internal class CommandAdapter : JsonAdapter<Command>() {
         }
         reader.endObject()
 
-        if (name == null) {
-            throw JsonDataException("Required value 'name' missing at ${reader.path}")
-        }
-        if (description == null) {
-            throw JsonDataException("Required value 'description' missing at ${reader.path}")
-        }
-        if (args == null) {
-            throw JsonDataException("Required value 'args' missing at ${reader.path}")
-        }
-        if (set == null) {
-            throw JsonDataException("Required value 'set_' (JSON name 'set') missing at ${reader.path}")
-        }
+        JsonParsingUtils.requireField(name, "name", reader)
+        JsonParsingUtils.requireField(description, "description", reader)
+        JsonParsingUtils.requireField(args, "args", reader)
+        JsonParsingUtils.requireField(set, "set", reader)
 
         return Command(
             name = name,

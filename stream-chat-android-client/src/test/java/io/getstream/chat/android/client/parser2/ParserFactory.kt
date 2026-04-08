@@ -38,5 +38,10 @@ internal object ParserFactory {
             messageTransformer = apiModelTransformers.outgoingMessageTransformer,
             userTransformer = apiModelTransformers.outgoingUserTransformers,
         ),
+        directEventParser = DirectEventParser(
+            currentUserIdProvider = currentUserIdProvider,
+            messageTransformer = apiModelTransformers.incomingMessageTransformer,
+            userTransformer = apiModelTransformers.incomingUserTransformer,
+        ),
     )
 }

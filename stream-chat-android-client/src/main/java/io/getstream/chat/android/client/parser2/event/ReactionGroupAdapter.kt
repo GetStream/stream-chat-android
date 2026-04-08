@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2.event
 
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.models.ReactionGroup
@@ -87,7 +86,6 @@ internal class ReactionGroupAdapter(
      * @param type The reaction type (e.g., "like", "love") - comes from the map key
      * @return The parsed ReactionGroup, or null if the JSON value is null
      */
-    @Suppress("ThrowsCount")
     fun parseWithType(reader: JsonReader, type: String): ReactionGroup? {
         if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
 
@@ -108,18 +106,10 @@ internal class ReactionGroupAdapter(
         }
         reader.endObject()
 
-        if (count == null) {
-            throw JsonDataException("Required value 'count' missing at ${reader.path}")
-        }
-        if (sumScores == null) {
-            throw JsonDataException("Required value 'sum_scores' missing at ${reader.path}")
-        }
-        if (firstReactionAt == null) {
-            throw JsonDataException("Required value 'first_reaction_at' missing at ${reader.path}")
-        }
-        if (lastReactionAt == null) {
-            throw JsonDataException("Required value 'last_reaction_at' missing at ${reader.path}")
-        }
+        JsonParsingUtils.requireField(count, "count", reader)
+        JsonParsingUtils.requireField(sumScores, "sum_scores", reader)
+        JsonParsingUtils.requireField(firstReactionAt, "first_reaction_at", reader)
+        JsonParsingUtils.requireField(lastReactionAt, "last_reaction_at", reader)
 
         return ReactionGroup(
             type = type,

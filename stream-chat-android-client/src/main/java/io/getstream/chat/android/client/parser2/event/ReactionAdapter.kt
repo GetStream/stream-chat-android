@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2.event
 
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.models.Reaction
@@ -56,38 +55,15 @@ internal class ReactionAdapter(
                 "updated_at" -> updatedAt = dateAdapter.fromJson(reader)
                 "user" -> user = userAdapter.fromJson(reader)
                 "emoji_code" -> emojiCode = reader.nextString()
-                else -> reader.readJsonValue()?.let { value ->
-                    val map = extraData ?: mutableMapOf<String, Any>().also { extraData = it }
-                    map[key] = value
-                }
+                else -> extraData = JsonParsingUtils.accumulateExtraData(key, reader, extraData)
             }
         }
         reader.endObject()
 
-        if (messageId == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'message_id' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (type == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'type' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (score == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'score' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (userId == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'user_id' missing at ${reader.path} at ${reader.path}",
-            )
-        }
+        JsonParsingUtils.requireField(messageId, "message_id", reader)
+        JsonParsingUtils.requireField(type, "type", reader)
+        JsonParsingUtils.requireField(score, "score", reader)
+        JsonParsingUtils.requireField(userId, "user_id", reader)
 
         return Reaction(
             messageId = messageId,

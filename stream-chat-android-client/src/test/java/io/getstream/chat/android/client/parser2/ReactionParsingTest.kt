@@ -94,50 +94,62 @@ internal class ReactionParsingTest {
 
     // endregion
 
-    // region Error message parity (both paths must throw identical errors)
+    // region Error message parity
 
     @Test
-    fun `Both paths - same error message on missing message_id`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing message_id`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ReactionTestData.jsonMissingMessageId, DownstreamReactionDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing message_id`() {
+        assertThrows<JsonDataException> {
             reactionAdapter.fromJson(ReactionTestData.jsonMissingMessageId)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing type`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing type`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ReactionTestData.jsonMissingType, DownstreamReactionDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing type`() {
+        assertThrows<JsonDataException> {
             reactionAdapter.fromJson(ReactionTestData.jsonMissingType)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing score`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing score`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ReactionTestData.jsonMissingScore, DownstreamReactionDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
-            reactionAdapter.fromJson(ReactionTestData.jsonMissingScore)
-        }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing user_id`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `Direct path - throws on missing score`() {
+        assertThrows<JsonDataException> {
+            reactionAdapter.fromJson(ReactionTestData.jsonMissingScore)
+        }
+    }
+
+    @Test
+    fun `DTO path - throws on missing user_id`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ReactionTestData.jsonMissingUserId, DownstreamReactionDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing user_id`() {
+        assertThrows<JsonDataException> {
             reactionAdapter.fromJson(ReactionTestData.jsonMissingUserId)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     // endregion

@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2.event
 
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.PrivacySettings
@@ -53,6 +52,9 @@ internal class UserAdapter(
         var deactivatedAt: Date? = null
         var updatedAt: Date? = null
         var lastActive: Date? = null
+        var totalUnreadCount: Int = 0
+        var unreadChannels: Int = 0
+        var unreadThreads: Int = 0
         var teams: List<String>? = null
         var teamsRole: Map<String, String>? = null
         var blockedUserIds: List<String>? = null
@@ -81,46 +83,24 @@ internal class UserAdapter(
                 "teams_role" -> teamsRole = JsonParsingUtils.parseStringMap(reader)
                 "updated_at" -> updatedAt = dateAdapter.fromJson(reader)
 
+                // OwnUserResponse fields — parsed to maintain parity with the DTO path.
+                // TODO: Check "total_unread_count": null JSON
+                "total_unread_count" -> totalUnreadCount = reader.nextInt()
+                "unread_channels" -> unreadChannels = reader.nextInt()
+                "unread_threads" -> unreadThreads = reader.nextInt()
                 // The following are not part of the UserResponse (they are part of OwnUserResponse):
                 // This is an intentional change from DownstreamUserDto which covers both UserResponse/OwnUserResponse
-                // 1. total_unread_count
-                // 2. unread_channels
-                // 3. unread_threads
-                // 4. mutes
-                // 5. channel_mutes
-                // 6. push_preferences
-                else -> reader.readJsonValue()?.let { value ->
-                    val map = extraData ?: mutableMapOf<String, Any>().also { extraData = it }
-                    map[key] = value
-                }
+                "mutes", "channel_mutes", "push_preferences" -> reader.skipValue()
+
+                else -> extraData = JsonParsingUtils.accumulateExtraData(key, reader, extraData)
             }
         }
         reader.endObject()
 
-        if (id == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'id' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (role == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'role' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (banned == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'banned' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (online == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'online' missing at ${reader.path} at ${reader.path}",
-            )
-        }
+        JsonParsingUtils.requireField(id, "id", reader)
+        JsonParsingUtils.requireField(role, "role", reader)
+        JsonParsingUtils.requireField(banned, "banned", reader)
+        JsonParsingUtils.requireField(online, "online", reader)
 
         return User(
             id = id,
@@ -137,6 +117,9 @@ internal class UserAdapter(
             deactivatedAt = deactivatedAt,
             updatedAt = updatedAt,
             lastActive = lastActive,
+            totalUnreadCount = totalUnreadCount,
+            unreadChannels = unreadChannels,
+            unreadThreads = unreadThreads,
             teams = teams ?: emptyList(),
             teamsRole = teamsRole ?: emptyMap(),
             blockedUserIds = blockedUserIds ?: emptyList(),

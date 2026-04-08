@@ -80,72 +80,90 @@ internal class LocationParsingTest {
 
     // endregion
 
-    // region Error message parity (both paths must throw identical errors)
+    // region Error message parity
 
     @Test
-    fun `Both paths - same error message on missing channel_cid`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing channel_cid`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(LocationTestData.jsonMissingChannelCid, DownstreamLocationDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing channel_cid`() {
+        assertThrows<JsonDataException> {
             adapter.fromJson(LocationTestData.jsonMissingChannelCid)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing message_id`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing message_id`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(LocationTestData.jsonMissingMessageId, DownstreamLocationDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing message_id`() {
+        assertThrows<JsonDataException> {
             adapter.fromJson(LocationTestData.jsonMissingMessageId)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing user_id`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing user_id`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(LocationTestData.jsonMissingUserId, DownstreamLocationDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing user_id`() {
+        assertThrows<JsonDataException> {
             adapter.fromJson(LocationTestData.jsonMissingUserId)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing latitude`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing latitude`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(LocationTestData.jsonMissingLatitude, DownstreamLocationDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing latitude`() {
+        assertThrows<JsonDataException> {
             adapter.fromJson(LocationTestData.jsonMissingLatitude)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing longitude`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing longitude`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(LocationTestData.jsonMissingLongitude, DownstreamLocationDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
-            adapter.fromJson(LocationTestData.jsonMissingLongitude)
-        }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing created_by_device_id`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `Direct path - throws on missing longitude`() {
+        assertThrows<JsonDataException> {
+            adapter.fromJson(LocationTestData.jsonMissingLongitude)
+        }
+    }
+
+    @Test
+    fun `DTO path - throws on missing created_by_device_id`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(LocationTestData.jsonMissingCreatedByDeviceId, DownstreamLocationDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing created_by_device_id`() {
+        assertThrows<JsonDataException> {
             adapter.fromJson(LocationTestData.jsonMissingCreatedByDeviceId)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     // endregion

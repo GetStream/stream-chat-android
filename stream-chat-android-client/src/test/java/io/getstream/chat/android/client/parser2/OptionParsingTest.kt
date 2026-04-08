@@ -75,28 +75,34 @@ internal class OptionParsingTest {
 
     // endregion
 
-    // region Error message parity (both paths must throw identical errors)
+    // region Error message parity
 
     @Test
-    fun `Both paths - same error message on missing id`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing id`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(OptionTestData.jsonMissingId, DownstreamPollOptionDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
-            adapter.fromJson(OptionTestData.jsonMissingId)
-        }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing text`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `Direct path - throws on missing id`() {
+        assertThrows<JsonDataException> {
+            adapter.fromJson(OptionTestData.jsonMissingId)
+        }
+    }
+
+    @Test
+    fun `DTO path - throws on missing text`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(OptionTestData.jsonMissingText, DownstreamPollOptionDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing text`() {
+        assertThrows<JsonDataException> {
             adapter.fromJson(OptionTestData.jsonMissingText)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     // endregion

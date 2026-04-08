@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2.event
 
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.client.events.NewMessageEvent
@@ -70,13 +69,7 @@ internal class NewMessageEventAdapter(
                 }
                 "user" -> user = userAdapter.fromJson(reader)
                 "cid" -> cid = reader.nextString()
-                "channel_member_count" -> {
-                    channelMemberCount = if (reader.peek() == JsonReader.Token.NULL) {
-                        reader.nextNull()
-                    } else {
-                        reader.nextInt()
-                    }
-                }
+                "channel_member_count" -> channelMemberCount = JsonParsingUtils.readNullableInt(reader)
                 "channel_custom" -> {
                     val (name, image) = parseChannelCustom(reader)
                     channelCustomName = name
@@ -88,48 +81,44 @@ internal class NewMessageEventAdapter(
                 "watcher_count" -> watcherCount = reader.nextInt()
                 "total_unread_count" -> totalUnreadCount = reader.nextInt()
                 "unread_channels" -> unreadChannels = reader.nextInt()
-                "channel_message_count" -> {
-                    channelMessageCount = if (reader.peek() == JsonReader.Token.NULL) {
-                        reader.nextNull()
-                    } else {
-                        reader.nextInt()
-                    }
-                }
+                "channel_message_count" -> channelMessageCount = JsonParsingUtils.readNullableInt(reader)
                 else -> reader.skipValue()
             }
         }
         reader.endObject()
 
-        if (type == null) {
-            throw JsonDataException("Required value 'type' missing at ${reader.path}")
-        }
-        if (rawCreatedAt == null) {
-            throw JsonDataException("Required value 'created_at' missing at ${reader.path}")
-        }
-        if (user == null) {
-            throw JsonDataException("Required value 'user' missing at ${reader.path}")
-        }
-        if (cid == null) {
-            throw JsonDataException("Required value 'cid' missing at ${reader.path}")
-        }
-        if (channelType == null) {
-            throw JsonDataException("Required value 'channel_type' missing at ${reader.path}")
-        }
-        if (channelId == null) {
-            throw JsonDataException("Required value 'channel_id' missing at ${reader.path}")
-        }
-        if (message == null) {
-            throw JsonDataException("Required value 'message' missing at ${reader.path}")
-        }
+        JsonParsingUtils.requireField(type, "type", reader)
+        JsonParsingUtils.requireField(rawCreatedAt, "created_at", reader)
+        JsonParsingUtils.requireField(user, "user", reader)
+        JsonParsingUtils.requireField(cid, "cid", reader)
+        JsonParsingUtils.requireField(channelType, "channel_type", reader)
+        JsonParsingUtils.requireField(channelId, "channel_id", reader)
+        JsonParsingUtils.requireField(message, "message", reader)
 
-        val channelInfo = ChannelInfo(
-            cid = cid,
-            id = channelId,
-            type = channelType,
-            memberCount = channelMemberCount ?: 0,
-            name = channelCustomName,
-            image = channelCustomImage,
-        )
+        // Enrich inline: set channelInfo + cid so parseAndProcessEvent can skip enrichIfNeeded().
+        // Only copy if something actually needs to change.
+        val needsChannelInfo = message.channelInfo == null
+        val needsCid = message.cid != cid
+        val replyTo = message.replyTo
+        val needsReplyToCid = replyTo != null && replyTo.cid != cid
+
+        val enrichedMessage = if (needsChannelInfo || needsCid || needsReplyToCid) {
+            val fallbackChannelInfo = ChannelInfo(
+                cid = cid,
+                id = channelId,
+                type = channelType,
+                memberCount = channelMemberCount ?: 0,
+                name = channelCustomName,
+                image = channelCustomImage,
+            )
+            message.copy(
+                channelInfo = message.channelInfo ?: fallbackChannelInfo,
+                cid = if (needsCid) cid else message.cid,
+                replyTo = if (needsReplyToCid) replyTo.copy(cid = cid) else replyTo,
+            )
+        } else {
+            message
+        }
 
         return NewMessageEvent(
             type = type,
@@ -139,7 +128,7 @@ internal class NewMessageEventAdapter(
             cid = cid,
             channelType = channelType,
             channelId = channelId,
-            message = message.copy(channelInfo = channelInfo),
+            message = enrichedMessage,
             watcherCount = watcherCount,
             totalUnreadCount = totalUnreadCount,
             unreadChannels = unreadChannels,

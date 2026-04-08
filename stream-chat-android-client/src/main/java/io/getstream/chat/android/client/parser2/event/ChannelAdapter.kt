@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2.event
 
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
@@ -33,6 +32,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserId
 import java.util.Date
 
+// TODO: Clean this Adapter + related ones (Mutes...)
 @Suppress("LongParameterList")
 internal class ChannelAdapter(
     private val messageAdapter: JsonAdapter<Message>,
@@ -115,21 +115,11 @@ internal class ChannelAdapter(
         }
         reader.endObject()
 
-        if (cid == null) {
-            throw JsonDataException("Required value 'cid' missing at ${reader.path}")
-        }
-        if (id == null) {
-            throw JsonDataException("Required value 'id' missing at ${reader.path}")
-        }
-        if (type == null) {
-            throw JsonDataException("Required value 'type' missing at ${reader.path}")
-        }
-        if (frozen == null) {
-            throw JsonDataException("Required value 'frozen' missing at ${reader.path}")
-        }
-        if (config == null) {
-            throw JsonDataException("Required value 'config' missing at ${reader.path}")
-        }
+        JsonParsingUtils.requireField(cid, "cid", reader)
+        JsonParsingUtils.requireField(id, "id", reader)
+        JsonParsingUtils.requireField(type, "type", reader)
+        JsonParsingUtils.requireField(frozen, "frozen", reader)
+        JsonParsingUtils.requireField(config, "config", reader)
 
         // Build ChannelInfo to inject into messages (matching DTO path behavior)
         val channelInfo = ChannelInfo(
@@ -194,7 +184,6 @@ internal class ChannelAdapter(
         return list
     }
 
-    @Suppress("ThrowsCount")
     private fun parseChannelUserRead(reader: JsonReader): ChannelUserRead? {
         if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
 
@@ -219,15 +208,9 @@ internal class ChannelAdapter(
         }
         reader.endObject()
 
-        if (user == null) {
-            throw JsonDataException("Required value 'user' missing at ${reader.path}")
-        }
-        if (lastRead == null) {
-            throw JsonDataException("Required value 'last_read' missing at ${reader.path}")
-        }
-        if (unreadMessages == null) {
-            throw JsonDataException("Required value 'unread_messages' missing at ${reader.path}")
-        }
+        JsonParsingUtils.requireField(user, "user", reader)
+        JsonParsingUtils.requireField(lastRead, "last_read", reader)
+        JsonParsingUtils.requireField(unreadMessages, "unread_messages", reader)
 
         // Use lastRead as placeholder - will be updated with correct lastReceivedEventDate later
         return ChannelUserRead(

@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2.event
 
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.models.Moderation
@@ -50,12 +49,8 @@ internal class ModerationAdapter : JsonAdapter<Moderation>() {
         }
         reader.endObject()
 
-        if (action == null) {
-            throw JsonDataException("Required value 'action' missing at ${reader.path}")
-        }
-        if (originalText == null) {
-            throw JsonDataException("Required value 'original_text' missing at ${reader.path}")
-        }
+        JsonParsingUtils.requireField(action, "action", reader)
+        JsonParsingUtils.requireField(originalText, "original_text", reader)
 
         return Moderation(
             action = ModerationAction.fromValue(action),

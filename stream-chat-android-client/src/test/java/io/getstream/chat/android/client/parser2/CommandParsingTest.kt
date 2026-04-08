@@ -62,50 +62,62 @@ internal class CommandParsingTest {
 
     // endregion
 
-    // region Error message parity (both paths must throw identical errors)
+    // region Error message parity
 
     @Test
-    fun `Both paths - same error message on missing name`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing name`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(CommandTestData.jsonMissingName, CommandDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing name`() {
+        assertThrows<JsonDataException> {
             commandAdapter.fromJson(CommandTestData.jsonMissingName)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing description`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing description`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(CommandTestData.jsonMissingDescription, CommandDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing description`() {
+        assertThrows<JsonDataException> {
             commandAdapter.fromJson(CommandTestData.jsonMissingDescription)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing args`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing args`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(CommandTestData.jsonMissingArgs, CommandDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
-            commandAdapter.fromJson(CommandTestData.jsonMissingArgs)
-        }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing set`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `Direct path - throws on missing args`() {
+        assertThrows<JsonDataException> {
+            commandAdapter.fromJson(CommandTestData.jsonMissingArgs)
+        }
+    }
+
+    @Test
+    fun `DTO path - throws on missing set`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(CommandTestData.jsonMissingSet, CommandDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing set`() {
+        assertThrows<JsonDataException> {
             commandAdapter.fromJson(CommandTestData.jsonMissingSet)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     // endregion

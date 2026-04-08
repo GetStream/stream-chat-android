@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2.event
 
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.models.Device
@@ -42,12 +41,8 @@ internal class DeviceAdapter : JsonAdapter<Device>() {
         }
         reader.endObject()
 
-        if (id == null) {
-            throw JsonDataException("Required value 'id' missing at ${reader.path}")
-        }
-        if (pushProvider == null) {
-            throw JsonDataException("Required value 'push_provider' missing at ${reader.path}")
-        }
+        JsonParsingUtils.requireField(id, "id", reader)
+        JsonParsingUtils.requireField(pushProvider, "push_provider", reader)
 
         return Device(
             token = id,

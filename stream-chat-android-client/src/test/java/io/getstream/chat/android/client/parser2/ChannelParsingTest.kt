@@ -175,67 +175,76 @@ internal class ChannelParsingTest {
 
     // endregion
 
-    // region Error message parity (both paths must throw identical errors)
+    // region Error message parity
 
     @Test
-    fun `Both paths - same error message on missing cid`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing cid`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ChannelTestData.jsonMissingCid, DownstreamChannelDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing cid`() {
+        assertThrows<JsonDataException> {
             channelAdapter.fromJson(ChannelTestData.jsonMissingCid)
         }
-        // DTO path wraps exceptions through CustomObjectDtoAdapter, extract root cause
-        val dtoMessage = (dtoException.cause as? JsonDataException)?.message ?: dtoException.message
-        assertEquals(dtoMessage, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing id`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing id`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ChannelTestData.jsonMissingId, DownstreamChannelDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing id`() {
+        assertThrows<JsonDataException> {
             channelAdapter.fromJson(ChannelTestData.jsonMissingId)
         }
-        val dtoMessage = (dtoException.cause as? JsonDataException)?.message ?: dtoException.message
-        assertEquals(dtoMessage, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing type`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing type`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ChannelTestData.jsonMissingType, DownstreamChannelDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing type`() {
+        assertThrows<JsonDataException> {
             channelAdapter.fromJson(ChannelTestData.jsonMissingType)
         }
-        val dtoMessage = (dtoException.cause as? JsonDataException)?.message ?: dtoException.message
-        assertEquals(dtoMessage, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing frozen`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing frozen`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ChannelTestData.jsonMissingFrozen, DownstreamChannelDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
-            channelAdapter.fromJson(ChannelTestData.jsonMissingFrozen)
-        }
-        val dtoMessage = (dtoException.cause as? JsonDataException)?.message ?: dtoException.message
-        assertEquals(dtoMessage, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing config`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `Direct path - throws on missing frozen`() {
+        assertThrows<JsonDataException> {
+            channelAdapter.fromJson(ChannelTestData.jsonMissingFrozen)
+        }
+    }
+
+    @Test
+    fun `DTO path - throws on missing config`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ChannelTestData.jsonMissingConfig, DownstreamChannelDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing config`() {
+        assertThrows<JsonDataException> {
             channelAdapter.fromJson(ChannelTestData.jsonMissingConfig)
         }
-        val dtoMessage = (dtoException.cause as? JsonDataException)?.message ?: dtoException.message
-        assertEquals(dtoMessage, directException.message)
     }
 
     // endregion

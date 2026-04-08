@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2.event
 
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.models.Attachment
@@ -150,104 +149,26 @@ internal class MessageAdapter(
                 "shared_location" -> sharedLocation = locationAdapter.fromJson(reader)
                 "member" -> channelRole = parseMemberChannelRole(reader)
                 "deleted_for_me" -> deletedForMe = reader.nextBoolean()
-                else -> reader.readJsonValue()?.let { value ->
-                    val map = extraData ?: mutableMapOf<String, Any>().also { extraData = it }
-                    map[key] = value
-                }
+                else -> extraData = JsonParsingUtils.accumulateExtraData(key, reader, extraData)
             }
         }
         reader.endObject()
 
-        if (attachments == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'attachments' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (cid == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'cid' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (createdAt == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'created_at' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (html == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'html' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (id == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'id' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (latestReactions == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'latest_reactions' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (mentionedUsers == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'mentioned_users' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (ownReactions == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'own_reactions' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (replyCount == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'reply_count' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (deletedReplyCount == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'deleted_reply_count' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (silent == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'silent' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (text == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'text' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (type == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'type' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (updatedAt == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'updated_at' missing at ${reader.path} at ${reader.path}",
-            )
-        }
-        if (user == null) {
-            throw JsonDataException(
-                "com.squareup.moshi.JsonDataException: " +
-                    "Required value 'user' missing at ${reader.path} at ${reader.path}",
-            )
-        }
+        JsonParsingUtils.requireField(attachments, "attachments", reader)
+        JsonParsingUtils.requireField(cid, "cid", reader)
+        JsonParsingUtils.requireField(createdAt, "created_at", reader)
+        JsonParsingUtils.requireField(html, "html", reader)
+        JsonParsingUtils.requireField(id, "id", reader)
+        JsonParsingUtils.requireField(latestReactions, "latest_reactions", reader)
+        JsonParsingUtils.requireField(mentionedUsers, "mentioned_users", reader)
+        JsonParsingUtils.requireField(ownReactions, "own_reactions", reader)
+        JsonParsingUtils.requireField(replyCount, "reply_count", reader)
+        JsonParsingUtils.requireField(deletedReplyCount, "deleted_reply_count", reader)
+        JsonParsingUtils.requireField(silent, "silent", reader)
+        JsonParsingUtils.requireField(text, "text", reader)
+        JsonParsingUtils.requireField(type, "type", reader)
+        JsonParsingUtils.requireField(updatedAt, "updated_at", reader)
+        JsonParsingUtils.requireField(user, "user", reader)
 
         val resolvedChannelInfo = channel ?: fallbackChannelInfo
 

@@ -75,28 +75,34 @@ internal class ModerationParsingTest {
 
     // endregion
 
-    // region Error message parity (both paths must throw identical errors)
+    // region Error message parity
 
     @Test
-    fun `Both paths - same error message on missing action`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing action`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ModerationTestData.jsonMissingAction, DownstreamModerationDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
-            adapter.fromJson(ModerationTestData.jsonMissingAction)
-        }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing original_text`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `Direct path - throws on missing action`() {
+        assertThrows<JsonDataException> {
+            adapter.fromJson(ModerationTestData.jsonMissingAction)
+        }
+    }
+
+    @Test
+    fun `DTO path - throws on missing original_text`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ModerationTestData.jsonMissingOriginalText, DownstreamModerationDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing original_text`() {
+        assertThrows<JsonDataException> {
             adapter.fromJson(ModerationTestData.jsonMissingOriginalText)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     // endregion

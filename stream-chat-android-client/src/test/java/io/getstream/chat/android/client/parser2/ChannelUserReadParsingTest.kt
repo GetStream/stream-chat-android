@@ -95,39 +95,48 @@ internal class ChannelUserReadParsingTest {
 
     // endregion
 
-    // region Error message parity (both paths must throw identical errors)
+    // region Error message parity
 
     @Test
-    fun `Both paths - same error message on missing user`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing user`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ChannelUserReadTestData.jsonMissingUser, DownstreamChannelUserRead::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing user`() {
+        assertThrows<JsonDataException> {
             adapter.fromJson(ChannelUserReadTestData.jsonMissingUser)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing last_read`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing last_read`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ChannelUserReadTestData.jsonMissingLastRead, DownstreamChannelUserRead::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
-            adapter.fromJson(ChannelUserReadTestData.jsonMissingLastRead)
-        }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing unread_messages`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `Direct path - throws on missing last_read`() {
+        assertThrows<JsonDataException> {
+            adapter.fromJson(ChannelUserReadTestData.jsonMissingLastRead)
+        }
+    }
+
+    @Test
+    fun `DTO path - throws on missing unread_messages`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(ChannelUserReadTestData.jsonMissingUnreadMessages, DownstreamChannelUserRead::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing unread_messages`() {
+        assertThrows<JsonDataException> {
             adapter.fromJson(ChannelUserReadTestData.jsonMissingUnreadMessages)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     // endregion

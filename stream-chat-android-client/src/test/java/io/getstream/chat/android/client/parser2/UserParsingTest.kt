@@ -28,7 +28,9 @@ import io.getstream.chat.android.client.parser2.testdata.UserTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.models.UserTransformer
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.util.Date
@@ -89,51 +91,90 @@ internal class UserParsingTest {
 
     // endregion
 
-    // region Error message parity (both paths must throw identical errors)
+    // region Error message parity
 
     @Test
-    fun `Both paths - same error message on missing id`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing id`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(UserTestData.jsonMissingId, DownstreamUserDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing id`() {
+        assertThrows<JsonDataException> {
             userAdapter.fromJson(UserTestData.jsonMissingId)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing role`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing role`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(UserTestData.jsonMissingRole, DownstreamUserDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing role`() {
+        assertThrows<JsonDataException> {
             userAdapter.fromJson(UserTestData.jsonMissingRole)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing banned`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing banned`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(UserTestData.jsonMissingBanned, DownstreamUserDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
-            userAdapter.fromJson(UserTestData.jsonMissingBanned)
-        }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing online`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `Direct path - throws on missing banned`() {
+        assertThrows<JsonDataException> {
+            userAdapter.fromJson(UserTestData.jsonMissingBanned)
+        }
+    }
+
+    @Test
+    fun `DTO path - throws on missing online`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(UserTestData.jsonMissingOnline, DownstreamUserDto::class.java)
         }
-        println(dtoException.message)
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing online`() {
+        assertThrows<JsonDataException> {
             userAdapter.fromJson(UserTestData.jsonMissingOnline)
         }
-        assertEquals(dtoException.message, directException.message)
+    }
+
+    // endregion
+
+    // region Transformer parity (both paths must apply transformer identically)
+
+    @Test
+    fun `Both paths apply custom UserTransformer identically - all fields`() {
+        val customTransformer = UserTransformer { it.copy(name = it.name + " [transformed]") }
+        val transformedDomainMapping = DomainMapping(
+            currentUserIdProvider = { "" },
+            channelTransformer = NoOpChannelTransformer,
+            messageTransformer = NoOpMessageTransformer,
+            userTransformer = customTransformer,
+        )
+        val transformedUserAdapter = UserAdapter(
+            deviceAdapter = deviceAdapter,
+            privacySettingsAdapter = privacySettingsAdapter,
+            dateAdapter = dateAdapter,
+            userTransformer = customTransformer,
+        )
+
+        val dto = parser.fromJson(UserTestData.jsonAllFields, DownstreamUserDto::class.java)
+        val dtoResult = with(transformedDomainMapping) { dto.toDomain() }
+        val directResult = transformedUserAdapter.fromJson(UserTestData.jsonAllFields)
+
+        assertEquals(dtoResult, directResult)
+        assertTrue(dtoResult.name.endsWith(" [transformed]"))
     }
 
     // endregion

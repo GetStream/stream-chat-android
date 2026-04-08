@@ -91,61 +91,76 @@ internal class VoteParsingTest {
 
     // endregion
 
-    // region Error message parity (both paths must throw identical errors)
+    // region Error message parity
 
     @Test
-    fun `Both paths - same error message on missing id`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing id`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(VoteTestData.jsonMissingId, DownstreamVoteDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing id`() {
+        assertThrows<JsonDataException> {
             adapter.fromJson(VoteTestData.jsonMissingId)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing poll_id`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing poll_id`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(VoteTestData.jsonMissingPollId, DownstreamVoteDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing poll_id`() {
+        assertThrows<JsonDataException> {
             adapter.fromJson(VoteTestData.jsonMissingPollId)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing option_id`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing option_id`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(VoteTestData.jsonMissingOptionId, DownstreamVoteDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing option_id`() {
+        assertThrows<JsonDataException> {
             adapter.fromJson(VoteTestData.jsonMissingOptionId)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing created_at`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `DTO path - throws on missing created_at`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(VoteTestData.jsonMissingCreatedAt, DownstreamVoteDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
-            adapter.fromJson(VoteTestData.jsonMissingCreatedAt)
-        }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error message on missing updated_at`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `Direct path - throws on missing created_at`() {
+        assertThrows<JsonDataException> {
+            adapter.fromJson(VoteTestData.jsonMissingCreatedAt)
+        }
+    }
+
+    @Test
+    fun `DTO path - throws on missing updated_at`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(VoteTestData.jsonMissingUpdatedAt, DownstreamVoteDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+    }
+
+    @Test
+    fun `Direct path - throws on missing updated_at`() {
+        assertThrows<JsonDataException> {
             adapter.fromJson(VoteTestData.jsonMissingUpdatedAt)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     // endregion
