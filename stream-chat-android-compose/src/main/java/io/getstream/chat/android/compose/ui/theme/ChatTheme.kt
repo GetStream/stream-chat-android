@@ -33,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import coil3.ImageLoader
@@ -214,14 +215,8 @@ public fun ChatTheme(
     }
 
     val context = LocalContext.current
-    val cdn = remember {
-        // Guard needed because ChatClient is not initialized in Compose @Preview environments
-        try {
-            ChatClient.instance().cdn
-        } catch (_: IllegalStateException) {
-            null
-        }
-    }
+    val previewMode = LocalInspectionMode.current
+    val cdn = remember { if (previewMode) null else ChatClient.instance().cdn }
     val imageLoader = remember(imageLoaderFactory, cdn) {
         val interceptors = buildList {
             cdn?.let { add(CDNImageInterceptor(it)) }
