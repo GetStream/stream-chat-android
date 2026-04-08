@@ -116,9 +116,7 @@ class ChannelsActivity : ComponentActivity() {
         val currentUserId = chatClient.getCurrentUser()?.id ?: ""
         ChannelListViewModelFactory(
             chatClient = chatClient,
-            querySort = QuerySortByField
-                .descByName<Channel>("pinned_at") // pinned channels first
-                .desc("last_updated"), // then by last updated
+            querySort = QuerySortByField.descByName("last_updated"),
             filters = Filters.and(
                 Filters.eq("type", "messaging"),
                 Filters.`in`("members", listOf(currentUserId)),
