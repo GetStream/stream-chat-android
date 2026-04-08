@@ -33,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import coil3.ImageLoader
@@ -129,9 +130,6 @@ private val LocalStreamCdnImageResizing = compositionLocalOf<StreamCdnImageResiz
             "Make sure to wrap all usages of Stream components in a ChatTheme.",
     )
 }
-private val LocalMessageComposerTheme = compositionLocalOf<MessageComposerTheme> {
-    error("No MessageComposerTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
 private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
     error("No StreamMediaRecorder provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -166,7 +164,6 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param streamCdnImageResizing Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,
  * set [StreamCdnImageResizing.imageResizingEnabled] to true if you wish to enable resizing images. Note that resizing
  * applies only to images hosted on Stream's CDN which contain the original height (oh) and width (ow) query parameters.
- * @param messageComposerTheme Theme of the message composer.
  * @param messageTextFormatter [MessageTextFormatter] Used to format message text for display.
  * @param streamMediaRecorder Used for recording audio messages.
  * @param content The content shown within the theme wrapper.
@@ -205,11 +202,6 @@ public fun ChatTheme(
     messageOptionsTheme: MessageOptionsTheme = MessageOptionsTheme.defaultTheme(),
     channelOptionsTheme: ChannelOptionsTheme = ChannelOptionsTheme.defaultTheme(),
     streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
-    messageComposerTheme: MessageComposerTheme = MessageComposerTheme.defaultTheme(
-        isInDarkMode = isInDarkMode,
-        typography = typography,
-        colors = colors,
-    ),
     messageTextFormatter: MessageTextFormatter = MessageTextFormatter.defaultFormatter(
         autoTranslationEnabled = config.translation.enabled,
         typography = typography,
@@ -223,7 +215,8 @@ public fun ChatTheme(
     }
 
     val context = LocalContext.current
-    val cdn = remember { ChatClient.instance().cdn }
+    val previewMode = LocalInspectionMode.current
+    val cdn = remember { if (previewMode) null else ChatClient.instance().cdn }
     val imageLoader = remember(imageLoaderFactory, cdn) {
         val interceptors = buildList {
             cdn?.let { add(CDNImageInterceptor(it)) }
@@ -254,7 +247,6 @@ public fun ChatTheme(
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
         LocalMessageTextFormatter provides messageTextFormatter,
         LocalSearchResultNameFormatter provides searchResultNameFormatter,
-        LocalMessageComposerTheme provides messageComposerTheme,
         LocalStreamImageLoader provides imageLoader,
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsTheme provides messageOptionsTheme,
@@ -430,14 +422,6 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalStreamCdnImageResizing.current
-
-    /**
-     * Retrieves the current [MessageComposerTheme] at the call site's position in the hierarchy.
-     */
-    public val messageComposerTheme: MessageComposerTheme
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalMessageComposerTheme.current
 
     /**
      * Retrieves the current list of [StreamMediaRecorder] at the call site's position in the hierarchy.
