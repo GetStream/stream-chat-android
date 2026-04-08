@@ -53,6 +53,7 @@ import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -281,7 +282,7 @@ public data class GiphyAttachmentClickData internal constructor(
 @Composable
 @Preview(showBackground = true)
 private fun GiphyAttachmentContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         GiphyAttachmentContent()
     }
 }

@@ -49,6 +49,7 @@ import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
 import io.getstream.chat.android.compose.ui.theme.ChannelHeaderCenterContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelHeaderLeadingContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelHeaderTrailingContentParams
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -305,7 +306,7 @@ internal fun DefaultChannelHeaderTrailingContent(
 @Preview(name = "ChannelHeader Preview (Connected)")
 @Composable
 private fun ChannelHeaderConnectedPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelHeader(
             modifier = Modifier
                 .fillMaxWidth()
@@ -320,7 +321,7 @@ private fun ChannelHeaderConnectedPreview() {
 @Preview(name = "ChannelHeader Preview (Connecting)")
 @Composable
 private fun ChannelHeaderConnectingPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelHeader(
             modifier = Modifier
                 .fillMaxWidth()
@@ -335,7 +336,7 @@ private fun ChannelHeaderConnectingPreview() {
 @Preview(name = "ChannelHeader Preview (Offline)")
 @Composable
 private fun ChannelHeaderOfflinePreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelHeader(
             modifier = Modifier
                 .fillMaxWidth()
@@ -350,7 +351,7 @@ private fun ChannelHeaderOfflinePreview() {
 @Preview(name = "ChannelHeader Preview (User Typing)")
 @Composable
 private fun ChannelHeaderUserTypingPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelHeader(
             modifier = Modifier
                 .fillMaxWidth()
@@ -366,7 +367,7 @@ private fun ChannelHeaderUserTypingPreview() {
 @Preview(name = "ChannelHeader Preview (Many Members)")
 @Composable
 private fun ChannelHeaderManyMembersPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelHeader(
             modifier = Modifier
                 .fillMaxWidth()

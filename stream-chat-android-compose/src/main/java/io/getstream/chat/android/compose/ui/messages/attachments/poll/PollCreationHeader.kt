@@ -43,6 +43,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -146,7 +147,7 @@ internal fun DefaultPollOptionsHeaderTrailingContent(
 @Preview
 @Composable
 private fun PollCreationHeaderEnabledPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         PollCreationHeaderEnabled()
     }
 }
@@ -159,7 +160,7 @@ internal fun PollCreationHeaderEnabled() {
 @Preview
 @Composable
 private fun PollCreationHeaderDisabledPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         PollCreationHeaderDisabled()
     }
 }

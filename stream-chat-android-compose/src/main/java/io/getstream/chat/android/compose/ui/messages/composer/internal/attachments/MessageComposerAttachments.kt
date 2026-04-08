@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentAudioRecordItemParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentFileItemParams
@@ -157,7 +158,7 @@ private fun MessageComposerAttachmentsContent(
 @Preview(widthDp = 640)
 @Composable
 private fun MessageComposerAttachmentsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerAttachments()
     }
 }

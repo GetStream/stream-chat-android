@@ -55,6 +55,7 @@ import coil3.ColorImage
 import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -215,7 +216,7 @@ private fun LinkPreview.resolveUrl() = attachment.run { titleLink ?: ogUrl }
 @Preview(showBackground = true)
 @Composable
 private fun ComposerLinkContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ComposerLinkPreview()
     }
 }

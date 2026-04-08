@@ -47,6 +47,7 @@ import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecor
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.CommandSuggestionList
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.SuggestionsMenu
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.UserSuggestionList
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.ui.theme.LocalChatUiConfig
@@ -384,7 +385,7 @@ private fun MessageInputValidationError(validationErrors: List<ValidationError>,
 @Preview
 @Composable
 private fun MessageComposerFixedStylePreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerFixedStyle()
     }
 }
@@ -400,7 +401,7 @@ internal fun MessageComposerFixedStyle() {
 @Preview
 @Composable
 private fun MessageComposerFixedStyleWithVisibleAttachmentPickerPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerFixedStyleWithVisibleAttachmentPicker()
     }
 }
@@ -417,7 +418,7 @@ internal fun MessageComposerFixedStyleWithVisibleAttachmentPicker() {
 @Preview
 @Composable
 private fun MessageComposerFixedStyleWithUserSuggestionsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerFixedStyleWithUserSuggestions()
     }
 }
@@ -441,7 +442,7 @@ internal fun MessageComposerFixedStyleWithUserSuggestions() {
 @Preview
 @Composable
 private fun MessageComposerFixedStyleWithCommandSuggestionsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerFixedStyleWithCommandSuggestions()
     }
 }
@@ -464,7 +465,7 @@ internal fun MessageComposerFixedStyleWithCommandSuggestions() {
 @Preview(showBackground = true)
 @Composable
 private fun MessageComposerFloatingStylePreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerFloatingStyle()
     }
 }
@@ -483,7 +484,7 @@ internal fun MessageComposerFloatingStyle() {
 @Preview(showBackground = true)
 @Composable
 private fun MessageComposerFloatingStyleWithVisibleAttachmentPickerPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerFloatingStyleWithVisibleAttachmentPicker()
     }
 }
@@ -503,7 +504,7 @@ internal fun MessageComposerFloatingStyleWithVisibleAttachmentPicker() {
 @Preview(showBackground = true)
 @Composable
 private fun MessageComposerFloatingStyleWithUserSuggestionsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerFloatingStyleWithUserSuggestions()
     }
 }
@@ -530,7 +531,7 @@ internal fun MessageComposerFloatingStyleWithUserSuggestions() {
 @Preview(showBackground = true)
 @Composable
 private fun MessageComposerFloatingStyleWithCommandSuggestionsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerFloatingStyleWithCommandSuggestions()
     }
 }

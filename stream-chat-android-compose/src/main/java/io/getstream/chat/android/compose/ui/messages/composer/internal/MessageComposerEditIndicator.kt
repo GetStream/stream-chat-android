@@ -46,6 +46,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessageBody
 import io.getstream.chat.android.compose.ui.components.messages.rememberBodyBuilder
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Message
@@ -144,7 +145,7 @@ private fun EditIndicatorSubtitle(body: QuotedMessageBody) {
 @Preview
 @Composable
 private fun MessageComposerEditIndicatorPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerEditIndicator(
             message = Message(text = "I think this could work"),
         )

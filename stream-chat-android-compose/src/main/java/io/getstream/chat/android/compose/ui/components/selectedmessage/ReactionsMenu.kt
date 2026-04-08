@@ -54,6 +54,7 @@ import io.getstream.chat.android.compose.state.userreactions.UserReactionItemSta
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionsMenuContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -372,7 +373,7 @@ internal fun ReactionsMenuContentManyReactions() {
 @Preview
 @Composable
 private fun OneSelectedReactionMenuPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ReactionsMenuContentOneReaction()
     }
 }
@@ -380,7 +381,7 @@ private fun OneSelectedReactionMenuPreview() {
 @Preview
 @Composable
 private fun ManySelectedReactionsMenuPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ReactionsMenuContentManyReactions()
     }
 }

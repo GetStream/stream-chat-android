@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
@@ -49,7 +50,7 @@ internal fun MessageDivider(text: String, modifier: Modifier = Modifier) {
 @Preview
 @Composable
 private fun MessageDividerPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),

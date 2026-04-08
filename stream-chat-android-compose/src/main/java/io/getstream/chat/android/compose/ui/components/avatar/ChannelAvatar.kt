@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.common.CountBadge
 import io.getstream.chat.android.compose.ui.components.common.CountBadgeSize
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.applyIf
@@ -318,7 +319,7 @@ private fun directMessageRecipient(channel: Channel, currentUser: User?): User? 
 private fun ChannelAvatarPreview() {
     val sizes = AvatarSize.run { listOf(ExtraExtraLarge * 1.5f, ExtraExtraLarge, ExtraLarge, Large, Medium) }
     val variants = listOf(0, 1, 2, 3, 4, 5, 13, 1000)
-    ChatTheme {
+    ChatPreviewTheme {
         Column(
             modifier = Modifier
                 .background(ChatTheme.colors.backgroundCoreApp)

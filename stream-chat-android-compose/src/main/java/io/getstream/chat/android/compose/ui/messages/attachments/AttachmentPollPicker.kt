@@ -44,6 +44,7 @@ import io.getstream.chat.android.compose.ui.components.FullscreenDialog
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.CreatePollScreen
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.CreatePollParams
@@ -117,7 +118,7 @@ internal fun AttachmentPollPicker(
 @Preview(showBackground = true)
 @Composable
 private fun AttachmentPollPickerPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         AttachmentPollPicker()
     }
 }

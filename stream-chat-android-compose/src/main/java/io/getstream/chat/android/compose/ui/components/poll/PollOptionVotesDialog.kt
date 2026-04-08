@@ -58,6 +58,7 @@ import io.getstream.chat.android.compose.R.plurals.stream_compose_poll_vote_coun
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.ViewModelStore
@@ -230,7 +231,7 @@ private fun Content(
 @Preview(showBackground = true)
 @Composable
 private fun PollOptionVotesLoadingPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         PollOptionVotesLoading()
     }
 }
@@ -252,7 +253,7 @@ internal fun PollOptionVotesLoading() {
 @Preview(showBackground = true)
 @Composable
 private fun PollOptionVotesContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         PollOptionVotesContent()
     }
 }
@@ -275,7 +276,7 @@ internal fun PollOptionVotesContent() {
 @Preview(showBackground = true)
 @Composable
 private fun PollOptionVotesLoadingMorePreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         PollOptionVotesLoadingMore()
     }
 }

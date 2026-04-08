@@ -60,6 +60,7 @@ import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -316,7 +317,7 @@ internal fun onLinkAttachmentContentClick(context: Context, url: String) {
 @Preview(showBackground = true)
 @Composable
 private fun FullSizeLinkAttachmentContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         LinkAttachmentContent(1)
     }
 }
@@ -324,7 +325,7 @@ private fun FullSizeLinkAttachmentContentPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun CompactLinkAttachmentContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         LinkAttachmentContent(2)
     }
 }

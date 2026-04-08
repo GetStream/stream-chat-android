@@ -45,6 +45,7 @@ import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoMemberInfoModalSheetTopBarParams
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoMemberOptionItemParams
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
@@ -215,7 +216,7 @@ private fun Member.getBanExpirationText(context: Context): String {
 @Preview
 @Composable
 private fun ChannelInfoMemberInfoModalSheetContentBannedPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ExpandedSheet {
             ChannelInfoMemberInfoModalSheetContent(banned = true)
         }
@@ -225,7 +226,7 @@ private fun ChannelInfoMemberInfoModalSheetContentBannedPreview() {
 @Preview
 @Composable
 private fun ChannelInfoMemberInfoModalSheetContentNotBannedPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ExpandedSheet {
             ChannelInfoMemberInfoModalSheetContent(banned = false)
         }

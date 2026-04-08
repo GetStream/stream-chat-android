@@ -63,6 +63,7 @@ import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.components.common.RadioCheck
 import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.components.poll.AddAnswerDialog
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageBubbleParams
 import io.getstream.chat.android.compose.ui.theme.MessageFailedIconParams
@@ -556,7 +557,7 @@ private fun PollOptionButton(
 @Preview
 @Composable
 private fun PollMessageContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Column(modifier = Modifier.background(ChatTheme.colors.backgroundCoreApp)) {
             PollMessageContent(
                 modifier = Modifier

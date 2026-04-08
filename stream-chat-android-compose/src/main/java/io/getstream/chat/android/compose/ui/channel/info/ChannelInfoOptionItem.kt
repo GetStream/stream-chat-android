@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
@@ -180,7 +181,7 @@ private fun ChannelInfoOptionContent(
 @Preview
 @Composable
 private fun DirectChannelInfoOptionItemsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelInfoOptionItems()
     }
 }
@@ -188,7 +189,7 @@ private fun DirectChannelInfoOptionItemsPreview() {
 @Preview
 @Composable
 private fun GroupChannelInfoOptionItemsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelInfoOptionItems(isGroupChannel = true)
     }
 }

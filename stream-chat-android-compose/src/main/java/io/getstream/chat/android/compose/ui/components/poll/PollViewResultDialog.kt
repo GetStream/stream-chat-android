@@ -64,6 +64,7 @@ import io.getstream.chat.android.client.extensions.internal.getVotesUnlessAnonym
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.ViewModelStore
@@ -372,7 +373,7 @@ private val NullableOptionSaver: Saver<Option?, Bundle> = Saver(
 @Preview
 @Composable
 private fun PollResultsContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Box(Modifier.background(ChatTheme.colors.backgroundCoreApp)) {
             PollResultsContent()
         }

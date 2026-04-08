@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.extensions.deliveredReadsOf
 import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.getReadStatuses
@@ -200,7 +201,7 @@ private fun IsDeliveredIcon(modifier: Modifier) {
 @Preview
 @Composable
 private fun MessageReadStatusIconPendingPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageReadStatusIconPending()
     }
 }
@@ -216,7 +217,7 @@ internal fun MessageReadStatusIconPending() {
 @Preview
 @Composable
 private fun MessageReadStatusIconSentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageReadStatusIconSent()
     }
 }
@@ -232,7 +233,7 @@ internal fun MessageReadStatusIconSent() {
 @Preview
 @Composable
 private fun MessageReadStatusIconDeliveredPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageReadStatusIconDelivered()
     }
 }
@@ -249,7 +250,7 @@ internal fun MessageReadStatusIconDelivered() {
 @Preview
 @Composable
 private fun MessageReadStatusIconReadPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageReadStatusIconRead()
     }
 }
@@ -266,7 +267,7 @@ internal fun MessageReadStatusIconRead() {
 @Preview
 @Composable
 private fun MessageReadStatusIconErrorPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageReadStatusIconError()
     }
 }

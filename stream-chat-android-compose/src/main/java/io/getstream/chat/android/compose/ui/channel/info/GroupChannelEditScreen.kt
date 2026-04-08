@@ -69,6 +69,7 @@ import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleD
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberCaptureMediaLauncher
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.ViewModelStore
@@ -407,7 +408,7 @@ private fun ChannelNameField(
 @Preview
 @Composable
 private fun GroupChannelEditPlaceholderPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ViewModelStore {
             GroupChannelEditPlaceholder()
         }
@@ -424,7 +425,7 @@ internal fun GroupChannelEditPlaceholder() {
 @Preview
 @Composable
 private fun GroupChannelEditFilledPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         GroupChannelEditFilled()
     }
 }
@@ -440,7 +441,7 @@ internal fun GroupChannelEditFilled() {
 @Preview
 @Composable
 private fun GroupChannelEditBusyPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         GroupChannelEditBusy()
     }
 }
@@ -457,7 +458,7 @@ internal fun GroupChannelEditBusy() {
 @Preview
 @Composable
 private fun ImagePickerOptionsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ImagePickerOptionsWithRemove()
     }
 }
@@ -473,7 +474,7 @@ internal fun ImagePickerOptionsWithRemove() {
 @Preview
 @Composable
 private fun ImagePickerOptionsNoRemovePreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ImagePickerOptionsNoRemove()
     }
 }

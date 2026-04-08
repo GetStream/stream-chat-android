@@ -83,6 +83,7 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.components.common.PlayButton
 import io.getstream.chat.android.compose.ui.components.common.PlayButtonSize
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -693,7 +694,7 @@ internal fun onMediaAttachmentContentItemClick(
 @Composable
 @Preview(showBackground = true)
 private fun SingleMediaAttachmentContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         SingleMediaAttachmentContent()
     }
 }
@@ -726,7 +727,7 @@ internal fun SingleMediaAttachmentContent() {
 @Composable
 @Preview(showBackground = true)
 private fun MultipleMediaAttachmentContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MultipleMediaAttachmentContent()
     }
 }

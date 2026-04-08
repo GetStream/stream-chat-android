@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionIconParams
 import io.getstream.chat.android.compose.ui.util.ReactionResolver
@@ -98,7 +99,7 @@ private fun ReactionToggleSize.toIconSize() = when (this) {
 @Preview(showBackground = true)
 @Composable
 private fun ReactionTogglePreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Column(Modifier.padding(8.dp)) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),

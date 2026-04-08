@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.BackButton
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
@@ -67,7 +68,7 @@ public fun PollDialogHeader(
 @Preview
 @Composable
 private fun PollDialogHeaderPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Box(
             modifier = Modifier
                 .fillMaxWidth()

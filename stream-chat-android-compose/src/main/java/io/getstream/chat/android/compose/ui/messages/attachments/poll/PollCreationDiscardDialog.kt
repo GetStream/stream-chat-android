@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -123,7 +124,7 @@ public fun PollCreationDiscardDialog(
 @Preview
 @Composable
 private fun PollCreationDiscardDialogPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         PollCreationDiscardDialog()
     }
 }

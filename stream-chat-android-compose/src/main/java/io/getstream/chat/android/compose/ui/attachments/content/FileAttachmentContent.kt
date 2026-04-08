@@ -48,6 +48,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.attachments.files.FileTypeIcon
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.FileAttachmentItemParams
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
@@ -306,7 +307,7 @@ internal fun onFileAttachmentContentItemClick(
 @Preview(showBackground = true)
 @Composable
 private fun OwnFileAttachmentContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         FileAttachmentContent(isMine = true)
     }
 }
@@ -314,7 +315,7 @@ private fun OwnFileAttachmentContentPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun OtherFileAttachmentContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         FileAttachmentContent(isMine = false)
     }
 }
@@ -347,7 +348,7 @@ internal fun FileAttachmentContent(isMine: Boolean, isUploading: Boolean = false
 @Preview(showBackground = true)
 @Composable
 private fun UploadingFileAttachmentContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         val attachments = listOf(
             Attachment(
                 mimeType = MimeType.MIME_TYPE_PDF,

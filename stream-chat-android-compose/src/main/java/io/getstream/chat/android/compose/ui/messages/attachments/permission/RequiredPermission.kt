@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.ui.common.utils.openSystemSettings
@@ -133,7 +134,7 @@ private fun RequiredPermission(
 @Preview(showBackground = true)
 @Composable
 private fun RequiredMediaStoragePermissionPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         RequiredMediaStoragePermission()
     }
 }
@@ -146,7 +147,7 @@ internal fun RequiredMediaStoragePermission() {
 @Preview(showBackground = true)
 @Composable
 private fun RequiredFilesStoragePermissionPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         RequiredFilesStoragePermission()
     }
 }
@@ -159,7 +160,7 @@ internal fun RequiredFilesStoragePermission() {
 @Preview(showBackground = true)
 @Composable
 private fun RequiredCameraPermissionPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         RequiredCameraPermission()
     }
 }

@@ -32,6 +32,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.applyIf
@@ -74,7 +75,7 @@ private val SpeedToggleShape = RoundedCornerShape(StreamTokens.radiusLg)
 @Preview
 @Composable
 private fun PlaybackSpeedTogglePreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Row(modifier = Modifier.padding(16.dp)) {
             PlaybackSpeedToggle(
                 speed = 1.5f,

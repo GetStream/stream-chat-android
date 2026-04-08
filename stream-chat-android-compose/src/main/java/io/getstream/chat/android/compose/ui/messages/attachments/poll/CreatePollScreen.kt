@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.CreatePollParams
@@ -148,7 +149,7 @@ public fun CreatePollScreen(
 @Preview
 @Composable
 private fun CreatePollScreenPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         CreatePollScreen()
     }
 }

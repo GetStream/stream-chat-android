@@ -38,6 +38,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.GiphyAttachmentContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
@@ -146,7 +147,7 @@ public fun GiphyMessageContent(
 @Composable
 private fun GiphyMessageContentPreview() {
     val attachment = Attachment(type = AttachmentType.GIPHY, ogUrl = "")
-    ChatTheme {
+    ChatPreviewTheme {
         Box(Modifier.background(MessageStyling.backgroundColor(true))) {
             GiphyMessageContent(
                 message = Message(attachments = listOf(attachment)),

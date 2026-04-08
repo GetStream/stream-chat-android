@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.poll.PollOptionInput
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -244,7 +245,7 @@ private fun List<PollOptionItem>.updateOnTitleChange(
 @Preview(showBackground = true)
 @Composable
 private fun PollOptionListEmptyPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         PollOptionListEmpty()
     }
 }
@@ -261,7 +262,7 @@ internal fun PollOptionListEmpty() {
 @Preview(showBackground = true)
 @Composable
 private fun PollOptionListBlankPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         PollOptionListBlank()
     }
 }
@@ -280,7 +281,7 @@ internal fun PollOptionListBlank() {
 @Preview(showBackground = true)
 @Composable
 private fun PollOptionListDuplicatedErrorPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         PollOptionListDuplicatedError()
     }
 }

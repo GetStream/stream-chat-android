@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -161,7 +162,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
 @Preview
 @Composable
 private fun MessagePreviewIconsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessagePreviewIcons()
     }
 }

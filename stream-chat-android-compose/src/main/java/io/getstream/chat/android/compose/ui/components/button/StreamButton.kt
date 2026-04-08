@@ -44,6 +44,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.ifNotNull
@@ -115,7 +116,7 @@ internal fun StreamButton(
 @Preview(showBackground = true)
 @Composable
 private fun StreamButtonPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         val styles = listOf(
             StreamButtonStyleDefaults.primarySolid,
             StreamButtonStyleDefaults.primaryOutline,

@@ -70,6 +70,7 @@ import io.getstream.chat.android.compose.ui.theme.ChannelItemReadStatusIndicator
 import io.getstream.chat.android.compose.ui.theme.ChannelItemTrailingContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelItemUnreadCountIndicatorParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListConfig
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.MuteIndicatorPosition
@@ -455,7 +456,7 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
 @Preview(showBackground = true)
 @Composable
 private fun ChannelItemNoMessagesPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelItemNoMessages()
     }
 }
@@ -471,7 +472,7 @@ internal fun ChannelItemNoMessages() {
 @Preview(showBackground = true)
 @Composable
 private fun ChannelItemMutedPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelItemMuted()
     }
 }
@@ -509,7 +510,7 @@ internal fun ChannelItemMutedTrailingBottom() {
 @Preview(showBackground = true)
 @Composable
 private fun ChannelItemUnreadMessagesPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelItemUnreadMessages()
     }
 }
@@ -527,7 +528,7 @@ internal fun ChannelItemUnreadMessages() {
 @Preview(showBackground = true)
 @Composable
 private fun ChannelItemLastMessagePendingStatusPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelItemLastMessagePendingStatus()
     }
 }
@@ -547,7 +548,7 @@ internal fun ChannelItemLastMessagePendingStatus() {
 @Preview(showBackground = true)
 @Composable
 private fun ChannelItemLastMessageSentStatusPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelItemLastMessageSentStatus()
     }
 }
@@ -567,7 +568,7 @@ internal fun ChannelItemLastMessageSentStatus() {
 @Preview(showBackground = true)
 @Composable
 private fun ChannelItemLastMessageDeliveredStatusPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelItemLastMessageDeliveredStatus()
     }
 }
@@ -593,7 +594,7 @@ internal fun ChannelItemLastMessageDeliveredStatus() {
 @Preview(showBackground = true)
 @Composable
 private fun ChannelItemLastMessageSeenStatusPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelItemLastMessageSeenStatus()
     }
 }
@@ -614,7 +615,7 @@ internal fun ChannelItemLastMessageSeenStatus() {
 @Preview(showBackground = true)
 @Composable
 private fun ChannelItemDraftMessagePreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelItemDraftMessage()
     }
 }
@@ -652,7 +653,7 @@ private fun ChannelItem(
 @Preview(showBackground = true)
 @Composable
 private fun ChannelItemSelectedPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelItemSelected()
     }
 }

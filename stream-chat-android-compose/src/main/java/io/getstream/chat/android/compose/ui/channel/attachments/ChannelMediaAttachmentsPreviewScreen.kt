@@ -49,6 +49,7 @@ import io.getstream.chat.android.compose.ui.attachments.preview.internal.VideoPl
 import io.getstream.chat.android.compose.ui.attachments.preview.internal.rememberMediaGalleryPlayerState
 import io.getstream.chat.android.compose.ui.theme.ChannelMediaAttachmentsPreviewBottomBarParams
 import io.getstream.chat.android.compose.ui.theme.ChannelMediaAttachmentsPreviewTopBarParams
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelMediaAttachmentsPreviewViewAction
@@ -249,7 +250,7 @@ private fun ChannelMediaAttachmentsPreviewBottomBar(
 @Preview
 @Composable
 private fun ChannelMediaAttachmentsPreviewContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelMediaAttachmentsPreviewContent()
     }
 }
@@ -271,7 +272,7 @@ internal fun ChannelMediaAttachmentsPreviewContent() {
 @Preview
 @Composable
 private fun ChannelMediaAttachmentsPreviewPreparingToShareContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelMediaAttachmentsPreviewPreparingToShareContent()
     }
 }

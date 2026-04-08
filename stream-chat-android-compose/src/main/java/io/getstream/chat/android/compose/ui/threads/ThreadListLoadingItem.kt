@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
@@ -148,7 +149,7 @@ private val PlaceholderShape = RoundedCornerShape(StreamTokens.radiusFull)
 @Preview
 @Composable
 private fun ThreadListLoadingItemPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Surface {
             ThreadListLoadingItem()
         }

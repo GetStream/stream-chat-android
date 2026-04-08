@@ -33,6 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.animation.FadingVisibility
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -131,7 +132,7 @@ private fun RadioControlBase(
 @Preview
 @Composable
 private fun RadioButtonPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Row(
             modifier = Modifier.padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -147,7 +148,7 @@ private fun RadioButtonPreview() {
 @Preview
 @Composable
 private fun RadioCheckPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Row(
             modifier = Modifier.padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),

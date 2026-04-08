@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import java.util.Locale
@@ -127,7 +128,7 @@ private fun Long.toPreciseDuration(): String = seconds.toComponents { hours, min
 @Preview
 @Composable
 private fun MediaBadgeCompactPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Row {
             VideoBadge(durationInSeconds = 8, compact = true)
             AudioBadge(durationInSeconds = 8, compact = true)
@@ -138,7 +139,7 @@ private fun MediaBadgeCompactPreview() {
 @Preview
 @Composable
 private fun MediaBadgePrecisePreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Row {
             VideoBadge(durationInSeconds = 8)
             AudioBadge(durationInSeconds = 8)

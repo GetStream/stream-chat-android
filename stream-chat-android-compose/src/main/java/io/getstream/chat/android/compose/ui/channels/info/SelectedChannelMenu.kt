@@ -41,6 +41,7 @@ import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
 import io.getstream.chat.android.compose.ui.theme.ChannelMenuCenterContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelMenuHeaderContentParams
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
@@ -176,7 +177,7 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
 @Preview(showBackground = true, name = "SelectedChannelMenu Preview (Centered dialog)")
 @Composable
 private fun SelectedChannelMenuCenteredDialogPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Box(modifier = Modifier.fillMaxSize()) {
             val channel = PreviewChannelData.channelWithManyMembers
             SelectedChannelMenu(
@@ -206,7 +207,7 @@ private fun SelectedChannelMenuCenteredDialogPreview() {
 @Preview(showBackground = true, name = "SelectedChannelMenu Preview (Bottom sheet dialog)")
 @Composable
 private fun SelectedChannelMenuBottomSheetDialogPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Box(modifier = Modifier.fillMaxSize()) {
             val channel = PreviewChannelData.channelWithManyMembers
             SelectedChannelMenu(

@@ -44,6 +44,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
@@ -158,7 +159,7 @@ private class DefaultInputFieldVisualTransformation(
 @Preview
 @Composable
 private fun InputFieldPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         InputField(
             modifier = Modifier.fillMaxWidth(),
             value = "InputFieldPreview",

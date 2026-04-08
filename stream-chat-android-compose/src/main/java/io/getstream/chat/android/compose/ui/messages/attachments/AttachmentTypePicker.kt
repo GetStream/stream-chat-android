@@ -44,6 +44,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.CommandPicke
 import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.util.extensions.isPollEnabled
@@ -225,7 +226,7 @@ private val AttachmentPickerModeInfos = mapOf(
 @Preview(showBackground = true)
 @Composable
 private fun AttachmentTypePickerPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         AttachmentTypePicker()
     }
 }
@@ -242,7 +243,7 @@ internal fun AttachmentTypePicker() {
 @Preview(showBackground = true)
 @Composable
 private fun AttachmentTypePickerWithPollsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         AttachmentTypePickerWithPolls()
     }
 }
@@ -262,7 +263,7 @@ internal fun AttachmentTypePickerWithPolls() {
 @Preview(showBackground = true)
 @Composable
 private fun AttachmentTypePickerWithCommandsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         AttachmentTypePickerWithCommands()
     }
 }
@@ -281,7 +282,7 @@ internal fun AttachmentTypePickerWithCommands() {
 @Preview(showBackground = true)
 @Composable
 private fun AttachmentTypeSystemPickerPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         AttachmentTypeSystemPicker()
     }
 }
@@ -297,7 +298,7 @@ internal fun AttachmentTypeSystemPicker() {
 @Preview(showBackground = true)
 @Composable
 private fun AttachmentTypeSystemPickerWithPollsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         AttachmentTypeSystemPickerWithPolls()
     }
 }
@@ -316,7 +317,7 @@ internal fun AttachmentTypeSystemPickerWithPolls() {
 @Preview(showBackground = true)
 @Composable
 private fun AttachmentTypeSystemPickerWithCommandsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         AttachmentTypeSystemPickerWithCommands()
     }
 }

@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.extensions.isArchive
 import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChannelOptionsItemParams
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.isDistinct
@@ -514,7 +515,7 @@ private fun buildGroupMuteAction(
 @Preview(showBackground = true, name = "ChannelOptions Preview")
 @Composable
 private fun ChannelOptionsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         val channel = PreviewChannelData.channelWithMessages
         ChannelOptions(
             actions = listOf(

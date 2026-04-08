@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentImage
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Attachment
@@ -117,7 +118,7 @@ private val FileItemShape = RoundedCornerShape(StreamTokens.radiusLg)
 @Preview
 @Composable
 private fun MessageComposerAttachmentFileItemPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerAttachmentFileItem()
     }
 }

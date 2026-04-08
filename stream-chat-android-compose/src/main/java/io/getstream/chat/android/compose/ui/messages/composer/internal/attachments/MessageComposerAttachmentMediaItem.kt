@@ -37,7 +37,7 @@ import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.components.common.VideoBadge
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
@@ -95,7 +95,7 @@ private val MediaItemImageShape = RoundedCornerShape(StreamTokens.radiusLg)
 @Preview
 @Composable
 private fun MessageComposerAttachmentImageItemPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerAttachmentImageItem()
     }
 }
@@ -115,7 +115,7 @@ internal fun MessageComposerAttachmentImageItem() {
 @Preview
 @Composable
 private fun MessageComposerAttachmentVideoItemPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerAttachmentVideoItem()
     }
 }

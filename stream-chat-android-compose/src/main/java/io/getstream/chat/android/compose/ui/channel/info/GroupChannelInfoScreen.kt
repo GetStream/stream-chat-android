@@ -581,7 +581,7 @@ internal fun GroupChannelInfoLoading() {
 @Preview(showBackground = true)
 @Composable
 private fun GroupChannelInfoCollapsedMembersPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         GroupChannelInfoCollapsedMembers()
     }
 }
@@ -625,7 +625,7 @@ internal fun GroupChannelInfoCollapsedMembers() {
 @Preview(showBackground = true)
 @Composable
 private fun GroupChannelInfoExpandedMembersPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         GroupChannelInfoExpandedMembers()
     }
 }

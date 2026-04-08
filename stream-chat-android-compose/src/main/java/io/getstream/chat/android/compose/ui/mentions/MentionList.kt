@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.LazyPagingColumn
 import io.getstream.chat.android.compose.ui.components.PullToRefreshBox
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MentionListEmptyContentParams
 import io.getstream.chat.android.compose.ui.theme.MentionListItemParams
@@ -250,7 +251,7 @@ internal fun MentionListLoading() {
 @Preview(showBackground = true)
 @Composable
 private fun MentionListLoadingLightPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MentionListLoading()
     }
 }
@@ -267,7 +268,7 @@ internal fun MentionListEmpty() {
 @Preview(showBackground = true)
 @Composable
 private fun MentionListEmptyLightPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MentionListEmpty()
     }
 }
@@ -300,7 +301,7 @@ internal fun MentionListLoaded() {
 @Preview(showBackground = true)
 @Composable
 private fun MentionListLoadedLightPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MentionListLoaded()
     }
 }
@@ -334,7 +335,7 @@ internal fun MentionListLoadingMore() {
 @Preview(showBackground = true)
 @Composable
 private fun MentionListLoadingMoreLightPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MentionListLoadingMore()
     }
 }

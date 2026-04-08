@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.models.User
@@ -79,7 +80,7 @@ internal fun UserAvatarStack(
 private fun AvatarStackPreview() {
     val users = List(size = 5) { PreviewUserData.userWithoutImage.copy(name = "User $it", id = "$it") }
 
-    ChatTheme {
+    ChatPreviewTheme {
         UserAvatarStack(overlap = 16.dp, users = users, avatarSize = AvatarSize.Medium)
     }
 }

@@ -38,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastAny
 import androidx.core.net.toUri
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.util.AnnotationTagEmail
@@ -183,7 +184,7 @@ private fun ClickableText(
 @Preview
 @Composable
 private fun MessageTextPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageText(
             message = Message(text = "Hello World!"),
             currentUser = null,

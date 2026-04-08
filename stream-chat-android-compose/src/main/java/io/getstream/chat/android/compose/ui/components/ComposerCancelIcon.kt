@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
 
@@ -61,7 +62,7 @@ public fun ComposerCancelIcon(
 @Preview
 @Composable
 private fun ComposerCancelIconPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ComposerCancelIcon {}
     }
 }

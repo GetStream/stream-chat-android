@@ -37,6 +37,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.ui.theme.LocalChatUiConfig
@@ -241,7 +242,7 @@ private fun MessageInputTop(
 @Preview
 @Composable
 private fun MessageComposerInputPlaceholderPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerInputPlaceholder()
     }
 }
@@ -256,7 +257,7 @@ internal fun MessageComposerInputPlaceholder() {
 @Preview
 @Composable
 private fun MessageComposerInputFilledPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerInputFilled()
     }
 }
@@ -273,7 +274,7 @@ internal fun MessageComposerInputFilled() {
 @Preview
 @Composable
 private fun MessageComposerInputOverflowPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerInputOverflow()
     }
 }
@@ -296,7 +297,7 @@ internal fun MessageComposerInputOverflow() {
 @Preview
 @Composable
 private fun MessageComposerInputSlowModePreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerInputSlowMode()
     }
 }
@@ -314,7 +315,7 @@ internal fun MessageComposerInputSlowMode() {
 @Preview
 @Composable
 private fun MessageComposerInputThreadModePreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerInputThreadMode()
     }
 }
@@ -333,7 +334,7 @@ internal fun MessageComposerInputThreadMode() {
 @Preview
 @Composable
 private fun MessageComposerInputThreadModeAlsoSendToChannelPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerInputThreadModeAlsoSendToChannel()
     }
 }
@@ -353,7 +354,7 @@ internal fun MessageComposerInputThreadModeAlsoSendToChannel() {
 @Preview
 @Composable
 private fun MessageComposerInputActiveCommandPlaceholderPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerInputActiveCommandPlaceholder()
     }
 }
@@ -370,7 +371,7 @@ internal fun MessageComposerInputActiveCommandPlaceholder() {
 @Preview
 @Composable
 private fun MessageComposerInputActiveCommandFilledPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerInputActiveCommandFilled()
     }
 }
@@ -388,7 +389,7 @@ internal fun MessageComposerInputActiveCommandFilled() {
 @Preview
 @Composable
 private fun MessageComposerInputAttachmentsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerInputAttachments()
     }
 }
@@ -411,7 +412,7 @@ internal fun MessageComposerInputAttachments() {
 @Preview
 @Composable
 private fun MessageComposerInputLinkPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerInputLink()
     }
 }
@@ -433,7 +434,7 @@ internal fun MessageComposerInputLink() {
 @Preview
 @Composable
 private fun MessageComposerInputReplyPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerInputReply()
     }
 }
@@ -450,7 +451,7 @@ internal fun MessageComposerInputReply() {
 @Preview
 @Composable
 private fun MessageComposerInputEditPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerInputEdit()
     }
 }
@@ -468,7 +469,7 @@ internal fun MessageComposerInputEdit() {
 @Preview
 @Composable
 private fun MessageComposerInputEditEmptyPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerInputEditEmpty()
     }
 }
@@ -485,7 +486,7 @@ internal fun MessageComposerInputEditEmpty() {
 @Preview
 @Composable
 private fun MessageComposerInputAttachmentsAndLinkPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerInputAttachmentsAndLink()
     }
 }
@@ -510,7 +511,7 @@ internal fun MessageComposerInputAttachmentsAndLink() {
 @Preview
 @Composable
 private fun MessageComposerInputReplyAttachmentsAndLinkPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerInputReplyAttachmentsAndLink()
     }
 }
@@ -536,7 +537,7 @@ internal fun MessageComposerInputReplyAttachmentsAndLink() {
 @Preview
 @Composable
 private fun MessageComposerInputEditAttachmentsAndLinkPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerInputEditAttachmentsAndLink()
     }
 }

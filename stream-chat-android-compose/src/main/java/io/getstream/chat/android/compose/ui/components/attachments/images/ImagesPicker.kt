@@ -47,6 +47,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.components.common.RadioCheck
 import io.getstream.chat.android.compose.ui.components.common.VideoBadge
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
@@ -202,7 +203,7 @@ private const val VideoLengthInSeconds = 60L
 @Preview(showBackground = true)
 @Composable
 private fun ImagesPickerPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ImagesPickerSelection()
     }
 }
@@ -231,7 +232,7 @@ internal fun ImagesPickerSelection() {
 @Preview(showBackground = true)
 @Composable
 private fun ImagesPickerAddMorePreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ImagesPickerAddMore()
     }
 }

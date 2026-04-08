@@ -35,6 +35,7 @@ import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentDe
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentImage
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentStyle
 import io.getstream.chat.android.compose.ui.theme.ChannelFilesAttachmentsTopBarParams
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModel
@@ -158,7 +159,7 @@ internal fun ChannelFilesAttachmentsItem(
 @Preview
 @Composable
 private fun ChannelFilesAttachmentsLoadingPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelFilesAttachmentsLoading()
     }
 }
@@ -175,7 +176,7 @@ internal fun ChannelFilesAttachmentsLoading() {
 @Preview
 @Composable
 private fun ChannelFilesAttachmentsEmptyPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelFilesAttachmentsEmpty()
     }
 }
@@ -194,7 +195,7 @@ internal fun ChannelFilesAttachmentsEmpty() {
 @Preview
 @Composable
 private fun ChannelFilesAttachmentsContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelFilesAttachmentsContent()
     }
 }
@@ -218,7 +219,7 @@ internal fun ChannelFilesAttachmentsContent() {
 @Preview
 @Composable
 private fun ChannelFilesAttachmentsErrorPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelFilesAttachmentsError()
     }
 }
@@ -237,7 +238,7 @@ internal fun ChannelFilesAttachmentsError() {
 @Preview
 @Composable
 private fun ChannelFilesAttachmentsLoadingMorePreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelFilesAttachmentsLoadingMore()
     }
 }

@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.previewdata.PreviewReactionData
 import io.getstream.chat.android.compose.state.messages.MessageReactionItemState
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionIconParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -192,7 +193,7 @@ private fun ReactionChip(
 @Preview
 @Composable
 private fun SingleClusteredMessageReactionsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ClusteredMessageReactions(reactions = PreviewReactionData.oneReaction())
     }
 }
@@ -200,7 +201,7 @@ private fun SingleClusteredMessageReactionsPreview() {
 @Preview
 @Composable
 private fun MultipleClusteredMessageReactionsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ClusteredMessageReactions(reactions = PreviewReactionData.manyReactions())
     }
 }
@@ -208,7 +209,7 @@ private fun MultipleClusteredMessageReactionsPreview() {
 @Preview
 @Composable
 private fun SingleSegmentedMessageReactionsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         SegmentedMessageReactions(reactions = PreviewReactionData.oneReaction())
     }
 }
@@ -216,7 +217,7 @@ private fun SingleSegmentedMessageReactionsPreview() {
 @Preview
 @Composable
 private fun MultipleSegmentedMessageReactionsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         SegmentedMessageReactions(reactions = PreviewReactionData.manyReactions())
     }
 }

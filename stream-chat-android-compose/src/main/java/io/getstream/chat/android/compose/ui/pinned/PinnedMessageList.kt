@@ -43,6 +43,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.EmptyContent
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.PinnedMessageListEmptyContentParams
 import io.getstream.chat.android.compose.ui.theme.PinnedMessageListItemDividerParams
@@ -304,7 +305,7 @@ internal fun DefaultPinnedMessageListLoadingMoreContent() {
 @Composable
 @Preview
 private fun PinnedMessageItemPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Surface {
             PinnedMessageItem(
                 message = PreviewPinnedMessageData.pinnedMessage1,
@@ -318,7 +319,7 @@ private fun PinnedMessageItemPreview() {
 @Composable
 @Preview
 private fun DefaultPinnedMessageListEmptyContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Surface {
             DefaultPinnedMessageListEmptyContent()
         }
@@ -328,7 +329,7 @@ private fun DefaultPinnedMessageListEmptyContentPreview() {
 @Composable
 @Preview
 private fun DefaultPinnedMessageListLoadingContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Surface {
             DefaultPinnedMessageListLoadingContent()
         }
@@ -338,7 +339,7 @@ private fun DefaultPinnedMessageListLoadingContentPreview() {
 @Composable
 @Preview
 private fun DefaultPinnedMessageListLoadingMoreContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Surface {
             DefaultPinnedMessageListLoadingMoreContent()
         }

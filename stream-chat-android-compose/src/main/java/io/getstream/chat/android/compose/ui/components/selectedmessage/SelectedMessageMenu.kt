@@ -63,6 +63,7 @@ import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemS
 import io.getstream.chat.android.compose.state.messages.MessageAlignment
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageSnapshot
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageContainerParams
 import io.getstream.chat.android.compose.ui.theme.MessageMenuHeaderContentParams
@@ -358,7 +359,7 @@ private fun rememberMenuAnimation(
 @Preview(showBackground = true)
 @Composable
 private fun SelectedMessageMenuForIncomingMessagePreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         SelectedMessageMenuForIncomingMessage()
     }
 }
@@ -366,7 +367,7 @@ private fun SelectedMessageMenuForIncomingMessagePreview() {
 @Preview(showBackground = true)
 @Composable
 private fun SelectedMessageMenuForOutgoingMessagePreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         SelectedMessageMenuForOutgoingMessage()
     }
 }
@@ -388,7 +389,7 @@ internal fun SelectedMessageMenuForOutgoingMessage() {
 @Preview(showBackground = true)
 @Composable
 private fun SelectedMessageMenuForFailedMessagePreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         SelectedMessageMenuForFailedMessage()
     }
 }

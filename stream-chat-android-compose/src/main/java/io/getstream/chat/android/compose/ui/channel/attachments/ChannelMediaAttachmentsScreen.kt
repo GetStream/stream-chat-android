@@ -40,6 +40,7 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.common.VideoBadge
 import io.getstream.chat.android.compose.ui.theme.ChannelMediaAttachmentsTopBarParams
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
@@ -185,7 +186,7 @@ internal fun ChannelMediaAttachmentsItem(
 @Preview
 @Composable
 private fun ChannelMediaAttachmentsLoadingPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelMediaAttachmentsLoading()
     }
 }
@@ -201,7 +202,7 @@ internal fun ChannelMediaAttachmentsLoading() {
 @Preview
 @Composable
 private fun ChannelMediaAttachmentsEmptyPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelMediaAttachmentsEmpty()
     }
 }
@@ -219,7 +220,7 @@ internal fun ChannelMediaAttachmentsEmpty() {
 @Preview
 @Composable
 private fun ChannelMediaAttachmentsContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelMediaAttachmentsContent()
     }
 }
@@ -242,7 +243,7 @@ internal fun ChannelMediaAttachmentsContent() {
 @Preview
 @Composable
 private fun ChannelMediaAttachmentsErrorPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelMediaAttachmentsError()
     }
 }
@@ -260,7 +261,7 @@ internal fun ChannelMediaAttachmentsError() {
 @Preview
 @Composable
 private fun ChannelMediaAttachmentsLoadingMorePreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelMediaAttachmentsLoadingMore()
     }
 }

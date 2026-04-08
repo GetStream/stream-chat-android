@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.components.attachments.files.FileTypeIcon
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -102,7 +103,7 @@ private val supportedAttachmentTypes = setOf(
 @Preview(showBackground = true)
 @Composable
 private fun OwnUnsupportedAttachmentContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         UnsupportedAttachmentContent(
             state = AttachmentState(
                 message = Message(

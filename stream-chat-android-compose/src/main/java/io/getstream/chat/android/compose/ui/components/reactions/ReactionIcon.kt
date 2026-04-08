@@ -27,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 
 /**
  * Component for rendering reaction emojis.
@@ -67,7 +67,7 @@ private fun ReactionIconSize.toFontSize() = when (this) {
 @Preview(showBackground = true)
 @Composable
 private fun ReactionIconPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Row(
             modifier = Modifier.padding(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),

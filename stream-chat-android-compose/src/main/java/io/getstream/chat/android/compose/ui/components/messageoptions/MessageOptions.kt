@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.components.common.ContextualMenu
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageMenuOptionsItemParams
 import io.getstream.chat.android.compose.util.extensions.canBlockUser
@@ -291,7 +292,7 @@ private fun MessageOptionsPreview(
     currentUser: User,
     syncStatus: SyncStatus,
 ) {
-    ChatTheme {
+    ChatPreviewTheme {
         val selectedMMessage = PreviewMessageData.message1.copy(
             user = messageUser,
             syncStatus = syncStatus,

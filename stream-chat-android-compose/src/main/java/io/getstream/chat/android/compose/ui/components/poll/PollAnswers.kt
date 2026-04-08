@@ -66,6 +66,7 @@ import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.components.composer.InputField
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
@@ -345,7 +346,7 @@ private fun AddAnswerDialogInput(newOption: MutableState<String>, modifier: Modi
 @Preview
 @Composable
 private fun PollAnswersDialogPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         val now = Date()
         val pollWithAnswers = PreviewPollData.poll1.copy(
             answers = listOf(

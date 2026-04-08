@@ -52,6 +52,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.ThreadListBannerParams
@@ -339,7 +340,7 @@ internal fun DefaultThreadListLoadingMoreContent() {
 @Preview
 @Composable
 private fun DefaultThreadListEmptyContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Surface {
             DefaultThreadListEmptyContent()
         }
@@ -349,7 +350,7 @@ private fun DefaultThreadListEmptyContentPreview() {
 @Preview
 @Composable
 private fun DefaultThreadListLoadingContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Surface {
             DefaultThreadListLoadingContent()
         }
@@ -359,7 +360,7 @@ private fun DefaultThreadListLoadingContentPreview() {
 @Preview
 @Composable
 private fun DefaultThreadListLoadingMoreContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Surface {
             DefaultThreadListLoadingMoreContent()
         }

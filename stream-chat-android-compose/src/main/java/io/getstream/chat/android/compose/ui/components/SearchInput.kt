@@ -52,6 +52,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.SearchInputClearButtonParams
 import io.getstream.chat.android.compose.ui.theme.SearchInputLabelParams
@@ -222,7 +223,7 @@ internal fun DefaultSearchClearButton(onClick: () -> Unit) {
 @Preview(name = "Search input")
 @Composable
 private fun SearchInputPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         var searchQuery by rememberSaveable { mutableStateOf("") }
 
         SearchInput(

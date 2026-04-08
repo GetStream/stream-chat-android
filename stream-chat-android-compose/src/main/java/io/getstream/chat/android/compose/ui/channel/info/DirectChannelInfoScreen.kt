@@ -50,6 +50,7 @@ import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoOptionItemParams
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.DirectChannelInfoAvatarContainerParams
 import io.getstream.chat.android.compose.ui.theme.DirectChannelInfoTopBarParams
@@ -315,7 +316,7 @@ internal fun List<ChannelInfoViewState.Content.Option>.filterActions() = filter 
 @Preview
 @Composable
 private fun DirectChannelInfoContentLoadingPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         DirectChannelInfoLoading()
     }
 }
@@ -334,7 +335,7 @@ internal fun DirectChannelInfoLoading() {
 @Preview
 @Composable
 private fun DirectChannelInfoContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         DirectChannelInfoContent()
     }
 }

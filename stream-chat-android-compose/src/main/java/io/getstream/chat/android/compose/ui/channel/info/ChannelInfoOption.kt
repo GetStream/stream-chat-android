@@ -44,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.StreamSwitch
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -170,7 +171,7 @@ internal fun ChannelInfoOptionSwitch(
 @Preview(showBackground = true)
 @Composable
 private fun ChannelInfoOptionButtonPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelInfoOptionButton(
             icon = R.drawable.stream_design_ic_delete,
             text = "Delete",
@@ -182,7 +183,7 @@ private fun ChannelInfoOptionButtonPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun ChannelInfoOptionNavigationButtonPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelInfoOptionNavigationButton(
             icon = R.drawable.stream_design_ic_folder,
             text = "Files",
@@ -194,7 +195,7 @@ private fun ChannelInfoOptionNavigationButtonPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun ChannelInfoOptionSwitchPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelInfoOptionSwitch(
             icon = R.drawable.stream_design_ic_mute,
             text = "Mute",

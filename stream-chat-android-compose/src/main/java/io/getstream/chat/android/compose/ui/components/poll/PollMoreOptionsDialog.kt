@@ -58,6 +58,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
 import io.getstream.chat.android.compose.ui.components.common.RadioCheck
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
@@ -339,7 +340,7 @@ private const val MaxStackedAvatars = 3
 @Preview
 @Composable
 private fun PollMoreOptionsDialogPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         PollMoreOptionsDialog()
     }
 }

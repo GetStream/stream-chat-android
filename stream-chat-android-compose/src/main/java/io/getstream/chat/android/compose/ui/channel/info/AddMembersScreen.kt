@@ -53,6 +53,7 @@ import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.common.RadioCheck
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
@@ -329,7 +330,7 @@ private fun AddMembersEmptyState() {
 @Preview(showBackground = true)
 @Composable
 private fun AddMembersScreenLoadingPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         AddMembersScreenLoading()
     }
 }
@@ -349,7 +350,7 @@ internal fun AddMembersScreenLoading() {
 @Preview(showBackground = true)
 @Composable
 private fun AddMembersScreenEmptyPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         AddMembersScreenEmpty()
     }
 }
@@ -373,7 +374,7 @@ internal fun AddMembersScreenEmpty() {
 @Preview(showBackground = true)
 @Composable
 private fun AddMembersScreenResultsWithQueryPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         AddMembersScreenResultsWithQuery()
     }
 }
@@ -397,7 +398,7 @@ internal fun AddMembersScreenResultsWithQuery() {
 @Preview(showBackground = true)
 @Composable
 private fun AddMembersScreenResultsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         AddMembersScreenResults()
     }
 }
@@ -420,7 +421,7 @@ internal fun AddMembersScreenResults() {
 @Preview(showBackground = true)
 @Composable
 private fun AddMembersScreenResultsWithSelectionPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         AddMembersScreenResultsWithSelection()
     }
 }
@@ -444,7 +445,7 @@ internal fun AddMembersScreenResultsWithSelection() {
 @Preview(showBackground = true)
 @Composable
 private fun AddMembersScreenResultsWithMemberPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         AddMembersScreenResultsWithMember()
     }
 }
@@ -468,7 +469,7 @@ internal fun AddMembersScreenResultsWithMember() {
 @Preview(showBackground = true)
 @Composable
 private fun AddMembersScreenLoadingMorePreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         AddMembersScreenLoadingMore()
     }
 }

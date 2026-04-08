@@ -27,7 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
@@ -71,7 +71,7 @@ public fun ChannelMembers(
 @Preview(showBackground = true, name = "ChannelMembers Preview (One member)")
 @Composable
 private fun OneMemberChannelMembersPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelMembers(members = PreviewMembersData.oneMember)
     }
 }
@@ -82,7 +82,7 @@ private fun OneMemberChannelMembersPreview() {
 @Preview(showBackground = true, name = "ChannelMembers Preview (Many members)")
 @Composable
 private fun ManyMembersChannelMembersPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelMembers(members = PreviewMembersData.manyMembers)
     }
 }

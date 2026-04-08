@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionMenuOptionItemParams
 import io.getstream.chat.android.models.Reaction
@@ -73,7 +74,7 @@ internal fun ExtendedReactionsOptions(
 @Preview(showBackground = true, name = "ExtendedReactionOptions Preview")
 @Composable
 internal fun ExtendedReactionOptionsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ExtendedReactionsOptions(
             ownReactions = listOf(),
             onReactionOptionSelected = {},
@@ -87,7 +88,7 @@ internal fun ExtendedReactionOptionsPreview() {
 @Preview(showBackground = true, name = "ExtendedReactionOptions Preview (With Own Reaction)")
 @Composable
 internal fun ExtendedReactionOptionsWithOwnReactionPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ExtendedReactionsOptions(
             ownReactions = listOf(
                 Reaction(

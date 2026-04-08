@@ -52,6 +52,7 @@ import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleD
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberCaptureMediaLauncher
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredCameraPermission
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
@@ -148,7 +149,7 @@ internal fun CameraPickerMode.toCaptureMediaMode(): CaptureMediaContract.Mode =
 @Preview(showBackground = true)
 @Composable
 private fun AttachmentCameraPickerPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         AttachmentCameraPicker()
     }
 }

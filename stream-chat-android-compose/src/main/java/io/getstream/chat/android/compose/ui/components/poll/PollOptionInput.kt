@@ -49,6 +49,7 @@ import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedInputText
 
@@ -143,7 +144,7 @@ public fun PollOptionInput(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 public fun PollOptionInputPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Column(
             modifier = Modifier
                 .background(ChatTheme.colors.backgroundCoreApp)

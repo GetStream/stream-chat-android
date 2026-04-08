@@ -40,6 +40,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewReactionData
 import io.getstream.chat.android.compose.state.messages.MessageReactionItemState
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionIconParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -139,7 +140,7 @@ private fun ReactionChip(
 @Preview(showBackground = true)
 @Composable
 private fun ReactionCountRowPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ReactionCountRow(
             reactionGroups = PreviewReactionData.manyReactions(),
             selectedReactionType = "love",

@@ -51,6 +51,7 @@ import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.theme.ChannelListHeaderCenterContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListHeaderLeadingContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListHeaderTrailingContentParams
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
@@ -247,7 +248,7 @@ internal fun DefaultChannelListHeaderTrailingContent(
 @Preview
 @Composable
 private fun ChannelListHeaderConnectedNoUserPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelListHeaderConnectedNoUser()
     }
 }
@@ -255,7 +256,7 @@ private fun ChannelListHeaderConnectedNoUserPreview() {
 @Preview
 @Composable
 private fun ChannelListHeaderConnectedWithUserPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelListHeaderConnectedWithUser()
     }
 }
@@ -263,7 +264,7 @@ private fun ChannelListHeaderConnectedWithUserPreview() {
 @Preview
 @Composable
 private fun ChannelListHeaderConnectingNoUserPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelListHeaderConnectingNoUser()
     }
 }
@@ -271,7 +272,7 @@ private fun ChannelListHeaderConnectingNoUserPreview() {
 @Preview
 @Composable
 private fun ChannelListHeaderConnectingWithUserPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelListHeaderConnectingWithUser()
     }
 }
@@ -279,7 +280,7 @@ private fun ChannelListHeaderConnectingWithUserPreview() {
 @Preview
 @Composable
 private fun ChannelListHeaderOfflineNoUserPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelListHeaderOfflineNoUser()
     }
 }
@@ -287,7 +288,7 @@ private fun ChannelListHeaderOfflineNoUserPreview() {
 @Preview
 @Composable
 private fun ChannelListHeaderOfflineWithUserPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelListHeaderOfflineWithUser()
     }
 }

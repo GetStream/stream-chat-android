@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.models.Member
@@ -78,7 +79,7 @@ internal fun ChannelMembersItem(
 @Preview(showBackground = true, name = "ChannelMembersItem Preview")
 @Composable
 private fun ChannelMemberItemPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelMembersItem(Member(user = PreviewUserData.user1))
     }
 }

@@ -35,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.ifNotNull
@@ -131,7 +132,7 @@ internal fun MessageAnnotations(modifier: Modifier) {
 @Preview
 @Composable
 internal fun MessageAnnotationsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageAnnotations(
             Modifier
                 .background(ChatTheme.colors.backgroundCoreApp)

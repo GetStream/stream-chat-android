@@ -31,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.common.Checkbox
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
@@ -77,7 +78,7 @@ internal fun MessageComposerInputCenterBottomContent(
 @Preview(showBackground = true)
 @Composable
 private fun SelectedPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerInputCenterBottomContent(
             alsoSendToChannel = true,
             onAlsoSendToChannelChange = {},
@@ -88,7 +89,7 @@ private fun SelectedPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun UnselectedPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         MessageComposerInputCenterBottomContent(
             alsoSendToChannel = false,
             onAlsoSendToChannelChange = {},

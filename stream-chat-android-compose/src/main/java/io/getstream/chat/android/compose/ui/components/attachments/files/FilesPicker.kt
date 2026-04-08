@@ -41,6 +41,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPi
 import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.components.common.RadioButton
 import io.getstream.chat.android.compose.ui.components.common.RadioCheck
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -173,7 +174,7 @@ internal fun DefaultFilesPickerItem(
 @Preview(showBackground = true)
 @Composable
 private fun FilesPickerSingleSelectionPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         FilesPickerSingleSelection()
     }
 }
@@ -199,7 +200,7 @@ internal fun FilesPickerSingleSelection() {
 @Preview(showBackground = true)
 @Composable
 private fun FilesPickerMultipleSelectionPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         FilesPickerMultipleSelection()
     }
 }

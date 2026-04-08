@@ -36,7 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.StreamPrimitiveColors
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
@@ -70,7 +70,7 @@ private const val IconLabelFontSize = 8
 @Preview
 @Composable
 private fun FileTypeIconsPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         FileTypeIcons()
     }
 }

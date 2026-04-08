@@ -37,6 +37,7 @@ import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleSize
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionToggleParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -108,7 +109,7 @@ public fun MessageMenuHeader(
 @Preview(showBackground = true)
 @Composable
 private fun MessageMenuHeaderPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         val reactionType = ChatTheme.reactionResolver.supportedReactions.firstOrNull()
 
         if (reactionType != null) {

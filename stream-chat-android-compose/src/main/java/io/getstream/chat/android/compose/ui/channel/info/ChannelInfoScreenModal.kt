@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.previewdata.PreviewMembersData
@@ -200,7 +201,7 @@ private fun BanMemberModalText(
 @Preview
 @Composable
 private fun ChannelInfoScreenModalLeaveDirectChannelPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelInfoScreenModal(
             modal = ChannelInfoViewEvent.LeaveChannelModal,
             isGroupChannel = false,
@@ -211,7 +212,7 @@ private fun ChannelInfoScreenModalLeaveDirectChannelPreview() {
 @Preview
 @Composable
 private fun ChannelInfoScreenModalLeaveGroupChannelPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelInfoScreenModal(
             modal = ChannelInfoViewEvent.LeaveChannelModal,
             isGroupChannel = true,
@@ -222,7 +223,7 @@ private fun ChannelInfoScreenModalLeaveGroupChannelPreview() {
 @Preview
 @Composable
 private fun ChannelInfoScreenModalDeleteDirectChannelPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelInfoScreenModal(
             modal = ChannelInfoViewEvent.DeleteChannelModal,
             isGroupChannel = false,
@@ -233,7 +234,7 @@ private fun ChannelInfoScreenModalDeleteDirectChannelPreview() {
 @Preview
 @Composable
 private fun ChannelInfoScreenModalDeleteGroupChannelPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelInfoScreenModal(
             modal = ChannelInfoViewEvent.DeleteChannelModal,
             isGroupChannel = true,
@@ -244,7 +245,7 @@ private fun ChannelInfoScreenModalDeleteGroupChannelPreview() {
 @Preview
 @Composable
 private fun ChannelInfoScreenModalBanMemberPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelInfoScreenModalBanMember()
     }
 }
@@ -262,7 +263,7 @@ internal fun ChannelInfoScreenModalBanMember() {
 @Preview
 @Composable
 private fun ChannelInfoScreenModalRemoveMemberPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelInfoScreenModalRemoveMember()
     }
 }

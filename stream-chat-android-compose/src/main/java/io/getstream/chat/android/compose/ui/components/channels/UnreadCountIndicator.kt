@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
@@ -79,7 +80,7 @@ private const val LimitTooManyUnreadCount = 99
 @Preview(showBackground = true, name = "UnreadCountIndicator Preview (Few unread messages)")
 @Composable
 private fun FewMessagesUnreadCountIndicatorPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         UnreadCountIndicator(unreadCount = 5)
     }
 }
@@ -92,7 +93,7 @@ private fun FewMessagesUnreadCountIndicatorPreview() {
 @Preview(showBackground = true, name = "UnreadCountIndicator Preview (Many unread messages)")
 @Composable
 private fun ManyMessagesUnreadCountIndicatorPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         UnreadCountIndicator(unreadCount = 200)
     }
 }
