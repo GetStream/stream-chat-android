@@ -165,7 +165,6 @@ class ChatsActivity : ComponentActivity() {
                 channelOptionsTheme = ChannelOptionsTheme.defaultTheme(
                     optionVisibility = ChannelOptionItemVisibility(
                         isViewInfoVisible = AdaptiveLayoutInfo.singlePaneWindow(),
-                        isPinChannelVisible = true,
                     ),
                 ),
             ) {
