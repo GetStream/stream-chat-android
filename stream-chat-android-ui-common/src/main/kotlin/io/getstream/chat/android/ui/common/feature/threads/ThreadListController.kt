@@ -22,6 +22,8 @@ import io.getstream.chat.android.client.api.state.QueryThreadsState
 import io.getstream.chat.android.client.api.state.queryThreadsAsState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.threads.ThreadListState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -62,6 +64,16 @@ public class ThreadListController(
     private val _state: MutableStateFlow<ThreadListState> = MutableStateFlow(INITIAL_STATE)
     public val state: StateFlow<ThreadListState>
         get() = _state
+
+    /**
+     * The state of our network connection - if we're online, connecting or offline.
+     */
+    public val connectionState: StateFlow<ConnectionState> = chatClient.clientState.connectionState
+
+    /**
+     * The state of the currently logged in user.
+     */
+    public val user: StateFlow<User?> = chatClient.clientState.user
 
     private val queryThreadsState = queryThreadsAsState()
 

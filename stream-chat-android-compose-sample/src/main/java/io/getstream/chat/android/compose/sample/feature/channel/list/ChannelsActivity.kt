@@ -88,12 +88,11 @@ import io.getstream.chat.android.compose.ui.theme.ChannelListDividerItemParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListItemContentParams
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.threads.ThreadList
+import io.getstream.chat.android.compose.ui.threads.ThreadsScreen
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModel
 import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModelFactory
-import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
@@ -127,10 +126,7 @@ class ChannelsActivity : ComponentActivity() {
 
     private val channelsViewModel: ChannelListViewModel by viewModels { channelsViewModelFactory }
     private val mentionListViewModel: MentionListViewModel by viewModels { MentionListViewModelFactory() }
-    private val threadsViewModel: ThreadListViewModel by viewModels {
-        val query = QueryThreadsRequest()
-        ThreadsViewModelFactory(query)
-    }
+    private val threadsViewModelFactory = ThreadsViewModelFactory(query = QueryThreadsRequest())
 
     @Suppress("LongMethod")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -209,7 +205,13 @@ class ChannelsActivity : ComponentActivity() {
                                     )
 
                                     AppBottomBarOption.MENTIONS -> MentionsContent()
-                                    AppBottomBarOption.THREADS -> ThreadsContent()
+                                    AppBottomBarOption.THREADS -> ThreadsContent(
+                                        onHeaderAvatarClick = {
+                                            coroutineScope.launch {
+                                                drawerState.open()
+                                            }
+                                        },
+                                    )
                                 }
                             }
                         }
@@ -248,10 +250,10 @@ class ChannelsActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun ThreadsContent() {
-        ThreadList(
-            viewModel = threadsViewModel,
-            modifier = Modifier.fillMaxSize(),
+    private fun ThreadsContent(onHeaderAvatarClick: () -> Unit) {
+        ThreadsScreen(
+            viewModelFactory = threadsViewModelFactory,
+            onHeaderAvatarClick = onHeaderAvatarClick,
             onThreadClick = ::openThread,
         )
     }
