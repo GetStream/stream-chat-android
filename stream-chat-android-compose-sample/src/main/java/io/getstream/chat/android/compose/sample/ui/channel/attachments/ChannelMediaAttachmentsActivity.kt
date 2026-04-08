@@ -27,7 +27,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.sample.R
-import io.getstream.chat.android.compose.sample.R.string.stream_ui_message_list_video_display_error
 import io.getstream.chat.android.compose.ui.channel.attachments.ChannelMediaAttachmentsScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModel
@@ -35,6 +34,8 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsVie
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewEvent
 import kotlinx.coroutines.flow.collectLatest
+import io.getstream.chat.android.compose.R as ComposeR
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 class ChannelMediaAttachmentsActivity : ComponentActivity() {
     companion object {
@@ -65,14 +66,14 @@ class ChannelMediaAttachmentsActivity : ComponentActivity() {
                     onVideoPlaybackError = {
                         Toast.makeText(
                             applicationContext,
-                            stream_ui_message_list_video_display_error,
+                            UiCommonR.string.stream_ui_message_list_video_display_error,
                             Toast.LENGTH_SHORT,
                         ).show()
                     },
                     onSharingError = {
                         Toast.makeText(
                             applicationContext,
-                            R.string.stream_compose_media_gallery_preview_could_not_share_attachment,
+                            ComposeR.string.stream_compose_media_gallery_preview_could_not_share_attachment,
                             Toast.LENGTH_SHORT,
                         ).show()
                     },

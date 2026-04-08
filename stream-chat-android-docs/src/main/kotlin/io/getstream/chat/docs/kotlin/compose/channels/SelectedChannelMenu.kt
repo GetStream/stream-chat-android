@@ -21,7 +21,7 @@ import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
 import io.getstream.chat.android.compose.ui.components.channels.buildDefaultChannelActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
-import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/channel-components/selected-channel-menu/#usage)
@@ -29,7 +29,7 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFact
 private object SelectedChannelMenuUsageSnippet {
 
     class ChannelsActivity : AppCompatActivity() {
-        val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
+        val listViewModel: ChannelListViewModel by viewModels { ChannelListViewModelFactory() }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -77,7 +77,7 @@ private object SelectedChannelMenuUsageSnippet {
 private object SelectedChannelMenuHandlingActionsSnippet {
 
     class ChannelsActivity : AppCompatActivity() {
-        val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
+        val listViewModel: ChannelListViewModel by viewModels { ChannelListViewModelFactory() }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -129,7 +129,7 @@ private object SelectedChannelMenuHandlingActionsSnippet {
 private object SelectedChannelMenuCustomizationSnippet {
 
     class ChannelsActivity : AppCompatActivity() {
-        val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
+        val listViewModel: ChannelListViewModel by viewModels { ChannelListViewModelFactory() }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)

@@ -13,7 +13,7 @@ import io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderVie
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
 import io.getstream.chat.android.ui.feature.search.SearchInputView
 import io.getstream.chat.android.ui.feature.search.list.SearchResultListView
-import io.getstream.chat.docs.R
+import io.getstream.chat.android.ui.R as UiR
 
 /**
  * [Channel List Screen](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list-screen/)
@@ -29,13 +29,13 @@ class ChannelListScreen {
             context.startActivity(ChannelListActivity.createIntent(context))
         }
 
-        class MyChannelListActivity : AppCompatActivity(R.layout.stream_ui_fragment_container) {
+        class MyChannelListActivity : AppCompatActivity(UiR.layout.stream_ui_fragment_container) {
 
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
                 if (savedInstanceState == null) {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.container, ChannelListFragment.newInstance())
+                        .replace(UiR.id.container, ChannelListFragment.newInstance())
                         .commit()
                 }
             }
@@ -47,7 +47,7 @@ class ChannelListScreen {
      */
     fun handlingActions() {
 
-        class MyChannelListActivity : AppCompatActivity(R.layout.stream_ui_fragment_container),
+        class MyChannelListActivity : AppCompatActivity(UiR.layout.stream_ui_fragment_container),
             ChannelListFragment.HeaderActionButtonClickListener,
             ChannelListFragment.HeaderUserAvatarClickListener,
             ChannelListFragment.ChannelListItemClickListener,
@@ -57,7 +57,7 @@ class ChannelListScreen {
                 super.onCreate(savedInstanceState)
                 if (savedInstanceState == null) {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.container, ChannelListFragment.newInstance())
+                        .replace(UiR.id.container, ChannelListFragment.newInstance())
                         .commit()
                 }
             }
@@ -128,7 +128,7 @@ class ChannelListScreen {
             override fun createChannelListFragment(): ChannelListFragment {
                 return ChannelListFragment.newInstance {
                     setFragment(CustomChannelListFragment())
-                    customTheme(R.style.StreamUiTheme)
+                    customTheme(UiR.style.StreamUiTheme)
                     showSearch(true)
                     showHeader(true)
                     headerTitle("Title")

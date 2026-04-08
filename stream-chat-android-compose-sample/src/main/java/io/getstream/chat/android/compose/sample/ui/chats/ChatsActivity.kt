@@ -51,7 +51,6 @@ import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
-import io.getstream.chat.android.compose.sample.R.string.stream_ui_message_list_video_display_error
 import io.getstream.chat.android.compose.sample.feature.channel.ChannelConstants.CHANNEL_ARG_DRAFT
 import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
@@ -85,8 +84,8 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsVie
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
-import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModelFactory
 import io.getstream.chat.android.models.AttachmentType
@@ -98,13 +97,13 @@ import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAt
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import io.getstream.chat.android.compose.R as ComposeR
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 class ChatsActivity : ComponentActivity() {
 
@@ -130,10 +129,10 @@ class ChatsActivity : ComponentActivity() {
     private val messageId by lazy { intent.getStringExtra(KEY_MESSAGE_ID) }
     private val parentMessageId by lazy { intent.getStringExtra(KEY_PARENT_MESSAGE_ID) }
 
-    private val channelViewModelFactory by lazy {
+    private val channelListViewModelFactory by lazy {
         val chatClient = ChatClient.instance()
         val currentUserId = chatClient.getCurrentUser()?.id ?: ""
-        ChannelViewModelFactory(
+        ChannelListViewModelFactory(
             chatClient = chatClient,
             querySort = QuerySortByField
                 .descByName<Channel>("pinned_at") // pinned channels first
@@ -147,9 +146,9 @@ class ChatsActivity : ComponentActivity() {
         )
     }
 
-    private val messagesViewModelFactory by lazy {
+    private val channelViewModelFactory by lazy {
         channelId?.let { cid ->
-            buildMessagesViewModelFactory(
+            buildChannelViewModelFactory(
                 channelId = cid,
                 messageId = messageId,
                 parentMessageId = parentMessageId,
@@ -183,12 +182,12 @@ class ChatsActivity : ComponentActivity() {
         val navigator = rememberThreePaneNavigator()
         ChatsScreen(
             navigator = navigator,
-            channelViewModelFactory = channelViewModelFactory,
-            messagesViewModelFactoryProvider = { _, (channelId, messageId, parentMessageId) ->
+            channelListViewModelFactory = channelListViewModelFactory,
+            channelViewModelFactoryProvider = { _, (channelId, messageId, parentMessageId) ->
                 if (channelId == null) {
-                    messagesViewModelFactory
+                    channelViewModelFactory
                 } else {
-                    buildMessagesViewModelFactory(
+                    buildChannelViewModelFactory(
                         channelId = channelId,
                         messageId = messageId,
                         parentMessageId = parentMessageId,
@@ -480,7 +479,7 @@ class ChatsActivity : ComponentActivity() {
                 title = {
                     Column {
                         Text(
-                            text = stringResource(R.string.stream_ui_channel_info_group_title),
+                            text = stringResource(UiCommonR.string.stream_ui_channel_info_group_title),
                             style = ChatTheme.typography.headingMedium,
                             color = ChatTheme.colors.textPrimary,
                         )
@@ -503,7 +502,7 @@ class ChatsActivity : ComponentActivity() {
                         OutlinedButton(
                             onClick = onActionClick,
                         ) {
-                            Text(text = stringResource(id = ComposeR.string.stream_ui_channel_info_edit_action))
+                            Text(text = stringResource(id = UiCommonR.string.stream_ui_channel_info_edit_action))
                         }
                     }
                 },
@@ -578,14 +577,14 @@ class ChatsActivity : ComponentActivity() {
             onVideoPlaybackError = {
                 Toast.makeText(
                     applicationContext,
-                    stream_ui_message_list_video_display_error,
+                    UiCommonR.string.stream_ui_message_list_video_display_error,
                     Toast.LENGTH_SHORT,
                 ).show()
             },
             onSharingError = {
                 Toast.makeText(
                     applicationContext,
-                    R.string.stream_compose_media_gallery_preview_could_not_share_attachment,
+                    ComposeR.string.stream_compose_media_gallery_preview_could_not_share_attachment,
                     Toast.LENGTH_SHORT,
                 ).show()
             },
@@ -604,16 +603,15 @@ class ChatsActivity : ComponentActivity() {
         }
     }
 
-    private fun buildMessagesViewModelFactory(
+    private fun buildChannelViewModelFactory(
         channelId: String,
         messageId: String?,
         parentMessageId: String?,
-    ) = MessagesViewModelFactory(
+    ) = ChannelViewModelFactory(
         context = applicationContext,
         channelId = channelId,
         messageId = messageId,
         parentMessageId = parentMessageId,
-        deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
         isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
     )
 
@@ -630,8 +628,8 @@ class ChatsActivity : ComponentActivity() {
 private fun CloseButton(onClick: () -> Unit) {
     IconButton(onClick = onClick) {
         Icon(
-            painter = painterResource(id = R.drawable.stream_design_ic_xmark),
-            contentDescription = stringResource(id = R.string.stream_compose_cancel),
+            painter = painterResource(id = ComposeR.drawable.stream_design_ic_xmark),
+            contentDescription = stringResource(id = ComposeR.string.stream_compose_cancel),
             tint = ChatTheme.colors.textPrimary,
         )
     }
@@ -717,37 +715,37 @@ private fun ThreePaneNavigator.navigateToChannel(
 private fun Context.showError(error: ChannelInfoViewEvent.Error) {
     val message = when (error) {
         ChannelInfoViewEvent.RenameChannelError,
-        -> R.string.stream_ui_channel_info_rename_group_error
+        -> UiCommonR.string.stream_ui_channel_info_rename_group_error
 
         ChannelInfoViewEvent.MuteChannelError,
         ChannelInfoViewEvent.UnmuteChannelError,
-        -> R.string.stream_ui_channel_info_mute_conversation_error
+        -> UiCommonR.string.stream_ui_channel_info_mute_conversation_error
 
         ChannelInfoViewEvent.MuteUserError,
         ChannelInfoViewEvent.UnmuteUserError,
-        -> R.string.stream_ui_channel_info_mute_user_error
+        -> UiCommonR.string.stream_ui_channel_info_mute_user_error
 
         ChannelInfoViewEvent.BlockUserError,
         ChannelInfoViewEvent.UnblockUserError,
-        -> R.string.stream_ui_channel_info_block_user_error
+        -> UiCommonR.string.stream_ui_channel_info_block_user_error
 
         ChannelInfoViewEvent.LeaveChannelError,
-        -> R.string.stream_ui_channel_info_leave_conversation_error
+        -> UiCommonR.string.stream_ui_channel_info_leave_conversation_error
 
         ChannelInfoViewEvent.DeleteChannelError,
-        -> R.string.stream_ui_channel_info_delete_conversation_error
+        -> UiCommonR.string.stream_ui_channel_info_delete_conversation_error
 
         ChannelInfoViewEvent.BanMemberError,
-        -> R.string.stream_ui_channel_info_ban_member_error
+        -> UiCommonR.string.stream_ui_channel_info_ban_member_error
 
         ChannelInfoViewEvent.UnbanMemberError,
-        -> R.string.stream_ui_channel_info_unban_member_error
+        -> UiCommonR.string.stream_ui_channel_info_unban_member_error
 
         ChannelInfoViewEvent.RemoveMemberError,
-        -> R.string.stream_ui_channel_info_remove_member_error
+        -> UiCommonR.string.stream_ui_channel_info_remove_member_error
 
         ChannelInfoViewEvent.AddMembersError,
-        -> R.string.stream_ui_channel_info_add_members_error
+        -> UiCommonR.string.stream_ui_channel_info_add_members_error
     }
     Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
 }

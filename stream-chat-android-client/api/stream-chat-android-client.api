@@ -285,7 +285,6 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 	public final fun okHttpClient (Lokhttp3/OkHttpClient;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun retryPolicy (Lio/getstream/result/call/retry/RetryPolicy;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun sendMessageInterceptor (Lio/getstream/chat/android/client/interceptor/SendMessageInterceptor;)Lio/getstream/chat/android/client/ChatClient$Builder;
-	public final fun shareFileDownloadRequestInterceptor (Lokhttp3/Interceptor;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun uploadAttachmentsNetworkType (Lio/getstream/chat/android/models/UploadAttachmentsNetworkType;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun withApiModelTransformer (Lio/getstream/chat/android/client/transformer/ApiModelTransformers;)Lio/getstream/chat/android/client/ChatClient$Builder;
 }
@@ -805,7 +804,7 @@ public final class io/getstream/chat/android/client/api/state/ChannelsStateData$
 
 public final class io/getstream/chat/android/client/api/state/ChatClientExtensions {
 	public static final fun cancelEphemeralMessage (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/Message;)Lio/getstream/result/call/Call;
-	public static final fun downloadAttachment (Lio/getstream/chat/android/client/ChatClient;Landroid/content/Context;Lio/getstream/chat/android/models/Attachment;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Lio/getstream/result/call/Call;
+	public static final fun downloadAttachment (Lio/getstream/chat/android/client/ChatClient;Landroid/content/Context;Lio/getstream/chat/android/models/Attachment;)Lio/getstream/result/call/Call;
 	public static final fun getGlobalState (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/client/api/state/GlobalState;
 	public static final fun getGlobalStateFlow (Lio/getstream/chat/android/client/ChatClient;)Lkotlinx/coroutines/flow/Flow;
 	public static final fun getMessageUsingCache (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)Lio/getstream/result/call/Call;

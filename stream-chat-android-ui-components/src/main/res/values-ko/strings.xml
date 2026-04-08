@@ -60,21 +60,21 @@
     <string name="stream_ui_message_composer_error_file_size">파일이 너무 큽니다 - 최대 %s입니다</string>
     <string name="stream_ui_message_composer_error_attachment_count">첨부파일 개수가 (%d) 개를 초과하였습니다.</string>
     <string name="stream_ui_message_composer_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
-  <plurals name="stream_ui_message_list_header_member_count">
+  <plurals name="stream_ui_channel_header_member_count">
     <item quantity="other">"%1d명"</item>
   </plurals>
-  <plurals name="stream_ui_message_list_header_typing_users">
+  <plurals name="stream_ui_channel_header_typing_users">
     <item quantity="one">"%s 입력 중"</item>
     <item quantity="other">"%s 외 %d명 입력 중"</item>
   </plurals>
-  <string name="stream_ui_message_list_header_back_button_content_description">"뒤로 가기"</string>
-  <string name="stream_ui_message_list_header_disconnected">"네트워크를 검색하는 중입니다"</string>
-  <string name="stream_ui_message_list_header_member_count_online">"%1$s, %2$d온라인"</string>
-  <string name="stream_ui_message_list_header_offline">"오프라인…"</string>
-  <string name="stream_ui_message_list_header_retry">"재연결"</string>
-  <string name="stream_ui_message_list_header_thread_subtitle">"%s 참여"</string>
-  <string name="stream_ui_message_list_header_thread_title">"스레드 응답"</string>
-  <string name="stream_ui_message_list_header_untitled_channel">"익명의 채널"</string>
+  <string name="stream_ui_channel_header_back_button_content_description">"뒤로 가기"</string>
+  <string name="stream_ui_channel_header_disconnected">"네트워크를 검색하는 중입니다"</string>
+  <string name="stream_ui_channel_header_member_count_online">"%1$s, %2$d온라인"</string>
+  <string name="stream_ui_channel_header_offline">"오프라인…"</string>
+  <string name="stream_ui_channel_header_retry">"재연결"</string>
+  <string name="stream_ui_channel_header_thread_subtitle">"%s 참여"</string>
+  <string name="stream_ui_channel_header_thread_title">"스레드 응답"</string>
+  <string name="stream_ui_channel_header_untitled_channel">"익명의 채널"</string>
   <plurals name="stream_ui_message_list_message_reactions">
     <item quantity="other">"%d개의 공감"</item>
   </plurals>

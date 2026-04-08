@@ -90,7 +90,6 @@ import io.getstream.chat.android.compose.ui.theme.MessageBubbleParams
 import io.getstream.chat.android.compose.ui.theme.MessageContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageFailedIconParams
 import io.getstream.chat.android.compose.ui.theme.MessageFooterContentParams
-import io.getstream.chat.android.compose.ui.theme.MessageFooterOnlyVisibleToYouContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageFooterUploadingContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageReactionsParams
 import io.getstream.chat.android.compose.ui.theme.MessageSpacerParams
@@ -112,7 +111,6 @@ import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
@@ -570,15 +568,6 @@ internal fun ColumnScope.DefaultMessageBottom(
             ChatTheme.componentFactory.MessageFooterUploadingContent(
                 params = MessageFooterUploadingContentParams(
                     modifier = Modifier.align(Alignment.End),
-                    messageItem = messageItem,
-                ),
-            )
-        }
-
-        message.isDeleted() && !message.deletedForMe &&
-            messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
-            ChatTheme.componentFactory.MessageFooterOnlyVisibleToYouContent(
-                params = MessageFooterOnlyVisibleToYouContentParams(
                     messageItem = messageItem,
                 ),
             )

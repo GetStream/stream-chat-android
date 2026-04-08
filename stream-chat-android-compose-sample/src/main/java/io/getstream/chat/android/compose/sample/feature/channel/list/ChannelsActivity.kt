@@ -90,7 +90,7 @@ import io.getstream.chat.android.compose.ui.theme.ChannelOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.threads.ThreadList
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
-import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModel
 import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
@@ -114,7 +114,7 @@ class ChannelsActivity : ComponentActivity() {
     private val channelsViewModelFactory by lazy {
         val chatClient = ChatClient.instance()
         val currentUserId = chatClient.getCurrentUser()?.id ?: ""
-        ChannelViewModelFactory(
+        ChannelListViewModelFactory(
             chatClient = chatClient,
             querySort = QuerySortByField
                 .descByName<Channel>("pinned_at") // pinned channels first

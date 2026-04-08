@@ -38,14 +38,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.material.datepicker.MaterialDatePicker
-import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
-import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
+import io.getstream.chat.android.compose.ui.messages.header.ChannelHeader
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -64,7 +64,7 @@ class MessagesActivity : AppCompatActivity() {
 
         setContent {
             ChatTheme(componentFactory = CustomChatComponentFactory) {
-                CustomMessagesScreen(
+                CustomChannelScreen(
                     channelId = channelId,
                     onBackPressed = { finish() },
                     threadLoadOlderToNewer = false,
@@ -74,19 +74,19 @@ class MessagesActivity : AppCompatActivity() {
     }
 
     /**
-     * A custom [MessagesScreen] with the support for date attachments.
+     * A custom [ChannelScreen] with the support for date attachments.
      *
      * @param channelId The ID of the opened channel.
      * @param threadLoadOlderToNewer Flag to load older messages to newer messages in the thread.
      * @param onBackPressed Handler for the back action.
      */
     @Composable
-    fun CustomMessagesScreen(
+    fun CustomChannelScreen(
         channelId: String,
         threadLoadOlderToNewer: Boolean,
         onBackPressed: () -> Unit = {},
     ) {
-        val factory = MessagesViewModelFactory(
+        val factory = ChannelViewModelFactory(
             context = LocalContext.current,
             channelId = channelId,
             threadLoadOlderToNewer = threadLoadOlderToNewer,
@@ -105,7 +105,7 @@ class MessagesActivity : AppCompatActivity() {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
-                    MessageListHeader(
+                    ChannelHeader(
                         modifier = Modifier.height(56.dp),
                         channel = messageListViewModel.channel,
                         currentUser = currentUser,

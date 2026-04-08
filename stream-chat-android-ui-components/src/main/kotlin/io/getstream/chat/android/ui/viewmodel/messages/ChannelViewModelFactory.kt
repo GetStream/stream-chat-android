@@ -37,7 +37,6 @@ import io.getstream.chat.android.ui.common.feature.messages.composer.mention.toU
 import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.feature.messages.list.MessagePositionHandler
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
@@ -47,7 +46,7 @@ import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 
 /**
- * A ViewModel factory for MessageListViewModel, MessageListHeaderViewModel and MessageComposerViewModel.
+ * A ViewModel factory for MessageListViewModel, ChannelHeaderViewModel and MessageComposerViewModel.
  *
  * @param cid The current channel ID, to load the messages from.
  * @param messageId The message ID to which we want to scroll to when opening the message list.
@@ -60,7 +59,6 @@ import java.io.File
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
  * @param showSystemMessages If we should show system message items in the list.
- * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
  * @param dateSeparatorHandler Handler that determines when the date separators should be visible.
  * @param threadDateSeparatorHandler Handler that determines when the thread date separators should be visible.
@@ -72,11 +70,11 @@ import java.io.File
  * @param threadLoadOlderToNewer Configures if the thread should be loaded from older to newer messages.
  * @param isComposerDraftMessagesEnabled Configures if the composer should support draft messages.
  *
- * @see MessageListHeaderViewModel
+ * @see ChannelHeaderViewModel
  * @see MessageListViewModel
  * @see MessageComposerViewModel
  */
-public class MessageListViewModelFactory @JvmOverloads constructor(
+public class ChannelViewModelFactory @JvmOverloads constructor(
     context: Context,
     private val cid: String,
     private val messageId: String? = null,
@@ -90,7 +88,6 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     private val enforceUniqueReactions: Boolean = true,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val showSystemMessages: Boolean = true,
-    private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
     private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler(),
     private val threadDateSeparatorHandler: DateSeparatorHandler =
@@ -120,7 +117,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
 
     private fun <T : ViewModel> createInternal(modelClass: Class<T>, savedStateHandle: SavedStateHandle): T {
         val viewModel: ViewModel = when (modelClass) {
-            MessageListHeaderViewModel::class.java -> MessageListHeaderViewModel(cid, messageId = messageId)
+            ChannelHeaderViewModel::class.java -> ChannelHeaderViewModel(cid, messageId = messageId)
             MessageListViewModel::class.java -> MessageListViewModel(
                 messageListController = MessageListController(
                     cid = cid,
@@ -134,7 +131,6 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                     channelState = channelStateFlow,
                     enforceUniqueReactions = enforceUniqueReactions,
                     showSystemMessages = showSystemMessages,
-                    deletedMessageVisibility = deletedMessageVisibility,
                     messageFooterVisibility = messageFooterVisibility,
                     dateSeparatorHandler = dateSeparatorHandler,
                     threadDateSeparatorHandler = threadDateSeparatorHandler,
@@ -160,8 +156,8 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                 ),
             )
             else -> throw IllegalArgumentException(
-                "MessageListViewModelFactory can only create instances of the following classes: " +
-                    "${MessageListHeaderViewModel::class.java.simpleName}, " +
+                "ChannelViewModelFactory can only create instances of the following classes: " +
+                    "${ChannelHeaderViewModel::class.java.simpleName}, " +
                     "${MessageListViewModel::class.java.simpleName}, or " +
                     "${MessageComposerViewModel::class.java.simpleName}.",
             )
@@ -183,7 +179,6 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
         private var enforceUniqueReactions: Boolean = true
         private var maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT
         private var showSystemMessages: Boolean = true
-        private var deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE
         private var messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference()
         private var dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler()
         private var threadDateSeparatorHandler: DateSeparatorHandler =
@@ -236,10 +231,6 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
             this.showSystemMessages = showSystemMessages
         }
 
-        public fun deletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility): Builder = apply {
-            this.deletedMessageVisibility = deletedMessageVisibility
-        }
-
         public fun messageFooterVisibility(messageFooterVisibility: MessageFooterVisibility): Builder = apply {
             this.messageFooterVisibility = messageFooterVisibility
         }
@@ -257,11 +248,11 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
         }
 
         /**
-         * Builds [MessageListViewModelFactory] instance.
+         * Builds [ChannelViewModelFactory] instance.
          */
         public fun build(): ViewModelProvider.Factory {
             val cid = cid ?: error("Channel cid should not be null")
-            return MessageListViewModelFactory(
+            return ChannelViewModelFactory(
                 context = context,
                 cid = cid,
                 messageId = messageId,
@@ -273,7 +264,6 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                 enforceUniqueReactions = enforceUniqueReactions,
                 maxAttachmentCount = maxAttachmentCount,
                 showSystemMessages = showSystemMessages,
-                deletedMessageVisibility = deletedMessageVisibility,
                 messageFooterVisibility = messageFooterVisibility,
                 dateSeparatorHandler = dateSeparatorHandler,
                 threadDateSeparatorHandler = threadDateSeparatorHandler,

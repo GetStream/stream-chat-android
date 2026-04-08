@@ -36,7 +36,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 
-internal class MessagesViewModelFactoryTest {
+internal class ChannelViewModelFactoryTest {
 
     @get:Rule
     val testCoroutineRule = TestCoroutineRule()
@@ -77,7 +77,7 @@ internal class MessagesViewModelFactoryTest {
         }
 
         assertEquals(
-            "MessagesViewModelFactory can only create instances of " +
+            "ChannelViewModelFactory can only create instances of " +
                 "MessageComposerViewModel, MessageListViewModel, or AttachmentsPickerViewModel.",
             exception.message,
         )
@@ -109,7 +109,7 @@ internal class MessagesViewModelFactoryTest {
             }.build()
         }
 
-        fun get() = MessagesViewModelFactory(
+        fun get() = ChannelViewModelFactory(
             context = mockContext,
             channelId = cid,
             chatClient = mockChatClient,

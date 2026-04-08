@@ -40,14 +40,13 @@ import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.list.DeleteMessage
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.EditMessage
 import io.getstream.chat.android.ui.common.state.messages.list.SendAnyway
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelHeaderViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
@@ -85,9 +84,9 @@ class ChatFragment : Fragment() {
         )
     }
 
-    private val factory: MessageListViewModelFactory by lazy {
+    private val factory: ChannelViewModelFactory by lazy {
         val chatClient = ChatClient.instance()
-        MessageListViewModelFactory(
+        ChannelViewModelFactory(
             context = requireContext().applicationContext,
             cid = args.cid,
             messageId = args.messageId,
@@ -97,7 +96,7 @@ class ChatFragment : Fragment() {
         )
     }
     private val chatViewModelFactory: ChatViewModelFactory by lazy { ChatViewModelFactory(cid = args.cid) }
-    private val headerViewModel: MessageListHeaderViewModel by viewModels { factory }
+    private val headerViewModel: ChannelHeaderViewModel by viewModels { factory }
     private val messageListViewModel: MessageListViewModel by viewModels { factory }
     private val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
     private val chatViewModel: ChatViewModel by viewModels { chatViewModelFactory }
@@ -253,9 +252,6 @@ class ChatFragment : Fragment() {
     private fun initMessageListViewModel() {
         val calendar = Calendar.getInstance()
         messageListViewModel.apply {
-            messageListViewModel.setDeletedMessageVisibility(
-                deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER,
-            )
             bindView(binding.messageListView, viewLifecycleOwner)
             setDateSeparatorHandler { previousMessage, message ->
                 if (previousMessage == null) {

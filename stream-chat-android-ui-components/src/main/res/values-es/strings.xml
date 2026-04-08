@@ -71,22 +71,22 @@
   <string name="stream_ui_message_composer_send_to_channel">"También enviar al canal"</string>
   <string name="stream_ui_message_composer_sending_links_not_allowed">"No se permite enviar enlaces en esta conversación."</string>
   <string name="stream_ui_message_composer_slide_to_cancel">"Deslizar para cancelar"</string>
-  <plurals name="stream_ui_message_list_header_member_count">
+  <plurals name="stream_ui_channel_header_member_count">
     <item quantity="one">"%1d Miembro"</item>
     <item quantity="other">"%1d Miembros"</item>
   </plurals>
-  <plurals name="stream_ui_message_list_header_typing_users">
+  <plurals name="stream_ui_channel_header_typing_users">
     <item quantity="one">"%1$s está escribiendo"</item>
     <item quantity="other">"%1$s y %2$d más están escribiendo"</item>
   </plurals>
-  <string name="stream_ui_message_list_header_back_button_content_description">"Botón atrás"</string>
-  <string name="stream_ui_message_list_header_disconnected">"Buscando conexión de red"</string>
-  <string name="stream_ui_message_list_header_member_count_online">"%1$s, %2$d Conectados"</string>
-  <string name="stream_ui_message_list_header_offline">"Desconectado"</string>
-  <string name="stream_ui_message_list_header_retry">"Probar de nuevo"</string>
-  <string name="stream_ui_message_list_header_thread_subtitle">"con %1$s"</string>
-  <string name="stream_ui_message_list_header_thread_title">"Respuestas en el hilo"</string>
-  <string name="stream_ui_message_list_header_untitled_channel">"Canal sin nombre"</string>
+  <string name="stream_ui_channel_header_back_button_content_description">"Botón atrás"</string>
+  <string name="stream_ui_channel_header_disconnected">"Buscando conexión de red"</string>
+  <string name="stream_ui_channel_header_member_count_online">"%1$s, %2$d Conectados"</string>
+  <string name="stream_ui_channel_header_offline">"Desconectado"</string>
+  <string name="stream_ui_channel_header_retry">"Probar de nuevo"</string>
+  <string name="stream_ui_channel_header_thread_subtitle">"con %1$s"</string>
+  <string name="stream_ui_channel_header_thread_title">"Respuestas en el hilo"</string>
+  <string name="stream_ui_channel_header_untitled_channel">"Canal sin nombre"</string>
   <plurals name="stream_ui_message_list_message_reactions">
     <item quantity="one">"%d Reación de mensaje"</item>
     <item quantity="other">"%d Reaciones de mensaje"</item>

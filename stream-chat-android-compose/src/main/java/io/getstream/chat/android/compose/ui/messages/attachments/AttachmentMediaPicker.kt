@@ -36,7 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.compose.ui.components.attachments.images.ImagesPicker
@@ -49,6 +48,7 @@ import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.permissions.VisualMediaAccess
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.openSystemSettings
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 @Composable
 internal fun AttachmentMediaPicker(
@@ -86,8 +86,8 @@ internal fun AttachmentMediaPicker(
         StreamSnackbarHost(hostState = snackBarHostState)
     }
 
-    val snackbarMessage = stringResource(id = R.string.stream_ui_message_composer_permission_setting_message)
-    val snackbarAction = stringResource(id = R.string.stream_ui_message_composer_permissions_setting_button)
+    val snackbarMessage = stringResource(id = UiCommonR.string.stream_ui_message_composer_permission_setting_message)
+    val snackbarAction = stringResource(id = UiCommonR.string.stream_ui_message_composer_permissions_setting_button)
     LaunchedEffect(showPermanentlyDeniedSnackBar) {
         if (showPermanentlyDeniedSnackBar) {
             val result = snackBarHostState.showSnackbar(

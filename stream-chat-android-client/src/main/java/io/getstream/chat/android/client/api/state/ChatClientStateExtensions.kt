@@ -190,7 +190,7 @@ public fun ChatClient.watchChannelAsState(
 }
 
 /**
- * Performs [ChatClient.queryThreadsResult] under the hood and returns [QueryThreadsState].
+ * Performs [ChatClient.queryThreads] under the hood and returns [QueryThreadsState].
  * The [QueryThreadsState] cannot be created before connecting the user therefore, the method returns a StateFlow
  * that emits a null when the user has not been connected yet and the new value every time the user changes.
  *
@@ -295,6 +295,7 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
                 }
                 Result.Success(Unit)
             }
+
             is Result.Failure -> cidValidationResult
         }
     }
@@ -306,13 +307,10 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
  * If a [CDN][io.getstream.chat.android.client.cdn.CDN] is configured on this [ChatClient], the download URL
  * and headers are transformed via [CDN.imageRequest][io.getstream.chat.android.client.cdn.CDN.imageRequest] (for
  * images) or [CDN.fileRequest][io.getstream.chat.android.client.cdn.CDN.fileRequest] (for other files) before
- * the download is enqueued. CDN transformations are applied after [generateDownloadUri] and before
- * [interceptRequest], so custom interceptors can override CDN headers.
+ * the download is enqueued.
  *
  * @param context The context used to access the [DownloadManager].
  * @param attachment The attachment to download.
- * @param generateDownloadUri The function that generates the download URI for the attachment.
- * @param interceptRequest The function that intercepts the [DownloadManager.Request] before it's enqueued.
  *
  * @return Executable async [Call] downloading attachment.
  */
@@ -321,15 +319,13 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
 public fun ChatClient.downloadAttachment(
     context: Context,
     attachment: Attachment,
-    generateDownloadUri: (Attachment) -> Uri,
-    interceptRequest: DownloadManager.Request.() -> Unit,
 ): Call<Unit> {
     return CoroutineCall(inheritScope { Job(it) }) {
         val logger by taggedLogger("Chat:DownloadAttachment")
 
         try {
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-            val uri = generateDownloadUri(attachment)
+            val uri = Uri.parse(attachment.assetUrl ?: attachment.imageUrl)
             val subPath = attachment.name ?: attachment.title ?: attachment.parseAttachmentNameFromUrl()
                 ?: createAttachmentFallbackName()
 
@@ -355,8 +351,7 @@ public fun ChatClient.downloadAttachment(
                         cdnRequest?.headers?.forEach { (key, value) ->
                             addRequestHeader(key, value)
                         }
-                    }
-                    .apply(interceptRequest),
+                    },
             )
             Result.Success(Unit)
         } catch (exception: Exception) {
@@ -383,6 +378,7 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
                 logic.channel(channelType = channelType, channelId = channelId)
                     .loadBefore(messageId = null, limit = messageLimit)
             }
+
             is Result.Failure -> cidValidationResult
         }
     }
@@ -404,6 +400,7 @@ public fun ChatClient.loadNewerMessages(
                 logic.channel(channelType = channelType, channelId = channelId)
                     .loadAfter(messageId = baseMessageId, limit = messageLimit)
             }
+
             is Result.Failure -> cidValidationResult
         }
     }
@@ -429,6 +426,7 @@ public fun ChatClient.loadMessagesAroundId(
                 logic.channel(channelType = channelType, channelId = channelId)
                     .loadAround(messageId)
             }
+
             is Result.Failure -> cidValidationResult
         }
     }
@@ -464,6 +462,7 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
                     )
                 }
             }
+
             is Result.Failure -> cidValidationResult
         }
     }
@@ -536,6 +535,7 @@ private suspend fun ChatClient.loadMessageByIdInternal(
                 Result.Failure(Error.GenericError("The message could not be found."))
             }
         }
+
         is Result.Failure -> Result.Failure(
             Error.GenericError("Error while fetching messages from backend. Messages around id: $messageId"),
         )
@@ -566,6 +566,7 @@ public fun ChatClient.loadNewestMessages(
                 logic.channel(channelType = channelType, channelId = channelId)
                     .watch(messageLimit, userPresence)
             }
+
             is Result.Failure -> Result.Failure(cidValidationResult.value)
         }
     }

@@ -24,6 +24,7 @@ import androidx.core.content.res.use
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.getColorFromRes
 import io.getstream.chat.ui.sample.databinding.ChatInfoGroupMemberOptionBinding
+import io.getstream.chat.android.ui.R as UiR
 
 class GroupChatInfoMemberOptionView : FrameLayout {
 
@@ -68,7 +69,7 @@ class GroupChatInfoMemberOptionView : FrameLayout {
                 titleTextView.setTextColor(
                     typedArray.getColor(
                         R.styleable.GroupChatInfoMemberOptionView_optionTextColor,
-                        context.getColorFromRes(R.color.stream_ui_text_color_primary),
+                        context.getColorFromRes(UiR.color.stream_ui_text_color_primary),
                     ),
                 )
             }

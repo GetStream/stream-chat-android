@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.guides.R
+import io.getstream.chat.android.compose.R as ComposeR
 
 /**
  * A custom play button used to overlay video attachment
@@ -39,7 +39,7 @@ internal fun CustomPlayButton(modifier: Modifier) {
             modifier = Modifier
                 .padding(2.dp)
                 .fillMaxSize(0.8f),
-            painter = painterResource(id = R.drawable.stream_design_ic_play_fill),
+            painter = painterResource(id = ComposeR.drawable.stream_design_ic_play_fill),
             tint = Color.White,
             contentDescription = null,
         )

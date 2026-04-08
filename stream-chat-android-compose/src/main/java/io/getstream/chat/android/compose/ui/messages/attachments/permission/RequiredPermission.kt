@@ -42,6 +42,7 @@ import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.ui.common.utils.openSystemSettings
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 @Composable
 internal fun RequiredMediaStoragePermission(
@@ -51,8 +52,8 @@ internal fun RequiredMediaStoragePermission(
     RequiredPermission(
         modifier = modifier,
         icon = R.drawable.stream_design_ic_image,
-        title = R.string.stream_ui_message_composer_permission_storage_title,
-        message = R.string.stream_ui_message_composer_permission_storage_message,
+        title = UiCommonR.string.stream_ui_message_composer_permission_storage_title,
+        message = UiCommonR.string.stream_ui_message_composer_permission_storage_message,
         onGrantPermissionClick = onGrantPermissionClick,
     )
 }
@@ -65,8 +66,8 @@ internal fun RequiredFilesStoragePermission(
     RequiredPermission(
         modifier = modifier,
         icon = R.drawable.stream_design_ic_folder,
-        title = R.string.stream_ui_message_composer_permission_storage_title,
-        message = R.string.stream_ui_message_composer_permission_storage_message,
+        title = UiCommonR.string.stream_ui_message_composer_permission_storage_title,
+        message = UiCommonR.string.stream_ui_message_composer_permission_storage_message,
         onGrantPermissionClick = onGrantPermissionClick,
     )
 }
@@ -79,8 +80,8 @@ internal fun RequiredCameraPermission(
     RequiredPermission(
         modifier = modifier,
         icon = R.drawable.stream_design_ic_camera,
-        title = R.string.stream_ui_message_composer_permission_camera_title,
-        message = R.string.stream_ui_message_composer_permission_camera_message,
+        title = UiCommonR.string.stream_ui_message_composer_permission_camera_title,
+        message = UiCommonR.string.stream_ui_message_composer_permission_camera_message,
         onGrantPermissionClick = context::openSystemSettings,
     )
 }
@@ -123,7 +124,7 @@ private fun RequiredPermission(
         Spacer(modifier = Modifier.height(StreamTokens.spacingMd))
         StreamTextButton(
             style = StreamButtonStyleDefaults.secondaryOutline,
-            text = stringResource(id = R.string.stream_ui_message_composer_grant_permission_button),
+            text = stringResource(id = UiCommonR.string.stream_ui_message_composer_grant_permission_button),
             onClick = onGrantPermissionClick,
         )
     }

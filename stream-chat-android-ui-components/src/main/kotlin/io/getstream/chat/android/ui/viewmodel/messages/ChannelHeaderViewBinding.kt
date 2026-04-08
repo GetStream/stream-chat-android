@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-@file:JvmName("MessageListHeaderViewModelBinding")
+@file:JvmName("ChannelHeaderViewModelBinding")
 
 package io.getstream.chat.android.ui.viewmodel.messages
 
 import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
+import io.getstream.chat.android.ui.feature.messages.header.ChannelHeaderView
 import io.getstream.chat.android.ui.utils.extensions.getMembersStatusText
 
 /**
- * Binds [MessageListHeaderView] with [MessageListHeaderViewModel], updating the view's state
+ * Binds [ChannelHeaderView] with [ChannelHeaderViewModel], updating the view's state
  * based on data provided by the ViewModel.
  *
  * This function sets listeners on the view and ViewModel. Call this method
  * before setting any additional listeners on these objects yourself.
  */
 @JvmName("bind")
-public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, lifecycle: LifecycleOwner) {
+public fun ChannelHeaderViewModel.bindView(view: ChannelHeaderView, lifecycle: LifecycleOwner) {
     channel.observe(lifecycle) { channel ->
         val channelName = ChatUI.channelNameFormatter.formatChannelName(
             channel = channel,

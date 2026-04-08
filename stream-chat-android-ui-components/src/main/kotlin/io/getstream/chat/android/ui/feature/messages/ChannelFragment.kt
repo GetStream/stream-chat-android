@@ -35,19 +35,19 @@ import io.getstream.chat.android.ui.common.state.messages.list.EditMessage
 import io.getstream.chat.android.ui.common.state.messages.list.SendAnyway
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentMessageListBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
-import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
+import io.getstream.chat.android.ui.feature.messages.header.ChannelHeaderView
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.utils.extensions.findListener
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelHeaderViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
 
 /**
  * Self-contained chat screen which internally contains the following components:
  *
- * - [MessageListHeaderView] - displays the navigation icon, the channel information
+ * - [ChannelHeaderView] - displays the navigation icon, the channel information
  *   and the channel image
  * - [MessageListView] - shows a list of paginated messages, with threads, replies,
  *   quotes, reactions and deleted messages
@@ -58,7 +58,7 @@ import io.getstream.chat.android.ui.viewmodel.messages.bindView
  * to explore the SDK's features in a breeze, however, they offer limited customization.
  */
 @Suppress("MemberVisibilityCanBePrivate")
-public open class MessageListFragment : Fragment() {
+public open class ChannelFragment : Fragment() {
 
     /** A specific channel cid to be connected with the Stream channel. */
     protected val cid: String by lazy(LazyThreadSafetyMode.NONE) {
@@ -81,8 +81,8 @@ public open class MessageListFragment : Fragment() {
     }
 
     /** A ViewModel factory for creating message list relevant ViewModels. */
-    protected val factory: MessageListViewModelFactory by lazy(LazyThreadSafetyMode.NONE) {
-        MessageListViewModelFactory(
+    protected val factory: ChannelViewModelFactory by lazy(LazyThreadSafetyMode.NONE) {
+        ChannelViewModelFactory(
             context = requireContext().applicationContext,
             cid = cid,
             messageId = messageId,
@@ -90,8 +90,8 @@ public open class MessageListFragment : Fragment() {
         )
     }
 
-    /** A message list header ViewModel for binding [MessageListHeaderView]. */
-    protected val messageListHeaderViewModel: MessageListHeaderViewModel by viewModels { factory }
+    /** A channel header ViewModel for binding [ChannelHeaderView]. */
+    protected val channelHeaderViewModel: ChannelHeaderViewModel by viewModels { factory }
 
     /** A message list ViewModel for binding [MessageListView]. */
     protected val messageListViewModel: MessageListViewModel by viewModels { factory }
@@ -127,7 +127,7 @@ public open class MessageListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupMessageListHeader(binding.messageListHeaderView)
+        setupChannelHeader(binding.channelHeaderView)
         setupMessageList(binding.messageListView)
         setupMessageComposer(binding.messageComposerView)
     }
@@ -141,14 +141,14 @@ public open class MessageListFragment : Fragment() {
     }
 
     /**
-     * Configures [MessageListHeaderView]. Override the method for a custom setup.
+     * Configures [ChannelHeaderView]. Override the method for a custom setup.
      *
-     * @param messageListHeaderView The message list header that is being configured.
+     * @param channelHeaderView The channel header view that is being configured.
      */
-    protected open fun setupMessageListHeader(messageListHeaderView: MessageListHeaderView) {
-        with(messageListHeaderView) {
+    protected open fun setupChannelHeader(channelHeaderView: ChannelHeaderView) {
+        with(channelHeaderView) {
             if (showHeader) {
-                messageListHeaderViewModel.bindView(this, viewLifecycleOwner)
+                channelHeaderViewModel.bindView(this, viewLifecycleOwner)
 
                 setBackButtonClickListener {
                     messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
@@ -202,11 +202,11 @@ public open class MessageListFragment : Fragment() {
         messageListViewModel.mode.observe(viewLifecycleOwner) { mode ->
             when (mode) {
                 is MessageMode.MessageThread -> {
-                    messageListHeaderViewModel.setActiveThread(mode.parentMessage)
+                    channelHeaderViewModel.setActiveThread(mode.parentMessage)
                     messageComposerViewModel.setMessageMode(MessageMode.MessageThread(mode.parentMessage))
                 }
                 is MessageMode.Normal -> {
-                    messageListHeaderViewModel.resetThread()
+                    channelHeaderViewModel.resetThread()
                     messageComposerViewModel.leaveThread()
                 }
             }
@@ -253,7 +253,7 @@ public open class MessageListFragment : Fragment() {
     }
 
     /**
-     * Creates instances of [MessageListFragment].
+     * Creates instances of [ChannelFragment].
      *
      * @param cid The full channel id. ie messaging:123.
      */
@@ -261,7 +261,7 @@ public open class MessageListFragment : Fragment() {
         private var themeResId: Int = 0
         private var showHeader: Boolean = false
         private var messageId: String? = null
-        private var fragment: MessageListFragment? = null
+        private var fragment: ChannelFragment? = null
         private var threadLoadOlderToNewer = false
 
         /**
@@ -293,19 +293,19 @@ public open class MessageListFragment : Fragment() {
         }
 
         /**
-         * Sets custom message list Fragment. The Fragment must be a subclass of [MessageListFragment].
+         * Sets custom message list Fragment. The Fragment must be a subclass of [ChannelFragment].
          */
-        public fun <T : MessageListFragment> setFragment(fragment: T): Builder = apply {
+        public fun <T : ChannelFragment> setFragment(fragment: T): Builder = apply {
             this.fragment = fragment
         }
 
         /**
          * Builds a custom message list Fragment.
          *
-         * @return A customized [MessageListFragment].
+         * @return A customized [ChannelFragment].
          */
-        public fun build(): MessageListFragment {
-            return (fragment ?: MessageListFragment()).apply {
+        public fun build(): ChannelFragment {
+            return (fragment ?: ChannelFragment()).apply {
                 arguments = bundleOf(
                     ARG_THEME_RES_ID to this@Builder.themeResId,
                     ARG_CHANNEL_ID to this@Builder.cid,
@@ -325,14 +325,14 @@ public open class MessageListFragment : Fragment() {
         private const val ARG_THREAD_LOAD_OLDER_TO_NEWER: String = "thread_load_older_to_newer"
 
         /**
-         * Creates instances of [MessageListFragment].
+         * Creates instances of [ChannelFragment].
          *
          * @param cid The full channel id. ie messaging:123.
          * @param initializer The initializer to customize builder params.
          */
         @JvmStatic
         @JvmOverloads
-        public fun newInstance(cid: String, initializer: (Builder.() -> Unit)? = null): MessageListFragment {
+        public fun newInstance(cid: String, initializer: (Builder.() -> Unit)? = null): ChannelFragment {
             val builder = Builder(cid)
             initializer?.invoke(builder)
             return builder.build()

@@ -93,6 +93,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 import kotlinx.coroutines.launch
 import java.util.Date
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * A stateful composable function rendering a screen for previewing visual media attachments (images and videos).
@@ -382,7 +383,7 @@ public fun MediaGalleryPreviewScreen(
         }
     }
 
-    val playbackErrorText = stringResource(R.string.stream_ui_message_list_video_display_error)
+    val playbackErrorText = stringResource(UiCommonR.string.stream_ui_message_list_video_display_error)
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     var isImmersive by remember { mutableStateOf(false) }
@@ -733,7 +734,7 @@ internal fun MediaGalleryPreviewCloseIcon(
     ) {
         Icon(
             painter = painterResource(id = R.drawable.stream_design_ic_arrow_left),
-            contentDescription = stringResource(id = R.string.stream_ui_back_button),
+            contentDescription = stringResource(id = UiCommonR.string.stream_ui_back_button),
         )
     }
 }

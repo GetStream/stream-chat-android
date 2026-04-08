@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -73,7 +74,9 @@ public fun CreatePollScreen(
         }
     }
     Scaffold(
-        modifier = Modifier.systemBarsPadding(),
+        modifier = Modifier
+            .systemBarsPadding()
+            .imePadding(),
         containerColor = ChatTheme.colors.backgroundCoreApp,
         topBar = {
             PollCreationHeader(
@@ -96,9 +99,9 @@ public fun CreatePollScreen(
         Column(
             modifier = Modifier
                 .padding(padding)
+                .verticalScroll(rememberScrollState())
                 .padding(StreamTokens.spacingMd)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
+                .fillMaxSize(),
         ) {
             // Poll question input
             PollQuestionInput(

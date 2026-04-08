@@ -21,20 +21,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
-import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
+import io.getstream.chat.android.compose.ui.messages.header.ChannelHeader
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.docs.R
 
 /**
- * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/message-list-header/#usage)
+ * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/channel-header/#usage)
  */
-private object MessageListHeaderUsageSnippet {
+private object ChannelHeaderUsageSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = this,
                 channelId = "messaging:123",
             )
@@ -55,7 +55,7 @@ private object MessageListHeaderUsageSnippet {
                     // Load the data for the header here
 
                     Column(Modifier.fillMaxSize()) {
-                        MessageListHeader(
+                        ChannelHeader(
                             modifier = Modifier.wrapContentHeight(),
                             channel = channel,
                             currentUser = currentUser,
@@ -75,13 +75,13 @@ private object MessageListHeaderUsageSnippet {
 }
 
 /**
- * [Handling Actions](https://getstream.io/chat/docs/sdk/android/compose/message-components/message-list-header/#handling-actions)
+ * [Handling Actions](https://getstream.io/chat/docs/sdk/android/compose/message-components/channel-header/#handling-actions)
  */
-private object MessageListHeaderHandlingActionsSnippet {
+private object ChannelHeaderHandlingActionsSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = this,
                 channelId = "messaging:123",
             )
@@ -98,7 +98,7 @@ private object MessageListHeaderHandlingActionsSnippet {
                     val currentUser by listViewModel.user.collectAsState()
                     val connectionState by listViewModel.connectionState.collectAsState()
 
-                    MessageListHeader(
+                    ChannelHeader(
                         channel = channel,
                         currentUser = currentUser,
                         connectionState = connectionState,
@@ -118,13 +118,13 @@ private object MessageListHeaderHandlingActionsSnippet {
 }
 
 /**
- * [Customization](https://getstream.io/chat/docs/sdk/android/compose/message-components/message-list-header/#customization)
+ * [Customization](https://getstream.io/chat/docs/sdk/android/compose/message-components/channel-header/#customization)
  */
-private object MessageListHeaderCustomizationSnippet {
+private object ChannelHeaderCustomizationSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = this,
                 channelId = "messaging:123",
             )
@@ -141,7 +141,7 @@ private object MessageListHeaderCustomizationSnippet {
                     val currentUser by listViewModel.user.collectAsState()
                     val connectionState by listViewModel.connectionState.collectAsState()
 
-                    MessageListHeader(
+                    ChannelHeader(
                         channel = channel,
                         currentUser = currentUser,
                         leadingContent = {

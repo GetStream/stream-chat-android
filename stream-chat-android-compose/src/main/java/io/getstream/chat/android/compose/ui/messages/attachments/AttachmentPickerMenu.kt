@@ -32,7 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.theme.AttachmentPickerParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.util.isKeyboardVisibleAsState
@@ -52,7 +52,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
  * The picker visibility is controlled by [AttachmentsPickerViewModel.isPickerVisible].
  * Toggle it using [AttachmentsPickerViewModel.setPickerVisible].
  *
- * This component is typically used within [MessagesScreen] and handles the complete flow of:
+ * This component is typically used within [ChannelScreen] and handles the complete flow of:
  * 1. Displaying the attachment picker when triggered
  * 2. Managing attachment selection
  * 3. Adding selected attachments to the message composer

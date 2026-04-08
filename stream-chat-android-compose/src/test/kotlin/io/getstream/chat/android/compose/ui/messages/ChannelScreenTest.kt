@@ -24,7 +24,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.test.MockedChatClientTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomUser
@@ -39,7 +39,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [33])
-internal class MessagesScreenTest : MockedChatClientTest {
+internal class ChannelScreenTest : MockedChatClientTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -55,7 +55,7 @@ internal class MessagesScreenTest : MockedChatClientTest {
     fun `initial state`() {
         composeTestRule.setContent {
             ChatTheme {
-                MessagesScreen()
+                ChannelScreen()
             }
         }
 
@@ -65,9 +65,9 @@ internal class MessagesScreenTest : MockedChatClientTest {
 }
 
 @Composable
-private fun MessagesScreen() {
-    MessagesScreen(
-        viewModelFactory = MessagesViewModelFactory(
+private fun ChannelScreen() {
+    ChannelScreen(
+        viewModelFactory = ChannelViewModelFactory(
             context = ApplicationProvider.getApplicationContext(),
             channelId = randomCID(),
         ),

@@ -62,21 +62,21 @@
     <string name="stream_ui_message_composer_error_file_size">Berkas terlalu besar - maksimum %s.</string>
     <string name="stream_ui_message_composer_error_attachment_count">Melebihi jumlah lampiran maksimum (%1$d).</string>
     <string name="stream_ui_message_composer_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
-    <string name="stream_ui_message_list_header_thread_title">Balasan Utas</string>
-    <string name="stream_ui_message_list_header_untitled_channel">Grup Anonim</string>
-    <string name="stream_ui_message_list_header_thread_subtitle">dengan %1$s</string>
-    <string name="stream_ui_message_list_header_disconnected">Mencari jaringan</string>
-    <string name="stream_ui_message_list_header_offline">Offline…</string>
-    <string name="stream_ui_message_list_header_retry">Coba Lagi</string>
-    <string name="stream_ui_message_list_header_member_count_online">%1$s, %2$d Online</string>
-    <plurals name="stream_ui_message_list_header_member_count">
+    <string name="stream_ui_channel_header_thread_title">Balasan Utas</string>
+    <string name="stream_ui_channel_header_untitled_channel">Grup Anonim</string>
+    <string name="stream_ui_channel_header_thread_subtitle">dengan %1$s</string>
+    <string name="stream_ui_channel_header_disconnected">Mencari jaringan</string>
+    <string name="stream_ui_channel_header_offline">Offline…</string>
+    <string name="stream_ui_channel_header_retry">Coba Lagi</string>
+    <string name="stream_ui_channel_header_member_count_online">%1$s, %2$d Online</string>
+    <plurals name="stream_ui_channel_header_member_count">
         <item quantity="other">%1d Anggota</item>
     </plurals>
-    <plurals name="stream_ui_message_list_header_typing_users" tools:ignore="UnusedQuantity">
+    <plurals name="stream_ui_channel_header_typing_users" tools:ignore="UnusedQuantity">
         <item quantity="one">%s sedang mengetik</item>
         <item quantity="other">%s dan %d lainnya sedang mengetik</item>
     </plurals>
-    <string name="stream_ui_message_list_header_back_button_content_description">Tombol kembali</string>
+    <string name="stream_ui_channel_header_back_button_content_description">Tombol kembali</string>
     <string name="stream_ui_message_list_empty">Tidak ada pesan</string>
     <string name="stream_ui_message_list_download_started">Unduhan dimulai</string>
     <string name="stream_ui_message_list_giphy_title">Giphy</string>

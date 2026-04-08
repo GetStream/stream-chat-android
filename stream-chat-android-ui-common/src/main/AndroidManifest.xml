@@ -28,11 +28,6 @@
     </queries>
 
     <application>
-        <activity
-            android:name=".feature.documents.AttachmentDocumentActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            />
         <provider
             android:name=".StreamFileProvider"
             android:authorities="${applicationId}.streamfileprovider"

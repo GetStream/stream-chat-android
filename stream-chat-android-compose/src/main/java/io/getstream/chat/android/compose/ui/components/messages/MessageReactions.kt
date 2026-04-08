@@ -39,7 +39,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewReactionData
 import io.getstream.chat.android.compose.state.messages.MessageReactionItemState
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
@@ -48,6 +47,7 @@ import io.getstream.chat.android.compose.ui.theme.ReactionIconParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.ifNotNull
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Represents a reaction bubble with a list of reactions this message has.
@@ -63,7 +63,7 @@ public fun ClusteredMessageReactions(
     onClick: (() -> Unit)? = null,
 ) {
     val description = pluralStringResource(
-        R.plurals.stream_ui_message_list_semantics_message_reactions,
+        UiCommonR.plurals.stream_ui_message_list_semantics_message_reactions,
         reactions.size,
         reactions.size,
     )
@@ -119,7 +119,7 @@ public fun SegmentedMessageReactions(
     onClick: (() -> Unit)? = null,
 ) {
     val description = pluralStringResource(
-        R.plurals.stream_ui_message_list_semantics_message_reactions,
+        UiCommonR.plurals.stream_ui_message_list_semantics_message_reactions,
         reactions.size,
         reactions.size,
     )

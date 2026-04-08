@@ -37,7 +37,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 
 @ExtendWith(TestCoroutineExtension::class)
-internal class MessageListViewModelFactoryTest {
+internal class ChannelViewModelFactoryTest {
 
     @JvmField
     @RegisterExtension
@@ -62,7 +62,7 @@ internal class MessageListViewModelFactoryTest {
         val cid = "test_cid"
         val messageId = "test_message_id"
         val parentMessageId = "test_parent_message_id"
-        val messageListViewModelFactory = MessageListViewModelFactory(
+        val messageListViewModelFactory = ChannelViewModelFactory(
             context = mock(),
             cid = cid,
             messageId = messageId,
