@@ -214,7 +214,14 @@ public fun ChatTheme(
     }
 
     val context = LocalContext.current
-    val cdn = remember { ChatClient.instance().cdn }
+    val cdn = remember {
+        // Guard needed because ChatClient is not initialized in Compose @Preview environments
+        try {
+            ChatClient.instance().cdn
+        } catch (_: IllegalStateException) {
+            null
+        }
+    }
     val imageLoader = remember(imageLoaderFactory, cdn) {
         val interceptors = buildList {
             cdn?.let { add(CDNImageInterceptor(it)) }
