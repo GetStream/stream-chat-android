@@ -444,7 +444,7 @@ class ChatsActivity : ComponentActivity() {
                     is ChannelInfoViewEvent.UnmuteUser,
                     is ChannelInfoViewEvent.BlockUser,
                     is ChannelInfoViewEvent.UnblockUser,
-                        -> Unit
+                    -> Unit
                 }
             }
         }
@@ -712,37 +712,37 @@ private fun ThreePaneNavigator.navigateToChannel(
 private fun Context.showError(error: ChannelInfoViewEvent.Error) {
     val message = when (error) {
         ChannelInfoViewEvent.RenameChannelError,
-            -> UiCommonR.string.stream_ui_channel_info_rename_group_error
+        -> UiCommonR.string.stream_ui_channel_info_rename_group_error
 
         ChannelInfoViewEvent.MuteChannelError,
         ChannelInfoViewEvent.UnmuteChannelError,
-            -> UiCommonR.string.stream_ui_channel_info_mute_conversation_error
+        -> UiCommonR.string.stream_ui_channel_info_mute_conversation_error
 
         ChannelInfoViewEvent.MuteUserError,
         ChannelInfoViewEvent.UnmuteUserError,
-            -> UiCommonR.string.stream_ui_channel_info_mute_user_error
+        -> UiCommonR.string.stream_ui_channel_info_mute_user_error
 
         ChannelInfoViewEvent.BlockUserError,
         ChannelInfoViewEvent.UnblockUserError,
-            -> UiCommonR.string.stream_ui_channel_info_block_user_error
+        -> UiCommonR.string.stream_ui_channel_info_block_user_error
 
         ChannelInfoViewEvent.LeaveChannelError,
-            -> UiCommonR.string.stream_ui_channel_info_leave_conversation_error
+        -> UiCommonR.string.stream_ui_channel_info_leave_conversation_error
 
         ChannelInfoViewEvent.DeleteChannelError,
-            -> UiCommonR.string.stream_ui_channel_info_delete_conversation_error
+        -> UiCommonR.string.stream_ui_channel_info_delete_conversation_error
 
         ChannelInfoViewEvent.BanMemberError,
-            -> UiCommonR.string.stream_ui_channel_info_ban_member_error
+        -> UiCommonR.string.stream_ui_channel_info_ban_member_error
 
         ChannelInfoViewEvent.UnbanMemberError,
-            -> UiCommonR.string.stream_ui_channel_info_unban_member_error
+        -> UiCommonR.string.stream_ui_channel_info_unban_member_error
 
         ChannelInfoViewEvent.RemoveMemberError,
-            -> UiCommonR.string.stream_ui_channel_info_remove_member_error
+        -> UiCommonR.string.stream_ui_channel_info_remove_member_error
 
         ChannelInfoViewEvent.AddMembersError,
-            -> UiCommonR.string.stream_ui_channel_info_add_members_error
+        -> UiCommonR.string.stream_ui_channel_info_add_members_error
     }
     Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
 }
