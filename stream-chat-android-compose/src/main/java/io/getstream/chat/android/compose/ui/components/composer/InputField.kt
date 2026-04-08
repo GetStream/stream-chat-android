@@ -149,11 +149,34 @@ private class DefaultInputFieldVisualTransformation(
 @Composable
 private fun InputFieldPreview() {
     ChatTheme {
-        InputField(
-            modifier = Modifier.fillMaxWidth(),
-            value = "InputFieldPreview",
-            onValueChange = { _ -> },
-            decorationBox = { innerTextField -> innerTextField.invoke() },
-        )
+        InputFieldFilled()
     }
+}
+
+@Composable
+internal fun InputFieldFilled() {
+    InputField(
+        modifier = Modifier.fillMaxWidth(),
+        value = "Some text",
+        onValueChange = {},
+        decorationBox = { innerTextField -> innerTextField() },
+    )
+}
+
+@Preview
+@Composable
+private fun InputFieldEmptyPreview() {
+    ChatTheme {
+        InputFieldEmpty()
+    }
+}
+
+@Composable
+internal fun InputFieldEmpty() {
+    InputField(
+        modifier = Modifier.fillMaxWidth(),
+        value = "",
+        onValueChange = {},
+        decorationBox = { innerTextField -> innerTextField() },
+    )
 }
