@@ -57,6 +57,9 @@ internal object UserTestData {
             "last_active": "2020-01-03T00:00:00.000Z",
             "teams": ["team1", "team2"],
             "teams_role": {"team1": "admin", "team2": "member"},
+            "total_unread_count": 5,
+            "unread_channels": 3,
+            "unread_threads": 2,
             "blocked_user_ids": ["blocked1"],
             "avg_response_time": 3600,
             "custom_field": "custom_value"
@@ -138,12 +141,28 @@ internal object UserTestData {
         deactivatedAt = null,
         updatedAt = Date(1577923200000L),
         lastActive = Date(1578009600000L),
+        totalUnreadCount = 5,
+        unreadChannels = 3,
+        unreadThreads = 2,
         teams = listOf("team1", "team2"),
         teamsRole = mapOf("team1" to "admin", "team2" to "member"),
         blockedUserIds = listOf("blocked1"),
         avgResponseTime = 3600,
         extraData = mapOf("custom_field" to "custom_value"),
     )
+
+    @Language("JSON")
+    val jsonUnreadCountsNull = """
+        {
+            "id": "user123",
+            "role": "user",
+            "banned": false,
+            "online": true,
+            "total_unread_count": null,
+            "unread_channels": null,
+            "unread_threads": null
+        }
+    """.trimIndent()
 
     val expectedOptionalFieldsMissing = User(
         id = "user456",

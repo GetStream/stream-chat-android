@@ -84,7 +84,8 @@ internal class UserAdapter(
                 "updated_at" -> updatedAt = dateAdapter.fromJson(reader)
 
                 // OwnUserResponse fields — parsed to maintain parity with the DTO path.
-                // TODO: Check "total_unread_count": null JSON
+                // DTO declares `Int = 0`: default applies when field is absent; null throws.
+                // reader.nextInt() also throws on null, matching the DTO behavior.
                 "total_unread_count" -> totalUnreadCount = reader.nextInt()
                 "unread_channels" -> unreadChannels = reader.nextInt()
                 "unread_threads" -> unreadThreads = reader.nextInt()

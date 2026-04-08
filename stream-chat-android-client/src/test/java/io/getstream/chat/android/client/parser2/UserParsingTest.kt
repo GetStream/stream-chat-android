@@ -73,6 +73,13 @@ internal class UserParsingTest {
         assertEquals(UserTestData.expectedOptionalFieldsMissing, domain)
     }
 
+    @Test
+    fun `DTO path - throws on null unread counts`() {
+        assertThrows<JsonDataException> {
+            parser.fromJson(UserTestData.jsonUnreadCountsNull, DownstreamUserDto::class.java)
+        }
+    }
+
     // endregion
 
     // region Direct path (JSON → User via UserAdapter)
@@ -87,6 +94,13 @@ internal class UserParsingTest {
     fun `Direct path - deserializes with optional fields missing`() {
         val domain = userAdapter.fromJson(UserTestData.jsonOptionalFieldsMissing)
         assertEquals(UserTestData.expectedOptionalFieldsMissing, domain)
+    }
+
+    @Test
+    fun `Direct path - throws on null unread counts`() {
+        assertThrows<JsonDataException> {
+            userAdapter.fromJson(UserTestData.jsonUnreadCountsNull)
+        }
     }
 
     // endregion
