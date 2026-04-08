@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
+import io.getstream.chat.android.compose.ui.components.channels.MessagePreviewContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.SearchResultItemCenterContentParams
 import io.getstream.chat.android.compose.ui.theme.SearchResultItemLeadingContentParams
@@ -177,16 +178,10 @@ internal fun RowScope.DefaultSearchResultItemCenterContent(
             color = ChatTheme.colors.textPrimary,
         )
 
-        Text(
-            text = ChatTheme.messagePreviewFormatter.formatMessagePreview(
-                searchResultItemState.message,
-                currentUser,
-                false,
-            ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = ChatTheme.typography.captionDefault,
-            color = ChatTheme.colors.textSecondary,
+        MessagePreviewContent(
+            message = searchResultItemState.message,
+            currentUser = currentUser,
+            isDirectMessaging = false,
         )
     }
 }

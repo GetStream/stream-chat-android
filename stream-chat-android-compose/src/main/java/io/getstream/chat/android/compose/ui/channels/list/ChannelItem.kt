@@ -49,7 +49,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -64,7 +63,9 @@ import io.getstream.chat.android.compose.ui.components.TypingIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
 import io.getstream.chat.android.compose.ui.theme.ChannelItemCenterContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelItemDraftPreviewParams
 import io.getstream.chat.android.compose.ui.theme.ChannelItemLeadingContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelItemMessagePreviewParams
 import io.getstream.chat.android.compose.ui.theme.ChannelItemReadStatusIndicatorParams
 import io.getstream.chat.android.compose.ui.theme.ChannelItemTrailingContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelItemUnreadCountIndicatorParams
@@ -340,28 +341,7 @@ private fun MessageRow(
                     ),
                 )
             }
-
-            val lastMessageText =
-                channelItemState.draftMessage
-                    ?.let { ChatTheme.messagePreviewFormatter.formatDraftMessagePreview(it) }
-                    ?: lastMessage?.let {
-                        ChatTheme.messagePreviewFormatter.formatMessagePreview(
-                            it, currentUser, isDirectMessaging,
-                        )
-                    }
-
-            Text(
-                modifier = Modifier
-                    .testTag("Stream_MessagePreview")
-                    .weight(1f),
-                text = lastMessageText
-                    ?: AnnotatedString(stringResource(R.string.stream_compose_no_messages_yet)),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = ChatTheme.typography.captionDefault,
-                color = ChatTheme.colors.textSecondary,
-                inlineContent = ChatTheme.messagePreviewIconFactory.createPreviewIcons(),
-            )
+            MessageContent(channelItemState, currentUser, lastMessage, isDirectMessaging)
         }
 
         if (channelItemState.isMuted && mutePosition == MuteIndicatorPosition.TrailingBottom) {
@@ -374,6 +354,44 @@ private fun MessageRow(
                 tint = ChatTheme.colors.textTertiary,
             )
         }
+    }
+}
+
+@Composable
+private fun RowScope.MessageContent(
+    channelItemState: ItemState.ChannelItemState,
+    currentUser: User?,
+    lastMessage: Message?,
+    isDirectMessaging: Boolean,
+) {
+    val draftMessage = channelItemState.draftMessage
+    when {
+        draftMessage != null -> ChatTheme.componentFactory.ChannelItemDraftPreview(
+            params = ChannelItemDraftPreviewParams(
+                draftMessage = draftMessage,
+                modifier = Modifier.weight(1f),
+            ),
+        )
+
+        lastMessage != null -> ChatTheme.componentFactory.ChannelItemMessagePreview(
+            params = ChannelItemMessagePreviewParams(
+                message = lastMessage,
+                currentUser = currentUser,
+                isDirectMessaging = isDirectMessaging,
+                modifier = Modifier.weight(1f),
+            ),
+        )
+
+        else -> Text(
+            modifier = Modifier
+                .testTag("Stream_MessagePreview")
+                .weight(1f),
+            text = stringResource(R.string.stream_compose_no_messages_yet),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = ChatTheme.typography.captionDefault,
+            color = ChatTheme.colors.textSecondary,
+        )
     }
 }
 

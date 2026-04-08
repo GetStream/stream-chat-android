@@ -40,9 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.LayoutDirection
 import kotlinx.coroutines.flow.filter
 import kotlin.math.roundToInt
 
@@ -68,7 +66,6 @@ public fun SwipeableChannelItem(
     swipeActions: @Composable () -> Unit,
     content: @Composable () -> Unit,
 ) {
-    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val coordinator = LocalSwipeRevealCoordinator.current
 
     val anchoredDraggableState = remember {
@@ -112,7 +109,7 @@ public fun SwipeableChannelItem(
         Row(
             modifier = Modifier
                 .fillMaxHeight()
-                .align(if (isRtl) Alignment.CenterStart else Alignment.CenterEnd)
+                .align(Alignment.CenterEnd)
                 .onSizeChanged { size -> actionsWidthPx = size.width },
         ) {
             swipeActions()
@@ -124,7 +121,7 @@ public fun SwipeableChannelItem(
                 .offset {
                     val raw = anchoredDraggableState.offset
                     val x = if (raw.isNaN()) 0 else raw.roundToInt()
-                    IntOffset(x = if (isRtl) -x else x, y = 0)
+                    IntOffset(x = x, y = 0)
                 }
                 .background(backgroundColor)
                 .anchoredDraggable(

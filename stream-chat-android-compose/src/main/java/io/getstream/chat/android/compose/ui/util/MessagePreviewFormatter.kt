@@ -22,7 +22,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import io.getstream.chat.android.client.utils.message.hasAudioRecording
@@ -35,7 +34,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
-import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 
@@ -48,35 +46,25 @@ public interface MessagePreviewFormatter {
      * Generates a preview title for the given message.
      *
      * @param message The message whose data is used to generate the preview title.
+     * @param currentUser The currently logged in user.
      * @return The formatted text representation of the preview title.
      */
     public fun formatMessageTitle(message: Message, currentUser: User?): AnnotatedString
 
     /**
-     * Generates a preview text for the given message.
+     * Generates a preview text for the given message content (icon + text),
+     * excluding the sender name prefix.
      *
      * @param message The message whose data is used to generate the preview text.
      * @param currentUser The currently logged in user.
      * @param isDirectMessaging Whether the channel is a direct message conversation.
-     * Used to determine sender prefix behavior.
-     * @param includeSenderName Whether to include the sender name prefix in the preview.
      * @return The formatted text representation for the given message.
      */
     public fun formatMessagePreview(
         message: Message,
         currentUser: User?,
         isDirectMessaging: Boolean,
-        includeSenderName: Boolean = true,
     ): AnnotatedString
-
-    /**
-     * Generates a preview text for the given draft message.
-     * This is used to show a preview of the draft message in the the channel list.
-     *
-     * @param draftMessage The draft message whose data is used to generate the preview text.
-     * @return The formatted text representation for the given draft message.
-     */
-    public fun formatDraftMessagePreview(draftMessage: DraftMessage): AnnotatedString
 
     public companion object {
         /**
@@ -85,43 +73,38 @@ public interface MessagePreviewFormatter {
          * @param context The context to load string resources.
          * @param autoTranslationEnabled Whether the auto-translation is enabled.
          * @param typography The typography to use for styling.
-         * @param colors The color palette used for styling.
          * @return The default implementation of [MessagePreviewFormatter].
          *
          * @see [DefaultMessagePreviewFormatter]
          */
-        @Suppress("detekt:ForbiddenComment")
         public fun defaultFormatter(
             context: Context,
             autoTranslationEnabled: Boolean,
             typography: StreamDesign.Typography,
-            colors: StreamDesign.Colors,
         ): MessagePreviewFormatter {
             return DefaultMessagePreviewFormatter(
                 context = context,
                 autoTranslationEnabled = autoTranslationEnabled,
-                draftMessageLabelTextStyle = typography.metadataEmphasis.copy(color = colors.accentPrimary),
-                messageTextStyle = typography.bodyEmphasis,
-                senderNameTextStyle = typography.bodyEmphasis,
-                // TODO: replace with a dedicated italic token once the design system provides one
-                attachmentTextFontStyle = typography.bodyDefault.copy(fontStyle = FontStyle.Italic),
+                messageTextStyle = typography.captionEmphasis,
+                attachmentTextFontStyle = typography.captionDefault,
             )
         }
     }
 }
 
 /**
- * The default implementation of [MessagePreviewFormatter] that allows to generate a preview text for
- * a message with the following spans: sender name, message text, attachments preview text.
+ * The default implementation of [MessagePreviewFormatter] that generates a preview text for
+ * message content: icon + text / attachment labels.
  *
  * @param context The context to load string resources.
+ * @param autoTranslationEnabled Whether the auto-translation is enabled.
+ * @param messageTextStyle The text style for message text.
+ * @param attachmentTextFontStyle The text style for attachment text.
  */
 private class DefaultMessagePreviewFormatter(
     private val context: Context,
     private val autoTranslationEnabled: Boolean,
-    private val draftMessageLabelTextStyle: TextStyle,
     private val messageTextStyle: TextStyle,
-    private val senderNameTextStyle: TextStyle,
     private val attachmentTextFontStyle: TextStyle,
 ) : MessagePreviewFormatter {
 
@@ -164,32 +147,23 @@ private class DefaultMessagePreviewFormatter(
      * @param currentUser The currently logged in user.
      * @return The formatted text representation for the given message.
      */
-    @Suppress("LongMethod")
     override fun formatMessagePreview(
         message: Message,
         currentUser: User?,
         isDirectMessaging: Boolean,
-        includeSenderName: Boolean,
     ): AnnotatedString {
         return buildAnnotatedString {
             val displayedText = resolveDisplayedText(message, currentUser)
-            val appendSender: ((Message) -> Unit)? = if (includeSenderName) {
-                { msg -> appendSenderName(msg, currentUser, senderNameTextStyle, isDirectMessaging) }
-            } else {
-                null
-            }
             when {
                 message.isSystem() -> append(displayedText)
 
                 message.isDeleted() -> {
-                    appendSender?.invoke(message)
                     appendInlineContent(DefaultMessagePreviewIconFactory.DELETED)
                     append(SPACE)
                     append(context.getString(R.string.stream_compose_message_deleted_preview))
                 }
 
                 message.isPoll() -> {
-                    appendSender?.invoke(message)
                     appendInlineContent(DefaultMessagePreviewIconFactory.POLL)
                     append(SPACE)
                     if (message.isPollClosed()) {
@@ -210,14 +184,12 @@ private class DefaultMessagePreviewFormatter(
                 }
 
                 message.hasAudioRecording() -> {
-                    appendSender?.invoke(message)
                     appendInlineContent(DefaultMessagePreviewIconFactory.VOICE_MESSAGE)
                     append(SPACE)
                     append(context.getString(R.string.stream_compose_audio_recording_preview))
                 }
 
                 message.hasSharedLocation() -> {
-                    appendSender?.invoke(message)
                     appendInlineContent(DefaultMessagePreviewIconFactory.LOCATION)
                     append(SPACE)
                     message.sharedLocation?.let { location ->
@@ -225,10 +197,7 @@ private class DefaultMessagePreviewFormatter(
                     }
                 }
 
-                else -> {
-                    appendSender?.invoke(message)
-                    appendTypedAttachmentPreview(message.attachments, displayedText)
-                }
+                else -> appendTypedAttachmentPreview(message.attachments, displayedText)
             }
         }
     }
@@ -333,61 +302,6 @@ private class DefaultMessagePreviewFormatter(
                 context.resources.getQuantityString(pluralLabelResId, count, count),
             )
             else -> append(context.getString(singleLabelResId))
-        }
-    }
-
-    /**
-     * Generates a preview text for the given draft message.
-     * This is used to show a preview of the draft message in the the channel list.
-     *
-     * @param draftMessage The draft message whose data is used to generate the preview text.
-     * @return The formatted text representation for the given draft message.
-     */
-    override fun formatDraftMessagePreview(draftMessage: DraftMessage): AnnotatedString = buildAnnotatedString {
-        withStyle(
-            style = SpanStyle(
-                fontStyle = draftMessageLabelTextStyle.fontStyle,
-                fontFamily = draftMessageLabelTextStyle.fontFamily,
-                color = draftMessageLabelTextStyle.color,
-            ),
-        ) {
-            append(context.getString(R.string.stream_compose_channel_list_draft))
-        }
-        append(SPACE)
-        withStyle(
-            style = SpanStyle(
-                fontStyle = messageTextStyle.fontStyle,
-                fontFamily = messageTextStyle.fontFamily,
-                color = messageTextStyle.color,
-            ),
-        ) {
-            append(draftMessage.text)
-        }
-    }
-
-    /**
-     * Appends the sender name to the [AnnotatedString].
-     */
-    private fun AnnotatedString.Builder.appendSenderName(
-        message: Message,
-        currentUser: User?,
-        senderNameTextStyle: TextStyle,
-        isDirectMessaging: Boolean = false,
-    ) {
-        val sender = message.getSenderDisplayName(context, currentUser, isDirectMessaging)
-
-        if (sender != null) {
-            append("$sender: ")
-
-            addStyle(
-                SpanStyle(
-                    fontStyle = senderNameTextStyle.fontStyle,
-                    fontWeight = senderNameTextStyle.fontWeight,
-                    fontFamily = senderNameTextStyle.fontFamily,
-                ),
-                start = 0,
-                end = sender.length,
-            )
         }
     }
 

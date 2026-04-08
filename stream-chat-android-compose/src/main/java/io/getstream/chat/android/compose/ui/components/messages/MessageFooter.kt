@@ -67,10 +67,16 @@ public fun MessageFooter(
                     message.replyCount,
                 )
             }
+            val threadFooterTextColor = if (messageItem.isPreviewMode) {
+                ChatTheme.colors.textOnAccent
+            } else {
+                ChatTheme.colors.chatTextLink
+            }
             MessageThreadFooter(
                 participants = message.threadParticipants,
                 messageAlignment = alignment,
                 text = threadFooterText,
+                textColor = threadFooterTextColor,
             )
         }
 

@@ -114,7 +114,7 @@ public fun SelectedMessageMenu(
     currentUser: User? = null,
     onDismiss: () -> Unit = {},
 ) {
-    val selectedMessageSnapshot = LocalSelectedMessageSnapshot.current.value
+    val selectedMessageSnapshot by LocalSelectedMessageSnapshot.current
     val messageItemState = MessageItemState(
         message = message,
         isMine = message.user.id == currentUser?.id,
@@ -267,7 +267,7 @@ private fun Modifier.unclippedVerticalScroll(state: UnclippedScrollState): Modif
 }
 
 private const val BackgroundBlur = 50
-private const val DimAmount = 0.6f
+private const val DimAmount = 0.7f
 
 /**
  * Holds the animation state for the [SelectedMessageMenu] pop-out effect.

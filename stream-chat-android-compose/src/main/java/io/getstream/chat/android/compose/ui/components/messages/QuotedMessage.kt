@@ -167,6 +167,7 @@ private fun QuotedMessageText(body: QuotedMessageBody, color: Color) {
                 painter = painterResource(iconId),
                 contentDescription = null,
                 tint = color,
+                modifier = Modifier.size(12.dp),
             )
         }
 
