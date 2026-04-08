@@ -22,6 +22,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
@@ -45,8 +46,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedInputText
 
 /**
@@ -79,7 +80,6 @@ public fun InputField(
     innerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
     visualTransformation: VisualTransformation = DefaultInputFieldVisualTransformation(
-        inputFieldTheme = ChatTheme.messageComposerTheme.inputField,
         typography = ChatTheme.typography,
         colors = ChatTheme.colors,
     ),
@@ -99,13 +99,13 @@ public fun InputField(
         }
     }
 
-    val theme = ChatTheme.messageComposerTheme.inputField
+    val colors = ChatTheme.colors
 
     BasicTextField(
         modifier = modifier
-            .border(border = border, shape = theme.borderShape)
-            .clip(shape = theme.borderShape)
-            .background(theme.backgroundColor)
+            .border(border = border, shape = InputFieldBorder)
+            .clip(shape = InputFieldBorder)
+            .background(colors.backgroundCoreSurfaceDefault)
             .padding(innerPadding),
         value = textState,
         onValueChange = {
@@ -115,8 +115,8 @@ public fun InputField(
             }
         },
         visualTransformation = visualTransformation,
-        textStyle = theme.textStyle,
-        cursorBrush = SolidColor(theme.cursorBrushColor),
+        textStyle = ChatTheme.typography.bodyDefault.copy(color = colors.textPrimary),
+        cursorBrush = SolidColor(colors.accentPrimary),
         decorationBox = { innerTextField -> decorationBox(innerTextField) },
         maxLines = maxLines,
         singleLine = maxLines == 1,
@@ -125,31 +125,21 @@ public fun InputField(
     )
 }
 
-/**
- * Default visual transformation for the [InputField] composable.
- * Applies text styling and link styling to the input text.
- *
- * @param inputFieldTheme The theme for the input field.
- * @param typography The typography styles to be used.
- * @param colors The color palette to be used.
- */
+private val InputFieldBorder = RoundedCornerShape(StreamTokens.radius3xl)
+
 private class DefaultInputFieldVisualTransformation(
-    val inputFieldTheme: ComposerInputFieldTheme,
     val typography: StreamDesign.Typography,
     val colors: StreamDesign.Colors,
 ) : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
-        val textColor = inputFieldTheme.textStyle.color
-        val fontStyle = typography.bodyDefault.fontStyle
-        val linkStyle = TextStyle(
-            color = colors.accentPrimary,
-            textDecoration = TextDecoration.Underline,
-        )
         val transformed = buildAnnotatedInputText(
             text = text.text,
-            textColor = textColor,
-            textFontStyle = fontStyle,
-            linkStyle = linkStyle,
+            textColor = colors.textPrimary,
+            textFontStyle = typography.bodyDefault.fontStyle,
+            linkStyle = TextStyle(
+                color = colors.accentPrimary,
+                textDecoration = TextDecoration.Underline,
+            ),
         )
         return TransformedText(transformed, OffsetMapping.Identity)
     }
