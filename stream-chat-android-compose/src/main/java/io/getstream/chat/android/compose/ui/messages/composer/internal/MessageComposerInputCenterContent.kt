@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
@@ -84,6 +85,7 @@ internal fun MessageComposerInputCenterContent(
 
     BasicTextField(
         modifier = modifier
+            .fillMaxWidth()
             .testTag("Stream_ComposerInputField")
             .heightIn(min = 48.dp),
         value = textState,

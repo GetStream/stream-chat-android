@@ -18,8 +18,7 @@
     android:width="20dp"
     android:height="20dp"
     android:viewportWidth="20"
-    android:viewportHeight="20"
-    android:autoMirrored="true">
+    android:viewportHeight="20">
     <path
         android:strokeColor="#FF000000"
         android:strokeWidth="1.5"

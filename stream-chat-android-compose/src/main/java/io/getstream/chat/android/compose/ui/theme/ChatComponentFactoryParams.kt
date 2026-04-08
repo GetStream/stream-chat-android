@@ -61,6 +61,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.CreatePollParams
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
@@ -265,6 +266,32 @@ public data class ChannelItemReadStatusIndicatorParams(
     val channel: Channel,
     val message: Message,
     val currentUser: User?,
+    val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.ChannelItemMessagePreview].
+ *
+ * @param message The message to preview.
+ * @param currentUser The currently logged-in user.
+ * @param isDirectMessaging Whether this is a one-to-one conversation.
+ * @param modifier Modifier for styling.
+ */
+public data class ChannelItemMessagePreviewParams(
+    val message: Message,
+    val currentUser: User?,
+    val isDirectMessaging: Boolean,
+    val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.ChannelItemDraftPreview].
+ *
+ * @param draftMessage The draft message to preview.
+ * @param modifier Modifier for styling.
+ */
+public data class ChannelItemDraftPreviewParams(
+    val draftMessage: DraftMessage,
     val modifier: Modifier = Modifier,
 )
 

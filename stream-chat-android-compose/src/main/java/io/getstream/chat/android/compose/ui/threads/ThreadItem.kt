@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
+import io.getstream.chat.android.compose.ui.components.channels.MessagePreviewContent
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -144,19 +145,15 @@ internal fun ThreadItemTitle(
 @Composable
 internal fun ThreadItemParentMessage(thread: Thread, currentUser: User?) {
     val isOneToOneChannel = thread.channel?.isOneToOne(currentUser) ?: false
-    val message = thread.parentMessage
-    val formatter = ChatTheme.messagePreviewFormatter
-    val text = remember(message, currentUser, isOneToOneChannel, formatter) {
-        formatter.formatMessagePreview(message, currentUser, isOneToOneChannel)
-    }
-    Text(
+    MessagePreviewContent(
         modifier = Modifier.fillMaxWidth(),
-        text = text,
-        color = ChatTheme.colors.textPrimary,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        style = ChatTheme.typography.bodyDefault,
-        inlineContent = ChatTheme.messagePreviewIconFactory.createPreviewIcons(),
+        message = thread.parentMessage,
+        currentUser = currentUser,
+        isDirectMessaging = isOneToOneChannel,
+        senderTextStyle = ChatTheme.typography.bodyEmphasis,
+        senderColor = ChatTheme.colors.textSecondary,
+        contentTextStyle = ChatTheme.typography.bodyDefault,
+        contentColor = ChatTheme.colors.textPrimary,
     )
 }
 

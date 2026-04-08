@@ -141,7 +141,6 @@ internal fun RowScope.DefaultPinnedMessageItemCenterContent(
                 message = message,
                 currentUser = currentUser,
                 isDirectMessaging = false,
-                includeSenderName = false,
             )
         }
         Text(
