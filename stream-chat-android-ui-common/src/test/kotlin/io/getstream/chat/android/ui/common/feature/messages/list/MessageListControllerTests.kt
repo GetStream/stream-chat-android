@@ -166,7 +166,10 @@ internal class MessageListControllerTests {
     @Test
     fun `Given regular message followed and preceded by current user message When grouping messages Should add middle position to message`() =
         runTest {
-            val messages = randomMessageList(3) { randomMessage(user = user1) }
+            val now = java.util.Date()
+            val messages = randomMessageList(3) {
+                randomMessage(user = user1, createdAt = now, createdLocallyAt = now)
+            }
             val messagesState = MutableStateFlow(messages)
             val controller = Fixture()
                 .givenCurrentUser()
