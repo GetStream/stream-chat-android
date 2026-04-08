@@ -45,7 +45,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.poll.PollOptionInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -131,57 +130,69 @@ private fun ReorderableScope.PollOptionRow(
     onRemove: () -> Unit,
 ) {
     val colors = ChatTheme.colors
-    val borderColor = if (item.pollOptionError == null) colors.borderCoreDefault else colors.accentError
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .border(width = 1.dp, color = borderColor, shape = PollInputShape)
+            .border(width = 1.dp, color = colors.borderCoreDefault, shape = PollInputShape)
             .clip(shape = PollInputShape),
-        verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(
-            modifier = Modifier.draggableHandle(),
-            onClick = {},
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.stream_design_ic_reorder),
-                contentDescription = null,
-                tint = colors.inputTextIcon,
-                modifier = Modifier.size(20.dp),
+            IconButton(
+                modifier = Modifier.draggableHandle(),
+                onClick = {},
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.stream_design_ic_reorder),
+                    contentDescription = null,
+                    tint = colors.inputTextIcon,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
+
+            PollOptionInput(
+                modifier = Modifier.weight(1f),
+                value = item.title,
+                description = stringResource(id = R.string.stream_compose_poll_option_hint),
+                onValueChange = onTitleChange,
             )
+
+            IconButton(onClick = onRemove) {
+                Icon(
+                    painter = painterResource(R.drawable.stream_design_ic_minus_circle),
+                    contentDescription = null,
+                    tint = colors.inputTextIcon,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
         }
 
-        PollOptionInput(
-            modifier = Modifier.weight(1f),
-            value = item.title,
-            description = stringResource(id = R.string.stream_compose_poll_option_hint),
-            onValueChange = onTitleChange,
-            decorationBox = { innerTextField ->
-                if (item.pollOptionError == null || item.title.isBlank()) {
-                    innerTextField()
-                } else {
-                    Column {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = StreamTokens.spacing2xs),
-                            text = item.pollOptionError.message,
-                            color = colors.accentError,
-                            fontSize = 12.sp,
-                        )
-                        innerTextField()
-                    }
-                }
-            },
-        )
-
-        IconButton(onClick = onRemove) {
-            Icon(
-                painter = painterResource(R.drawable.stream_design_ic_minus_circle),
-                contentDescription = null,
-                tint = colors.inputTextIcon,
-                modifier = Modifier.size(20.dp),
-            )
+        if (item.pollOptionError != null && item.title.isNotBlank()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = StreamTokens.spacingMd,
+                        end = StreamTokens.spacingMd,
+                        bottom = StreamTokens.spacingSm,
+                    ),
+                horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.stream_design_ic_exclamation_circle),
+                    contentDescription = null,
+                    tint = colors.accentError,
+                    modifier = Modifier.size(20.dp),
+                )
+                Text(
+                    text = item.pollOptionError.message,
+                    color = colors.accentError,
+                    style = ChatTheme.typography.captionDefault,
+                )
+            }
         }
     }
 }
