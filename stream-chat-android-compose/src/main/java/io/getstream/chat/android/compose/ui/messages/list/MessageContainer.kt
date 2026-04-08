@@ -414,7 +414,7 @@ private fun ShowInChannelAnnotation(item: MessageItemState, onThreadClick: (Mess
             text = stringResource(alsoSendToChannelTextRes),
             trailingText = stringResource(R.string.stream_compose_message_list_view),
             contentColor = item.annotationContentColor(),
-            trailingTextColor = ChatTheme.colors.chatTextLink,
+            trailingTextColor = item.annotationContentColor(default = ChatTheme.colors.chatTextLink),
             onClick = { onThreadClick(item.message) },
         )
     }

@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
@@ -47,6 +48,7 @@ import kotlin.math.round
  * @param text Text of the label.
  * @param messageAlignment The alignment of the message, used for the content orientation.
  * @param modifier Modifier for styling.
+ * @param textColor Color of the thread replies label text.
  */
 @Composable
 public fun MessageThreadFooter(
@@ -54,6 +56,7 @@ public fun MessageThreadFooter(
     text: String,
     messageAlignment: MessageAlignment,
     modifier: Modifier = Modifier,
+    textColor: Color = ChatTheme.colors.chatTextLink,
 ) {
     Row(
         modifier = modifier,
@@ -69,7 +72,7 @@ public fun MessageThreadFooter(
             modifier = Modifier.testTag("Stream_ThreadRepliesLabel"),
             text = text,
             style = ChatTheme.typography.captionEmphasis,
-            color = ChatTheme.colors.chatTextLink,
+            color = textColor,
         )
 
         if (messageAlignment == MessageAlignment.End) {
