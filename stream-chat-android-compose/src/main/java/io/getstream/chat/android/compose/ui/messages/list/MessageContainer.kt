@@ -490,6 +490,7 @@ private fun MessageContentWithReactions(
     reactions: (@Composable () -> Unit)?,
     content: @Composable () -> Unit,
 ) {
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     Layout(
         modifier = Modifier.zIndex(1f),
         content = {
@@ -514,9 +515,10 @@ private fun MessageContentWithReactions(
             reactionsPlaceable?.let { rp ->
                 val protrusionPx = StreamTokens.spacingXs.roundToPx()
                 // The reactions are aligned opposite to the message alignment
-                val x = when (messageAlignment) {
-                    MessageAlignment.End -> minOf(0, width - rp.width) - protrusionPx
-                    MessageAlignment.Start -> maxOf(0, width - rp.width) + protrusionPx
+                val reactionsOnEnd = (messageAlignment == MessageAlignment.Start) xor isRtl
+                val x = when (reactionsOnEnd) {
+                    false -> minOf(0, width - rp.width) - protrusionPx
+                    true -> maxOf(0, width - rp.width) + protrusionPx
                 }
                 rp.place(x, 0, zIndex = 1f)
             }

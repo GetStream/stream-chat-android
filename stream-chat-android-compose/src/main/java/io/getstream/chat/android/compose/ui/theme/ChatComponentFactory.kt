@@ -94,6 +94,8 @@ import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
+import io.getstream.chat.android.compose.ui.components.channels.DraftPreviewContent
+import io.getstream.chat.android.compose.ui.components.channels.MessagePreviewContent
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
 import io.getstream.chat.android.compose.ui.components.common.CommandChip
@@ -464,6 +466,34 @@ public interface ChatComponentFactory {
             channel = params.channel,
             message = params.message,
             currentUser = params.currentUser,
+            modifier = params.modifier,
+        )
+    }
+
+    /**
+     * The default message preview in the channel item, showing the sender name and message content.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ChannelItemMessagePreview(params: ChannelItemMessagePreviewParams) {
+        MessagePreviewContent(
+            message = params.message,
+            currentUser = params.currentUser,
+            isDirectMessaging = params.isDirectMessaging,
+            modifier = params.modifier,
+        )
+    }
+
+    /**
+     * The default draft message preview in the channel item, showing the "Draft:" label and draft text.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ChannelItemDraftPreview(params: ChannelItemDraftPreviewParams) {
+        DraftPreviewContent(
+            draftMessage = params.draftMessage,
             modifier = params.modifier,
         )
     }
