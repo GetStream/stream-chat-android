@@ -62,7 +62,8 @@
   <string name="stream_ui_message_composer_gallery_access">"Permitir acceso a tu galería"</string>
   <string name="stream_ui_message_composer_hint_cannot_send_message">"No puedes enviar mensajes en este canal"</string>
   <string name="stream_ui_message_composer_hint_normal">"Escribe algo aquí"</string>
-  <string name="stream_ui_message_composer_hold_to_record">"Mantén pulsado para empezar, suelta para enviar."</string>
+  <string name="stream_ui_message_composer_hold_to_record_send">"Mantén pulsado para empezar, suelta para enviar."</string>
+  <string name="stream_ui_message_composer_hold_to_record_save">"Mantén pulsado para empezar, suelta para guardar."</string>
   <string name="stream_ui_message_composer_instant_commands">"Comandos instantáneos"</string>
   <string name="stream_ui_message_composer_mode_edit">"Editar Mensaje"</string>
   <string name="stream_ui_message_composer_mode_reply">"Contestar al mensaje"</string>
