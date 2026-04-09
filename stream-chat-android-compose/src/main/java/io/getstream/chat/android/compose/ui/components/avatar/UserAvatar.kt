@@ -94,6 +94,7 @@ internal fun BoxWithConstraintsScope.resolveIndicatorDimensions(): OnlineIndicat
             offset = base.offset,
         )
     }
+
     maxWidth >= AvatarSize.ExtraExtraLarge -> OnlineIndicatorDimensions.ExtraExtraLarge
     maxWidth >= AvatarSize.ExtraLarge -> OnlineIndicatorDimensions.ExtraLarge
     maxWidth >= AvatarSize.Large -> OnlineIndicatorDimensions.Large
@@ -161,35 +162,40 @@ private fun rememberPlaceholderInitials(user: User, availableWidth: Dp): String 
 
 @Preview
 @Composable
-private fun AvatarPreview() {
+private fun UserAvatarContentPreview() {
+    ChatTheme {
+        UserAvatarContent()
+    }
+}
+
+@Composable
+internal fun UserAvatarContent() {
     val sizes = AvatarSize.run { listOf(ExtraLarge, Large, Medium, Small, ExtraSmall) }
 
-    ChatTheme {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                sizes.forEach { size ->
-                    UserAvatar(
-                        user = PreviewUserData.userWithOnlineStatus,
-                        showIndicator = true,
-                        modifier = Modifier.size(size),
-                    )
-                }
+    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            sizes.forEach { size ->
+                UserAvatar(
+                    user = PreviewUserData.userWithOnlineStatus,
+                    showIndicator = true,
+                    modifier = Modifier.size(size),
+                )
             }
+        }
 
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                sizes.forEach { size ->
-                    UserAvatar(
-                        user = PreviewUserData.userWithoutImage,
-                        showIndicator = true,
-                        modifier = Modifier.size(size),
-                    )
-                }
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            sizes.forEach { size ->
+                UserAvatar(
+                    user = PreviewUserData.userWithoutImage,
+                    showIndicator = true,
+                    modifier = Modifier.size(size),
+                )
             }
         }
     }
