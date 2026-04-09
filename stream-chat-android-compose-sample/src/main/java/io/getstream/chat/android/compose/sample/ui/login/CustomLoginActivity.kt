@@ -65,6 +65,7 @@ import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.list.ChannelsActivity
+import io.getstream.chat.android.compose.sample.ui.SampleChatTheme
 import io.getstream.chat.android.compose.sample.ui.chats.ChatsActivity
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
@@ -84,7 +85,7 @@ class CustomLoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ChatTheme(allowUIAutomationTest = true) {
+            SampleChatTheme {
                 CustomLoginScreen(
                     onBackButtonClick = ::finish,
                     onLoginButtonClick = { userCredentials ->

@@ -55,9 +55,9 @@ import io.getstream.chat.android.compose.sample.feature.channel.ChannelConstants
 import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.feature.channel.list.CustomChatEventHandlerFactory
+import io.getstream.chat.android.compose.sample.ui.SampleChatTheme
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
-import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesScreen
 import io.getstream.chat.android.compose.ui.channel.attachments.ChannelFilesAttachmentsScreen
@@ -158,10 +158,7 @@ class ChatsActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ChatTheme(
-                dateFormatter = ChatApp.dateFormatter,
-                allowUIAutomationTest = true,
-                componentFactory = CustomChatComponentFactory(),
+            SampleChatTheme(
                 channelOptionsTheme = ChannelOptionsTheme.defaultTheme(
                     optionVisibility = ChannelOptionItemVisibility(
                         isViewInfoVisible = AdaptiveLayoutInfo.singlePaneWindow(),
