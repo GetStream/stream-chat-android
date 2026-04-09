@@ -1770,7 +1770,6 @@ public final class io/getstream/chat/android/ui/common/state/channels/actions/Ar
 	public fun getIcon ()I
 	public fun getLabel ()Ljava/lang/String;
 	public fun getOnAction ()Lkotlin/jvm/functions/Function0;
-	public fun getRequiredCapability ()Ljava/lang/String;
 	public fun isDestructive ()Z
 }
 
@@ -1782,7 +1781,6 @@ public final class io/getstream/chat/android/ui/common/state/channels/actions/Bl
 	public fun getIcon ()I
 	public fun getLabel ()Ljava/lang/String;
 	public fun getOnAction ()Lkotlin/jvm/functions/Function0;
-	public fun getRequiredCapability ()Ljava/lang/String;
 	public fun isDestructive ()Z
 }
 
@@ -1792,13 +1790,11 @@ public abstract interface class io/getstream/chat/android/ui/common/state/channe
 	public abstract fun getIcon ()I
 	public abstract fun getLabel ()Ljava/lang/String;
 	public abstract fun getOnAction ()Lkotlin/jvm/functions/Function0;
-	public fun getRequiredCapability ()Ljava/lang/String;
 	public fun isDestructive ()Z
 }
 
 public final class io/getstream/chat/android/ui/common/state/channels/actions/ChannelAction$DefaultImpls {
 	public static fun getConfirmationPopup (Lio/getstream/chat/android/ui/common/state/channels/actions/ChannelAction;)Lio/getstream/chat/android/ui/common/state/channels/actions/ConfirmationPopup;
-	public static fun getRequiredCapability (Lio/getstream/chat/android/ui/common/state/channels/actions/ChannelAction;)Ljava/lang/String;
 	public static fun isDestructive (Lio/getstream/chat/android/ui/common/state/channels/actions/ChannelAction;)Z
 }
 
@@ -1827,7 +1823,6 @@ public final class io/getstream/chat/android/ui/common/state/channels/actions/De
 	public fun getIcon ()I
 	public fun getLabel ()Ljava/lang/String;
 	public fun getOnAction ()Lkotlin/jvm/functions/Function0;
-	public fun getRequiredCapability ()Ljava/lang/String;
 	public fun isDestructive ()Z
 }
 
@@ -1840,7 +1835,6 @@ public final class io/getstream/chat/android/ui/common/state/channels/actions/Le
 	public fun getIcon ()I
 	public fun getLabel ()Ljava/lang/String;
 	public fun getOnAction ()Lkotlin/jvm/functions/Function0;
-	public fun getRequiredCapability ()Ljava/lang/String;
 	public fun isDestructive ()Z
 }
 
@@ -1852,7 +1846,6 @@ public final class io/getstream/chat/android/ui/common/state/channels/actions/Mu
 	public fun getIcon ()I
 	public fun getLabel ()Ljava/lang/String;
 	public fun getOnAction ()Lkotlin/jvm/functions/Function0;
-	public fun getRequiredCapability ()Ljava/lang/String;
 	public fun isDestructive ()Z
 }
 
@@ -1864,7 +1857,6 @@ public final class io/getstream/chat/android/ui/common/state/channels/actions/Mu
 	public fun getIcon ()I
 	public fun getLabel ()Ljava/lang/String;
 	public fun getOnAction ()Lkotlin/jvm/functions/Function0;
-	public fun getRequiredCapability ()Ljava/lang/String;
 	public fun isDestructive ()Z
 }
 
@@ -1876,7 +1868,6 @@ public final class io/getstream/chat/android/ui/common/state/channels/actions/Pi
 	public fun getIcon ()I
 	public fun getLabel ()Ljava/lang/String;
 	public fun getOnAction ()Lkotlin/jvm/functions/Function0;
-	public fun getRequiredCapability ()Ljava/lang/String;
 	public fun isDestructive ()Z
 }
 
@@ -1888,7 +1879,6 @@ public final class io/getstream/chat/android/ui/common/state/channels/actions/Un
 	public fun getIcon ()I
 	public fun getLabel ()Ljava/lang/String;
 	public fun getOnAction ()Lkotlin/jvm/functions/Function0;
-	public fun getRequiredCapability ()Ljava/lang/String;
 	public fun isDestructive ()Z
 }
 
@@ -1900,7 +1890,6 @@ public final class io/getstream/chat/android/ui/common/state/channels/actions/Un
 	public fun getIcon ()I
 	public fun getLabel ()Ljava/lang/String;
 	public fun getOnAction ()Lkotlin/jvm/functions/Function0;
-	public fun getRequiredCapability ()Ljava/lang/String;
 	public fun isDestructive ()Z
 }
 
@@ -1912,7 +1901,6 @@ public final class io/getstream/chat/android/ui/common/state/channels/actions/Un
 	public fun getIcon ()I
 	public fun getLabel ()Ljava/lang/String;
 	public fun getOnAction ()Lkotlin/jvm/functions/Function0;
-	public fun getRequiredCapability ()Ljava/lang/String;
 	public fun isDestructive ()Z
 }
 
@@ -1924,7 +1912,6 @@ public final class io/getstream/chat/android/ui/common/state/channels/actions/Un
 	public fun getIcon ()I
 	public fun getLabel ()Ljava/lang/String;
 	public fun getOnAction ()Lkotlin/jvm/functions/Function0;
-	public fun getRequiredCapability ()Ljava/lang/String;
 	public fun isDestructive ()Z
 }
 
@@ -1936,7 +1923,6 @@ public final class io/getstream/chat/android/ui/common/state/channels/actions/Un
 	public fun getIcon ()I
 	public fun getLabel ()Ljava/lang/String;
 	public fun getOnAction ()Lkotlin/jvm/functions/Function0;
-	public fun getRequiredCapability ()Ljava/lang/String;
 	public fun isDestructive ()Z
 }
 
@@ -1948,7 +1934,6 @@ public final class io/getstream/chat/android/ui/common/state/channels/actions/Vi
 	public fun getIcon ()I
 	public fun getLabel ()Ljava/lang/String;
 	public fun getOnAction ()Lkotlin/jvm/functions/Function0;
-	public fun getRequiredCapability ()Ljava/lang/String;
 	public fun isDestructive ()Z
 }
 

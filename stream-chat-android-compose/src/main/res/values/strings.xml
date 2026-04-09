@@ -36,13 +36,9 @@
     <string name="stream_compose_channel_list_start_chat">Start a chat</string>
 
     <!-- Channel List Swipe Actions -->
-    <string name="stream_compose_swipe_action_pin">Pin</string>
-    <string name="stream_compose_swipe_action_unpin">Unpin</string>
     <string name="stream_compose_swipe_action_mute">Mute</string>
     <string name="stream_compose_swipe_action_unmute">Unmute</string>
     <string name="stream_compose_swipe_action_more">More</string>
-    <string name="stream_compose_swipe_action_archive">Archive</string>
-    <string name="stream_compose_swipe_action_unarchive">Unarchive</string>
     <string name="stream_compose_channel_list_empty_search_results">No results for \"%1$s\"</string>
 
     <!-- Selected Channel Menu -->
@@ -54,8 +50,6 @@
     <string name="stream_compose_selected_channel_menu_unpin_group">Unpin Group</string>
     <string name="stream_compose_selected_channel_menu_leave_group_confirmation_title">Leave group</string>
     <string name="stream_compose_selected_channel_menu_leave_group_confirmation_message">Do you want to leave the %1$s group?</string>
-    <string name="stream_compose_selected_channel_menu_mute_group">Mute Group</string>
-    <string name="stream_compose_selected_channel_menu_unmute_group">Unmute Group</string>
     <string name="stream_compose_selected_channel_menu_mute_user">Mute User</string>
     <string name="stream_compose_selected_channel_menu_unmute_user">Unmute User</string>
     <string name="stream_compose_selected_channel_menu_block_user">Block User</string>
