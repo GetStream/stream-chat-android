@@ -346,7 +346,7 @@ internal fun PollSection(
         modifier = modifier
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
-            .background(ChatTheme.colors.backgroundCoreSurfaceSubtle)
+            .background(ChatTheme.colors.backgroundCoreSurfaceCard)
             .padding(contentPadding),
         verticalArrangement = verticalArrangement,
         content = content,

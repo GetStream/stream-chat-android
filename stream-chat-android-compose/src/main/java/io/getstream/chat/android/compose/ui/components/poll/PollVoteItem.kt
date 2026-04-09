@@ -55,7 +55,7 @@ internal fun PollVoteItem(
                     .padding(borderSize),
                 user = user,
                 showIndicator = false,
-                showBorder = true,
+                showBorder = false,
             ),
         )
 
