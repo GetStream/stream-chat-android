@@ -273,6 +273,7 @@ private fun GroupChannelEditTopBar(
                 )
             } else {
                 StreamButton(
+                    modifier = Modifier.padding(end = StreamTokens.spacingSm),
                     style = StreamButtonStyleDefaults.primarySolid,
                     onClick = onSaveActionClick,
                 ) {

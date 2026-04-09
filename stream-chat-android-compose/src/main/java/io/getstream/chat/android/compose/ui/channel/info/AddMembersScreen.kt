@@ -221,10 +221,7 @@ private fun AddMembersList(
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(
-            top = StreamTokens.spacingSm,
-            bottom = StreamTokens.spacing3xl,
-        ),
+        contentPadding = PaddingValues(bottom = StreamTokens.spacing3xl),
     ) {
         items(
             items = users,
