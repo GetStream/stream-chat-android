@@ -47,13 +47,11 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedInputText
 import io.getstream.chat.android.compose.ui.util.extensions.internal.placeholderRes
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
-import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.R as UiCommonR
 
@@ -79,8 +77,9 @@ internal fun MessageComposerInputCenterContent(
         }
     }
 
-    val inputFieldTheme = ChatTheme.messageComposerTheme.inputField
-    val visualTransformation = rememberVisualTransformation(state.selectedMentions)
+    val colors = ChatTheme.colors
+    val typography = ChatTheme.typography
+    val visualTransformation = rememberVisualTransformation(typography, colors)
     val canSendMessage = state.canSendMessage()
 
     BasicTextField(
@@ -91,13 +90,11 @@ internal fun MessageComposerInputCenterContent(
         value = textState,
         onValueChange = {
             textState = it
-            if (value != it.text) {
-                onValueChange(it.text)
-            }
+            if (value != it.text) onValueChange(it.text)
         },
         visualTransformation = visualTransformation,
-        textStyle = inputFieldTheme.textStyle,
-        cursorBrush = SolidColor(inputFieldTheme.cursorBrushColor),
+        textStyle = typography.bodyDefault.copy(color = colors.textPrimary),
+        cursorBrush = SolidColor(colors.accentPrimary),
         decorationBox = { innerTextField ->
             Box(
                 modifier = Modifier.padding(
@@ -148,42 +145,31 @@ private fun TextFieldPlaceholder(
 }
 
 @Composable
-private fun rememberVisualTransformation(mentions: Set<Mention>): TextFieldVisualTransformation {
-    val inputFieldTheme = ChatTheme.messageComposerTheme.inputField
-    val typography = ChatTheme.typography
-    val colors = ChatTheme.colors
-    return remember(inputFieldTheme, typography, colors, mentions) {
-        TextFieldVisualTransformation(
-            inputFieldTheme = inputFieldTheme,
-            typography = typography,
-            colors = colors,
-            mentions = mentions,
-        )
-    }
+private fun rememberVisualTransformation(
+    typography: StreamDesign.Typography,
+    colors: StreamDesign.Colors,
+): TextFieldVisualTransformation = remember(typography, colors) {
+    TextFieldVisualTransformation(
+        typography = typography,
+        colors = colors,
+    )
 }
 
 private const val TextFieldMaxLines = 5
 
 private class TextFieldVisualTransformation(
-    val inputFieldTheme: ComposerInputFieldTheme,
     val typography: StreamDesign.Typography,
     val colors: StreamDesign.Colors,
-    val mentions: Set<Mention>,
 ) : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
-        val textColor = inputFieldTheme.textStyle.color
-        val fontStyle = typography.bodyDefault.fontStyle
-        val linkStyle = TextStyle(
-            color = colors.accentPrimary,
-            textDecoration = TextDecoration.Underline,
-        )
         val transformed = buildAnnotatedInputText(
             text = text.text,
-            textColor = textColor,
-            textFontStyle = fontStyle,
-            linkStyle = linkStyle,
-            mentions = mentions,
-            mentionStyleFactory = inputFieldTheme.mentionStyleFactory,
+            textColor = colors.textPrimary,
+            textFontStyle = typography.bodyDefault.fontStyle,
+            linkStyle = TextStyle(
+                color = colors.accentPrimary,
+                textDecoration = TextDecoration.Underline,
+            ),
         )
         return TransformedText(transformed, OffsetMapping.Identity)
     }

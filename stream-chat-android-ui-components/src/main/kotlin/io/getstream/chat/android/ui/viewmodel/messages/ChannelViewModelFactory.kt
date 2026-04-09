@@ -88,7 +88,7 @@ public class ChannelViewModelFactory @JvmOverloads constructor(
     private val enforceUniqueReactions: Boolean = true,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val showSystemMessages: Boolean = true,
-    private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
+    private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.LastInGroup,
     private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler(),
     private val threadDateSeparatorHandler: DateSeparatorHandler =
         DateSeparatorHandler.getDefaultThreadDateSeparatorHandler(),
@@ -179,7 +179,7 @@ public class ChannelViewModelFactory @JvmOverloads constructor(
         private var enforceUniqueReactions: Boolean = true
         private var maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT
         private var showSystemMessages: Boolean = true
-        private var messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference()
+        private var messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.LastInGroup
         private var dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler()
         private var threadDateSeparatorHandler: DateSeparatorHandler =
             DateSeparatorHandler.getDefaultThreadDateSeparatorHandler()

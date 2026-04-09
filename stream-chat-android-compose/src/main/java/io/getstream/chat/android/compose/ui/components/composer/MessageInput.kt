@@ -142,6 +142,7 @@ public fun MessageInput(
                 Column(modifier = Modifier.weight(1f)) {
                     ChatTheme.componentFactory.MessageComposerInputCenterContent(
                         params = MessageComposerInputCenterContentParams(
+                            modifier = Modifier.fillMaxWidth(),
                             state = messageComposerState,
                             onValueChange = onValueChange,
                         ),

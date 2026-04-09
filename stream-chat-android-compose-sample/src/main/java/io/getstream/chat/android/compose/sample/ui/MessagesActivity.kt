@@ -31,7 +31,6 @@ import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
-import io.getstream.chat.android.compose.sample.ui.component.CustomMentionStyleFactory
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
 import io.getstream.chat.android.compose.ui.messages.ChannelScreen
@@ -39,11 +38,8 @@ import io.getstream.chat.android.compose.ui.theme.AttachmentPickerConfig
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
-import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
-import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
 import io.getstream.chat.android.compose.ui.theme.MessageOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionOptionsTheme
-import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
@@ -83,20 +79,9 @@ class MessagesActivity : ComponentActivity() {
     @Composable
     private fun SetupChatTheme() {
         val isInDarkMode = isSystemInDarkTheme()
-        val colors = if (isInDarkMode) StreamDesign.Colors.defaultDark() else StreamDesign.Colors.default()
-        val typography = StreamDesign.Typography.default()
-        val messageComposerTheme = MessageComposerTheme
-            .defaultTheme(isInDarkMode, typography, colors)
-            .copy(
-                inputField = ComposerInputFieldTheme.defaultTheme(
-                    mentionStyleFactory = CustomMentionStyleFactory(colors.accentPrimary),
-                ),
-            )
         val locationViewModelFactory = SharedLocationViewModelFactory(cid)
         ChatTheme(
             isInDarkMode = isInDarkMode,
-            colors = colors,
-            typography = typography,
             componentFactory = CustomChatComponentFactory(locationViewModelFactory = locationViewModelFactory),
             dateFormatter = ChatApp.dateFormatter,
             config = ChatUiConfig(
@@ -107,7 +92,6 @@ class MessagesActivity : ComponentActivity() {
                 attachmentPicker = AttachmentPickerConfig(useSystemPicker = settings.isSystemAttachmentPickerEnabled),
             ),
             allowUIAutomationTest = true,
-            messageComposerTheme = messageComposerTheme,
             reactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
             messageOptionsTheme = MessageOptionsTheme.defaultTheme(
                 optionVisibility = MessageOptionItemVisibility(),

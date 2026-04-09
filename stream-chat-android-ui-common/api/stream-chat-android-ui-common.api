@@ -2694,20 +2694,6 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Messa
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/state/messages/list/MessageFooterVisibility$WithTimeDifference : io/getstream/chat/android/ui/common/state/messages/list/MessageFooterVisibility {
-	public static final field $stable I
-	public fun <init> ()V
-	public fun <init> (J)V
-	public synthetic fun <init> (JILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()J
-	public final fun copy (J)Lio/getstream/chat/android/ui/common/state/messages/list/MessageFooterVisibility$WithTimeDifference;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/list/MessageFooterVisibility$WithTimeDifference;JILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/list/MessageFooterVisibility$WithTimeDifference;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getTimeDifferenceMillis ()J
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class io/getstream/chat/android/ui/common/state/messages/list/MessageItemState : io/getstream/chat/android/ui/common/state/messages/list/HasMessageListItemState {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZZZLio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/state/messages/list/MessagePosition;ZZLio/getstream/chat/android/ui/common/state/messages/list/MessageFocusState;Ljava/util/List;ZLjava/util/Set;Z)V

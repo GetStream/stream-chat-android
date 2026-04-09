@@ -16,9 +16,6 @@
 
 package io.getstream.chat.android.ui.common.utils.extensions
 
-import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
-import io.getstream.chat.android.client.extensions.internal.NEVER
-import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
@@ -41,42 +38,9 @@ public fun MessageFooterVisibility.shouldShowMessageFooter(
     nextMessage: Message?,
 ): Boolean {
     if (nextMessage == null && this != MessageFooterVisibility.Never) return true
-    if (message.messageTextUpdatedAt != null && this != MessageFooterVisibility.Never) return true
     return when (this) {
         MessageFooterVisibility.Always -> true
         MessageFooterVisibility.LastInGroup -> isLastMessageInGroup
         MessageFooterVisibility.Never -> false
-        is MessageFooterVisibility.WithTimeDifference -> isFooterVisibleWithTimeDifference(
-            message = message,
-            nextMessage = nextMessage,
-            isLastMessageInGroup = isLastMessageInGroup,
-            timeDifferenceMillis = timeDifferenceMillis,
-        )
-    }
-}
-
-/**
- * @param message The current [Message].
- * @param nextMessage The next [Message] in the list if there is one.
- * @param isLastMessageInGroup If the message is the last in group of messages.
- * @param timeDifferenceMillis The time difference between next and current message.
- *
- * @return Whether the footer should be visible or not.
- */
-private fun isFooterVisibleWithTimeDifference(
-    message: Message,
-    nextMessage: Message?,
-    isLastMessageInGroup: Boolean,
-    timeDifferenceMillis: Long,
-): Boolean {
-    return when {
-        isLastMessageInGroup -> true
-        message.isDeleted() -> false
-        message.user.id != nextMessage?.user?.id ||
-            nextMessage.isDeleted() ||
-            (nextMessage.getCreatedAtOrDefault(NEVER).time) -
-            (message.getCreatedAtOrDefault(NEVER).time) >
-            timeDifferenceMillis -> true
-        else -> false
     }
 }

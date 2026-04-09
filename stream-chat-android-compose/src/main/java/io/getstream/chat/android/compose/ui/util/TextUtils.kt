@@ -27,8 +27,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.core.util.PatternsCompat
-import io.getstream.chat.android.compose.ui.theme.MentionStyleFactory
-import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import java.util.regex.Pattern
 
 internal typealias AnnotationTag = String
@@ -111,15 +109,13 @@ internal fun buildAnnotatedMessageText(
 }
 
 /**
- * Builds an [AnnotatedString] from a given text, applying styles and annotations for links and mentions.
+ * Builds an [AnnotatedString] from a given text, applying styles and annotations for links.
  * Used in message input fields.
  *
  * @param text The input text to be transformed into an [AnnotatedString].
  * @param textColor The color to be applied to the regular text.
  * @param textFontStyle The font style to be applied to the regular text.
  * @param linkStyle The text style to be applied to links within the text.
- * @param mentions A set of [Mention] objects representing the mentions in the text.
- * @param mentionStyleFactory A factory to provide styles for mentions.
  * @param builder An optional lambda to apply additional styles or annotations.
  */
 @SuppressLint("RestrictedApi")
@@ -128,12 +124,9 @@ internal fun buildAnnotatedInputText(
     textColor: Color,
     textFontStyle: FontStyle?,
     linkStyle: TextStyle,
-    mentions: Set<Mention> = emptySet(),
-    mentionStyleFactory: MentionStyleFactory = MentionStyleFactory.NoStyle,
     builder: (AnnotatedString.Builder).() -> Unit = {},
 ): AnnotatedString {
     return buildAnnotatedString {
-        // First we add the whole text to the [AnnotatedString] and style it as a regular text.
         append(text)
         addStyle(
             SpanStyle(
@@ -144,8 +137,6 @@ internal fun buildAnnotatedInputText(
             end = text.length,
         )
 
-        // Then for each available link in the text, we add a different style, to represent the links,
-        // as well as add a String annotation to it. This gives us the ability to open the URL on click.
         linkify(
             text = text,
             tag = AnnotationTagUrl,
@@ -161,13 +152,7 @@ internal fun buildAnnotatedInputText(
             schemes = EMAIL_SCHEMES,
             textStyle = linkStyle,
         )
-        tagMentions(
-            text = text,
-            mentions = mentions,
-            mentionStyleFactory = mentionStyleFactory,
-        )
 
-        // Finally, we apply any additional styling that was passed in.
         builder(this)
     }
 }
@@ -253,24 +238,6 @@ private fun AnnotatedString.Builder.tagUser(
             start = start - 1, // -1 to include the @ symbol
             end = end,
         )
-    }
-}
-
-private fun AnnotatedString.Builder.tagMentions(
-    text: String,
-    mentions: Set<Mention>,
-    mentionStyleFactory: MentionStyleFactory,
-) {
-    mentions.forEach { mention ->
-        val start = text.indexOf(mention.display)
-        val end = start + mention.display.length
-        if (start < 0) return@forEach
-
-        val style = mentionStyleFactory.styleFor(mention)
-        if (style != null) {
-            addStyle(style, start - 1, end) // -1 to include the @ symbol
-            addStringAnnotation(AnnotationTagMention, mention.display, start - 1, end) // -1 to include the @ symbol
-        }
     }
 }
 

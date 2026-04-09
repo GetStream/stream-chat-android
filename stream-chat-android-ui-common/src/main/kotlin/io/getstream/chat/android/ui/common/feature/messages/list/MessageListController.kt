@@ -189,7 +189,7 @@ public class MessageListController(
     private val clientState: ClientState = chatClient.clientState,
     public val channelState: StateFlow<ChannelState?>,
     private val showSystemMessages: Boolean = true,
-    private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
+    private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.LastInGroup,
     private val enforceUniqueReactions: Boolean = false,
     private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler(),
     private val threadDateSeparatorHandler: DateSeparatorHandler =
