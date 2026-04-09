@@ -54,7 +54,7 @@ internal fun Checkbox(
     val colors = ChatTheme.colors
     Box(
         modifier = modifier
-            .size(24.dp)
+            .size(20.dp)
             .run {
                 when {
                     !checked && enabled -> border(1.dp, borderColor, CheckboxShape)
