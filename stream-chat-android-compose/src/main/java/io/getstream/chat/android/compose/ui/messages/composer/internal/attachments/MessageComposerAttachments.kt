@@ -17,7 +17,10 @@
 package io.getstream.chat.android.compose.ui.messages.composer.internal.attachments
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -107,48 +110,63 @@ private fun MessageComposerAttachmentsContent(
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
     onAttachmentRemoved: (Attachment) -> Unit = {},
 ) {
-    LazyRow(
-        state = rememberAutoScrollLazyListState(attachments.size),
+    val (audioRecordings, otherAttachments) = remember(attachments) {
+        attachments.partition { it.isAudioRecording() }
+    }
+
+    Column(
         modifier = modifier.testTag("Stream_MessageComposerAttachments"),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs, Alignment.Start),
-        contentPadding = PaddingValues(horizontal = StreamTokens.spacingSm),
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
     ) {
-        items(
-            items = attachments,
-            key = Attachment::stableKey,
-        ) { attachment ->
-            when {
-                attachment.isAudioRecording() ->
-                    ChatTheme.componentFactory.MessageComposerAttachmentAudioRecordItem(
-                        params = MessageComposerAttachmentAudioRecordItemParams(
-                            modifier = Modifier.animateItem(),
-                            attachment = attachment,
-                            playerState = playerState,
-                            onPlayToggleClick = onPlayToggleClick,
-                            onPlaySpeedClick = onPlaySpeedClick,
-                            onThumbDragStart = onThumbDragStart,
-                            onThumbDragStop = onThumbDragStop,
-                            onAttachmentRemoved = onAttachmentRemoved,
-                        ),
-                    )
+        // Note: Without extensive customisations, we can have at most 1 audio recording
+        for (audioRecording in audioRecordings) {
+            ChatTheme.componentFactory.MessageComposerAttachmentAudioRecordItem(
+                params = MessageComposerAttachmentAudioRecordItemParams(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = StreamTokens.spacingSm),
+                    attachment = audioRecording,
+                    playerState = playerState,
+                    onPlayToggleClick = onPlayToggleClick,
+                    onPlaySpeedClick = onPlaySpeedClick,
+                    onThumbDragStart = onThumbDragStart,
+                    onThumbDragStop = onThumbDragStop,
+                    onAttachmentRemoved = onAttachmentRemoved,
+                ),
+            )
+        }
 
-                attachment.isImage() || attachment.isVideo() ->
-                    ChatTheme.componentFactory.MessageComposerAttachmentMediaItem(
-                        params = MessageComposerAttachmentMediaItemParams(
-                            modifier = Modifier.animateItem(),
-                            attachment = attachment,
-                            onAttachmentRemoved = onAttachmentRemoved,
-                        ),
-                    )
+        if (otherAttachments.isNotEmpty()) {
+            LazyRow(
+                state = rememberAutoScrollLazyListState(otherAttachments.size),
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs, Alignment.Start),
+                contentPadding = PaddingValues(horizontal = StreamTokens.spacingSm),
+            ) {
+                items(
+                    items = otherAttachments,
+                    key = Attachment::stableKey,
+                ) { attachment ->
+                    when {
+                        attachment.isImage() || attachment.isVideo() ->
+                            ChatTheme.componentFactory.MessageComposerAttachmentMediaItem(
+                                params = MessageComposerAttachmentMediaItemParams(
+                                    modifier = Modifier.animateItem(),
+                                    attachment = attachment,
+                                    onAttachmentRemoved = onAttachmentRemoved,
+                                ),
+                            )
 
-                else -> ChatTheme.componentFactory.MessageComposerAttachmentFileItem(
-                    params = MessageComposerAttachmentFileItemParams(
-                        modifier = Modifier.animateItem(),
-                        attachment = attachment,
-                        onAttachmentRemoved = onAttachmentRemoved,
-                    ),
-                )
+                        else -> ChatTheme.componentFactory.MessageComposerAttachmentFileItem(
+                            params = MessageComposerAttachmentFileItemParams(
+                                modifier = Modifier.animateItem(),
+                                attachment = attachment,
+                                onAttachmentRemoved = onAttachmentRemoved,
+                            ),
+                        )
+                    }
+                }
             }
         }
     }
