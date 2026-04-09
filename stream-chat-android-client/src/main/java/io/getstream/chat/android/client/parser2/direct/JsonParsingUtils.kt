@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.parser2.event
+package io.getstream.chat.android.client.parser2.direct
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonDataException

@@ -21,10 +21,10 @@ import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
-import io.getstream.chat.android.client.parser2.event.DeviceAdapter
-import io.getstream.chat.android.client.parser2.event.PrivacySettingsAdapter
-import io.getstream.chat.android.client.parser2.event.ReactionAdapter
-import io.getstream.chat.android.client.parser2.event.UserAdapter
+import io.getstream.chat.android.client.parser2.direct.DeviceAdapter
+import io.getstream.chat.android.client.parser2.direct.PrivacySettingsAdapter
+import io.getstream.chat.android.client.parser2.direct.ReactionAdapter
+import io.getstream.chat.android.client.parser2.direct.UserAdapter
 import io.getstream.chat.android.client.parser2.testdata.ReactionTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer

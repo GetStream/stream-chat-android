@@ -21,7 +21,7 @@ import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
-import io.getstream.chat.android.client.parser2.event.MessageReminderInfoAdapter
+import io.getstream.chat.android.client.parser2.direct.MessageReminderInfoAdapter
 import io.getstream.chat.android.client.parser2.testdata.MessageReminderInfoTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer

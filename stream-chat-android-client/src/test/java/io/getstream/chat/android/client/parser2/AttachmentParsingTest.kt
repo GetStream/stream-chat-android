@@ -19,7 +19,7 @@ package io.getstream.chat.android.client.parser2
 import com.squareup.moshi.JsonDataException
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
-import io.getstream.chat.android.client.parser2.event.AttachmentAdapter
+import io.getstream.chat.android.client.parser2.direct.AttachmentAdapter
 import io.getstream.chat.android.client.parser2.testdata.AttachmentTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer

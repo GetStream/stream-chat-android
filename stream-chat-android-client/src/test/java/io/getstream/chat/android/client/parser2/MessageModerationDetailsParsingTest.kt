@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
-import io.getstream.chat.android.client.parser2.event.MessageModerationDetailsAdapter
+import io.getstream.chat.android.client.parser2.direct.MessageModerationDetailsAdapter
 import io.getstream.chat.android.client.parser2.testdata.MessageModerationDetailsTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer

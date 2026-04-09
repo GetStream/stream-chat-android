@@ -14,49 +14,44 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.parser2.event
+package io.getstream.chat.android.client.parser2.direct
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
-import io.getstream.chat.android.models.ChannelInfo
+import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.PushProvider
 
-internal class ChannelInfoAdapter : JsonAdapter<ChannelInfo>() {
-    override fun fromJson(reader: JsonReader): ChannelInfo? {
+internal class DeviceAdapter : JsonAdapter<Device>() {
+    override fun fromJson(reader: JsonReader): Device? {
         if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
 
         reader.beginObject()
-        var cid: String? = null
         var id: String? = null
-        var memberCount: Int = 0
-        var name: String? = null
-        var type: String? = null
-        var image: String? = null
+        var pushProvider: String? = null
+        var pushProviderName: String? = null
 
         while (reader.hasNext()) {
             when (reader.nextName()) {
-                "cid" -> cid = JsonParsingUtils.readNullableString(reader)
-                "id" -> id = JsonParsingUtils.readNullableString(reader)
-                "member_count" -> memberCount = reader.nextInt()
-                "name" -> name = JsonParsingUtils.readNullableString(reader)
-                "type" -> type = JsonParsingUtils.readNullableString(reader)
-                "image" -> image = JsonParsingUtils.readNullableString(reader)
+                "id" -> id = reader.nextString()
+                "push_provider" -> pushProvider = reader.nextString()
+                "push_provider_name" -> pushProviderName = JsonParsingUtils.readNullableString(reader)
                 else -> reader.skipValue()
             }
         }
         reader.endObject()
 
-        return ChannelInfo(
-            cid = cid,
-            id = id,
-            memberCount = memberCount,
-            name = name,
-            type = type,
-            image = image,
+        JsonParsingUtils.requireField(id, "id", reader)
+        JsonParsingUtils.requireField(pushProvider, "push_provider", reader)
+
+        return Device(
+            token = id,
+            pushProvider = PushProvider.fromKey(pushProvider),
+            providerName = pushProviderName,
         )
     }
 
-    override fun toJson(p0: JsonWriter, p1: ChannelInfo?) {
+    override fun toJson(p0: JsonWriter, p1: Device?) {
         error("Serialization not supported for direct-to-domain path")
     }
 }
