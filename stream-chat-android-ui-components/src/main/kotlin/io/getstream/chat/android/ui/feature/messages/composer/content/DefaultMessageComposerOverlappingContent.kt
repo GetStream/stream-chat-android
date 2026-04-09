@@ -717,7 +717,13 @@ public open class DefaultMessageComposerOverlappingContent : ConstraintLayout, M
             false,
         ).also {
             it.findViewById<TextView>(R.id.holdToRecordText).apply {
-                text = style.audioRecordingHoldToRecordText
+                text = style.audioRecordingHoldToRecordText ?: context.getString(
+                    if (style.audioRecordingSendOnComplete) {
+                        R.string.stream_ui_message_composer_hold_to_record_send
+                    } else {
+                        R.string.stream_ui_message_composer_hold_to_record_save
+                    },
+                )
                 setTextStyle(style.audioRecordingHoldToRecordTextStyle)
                 background = style.audioRecordingHoldToRecordBackgroundDrawable.applyTint(
                     style.audioRecordingHoldToRecordBackgroundDrawableTint,

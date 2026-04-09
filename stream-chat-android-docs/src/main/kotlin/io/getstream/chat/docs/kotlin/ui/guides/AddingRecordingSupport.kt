@@ -19,7 +19,7 @@ class AddingRecordingSupport {
     fun customizeUiInMessageComposer(context: Context) {
         TransformStyle.messageComposerStyleTransformer = StyleTransformer { defaultStyle ->
             defaultStyle.copy(
-                audioRecordingHoldToRecordText = context.getString(R.string.stream_ui_message_composer_hold_to_record),
+                audioRecordingHoldToRecordText = context.getString(R.string.stream_ui_message_composer_hold_to_record_save),
                 audioRecordingHoldToRecordTextStyle = TextStyle(
                     size = context.getDimension(R.dimen.stream_ui_text_medium),
                     color = context.getColorCompat(R.color.stream_ui_text_color_secondary),

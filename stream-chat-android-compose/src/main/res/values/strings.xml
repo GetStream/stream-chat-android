@@ -200,7 +200,8 @@
 
     <!-- Audio Recording -->
     <string name="stream_compose_audio_recording_start">Record audio message</string>
-    <string name="stream_compose_audio_recording_hint">Hold to record. Release to send.</string>
+    <string name="stream_compose_audio_recording_hint_send">Hold to record. Release to send.</string>
+    <string name="stream_compose_audio_recording_hint_save">Hold to record. Release to save.</string>
     <string name="stream_compose_audio_recording_slide_to_cancel">Slide to cancel</string>
     <string name="stream_compose_audio_recording_delete">Delete recording</string>
     <string name="stream_compose_audio_recording_stop">Stop recording</string>

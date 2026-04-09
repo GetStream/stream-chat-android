@@ -1369,9 +1369,6 @@
         </item>
 
         <!-- Center overlap content -->
-        <item name="streamUiMessageComposerAudioRecordingHoldToRecordText">
-            @string/stream_ui_message_composer_hold_to_record
-        </item>
         <item name="streamUiMessageComposerAudioRecordingHoldToRecordTextSize">
             @dimen/stream_ui_text_medium
         </item>

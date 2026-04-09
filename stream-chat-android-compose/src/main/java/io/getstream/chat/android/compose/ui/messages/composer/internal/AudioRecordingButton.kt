@@ -449,7 +449,14 @@ private class RecordingHintState(
 private fun rememberRecordingHint(): RecordingHintState {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val message = stringResource(R.string.stream_compose_audio_recording_hint)
+    val sendOnComplete = ChatTheme.config.composer.audioRecordingSendOnComplete
+    val message = stringResource(
+        if (sendOnComplete) {
+            R.string.stream_compose_audio_recording_hint_send
+        } else {
+            R.string.stream_compose_audio_recording_hint_save
+        },
+    )
     return remember(snackbarHostState, scope, message) {
         RecordingHintState(snackbarHostState, scope, message)
     }

@@ -107,7 +107,8 @@ import io.getstream.chat.android.ui.common.R as UiCommonR
  * @param audioRecordingButtonWidth The width of the button to record audio.
  * @param audioRecordingButtonHeight The height of the button to record audio.
  * @param audioRecordingButtonPadding The padding of the button to record audio.
- * @param audioRecordingHoldToRecordText The info text that will be shown if touch event on audio button was too short.
+ * @param audioRecordingHoldToRecordText Optional override for the info text shown on a short touch of the audio button.
+ * When `null`, the text is resolved from string resources based on [audioRecordingSendOnComplete].
  * @param audioRecordingHoldToRecordTextStyle The text style that will be used for the "hold to record" text.
  * @param audioRecordingHoldToRecordBackgroundDrawable The drawable will be used as a background for the "hold to
  * record" text.
@@ -215,7 +216,7 @@ public data class MessageComposerViewStyle(
     public val messageInputVideoAttachmentIconDrawablePaddingStart: Int,
     public val messageInputVideoAttachmentIconDrawablePaddingEnd: Int,
     // Center overlap content
-    public val audioRecordingHoldToRecordText: String,
+    public val audioRecordingHoldToRecordText: String?,
     public val audioRecordingHoldToRecordTextStyle: TextStyle,
     public val audioRecordingHoldToRecordBackgroundDrawable: Drawable,
     @ColorInt public val audioRecordingHoldToRecordBackgroundDrawableTint: Int?,
@@ -534,7 +535,7 @@ public data class MessageComposerViewStyle(
                  */
                 val audioRecordingHoldToRecordText = a.getString(
                     R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordText,
-                ) ?: context.getString(R.string.stream_ui_message_composer_hold_to_record)
+                )
                 val audioRecordingHoldToRecordTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordTextSize,
