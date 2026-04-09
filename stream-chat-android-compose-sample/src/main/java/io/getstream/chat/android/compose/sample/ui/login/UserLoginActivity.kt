@@ -62,6 +62,7 @@ import io.getstream.chat.android.compose.sample.data.PredefinedUserCredentials
 import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.list.ChannelsActivity
+import io.getstream.chat.android.compose.sample.ui.SampleChatTheme
 import io.getstream.chat.android.compose.sample.ui.chats.ChatsActivity
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
@@ -80,7 +81,7 @@ class UserLoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ChatTheme(allowUIAutomationTest = true) {
+            SampleChatTheme {
                 UserLoginScreen(
                     onUserItemClick = { userCredentials ->
                         lifecycleScope.launch {

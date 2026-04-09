@@ -315,28 +315,34 @@ private fun directMessageRecipient(channel: Channel, currentUser: User?): User? 
 @Suppress("MagicNumber")
 @Preview
 @Composable
-private fun ChannelAvatarPreview() {
-    val sizes = AvatarSize.run { listOf(ExtraExtraLarge * 1.5f, ExtraExtraLarge, ExtraLarge, Large, Medium) }
-    val variants = listOf(0, 1, 2, 3, 4, 5, 13, 1000)
+private fun ChannelAvatarContentPreview() {
     ChatTheme {
-        Column(
-            modifier = Modifier
-                .background(ChatTheme.colors.backgroundCoreApp)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            variants.forEach { howMany ->
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    sizes.forEach { size ->
-                        ChannelAvatar(
-                            channel = PreviewChannelData.makeChannelWithMembers(howMany),
-                            currentUser = null,
-                            modifier = Modifier.size(size),
-                        )
-                    }
+        ChannelAvatarContent()
+    }
+}
+
+@Suppress("MagicNumber")
+@Composable
+internal fun ChannelAvatarContent() {
+    val sizes = AvatarSize.run { listOf(ExtraExtraLarge, ExtraLarge, Large, Medium, Small, ExtraSmall) }
+    val variants = listOf(0, 1, 2, 3, 4, 5, 13, 1000)
+    Column(
+        modifier = Modifier
+            .background(ChatTheme.colors.backgroundCoreApp)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        variants.forEach { howMany ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                sizes.forEach { size ->
+                    ChannelAvatar(
+                        channel = PreviewChannelData.makeChannelWithMembers(howMany),
+                        currentUser = null,
+                        modifier = Modifier.size(size),
+                    )
                 }
             }
         }

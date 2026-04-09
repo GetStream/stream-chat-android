@@ -22,7 +22,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.core.net.toUri
 import io.getstream.chat.android.compose.sample.ChatApp
@@ -32,14 +31,10 @@ import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActi
 import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
-import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
 import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.theme.AttachmentPickerConfig
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
-import io.getstream.chat.android.compose.ui.theme.MessageOptionsTheme
-import io.getstream.chat.android.compose.ui.theme.ReactionOptionsTheme
 import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
@@ -78,23 +73,15 @@ class MessagesActivity : ComponentActivity() {
 
     @Composable
     private fun SetupChatTheme() {
-        val isInDarkMode = isSystemInDarkTheme()
         val locationViewModelFactory = SharedLocationViewModelFactory(cid)
-        ChatTheme(
-            isInDarkMode = isInDarkMode,
+        SampleChatTheme(
             componentFactory = CustomChatComponentFactory(locationViewModelFactory = locationViewModelFactory),
-            dateFormatter = ChatApp.dateFormatter,
             config = ChatUiConfig(
                 composer = ComposerConfig(
                     linkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
                     floatingStyleEnabled = settings.isComposerFloatingStyleEnabled,
                 ),
                 attachmentPicker = AttachmentPickerConfig(useSystemPicker = settings.isSystemAttachmentPickerEnabled),
-            ),
-            allowUIAutomationTest = true,
-            reactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
-            messageOptionsTheme = MessageOptionsTheme.defaultTheme(
-                optionVisibility = MessageOptionItemVisibility(),
             ),
         ) {
             SetupContent()

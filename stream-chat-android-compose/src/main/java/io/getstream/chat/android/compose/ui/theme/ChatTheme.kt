@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class)
 
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.runtime.Composable
@@ -29,12 +28,8 @@ import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTagsAsResourceId
 import coil3.ImageLoader
 import com.valentinilk.shimmer.LocalShimmerTheme
 import io.getstream.chat.android.client.ChatClient
@@ -147,7 +142,6 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param reactionOptionsTheme [ReactionOptionsTheme] Theme for the reaction option list in the selected message menu.
  * For theming the message option list in the same menu, use [messageOptionsTheme].
  * @param messagePreviewIconFactory Used to create a preview icon for the given message type.
- * @param allowUIAutomationTest Allow to simulate ui automation with given test tags.
  * @param dateFormatter [DateFormatter] Used throughout the app for date and time information.
  * @param timeProvider [TimeProvider] Used throughout the app for time information.
  * @param durationFormatter [DurationFormatter] Used to format durations in the app.
@@ -183,7 +177,6 @@ public fun ChatTheme(
     reactionResolver: ReactionResolver = ReactionResolver.defaultResolver(),
     reactionOptionsTheme: ReactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
     messagePreviewIconFactory: MessagePreviewIconFactory = MessagePreviewIconFactory.defaultFactory(),
-    allowUIAutomationTest: Boolean = false,
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     timeProvider: TimeProvider = TimeProvider.DEFAULT,
     durationFormatter: DurationFormatter = DurationFormatter.defaultFormatter(),
@@ -250,15 +243,7 @@ public fun ChatTheme(
         LocalStreamCdnImageResizing provides streamCdnImageResizing,
         LocalStreamMediaRecorder provides streamMediaRecorder,
     ) {
-        if (allowUIAutomationTest) {
-            Box(
-                modifier = Modifier.semantics { testTagsAsResourceId = allowUIAutomationTest },
-            ) {
-                content()
-            }
-        } else {
-            content()
-        }
+        content()
     }
 }
 

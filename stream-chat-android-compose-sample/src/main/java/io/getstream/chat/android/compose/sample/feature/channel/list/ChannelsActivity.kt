@@ -58,7 +58,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.state.globalStateFlow
-import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.feature.channel.ChannelConstants.CHANNEL_ARG_DRAFT
@@ -67,11 +66,11 @@ import io.getstream.chat.android.compose.sample.feature.channel.add.group.AddGro
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.feature.reminders.MessageRemindersActivity
 import io.getstream.chat.android.compose.sample.ui.MessagesActivity
+import io.getstream.chat.android.compose.sample.ui.SampleChatTheme
 import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
-import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.sample.ui.profile.UserProfileActivity
 import io.getstream.chat.android.compose.state.channels.list.ItemState
@@ -151,11 +150,7 @@ class ChannelsActivity : ComponentActivity() {
             val unreadChannelsCount by unreadChannelsCountFlow.collectAsStateWithLifecycle(0)
             val unreadThreadsCount by unreadThreadsCountFlow.collectAsStateWithLifecycle(0)
 
-            ChatTheme(
-                dateFormatter = ChatApp.dateFormatter,
-                allowUIAutomationTest = true,
-                componentFactory = CustomChatComponentFactory(),
-            ) {
+            SampleChatTheme {
                 val user by channelsViewModel.user.collectAsStateWithLifecycle()
                 val drawerState = rememberDrawerState(DrawerValue.Closed)
                 val coroutineScope = rememberCoroutineScope()
