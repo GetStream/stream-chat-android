@@ -191,4 +191,32 @@ internal object UserTestData {
         pushPreference = null,
         extraData = emptyMap(),
     )
+
+    @Language("JSON")
+    val jsonWithExplicitNulls = """
+        {
+            "id": "user123",
+            "role": "user",
+            "banned": false,
+            "online": true,
+            "name": null,
+            "image": null,
+            "invisible": null,
+            "language": null,
+            "avg_response_time": null
+        }
+    """.trimIndent()
+
+    val expectedWithExplicitNulls = User(
+        id = "user123",
+        name = "",
+        image = "",
+        role = "user",
+        invisible = null,
+        language = "",
+        banned = false,
+        online = true,
+        avgResponseTime = null,
+        extraData = emptyMap(),
+    )
 }

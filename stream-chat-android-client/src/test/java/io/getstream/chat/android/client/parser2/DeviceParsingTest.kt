@@ -75,6 +75,23 @@ internal class DeviceParsingTest {
 
     // endregion
 
+    // region Explicit null values
+
+    @Test
+    fun `DTO path - deserializes with explicit null values`() {
+        val dto = parser.fromJson(DeviceTestData.jsonWithExplicitNulls, DeviceDto::class.java)
+        val device = with(domainMapping) { dto.toDomain() }
+        assertEquals(DeviceTestData.expectedWithExplicitNulls, device)
+    }
+
+    @Test
+    fun `Direct path - deserializes with explicit null values`() {
+        val device = deviceAdapter.fromJson(DeviceTestData.jsonWithExplicitNulls)
+        assertEquals(DeviceTestData.expectedWithExplicitNulls, device)
+    }
+
+    // endregion
+
     // region Error message parity
 
     @Test

@@ -41,4 +41,14 @@ internal object MessageModerationDetailsTestData {
         action = MessageModerationAction(""),
         errorMsg = "",
     )
+
+    @Language("JSON")
+    val jsonWithExplicitNulls =
+        """{"original_text":null,"action":null,"error_msg":null}"""
+
+    val expectedWithExplicitNulls = MessageModerationDetails(
+        originalText = "",
+        action = MessageModerationAction(""),
+        errorMsg = "",
+    )
 }

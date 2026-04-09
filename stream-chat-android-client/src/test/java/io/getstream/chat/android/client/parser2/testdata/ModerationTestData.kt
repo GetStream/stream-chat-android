@@ -57,4 +57,18 @@ internal object ModerationTestData {
         semanticFilterMatched = null,
         platformCircumvented = false,
     )
+
+    @Language("JSON")
+    val jsonWithExplicitNulls =
+        """{"action":"flag","original_text":"Some text","text_harms":null,"image_harms":null,"blocklist_matched":null,"semantic_filter_matched":null,"platform_circumvented":null}"""
+
+    val expectedWithExplicitNulls = Moderation(
+        action = ModerationAction.flag,
+        originalText = "Some text",
+        textHarms = emptyList(),
+        imageHarms = emptyList(),
+        blocklistMatched = null,
+        semanticFilterMatched = null,
+        platformCircumvented = false,
+    )
 }

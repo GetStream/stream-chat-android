@@ -75,6 +75,23 @@ internal class ModerationParsingTest {
 
     // endregion
 
+    // region Explicit null values
+
+    @Test
+    fun `DTO path - deserializes with explicit null values`() {
+        val dto = parser.fromJson(ModerationTestData.jsonWithExplicitNulls, DownstreamModerationDto::class.java)
+        val domain = with(domainMapping) { dto.toDomain() }
+        assertEquals(ModerationTestData.expectedWithExplicitNulls, domain)
+    }
+
+    @Test
+    fun `Direct path - deserializes with explicit null values`() {
+        val domain = adapter.fromJson(ModerationTestData.jsonWithExplicitNulls)
+        assertEquals(ModerationTestData.expectedWithExplicitNulls, domain)
+    }
+
+    // endregion
+
     // region Error message parity
 
     @Test

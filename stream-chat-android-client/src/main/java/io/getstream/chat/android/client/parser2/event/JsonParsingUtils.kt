@@ -45,6 +45,21 @@ internal object JsonParsingUtils {
         return if (reader.peek() == JsonReader.Token.NULL) reader.nextNull() else reader.nextInt()
     }
 
+    /** Reads a nullable String (returns null if JSON value is null). */
+    fun readNullableString(reader: JsonReader): String? {
+        return if (reader.peek() == JsonReader.Token.NULL) reader.nextNull() else reader.nextString()
+    }
+
+    /** Reads a nullable Boolean (returns null if JSON value is null). */
+    fun readNullableBoolean(reader: JsonReader): Boolean? {
+        return if (reader.peek() == JsonReader.Token.NULL) reader.nextNull() else reader.nextBoolean()
+    }
+
+    /** Reads a nullable Long (returns null if JSON value is null). */
+    fun readNullableLong(reader: JsonReader): Long? {
+        return if (reader.peek() == JsonReader.Token.NULL) reader.nextNull() else reader.nextLong()
+    }
+
     /** Accumulates a key-value pair into an extra data map, lazily creating it if needed. */
     fun accumulateExtraData(
         key: String,

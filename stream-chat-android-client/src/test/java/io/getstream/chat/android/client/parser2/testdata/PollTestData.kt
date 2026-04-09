@@ -235,4 +235,31 @@ internal object PollTestData {
         createdBy = null,
         extraData = mapOf("custom_field" to "custom_value", "custom_number" to 42.0),
     )
+
+    @Language("JSON")
+    val jsonWithExplicitNulls =
+        """{"id":"poll1","name":"Favorite color","description":"Choose your favorite color","options":[{"id":"option1","text":"Red"}],"enforce_unique_vote":true,"allow_user_suggested_options":false,"allow_answers":false,"vote_count":0,"own_votes":[],"created_at":"2024-01-01T09:00:00.000Z","updated_at":"2024-01-01T12:00:00.000Z","answers_count":0,"created_by_id":"admin","voting_visibility":null,"max_votes_allowed":null,"is_closed":null}"""
+
+    val expectedWithExplicitNulls = Poll(
+        id = "poll1",
+        name = "Favorite color",
+        description = "Choose your favorite color",
+        options = listOf(Option(id = "option1", text = "Red")),
+        votingVisibility = VotingVisibility.PUBLIC,
+        enforceUniqueVote = true,
+        maxVotesAllowed = 1,
+        allowUserSuggestedOptions = false,
+        allowAnswers = false,
+        voteCount = 0,
+        voteCountsByOption = emptyMap(),
+        votes = emptyList(),
+        ownVotes = emptyList(),
+        createdAt = Date(1704099600000L),
+        updatedAt = Date(1704110400000L),
+        closed = false,
+        answersCount = 0,
+        answers = emptyList(),
+        createdBy = null,
+        extraData = emptyMap(),
+    )
 }

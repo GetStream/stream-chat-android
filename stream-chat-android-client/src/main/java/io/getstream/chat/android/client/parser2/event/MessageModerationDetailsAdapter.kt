@@ -33,9 +33,9 @@ internal class MessageModerationDetailsAdapter : JsonAdapter<MessageModerationDe
 
         while (reader.hasNext()) {
             when (reader.nextName()) {
-                "original_text" -> originalText = reader.nextString()
-                "action" -> action = reader.nextString()
-                "error_msg" -> errorMsg = reader.nextString()
+                "original_text" -> originalText = JsonParsingUtils.readNullableString(reader)
+                "action" -> action = JsonParsingUtils.readNullableString(reader)
+                "error_msg" -> errorMsg = JsonParsingUtils.readNullableString(reader)
                 else -> reader.skipValue()
             }
         }

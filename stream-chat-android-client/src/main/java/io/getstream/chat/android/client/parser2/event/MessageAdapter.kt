@@ -107,7 +107,7 @@ internal class MessageAdapter(
                 "attachments" -> attachments = JsonParsingUtils.parseList(reader, attachmentAdapter)
                 "channel" -> channel = channelInfoAdapter.fromJson(reader)
                 "cid" -> cid = reader.nextString()
-                "command" -> command = reader.nextString()
+                "command" -> command = JsonParsingUtils.readNullableString(reader)
                 "created_at" -> createdAt = dateAdapter.fromJson(reader)
                 "deleted_at" -> deletedAt = dateAdapter.fromJson(reader)
                 "html" -> html = reader.nextString()
@@ -116,7 +116,7 @@ internal class MessageAdapter(
                 "latest_reactions" -> latestReactions = JsonParsingUtils.parseList(reader, reactionAdapter)
                 "mentioned_users" -> mentionedUsers = JsonParsingUtils.parseList(reader, userAdapter)
                 "own_reactions" -> ownReactions = JsonParsingUtils.parseList(reader, reactionAdapter)
-                "parent_id" -> parentId = reader.nextString()
+                "parent_id" -> parentId = JsonParsingUtils.readNullableString(reader)
                 "pin_expires" -> pinExpires = dateAdapter.fromJson(reader)
                 "pinned" -> pinned = reader.nextBoolean()
                 "pinned_at" -> pinnedAt = dateAdapter.fromJson(reader)
@@ -128,7 +128,7 @@ internal class MessageAdapter(
                     quotedMessage = fromJson(reader, resolvedChannelInfo)
                 }
 
-                "quoted_message_id" -> quotedMessageId = reader.nextString()
+                "quoted_message_id" -> quotedMessageId = JsonParsingUtils.readNullableString(reader)
                 "reaction_counts" -> reactionCounts = JsonParsingUtils.parseIntMap(reader)
                 "reaction_scores" -> reactionScores = JsonParsingUtils.parseIntMap(reader)
                 "reaction_groups" -> reactionGroups = reactionGroupAdapter.parseReactionGroupsMap(reader)
@@ -148,7 +148,7 @@ internal class MessageAdapter(
                 "reminder" -> reminder = reminderAdapter.fromJson(reader)
                 "shared_location" -> sharedLocation = locationAdapter.fromJson(reader)
                 "member" -> channelRole = parseMemberChannelRole(reader)
-                "deleted_for_me" -> deletedForMe = reader.nextBoolean()
+                "deleted_for_me" -> deletedForMe = JsonParsingUtils.readNullableBoolean(reader)
                 else -> extraData = JsonParsingUtils.accumulateExtraData(key, reader, extraData)
             }
         }
@@ -239,7 +239,7 @@ internal class MessageAdapter(
 
         while (reader.hasNext()) {
             when (reader.nextName()) {
-                "channel_role" -> channelRole = reader.nextString()
+                "channel_role" -> channelRole = JsonParsingUtils.readNullableString(reader)
                 else -> reader.skipValue()
             }
         }

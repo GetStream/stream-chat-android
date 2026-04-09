@@ -143,6 +143,23 @@ internal class MessageParsingTest {
 
     // endregion
 
+    // region Explicit nulls (JSON with explicit null values)
+
+    @Test
+    fun `DTO path - deserializes with explicit nulls`() {
+        val dto = parser.fromJson(MessageTestData.jsonWithExplicitNulls, DownstreamMessageDto::class.java)
+        val domain = with(domainMapping) { dto.toDomain() }
+        assertEquals(MessageTestData.expectedWithExplicitNulls, domain)
+    }
+
+    @Test
+    fun `Direct path - deserializes with explicit nulls`() {
+        val domain = messageAdapter.fromJson(MessageTestData.jsonWithExplicitNulls)
+        assertEquals(MessageTestData.expectedWithExplicitNulls, domain)
+    }
+
+    // endregion
+
     // region Error message parity
 
     @Test

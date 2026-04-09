@@ -98,6 +98,23 @@ internal class PollParsingTest {
 
     // endregion
 
+    // region Explicit nulls (JSON with explicit null values)
+
+    @Test
+    fun `DTO path - deserializes with explicit nulls`() {
+        val dto = parser.fromJson(PollTestData.jsonWithExplicitNulls, DownstreamPollDto::class.java)
+        val domain = with(domainMapping) { dto.toDomain() }
+        assertEquals(PollTestData.expectedWithExplicitNulls, domain)
+    }
+
+    @Test
+    fun `Direct path - deserializes with explicit nulls`() {
+        val domain = adapter.fromJson(PollTestData.jsonWithExplicitNulls)
+        assertEquals(PollTestData.expectedWithExplicitNulls, domain)
+    }
+
+    // endregion
+
     // region Error message parity
 
     @Test

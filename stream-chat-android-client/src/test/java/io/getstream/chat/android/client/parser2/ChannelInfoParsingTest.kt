@@ -72,4 +72,21 @@ internal class ChannelInfoParsingTest {
     }
 
     // endregion
+
+    // region Explicit null values
+
+    @Test
+    fun `DTO path - deserializes with explicit null values`() {
+        val dto = parser.fromJson(ChannelInfoTestData.jsonWithExplicitNulls, ChannelInfoDto::class.java)
+        val channelInfo = with(domainMapping) { dto.toDomain() }
+        assertEquals(ChannelInfoTestData.expectedWithExplicitNulls, channelInfo)
+    }
+
+    @Test
+    fun `Direct path - deserializes with explicit null values`() {
+        val channelInfo = channelInfoAdapter.fromJson(ChannelInfoTestData.jsonWithExplicitNulls)
+        assertEquals(ChannelInfoTestData.expectedWithExplicitNulls, channelInfo)
+    }
+
+    // endregion
 }

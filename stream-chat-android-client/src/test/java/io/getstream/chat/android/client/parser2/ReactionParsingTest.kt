@@ -94,6 +94,23 @@ internal class ReactionParsingTest {
 
     // endregion
 
+    // region Explicit null values
+
+    @Test
+    fun `DTO path - deserializes with explicit null values`() {
+        val dto = parser.fromJson(ReactionTestData.jsonWithExplicitNulls, DownstreamReactionDto::class.java)
+        val reaction = with(domainMapping) { dto.toDomain() }
+        assertEquals(ReactionTestData.expectedWithExplicitNulls, reaction)
+    }
+
+    @Test
+    fun `Direct path - deserializes with explicit null values`() {
+        val reaction = reactionAdapter.fromJson(ReactionTestData.jsonWithExplicitNulls)
+        assertEquals(ReactionTestData.expectedWithExplicitNulls, reaction)
+    }
+
+    // endregion
+
     // region Error message parity
 
     @Test

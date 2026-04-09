@@ -35,12 +35,12 @@ internal class ChannelInfoAdapter : JsonAdapter<ChannelInfo>() {
 
         while (reader.hasNext()) {
             when (reader.nextName()) {
-                "cid" -> cid = reader.nextString()
-                "id" -> id = reader.nextString()
+                "cid" -> cid = JsonParsingUtils.readNullableString(reader)
+                "id" -> id = JsonParsingUtils.readNullableString(reader)
                 "member_count" -> memberCount = reader.nextInt()
-                "name" -> name = reader.nextString()
-                "type" -> type = reader.nextString()
-                "image" -> image = reader.nextString()
+                "name" -> name = JsonParsingUtils.readNullableString(reader)
+                "type" -> type = JsonParsingUtils.readNullableString(reader)
+                "image" -> image = JsonParsingUtils.readNullableString(reader)
                 else -> reader.skipValue()
             }
         }

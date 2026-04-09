@@ -41,9 +41,9 @@ internal class ModerationAdapter : JsonAdapter<Moderation>() {
                 "original_text" -> originalText = reader.nextString()
                 "text_harms" -> textHarms = JsonParsingUtils.parseStringList(reader)
                 "image_harms" -> imageHarms = JsonParsingUtils.parseStringList(reader)
-                "blocklist_matched" -> blocklistMatched = reader.nextString()
-                "semantic_filter_matched" -> semanticFilterMatched = reader.nextString()
-                "platform_circumvented" -> platformCircumvented = reader.nextBoolean()
+                "blocklist_matched" -> blocklistMatched = JsonParsingUtils.readNullableString(reader)
+                "semantic_filter_matched" -> semanticFilterMatched = JsonParsingUtils.readNullableString(reader)
+                "platform_circumvented" -> platformCircumvented = JsonParsingUtils.readNullableBoolean(reader)
                 else -> reader.skipValue()
             }
         }

@@ -54,7 +54,7 @@ internal class ReactionAdapter(
                 "created_at" -> createdAt = dateAdapter.fromJson(reader)
                 "updated_at" -> updatedAt = dateAdapter.fromJson(reader)
                 "user" -> user = userAdapter.fromJson(reader)
-                "emoji_code" -> emojiCode = reader.nextString()
+                "emoji_code" -> emojiCode = JsonParsingUtils.readNullableString(reader)
                 else -> extraData = JsonParsingUtils.accumulateExtraData(key, reader, extraData)
             }
         }

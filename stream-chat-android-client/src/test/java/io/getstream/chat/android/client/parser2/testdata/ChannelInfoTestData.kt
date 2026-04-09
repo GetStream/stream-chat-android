@@ -46,4 +46,17 @@ internal object ChannelInfoTestData {
         type = null,
         image = null,
     )
+
+    @Language("JSON")
+    val jsonWithExplicitNulls =
+        """{"cid":null,"id":null,"member_count":5,"name":null,"type":null,"image":null}"""
+
+    val expectedWithExplicitNulls = ChannelInfo(
+        cid = null,
+        id = null,
+        memberCount = 5,
+        name = null,
+        type = null,
+        image = null,
+    )
 }

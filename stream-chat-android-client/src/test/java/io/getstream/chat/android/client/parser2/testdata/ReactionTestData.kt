@@ -95,4 +95,25 @@ internal object ReactionTestData {
         emojiCode = null,
         extraData = emptyMap(),
     )
+
+    @Language("JSON")
+    val jsonWithExplicitNulls = """{
+        "message_id": "msg1",
+        "type": "like",
+        "score": 1,
+        "user_id": "user1",
+        "emoji_code": null
+    }"""
+
+    val expectedWithExplicitNulls = Reaction(
+        messageId = "msg1",
+        type = "like",
+        score = 1,
+        userId = "user1",
+        createdAt = null,
+        updatedAt = null,
+        user = null,
+        emojiCode = null,
+        extraData = emptyMap(),
+    )
 }

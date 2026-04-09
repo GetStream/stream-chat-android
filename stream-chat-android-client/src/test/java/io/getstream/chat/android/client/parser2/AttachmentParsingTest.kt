@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.parser2
 
+import com.squareup.moshi.JsonDataException
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.parser2.event.AttachmentAdapter
@@ -25,6 +26,7 @@ import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 internal class AttachmentParsingTest {
 
@@ -69,6 +71,41 @@ internal class AttachmentParsingTest {
     fun `Direct path - deserializes with optional fields missing`() {
         val attachment = attachmentAdapter.fromJson(AttachmentTestData.jsonOptionalFieldsMissing)
         assertEquals(AttachmentTestData.expectedOptionalFieldsMissing, attachment)
+    }
+
+    // endregion
+
+    // region Explicit null values ({"asset_url": null, ...})
+
+    @Test
+    fun `DTO path - deserializes with explicit null values`() {
+        val dto = parser.fromJson(AttachmentTestData.jsonWithExplicitNulls, AttachmentDto::class.java)
+        val attachment = with(domainMapping) { dto.toDomain() }
+        assertEquals(AttachmentTestData.expectedWithExplicitNulls, attachment)
+    }
+
+    @Test
+    fun `Direct path - deserializes with explicit null values`() {
+        val attachment = attachmentAdapter.fromJson(AttachmentTestData.jsonWithExplicitNulls)
+        assertEquals(AttachmentTestData.expectedWithExplicitNulls, attachment)
+    }
+
+    // endregion
+
+    // region file_size: null (non-nullable Int — both paths must throw)
+
+    @Test
+    fun `DTO path - throws on file_size null`() {
+        assertThrows<JsonDataException> {
+            parser.fromJson(AttachmentTestData.jsonWithFileSizeNull, AttachmentDto::class.java)
+        }
+    }
+
+    @Test
+    fun `Direct path - throws on file_size null`() {
+        assertThrows<JsonDataException> {
+            attachmentAdapter.fromJson(AttachmentTestData.jsonWithFileSizeNull)
+        }
     }
 
     // endregion

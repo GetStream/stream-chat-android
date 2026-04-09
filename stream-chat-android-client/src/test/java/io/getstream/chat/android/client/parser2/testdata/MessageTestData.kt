@@ -596,4 +596,55 @@ internal object MessageTestData {
         deletedForMe = false,
         extraData = emptyMap(),
     )
+
+    @Language("JSON")
+    val jsonWithExplicitNulls = """{
+        "id": "msg-1",
+        "cid": "messaging:general",
+        "text": "Hello world",
+        "html": "<p>Hello world</p>",
+        "type": "regular",
+        "user": {"id": "user-1", "role": "user", "banned": false, "online": true},
+        "attachments": [],
+        "latest_reactions": [],
+        "own_reactions": [],
+        "mentioned_users": [],
+        "reply_count": 0,
+        "deleted_reply_count": 0,
+        "created_at": "2020-01-01T00:00:00.000Z",
+        "updated_at": "2020-01-01T00:00:00.000Z",
+        "silent": false,
+        "pinned": false,
+        "command": null,
+        "parent_id": null,
+        "quoted_message_id": null,
+        "deleted_for_me": null
+    }"""
+
+    val expectedWithExplicitNulls = Message(
+        id = "msg-1",
+        cid = "messaging:general",
+        text = "Hello world",
+        html = "<p>Hello world</p>",
+        type = "regular",
+        user = User(id = "user-1", role = "user", invisible = false, banned = false, online = true),
+        attachments = emptyList(),
+        latestReactions = emptyList(),
+        ownReactions = emptyList(),
+        mentionedUsersIds = emptyList(),
+        mentionedUsers = emptyList(),
+        replyCount = 0,
+        deletedReplyCount = 0,
+        createdAt = Date(1577836800000L),
+        updatedAt = Date(1577836800000L),
+        silent = false,
+        pinned = false,
+        command = null,
+        parentId = null,
+        replyMessageId = null,
+        deletedForMe = false,
+        shadowed = false,
+        showInChannel = false,
+        extraData = emptyMap(),
+    )
 }

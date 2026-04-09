@@ -42,7 +42,7 @@ internal class UserAdapter(
         var name: String? = null
         var image: String? = null
         var role: String? = null
-        var invisible: Boolean? = null
+        var invisible: Boolean? = false // DTO default
         var privacySettings: PrivacySettings? = null
         var language: String? = null
         var banned: Boolean? = null
@@ -64,18 +64,18 @@ internal class UserAdapter(
         while (reader.hasNext()) {
             val key = reader.nextName()
             when (key) {
-                "avg_response_time" -> avgResponseTime = reader.nextLong()
+                "avg_response_time" -> avgResponseTime = JsonParsingUtils.readNullableLong(reader)
                 "banned" -> banned = reader.nextBoolean()
                 "blocked_user_ids" -> blockedUserIds = JsonParsingUtils.parseStringList(reader)
                 "created_at" -> createdAt = dateAdapter.fromJson(reader)
                 "deactivated_at" -> deactivatedAt = dateAdapter.fromJson(reader)
                 "devices" -> devices = JsonParsingUtils.parseList(reader, deviceAdapter)
                 "id" -> id = reader.nextString()
-                "image" -> image = reader.nextString()
-                "invisible" -> invisible = reader.nextBoolean()
-                "language" -> language = reader.nextString()
+                "image" -> image = JsonParsingUtils.readNullableString(reader)
+                "invisible" -> invisible = JsonParsingUtils.readNullableBoolean(reader)
+                "language" -> language = JsonParsingUtils.readNullableString(reader)
                 "last_active" -> lastActive = dateAdapter.fromJson(reader)
-                "name" -> name = reader.nextString()
+                "name" -> name = JsonParsingUtils.readNullableString(reader)
                 "online" -> online = reader.nextBoolean()
                 "privacy_settings" -> privacySettings = privacySettingsAdapter.fromJson(reader)
                 "role" -> role = reader.nextString()
@@ -108,7 +108,7 @@ internal class UserAdapter(
             name = name ?: "",
             image = image ?: "",
             role = role,
-            invisible = invisible ?: false,
+            invisible = invisible,
             privacySettings = privacySettings,
             language = language ?: "",
             banned = banned,

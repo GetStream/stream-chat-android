@@ -49,4 +49,14 @@ internal object DeviceTestData {
         pushProvider = PushProvider.FIREBASE,
         providerName = null,
     )
+
+    @Language("JSON")
+    val jsonWithExplicitNulls =
+        """{"id":"token1","push_provider":"firebase","push_provider_name":null}"""
+
+    val expectedWithExplicitNulls = Device(
+        token = "token1",
+        pushProvider = PushProvider.FIREBASE,
+        providerName = null,
+    )
 }

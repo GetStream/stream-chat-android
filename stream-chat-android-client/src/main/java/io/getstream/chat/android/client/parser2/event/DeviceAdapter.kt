@@ -35,7 +35,7 @@ internal class DeviceAdapter : JsonAdapter<Device>() {
             when (reader.nextName()) {
                 "id" -> id = reader.nextString()
                 "push_provider" -> pushProvider = reader.nextString()
-                "push_provider_name" -> pushProviderName = reader.nextString()
+                "push_provider_name" -> pushProviderName = JsonParsingUtils.readNullableString(reader)
                 else -> reader.skipValue()
             }
         }

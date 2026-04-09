@@ -72,4 +72,21 @@ internal class MessageModerationDetailsParsingTest {
     }
 
     // endregion
+
+    // region Explicit null values
+
+    @Test
+    fun `DTO path - deserializes with explicit null values`() {
+        val dto = parser.fromJson(MessageModerationDetailsTestData.jsonWithExplicitNulls, DownstreamModerationDetailsDto::class.java)
+        val domain = with(domainMapping) { dto.toDomain() }
+        assertEquals(MessageModerationDetailsTestData.expectedWithExplicitNulls, domain)
+    }
+
+    @Test
+    fun `Direct path - deserializes with explicit null values`() {
+        val domain = adapter.fromJson(MessageModerationDetailsTestData.jsonWithExplicitNulls)
+        assertEquals(MessageModerationDetailsTestData.expectedWithExplicitNulls, domain)
+    }
+
+    // endregion
 }

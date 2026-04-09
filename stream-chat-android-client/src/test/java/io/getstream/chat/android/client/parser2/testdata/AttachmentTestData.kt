@@ -82,4 +82,33 @@ internal object AttachmentTestData {
         originalWidth = null,
         extraData = mutableMapOf(),
     )
+
+    @Language("JSON")
+    val jsonWithExplicitNulls =
+        """{"asset_url":null,"author_name":null,"author_link":null,"fallback":null,"image":null,"image_url":null,"mime_type":null,"name":null,"og_scrape_url":null,"text":null,"thumb_url":null,"title":null,"title_link":null,"type":null,"original_height":null,"original_width":null}"""
+
+    @Language("JSON")
+    val jsonWithFileSizeNull =
+        """{"file_size":null}"""
+
+    val expectedWithExplicitNulls = Attachment(
+        assetUrl = null,
+        authorName = null,
+        authorLink = null,
+        fallback = null,
+        fileSize = 0,
+        image = null,
+        imageUrl = null,
+        mimeType = null,
+        name = null,
+        ogUrl = null,
+        text = null,
+        thumbUrl = null,
+        title = null,
+        titleLink = null,
+        type = null,
+        originalHeight = null,
+        originalWidth = null,
+        extraData = mutableMapOf(),
+    )
 }
