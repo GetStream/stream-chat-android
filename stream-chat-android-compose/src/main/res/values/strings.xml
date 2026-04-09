@@ -269,7 +269,7 @@
     <string name="stream_compose_poll_option_title">Options</string>
     <string name="stream_compose_poll_option_description">Add an option</string>
     <string name="stream_compose_poll_option_hint">Add an option</string>
-    <string name="stream_compose_poll_option_error_duplicated">This is already an option</string>
+    <string name="stream_compose_poll_option_error_duplicated">Option already exists</string>
     <string name="stream_compose_poll_option_discard_dialog_title">Discard poll</string>
     <string name="stream_compose_poll_option_discard_dialog_description">Are you sure you want to discard your poll?</string>
     <string name="stream_compose_poll_option_discard_dialog_cancel">Keep Editing</string>
@@ -317,6 +317,8 @@
 
     <string name="stream_compose_poll_created_preview">Poll created: %s</string>
     <string name="stream_compose_poll_closed_preview">Poll closed: %s</string>
+    <string name="stream_compose_poll_option_reorder">Reorder poll option</string>
+    <string name="stream_compose_poll_option_remove">Remove poll option</string>
 
     <!--  Pinned message list  -->
     <string name="stream_compose_pinned_message_list_empty_title">No pinned messages</string>

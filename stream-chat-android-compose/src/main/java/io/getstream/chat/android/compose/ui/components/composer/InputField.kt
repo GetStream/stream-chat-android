@@ -85,7 +85,7 @@ public fun InputField(
     ),
     decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit,
 ) {
-    var textState by remember { mutableStateOf(TextFieldValue(text = value)) }
+    var textState by remember { mutableStateOf(TextFieldValue(text = value, selection = TextRange(value.length))) }
 
     if (textState.text != value) {
         // Workaround to move cursor to the end after selecting a suggestion
