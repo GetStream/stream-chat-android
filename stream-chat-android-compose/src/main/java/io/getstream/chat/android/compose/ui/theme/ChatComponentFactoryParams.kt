@@ -1115,13 +1115,13 @@ public data class MessageComposerInputCenterContentParams(
 )
 
 /**
- * Parameters for [ChatComponentFactory.MessageComposerInputCenterBottomContent].
+ * Parameters for [ChatComponentFactory.MessageComposerInputBottomContent].
  *
  * @param state The current state of the message composer.
  * @param onAlsoSendToChannelChange Action invoked when also-send-to-channel is changed.
  * @param modifier Modifier for styling.
  */
-public data class MessageComposerInputCenterBottomContentParams(
+public data class MessageComposerInputBottomContentParams(
     val state: MessageComposerState,
     val onAlsoSendToChannelChange: (Boolean) -> Unit,
     val modifier: Modifier = Modifier,

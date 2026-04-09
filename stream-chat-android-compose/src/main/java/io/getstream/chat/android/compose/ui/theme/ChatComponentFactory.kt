@@ -1465,19 +1465,19 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default center bottom content of the message composer input.
-     * Shown at the bottom of the composer input.
+     * The default bottom content of the message composer input.
+     * Shown at the bottom of the composer input, below the text field.
      *
      * Used as part of [MessageComposerInput].
      *
      * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageComposerInputCenterBottomContent(params: MessageComposerInputCenterBottomContentParams) {
+    public fun MessageComposerInputBottomContent(params: MessageComposerInputBottomContentParams) {
         val inThreadMode = params.state.messageMode is MessageMode.MessageThread
         AnimatedContent(targetState = inThreadMode) { visible ->
             if (visible) {
-                io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerInputCenterBottomContent(
+                io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerInputBottomContent(
                     alsoSendToChannel = params.state.alsoSendToChannel,
                     onAlsoSendToChannelChange = params.onAlsoSendToChannelChange,
                 )
