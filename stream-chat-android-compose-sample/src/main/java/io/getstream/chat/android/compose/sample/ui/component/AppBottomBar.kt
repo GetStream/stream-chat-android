@@ -68,7 +68,7 @@ fun AppBottomBar(
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
         AppBottomBarOptionTile(
-            icon = R.drawable.ic_chats,
+            icon = ComposeR.drawable.stream_design_ic_message_bubble_fill,
             text = R.string.app_bottom_bar_chats,
             isSelected = selectedOption == AppBottomBarOption.CHATS,
             onClick = { onOptionSelected(AppBottomBarOption.CHATS) },
@@ -85,7 +85,7 @@ fun AppBottomBar(
             onClick = { onOptionSelected(AppBottomBarOption.MENTIONS) },
         )
         AppBottomBarOptionTile(
-            icon = R.drawable.ic_threads,
+            icon = ComposeR.drawable.stream_design_ic_thread,
             text = R.string.app_bottom_bar_threads,
             isSelected = selectedOption == AppBottomBarOption.THREADS,
             onClick = { onOptionSelected(AppBottomBarOption.THREADS) },

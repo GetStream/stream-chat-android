@@ -282,7 +282,7 @@ private fun TitleRow(
                     modifier = Modifier
                         .testTag("Stream_ChannelMutedIcon")
                         .size(16.dp),
-                    painter = painterResource(id = R.drawable.stream_design_ic_bell_off),
+                    painter = painterResource(id = R.drawable.stream_design_ic_mute),
                     contentDescription = null,
                     tint = ChatTheme.colors.textTertiary,
                 )
@@ -349,7 +349,7 @@ private fun MessageRow(
                 modifier = Modifier
                     .testTag("Stream_ChannelMutedIcon")
                     .size(16.dp),
-                painter = painterResource(id = R.drawable.stream_design_ic_bell_off),
+                painter = painterResource(id = R.drawable.stream_design_ic_mute),
                 contentDescription = null,
                 tint = ChatTheme.colors.textTertiary,
             )
