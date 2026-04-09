@@ -21,7 +21,6 @@ package io.getstream.chat.android.compose.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -142,7 +141,6 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param config Central behavioral configuration for the Chat SDK. See [ChatUiConfig].
  * @param colors The set of colors we provide, wrapped in [StreamDesign.Colors].
  * @param typography The set of typography styles we provide, wrapped in [StreamDesign.Typography].
- * @param rippleConfiguration Defines the appearance for ripples.
  * @param componentFactory Provide to customize the stateless components that are used throughout the UI.
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
  * @param reactionResolver Provides available reactions and resolves reaction types to emoji codes.
@@ -173,13 +171,12 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
 public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
     config: ChatUiConfig = ChatUiConfig(),
-    colors: StreamDesign.Colors =
-        if (isInDarkMode) StreamDesign.Colors.defaultDark() else StreamDesign.Colors.default(),
+    colors: StreamDesign.Colors = if (isInDarkMode) {
+        StreamDesign.Colors.defaultDark()
+    } else {
+        StreamDesign.Colors.default()
+    },
     typography: StreamDesign.Typography = StreamDesign.Typography.default(),
-    rippleConfiguration: StreamRippleConfiguration = StreamRippleConfiguration.defaultRippleConfiguration(
-        contentColor = LocalContentColor.current,
-        lightTheme = !isInDarkMode,
-    ),
     componentFactory: ChatComponentFactory = DefaultChatComponentFactory(),
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
@@ -228,12 +225,11 @@ public fun ChatTheme(
         }
     }
 
-    @Suppress("DEPRECATION")
     CompositionLocalProvider(
         LocalChatUiConfig provides config,
         LocalColors provides colors,
         LocalTypography provides typography,
-        LocalRippleConfiguration provides rippleConfiguration.toRippleConfiguration(),
+        LocalRippleConfiguration provides streamRippleConfiguration(colors, lightTheme = !isInDarkMode),
         LocalShimmerTheme provides StreamShimmerTheme,
         LocalComponentFactory provides componentFactory,
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
