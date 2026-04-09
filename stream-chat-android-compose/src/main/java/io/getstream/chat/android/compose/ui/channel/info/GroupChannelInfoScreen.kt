@@ -252,6 +252,7 @@ internal fun GroupChannelInfoTopBar(
                 infoState.options.any { option -> option is ChannelInfoViewState.Content.Option.EditChannel }
             ) {
                 StreamTextButton(
+                    modifier = Modifier.padding(end = StreamTokens.spacingSm),
                     style = StreamButtonStyleDefaults.secondaryOutline,
                     text = stringResource(id = UiCommonR.string.stream_ui_channel_info_edit_action),
                     onClick = onActionClick,
