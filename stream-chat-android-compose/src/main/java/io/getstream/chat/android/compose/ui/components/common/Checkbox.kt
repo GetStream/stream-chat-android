@@ -92,14 +92,19 @@ private val CheckboxShape = RoundedCornerShape(StreamTokens.radiusSm)
 @Composable
 private fun CheckboxPreview() {
     ChatTheme {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Checkbox(checked = false, enabled = true, onCheckedChange = {})
-            Checkbox(checked = true, enabled = true, onCheckedChange = {})
-            Checkbox(checked = false, enabled = false, onCheckedChange = {})
-            Checkbox(checked = true, enabled = false, onCheckedChange = {})
-        }
+        CheckboxStates()
+    }
+}
+
+@Composable
+internal fun CheckboxStates() {
+    Row(
+        modifier = Modifier.padding(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Checkbox(checked = false, enabled = true, onCheckedChange = {})
+        Checkbox(checked = true, enabled = true, onCheckedChange = {})
+        Checkbox(checked = false, enabled = false, onCheckedChange = {})
+        Checkbox(checked = true, enabled = false, onCheckedChange = {})
     }
 }
