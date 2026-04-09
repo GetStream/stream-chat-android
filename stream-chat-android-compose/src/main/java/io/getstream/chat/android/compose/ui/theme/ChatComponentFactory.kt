@@ -1475,7 +1475,10 @@ public interface ChatComponentFactory {
     @Composable
     public fun MessageComposerInputBottomContent(params: MessageComposerInputBottomContentParams) {
         val inThreadMode = params.state.messageMode is MessageMode.MessageThread
-        AnimatedContent(targetState = inThreadMode) { visible ->
+        AnimatedContent(
+            modifier = params.modifier,
+            targetState = inThreadMode,
+        ) { visible ->
             if (visible) {
                 io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerInputBottomContent(
                     alsoSendToChannel = params.state.alsoSendToChannel,
