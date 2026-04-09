@@ -48,7 +48,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.globalStateFlow
-import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.feature.channel.ChannelConstants.CHANNEL_ARG_DRAFT
@@ -609,7 +608,6 @@ class ChatsActivity : ComponentActivity() {
         channelId = channelId,
         messageId = messageId,
         parentMessageId = parentMessageId,
-        isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
     )
 
     private fun openAddChannel() {
