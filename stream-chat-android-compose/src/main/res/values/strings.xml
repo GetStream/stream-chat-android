@@ -323,6 +323,8 @@
 
     <string name="stream_compose_poll_created_preview">Poll created: %s</string>
     <string name="stream_compose_poll_closed_preview">Poll closed: %s</string>
+    <string name="stream_compose_poll_option_reorder">Reorder poll option</string>
+    <string name="stream_compose_poll_option_remove">Remove poll option</string>
 
     <!--  Pinned message list  -->
     <string name="stream_compose_pinned_message_list_empty_title">No pinned messages</string>

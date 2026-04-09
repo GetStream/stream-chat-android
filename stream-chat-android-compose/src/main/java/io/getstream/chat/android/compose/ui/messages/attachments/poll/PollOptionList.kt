@@ -31,6 +31,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -140,13 +141,14 @@ private fun ReorderableScope.PollOptionRow(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(
-                modifier = Modifier.draggableHandle(),
-                onClick = {},
+            Box(
+                modifier = Modifier
+                    .draggableHandle()
+                    .minimumInteractiveComponentSize(),
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.stream_design_ic_reorder),
-                    contentDescription = null,
+                    contentDescription = stringResource(R.string.stream_compose_poll_option_reorder),
                     tint = colors.inputTextIcon,
                     modifier = Modifier.size(20.dp),
                 )
@@ -162,7 +164,7 @@ private fun ReorderableScope.PollOptionRow(
             IconButton(onClick = onRemove) {
                 Icon(
                     painter = painterResource(R.drawable.stream_design_ic_minus_circle),
-                    contentDescription = null,
+                    contentDescription = stringResource(R.string.stream_compose_poll_option_remove),
                     tint = colors.inputTextIcon,
                     modifier = Modifier.size(20.dp),
                 )
