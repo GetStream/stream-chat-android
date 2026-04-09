@@ -170,30 +170,36 @@ private fun ReorderableScope.PollOptionRow(
         }
 
         if (item.pollOptionError != null && item.title.isNotBlank()) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = StreamTokens.spacingMd,
-                        end = StreamTokens.spacingMd,
-                        bottom = StreamTokens.spacingSm,
-                    ),
-                horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.stream_design_ic_exclamation_circle),
-                    contentDescription = null,
-                    tint = colors.accentError,
-                    modifier = Modifier.size(20.dp),
-                )
-                Text(
-                    text = item.pollOptionError.message,
-                    color = colors.accentError,
-                    style = ChatTheme.typography.captionDefault,
-                )
-            }
+            PollOptionErrorRow(item.pollOptionError)
         }
+    }
+}
+
+@Composable
+private fun PollOptionErrorRow(pollOptionError: PollOptionError) {
+    val colors = ChatTheme.colors
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                start = StreamTokens.spacingMd,
+                end = StreamTokens.spacingMd,
+                bottom = StreamTokens.spacingSm,
+            ),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.stream_design_ic_exclamation_circle),
+            contentDescription = null,
+            tint = colors.accentError,
+            modifier = Modifier.size(20.dp),
+        )
+        Text(
+            text = pollOptionError.message,
+            color = colors.accentError,
+            style = ChatTheme.typography.captionDefault,
+        )
     }
 }
 
