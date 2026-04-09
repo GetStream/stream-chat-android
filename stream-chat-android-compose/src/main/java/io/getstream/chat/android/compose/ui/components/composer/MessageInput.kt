@@ -370,6 +370,24 @@ internal fun MessageComposerInputActiveCommandPlaceholder() {
 
 @Preview
 @Composable
+private fun MessageComposerInputActiveCommandPlaceholderInThreadModePreview() {
+    ChatTheme {
+        MessageComposerInputActiveCommandPlaceholderInThreadMode()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputActiveCommandPlaceholderInThreadMode() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            messageMode = MessageMode.MessageThread(PreviewMessageData.message1),
+            activeCommand = PreviewCommandData.command1,
+        ),
+    )
+}
+
+@Preview
+@Composable
 private fun MessageComposerInputActiveCommandFilledPreview() {
     ChatTheme {
         MessageComposerInputActiveCommandFilled()
@@ -380,6 +398,25 @@ private fun MessageComposerInputActiveCommandFilledPreview() {
 internal fun MessageComposerInputActiveCommandFilled() {
     MessageInput(
         messageComposerState = PreviewMessageComposerState.copy(
+            activeCommand = PreviewCommandData.command1,
+            inputValue = "The Office",
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputActiveCommandFilledInThreadModePreview() {
+    ChatTheme {
+        MessageComposerInputActiveCommandFilledInThreadMode()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputActiveCommandFilledInThreadMode() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            messageMode = MessageMode.MessageThread(PreviewMessageData.message1),
             activeCommand = PreviewCommandData.command1,
             inputValue = "The Office",
         ),
