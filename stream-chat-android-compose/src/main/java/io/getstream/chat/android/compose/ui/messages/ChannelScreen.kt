@@ -77,11 +77,8 @@ import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFact
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
-import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.Delete
@@ -113,17 +110,13 @@ import kotlinx.coroutines.launch
  * @param viewModelFactory The factory used to build ViewModels and power the behavior.
  * You can customize the behavior of the list through its parameters. For default behavior,
  * simply create an instance and pass in just the channel ID and the context.
- * @param showHeader If we're showing the header or not.
- * @param reactionSorting The sorting type for reactions. Default is [ReactionSortingByFirstReactionAt].
  * @param onBackPressed Handler for when the user taps on the Back button and/or the system
  * back button.
  * @param onHeaderTitleClick Handler for when the user taps on the header section.
  * @param onChannelAvatarClick Handler called when the user taps on the channel avatar.
- * @param onUserAvatarClick Handler when users avatar is clicked.
  * @param skipPushNotification If new messages should skip triggering a push notification when sent. False by default.
  * @param skipEnrichUrl If new messages being sent, or existing ones being updated should skip enriching the URL.
  * If URL is not enriched, it will not be displayed as a link attachment. False by default.
- * @param showAnonymousAvatar If the user avatar should be shown on comments for polls with anonymous voting visibility.
  * @param verticalArrangement Vertical arrangement of the regular message list.
  * Default: [Arrangement.Bottom].
  * @param threadsVerticalArrangement Vertical arrangement of the thread message list.
@@ -135,18 +128,11 @@ import kotlinx.coroutines.launch
 @Composable
 public fun ChannelScreen(
     viewModelFactory: ChannelViewModelFactory,
-    showHeader: Boolean = true,
-    reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
     onBackPressed: () -> Unit = {},
     onHeaderTitleClick: ((channel: Channel) -> Unit)? = null,
     onChannelAvatarClick: ((Channel) -> Unit)? = null,
-    onComposerLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
-    onMessageLinkClick: ((Message, String) -> Unit)? = null,
-    onUserAvatarClick: ((User) -> Unit)? = null,
-    onUserMentionClick: (User) -> Unit = {},
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
-    showAnonymousAvatar: Boolean = false,
     verticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
     threadsVerticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
     topBarContent: @Composable (BackAction) -> Unit = {
@@ -160,7 +146,6 @@ public fun ChannelScreen(
     bottomBarContent: @Composable () -> Unit = {
         DefaultBottomBarContent(
             viewModelFactory = viewModelFactory,
-            onComposerLinkPreviewClick = onComposerLinkPreviewClick,
             skipPushNotification = skipPushNotification,
             skipEnrichUrl = skipEnrichUrl,
         )
@@ -207,14 +192,8 @@ public fun ChannelScreen(
     ChannelScreenContentBox {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            topBar = {
-                if (showHeader) {
-                    topBarContent(backAction)
-                }
-            },
-            bottomBar = {
-                bottomBarContent()
-            },
+            topBar = { topBarContent(backAction) },
+            bottomBar = bottomBarContent,
             snackbarHost = { StreamSnackbarHost(snackbarHostState) },
             containerColor = ChatTheme.colors.backgroundCoreApp,
         ) { contentPadding ->
@@ -226,7 +205,7 @@ public fun ChannelScreen(
                     .fillMaxSize(),
                 contentPadding = contentPadding,
                 viewModel = listViewModel,
-                reactionSorting = reactionSorting,
+                reactionSorting = ReactionSortingByFirstReactionAt,
                 messagesLazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
                 verticalArrangement = verticalArrangement,
                 threadsVerticalArrangement = threadsVerticalArrangement,
@@ -242,9 +221,6 @@ public fun ChannelScreen(
                         }
                     }
                 },
-                onUserAvatarClick = onUserAvatarClick,
-                onMessageLinkClick = onMessageLinkClick,
-                onUserMentionClick = onUserMentionClick,
                 onClosePoll = listViewModel::closePoll,
                 onReply = { message -> composerViewModel.performMessageAction(Reply(message)) },
                 onMediaGalleryPreviewResult = remember(listViewModel, composerViewModel) {
@@ -293,10 +269,7 @@ public fun ChannelScreen(
             skipEnrichUrl = skipEnrichUrl,
         )
         MessageDialogs(listViewModel = listViewModel)
-        PollDialogs(
-            listViewModel = listViewModel,
-            showAnonymousAvatar = showAnonymousAvatar,
-        )
+        PollDialogs(listViewModel = listViewModel)
     }
 }
 
@@ -387,7 +360,6 @@ internal fun DefaultTopBarContent(
 @Composable
 internal fun DefaultBottomBarContent(
     viewModelFactory: ChannelViewModelFactory,
-    onComposerLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
 ) {
@@ -414,7 +386,6 @@ internal fun DefaultBottomBarContent(
                 listViewModel.dismissAllMessageActions()
                 composerViewModel.dismissMessageActions()
             },
-            onLinkPreviewClick = onComposerLinkPreviewClick,
             onSendMessage = { message ->
                 attachmentsPickerViewModel.setPickerVisible(visible = false)
                 attachmentsPickerViewModel.clearSelection()
@@ -733,10 +704,7 @@ public fun MessageDialogs(listViewModel: MessageListViewModel) {
 }
 
 @Composable
-public fun PollDialogs(
-    listViewModel: MessageListViewModel,
-    showAnonymousAvatar: Boolean,
-) {
+public fun PollDialogs(listViewModel: MessageListViewModel) {
     val dismiss = { listViewModel.displayPollMoreOptions(null) }
     val selectedPoll = listViewModel.pollState.selectedPoll
 
@@ -760,7 +728,6 @@ public fun PollDialogs(
     if (selectedPoll?.pollSelectionType == PollSelectionType.ViewAnswers) {
         PollAnswersDialog(
             selectedPoll = selectedPoll,
-            showAnonymousAvatar = showAnonymousAvatar,
             listViewModel = listViewModel,
             onDismissRequest = { dismiss.invoke() },
             onBackPressed = { dismiss.invoke() },

@@ -1588,7 +1588,7 @@ public final class io/getstream/chat/android/compose/ui/components/moderatedmess
 public final class io/getstream/chat/android/compose/ui/components/poll/ComposableSingletons$PollAnswersKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/poll/ComposableSingletons$PollAnswersKt;
 	public fun <init> ()V
-	public final fun getLambda$-1437491986$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1411166830$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-1980307438$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$-49181804$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$-608288022$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
@@ -1632,7 +1632,7 @@ public final class io/getstream/chat/android/compose/ui/components/poll/Composab
 }
 
 public final class io/getstream/chat/android/compose/ui/components/poll/PollAnswersKt {
-	public static final fun PollAnswersDialog (Lio/getstream/chat/android/ui/common/state/messages/poll/SelectedPoll;ZLio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+	public static final fun PollAnswersDialog (Lio/getstream/chat/android/ui/common/state/messages/poll/SelectedPoll;Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/poll/PollDialogHeaderKt {
@@ -1717,11 +1717,11 @@ public final class io/getstream/chat/android/compose/ui/mentions/MentionListKt {
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/ChannelScreenKt {
-	public static final fun ChannelScreen (Lio/getstream/chat/android/compose/viewmodel/messages/ChannelViewModelFactory;ZLio/getstream/chat/android/models/ReactionSorting;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ZZZLandroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/foundation/layout/Arrangement$Vertical;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V
+	public static final fun ChannelScreen (Lio/getstream/chat/android/compose/viewmodel/messages/ChannelViewModelFactory;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ZZLandroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/foundation/layout/Arrangement$Vertical;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 	public static final fun MessageDialogs (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Landroidx/compose/runtime/Composer;I)V
 	public static final fun MessageMenus (Landroidx/compose/foundation/layout/BoxScope;Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;ZZLandroidx/compose/runtime/Composer;I)V
 	public static final fun MessageModerationDialog (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;ZZLandroidx/compose/runtime/Composer;I)V
-	public static final fun PollDialogs (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;ZLandroidx/compose/runtime/Composer;I)V
+	public static final fun PollDialogs (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Landroidx/compose/runtime/Composer;I)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/AttachmentPickerActions {
