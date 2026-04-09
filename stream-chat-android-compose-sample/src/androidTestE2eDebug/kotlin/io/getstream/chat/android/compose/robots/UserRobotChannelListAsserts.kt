@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.robots
 
 import io.getstream.chat.android.compose.pages.ChannelListPage.ChannelList.Channel
 import io.getstream.chat.android.compose.uiautomator.isDisplayed
+import io.getstream.chat.android.compose.uiautomator.waitForText
 import io.getstream.chat.android.compose.uiautomator.waitToAppear
 import io.getstream.chat.android.compose.uiautomator.waitToDisappear
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
@@ -36,7 +37,7 @@ fun UserRobot.assertMessageInChannelPreview(text: String, fromCurrentUser: Boole
         false -> "${ParticipantRobot.name}: $text"
         null -> text
     }
-    assertEquals(expectedPreview, Channel.messagePreview.waitToAppear().text.trimEnd())
+    assertEquals(expectedPreview, Channel.messagePreview.waitToAppear().waitForText(expectedPreview).text.trimEnd())
     return this
 }
 

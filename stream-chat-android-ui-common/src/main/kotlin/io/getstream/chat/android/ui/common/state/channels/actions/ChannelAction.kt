@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.common.state.channels.actions
 
 import androidx.annotation.DrawableRes
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.ui.common.R
 
 /**
@@ -28,7 +27,6 @@ import io.getstream.chat.android.ui.common.R
  * @property channel The channel this action targets.
  * @property icon Drawable resource for the action icon.
  * @property label Human-readable label for the action.
- * @property requiredCapability Optional channel capability required to show this action.
  * @property confirmationPopup Optional confirmation dialog to show before executing.
  * @property isDestructive Whether this action is destructive (e.g. delete).
  * @property onAction The handler to execute when the action is confirmed.
@@ -39,7 +37,6 @@ public interface ChannelAction {
     @get:DrawableRes
     public val icon: Int
     public val label: String
-    public val requiredCapability: String? get() = null
     public val confirmationPopup: ConfirmationPopup? get() = null
     public val isDestructive: Boolean get() = false
     public val onAction: () -> Unit
@@ -68,7 +65,6 @@ public class LeaveGroup(
 ) : ChannelAction {
     @DrawableRes
     override val icon: Int = R.drawable.stream_design_ic_leave
-    override val requiredCapability: String = ChannelCapabilities.LEAVE_CHANNEL
     override val isDestructive: Boolean = true
 }
 
@@ -82,7 +78,6 @@ public class MuteChannel(
 ) : ChannelAction {
     @DrawableRes
     override val icon: Int = R.drawable.stream_design_ic_mute
-    override val requiredCapability: String = ChannelCapabilities.MUTE_CHANNEL
 }
 
 /**
@@ -95,7 +90,6 @@ public class UnmuteChannel(
 ) : ChannelAction {
     @DrawableRes
     override val icon: Int = R.drawable.stream_design_ic_audio
-    override val requiredCapability: String = ChannelCapabilities.MUTE_CHANNEL
 }
 
 /**
@@ -109,7 +103,6 @@ public class DeleteConversation(
 ) : ChannelAction {
     @DrawableRes
     override val icon: Int = R.drawable.stream_design_ic_delete
-    override val requiredCapability: String = ChannelCapabilities.DELETE_CHANNEL
     override val isDestructive: Boolean = true
 }
 
