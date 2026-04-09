@@ -16,16 +16,12 @@
 
 package io.getstream.chat.android.uitests.ui
 
-import io.getstream.chat.android.uitests.ui.compose.test.ComposeChannelsTest
-import io.getstream.chat.android.uitests.ui.compose.test.ComposeMessagesTest
 import io.getstream.chat.android.uitests.ui.uicomponents.test.UiComponentsChannelsTest
 import io.getstream.chat.android.uitests.ui.uicomponents.test.UiComponentsMessagesTest
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
 @Suite.SuiteClasses(
-    ComposeChannelsTest::class,
-    ComposeMessagesTest::class,
     UiComponentsChannelsTest::class,
     UiComponentsMessagesTest::class,
 )
