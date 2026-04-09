@@ -275,7 +275,7 @@
     <string name="stream_compose_poll_option_title">Options</string>
     <string name="stream_compose_poll_option_description">Add an option</string>
     <string name="stream_compose_poll_option_hint">Add an option</string>
-    <string name="stream_compose_poll_option_error_duplicated">This is already an option</string>
+    <string name="stream_compose_poll_option_error_duplicated">Option already exists</string>
     <string name="stream_compose_poll_option_discard_dialog_title">Discard poll</string>
     <string name="stream_compose_poll_option_discard_dialog_description">Are you sure you want to discard your poll?</string>
     <string name="stream_compose_poll_option_discard_dialog_cancel">Keep Editing</string>
