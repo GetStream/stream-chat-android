@@ -865,6 +865,7 @@ public object StreamDesign {
      * @param headingLarge Style for large, prominent headings.
      * @param metadataDefault Style for metadata and secondary information.
      * @param metadataEmphasis Style for emphasized metadata in secondary content areas.
+     * @param numericSmall Style for micro numeric indicators.
      * @param numericMedium Style for medium-sized numeric indicators, like the unread count.
      * @param numericLarge Style for large numeric indicators.
      * @param numericExtraLarge Style for extra-large numeric indicators.
@@ -881,6 +882,7 @@ public object StreamDesign {
         public val headingLarge: TextStyle,
         public val metadataDefault: TextStyle,
         public val metadataEmphasis: TextStyle,
+        public val numericSmall: TextStyle,
         public val numericMedium: TextStyle,
         public val numericLarge: TextStyle,
         public val numericExtraLarge: TextStyle,
@@ -911,17 +913,17 @@ public object StreamDesign {
                     fontFamily = fontFamily,
                     fontWeight = StreamTokens.fontWeightRegular,
                     fontSize = StreamTokens.fontSizeSm,
-                    lineHeight = StreamTokens.lineHeightTight,
+                    lineHeight = StreamTokens.lineHeightNormal,
                 ),
                 captionEmphasis = TextStyle(
                     fontFamily = fontFamily,
                     fontWeight = StreamTokens.fontWeightSemiBold,
                     fontSize = StreamTokens.fontSizeSm,
-                    lineHeight = StreamTokens.lineHeightTight,
+                    lineHeight = StreamTokens.lineHeightNormal,
                 ),
                 headingExtraSmall = TextStyle(
                     fontFamily = fontFamily,
-                    fontWeight = StreamTokens.fontWeightMedium,
+                    fontWeight = StreamTokens.fontWeightSemiBold,
                     fontSize = StreamTokens.fontSizeSm,
                     lineHeight = StreamTokens.lineHeightNormal,
                 ),
@@ -955,22 +957,29 @@ public object StreamDesign {
                     fontSize = StreamTokens.fontSizeXs,
                     lineHeight = StreamTokens.lineHeightTight,
                 ),
+                numericSmall = TextStyle(
+                    fontFamily = fontFamily,
+                    fontWeight = StreamTokens.fontWeightBold,
+                    fontSize = StreamTokens.fontSizeMicro,
+                    lineHeight = StreamTokens.fontSizeMicro,
+                ),
                 numericMedium = TextStyle(
                     fontFamily = fontFamily,
                     fontWeight = StreamTokens.fontWeightBold,
                     fontSize = StreamTokens.fontSize2xs,
-                    lineHeight = StreamTokens.lineHeightTighter,
+                    lineHeight = StreamTokens.fontSize2xs,
                 ),
                 numericLarge = TextStyle(
                     fontFamily = fontFamily,
                     fontWeight = StreamTokens.fontWeightBold,
                     fontSize = StreamTokens.fontSizeXs,
+                    lineHeight = StreamTokens.fontSizeXs,
                 ),
                 numericExtraLarge = TextStyle(
                     fontFamily = fontFamily,
                     fontWeight = StreamTokens.fontWeightBold,
                     fontSize = StreamTokens.fontSizeSm,
-                    lineHeight = StreamTokens.lineHeightTighter,
+                    lineHeight = StreamTokens.fontSizeSm,
                 ),
             )
         }
