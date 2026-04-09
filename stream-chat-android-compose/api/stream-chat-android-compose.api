@@ -6163,9 +6163,9 @@ public final class io/getstream/chat/android/compose/ui/threads/ComposableSingle
 public final class io/getstream/chat/android/compose/ui/threads/ComposableSingletons$ThreadListHeaderKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/threads/ComposableSingletons$ThreadListHeaderKt;
 	public fun <init> ()V
-	public final fun getLambda$-1674084940$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
-	public final fun getLambda$-186248340$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda$-2127007699$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-798078767$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1494410151$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$381085544$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/threads/ComposableSingletons$ThreadListKt {
