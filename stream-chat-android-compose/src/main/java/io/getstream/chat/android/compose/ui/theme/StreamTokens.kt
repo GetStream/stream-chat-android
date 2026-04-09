@@ -51,14 +51,13 @@ internal object StreamTokens {
     val fontWeightSemiBold = FontWeight.SemiBold
     val fontWeightMedium = FontWeight.Medium
     val fontWeightRegular = FontWeight.Normal
+    val fontSizeMicro = 8.sp
     val fontSize2xs = 10.sp
     val fontSizeXs = 12.sp
     val fontSizeSm = 14.sp
     val fontSizeMd = 16.sp
     val fontSizeLg = 18.sp
     val fontSizeXl = 20.sp
-    val lineHeightTightest = 10.sp
-    val lineHeightTighter = 14.sp
     val lineHeightTight = 16.sp
     val lineHeightNormal = 20.sp
     val lineHeightRelaxed = 24.sp
