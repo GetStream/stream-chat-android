@@ -14,20 +14,30 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.snapshot.compose.components
+package io.getstream.chat.android.compose.ui.components.avatar
 
-import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
-import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
+import app.cash.paparazzi.DeviceConfig
+import app.cash.paparazzi.Paparazzi
+import io.getstream.chat.android.compose.ui.PaparazziComposeTest
+import org.junit.Rule
 import org.junit.Test
 
-class ReactionOptionsTest : ComposeScreenshotTest() {
+internal class ChannelAvatarTest : PaparazziComposeTest {
+
+    @get:Rule
+    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_4A)
 
     @Test
-    fun reactionOptions() = runScreenshotTest {
-        ReactionOptions(
-            ownReactions = emptyList(),
-            onReactionOptionSelected = {},
-            onShowMoreReactionsSelected = {},
-        )
+    fun `channel avatar in light mode`() {
+        snapshot {
+            ChannelAvatarContent()
+        }
+    }
+
+    @Test
+    fun `channel avatar in dark mode`() {
+        snapshot(isInDarkMode = true) {
+            ChannelAvatarContent()
+        }
     }
 }
