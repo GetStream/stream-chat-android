@@ -1,5 +1,3 @@
-// ktlint-disable filename
-
 package io.getstream.chat.docs.kotlin.compose.messages
 
 import android.os.Bundle
@@ -15,7 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.ui.components.messageactions.SelectedReactionsMenu
+import io.getstream.chat.android.compose.ui.components.messageactions.ReactionsMenu
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -23,9 +21,9 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsState
 
 /**
- * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/selected-reactions-menu/#usage)
+ * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/reactions-menu/#usage)
  */
-private object SelectedReactionsMenuUsageSnippet {
+private object ReactionsMenuUsageSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
@@ -52,7 +50,7 @@ private object SelectedReactionsMenuUsageSnippet {
 
                         if (selectedMessageState is SelectedMessageReactionsState) {
                             val selectedMessage = selectedMessageState.message
-                            SelectedReactionsMenu(
+                            ReactionsMenu(
                                 modifier = Modifier.align(Alignment.BottomCenter),
                                 // The currently logged-in user
                                 currentUser = user,
@@ -79,9 +77,9 @@ private object SelectedReactionsMenuUsageSnippet {
 }
 
 /**
- * [Handling Actions](https://getstream.io/chat/docs/sdk/android/compose/message-components/selected-reactions-menu/#handling-actions)
+ * [Handling Actions](https://getstream.io/chat/docs/sdk/android/compose/message-components/reactions-menu/#handling-actions)
  */
-private object SelectedReactionsMenuHandlingActionsSnippet {
+private object ReactionsMenuHandlingActionsSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
@@ -109,7 +107,7 @@ private object SelectedReactionsMenuHandlingActionsSnippet {
 
                         if (selectedMessageState is SelectedMessageReactionsState) {
                             val selectedMessage = selectedMessageState.message
-                            SelectedReactionsMenu(
+                            ReactionsMenu(
                                 modifier = Modifier.align(Alignment.BottomCenter),
                                 // The currently logged-in user
                                 currentUser = user,
@@ -135,9 +133,9 @@ private object SelectedReactionsMenuHandlingActionsSnippet {
 }
 
 /**
- * [Customization](https://getstream.io/chat/docs/sdk/android/compose/message-components/selected-reactions-menu/#customization)
+ * [Customization](https://getstream.io/chat/docs/sdk/android/compose/message-components/reactions-menu/#customization)
  */
-private object SelectedReactionsMenuCustomizationSnippet {
+private object ReactionsMenuCustomizationSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
@@ -164,7 +162,7 @@ private object SelectedReactionsMenuCustomizationSnippet {
 
                         if (selectedMessageState is SelectedMessageReactionsState) {
                             val selectedMessage = selectedMessageState.message
-                            SelectedReactionsMenu(
+                            ReactionsMenu(
                                 // Use a Modifier to customize the appearance
                                 modifier = Modifier
                                     .align(Alignment.Center)

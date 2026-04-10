@@ -1954,7 +1954,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun ReactionsMenu(params: ReactionsMenuParams) {
-        io.getstream.chat.android.compose.ui.components.messageactions.SelectedReactionsMenu(
+        io.getstream.chat.android.compose.ui.components.messageactions.ReactionsMenu(
             modifier = params.modifier,
             currentUser = params.currentUser,
             message = params.message,

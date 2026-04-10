@@ -83,7 +83,7 @@ import io.getstream.chat.android.ui.common.state.messages.React
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun SelectedReactionsMenu(
+public fun ReactionsMenu(
     message: Message,
     currentUser: User?,
     ownCapabilities: Set<String>,
@@ -371,7 +371,7 @@ internal fun ReactionsMenuContentManyReactions() {
 
 @Preview
 @Composable
-private fun OneSelectedReactionMenuPreview() {
+private fun OneReactionMenuPreview() {
     ChatTheme {
         ReactionsMenuContentOneReaction()
     }
@@ -379,7 +379,7 @@ private fun OneSelectedReactionMenuPreview() {
 
 @Preview
 @Composable
-private fun ManySelectedReactionsMenuPreview() {
+private fun ManyReactionsMenuPreview() {
     ChatTheme {
         ReactionsMenuContentManyReactions()
     }
