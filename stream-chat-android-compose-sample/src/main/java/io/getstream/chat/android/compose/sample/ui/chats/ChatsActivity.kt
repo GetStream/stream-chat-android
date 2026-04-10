@@ -68,10 +68,11 @@ import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.chats.ChatListContentMode
 import io.getstream.chat.android.compose.ui.chats.ChatMessageSelection
 import io.getstream.chat.android.compose.ui.chats.ChatsScreen
-import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionItemVisibility
-import io.getstream.chat.android.compose.ui.theme.ChannelOptionsTheme
+import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionsVisibility
+import io.getstream.chat.android.compose.ui.theme.ChannelListConfig
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.CompoundComponentFactory
 import io.getstream.chat.android.compose.ui.theme.DirectChannelInfoTopBarParams
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoTopBarParams
@@ -159,9 +160,11 @@ class ChatsActivity : ComponentActivity() {
 
         setContent {
             SampleChatTheme(
-                channelOptionsTheme = ChannelOptionsTheme.defaultTheme(
-                    optionVisibility = ChannelOptionItemVisibility(
-                        isViewInfoVisible = AdaptiveLayoutInfo.singlePaneWindow(),
+                config = ChatUiConfig(
+                    channelList = ChannelListConfig(
+                        optionsVisibility = ChannelOptionsVisibility(
+                            isViewInfoVisible = AdaptiveLayoutInfo.singlePaneWindow(),
+                        ),
                     ),
                 ),
             ) {

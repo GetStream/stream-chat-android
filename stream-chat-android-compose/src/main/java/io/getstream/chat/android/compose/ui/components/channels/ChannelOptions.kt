@@ -114,7 +114,7 @@ public fun buildDefaultChannelActions(
     viewModel: ChannelListViewModel,
     onViewInfoAction: (Channel) -> Unit,
 ): List<ChannelAction> {
-    val optionVisibility = ChatTheme.channelOptionsTheme.optionVisibility
+    val optionVisibility = ChatTheme.config.channelList.optionsVisibility
     val currentUser by viewModel.user.collectAsState()
     val channelName = ChatTheme.channelNameFormatter.formatChannelName(
         selectedChannel,
@@ -154,7 +154,7 @@ private fun buildDmChannelActions(
     selectedChannel: Channel,
     currentUser: User?,
     ownCapabilities: Set<String>,
-    optionVisibility: ChannelOptionItemVisibility,
+    optionVisibility: ChannelOptionsVisibility,
     channelName: String,
     viewModel: ChannelListViewModel,
     onViewInfoAction: (Channel) -> Unit,
@@ -298,7 +298,7 @@ private fun buildDmDeleteAction(
 private fun buildGroupChannelActions(
     selectedChannel: Channel,
     ownCapabilities: Set<String>,
-    optionVisibility: ChannelOptionItemVisibility,
+    optionVisibility: ChannelOptionsVisibility,
     channelName: String,
     viewModel: ChannelListViewModel,
     onViewInfoAction: (Channel) -> Unit,

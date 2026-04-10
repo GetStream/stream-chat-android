@@ -92,7 +92,7 @@ private fun rememberPrimarySwipeAction(
 ): ChannelAction? {
     val resources = LocalResources.current
     val handlerState = rememberUpdatedState(handler)
-    val canMute = ChatTheme.channelOptionsTheme.optionVisibility.isMuteChannelVisible &&
+    val canMute = ChatTheme.config.channelList.optionsVisibility.isMuteChannelVisible &&
         channel.ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL)
 
     return remember(channel.cid, isMuted, canMute) {
