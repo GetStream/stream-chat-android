@@ -20,8 +20,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -59,7 +60,8 @@ internal fun MessageComposerAttachmentAudioRecordItem(
                 .border(1.dp, ChatTheme.colors.borderCoreDefault, AudioRecordItemShape)
                 .clip(AudioRecordItemShape)
                 .background(ChatTheme.colors.backgroundCoreApp)
-                .size(width = 290.dp, height = 72.dp),
+                .fillMaxWidth()
+                .height(72.dp),
             contentPadding = PaddingValues(StreamTokens.spacingSm),
             attachment = attachment,
             playerState = playerState,
