@@ -29,7 +29,7 @@ import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
-import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
+import io.getstream.chat.android.compose.sample.ui.location.LocationComponentFactory
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.theme.AttachmentPickerConfig
@@ -75,7 +75,7 @@ class MessagesActivity : ComponentActivity() {
     private fun SetupChatTheme() {
         val locationViewModelFactory = SharedLocationViewModelFactory(cid)
         SampleChatTheme(
-            componentFactory = CustomChatComponentFactory(locationViewModelFactory = locationViewModelFactory),
+            componentFactory = LocationComponentFactory(locationViewModelFactory = locationViewModelFactory),
             config = ChatUiConfig(
                 composer = ComposerConfig(
                     linkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
