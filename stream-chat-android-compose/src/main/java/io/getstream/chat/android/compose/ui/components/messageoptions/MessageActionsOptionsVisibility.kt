@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.compose.ui.components.messageoptions
 
-import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
+import io.getstream.chat.android.compose.ui.components.messageactions.MessageActions
 
 /**
- * Controls option visibility in the message options menu. All options are visible by default.
+ * Controls option visibility in the message actions overlay. All options are visible by default.
  *
  * @param isRetryMessageVisible Visibility of the retry failed message option.
  * @param isReplyVisible Visibility of the reply to message option (quote message).
@@ -33,11 +33,11 @@ import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedM
  * @param isMuteUserVisible Visibility of the mute user option.
  * @param isBlockUserVisible Visibility of the block user option.
  *
- * @see [SelectedMessageMenu]
+ * @see [MessageActions]
  * @see [MessageOptions]
  * @see [defaultMessageOptionsState]
  */
-public data class MessageOptionItemVisibility(
+public data class MessageActionsOptionsVisibility(
     val isRetryMessageVisible: Boolean = true,
     val isReplyVisible: Boolean = true,
     val isThreadReplyVisible: Boolean = true,

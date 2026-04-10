@@ -118,8 +118,6 @@ import io.getstream.chat.android.compose.ui.components.messages.SegmentedMessage
 import io.getstream.chat.android.compose.ui.components.messages.SwipeToReplyIcon
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleSize
-import io.getstream.chat.android.compose.ui.components.selectedmessage.MessageMenuHeader
-import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordingButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerEditIndicator
 import io.getstream.chat.android.compose.ui.messages.composer.internal.attachments.MessageComposerAttachmentAudioRecordItem
@@ -1847,14 +1845,14 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the full content of the SelectedMessageMenu.
+     * Factory method for creating the full content of the [MessageActions] overlay.
      * This is the menu that appears when a message is long-pressed.
      *
      * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageMenu(params: MessageMenuParams) {
-        SelectedMessageMenu(
+    public fun MessageActions(params: MessageActionsParams) {
+        io.getstream.chat.android.compose.ui.components.messageactions.MessageActions(
             modifier = params.modifier,
             messageOptions = params.messageOptions,
             message = params.message,
@@ -1867,13 +1865,13 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the header content of the SelectedMessageMenu.
+     * Factory method for creating the header content of the [MessageActions] overlay.
      *
      * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageMenuHeaderContent(params: MessageMenuHeaderContentParams) {
-        MessageMenuHeader(
+    public fun MessageActionsHeader(params: MessageActionsHeaderParams) {
+        io.getstream.chat.android.compose.ui.components.messageactions.MessageActionsHeader(
             modifier = params.modifier,
             onReactionOptionSelected = {
                 params.onMessageAction(
@@ -1894,7 +1892,7 @@ public interface ChatComponentFactory {
      * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageMenuOptions(params: MessageMenuOptionsParams) {
+    public fun MessageActionsOptions(params: MessageActionsOptionsParams) {
         MessageOptions(
             modifier = params.modifier,
             onMessageOptionSelected = params.onMessageOptionSelected,
@@ -1903,12 +1901,12 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating an individual option item in the SelectedMessageMenu.
+     * Factory method for creating an individual action item in the [MessageActions] overlay.
      *
      * @param params Parameters for this component.
      */
     @Composable
-    public fun MessageMenuOptionsItem(params: MessageMenuOptionsItemParams) {
+    public fun MessageActionsOptionsItem(params: MessageActionsOptionsItemParams) {
         ContextualMenuItem(
             label = stringResource(id = params.option.title),
             leadingIcon = params.option.iconPainter,
@@ -1956,7 +1954,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun ReactionsMenu(params: ReactionsMenuParams) {
-        io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu(
+        io.getstream.chat.android.compose.ui.components.messageactions.ReactionsMenu(
             modifier = params.modifier,
             currentUser = params.currentUser,
             message = params.message,
@@ -1974,7 +1972,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun ReactionsMenuContent(params: ReactionsMenuContentParams) {
-        io.getstream.chat.android.compose.ui.components.selectedmessage.ReactionsMenuContent(
+        io.getstream.chat.android.compose.ui.components.messageactions.ReactionsMenuContent(
             modifier = params.modifier,
             currentUser = params.currentUser,
             message = params.message,

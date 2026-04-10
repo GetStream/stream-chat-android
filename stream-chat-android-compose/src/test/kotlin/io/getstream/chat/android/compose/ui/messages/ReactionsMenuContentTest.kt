@@ -20,8 +20,8 @@ import androidx.compose.ui.Alignment
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
-import io.getstream.chat.android.compose.ui.components.selectedmessage.ReactionsMenuContentManyReactions
-import io.getstream.chat.android.compose.ui.components.selectedmessage.ReactionsMenuContentOneReaction
+import io.getstream.chat.android.compose.ui.components.messageactions.ReactionsMenuContentManyReactions
+import io.getstream.chat.android.compose.ui.components.messageactions.ReactionsMenuContentOneReaction
 import org.junit.Rule
 import org.junit.Test
 

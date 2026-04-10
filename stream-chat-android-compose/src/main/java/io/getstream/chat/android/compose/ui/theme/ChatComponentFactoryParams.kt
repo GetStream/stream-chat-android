@@ -1387,7 +1387,7 @@ public data class ChannelOptionsItemLeadingIconParams(
 )
 
 /**
- * Parameters for [ChatComponentFactory.MessageMenu].
+ * Parameters for [ChatComponentFactory.MessageActions].
  *
  * @param message The selected message.
  * @param messageOptions The list of message options.
@@ -1398,7 +1398,7 @@ public data class ChannelOptionsItemLeadingIconParams(
  * @param onDismiss Action invoked when the menu is dismissed.
  * @param currentUser The currently logged in user.
  */
-public data class MessageMenuParams(
+public data class MessageActionsParams(
     val message: Message,
     val messageOptions: List<MessageOptionItemState>,
     val ownCapabilities: Set<String>,
@@ -1410,7 +1410,7 @@ public data class MessageMenuParams(
 )
 
 /**
- * Parameters for [ChatComponentFactory.MessageMenuHeaderContent].
+ * Parameters for [ChatComponentFactory.MessageActionsHeader].
  *
  * @param message The selected message.
  * @param messageOptions The list of message options.
@@ -1419,7 +1419,7 @@ public data class MessageMenuParams(
  * @param onShowMore Action invoked when "show more" is clicked.
  * @param modifier Modifier for styling.
  */
-public data class MessageMenuHeaderContentParams(
+public data class MessageActionsHeaderParams(
     val message: Message,
     val messageOptions: List<MessageOptionItemState>,
     val ownCapabilities: Set<String>,
@@ -1429,14 +1429,14 @@ public data class MessageMenuHeaderContentParams(
 )
 
 /**
- * Parameters for [ChatComponentFactory.MessageMenuOptions].
+ * Parameters for [ChatComponentFactory.MessageActionsOptions].
  *
  * @param message The selected message.
  * @param options The list of message options.
  * @param onMessageOptionSelected Action invoked when a message option is selected.
  * @param modifier Modifier for styling.
  */
-public data class MessageMenuOptionsParams(
+public data class MessageActionsOptionsParams(
     val message: Message,
     val options: List<MessageOptionItemState>,
     val onMessageOptionSelected: (MessageOptionItemState) -> Unit,
@@ -1444,12 +1444,12 @@ public data class MessageMenuOptionsParams(
 )
 
 /**
- * Parameters for [ChatComponentFactory.MessageMenuOptionsItem].
+ * Parameters for [ChatComponentFactory.MessageActionsOptionsItem].
  *
  * @param option The message option state.
  * @param onMessageOptionSelected Action invoked when a message option is selected.
  */
-public data class MessageMenuOptionsItemParams(
+public data class MessageActionsOptionsItemParams(
     val option: MessageOptionItemState,
     val onMessageOptionSelected: (MessageOptionItemState) -> Unit,
 )

@@ -81,9 +81,6 @@ private val LocalAttachmentPreviewHandlers = compositionLocalOf<List<AttachmentP
 private val LocalReactionResolver = compositionLocalOf<ReactionResolver> {
     error("No ReactionResolver provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-private val LocalReactionOptionsTheme = compositionLocalOf<ReactionOptionsTheme> {
-    error("No ReactionOptionsTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
 private val LocalMessagePreviewIconFactory = compositionLocalOf<MessagePreviewIconFactory> {
     error("No message preview icon factory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -111,9 +108,6 @@ private val LocalSearchResultNameFormatter = compositionLocalOf<SearchResultName
 private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentProvider> {
     error("No MessageAlignmentProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-private val LocalMessageOptionsTheme = compositionLocalOf<MessageOptionsTheme> {
-    error("No MessageOptionsTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
 private val LocalChannelOptionsTheme = compositionLocalOf<ChannelOptionsTheme> {
     error("No ChannelOptionsTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -139,8 +133,6 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param componentFactory Provide to customize the stateless components that are used throughout the UI.
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
  * @param reactionResolver Provides available reactions and resolves reaction types to emoji codes.
- * @param reactionOptionsTheme [ReactionOptionsTheme] Theme for the reaction option list in the selected message menu.
- * For theming the message option list in the same menu, use [messageOptionsTheme].
  * @param messagePreviewIconFactory Used to create a preview icon for the given message type.
  * @param dateFormatter [DateFormatter] Used throughout the app for date and time information.
  * @param timeProvider [TimeProvider] Used throughout the app for time information.
@@ -150,8 +142,6 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param searchResultNameFormatter [SearchResultNameFormatter] Used to format names in search results.
  * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances.
  * @param messageAlignmentProvider [MessageAlignmentProvider] Used to provide message alignment for the given message.
- * @param messageOptionsTheme [MessageOptionsTheme] Theme for the message option list in the selected message menu.
- * For theming the reaction option list in the same menu, use [reactionOptionsTheme].
  * @param channelOptionsTheme [ChannelOptionsTheme] Theme for the channel option list in the channel info screen.
  * @param streamCdnImageResizing Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,
  * set [StreamCdnImageResizing.imageResizingEnabled] to true if you wish to enable resizing images. Note that resizing
@@ -175,7 +165,6 @@ public fun ChatTheme(
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
     reactionResolver: ReactionResolver = ReactionResolver.defaultResolver(),
-    reactionOptionsTheme: ReactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
     messagePreviewIconFactory: MessagePreviewIconFactory = MessagePreviewIconFactory.defaultFactory(),
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     timeProvider: TimeProvider = TimeProvider.DEFAULT,
@@ -189,7 +178,6 @@ public fun ChatTheme(
     searchResultNameFormatter: SearchResultNameFormatter = SearchResultNameFormatter.defaultFormatter(),
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
-    messageOptionsTheme: MessageOptionsTheme = MessageOptionsTheme.defaultTheme(),
     channelOptionsTheme: ChannelOptionsTheme = ChannelOptionsTheme.defaultTheme(),
     streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
     messageTextFormatter: MessageTextFormatter = MessageTextFormatter.defaultFormatter(
@@ -228,7 +216,6 @@ public fun ChatTheme(
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
         LocalReactionResolver provides reactionResolver,
         LocalMessagePreviewIconFactory provides messagePreviewIconFactory,
-        LocalReactionOptionsTheme provides reactionOptionsTheme,
         LocalDateFormatter provides dateFormatter,
         LocalTimeProvider provides timeProvider,
         LocalDurationFormatter provides durationFormatter,
@@ -238,7 +225,6 @@ public fun ChatTheme(
         LocalSearchResultNameFormatter provides searchResultNameFormatter,
         LocalStreamImageLoader provides imageLoader,
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
-        LocalMessageOptionsTheme provides messageOptionsTheme,
         LocalChannelOptionsTheme provides channelOptionsTheme,
         LocalStreamCdnImageResizing provides streamCdnImageResizing,
         LocalStreamMediaRecorder provides streamMediaRecorder,
@@ -299,14 +285,6 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalReactionResolver.current
-
-    /**
-     * Retrieves the current [ReactionOptionsTheme] at the call site's position in the hierarchy.
-     */
-    public val reactionOptionsTheme: ReactionOptionsTheme
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalReactionOptionsTheme.current
 
     /**
      * Retrieves the current message preview icon factory at the call site's position in the hierarchy.
@@ -379,14 +357,6 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessageAlignmentProvider.current
-
-    /**
-     * Retrieves the current [MessageOptionsTheme] at the call site's position in the hierarchy.
-     */
-    public val messageOptionsTheme: MessageOptionsTheme
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalMessageOptionsTheme.current
 
     /**
      * Retrieves the current [ChannelOptionsTheme] at the call site's position in the hierarchy.

@@ -67,7 +67,7 @@ import io.getstream.chat.android.compose.ui.messages.list.SelectedMessageSnapsho
 import io.getstream.chat.android.compose.ui.theme.AttachmentPickerMenuParams
 import io.getstream.chat.android.compose.ui.theme.ChannelHeaderParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.MessageMenuParams
+import io.getstream.chat.android.compose.ui.theme.MessageActionsParams
 import io.getstream.chat.android.compose.ui.theme.MessageReactionPickerParams
 import io.getstream.chat.android.compose.ui.theme.ReactionsMenuParams
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
@@ -526,8 +526,8 @@ private fun BoxScope.ChannelScreenMenus(
     }
 
     if (selectedMessageState is SelectedMessageOptionsState && selectedMessage.id.isNotEmpty()) {
-        ChatTheme.componentFactory.MessageMenu(
-            params = MessageMenuParams(
+        ChatTheme.componentFactory.MessageActions(
+            params = MessageActionsParams(
                 messageOptions = messageOptions,
                 message = selectedMessage,
                 ownCapabilities = ownCapabilities,

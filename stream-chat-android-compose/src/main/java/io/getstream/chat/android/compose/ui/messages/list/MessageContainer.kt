@@ -203,7 +203,7 @@ public fun MessageContainer(
 
     val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
     val description = stringResource(id = R.string.stream_compose_cd_message_item)
-    val optionVisibility = ChatTheme.messageOptionsTheme.optionVisibility
+    val optionVisibility = ChatTheme.config.messageActions.optionVisibility
     val isSwipeable = remember(message, messageItem.ownCapabilities, optionVisibility) {
         optionVisibility.canReplyToMessage(message, messageItem.ownCapabilities)
     }

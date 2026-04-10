@@ -23,6 +23,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.CommandPicke
 import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
+import io.getstream.chat.android.compose.ui.components.messageoptions.MessageActionsOptionsVisibility
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -89,6 +90,7 @@ public data class PollsConfig(
  * @param channelList Configuration for the channel list behavior.
  * @param attachmentPicker Configuration for the attachment picker behavior.
  * @param polls Configuration for the poll creation screen.
+ * @param messageActions Configuration for the message actions overlay.
  */
 public data class ChatUiConfig(
     val translation: TranslationConfig = TranslationConfig(),
@@ -98,6 +100,7 @@ public data class ChatUiConfig(
     val channelList: ChannelListConfig = ChannelListConfig(),
     val attachmentPicker: AttachmentPickerConfig = AttachmentPickerConfig(),
     val polls: PollsConfig = PollsConfig(),
+    val messageActions: MessageActionsConfig = MessageActionsConfig(),
 )
 
 /**
@@ -203,4 +206,15 @@ private val DefaultAttachmentPickerModes = listOf(
     CameraPickerMode(),
     PollPickerMode(),
     CommandPickerMode,
+)
+
+/**
+ * Configuration for the message actions overlay.
+ *
+ * @param optionVisibility Controls which message action options are shown.
+ * @param reactionsEnabled Whether the reaction option row is visible in the overlay.
+ */
+public data class MessageActionsConfig(
+    val optionVisibility: MessageActionsOptionsVisibility = MessageActionsOptionsVisibility(),
+    val reactionsEnabled: Boolean = true,
 )

@@ -24,7 +24,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.components.common.ContextualMenu
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.MessageMenuOptionsItemParams
+import io.getstream.chat.android.compose.ui.theme.MessageActionsOptionsItemParams
 import io.getstream.chat.android.compose.util.extensions.canBlockUser
 import io.getstream.chat.android.compose.util.extensions.canCopyMessage
 import io.getstream.chat.android.compose.util.extensions.canDeleteMessage
@@ -73,8 +73,8 @@ public fun MessageOptions(
 ) {
     ContextualMenu(modifier) {
         options.forEach { option ->
-            ChatTheme.componentFactory.MessageMenuOptionsItem(
-                params = MessageMenuOptionsItemParams(
+            ChatTheme.componentFactory.MessageActionsOptionsItem(
+                params = MessageActionsOptionsItemParams(
                     option = option,
                     onMessageOptionSelected = onMessageOptionSelected,
                 ),
@@ -105,7 +105,7 @@ public fun defaultMessageOptionsState(
     }
     val selectedMessageUserId = selectedMessage.user.id
     val ownCapabilities = channel.ownCapabilities
-    val visibility = ChatTheme.messageOptionsTheme.optionVisibility
+    val visibility = ChatTheme.config.messageActions.optionVisibility
 
     return listOfNotNull(
         if (visibility.canRetryMessage(currentUser, selectedMessage)) {

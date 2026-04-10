@@ -15,17 +15,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
+import io.getstream.chat.android.compose.ui.components.messageactions.MessageActions
+import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
-import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsState
+import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageOptionsState
 
 /**
- * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/selected-reactions-menu/#usage)
+ * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/selected-message-menu/#usage)
  */
-private object SelectedReactionsMenuUsageSnippet {
+private object MessageActionsUsageSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
@@ -49,17 +50,21 @@ private object SelectedReactionsMenuUsageSnippet {
                     Box(modifier = Modifier.fillMaxSize()) {
 
                         // The rest of your UI
-
-                        if (selectedMessageState is SelectedMessageReactionsState) {
+                        if (selectedMessageState is SelectedMessageOptionsState) {
                             val selectedMessage = selectedMessageState.message
-                            SelectedReactionsMenu(
+                            MessageActions(
                                 modifier = Modifier.align(Alignment.BottomCenter),
-                                // The currently logged-in user
-                                currentUser = user,
+                                // Define your message options
+                                messageOptions = defaultMessageOptionsState(
+                                    selectedMessage = selectedMessage,
+                                    currentUser = user,
+                                    isInThread = listViewModel.isInThread,
+                                    channel = selectedMessageState.channel
+                                ),
+                                // The message you selected
+                                message = selectedMessage,
                                 // The capabilities the user has in a given channel
                                 ownCapabilities = selectedMessageState.ownCapabilities,
-                                // The message whose reactions you selected
-                                message = selectedMessage,
                                 onMessageAction = { action ->
                                     // Handle message action
                                 },
@@ -79,9 +84,9 @@ private object SelectedReactionsMenuUsageSnippet {
 }
 
 /**
- * [Handling Actions](https://getstream.io/chat/docs/sdk/android/compose/message-components/selected-reactions-menu/#handling-actions)
+ * [Handling Actions](https://getstream.io/chat/docs/sdk/android/compose/message-components/selected-message-menu/#handling-actions)
  */
-private object SelectedReactionsMenuHandlingActionsSnippet {
+private object MessageActionsHandlingActionsSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
@@ -107,16 +112,21 @@ private object SelectedReactionsMenuHandlingActionsSnippet {
 
                         // The rest of your UI
 
-                        if (selectedMessageState is SelectedMessageReactionsState) {
+                        if (selectedMessageState is SelectedMessageOptionsState) {
                             val selectedMessage = selectedMessageState.message
-                            SelectedReactionsMenu(
+                            MessageActions(
                                 modifier = Modifier.align(Alignment.BottomCenter),
-                                // The currently logged-in user
-                                currentUser = user,
+                                // Define your message options
+                                messageOptions = defaultMessageOptionsState(
+                                    selectedMessage = selectedMessage,
+                                    currentUser = user,
+                                    isInThread = listViewModel.isInThread,
+                                    channel = selectedMessageState.channel
+                                ),
+                                // The message you selected
+                                message = selectedMessage,
                                 // The capabilities the user has in a given channel
                                 ownCapabilities = selectedMessageState.ownCapabilities,
-                                // The message whose reactions you selected
-                                message = selectedMessage,
                                 onMessageAction = { action ->
                                     composerViewModel.performMessageAction(action)
                                     listViewModel.performMessageAction(action)
@@ -124,7 +134,7 @@ private object SelectedReactionsMenuHandlingActionsSnippet {
                                 onShowMoreReactionsSelected = {
                                     listViewModel.selectExtendedReactions(selectedMessage)
                                 },
-                                onDismiss = { listViewModel.removeOverlay() },
+                                onDismiss = { listViewModel.removeOverlay() }
                             )
                         }
                     }
@@ -135,9 +145,9 @@ private object SelectedReactionsMenuHandlingActionsSnippet {
 }
 
 /**
- * [Customization](https://getstream.io/chat/docs/sdk/android/compose/message-components/selected-reactions-menu/#customization)
+ * [Customization](https://getstream.io/chat/docs/sdk/android/compose/message-components/selected-message-menu/#customization)
  */
-private object SelectedReactionsMenuCustomizationSnippet {
+private object MessageActionsCustomizationSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
@@ -162,25 +172,28 @@ private object SelectedReactionsMenuCustomizationSnippet {
 
                         // The rest of your UI
 
-                        if (selectedMessageState is SelectedMessageReactionsState) {
+                        if (selectedMessageState is SelectedMessageOptionsState) {
                             val selectedMessage = selectedMessageState.message
-                            SelectedReactionsMenu(
+                            MessageActions(
                                 // Use a Modifier to customize the appearance
                                 modifier = Modifier
                                     .align(Alignment.Center)
                                     .padding(horizontal = 20.dp)
                                     .wrapContentSize(),
-                                // The currently logged-in user
-                                currentUser = user,
+                                messageOptions = defaultMessageOptionsState(
+                                    selectedMessage = selectedMessage,
+                                    currentUser = user,
+                                    isInThread = listViewModel.isInThread,
+                                    channel = selectedMessageState.channel
+                                ),
                                 // The capabilities the user has in a given channel
                                 ownCapabilities = selectedMessageState.ownCapabilities,
-                                // The message whose reactions you selected
                                 message = selectedMessage,
                                 onMessageAction = { action ->
                                     // Handle message action
                                 },
                                 onShowMoreReactionsSelected = {
-                                    // Handle show more reactions button click
+                                    // Handle more reactions button click
                                 },
                                 onDismiss = {
                                     // Handle dismiss
