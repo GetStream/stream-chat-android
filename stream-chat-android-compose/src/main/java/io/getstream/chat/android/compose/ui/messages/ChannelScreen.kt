@@ -221,7 +221,6 @@ public fun ChannelScreen(
                         }
                     }
                 },
-                onClosePoll = listViewModel::closePoll,
                 onReply = { message -> composerViewModel.performMessageAction(Reply(message)) },
                 onMediaGalleryPreviewResult = remember(listViewModel, composerViewModel) {
                     {

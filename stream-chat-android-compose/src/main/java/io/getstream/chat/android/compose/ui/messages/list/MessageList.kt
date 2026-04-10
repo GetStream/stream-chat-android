@@ -75,15 +75,10 @@ import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
  * Default: [Arrangement.Bottom].
  * @param onThreadClick Handler when the user taps on the message, while there's a thread going.
  * @param onLongItemClick Handler for when the user long taps on a message and selects it.
- * @param onReactionsClick Handler when the user taps on message reactions and selects them.
  * @param onMessagesPageStartReached Handler for pagination when the end of the oldest messages has been reached.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message
  * changes.
  * @param onScrollToBottom Handler when the user reaches the bottom.
- * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
- * @param onQuotedMessageClick Handler for quoted message click action.
- * @param onUserAvatarClick Handler when users avatar is clicked.
- * @param onMessageLinkClick Handler for clicking on a link in the message.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param onMessagesPageEndReached Handler for pagination when the end of newest messages have been reached.
  * @param onScrollToBottomClicked Handler when the user requests to scroll to the bottom of the messages list.
@@ -115,54 +110,9 @@ public fun MessageList(
         }
     },
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
-    onReactionsClick: (Message) -> Unit = { viewModel.selectReactions(it) },
     onMessagesPageStartReached: () -> Unit = { viewModel.loadOlderMessages() },
     onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
-    onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
-    onPollUpdated: (Message, Poll) -> Unit = { message, poll ->
-        val selectedPoll = viewModel.pollState.selectedPoll
-        if (viewModel.isShowingPollOptionDetails &&
-            selectedPoll != null && selectedPoll.poll.id == poll.id
-        ) {
-            viewModel.updatePollState(poll, message, selectedPoll.pollSelectionType)
-        }
-    },
-    onCastVote: (Message, Poll, Option) -> Unit = { message, poll, option ->
-        viewModel.castVote(
-            message = message,
-            poll = poll,
-            option = option,
-        )
-    },
-    onRemoveVote: (Message, Poll, Vote) -> Unit = { message, poll, vote ->
-        viewModel.removeVote(
-            message = message,
-            poll = poll,
-            vote = vote,
-        )
-    },
-    selectPoll: (Message, Poll, PollSelectionType) -> Unit = { message, poll, selectionType ->
-        viewModel.displayPollMoreOptions(selectedPoll = SelectedPoll(poll, message, selectionType))
-    },
-    onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit = { message, poll, answer ->
-        viewModel.castAnswer(message, poll, answer)
-    },
-    onClosePoll: (String) -> Unit = { pollId ->
-        viewModel.closePoll(pollId = pollId)
-    },
-    onAddPollOption: (poll: Poll, option: String) -> Unit = { poll, option ->
-        viewModel.addPollOption(poll, option)
-    },
-    onQuotedMessageClick: (Message) -> Unit = { message ->
-        viewModel.scrollToMessage(
-            messageId = message.id,
-            parentMessageId = message.parentId,
-        )
-    },
-    onUserAvatarClick: ((User) -> Unit)? = null,
-    onMessageLinkClick: ((Message, String) -> Unit)? = null,
-    onUserMentionClick: (User) -> Unit = {},
     onReply: (Message) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {
         if (it?.resultType == MediaGalleryPreviewResultType.SHOW_IN_CHAT) {
@@ -207,21 +157,32 @@ public fun MessageList(
                     messageListItem = messageListItem,
                     reactionSorting = reactionSorting,
                     onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                    onCastVote = onCastVote,
-                    onRemoveVote = onRemoveVote,
-                    selectPoll = selectPoll,
-                    onPollUpdated = onPollUpdated,
-                    onClosePoll = onClosePoll,
-                    onAddPollOption = onAddPollOption,
+                    onCastVote = viewModel::castVote,
+                    onRemoveVote = viewModel::removeVote,
+                    selectPoll = { message, poll, selectionType ->
+                        viewModel.displayPollMoreOptions(SelectedPoll(poll, message, selectionType))
+                    },
+                    onPollUpdated = { message, poll ->
+                        val selectedPoll = viewModel.pollState.selectedPoll
+                        if (viewModel.isShowingPollOptionDetails &&
+                            selectedPoll != null && selectedPoll.poll.id == poll.id
+                        ) {
+                            viewModel.updatePollState(poll, message, selectedPoll.pollSelectionType)
+                        }
+                    },
+                    onClosePoll = viewModel::closePoll,
+                    onAddPollOption = viewModel::addPollOption,
                     onThreadClick = onThreadClick,
                     onLongItemClick = onLongItemClick,
-                    onReactionsClick = onReactionsClick,
-                    onGiphyActionClick = onGiphyActionClick,
-                    onQuotedMessageClick = onQuotedMessageClick,
-                    onUserAvatarClick = onUserAvatarClick,
-                    onMessageLinkClick = onMessageLinkClick,
-                    onUserMentionClick = onUserMentionClick,
-                    onAddAnswer = onAddAnswer,
+                    onReactionsClick = viewModel::selectReactions,
+                    onGiphyActionClick = viewModel::performGiphyAction,
+                    onQuotedMessageClick = { message ->
+                        viewModel.scrollToMessage(
+                            messageId = message.id,
+                            parentMessageId = message.parentId,
+                        )
+                    },
+                    onAddAnswer = viewModel::castAnswer,
                     onReply = onReply,
                 ),
             )
@@ -239,7 +200,6 @@ public fun MessageList(
         threadsVerticalArrangement = threadsVerticalArrangement,
         onLastVisibleMessageChanged = onLastVisibleMessageChanged,
         onLongItemClick = onLongItemClick,
-        onReactionsClick = onReactionsClick,
         onScrolledToBottom = onScrollToBottom,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         itemContent = itemContent,
@@ -247,13 +207,9 @@ public fun MessageList(
         loadingMoreContent = loadingMoreContent,
         loadingContent = loadingContent,
         emptyContent = emptyContent,
-        onQuotedMessageClick = onQuotedMessageClick,
         onMessagesPageEndReached = onMessagesPageEndReached,
         onScrollToBottom = onScrollToBottomClicked,
         onPauseAudioRecordingAttachments = onPauseAudioRecordingAttachments,
-        onMessageLinkClick = onMessageLinkClick,
-        onClosePoll = onClosePoll,
-        onAddAnswer = onAddAnswer,
         onReply = onReply,
     )
 }
@@ -373,11 +329,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param onScrolledToBottom Handler when the user scrolls to the bottom.
  * @param onThreadClick Handler for when the user taps on a message with an active thread.
  * @param onLongItemClick Handler for when the user long taps on an item.
- * @param onReactionsClick Handler when the user taps on message reactions and selects them.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
- * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
- * @param onQuotedMessageClick Handler for quoted message click action.
- * @param onMessageLinkClick Handler for clicking on a link in the message.
  * @param onMessagesPageEndReached Handler for pagination when the end of newest messages have been reached.
  * @param onScrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
  * @param onPauseAudioRecordingAttachments Handler for lifecycle events.
@@ -404,25 +356,12 @@ public fun MessageList(
     onMessagesPageStartReached: () -> Unit = {},
     onLastVisibleMessageChanged: (Message) -> Unit = {},
     onScrolledToBottom: () -> Unit = {},
-    onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
-    onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
-    onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
-    selectPoll: (Message, Poll, PollSelectionType) -> Unit = { _, _, _ -> },
-    onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit = { _, _, _ -> },
-    onClosePoll: (String) -> Unit = { _ -> },
-    onAddPollOption: (poll: Poll, option: String) -> Unit = { _, _ -> },
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},
-    onReactionsClick: (Message) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
-    onGiphyActionClick: (GiphyAction) -> Unit = {},
-    onQuotedMessageClick: (Message) -> Unit = {},
     onMessagesPageEndReached: (String) -> Unit = {},
     onScrollToBottom: (() -> Unit) -> Unit = {},
     onPauseAudioRecordingAttachments: () -> Unit = {},
-    onUserAvatarClick: ((User) -> Unit)? = null,
-    onMessageLinkClick: ((Message, String) -> Unit)? = null,
-    onUserMentionClick: (User) -> Unit = { _ -> },
     onReply: (Message) -> Unit = {},
     background: @Composable () -> Unit = {
         ChatTheme.componentFactory.MessageListBackground(params = MessageListBackgroundParams())
@@ -463,22 +402,8 @@ public fun MessageList(
                 params = MessageItemParams(
                     messageListItem = messageListItem,
                     reactionSorting = reactionSorting,
-                    onPollUpdated = onPollUpdated,
-                    onCastVote = onCastVote,
-                    onRemoveVote = onRemoveVote,
-                    selectPoll = selectPoll,
-                    onClosePoll = onClosePoll,
-                    onAddPollOption = onAddPollOption,
                     onLongItemClick = onLongItemClick,
                     onThreadClick = onThreadClick,
-                    onReactionsClick = onReactionsClick,
-                    onGiphyActionClick = onGiphyActionClick,
-                    onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                    onQuotedMessageClick = onQuotedMessageClick,
-                    onUserAvatarClick = onUserAvatarClick,
-                    onMessageLinkClick = onMessageLinkClick,
-                    onUserMentionClick = onUserMentionClick,
-                    onAddAnswer = onAddAnswer,
                     onReply = onReply,
                 ),
             )

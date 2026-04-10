@@ -24,8 +24,8 @@ import io.getstream.chat.android.compose.ui.components.messages.MessageBubble
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
-import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 
 /**
@@ -91,11 +91,9 @@ private object MessageListHandlingActionsSnippet {
                         // Actions
                         onThreadClick = { message -> },
                         onLongItemClick = { message -> },
-                        onReactionsClick = { message -> },
                         onMessagesPageStartReached = { },
                         onLastVisibleMessageChanged = { message -> },
                         onScrollToBottom = { },
-                        onGiphyActionClick = { giphyAction -> },
                         onMediaGalleryPreviewResult = { mediaGalleryPreviewResult -> },
                     )
                 }
