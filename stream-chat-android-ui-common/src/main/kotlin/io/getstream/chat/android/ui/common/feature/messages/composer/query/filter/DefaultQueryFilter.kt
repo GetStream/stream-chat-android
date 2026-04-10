@@ -29,20 +29,19 @@ import kotlin.math.min
 /**
  * Default implementation of [QueryFilter].
  *
- * This implementation of [QueryFilter] ignores upper case, diacritics
- * It uses levenshtein approximation so typos are included in the search.
+ * Keeps only items whose normalized target contains the normalized query as a substring, then
+ * sorts results by Levenshtein distance so the closest matches appear first. Normalization
+ * applies lowercasing, diacritics removal, and optional transliteration.
  *
- * It is possible to choose a transliteration by providing a [transliterator].
- *
- * @param transliterator The transliterator to use for transliterating the query string.
- * @param target The function to extract the target string from the item.
+ * @param transliterator The transliterator to use for normalizing strings.
+ * @param target The function to extract the searchable string from an item.
  */
 public class DefaultQueryFilter<T>(
     private val transliterator: StreamTransliterator = DefaultStreamTransliterator(),
     private val target: (T) -> String,
 ) : QueryFilter<T> {
 
-    private val logger by taggedLogger("Chat:InputQueryFilter")
+    private val logger by taggedLogger("Chat:QueryFilter")
 
     private val queryFormatter: QueryFormatter = Combine(
         Lowercase(),
@@ -53,73 +52,18 @@ public class DefaultQueryFilter<T>(
     override fun filter(items: List<T>, query: String): List<T> {
         logger.d { "[filter] query: \"$query\", items.size: ${items.size}" }
         val formattedQuery = queryFormatter.format(query)
-        return items.asSequence()
-            .map { it.measureDistance(formattedQuery) }
-            .filter { it.distance < MAX_DISTANCE }
-            .sorted()
-            .onEach { logger.v { "[filter] target: \"${target(it.item)}\", distance: ${it.distance}" } }
-            .map { it.item }
-            .toList()
-    }
-
-    private fun T.measureDistance(formattedQuery: String): MeasuredItem<T> {
-        val target = target(this)
-        if (target.isEmpty() || formattedQuery.length > target.length) {
-            logger.v { "[measureDistance] #skip; target: \"$target\", formattedQuery: \"$formattedQuery\"" }
-            return MeasuredItem(this, Int.MAX_VALUE)
-        }
-        val formattedTarget = queryFormatter.format(target)
-        val distance = when (formattedTarget.contains(formattedQuery, ignoreCase = true)) {
-            true -> 0
-            else -> {
-                val finalTarget = when (formattedTarget.length > formattedQuery.length) {
-                    true -> formattedTarget.substring(0, formattedQuery.length)
-                    else -> formattedTarget
+        if (formattedQuery.isEmpty()) return items
+        return items
+            .mapNotNull { item ->
+                val formattedTarget = queryFormatter.format(target(item))
+                if (formattedTarget.contains(formattedQuery)) {
+                    item to levenshteinDistance(formattedQuery, formattedTarget)
+                } else {
+                    null
                 }
-                levenshteinDistance(formattedQuery, finalTarget)
             }
-        }
-        return MeasuredItem(this, distance)
-    }
-
-    private data class MeasuredItem<T>(val item: T, val distance: Int) : Comparable<MeasuredItem<T>> {
-        override fun compareTo(other: MeasuredItem<T>): Int {
-            return distance.compareTo(other.distance)
-        }
-    }
-
-    private fun minLevenshteinDistance(search: String, target: String): Int {
-        val totalDistance = levenshteinDistance(search, target)
-        val wordDistance = wordLevenshteinDistance(search, target)
-        return minOf(totalDistance, wordDistance)
-    }
-
-    private fun wordLevenshteinDistance(search: String, target: String): Int {
-        try {
-            if (search.isEmpty() || target.isEmpty()) {
-                return Int.MAX_VALUE
-            }
-            var distance = Int.MAX_VALUE
-            var sStartIndex = 0
-            var tStartIndex = 0
-            while (true) {
-                val sEndIndex = search.indexOf(startIndex = sStartIndex, char = SPACE)
-                val tEndIndex = target.indexOf(startIndex = tStartIndex, char = SPACE)
-                if (tEndIndex == -1) {
-                    break
-                }
-                val subSearch = if (sEndIndex == -1) search else search.substring(sStartIndex, sEndIndex)
-                val subTarget = target.substring(tStartIndex, tEndIndex)
-                val subDistance = levenshteinDistance(subSearch, subTarget)
-                distance = minOf(distance, subDistance)
-                sStartIndex = sEndIndex + 1
-                tStartIndex = tEndIndex + 1
-            }
-            return distance
-        } catch (e: Throwable) {
-            logger.e(e) { "[wordLevenshteinDistance] failed: $e" }
-            return Int.MAX_VALUE
-        }
+            .sortedBy { (_, distance) -> distance }
+            .map { (item, _) -> item }
     }
 
     private fun levenshteinDistance(search: String, target: String): Int {
@@ -154,10 +98,5 @@ public class DefaultQueryFilter<T>(
         }
 
         return cost[searchLength - 1]
-    }
-
-    private companion object {
-        private const val MAX_DISTANCE = 3
-        private const val SPACE = ' '
     }
 }
