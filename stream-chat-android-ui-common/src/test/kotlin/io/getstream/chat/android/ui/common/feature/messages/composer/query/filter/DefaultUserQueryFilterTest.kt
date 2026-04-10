@@ -74,10 +74,10 @@ internal class DefaultUserQueryFilterTest {
     }
 
     @Test
-    fun `results are sorted by levenshtein distance`() {
-        val users = listOf(user("Charlie Alice"), user("Alice"), user("Bob Alice Smith"))
+    fun `results are sorted by match position`() {
+        val users = listOf(user("Johann"), user("Anne"), user("Marianne"))
 
-        assertEquals(listOf("Alice", "Charlie Alice", "Bob Alice Smith"), filter.filter(users, "alice").names())
+        assertEquals(listOf("Anne", "Johann", "Marianne"), filter.filter(users, "ann").names())
     }
 
     @Test
