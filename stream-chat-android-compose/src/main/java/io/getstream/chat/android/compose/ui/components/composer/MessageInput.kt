@@ -42,7 +42,7 @@ import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.ui.theme.LocalChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentsParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerEditIndicatorParams
-import io.getstream.chat.android.compose.ui.theme.MessageComposerInputCenterBottomContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerInputBottomContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerInputCenterContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerInputLeadingContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerInputTrailingContentParams
@@ -130,25 +130,26 @@ public fun MessageInput(
                 .minimumInteractiveComponentSize(),
             verticalAlignment = Alignment.Bottom,
         ) {
-            ChatTheme.componentFactory.MessageComposerInputLeadingContent(
-                params = MessageComposerInputLeadingContentParams(
-                    state = messageComposerState,
-                    onActiveCommandDismiss = onActiveCommandDismiss,
-                ),
-            )
-
             val isRecording = messageComposerState.recording !is RecordingState.Idle
             if (!isRecording) {
                 Column(modifier = Modifier.weight(1f)) {
-                    ChatTheme.componentFactory.MessageComposerInputCenterContent(
-                        params = MessageComposerInputCenterContentParams(
-                            modifier = Modifier.fillMaxWidth(),
-                            state = messageComposerState,
-                            onValueChange = onValueChange,
-                        ),
-                    )
-                    ChatTheme.componentFactory.MessageComposerInputCenterBottomContent(
-                        params = MessageComposerInputCenterBottomContentParams(
+                    Row(verticalAlignment = Alignment.Bottom) {
+                        ChatTheme.componentFactory.MessageComposerInputLeadingContent(
+                            params = MessageComposerInputLeadingContentParams(
+                                state = messageComposerState,
+                                onActiveCommandDismiss = onActiveCommandDismiss,
+                            ),
+                        )
+                        ChatTheme.componentFactory.MessageComposerInputCenterContent(
+                            params = MessageComposerInputCenterContentParams(
+                                modifier = Modifier.weight(1f),
+                                state = messageComposerState,
+                                onValueChange = onValueChange,
+                            ),
+                        )
+                    }
+                    ChatTheme.componentFactory.MessageComposerInputBottomContent(
+                        params = MessageComposerInputBottomContentParams(
                             state = messageComposerState,
                             onAlsoSendToChannelChange = onAlsoSendToChannelChange,
                         ),
@@ -346,6 +347,7 @@ internal fun MessageComposerInputThreadModeAlsoSendToChannel() {
             messageMode = MessageMode.MessageThread(
                 parentMessage = PreviewMessageData.message1,
             ),
+            inputValue = "Great, thanks! \uD83D\uDE4C Let me also share it in the channel",
             alsoSendToChannel = true,
         ),
     )
@@ -370,6 +372,26 @@ internal fun MessageComposerInputActiveCommandPlaceholder() {
 
 @Preview
 @Composable
+private fun MessageComposerInputActiveCommandPlaceholderInThreadModePreview() {
+    ChatTheme {
+        MessageComposerInputActiveCommandPlaceholderInThreadMode()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputActiveCommandPlaceholderInThreadMode() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            messageMode = MessageMode.MessageThread(
+                parentMessage = PreviewMessageData.message1,
+            ),
+            activeCommand = PreviewCommandData.command1,
+        ),
+    )
+}
+
+@Preview
+@Composable
 private fun MessageComposerInputActiveCommandFilledPreview() {
     ChatTheme {
         MessageComposerInputActiveCommandFilled()
@@ -380,6 +402,27 @@ private fun MessageComposerInputActiveCommandFilledPreview() {
 internal fun MessageComposerInputActiveCommandFilled() {
     MessageInput(
         messageComposerState = PreviewMessageComposerState.copy(
+            activeCommand = PreviewCommandData.command1,
+            inputValue = "The Office",
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputActiveCommandFilledInThreadModePreview() {
+    ChatTheme {
+        MessageComposerInputActiveCommandFilledInThreadMode()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputActiveCommandFilledInThreadMode() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            messageMode = MessageMode.MessageThread(
+                parentMessage = PreviewMessageData.message1,
+            ),
             activeCommand = PreviewCommandData.command1,
             inputValue = "The Office",
         ),

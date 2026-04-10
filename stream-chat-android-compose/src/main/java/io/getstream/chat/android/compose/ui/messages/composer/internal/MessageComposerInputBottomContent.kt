@@ -35,7 +35,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
 @Composable
-internal fun MessageComposerInputCenterBottomContent(
+internal fun MessageComposerInputBottomContent(
     alsoSendToChannel: Boolean,
     onAlsoSendToChannelChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -51,7 +51,7 @@ internal fun MessageComposerInputCenterBottomContent(
             .padding(
                 start = StreamTokens.spacingMd,
                 end = StreamTokens.spacingMd,
-                bottom = StreamTokens.spacingMd,
+                bottom = StreamTokens.spacingSm,
             ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
@@ -78,7 +78,7 @@ internal fun MessageComposerInputCenterBottomContent(
 @Composable
 private fun SelectedPreview() {
     ChatTheme {
-        MessageComposerInputCenterBottomContent(
+        MessageComposerInputBottomContent(
             alsoSendToChannel = true,
             onAlsoSendToChannelChange = {},
         )
@@ -89,7 +89,7 @@ private fun SelectedPreview() {
 @Composable
 private fun UnselectedPreview() {
     ChatTheme {
-        MessageComposerInputCenterBottomContent(
+        MessageComposerInputBottomContent(
             alsoSendToChannel = false,
             onAlsoSendToChannelChange = {},
         )

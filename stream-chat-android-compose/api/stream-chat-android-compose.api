@@ -1353,8 +1353,10 @@ public final class io/getstream/chat/android/compose/ui/components/composer/Comp
 	public fun <init> ()V
 	public final fun getLambda$-1141807280$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-1150438384$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-120349014$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-1240289060$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-1320161390$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-132642371$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-1355851382$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-148308776$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-1789505997$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
@@ -2008,11 +2010,11 @@ public final class io/getstream/chat/android/compose/ui/messages/composer/intern
 	public final fun getLambda$1901566342$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
-public final class io/getstream/chat/android/compose/ui/messages/composer/internal/ComposableSingletons$MessageComposerInputCenterBottomContentKt {
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/composer/internal/ComposableSingletons$MessageComposerInputCenterBottomContentKt;
+public final class io/getstream/chat/android/compose/ui/messages/composer/internal/ComposableSingletons$MessageComposerInputBottomContentKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/composer/internal/ComposableSingletons$MessageComposerInputBottomContentKt;
 	public fun <init> ()V
-	public final fun getLambda$-251225122$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda$-914010537$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1649672542$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$494648681$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/composer/internal/ComposableSingletons$MessageComposerInputTrailingContentKt {
@@ -3414,7 +3416,7 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 	public fun MessageComposerCoolDownIndicator (Lio/getstream/chat/android/compose/ui/theme/MessageComposerCoolDownIndicatorParams;Landroidx/compose/runtime/Composer;I)V
 	public fun MessageComposerEditIndicator (Lio/getstream/chat/android/compose/ui/theme/MessageComposerEditIndicatorParams;Landroidx/compose/runtime/Composer;I)V
 	public fun MessageComposerInput (Lio/getstream/chat/android/compose/ui/theme/MessageComposerInputParams;Landroidx/compose/runtime/Composer;I)V
-	public fun MessageComposerInputCenterBottomContent (Lio/getstream/chat/android/compose/ui/theme/MessageComposerInputCenterBottomContentParams;Landroidx/compose/runtime/Composer;I)V
+	public fun MessageComposerInputBottomContent (Lio/getstream/chat/android/compose/ui/theme/MessageComposerInputBottomContentParams;Landroidx/compose/runtime/Composer;I)V
 	public fun MessageComposerInputCenterContent (Lio/getstream/chat/android/compose/ui/theme/MessageComposerInputCenterContentParams;Landroidx/compose/runtime/Composer;I)V
 	public fun MessageComposerInputLeadingContent (Lio/getstream/chat/android/compose/ui/theme/MessageComposerInputLeadingContentParams;Landroidx/compose/runtime/Composer;I)V
 	public fun MessageComposerInputTrailingContent (Lio/getstream/chat/android/compose/ui/theme/MessageComposerInputTrailingContentParams;Landroidx/compose/runtime/Composer;I)V
@@ -3602,7 +3604,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFacto
 	public static fun MessageComposerCoolDownIndicator (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MessageComposerCoolDownIndicatorParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun MessageComposerEditIndicator (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MessageComposerEditIndicatorParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun MessageComposerInput (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MessageComposerInputParams;Landroidx/compose/runtime/Composer;I)V
-	public static fun MessageComposerInputCenterBottomContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MessageComposerInputCenterBottomContentParams;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageComposerInputBottomContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MessageComposerInputBottomContentParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun MessageComposerInputCenterContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MessageComposerInputCenterContentParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun MessageComposerInputLeadingContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MessageComposerInputLeadingContentParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun MessageComposerInputTrailingContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MessageComposerInputTrailingContentParams;Landroidx/compose/runtime/Composer;I)V
@@ -4485,15 +4487,15 @@ public final class io/getstream/chat/android/compose/ui/theme/MessageComposerEdi
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/compose/ui/theme/MessageComposerInputCenterBottomContentParams {
+public final class io/getstream/chat/android/compose/ui/theme/MessageComposerInputBottomContentParams {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;
 	public final fun component2 ()Lkotlin/jvm/functions/Function1;
 	public final fun component3 ()Landroidx/compose/ui/Modifier;
-	public final fun copy (Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerInputCenterBottomContentParams;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/MessageComposerInputCenterBottomContentParams;Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerInputCenterBottomContentParams;
+	public final fun copy (Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerInputBottomContentParams;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/MessageComposerInputBottomContentParams;Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerInputBottomContentParams;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getModifier ()Landroidx/compose/ui/Modifier;
 	public final fun getOnAlsoSendToChannelChange ()Lkotlin/jvm/functions/Function1;
