@@ -103,8 +103,6 @@ import io.getstream.chat.android.compose.ui.components.common.ContextualMenuItem
 import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
-import io.getstream.chat.android.compose.ui.components.messageactions.MessageActions
-import io.getstream.chat.android.compose.ui.components.messageactions.MessageActionsHeader
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
 import io.getstream.chat.android.compose.ui.components.messages.ClusteredMessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDeletedContent
@@ -1854,7 +1852,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun MessageActions(params: MessageActionsParams) {
-        MessageActions(
+        io.getstream.chat.android.compose.ui.components.messageactions.MessageActions(
             modifier = params.modifier,
             messageOptions = params.messageOptions,
             message = params.message,
@@ -1873,7 +1871,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun MessageActionsHeader(params: MessageActionsHeaderParams) {
-        MessageActionsHeader(
+        io.getstream.chat.android.compose.ui.components.messageactions.MessageActionsHeader(
             modifier = params.modifier,
             onReactionOptionSelected = {
                 params.onMessageAction(
