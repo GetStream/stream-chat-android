@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.compose.util.extensions
 
-import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
+import io.getstream.chat.android.compose.ui.components.messageoptions.MessageActionsOptionsVisibility
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -32,7 +32,7 @@ import io.getstream.chat.android.ui.common.utils.canReplyToMessage
 import io.getstream.chat.android.ui.common.utils.canRetryMessage
 import io.getstream.chat.android.ui.common.utils.canThreadReplyToMessage
 
-internal fun MessageOptionItemVisibility.canReplyToMessage(
+internal fun MessageActionsOptionsVisibility.canReplyToMessage(
     message: Message,
     ownCapabilities: Set<String>,
 ): Boolean = canReplyToMessage(
@@ -41,7 +41,7 @@ internal fun MessageOptionItemVisibility.canReplyToMessage(
     ownCapabilities = ownCapabilities,
 )
 
-internal fun MessageOptionItemVisibility.canThreadReplyToMessage(
+internal fun MessageActionsOptionsVisibility.canThreadReplyToMessage(
     isInThread: Boolean,
     message: Message,
     ownCapabilities: Set<String>,
@@ -52,14 +52,14 @@ internal fun MessageOptionItemVisibility.canThreadReplyToMessage(
     ownCapabilities = ownCapabilities,
 )
 
-internal fun MessageOptionItemVisibility.canCopyMessage(
+internal fun MessageActionsOptionsVisibility.canCopyMessage(
     message: Message,
 ): Boolean = canCopyMessage(
     copyTextEnabled = isCopyTextVisible,
     message = message,
 )
 
-internal fun MessageOptionItemVisibility.canEditMessage(
+internal fun MessageActionsOptionsVisibility.canEditMessage(
     currentUser: User?,
     message: Message,
     ownCapabilities: Set<String>,
@@ -70,7 +70,7 @@ internal fun MessageOptionItemVisibility.canEditMessage(
     ownCapabilities = ownCapabilities,
 )
 
-internal fun MessageOptionItemVisibility.canDeleteMessage(
+internal fun MessageActionsOptionsVisibility.canDeleteMessage(
     currentUser: User?,
     message: Message,
     ownCapabilities: Set<String>,
@@ -81,7 +81,7 @@ internal fun MessageOptionItemVisibility.canDeleteMessage(
     ownCapabilities = ownCapabilities,
 )
 
-internal fun MessageOptionItemVisibility.canFlagMessage(
+internal fun MessageActionsOptionsVisibility.canFlagMessage(
     currentUser: User?,
     message: Message,
     ownCapabilities: Set<String>,
@@ -92,7 +92,7 @@ internal fun MessageOptionItemVisibility.canFlagMessage(
     ownCapabilities = ownCapabilities,
 )
 
-internal fun MessageOptionItemVisibility.canPinMessage(
+internal fun MessageActionsOptionsVisibility.canPinMessage(
     message: Message,
     ownCapabilities: Set<String>,
 ): Boolean = canPinMessage(
@@ -101,7 +101,7 @@ internal fun MessageOptionItemVisibility.canPinMessage(
     ownCapabilities = ownCapabilities,
 )
 
-internal fun MessageOptionItemVisibility.canMuteUser(
+internal fun MessageActionsOptionsVisibility.canMuteUser(
     currentUser: User?,
     message: Message,
     channel: Channel,
@@ -112,7 +112,7 @@ internal fun MessageOptionItemVisibility.canMuteUser(
     channel = channel,
 )
 
-internal fun MessageOptionItemVisibility.canBlockUser(
+internal fun MessageActionsOptionsVisibility.canBlockUser(
     currentUser: User?,
     message: Message,
 ): Boolean = canBlockUser(
@@ -121,7 +121,7 @@ internal fun MessageOptionItemVisibility.canBlockUser(
     message = message,
 )
 
-internal fun MessageOptionItemVisibility.canMarkAsUnread(
+internal fun MessageActionsOptionsVisibility.canMarkAsUnread(
     currentUser: User?,
     message: Message,
     ownCapabilities: Set<String>,
@@ -132,7 +132,7 @@ internal fun MessageOptionItemVisibility.canMarkAsUnread(
     ownCapabilities = ownCapabilities,
 )
 
-internal fun MessageOptionItemVisibility.canRetryMessage(
+internal fun MessageActionsOptionsVisibility.canRetryMessage(
     currentUser: User?,
     message: Message,
 ): Boolean = canRetryMessage(

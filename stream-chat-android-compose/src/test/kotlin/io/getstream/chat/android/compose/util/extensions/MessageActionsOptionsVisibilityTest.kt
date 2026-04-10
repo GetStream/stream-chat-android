@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.compose.util.extensions
 
-import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
+import io.getstream.chat.android.compose.ui.components.messageoptions.MessageActionsOptionsVisibility
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -37,29 +37,29 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.Date
 
-internal class MessageOptionItemVisibilityTest {
+internal class MessageActionsOptionsVisibilityTest {
 
     @ParameterizedTest
     @MethodSource("canReplyToMessageArguments")
     fun `Verify canReplyToMessage() extension function return proper value`(
-        messageOptionItemVisibility: MessageOptionItemVisibility,
+        messageActionsOptionsVisibility: MessageActionsOptionsVisibility,
         message: Message,
         ownCapabilities: Set<String>,
         expectedResult: Boolean,
     ) {
-        messageOptionItemVisibility.canReplyToMessage(message, ownCapabilities) `should be` expectedResult
+        messageActionsOptionsVisibility.canReplyToMessage(message, ownCapabilities) `should be` expectedResult
     }
 
     @ParameterizedTest
     @MethodSource("canThreadReplyToMessageArguments")
     fun `Verify canThreadReplyToMessage() extension function return proper value`(
-        messageOptionItemVisibility: MessageOptionItemVisibility,
+        messageActionsOptionsVisibility: MessageActionsOptionsVisibility,
         isInThread: Boolean,
         message: Message,
         ownCapabilities: Set<String>,
         expectedResult: Boolean,
     ) {
-        messageOptionItemVisibility.canThreadReplyToMessage(
+        messageActionsOptionsVisibility.canThreadReplyToMessage(
             isInThread,
             message,
             ownCapabilities,
@@ -69,104 +69,104 @@ internal class MessageOptionItemVisibilityTest {
     @ParameterizedTest
     @MethodSource("canCopyMessageArguments")
     fun `Verify canCopyMessage() extension function return proper value`(
-        messageOptionItemVisibility: MessageOptionItemVisibility,
+        messageActionsOptionsVisibility: MessageActionsOptionsVisibility,
         message: Message,
         expectedResult: Boolean,
     ) {
-        messageOptionItemVisibility.canCopyMessage(message) `should be` expectedResult
+        messageActionsOptionsVisibility.canCopyMessage(message) `should be` expectedResult
     }
 
     @ParameterizedTest
     @MethodSource("canEditMessageArguments")
     fun `Verify canEditMessage() extension function return proper value`(
-        messageOptionItemVisibility: MessageOptionItemVisibility,
+        messageActionsOptionsVisibility: MessageActionsOptionsVisibility,
         currentUser: User?,
         message: Message,
         ownCapabilities: Set<String>,
         expectedResult: Boolean,
     ) {
-        messageOptionItemVisibility.canEditMessage(currentUser, message, ownCapabilities) `should be` expectedResult
+        messageActionsOptionsVisibility.canEditMessage(currentUser, message, ownCapabilities) `should be` expectedResult
     }
 
     @ParameterizedTest
     @MethodSource("canDeleteMessageArguments")
     fun `Verify canDeleteMessage() extension function return proper value`(
-        messageOptionItemVisibility: MessageOptionItemVisibility,
+        messageActionsOptionsVisibility: MessageActionsOptionsVisibility,
         currentUser: User?,
         message: Message,
         ownCapabilities: Set<String>,
         expectedResult: Boolean,
     ) {
-        messageOptionItemVisibility.canDeleteMessage(currentUser, message, ownCapabilities) `should be` expectedResult
+        messageActionsOptionsVisibility.canDeleteMessage(currentUser, message, ownCapabilities) `should be` expectedResult
     }
 
     @ParameterizedTest
     @MethodSource("canFlagMessageArguments")
     fun `Verify canFlagMessage() extension function return proper value`(
-        messageOptionItemVisibility: MessageOptionItemVisibility,
+        messageActionsOptionsVisibility: MessageActionsOptionsVisibility,
         currentUser: User?,
         message: Message,
         ownCapabilities: Set<String>,
         expectedResult: Boolean,
     ) {
-        messageOptionItemVisibility.canFlagMessage(currentUser, message, ownCapabilities) `should be` expectedResult
+        messageActionsOptionsVisibility.canFlagMessage(currentUser, message, ownCapabilities) `should be` expectedResult
     }
 
     @ParameterizedTest
     @MethodSource("canPinMessageArguments")
     fun `Verify canPinMessage() extension function return proper value`(
-        messageOptionItemVisibility: MessageOptionItemVisibility,
+        messageActionsOptionsVisibility: MessageActionsOptionsVisibility,
         message: Message,
         ownCapabilities: Set<String>,
         expectedResult: Boolean,
     ) {
-        messageOptionItemVisibility.canPinMessage(message, ownCapabilities) `should be` expectedResult
+        messageActionsOptionsVisibility.canPinMessage(message, ownCapabilities) `should be` expectedResult
     }
 
     @ParameterizedTest
     @MethodSource("canMuteUserArguments")
     fun `Verify canMuteUser() extension function returns proper value`(
-        messageOptionItemVisibility: MessageOptionItemVisibility,
+        messageActionsOptionsVisibility: MessageActionsOptionsVisibility,
         currentUser: User?,
         message: Message,
         channel: Channel,
         expectedResult: Boolean,
     ) {
-        messageOptionItemVisibility.canMuteUser(currentUser, message, channel) `should be` expectedResult
+        messageActionsOptionsVisibility.canMuteUser(currentUser, message, channel) `should be` expectedResult
     }
 
     @ParameterizedTest
     @MethodSource("canBlockUserArguments")
     fun `Verify canBlockUser() extension function return proper value`(
-        messageOptionItemVisibility: MessageOptionItemVisibility,
+        messageActionsOptionsVisibility: MessageActionsOptionsVisibility,
         currentUser: User?,
         message: Message,
         expectedResult: Boolean,
     ) {
-        messageOptionItemVisibility.canBlockUser(currentUser, message) `should be` expectedResult
+        messageActionsOptionsVisibility.canBlockUser(currentUser, message) `should be` expectedResult
     }
 
     @ParameterizedTest
     @MethodSource("canMarkAsUnreadArguments")
     fun `Verify canMarkAsUnread() extension function return proper value`(
-        messageOptionItemVisibility: MessageOptionItemVisibility,
+        messageActionsOptionsVisibility: MessageActionsOptionsVisibility,
         currentUser: User?,
         message: Message,
         ownCapabilities: Set<String>,
         expectedResult: Boolean,
     ) {
-        messageOptionItemVisibility.canMarkAsUnread(currentUser, message, ownCapabilities) `should be` expectedResult
+        messageActionsOptionsVisibility.canMarkAsUnread(currentUser, message, ownCapabilities) `should be` expectedResult
     }
 
     @ParameterizedTest
     @MethodSource("canRetryMessageArguments")
     fun `Verify canRetryMessage() extension function return proper value`(
-        messageOptionItemVisibility: MessageOptionItemVisibility,
+        messageActionsOptionsVisibility: MessageActionsOptionsVisibility,
         currentUser: User?,
         message: Message,
         expectedResult: Boolean,
     ) {
-        messageOptionItemVisibility.canRetryMessage(currentUser, message) `should be` expectedResult
+        messageActionsOptionsVisibility.canRetryMessage(currentUser, message) `should be` expectedResult
     }
 
     companion object {
@@ -177,35 +177,35 @@ internal class MessageOptionItemVisibilityTest {
         fun canReplyToMessageArguments() = listOf(
             // case: reply disabled
             Arguments.of(
-                MessageOptionItemVisibility(isReplyVisible = false),
+                MessageActionsOptionsVisibility(isReplyVisible = false),
                 randomMessage(deletedAt = null, deletedForMe = false),
                 randomChannelCapabilities(),
                 false,
             ),
             // case: message not synced
             Arguments.of(
-                MessageOptionItemVisibility(),
+                MessageActionsOptionsVisibility(),
                 randomMessage(syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED))),
                 randomChannelCapabilities(),
                 false,
             ),
             // case: no QUOTE_MESSAGE capability
             Arguments.of(
-                MessageOptionItemVisibility(),
+                MessageActionsOptionsVisibility(),
                 randomMessage(deletedAt = null, deletedForMe = false),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
                 false,
             ),
             // case: message is deleted
             Arguments.of(
-                MessageOptionItemVisibility(isReplyVisible = true),
+                MessageActionsOptionsVisibility(isReplyVisible = true),
                 randomMessage(syncStatus = SyncStatus.COMPLETED, deletedAt = Date(), deletedForMe = false),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
                 false,
             ),
             // case: all conditions met
             Arguments.of(
-                MessageOptionItemVisibility(isReplyVisible = true),
+                MessageActionsOptionsVisibility(isReplyVisible = true),
                 randomMessage(syncStatus = SyncStatus.COMPLETED, deletedAt = null, deletedForMe = false),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
                 true,
@@ -216,7 +216,7 @@ internal class MessageOptionItemVisibilityTest {
         fun canMarkAsUnreadArguments() = listOf(
             // case: visibility disabled
             Arguments.of(
-                MessageOptionItemVisibility(isMarkAsUnreadVisible = false),
+                MessageActionsOptionsVisibility(isMarkAsUnreadVisible = false),
                 currentUser,
                 randomMessage(),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.READ_EVENTS)),
@@ -224,7 +224,7 @@ internal class MessageOptionItemVisibilityTest {
             ),
             // case: no READ_EVENTS capability
             Arguments.of(
-                MessageOptionItemVisibility(isMarkAsUnreadVisible = true),
+                MessageActionsOptionsVisibility(isMarkAsUnreadVisible = true),
                 currentUser,
                 randomMessage(),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.READ_EVENTS)),
@@ -232,7 +232,7 @@ internal class MessageOptionItemVisibilityTest {
             ),
             // case: own message
             Arguments.of(
-                MessageOptionItemVisibility(isMarkAsUnreadVisible = true),
+                MessageActionsOptionsVisibility(isMarkAsUnreadVisible = true),
                 currentUser,
                 randomMessage(user = currentUser),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.READ_EVENTS)),
@@ -240,7 +240,7 @@ internal class MessageOptionItemVisibilityTest {
             ),
             // case: all conditions met
             Arguments.of(
-                MessageOptionItemVisibility(isMarkAsUnreadVisible = true),
+                MessageActionsOptionsVisibility(isMarkAsUnreadVisible = true),
                 currentUser,
                 randomMessage(),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.READ_EVENTS)),
@@ -251,25 +251,25 @@ internal class MessageOptionItemVisibilityTest {
         @JvmStatic
         fun canPinMessageArguments() = listOf(
             Arguments.of(
-                MessageOptionItemVisibility(isPinMessageVisible = false),
+                MessageActionsOptionsVisibility(isPinMessageVisible = false),
                 randomMessage(),
                 randomChannelCapabilities(),
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(),
+                MessageActionsOptionsVisibility(),
                 randomMessage(syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED))),
                 randomChannelCapabilities(),
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(),
+                MessageActionsOptionsVisibility(),
                 randomMessage(),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.PIN_MESSAGE)),
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(isPinMessageVisible = true),
+                MessageActionsOptionsVisibility(isPinMessageVisible = true),
                 randomMessage(syncStatus = SyncStatus.COMPLETED),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.PIN_MESSAGE)),
                 true,
@@ -279,28 +279,28 @@ internal class MessageOptionItemVisibilityTest {
         @JvmStatic
         fun canEditMessageArguments() = listOf(
             Arguments.of(
-                MessageOptionItemVisibility(isEditMessageVisible = false),
+                MessageActionsOptionsVisibility(isEditMessageVisible = false),
                 currentUser.takeIf { randomBoolean() },
                 randomMessage(sharedLocation = null),
                 randomChannelCapabilities(),
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(),
+                MessageActionsOptionsVisibility(),
                 currentUser.takeIf { randomBoolean() },
                 randomMessage(command = AttachmentType.GIPHY, sharedLocation = null),
                 randomChannelCapabilities(),
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(isEditMessageVisible = true),
+                MessageActionsOptionsVisibility(isEditMessageVisible = true),
                 currentUser,
                 randomMessage(poll = randomPoll(), command = null, sharedLocation = null),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.UPDATE_ANY_MESSAGE)),
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(),
+                MessageActionsOptionsVisibility(),
                 currentUser.takeIf { randomBoolean() },
                 randomMessage(sharedLocation = null),
                 randomChannelCapabilities(
@@ -312,14 +312,14 @@ internal class MessageOptionItemVisibilityTest {
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(isEditMessageVisible = true),
+                MessageActionsOptionsVisibility(isEditMessageVisible = true),
                 currentUser.takeIf { randomBoolean() },
                 randomMessage(sharedLocation = null),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.UPDATE_ANY_MESSAGE)),
                 true,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(isEditMessageVisible = true),
+                MessageActionsOptionsVisibility(isEditMessageVisible = true),
                 currentUser,
                 randomMessage(user = currentUser, sharedLocation = null),
                 randomChannelCapabilities(
@@ -329,7 +329,7 @@ internal class MessageOptionItemVisibilityTest {
                 true,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(isEditMessageVisible = true),
+                MessageActionsOptionsVisibility(isEditMessageVisible = true),
                 null,
                 randomMessage(),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.UPDATE_ANY_MESSAGE)),
@@ -340,28 +340,28 @@ internal class MessageOptionItemVisibilityTest {
         @JvmStatic
         fun canMuteUserArguments() = listOf(
             Arguments.of(
-                MessageOptionItemVisibility(isMuteUserVisible = false),
+                MessageActionsOptionsVisibility(isMuteUserVisible = false),
                 currentUser.takeIf { randomBoolean() },
                 randomMessage(),
                 Channel(config = Config(muteEnabled = true)),
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(),
+                MessageActionsOptionsVisibility(),
                 currentUser,
                 randomMessage(user = currentUser),
                 Channel(config = Config(muteEnabled = true)),
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(isMuteUserVisible = true),
+                MessageActionsOptionsVisibility(isMuteUserVisible = true),
                 currentUser.takeIf { randomBoolean() },
                 randomMessage(),
                 Channel(config = Config(muteEnabled = false)),
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(isMuteUserVisible = true),
+                MessageActionsOptionsVisibility(isMuteUserVisible = true),
                 currentUser.takeIf { randomBoolean() },
                 randomMessage(),
                 Channel(config = Config(muteEnabled = true)),
@@ -372,19 +372,19 @@ internal class MessageOptionItemVisibilityTest {
         @JvmStatic
         fun canBlockUserArguments() = listOf(
             Arguments.of(
-                MessageOptionItemVisibility(isBlockUserVisible = false),
+                MessageActionsOptionsVisibility(isBlockUserVisible = false),
                 currentUser.takeIf { randomBoolean() },
                 randomMessage(),
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(),
+                MessageActionsOptionsVisibility(),
                 currentUser,
                 randomMessage(user = currentUser),
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(isBlockUserVisible = true),
+                MessageActionsOptionsVisibility(isBlockUserVisible = true),
                 currentUser.takeIf { randomBoolean() },
                 randomMessage(),
                 true,
@@ -394,19 +394,19 @@ internal class MessageOptionItemVisibilityTest {
         @JvmStatic
         fun canRetryMessageArguments() = listOf(
             Arguments.of(
-                MessageOptionItemVisibility(isRetryMessageVisible = false),
+                MessageActionsOptionsVisibility(isRetryMessageVisible = false),
                 currentUser.takeIf { randomBoolean() },
                 randomMessage(),
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(),
+                MessageActionsOptionsVisibility(),
                 currentUser,
                 randomMessage(),
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(),
+                MessageActionsOptionsVisibility(),
                 currentUser,
                 randomMessage(
                     user = currentUser,
@@ -415,7 +415,7 @@ internal class MessageOptionItemVisibilityTest {
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(isRetryMessageVisible = true),
+                MessageActionsOptionsVisibility(isRetryMessageVisible = true),
                 currentUser,
                 randomMessage(
                     user = currentUser,
@@ -428,28 +428,28 @@ internal class MessageOptionItemVisibilityTest {
         @JvmStatic
         fun canFlagMessageArguments() = listOf(
             Arguments.of(
-                MessageOptionItemVisibility(isFlagMessageVisible = false),
+                MessageActionsOptionsVisibility(isFlagMessageVisible = false),
                 currentUser.takeIf { randomBoolean() },
                 randomMessage(),
                 randomChannelCapabilities(),
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(),
+                MessageActionsOptionsVisibility(),
                 currentUser.takeIf { randomBoolean() },
                 randomMessage(),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.FLAG_MESSAGE)),
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(),
+                MessageActionsOptionsVisibility(),
                 currentUser,
                 randomMessage(user = currentUser),
                 randomChannelCapabilities(),
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(isFlagMessageVisible = true),
+                MessageActionsOptionsVisibility(isFlagMessageVisible = true),
                 currentUser,
                 randomMessage(),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.FLAG_MESSAGE)),
@@ -460,14 +460,14 @@ internal class MessageOptionItemVisibilityTest {
         @JvmStatic
         fun canDeleteMessageArguments() = listOf(
             Arguments.of(
-                MessageOptionItemVisibility(isDeleteMessageVisible = false),
+                MessageActionsOptionsVisibility(isDeleteMessageVisible = false),
                 currentUser.takeIf { randomBoolean() },
                 randomMessage(),
                 randomChannelCapabilities(),
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(),
+                MessageActionsOptionsVisibility(),
                 currentUser.takeIf { randomBoolean() },
                 randomMessage(),
                 randomChannelCapabilities(
@@ -479,14 +479,14 @@ internal class MessageOptionItemVisibilityTest {
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(isDeleteMessageVisible = true),
+                MessageActionsOptionsVisibility(isDeleteMessageVisible = true),
                 currentUser.takeIf { randomBoolean() },
                 randomMessage(),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.DELETE_ANY_MESSAGE)),
                 true,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(isDeleteMessageVisible = true),
+                MessageActionsOptionsVisibility(isDeleteMessageVisible = true),
                 currentUser,
                 randomMessage(user = currentUser),
                 randomChannelCapabilities(
@@ -502,7 +502,7 @@ internal class MessageOptionItemVisibilityTest {
         fun canThreadReplyToMessageArguments() = listOf(
             // case: threads disabled
             Arguments.of(
-                MessageOptionItemVisibility(isThreadReplyVisible = false),
+                MessageActionsOptionsVisibility(isThreadReplyVisible = false),
                 randomBoolean(),
                 randomMessage(parentId = null, threadParticipants = emptyList()),
                 randomChannelCapabilities(),
@@ -510,7 +510,7 @@ internal class MessageOptionItemVisibilityTest {
             ),
             // case: message not synced
             Arguments.of(
-                MessageOptionItemVisibility(),
+                MessageActionsOptionsVisibility(),
                 randomBoolean(),
                 randomMessage(
                     parentId = null,
@@ -522,7 +522,7 @@ internal class MessageOptionItemVisibilityTest {
             ),
             // case: no SEND_REPLY capability
             Arguments.of(
-                MessageOptionItemVisibility(),
+                MessageActionsOptionsVisibility(),
                 randomBoolean(),
                 randomMessage(parentId = null, threadParticipants = emptyList()),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.SEND_REPLY)),
@@ -530,7 +530,7 @@ internal class MessageOptionItemVisibilityTest {
             ),
             // case: already in thread
             Arguments.of(
-                MessageOptionItemVisibility(isThreadReplyVisible = true),
+                MessageActionsOptionsVisibility(isThreadReplyVisible = true),
                 true,
                 randomMessage(parentId = null, threadParticipants = emptyList(), syncStatus = SyncStatus.COMPLETED),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.SEND_REPLY)),
@@ -538,7 +538,7 @@ internal class MessageOptionItemVisibilityTest {
             ),
             // case: message is a thread reply
             Arguments.of(
-                MessageOptionItemVisibility(isThreadReplyVisible = true),
+                MessageActionsOptionsVisibility(isThreadReplyVisible = true),
                 false,
                 randomMessage(
                     parentId = "parentId",
@@ -550,7 +550,7 @@ internal class MessageOptionItemVisibilityTest {
             ),
             // case: all conditions met
             Arguments.of(
-                MessageOptionItemVisibility(isThreadReplyVisible = true),
+                MessageActionsOptionsVisibility(isThreadReplyVisible = true),
                 false,
                 randomMessage(parentId = null, threadParticipants = emptyList(), syncStatus = SyncStatus.COMPLETED),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.SEND_REPLY)),
@@ -561,22 +561,22 @@ internal class MessageOptionItemVisibilityTest {
         @JvmStatic
         fun canCopyMessageArguments() = listOf(
             Arguments.of(
-                MessageOptionItemVisibility(isCopyTextVisible = false),
+                MessageActionsOptionsVisibility(isCopyTextVisible = false),
                 randomMessage(),
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(),
+                MessageActionsOptionsVisibility(),
                 randomMessage(text = ""),
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(),
+                MessageActionsOptionsVisibility(),
                 randomMessage(attachments = listOf(randomAttachment(titleLink = null, ogUrl = null))),
                 false,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(isCopyTextVisible = true),
+                MessageActionsOptionsVisibility(isCopyTextVisible = true),
                 randomMessage(
                     text = randomString(),
                     attachments = emptyList(),
@@ -584,7 +584,7 @@ internal class MessageOptionItemVisibilityTest {
                 true,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(isCopyTextVisible = true),
+                MessageActionsOptionsVisibility(isCopyTextVisible = true),
                 randomMessage(
                     text = randomString(),
                     attachments = listOf(randomAttachment(titleLink = randomString(), ogUrl = null)),
@@ -592,7 +592,7 @@ internal class MessageOptionItemVisibilityTest {
                 true,
             ),
             Arguments.of(
-                MessageOptionItemVisibility(isCopyTextVisible = true),
+                MessageActionsOptionsVisibility(isCopyTextVisible = true),
                 randomMessage(
                     text = randomString(),
                     attachments = listOf(randomAttachment(titleLink = null, ogUrl = randomString())),

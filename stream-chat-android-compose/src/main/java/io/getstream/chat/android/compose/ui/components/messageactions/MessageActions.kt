@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.components.selectedmessage
+package io.getstream.chat.android.compose.ui.components.messageactions
 
 import android.os.Build
 import android.view.WindowManager
@@ -64,9 +64,9 @@ import io.getstream.chat.android.compose.state.messages.MessageAlignment
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageSnapshot
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageActionsHeaderParams
+import io.getstream.chat.android.compose.ui.theme.MessageActionsOptionsParams
 import io.getstream.chat.android.compose.ui.theme.MessageContainerParams
-import io.getstream.chat.android.compose.ui.theme.MessageMenuHeaderContentParams
-import io.getstream.chat.android.compose.ui.theme.MessageMenuOptionsParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.Channel
@@ -104,7 +104,7 @@ import kotlin.math.roundToInt
  */
 @Suppress("LongMethod")
 @Composable
-public fun SelectedMessageMenu(
+public fun MessageActions(
     message: Message,
     messageOptions: List<MessageOptionItemState>,
     ownCapabilities: Set<String>,
@@ -187,9 +187,9 @@ public fun SelectedMessageMenu(
             horizontalAlignment = messageAlignment.contentAlignment,
         ) {
             val canLeaveReaction = ChannelCapabilities.SEND_REACTION in ownCapabilities
-            if (canLeaveReaction && ChatTheme.reactionOptionsTheme.areReactionOptionsVisible) {
-                ChatTheme.componentFactory.MessageMenuHeaderContent(
-                    params = MessageMenuHeaderContentParams(
+            if (canLeaveReaction && ChatTheme.config.messageActions.reactionsEnabled) {
+                ChatTheme.componentFactory.MessageActionsHeader(
+                    params = MessageActionsHeaderParams(
                         modifier = bubbleAlignmentPadding.then(animation.peripheralModifier(slideY = (-24).dp)),
                         message = message,
                         messageOptions = messageOptions,
@@ -221,8 +221,8 @@ public fun SelectedMessageMenu(
                 )
             }
 
-            ChatTheme.componentFactory.MessageMenuOptions(
-                params = MessageMenuOptionsParams(
+            ChatTheme.componentFactory.MessageActionsOptions(
+                params = MessageActionsOptionsParams(
                     modifier = bubbleAlignmentPadding.then(animation.peripheralModifier(slideY = 24.dp)),
                     message = message,
                     options = messageOptions,
@@ -270,7 +270,7 @@ private const val BackgroundBlur = 50
 private const val DimAmount = 0.7f
 
 /**
- * Holds the animation state for the [SelectedMessageMenu] pop-out effect.
+ * Holds the animation state for the [MessageActions] pop-out effect.
  *
  * Two parallel animations drive the menu entrance:
  * - **message**: slides the message from its list position to the dialog center
@@ -357,45 +357,45 @@ private fun rememberMenuAnimation(
 
 @Preview(showBackground = true)
 @Composable
-private fun SelectedMessageMenuForIncomingMessagePreview() {
+private fun MessageActionsForIncomingMessagePreview() {
     ChatTheme {
-        SelectedMessageMenuForIncomingMessage()
+        MessageActionsForIncomingMessage()
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun SelectedMessageMenuForOutgoingMessagePreview() {
+private fun MessageActionsForOutgoingMessagePreview() {
     ChatTheme {
-        SelectedMessageMenuForOutgoingMessage()
+        MessageActionsForOutgoingMessage()
     }
 }
 
 @Composable
-internal fun SelectedMessageMenuForIncomingMessage() {
-    SelectedMessageMenuPreview(
+internal fun MessageActionsForIncomingMessage() {
+    MessageActionsPreview(
         selectedMessage = PreviewMessageData.message1,
     )
 }
 
 @Composable
-internal fun SelectedMessageMenuForOutgoingMessage() {
-    SelectedMessageMenuPreview(
+internal fun MessageActionsForOutgoingMessage() {
+    MessageActionsPreview(
         selectedMessage = PreviewMessageData.message1.copy(user = PreviewUserData.user1),
     )
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun SelectedMessageMenuForFailedMessagePreview() {
+private fun MessageActionsForFailedMessagePreview() {
     ChatTheme {
-        SelectedMessageMenuForFailedMessage()
+        MessageActionsForFailedMessage()
     }
 }
 
 @Composable
-internal fun SelectedMessageMenuForFailedMessage() {
-    SelectedMessageMenuPreview(
+internal fun MessageActionsForFailedMessage() {
+    MessageActionsPreview(
         selectedMessage = PreviewMessageData.message1.copy(
             user = PreviewUserData.user1,
             syncStatus = SyncStatus.FAILED_PERMANENTLY,
@@ -404,7 +404,7 @@ internal fun SelectedMessageMenuForFailedMessage() {
 }
 
 @Composable
-private fun SelectedMessageMenuPreview(selectedMessage: Message) {
+private fun MessageActionsPreview(selectedMessage: Message) {
     val messageOptions = defaultMessageOptionsState(
         selectedMessage = selectedMessage,
         currentUser = PreviewUserData.user1,
@@ -412,7 +412,7 @@ private fun SelectedMessageMenuPreview(selectedMessage: Message) {
         channel = Channel(ownCapabilities = ChannelCapabilities.toSet()),
     )
 
-    SelectedMessageMenu(
+    MessageActions(
         message = selectedMessage,
         messageOptions = messageOptions,
         onMessageAction = {},

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.components.selectedmessage
+package io.getstream.chat.android.compose.ui.components.messageactions
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -52,7 +52,7 @@ import io.getstream.chat.android.models.Reaction
  * @param modifier Modifier for styling.
  */
 @Composable
-public fun MessageMenuHeader(
+public fun MessageActionsHeader(
     ownReactions: List<Reaction>,
     onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
     onShowMoreReactionsSelected: () -> Unit,
@@ -108,12 +108,12 @@ public fun MessageMenuHeader(
 
 @Preview(showBackground = true)
 @Composable
-private fun MessageMenuHeaderPreview() {
+private fun MessageActionsHeaderPreview() {
     ChatPreviewTheme {
         val reactionType = ChatTheme.reactionResolver.supportedReactions.firstOrNull()
 
         if (reactionType != null) {
-            MessageMenuHeader(
+            MessageActionsHeader(
                 ownReactions = listOf(Reaction(type = reactionType)),
                 onReactionOptionSelected = {},
                 onShowMoreReactionsSelected = {},

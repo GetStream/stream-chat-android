@@ -19,13 +19,13 @@ package io.getstream.chat.android.compose.ui.messages
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
-import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenuForFailedMessage
-import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenuForIncomingMessage
-import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenuForOutgoingMessage
+import io.getstream.chat.android.compose.ui.components.messageactions.MessageActionsForFailedMessage
+import io.getstream.chat.android.compose.ui.components.messageactions.MessageActionsForIncomingMessage
+import io.getstream.chat.android.compose.ui.components.messageactions.MessageActionsForOutgoingMessage
 import org.junit.Rule
 import org.junit.Test
 
-internal class SelectedMessageMenuTest : PaparazziComposeTest {
+internal class MessageActionsTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
@@ -33,42 +33,42 @@ internal class SelectedMessageMenuTest : PaparazziComposeTest {
     @Test
     fun `my message`() {
         snapshot(isInDarkMode = false) {
-            SelectedMessageMenuForOutgoingMessage()
+            MessageActionsForOutgoingMessage()
         }
     }
 
     @Test
     fun `my message in dark mode`() {
         snapshot(isInDarkMode = true) {
-            SelectedMessageMenuForOutgoingMessage()
+            MessageActionsForOutgoingMessage()
         }
     }
 
     @Test
     fun `their message`() {
         snapshot(isInDarkMode = false) {
-            SelectedMessageMenuForIncomingMessage()
+            MessageActionsForIncomingMessage()
         }
     }
 
     @Test
     fun `their message in dark mode`() {
         snapshot(isInDarkMode = true) {
-            SelectedMessageMenuForIncomingMessage()
+            MessageActionsForIncomingMessage()
         }
     }
 
     @Test
     fun `failed message`() {
         snapshot(isInDarkMode = false) {
-            SelectedMessageMenuForFailedMessage()
+            MessageActionsForFailedMessage()
         }
     }
 
     @Test
     fun `failed message in dark mode`() {
         snapshot(isInDarkMode = true) {
-            SelectedMessageMenuForFailedMessage()
+            MessageActionsForFailedMessage()
         }
     }
 }

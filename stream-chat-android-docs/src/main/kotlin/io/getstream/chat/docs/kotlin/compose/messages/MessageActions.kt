@@ -15,18 +15,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.components.messageactions.MessageActions
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
-import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageOptionsState
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/selected-message-menu/#usage)
  */
-private object SelectedMessageMenuUsageSnippet {
+private object MessageActionsUsageSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
@@ -52,7 +52,7 @@ private object SelectedMessageMenuUsageSnippet {
                         // The rest of your UI
                         if (selectedMessageState is SelectedMessageOptionsState) {
                             val selectedMessage = selectedMessageState.message
-                            SelectedMessageMenu(
+                            MessageActions(
                                 modifier = Modifier.align(Alignment.BottomCenter),
                                 // Define your message options
                                 messageOptions = defaultMessageOptionsState(
@@ -86,7 +86,7 @@ private object SelectedMessageMenuUsageSnippet {
 /**
  * [Handling Actions](https://getstream.io/chat/docs/sdk/android/compose/message-components/selected-message-menu/#handling-actions)
  */
-private object SelectedMessageMenuHandlingActionsSnippet {
+private object MessageActionsHandlingActionsSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
@@ -114,7 +114,7 @@ private object SelectedMessageMenuHandlingActionsSnippet {
 
                         if (selectedMessageState is SelectedMessageOptionsState) {
                             val selectedMessage = selectedMessageState.message
-                            SelectedMessageMenu(
+                            MessageActions(
                                 modifier = Modifier.align(Alignment.BottomCenter),
                                 // Define your message options
                                 messageOptions = defaultMessageOptionsState(
@@ -147,7 +147,7 @@ private object SelectedMessageMenuHandlingActionsSnippet {
 /**
  * [Customization](https://getstream.io/chat/docs/sdk/android/compose/message-components/selected-message-menu/#customization)
  */
-private object SelectedMessageMenuCustomizationSnippet {
+private object MessageActionsCustomizationSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
@@ -174,7 +174,7 @@ private object SelectedMessageMenuCustomizationSnippet {
 
                         if (selectedMessageState is SelectedMessageOptionsState) {
                             val selectedMessage = selectedMessageState.message
-                            SelectedMessageMenu(
+                            MessageActions(
                                 // Use a Modifier to customize the appearance
                                 modifier = Modifier
                                     .align(Alignment.Center)
