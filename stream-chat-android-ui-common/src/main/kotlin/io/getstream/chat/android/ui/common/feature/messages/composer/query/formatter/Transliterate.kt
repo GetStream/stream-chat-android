@@ -22,7 +22,7 @@ import io.getstream.chat.android.ui.common.feature.messages.composer.translitera
 /**
  * Transliterate the query string.
  */
-public class Transliterate(
+internal class Transliterate(
     private val transliterator: StreamTransliterator = DefaultStreamTransliterator(),
 ) : QueryFormatter {
     override fun format(query: String): String {

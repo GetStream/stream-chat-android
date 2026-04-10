@@ -36,7 +36,7 @@ import kotlin.math.min
  * @param transliterator The transliterator to use for normalizing strings.
  * @param target The function to extract the searchable string from an item.
  */
-public class DefaultQueryFilter<T>(
+internal class DefaultQueryFilter<T>(
     private val transliterator: StreamTransliterator = DefaultStreamTransliterator(),
     private val target: (T) -> String,
 ) : QueryFilter<T> {
