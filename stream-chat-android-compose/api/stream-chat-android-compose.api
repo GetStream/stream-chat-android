@@ -1646,8 +1646,8 @@ public final class io/getstream/chat/android/compose/ui/components/reactions/Rea
 public final class io/getstream/chat/android/compose/ui/components/selectedmessage/ComposableSingletons$MessageMenuHeaderKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/selectedmessage/ComposableSingletons$MessageMenuHeaderKt;
 	public fun <init> ()V
+	public final fun getLambda$1595289781$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1869643284$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda$789360109$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/components/selectedmessage/ComposableSingletons$ReactionCountRowKt {
