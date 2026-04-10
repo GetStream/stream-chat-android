@@ -31,7 +31,7 @@ import io.getstream.log.taggedLogger
  * @param channelCid The CID of the channel we are querying for members.
  * @param filter The filter used to filter the users.
  */
-public class LocalUserLookupHandler @JvmOverloads constructor(
+internal class LocalUserLookupHandler(
     private val chatClient: ChatClient,
     private val channelCid: String,
     private val filter: QueryFilter<User> = DefaultUserQueryFilter(),
