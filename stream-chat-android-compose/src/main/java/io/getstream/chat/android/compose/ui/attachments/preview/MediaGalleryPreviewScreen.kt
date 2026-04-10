@@ -873,7 +873,7 @@ internal fun MediaGalleryPreviewShareIcon(
         Icon(
             painter = painterResource(id = painter),
             contentDescription = stringResource(id = description),
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.size(20.dp),
         )
     }
 }
@@ -949,6 +949,7 @@ internal fun MediaGalleryPreviewPhotosIcon(
         Icon(
             painter = painterResource(id = R.drawable.stream_design_ic_gallery),
             contentDescription = stringResource(id = R.string.stream_compose_image_preview_photos),
+            modifier = Modifier.size(20.dp),
         )
     }
 }

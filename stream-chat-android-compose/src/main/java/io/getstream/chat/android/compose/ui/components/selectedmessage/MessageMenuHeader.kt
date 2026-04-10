@@ -18,11 +18,11 @@ package io.getstream.chat.android.compose.ui.components.selectedmessage
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +37,7 @@ import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleSize
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionToggleParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -71,9 +72,7 @@ public fun MessageMenuHeader(
     Row(
         modifier = modifier
             .background(colors.backgroundCoreElevation2, CircleShape)
-            .border(1.dp, colors.borderCoreDefault, CircleShape)
-            .padding(StreamTokens.spacing2xs),
-        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing3xs),
+            .border(1.dp, colors.borderCoreDefault, CircleShape),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         options.forEach { option ->
@@ -84,7 +83,9 @@ public fun MessageMenuHeader(
                     size = ReactionToggleSize.Large,
                     checked = option.isSelected,
                     onCheckedChange = { _ -> onReactionOptionSelected(option) },
-                    modifier = Modifier.testTag("Stream_Reaction_${option.type}"),
+                    modifier = Modifier
+                        .testTag("Stream_Reaction_${option.type}")
+                        .padding(start = StreamTokens.spacing3xs),
                 ),
             )
         }
@@ -94,7 +95,7 @@ public fun MessageMenuHeader(
                 onClick = onShowMoreReactionsSelected,
                 style = StreamButtonStyleDefaults.secondaryOutline,
                 size = StreamButtonSize.Small,
-                modifier = Modifier,
+                modifier = Modifier.minimumInteractiveComponentSize(),
             ) {
                 Icon(
                     painter = painterResource(R.drawable.stream_design_ic_plus),
@@ -108,7 +109,7 @@ public fun MessageMenuHeader(
 @Preview(showBackground = true)
 @Composable
 private fun MessageMenuHeaderPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         val reactionType = ChatTheme.reactionResolver.supportedReactions.firstOrNull()
 
         if (reactionType != null) {
