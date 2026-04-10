@@ -20,7 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.state
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.DefaultQueryFilter
+import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.DefaultUserQueryFilter
 import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.QueryFilter
 import io.getstream.log.taggedLogger
 
@@ -34,7 +34,7 @@ import io.getstream.log.taggedLogger
 public class LocalUserLookupHandler @JvmOverloads constructor(
     private val chatClient: ChatClient,
     private val channelCid: String,
-    private val filter: QueryFilter<User> = DefaultQueryFilter { it.name.ifBlank { it.id } },
+    private val filter: QueryFilter<User> = DefaultUserQueryFilter(),
 ) : UserLookupHandler {
 
     private val logger by taggedLogger("Chat:UserLookupLocal")

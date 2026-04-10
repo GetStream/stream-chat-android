@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.composer.query.filter
 
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.query.formatter.Combine
 import io.getstream.chat.android.ui.common.feature.messages.composer.query.formatter.IgnoreDiacritics
 import io.getstream.chat.android.ui.common.feature.messages.composer.query.formatter.Lowercase
-import io.getstream.chat.android.ui.common.feature.messages.composer.query.formatter.QueryFormatter
 import io.getstream.chat.android.ui.common.feature.messages.composer.query.formatter.Transliterate
 import io.getstream.chat.android.ui.common.feature.messages.composer.transliteration.DefaultStreamTransliterator
 import io.getstream.chat.android.ui.common.feature.messages.composer.transliteration.StreamTransliterator
@@ -27,43 +27,41 @@ import io.getstream.log.taggedLogger
 import kotlin.math.min
 
 /**
- * Default implementation of [QueryFilter].
+ * Default [QueryFilter] for [User] objects used in mention suggestions.
  *
- * Keeps only items whose normalized target contains the normalized query as a substring, then
- * sorts results by Levenshtein distance so the closest matches appear first. Normalization
+ * Keeps only users whose normalized name (or id) contains the normalized query as a substring,
+ * then sorts results by Levenshtein distance so the closest matches appear first. Normalization
  * applies lowercasing, diacritics removal, and optional transliteration.
  *
  * @param transliterator The transliterator to use for normalizing strings.
- * @param target The function to extract the searchable string from an item.
  */
-internal class DefaultQueryFilter<T>(
-    private val transliterator: StreamTransliterator = DefaultStreamTransliterator(),
-    private val target: (T) -> String,
-) : QueryFilter<T> {
+public class DefaultUserQueryFilter(
+    transliterator: StreamTransliterator = DefaultStreamTransliterator(),
+) : QueryFilter<User> {
 
     private val logger by taggedLogger("Chat:QueryFilter")
 
-    private val queryFormatter: QueryFormatter = Combine(
+    private val queryFormatter = Combine(
         Lowercase(),
         IgnoreDiacritics(),
         Transliterate(transliterator),
     )
 
-    override fun filter(items: List<T>, query: String): List<T> {
+    override fun filter(items: List<User>, query: String): List<User> {
         logger.d { "[filter] query: \"$query\", items.size: ${items.size}" }
         val formattedQuery = queryFormatter.format(query)
         if (formattedQuery.isEmpty()) return items
         return items
-            .mapNotNull { item ->
-                val formattedTarget = queryFormatter.format(target(item))
-                if (formattedTarget.contains(formattedQuery)) {
-                    item to levenshteinDistance(formattedQuery, formattedTarget)
+            .mapNotNull { user ->
+                val formattedName = queryFormatter.format(query = user.name.ifBlank(user::id))
+                if (formattedName.contains(formattedQuery)) {
+                    user to levenshteinDistance(formattedQuery, formattedName)
                 } else {
                     null
                 }
             }
             .sortedBy { (_, distance) -> distance }
-            .map { (item, _) -> item }
+            .map { (user, _) -> user }
     }
 
     private fun levenshteinDistance(search: String, target: String): Int {

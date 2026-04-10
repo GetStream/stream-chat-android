@@ -753,14 +753,6 @@ public final class io/getstream/chat/android/ui/common/feature/messages/composer
 	public fun handleUserLookup (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public final class io/getstream/chat/android/ui/common/feature/messages/composer/mention/DefaultUserQueryFilter : io/getstream/chat/android/ui/common/feature/messages/composer/query/filter/QueryFilter {
-	public static final field $stable I
-	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/transliteration/StreamTransliterator;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/transliteration/StreamTransliterator;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun filter (Ljava/util/List;Ljava/lang/String;)Ljava/util/List;
-}
-
 public final class io/getstream/chat/android/ui/common/feature/messages/composer/mention/LocalUserLookupHandler : io/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)V
@@ -817,6 +809,14 @@ public abstract interface class io/getstream/chat/android/ui/common/feature/mess
 
 public final class io/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandlerKt {
 	public static final fun withQueryFormatter (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler;Lio/getstream/chat/android/ui/common/feature/messages/composer/query/formatter/QueryFormatter;)Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/messages/composer/query/filter/DefaultUserQueryFilter : io/getstream/chat/android/ui/common/feature/messages/composer/query/filter/QueryFilter {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/transliteration/StreamTransliterator;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/transliteration/StreamTransliterator;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun filter (Ljava/util/List;Ljava/lang/String;)Ljava/util/List;
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/feature/messages/composer/query/filter/QueryFilter {

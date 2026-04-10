@@ -19,8 +19,8 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
-import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserQueryFilter
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.DefaultUserQueryFilter
 import io.getstream.chat.android.ui.common.feature.messages.composer.transliteration.DefaultStreamTransliterator
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
