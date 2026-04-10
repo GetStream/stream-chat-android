@@ -31,16 +31,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.BackButton
@@ -72,9 +68,6 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * @param modifier Modifier for styling.
  * @param typingUsers The list of typing users.
  * @param messageMode The current message mode, that changes the header content, if we're in a Thread.
- * @param color The color of the header.
- * @param shape The shape of the header.
- * @param elevation The elevation of the header.
  * @param onBackPressed Handler that propagates the back button click event.
  * @param onHeaderTitleClick Action handler when the user taps on the header title section.
  * @param onChannelAvatarClick Action handler called when the user taps on the channel avatar.
@@ -91,9 +84,6 @@ public fun ChannelHeader(
     modifier: Modifier = Modifier,
     typingUsers: List<User> = emptyList(),
     messageMode: MessageMode = MessageMode.Normal,
-    color: Color = ChatTheme.colors.backgroundCoreElevation1,
-    shape: Shape = RectangleShape,
-    elevation: Dp = StreamTokens.elevation3,
     onBackPressed: () -> Unit = {},
     onHeaderTitleClick: ((Channel) -> Unit)? = null,
     onChannelAvatarClick: ((Channel) -> Unit)? = null,
@@ -135,9 +125,8 @@ public fun ChannelHeader(
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        shadowElevation = elevation,
-        color = color,
-        shape = shape,
+        shadowElevation = StreamTokens.elevation3,
+        color = ChatTheme.colors.backgroundCoreElevation1,
     ) {
         Row(
             modifier = Modifier
