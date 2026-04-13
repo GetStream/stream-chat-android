@@ -78,7 +78,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.Delete
@@ -205,7 +204,6 @@ public fun ChannelScreen(
                     .fillMaxSize(),
                 contentPadding = contentPadding,
                 viewModel = listViewModel,
-                reactionSorting = ReactionSortingByFirstReactionAt,
                 messagesLazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
                 verticalArrangement = verticalArrangement,
                 threadsVerticalArrangement = threadsVerticalArrangement,

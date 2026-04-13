@@ -29,7 +29,6 @@ import io.getstream.chat.android.compose.ui.messages.list.MessagesLazyListState
 import io.getstream.chat.android.compose.ui.util.rememberMessagesLazyListState
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
-import io.getstream.chat.android.models.ReactionSortingByCount
 import io.getstream.chat.android.previewdata.PreviewChannelUserRead
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
@@ -53,7 +52,6 @@ internal class MessageListTest : PaparazziComposeTest {
             MessageList(
                 modifier = Modifier.fillMaxSize(),
                 currentState = MessageListState(),
-                reactionSorting = ReactionSortingByCount,
             )
         }
     }
@@ -66,7 +64,6 @@ internal class MessageListTest : PaparazziComposeTest {
                 currentState = MessageListState(
                     isLoading = true,
                 ),
-                reactionSorting = ReactionSortingByCount,
             )
         }
     }
@@ -150,7 +147,6 @@ internal class MessageListTest : PaparazziComposeTest {
                         ),
                     ),
                 ),
-                reactionSorting = ReactionSortingByCount,
             )
         }
     }
@@ -263,7 +259,6 @@ private fun MessageList(
     MessageList(
         messagesLazyListState = messagesLazyListState,
         currentState = messageListState,
-        reactionSorting = ReactionSortingByCount,
         verticalArrangement = verticalArrangement,
     )
 }

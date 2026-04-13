@@ -72,7 +72,6 @@ import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewMessageData
@@ -209,10 +208,7 @@ public fun MessageActions(
                     .unclippedVerticalScroll(scrollState),
             ) {
                 ChatTheme.componentFactory.MessageContainer(
-                    params = MessageContainerParams(
-                        messageItem = messageItemState,
-                        reactionSorting = ReactionSortingByLastReactionAt,
-                    ),
+                    params = MessageContainerParams(messageItem = messageItemState),
                 )
                 Spacer(
                     modifier = Modifier

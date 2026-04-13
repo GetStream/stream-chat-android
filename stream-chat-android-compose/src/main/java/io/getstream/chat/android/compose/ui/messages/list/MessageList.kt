@@ -46,8 +46,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.ReactionSorting
-import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
@@ -64,7 +62,6 @@ import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
  * @param viewModel The ViewModel that stores all the data and business logic required to show a
  * list of messages. The user has to provide one in this case, as we require the channelId to start
  * the operations.
- * @param reactionSorting The sorting of the reactions. Default: [ReactionSortingByFirstReactionAt].
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
@@ -95,7 +92,6 @@ import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 @Composable
 public fun MessageList(
     viewModel: MessageListViewModel,
-    reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
     messagesLazyListState: MessagesLazyListState =
@@ -155,7 +151,6 @@ public fun MessageList(
             MessageItem(
                 params = MessageItemParams(
                     messageListItem = messageListItem,
-                    reactionSorting = reactionSorting,
                     onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                     onCastVote = viewModel::castVote,
                     onRemoveVote = viewModel::removeVote,
@@ -190,7 +185,6 @@ public fun MessageList(
     },
 ) {
     MessageList(
-        reactionSorting = reactionSorting,
         modifier = modifier,
         contentPadding = contentPadding,
         currentState = viewModel.currentMessagesState.value,
@@ -218,7 +212,6 @@ public fun MessageList(
  * The default message item component, which renders each [MessageListItemState]'s subtype.
  *
  * @param messageListItemState The state of the message list item.
- * @param reactionSorting The sorting of the reactions.
  * @param onMediaGalleryPreviewResult Handler when the user receives a result from the Media Gallery Preview.
  * @param onThreadClick Handler when the user taps on a thread within a message item.
  * @param onLongItemClick Handler when the user long taps on an item.
@@ -237,7 +230,6 @@ public fun MessageList(
 @Composable
 internal fun LazyItemScope.DefaultMessageItem(
     messageListItemState: MessageListItemState,
-    reactionSorting: ReactionSorting,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onThreadClick: (Message) -> Unit,
     onLongItemClick: (Message) -> Unit,
@@ -258,7 +250,6 @@ internal fun LazyItemScope.DefaultMessageItem(
 ) {
     MessageItem(
         messageListItemState = messageListItemState,
-        reactionSorting = reactionSorting,
         onLongItemClick = onLongItemClick,
         onReactionsClick = onReactionsClick,
         onThreadClick = onThreadClick,
@@ -318,7 +309,6 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * Default: [Arrangement.Bottom].
  * @param threadsVerticalArrangement Vertical arrangement of the thread message list.
  * Default: [Arrangement.Bottom].
- * @param reactionSorting The sorting of the reactions.
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
@@ -348,7 +338,6 @@ public fun MessageList(
     currentState: MessageListState,
     verticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
     threadsVerticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
-    reactionSorting: ReactionSorting,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
     messagesLazyListState: MessagesLazyListState =
@@ -401,7 +390,6 @@ public fun MessageList(
             MessageItem(
                 params = MessageItemParams(
                     messageListItem = messageListItem,
-                    reactionSorting = reactionSorting,
                     onLongItemClick = onLongItemClick,
                     onThreadClick = onThreadClick,
                     onReply = onReply,

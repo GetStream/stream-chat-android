@@ -67,7 +67,6 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
@@ -509,7 +508,6 @@ public data class ScrollToBottomButtonParams(
  * Parameters for [ChatComponentFactory.MessageItem].
  *
  * @param messageListItem The message list item state.
- * @param reactionSorting The sorting for reactions.
  * @param onPollUpdated Action invoked when a poll is updated.
  * @param onCastVote Action invoked when a vote is cast.
  * @param onRemoveVote Action invoked when a vote is removed.
@@ -530,7 +528,6 @@ public data class ScrollToBottomButtonParams(
  */
 public data class MessageItemParams(
     val messageListItem: MessageListItemState,
-    val reactionSorting: ReactionSorting,
     val onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
     val onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
     val onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
@@ -636,7 +633,6 @@ public data class MessageListStartOfTheChannelItemContentParams(
  * Parameters for [ChatComponentFactory.MessageContainer].
  *
  * @param messageItem The message item state.
- * @param reactionSorting The sorting for reactions.
  * @param modifier Modifier for styling.
  * @param onPollUpdated Action invoked when a poll is updated.
  * @param onCastVote Action invoked when a vote is cast.
@@ -658,7 +654,6 @@ public data class MessageListStartOfTheChannelItemContentParams(
  */
 public data class MessageContainerParams(
     val messageItem: MessageItemState,
-    val reactionSorting: ReactionSorting,
     val modifier: Modifier = Modifier,
     val onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
     val onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },

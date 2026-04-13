@@ -73,7 +73,6 @@ import io.getstream.chat.android.compose.ui.util.topBorder
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.previewdata.PreviewUserData
@@ -99,7 +98,6 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
  * regular messages, typing indicators, empty thread placeholders, unread separators, and start of channel items.
  *
  * @param messageListItemState The state of the message list item.
- * @param reactionSorting The sorting of reactions for the message.
  * @param onLongItemClick Handler when the user long taps on an item.
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler when the user taps on a thread within a message item.
@@ -116,7 +114,6 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 @Composable
 public fun LazyItemScope.MessageItem(
     messageListItemState: MessageListItemState,
-    reactionSorting: ReactionSorting,
     onLongItemClick: (Message) -> Unit = {},
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
@@ -157,7 +154,6 @@ public fun LazyItemScope.MessageItem(
                 MessageContainer(
                     params = MessageContainerParams(
                         messageItem = messageListItemState,
-                        reactionSorting = reactionSorting,
                         modifier = Modifier.onGloballyPositioned { layoutCoords = it },
                         onLongItemClick = { message ->
                             layoutCoords?.let { coords ->

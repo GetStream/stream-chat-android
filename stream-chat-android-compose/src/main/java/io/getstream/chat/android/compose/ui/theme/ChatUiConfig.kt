@@ -25,6 +25,8 @@ import io.getstream.chat.android.compose.state.messages.attachments.GalleryPicke
 import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionsVisibility
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageActionsOptionsVisibility
+import io.getstream.chat.android.models.ReactionSorting
+import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -124,9 +126,11 @@ public data class TranslationConfig(
  * Behavioral configuration for the message list.
  *
  * @param videoThumbnailsEnabled Whether video thumbnails are displayed inside video previews.
+ * @param reactionSorting The sorting applied to message reactions.
  */
 public data class MessageListConfig(
     val videoThumbnailsEnabled: Boolean = true,
+    val reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
 )
 
 /**
