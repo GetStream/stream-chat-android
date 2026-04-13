@@ -16,13 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.components.channels
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -35,7 +31,6 @@ import io.getstream.chat.android.client.extensions.deliveredReadsOf
 import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.getReadStatuses
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
@@ -60,8 +55,7 @@ public fun MessageReadStatusIcon(
     modifier: Modifier = Modifier,
 ) {
     val readStatuses = channel.getReadStatuses(userToIgnore = currentUser)
-    val readCount = readStatuses.count { it.time >= message.getCreatedAtOrThrow().time }
-    val isMessageRead = readCount != 0
+    val isMessageRead = readStatuses.any { it.time >= message.getCreatedAtOrThrow().time }
     val isMessageDelivered = channel.deliveredReadsOf(message).isNotEmpty()
 
     MessageReadStatusIcon(
@@ -69,7 +63,6 @@ public fun MessageReadStatusIcon(
         message = message,
         isMessageRead = isMessageRead,
         isMessageDelivered = isMessageDelivered,
-        readCount = readCount,
     )
 }
 
@@ -87,8 +80,7 @@ public fun MessageReadStatusIcon(
     isMessageRead: Boolean,
     modifier: Modifier = Modifier,
     isMessageDelivered: Boolean = false,
-    readCount: Int = 0,
-    isReadIcon: @Composable () -> Unit = { IsReadCount(modifier = modifier, readCount = readCount) },
+    isReadIcon: @Composable () -> Unit = { IsReadIcon(modifier = modifier) },
     isPendingIcon: @Composable () -> Unit = { IsPendingIcon(modifier = modifier) },
     isSentIcon: @Composable () -> Unit = { IsSentIcon(modifier = modifier) },
     isDeliveredIcon: @Composable () -> Unit = { IsDeliveredIcon(modifier = modifier) },
@@ -112,39 +104,19 @@ public fun MessageReadStatusIcon(
 }
 
 @Composable
-private fun IsReadCount(
+private fun IsReadIcon(
     modifier: Modifier,
-    readCount: Int,
 ) {
-    val showReadCount = readCount > 1 && ChatTheme.config.messageList.readCountEnabled
-    val description = if (showReadCount) {
-        stringResource(UiCommonR.string.stream_ui_message_list_semantics_message_status_read_by, readCount)
-    } else {
-        stringResource(UiCommonR.string.stream_ui_message_list_semantics_message_status_read)
-    }
-    Row(
-        modifier = modifier.semantics { contentDescription = description },
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        if (showReadCount) {
-            Text(
-                text = readCount.toString(),
-                modifier = Modifier
-                    .testTag("Stream_MessageReadCount")
-                    .padding(horizontal = StreamTokens.spacing3xs),
-                style = ChatTheme.typography.metadataDefault,
-                color = ChatTheme.colors.chatTextTimestamp,
-            )
-        }
-        Icon(
-            modifier = Modifier
-                .testTag("Stream_MessageReadStatus_isRead")
-                .size(16.dp),
-            painter = painterResource(id = R.drawable.stream_design_ic_checks),
-            contentDescription = null,
-            tint = ChatTheme.colors.chatTextRead,
-        )
-    }
+    val description = stringResource(UiCommonR.string.stream_ui_message_list_semantics_message_status_read)
+    Icon(
+        modifier = modifier
+            .semantics { contentDescription = description }
+            .testTag("Stream_MessageReadStatus_isRead")
+            .size(16.dp),
+        painter = painterResource(id = R.drawable.stream_design_ic_checks),
+        contentDescription = null,
+        tint = ChatTheme.colors.chatTextRead,
+    )
 }
 
 @Composable
@@ -259,7 +231,6 @@ internal fun MessageReadStatusIconRead() {
     MessageReadStatusIcon(
         message = PreviewMessageData.message2,
         isMessageRead = true,
-        readCount = 3,
     )
 }
 
