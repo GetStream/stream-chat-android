@@ -203,9 +203,9 @@ public fun MessageContainer(
 
     val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
     val description = stringResource(id = R.string.stream_compose_cd_message_item)
-    val optionVisibility = ChatTheme.config.messageActions.optionVisibility
-    val isSwipeable = remember(message, messageItem.ownCapabilities, optionVisibility) {
-        optionVisibility.canReplyToMessage(message, messageItem.ownCapabilities)
+    val optionsVisibility = ChatTheme.config.messageActions.optionsVisibility
+    val isSwipeable = remember(message, messageItem.ownCapabilities, optionsVisibility) {
+        optionsVisibility.canReplyToMessage(message, messageItem.ownCapabilities)
     }
 
     // Remember the message to ensure updated values are captured in the onReply lambda

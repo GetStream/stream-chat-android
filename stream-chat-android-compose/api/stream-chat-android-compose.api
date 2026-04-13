@@ -4173,7 +4173,7 @@ public final class io/getstream/chat/android/compose/ui/theme/MessageActionsConf
 	public final fun copy (Lio/getstream/chat/android/compose/ui/components/messageoptions/MessageActionsOptionsVisibility;Z)Lio/getstream/chat/android/compose/ui/theme/MessageActionsConfig;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/MessageActionsConfig;Lio/getstream/chat/android/compose/ui/components/messageoptions/MessageActionsOptionsVisibility;ZILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageActionsConfig;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getOptionVisibility ()Lio/getstream/chat/android/compose/ui/components/messageoptions/MessageActionsOptionsVisibility;
+	public final fun getOptionsVisibility ()Lio/getstream/chat/android/compose/ui/components/messageoptions/MessageActionsOptionsVisibility;
 	public final fun getReactionsEnabled ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;

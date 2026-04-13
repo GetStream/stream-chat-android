@@ -214,10 +214,10 @@ private val DefaultAttachmentPickerModes = listOf(
 /**
  * Configuration for the message actions overlay.
  *
- * @param optionVisibility Controls which message action options are shown.
+ * @param optionsVisibility Controls which message action options are shown.
  * @param reactionsEnabled Whether the reaction option row is visible in the overlay.
  */
 public data class MessageActionsConfig(
-    val optionVisibility: MessageActionsOptionsVisibility = MessageActionsOptionsVisibility(),
+    val optionsVisibility: MessageActionsOptionsVisibility = MessageActionsOptionsVisibility(),
     val reactionsEnabled: Boolean = true,
 )
