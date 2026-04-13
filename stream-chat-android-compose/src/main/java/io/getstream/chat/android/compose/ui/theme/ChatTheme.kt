@@ -108,9 +108,6 @@ private val LocalSearchResultNameFormatter = compositionLocalOf<SearchResultName
 private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentProvider> {
     error("No MessageAlignmentProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-private val LocalChannelOptionsTheme = compositionLocalOf<ChannelOptionsTheme> {
-    error("No ChannelOptionsTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
 
 private val LocalStreamCdnImageResizing = compositionLocalOf<StreamCdnImageResizing> {
     error(
@@ -142,7 +139,6 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param searchResultNameFormatter [SearchResultNameFormatter] Used to format names in search results.
  * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances.
  * @param messageAlignmentProvider [MessageAlignmentProvider] Used to provide message alignment for the given message.
- * @param channelOptionsTheme [ChannelOptionsTheme] Theme for the channel option list in the channel info screen.
  * @param streamCdnImageResizing Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,
  * set [StreamCdnImageResizing.imageResizingEnabled] to true if you wish to enable resizing images. Note that resizing
  * applies only to images hosted on Stream's CDN which contain the original height (oh) and width (ow) query parameters.
@@ -178,7 +174,6 @@ public fun ChatTheme(
     searchResultNameFormatter: SearchResultNameFormatter = SearchResultNameFormatter.defaultFormatter(),
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
-    channelOptionsTheme: ChannelOptionsTheme = ChannelOptionsTheme.defaultTheme(),
     streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
     messageTextFormatter: MessageTextFormatter = MessageTextFormatter.defaultFormatter(
         autoTranslationEnabled = config.translation.enabled,
@@ -225,7 +220,6 @@ public fun ChatTheme(
         LocalSearchResultNameFormatter provides searchResultNameFormatter,
         LocalStreamImageLoader provides imageLoader,
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
-        LocalChannelOptionsTheme provides channelOptionsTheme,
         LocalStreamCdnImageResizing provides streamCdnImageResizing,
         LocalStreamMediaRecorder provides streamMediaRecorder,
     ) {
@@ -357,14 +351,6 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessageAlignmentProvider.current
-
-    /**
-     * Retrieves the current [ChannelOptionsTheme] at the call site's position in the hierarchy.
-     */
-    public val channelOptionsTheme: ChannelOptionsTheme
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalChannelOptionsTheme.current
 
     /**
      * Retrieves the value of [StreamCdnImageResizing] at the call site's position in the hierarchy.

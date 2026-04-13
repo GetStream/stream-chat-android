@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import io.getstream.chat.android.compose.sample.ChatApp
-import io.getstream.chat.android.compose.ui.theme.ChannelOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
@@ -38,7 +37,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 internal fun SampleChatTheme(
     config: ChatUiConfig = ChatUiConfig(),
     componentFactory: ChatComponentFactory = object : ChatComponentFactory {},
-    channelOptionsTheme: ChannelOptionsTheme = ChannelOptionsTheme.defaultTheme(),
     content: @Composable () -> Unit,
 ) {
     Box(modifier = Modifier.semantics { testTagsAsResourceId = true }) {
@@ -46,7 +44,6 @@ internal fun SampleChatTheme(
             dateFormatter = ChatApp.dateFormatter,
             config = config,
             componentFactory = componentFactory,
-            channelOptionsTheme = channelOptionsTheme,
             content = content,
         )
     }

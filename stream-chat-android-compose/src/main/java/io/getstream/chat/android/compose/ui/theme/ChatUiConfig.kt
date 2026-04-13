@@ -23,6 +23,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.CommandPicke
 import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
+import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionsVisibility
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageActionsOptionsVisibility
 import kotlinx.parcelize.Parcelize
 
@@ -42,10 +43,12 @@ public enum class MuteIndicatorPosition {
  *
  * @param muteIndicatorPosition Where the mute icon is placed in the channel list item.
  * @param swipeActionsEnabled Whether swipe-to-reveal actions are enabled on channel list items.
+ * @param optionsVisibility Controls which options are visible in the channel options menu.
  */
 public data class ChannelListConfig(
     val muteIndicatorPosition: MuteIndicatorPosition = MuteIndicatorPosition.InlineTitle,
     val swipeActionsEnabled: Boolean = true,
+    val optionsVisibility: ChannelOptionsVisibility = ChannelOptionsVisibility(),
 )
 
 /**

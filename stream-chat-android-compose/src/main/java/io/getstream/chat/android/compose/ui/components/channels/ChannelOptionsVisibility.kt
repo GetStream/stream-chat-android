@@ -29,7 +29,7 @@ package io.getstream.chat.android.compose.ui.components.channels
  *
  * @see [ChannelOptions]
  */
-public data class ChannelOptionItemVisibility(
+public data class ChannelOptionsVisibility(
     val isViewInfoVisible: Boolean = true,
     val isLeaveChannelVisible: Boolean = true,
     val isMuteChannelVisible: Boolean = true,
