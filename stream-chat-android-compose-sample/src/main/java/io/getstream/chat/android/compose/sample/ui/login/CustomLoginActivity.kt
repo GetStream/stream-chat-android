@@ -126,6 +126,9 @@ class CustomLoginActivity : AppCompatActivity() {
                     var userTokenText by remember { mutableStateOf("") }
                     var userNameText by remember { mutableStateOf("") }
                     var isAdaptiveLayoutEnabled by remember { mutableStateOf(settings.isAdaptiveLayoutEnabled) }
+                    var isComposerLinkPreviewEnabled by remember {
+                        mutableStateOf(settings.isComposerLinkPreviewEnabled)
+                    }
                     var isComposerFloatingStyleEnabled by remember {
                         mutableStateOf(settings.isComposerFloatingStyleEnabled)
                     }
@@ -145,6 +148,17 @@ class CustomLoginActivity : AppCompatActivity() {
                             onValueChange = {
                                 isAdaptiveLayoutEnabled = it
                                 settings.isAdaptiveLayoutEnabled = it
+                            },
+                        ),
+                        FeatureFlag(
+                            label = stringResource(R.string.custom_login_flag_composer_link_preview_label),
+                            description = stringResource(
+                                R.string.custom_login_flag_composer_link_preview_description,
+                            ),
+                            value = isComposerLinkPreviewEnabled,
+                            onValueChange = {
+                                isComposerLinkPreviewEnabled = it
+                                settings.isComposerLinkPreviewEnabled = it
                             },
                         ),
                         FeatureFlag(

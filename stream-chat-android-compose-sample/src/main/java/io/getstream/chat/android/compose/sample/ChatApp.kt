@@ -75,7 +75,5 @@ class ChatApp : Application() {
 
         lateinit var sharedLocationService: SharedLocationService
             private set
-
-        public const val isComposerLinkPreviewEnabled: Boolean = true
     }
 }
