@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.common.feature.messages.composer.mention
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.DefaultQueryFilter
+import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.DefaultUserQueryFilter
 import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.QueryFilter
 import io.getstream.log.taggedLogger
 
@@ -44,7 +44,7 @@ public class DefaultUserLookupHandler(
     public constructor(
         chatClient: ChatClient,
         channelCid: String,
-        localFilter: QueryFilter<User> = DefaultQueryFilter { it.name.ifBlank { it.id } },
+        localFilter: QueryFilter<User> = DefaultUserQueryFilter(),
     ) : this(
         localHandler = LocalUserLookupHandler(chatClient, channelCid, localFilter),
         remoteHandler = RemoteUserLookupHandler(chatClient, channelCid),
