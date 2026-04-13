@@ -48,7 +48,6 @@ class ChannelListPage {
                 val deliveryStatusIsPending = Message.deliveryStatusIsPending
                 val deliveryStatusIsSent = Message.deliveryStatusIsSent
                 val deliveryStatusIsFailed = Message.deliveryStatusIsFailed
-                val readCount = By.res("Stream_MessageReadCount")
                 val unreadCountIndicator = By.res("Stream_UnreadCountIndicator")
                 val timestamp = By.res("Stream_Timestamp")
                 val typingIndicator = By.res("Stream_ChannelListTypingIndicator")
