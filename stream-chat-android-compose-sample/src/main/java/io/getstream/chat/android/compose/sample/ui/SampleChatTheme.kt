@@ -24,26 +24,20 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
-import io.getstream.chat.android.compose.sample.ChatApp
-import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 
 /**
- * Sample app wrapper around [ChatTheme] that enables test tags as resource IDs for UIAutomator
- * E2E tests and sets [ChatApp.dateFormatter] as defaults.
+ * Sample app wrapper around [ChatTheme] that enables test tags as resource IDs for UIAutomator E2E tests.
  */
 @Composable
 internal fun SampleChatTheme(
     config: ChatUiConfig = ChatUiConfig(),
-    componentFactory: ChatComponentFactory = object : ChatComponentFactory {},
     content: @Composable () -> Unit,
 ) {
     Box(modifier = Modifier.semantics { testTagsAsResourceId = true }) {
         ChatTheme(
-            dateFormatter = ChatApp.dateFormatter,
             config = config,
-            componentFactory = componentFactory,
             content = content,
         )
     }

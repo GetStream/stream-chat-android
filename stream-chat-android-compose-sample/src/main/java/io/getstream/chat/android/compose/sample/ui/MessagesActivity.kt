@@ -24,13 +24,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.core.net.toUri
-import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
-import io.getstream.chat.android.compose.sample.ui.location.LocationComponentFactory
-import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.theme.AttachmentPickerConfig
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
@@ -51,7 +48,7 @@ class MessagesActivity : ComponentActivity() {
         ChannelViewModelFactory(
             context = this,
             channelId = cid,
-            isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
+            isComposerLinkPreviewEnabled = settings.isComposerLinkPreviewEnabled,
             messageId = intent.getStringExtra(KEY_MESSAGE_ID),
             parentMessageId = intent.getStringExtra(KEY_PARENT_MESSAGE_ID),
             isComposerDraftMessageEnabled = true,
@@ -73,12 +70,10 @@ class MessagesActivity : ComponentActivity() {
 
     @Composable
     private fun SetupChatTheme() {
-        val locationViewModelFactory = SharedLocationViewModelFactory(cid)
         SampleChatTheme(
-            componentFactory = LocationComponentFactory(locationViewModelFactory = locationViewModelFactory),
             config = ChatUiConfig(
                 composer = ComposerConfig(
-                    linkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
+                    linkPreviewEnabled = settings.isComposerLinkPreviewEnabled,
                     floatingStyleEnabled = settings.isComposerFloatingStyleEnabled,
                 ),
                 attachmentPicker = AttachmentPickerConfig(useSystemPicker = settings.isSystemAttachmentPickerEnabled),
