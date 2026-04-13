@@ -105,7 +105,7 @@ public fun defaultMessageOptionsState(
     }
     val selectedMessageUserId = selectedMessage.user.id
     val ownCapabilities = channel.ownCapabilities
-    val visibility = ChatTheme.config.messageActions.optionVisibility
+    val visibility = ChatTheme.config.messageActions.optionsVisibility
 
     return listOfNotNull(
         if (visibility.canRetryMessage(currentUser, selectedMessage)) {
