@@ -109,7 +109,6 @@ open class MessageListPage {
                 val deliveryStatusIsPending get() = By.res("Stream_MessageReadStatus_isPending")
                 val deliveryStatusIsSent get() = By.res("Stream_MessageReadStatus_isSent")
                 val deliveryStatusIsFailed get() = By.res("Stream_MessageFailedIcon")
-                val readCount get() = By.res("Stream_MessageReadCount")
                 val timestamp get() = By.res("Stream_Timestamp")
                 val quotedMessage get() = By.res("Stream_QuotedMessage")
                 val threadRepliesLabel get() = By.res("Stream_ThreadRepliesLabel")

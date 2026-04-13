@@ -123,11 +123,9 @@ public data class TranslationConfig(
 /**
  * Behavioral configuration for the message list.
  *
- * @param readCountEnabled Whether the read count badge is displayed for messages.
  * @param videoThumbnailsEnabled Whether video thumbnails are displayed inside video previews.
  */
 public data class MessageListConfig(
-    val readCountEnabled: Boolean = true,
     val videoThumbnailsEnabled: Boolean = true,
 )
 

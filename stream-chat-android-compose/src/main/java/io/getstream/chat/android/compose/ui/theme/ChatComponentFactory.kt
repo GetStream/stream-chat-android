@@ -1175,22 +1175,12 @@ public interface ChatComponentFactory {
     public fun MessageFooterStatusIndicator(
         params: MessageFooterStatusIndicatorParams,
     ) {
-        if (params.messageItem.isMessageDelivered) {
-            MessageReadStatusIcon(
-                modifier = params.modifier,
-                message = params.messageItem.message,
-                isMessageRead = params.messageItem.isMessageRead,
-                isMessageDelivered = params.messageItem.isMessageDelivered,
-                readCount = params.messageItem.messageReadBy.size,
-            )
-        } else {
-            MessageReadStatusIcon(
-                modifier = params.modifier,
-                message = params.messageItem.message,
-                isMessageRead = params.messageItem.isMessageRead,
-                readCount = params.messageItem.messageReadBy.size,
-            )
-        }
+        MessageReadStatusIcon(
+            modifier = params.modifier,
+            message = params.messageItem.message,
+            isMessageRead = params.messageItem.isMessageRead,
+            isMessageDelivered = params.messageItem.isMessageDelivered,
+        )
     }
 
     /**
