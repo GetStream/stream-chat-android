@@ -308,9 +308,11 @@ private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
  * @param durationFormatter [DurationFormatter] Used to format durations in the app.
  * @param channelNameFormatter [ChannelNameFormatter] Used throughout the app for channel names.
  * @param messagePreviewFormatter [MessagePreviewFormatter] Used to generate a string preview for the given message.
- * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances. If used in combination with
- * [asyncImageHeadersProvider] you must override the [StreamCoilImageLoaderFactory.imageLoader] method accepting the
- * interceptors parameter.
+ * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances. If you provide a custom factory
+ * **and** use a custom CDN (via [io.getstream.chat.android.client.ChatClient.Builder]) or
+ * [asyncImageHeadersProvider], you must override the [StreamCoilImageLoaderFactory.imageLoader] overload that accepts
+ * interceptors; otherwise those features are silently ignored. If you don't use either, overriding the single-arg
+ * method is sufficient.
  * @param imageAssetTransformer [ImageAssetTransformer] Used to transform image assets.
  * @param imageHeadersProvider [ImageHeadersProvider] Deprecated. Use [asyncImageHeadersProvider] instead. Headers
  * provided here are injected synchronously on the main thread, which blocks the UI for any non-trivial work.
@@ -458,17 +460,12 @@ public fun ChatTheme(
     }
 
     val context = LocalContext.current
-    val cdn = remember { ChatClient.instance().cdn }
-    val imageLoader = remember(imageLoaderFactory, asyncImageHeadersProvider, cdn) {
+    val imageLoader = remember(imageLoaderFactory, asyncImageHeadersProvider) {
         val interceptors = buildList {
             asyncImageHeadersProvider?.let { add(ImageHeadersInterceptor(it)) }
-            cdn?.let { add(CDNImageInterceptor(it)) }
+            add(CDNImageInterceptor())
         }
-        if (interceptors.isEmpty()) {
-            imageLoaderFactory.imageLoader(context.applicationContext)
-        } else {
-            imageLoaderFactory.imageLoader(context.applicationContext, interceptors)
-        }
+        imageLoaderFactory.imageLoader(context.applicationContext, interceptors)
     }
 
     @Suppress("DEPRECATION")
