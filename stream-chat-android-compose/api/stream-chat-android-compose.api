@@ -2149,17 +2149,15 @@ public final class io/getstream/chat/android/compose/ui/pinned/ComposableSinglet
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/pinned/ComposableSingletons$PinnedMessageListKt;
 	public fun <init> ()V
 	public final fun getLambda$-1015440336$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda$-1332077747$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
-	public final fun getLambda$-1435677118$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1191056282$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-172971319$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-2117592139$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-437790828$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-635823442$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-843111094$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-865664519$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda$-985680375$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1092527525$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda$499338964$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$255765772$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 }
 
 public final class io/getstream/chat/android/compose/ui/pinned/PinnedMessageItemKt {
@@ -2167,7 +2165,7 @@ public final class io/getstream/chat/android/compose/ui/pinned/PinnedMessageItem
 }
 
 public final class io/getstream/chat/android/compose/ui/pinned/PinnedMessageListKt {
-	public static final fun PinnedMessageList (Lio/getstream/chat/android/compose/viewmodel/pinned/PinnedMessageListViewModel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+	public static final fun PinnedMessageList (Lio/getstream/chat/android/compose/viewmodel/pinned/PinnedMessageListViewModel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/pinned/internal/ComposableSingletons$DefaultPinnedMessageItemContentKt {
