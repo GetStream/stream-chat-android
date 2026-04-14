@@ -105,7 +105,7 @@ import kotlin.math.abs
  */
 @Composable
 @Suppress("LongParameterList", "LongMethod", "ComplexMethod")
-public fun Messages(
+internal fun Messages(
     messagesState: MessageListState,
     messagesLazyListState: MessagesLazyListState,
     verticalArrangement: Arrangement.Vertical = Arrangement.Bottom,

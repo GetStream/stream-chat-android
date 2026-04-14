@@ -774,7 +774,6 @@ public interface ChatComponentFactory {
     public fun LazyItemScope.MessageItem(params: MessageItemParams) {
         DefaultMessageItem(
             messageListItemState = params.messageListItem,
-            reactionSorting = params.reactionSorting,
             onPollUpdated = params.onPollUpdated,
             onCastVote = params.onCastVote,
             onRemoveVote = params.onRemoveVote,
@@ -917,7 +916,6 @@ public interface ChatComponentFactory {
     public fun MessageContainer(params: MessageContainerParams) {
         io.getstream.chat.android.compose.ui.messages.list.MessageContainer(
             messageItem = params.messageItem,
-            reactionSorting = params.reactionSorting,
             modifier = params.modifier,
             onPollUpdated = params.onPollUpdated,
             onCastVote = params.onCastVote,

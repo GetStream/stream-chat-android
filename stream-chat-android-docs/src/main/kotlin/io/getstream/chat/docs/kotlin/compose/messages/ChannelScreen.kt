@@ -92,7 +92,6 @@ private object ChannelScreenCustomizationSnippet {
                             enforceUniqueReactions = true,
                             showSystemMessages = true
                         ),
-                        showHeader = true,
                     )
                 }
             }

@@ -66,16 +66,6 @@ import kotlinx.coroutines.flow.collectLatest
  * @param modifier [Modifier] instance for general styling.
  * @param currentUser The currently logged [User], used for formatting the message preview.
  * @param onPinnedMessageClick Action to be invoked when the user clicks on a message from the list.
- * @param itemContent Composable rendering each [Message] item in the list. Override this to provide custom component
- * for rendering the items.
- * @param itemDivider Composable rendering the divider between messages. Override this to provide (or remove) the
- * default divider.
- * @param emptyContent Composable shown when there are no pinned messages to display. Override this to provide custom
- * component for rendering the empty state.
- * @param loadingContent Composable shown during the initial loading of the pinned messages. Override this to provide a
- * custom initial loading state.
- * @param loadingMoreContent Composable shown at the bottom of the list during the loading of more pinned messages
- * (pagination). Override this to provide a custom loading component shown during the loading of more items.
  */
 @Composable
 public fun PinnedMessageList(
@@ -83,33 +73,6 @@ public fun PinnedMessageList(
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onPinnedMessageClick: (Message) -> Unit = {},
-    itemContent: @Composable (Message) -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListItem(
-            params = PinnedMessageListItemParams(
-                message = it,
-                currentUser = currentUser,
-                onClick = onPinnedMessageClick,
-            ),
-        )
-    },
-    itemDivider: @Composable (Int) -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListItemDivider(params = PinnedMessageListItemDividerParams())
-    },
-    emptyContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListEmptyContent(
-            params = PinnedMessageListEmptyContentParams(modifier = modifier),
-        )
-    },
-    loadingContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListLoadingContent(
-            params = PinnedMessageListLoadingContentParams(modifier = modifier),
-        )
-    },
-    loadingMoreContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListLoadingMoreContent(
-            params = PinnedMessageListLoadingMoreContentParams(),
-        )
-    },
 ) {
     val state by viewModel.state.collectAsState()
     PinnedMessageList(
@@ -118,11 +81,6 @@ public fun PinnedMessageList(
         currentUser = currentUser,
         onPinnedMessageClick = onPinnedMessageClick,
         onLoadMore = viewModel::loadMore,
-        itemContent = itemContent,
-        itemDivider = itemDivider,
-        emptyContent = emptyContent,
-        loadingContent = loadingContent,
-        loadingMoreContent = loadingMoreContent,
     )
 
     // Error emissions
@@ -144,16 +102,6 @@ public fun PinnedMessageList(
  * @param onPinnedMessageClick Action to be invoked when the user clicks on a message from the list.
  * @param onLoadMore Action to be invoked when the user scrolls to the end of the list and more pinned messages should
  * be loaded.
- * @param itemContent Composable rendering each [Message] item in the list. Override this to provide custom component
- * for rendering the items.
- * @param itemDivider Composable rendering the divider between messages. Override this to provide (or remove) the
- * default divider.
- * @param emptyContent Composable shown when there are no pinned messages to display. Override this to provide custom
- * component for rendering the empty state.
- * @param loadingContent Composable shown during the initial loading of the pinned messages. Override this to provide a
- * custom initial loading state.
- * @param loadingMoreContent Composable shown at the bottom of the list during the loading of more pinned messages
- * (pagination). Override this to provide a custom loading component shown during the loading of more items.
  */
 @Composable
 internal fun PinnedMessageList(
@@ -162,43 +110,42 @@ internal fun PinnedMessageList(
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onPinnedMessageClick: (Message) -> Unit,
     onLoadMore: () -> Unit,
-    itemContent: @Composable (Message) -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListItem(
-            params = PinnedMessageListItemParams(
-                message = it,
-                currentUser = currentUser,
-                onClick = onPinnedMessageClick,
-            ),
-        )
-    },
-    itemDivider: @Composable (Int) -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListItemDivider(params = PinnedMessageListItemDividerParams())
-    },
-    emptyContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListEmptyContent(
-            params = PinnedMessageListEmptyContentParams(modifier = modifier),
-        )
-    },
-    loadingContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListLoadingContent(
-            params = PinnedMessageListLoadingContentParams(modifier = modifier),
-        )
-    },
-    loadingMoreContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListLoadingMoreContent(
-            params = PinnedMessageListLoadingMoreContentParams(),
-        )
-    },
 ) {
     when {
-        state.results.isEmpty() && state.isLoading -> loadingContent()
-        state.results.isEmpty() && !state.isLoading -> emptyContent()
+        state.results.isEmpty() && state.isLoading -> {
+            ChatTheme.componentFactory.PinnedMessageListLoadingContent(
+                params = PinnedMessageListLoadingContentParams(modifier = modifier),
+            )
+        }
+
+        state.results.isEmpty() && !state.isLoading -> {
+            ChatTheme.componentFactory.PinnedMessageListEmptyContent(
+                params = PinnedMessageListEmptyContentParams(modifier = modifier),
+            )
+        }
+
         else -> PinnedMessages(
             messages = state.results.map { it.message },
             modifier = modifier,
-            itemContent = itemContent,
-            itemDivider = itemDivider,
-            loadingMoreContent = loadingMoreContent,
+            itemContent = { message ->
+                ChatTheme.componentFactory.PinnedMessageListItem(
+                    params = PinnedMessageListItemParams(
+                        message = message,
+                        currentUser = currentUser,
+                        onClick = onPinnedMessageClick,
+                    ),
+                )
+            },
+            itemDivider = { _ ->
+                ChatTheme.componentFactory.PinnedMessageListItemDivider(
+                    params = PinnedMessageListItemDividerParams(),
+                )
+            },
+            loadingMoreContent = {
+                ChatTheme.componentFactory.PinnedMessageListLoadingMoreContent(
+                    params = PinnedMessageListLoadingMoreContentParams(),
+                )
+            },
             onLoadMore = onLoadMore,
         )
     }

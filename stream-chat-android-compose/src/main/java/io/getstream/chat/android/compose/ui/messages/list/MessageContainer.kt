@@ -107,7 +107,6 @@ import io.getstream.chat.android.compose.util.extensions.canReplyToMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
@@ -132,7 +131,6 @@ import kotlin.math.roundToInt
  *
  * @param messageItem The message item to show, which holds the message and the group position, if the message is in
  * a group of messages from the same user.
- * @param reactionSorting The sorting for the reactions, if we have any.
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  * @param modifier Modifier for styling.
  * @param onReactionsClick Handler when the user taps on message reactions.
@@ -153,7 +151,6 @@ import kotlin.math.roundToInt
 @Composable
 public fun MessageContainer(
     messageItem: MessageItemState,
-    reactionSorting: ReactionSorting,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     onReactionsClick: (Message) -> Unit = {},
@@ -260,7 +257,7 @@ public fun MessageContainer(
                         )
                         MessageContentWithReactions(
                             messageAlignment = messageAlignment,
-                            reactions = rememberMessageReactions(message, reactionSorting)?.let { reactions ->
+                            reactions = rememberMessageReactions(message)?.let { reactions ->
                                 {
                                     MessageReactions(
                                         params = MessageReactionsParams(
@@ -528,10 +525,11 @@ private fun MessageContentWithReactions(
 }
 
 @Composable
-private fun rememberMessageReactions(message: Message, sorting: ReactionSorting): List<MessageReactionItemState>? =
+private fun rememberMessageReactions(message: Message): List<MessageReactionItemState>? =
     if (message.isDeleted()) {
         null
     } else {
+        val sorting = ChatTheme.config.messageList.reactionSorting
         val resolver = ChatTheme.reactionResolver
         remember(resolver, message.reactionGroups, sorting) {
             val supported = resolver.supportedReactions

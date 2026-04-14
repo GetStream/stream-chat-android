@@ -34,6 +34,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -73,7 +74,6 @@ import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.sample.ui.profile.UserProfileActivity
-import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channels.SearchMode
@@ -84,6 +84,9 @@ import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.channels.buildDefaultChannelActions
 import io.getstream.chat.android.compose.ui.mentions.MentionList
+import io.getstream.chat.android.compose.ui.theme.ChannelListDividerItemParams
+import io.getstream.chat.android.compose.ui.theme.ChannelListItemContentParams
+import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.threads.ThreadList
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
@@ -96,7 +99,6 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
-import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -256,63 +258,31 @@ class ChannelsActivity : ComponentActivity() {
 
     /**
      * An example of a screen UI that's much more simple than the ChannelsScreen component, that features a custom
-     * ChannelList item.
+     * ChannelList item via the component factory.
      */
     @Composable
     private fun MyCustomUiSimplified() {
         val user by ChatClient.instance().clientState.user.collectAsState()
         val connectionState by ChatClient.instance().clientState.connectionState.collectAsState()
 
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            topBar = {
-                ChannelListHeader(
-                    title = stringResource(id = R.string.app_name),
-                    currentUser = user,
-                    connectionState = connectionState,
-                )
-            },
-        ) {
-            ChannelList(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(it),
-                channelContent = {
-                    CustomChannelListItem(channelItem = it, user = user)
-                },
-                divider = {
-                    Spacer(
-                        modifier = Modifier
-                            .fillMaxWidth(0.5f)
-                            .height(0.5.dp)
-                            .background(color = ChatTheme.colors.textSecondary),
+        ChatTheme(componentFactory = CustomChannelListComponentFactory) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    ChannelListHeader(
+                        title = stringResource(id = R.string.app_name),
+                        currentUser = user,
+                        connectionState = connectionState,
                     )
                 },
-            )
-        }
-    }
-
-    /**
-     * An example of a customized DefaultChannelItem component.
-     */
-    @Composable
-    private fun CustomChannelListItem(channelItem: ItemState.ChannelItemState, user: User?) {
-        ChannelItem(
-            channelItem = channelItem,
-            currentUser = user,
-            onChannelLongClick = {},
-            onChannelClick = {},
-            trailingContent = {
-                Spacer(modifier = Modifier.width(8.dp))
-            },
-            centerContent = {
-                Text(
-                    text = ChatTheme.channelNameFormatter.formatChannelName(it.channel, user),
-                    style = ChatTheme.typography.bodyEmphasis,
-                    color = ChatTheme.colors.textPrimary,
+            ) {
+                ChannelList(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(it),
                 )
-            },
-        )
+            }
+        }
     }
 
     /**
@@ -463,5 +433,42 @@ class ChannelsActivity : ComponentActivity() {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
         }
+    }
+}
+
+/**
+ * An example of a custom [ChatComponentFactory] that customizes the channel list item and divider.
+ */
+private object CustomChannelListComponentFactory : ChatComponentFactory {
+
+    @Composable
+    override fun LazyItemScope.ChannelListItemContent(params: ChannelListItemContentParams) {
+        ChannelItem(
+            channelItem = params.channelItem,
+            currentUser = params.currentUser,
+            onChannelLongClick = {},
+            onChannelClick = {},
+            trailingContent = {
+                Spacer(modifier = Modifier.width(8.dp))
+            },
+            centerContent = {
+                Text(
+                    text = ChatTheme.channelNameFormatter.formatChannelName(it.channel, params.currentUser),
+                    style = ChatTheme.typography.bodyEmphasis,
+                    color = ChatTheme.colors.textPrimary,
+                )
+            },
+        )
+    }
+
+    @Suppress("MagicNumber")
+    @Composable
+    override fun LazyItemScope.ChannelListDividerItem(params: ChannelListDividerItemParams) {
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth(0.5f)
+                .height(0.5.dp)
+                .background(color = ChatTheme.colors.textSecondary),
+        )
     }
 }

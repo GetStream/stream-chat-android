@@ -30,14 +30,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.BackButton
@@ -49,9 +45,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * Poll's creation header (toolbar) Composable that consist of several components.
  *
  * @param modifier The [Modifier] for styling.
- * @param color The color of the surface.
- * @param shape The shape of the surface.
- * @param elevation The elevation of the surface.
  * @param onBackPressed A lambda that will be executed if users click the back button on the default [leadingContent].
  * @param enabledCreation Represents if user can click the creation button or not.
  * @param onPollCreateClicked A lambda that will be executed if users click the poll creation button.
@@ -65,9 +58,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 @Composable
 public fun PollCreationHeader(
     modifier: Modifier = Modifier,
-    color: Color = ChatTheme.colors.backgroundCoreApp,
-    shape: Shape = RectangleShape,
-    elevation: Dp = 0.dp,
     onBackPressed: () -> Unit = {},
     enabledCreation: Boolean,
     onPollCreateClicked: () -> Unit,
@@ -77,9 +67,7 @@ public fun PollCreationHeader(
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        shadowElevation = elevation,
-        color = color,
-        shape = shape,
+        color = ChatTheme.colors.backgroundCoreApp,
     ) {
         Row(
             modifier = Modifier

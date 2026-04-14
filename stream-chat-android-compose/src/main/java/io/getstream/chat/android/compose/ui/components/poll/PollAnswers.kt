@@ -82,7 +82,6 @@ import java.util.Date
 @Composable
 public fun PollAnswersDialog(
     selectedPoll: SelectedPoll,
-    showAnonymousAvatar: Boolean,
     listViewModel: MessageListViewModel,
     onDismissRequest: () -> Unit,
     onBackPressed: () -> Unit,
@@ -125,7 +124,6 @@ public fun PollAnswersDialog(
             Content(
                 poll = selectedPoll.poll,
                 currentUserAnswer = currentUserAnswer,
-                showAnonymousAvatar = showAnonymousAvatar,
                 onBackPressed = onBackPressed,
                 onAddOrEditClick = { showAddAnswerDialog = true },
             )
@@ -137,7 +135,6 @@ public fun PollAnswersDialog(
 private fun Content(
     poll: Poll,
     currentUserAnswer: Answer? = null,
-    showAnonymousAvatar: Boolean = false,
     onBackPressed: () -> Unit = {},
     onAddOrEditClick: () -> Unit = {},
 ) {
@@ -173,7 +170,7 @@ private fun Content(
                 .padding(top = StreamTokens.spacing2xl),
             verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingMd),
         ) {
-            val showAvatar = (poll.votingVisibility == VotingVisibility.PUBLIC) || showAnonymousAvatar
+            val showAvatar = poll.votingVisibility == VotingVisibility.PUBLIC
 
             if (currentUserAnswer != null) {
                 PollAnswersItem(

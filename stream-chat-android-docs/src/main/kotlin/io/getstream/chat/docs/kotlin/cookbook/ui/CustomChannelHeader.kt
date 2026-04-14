@@ -27,8 +27,8 @@ import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.messages.header.ChannelHeader
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
-import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 import io.getstream.chat.docs.R
@@ -53,7 +53,6 @@ fun CustomChannelHeader(cid: String?, onBackClick: () -> Unit = {}) {
             typingUsers = viewModel.typingUsers,
             messageMode = viewModel.messageMode,
             onBackPressed = onBackClick,
-            color = Color(0xFF0F7B6F),
             leadingContent = { CustomHeaderLeadingContent(onClick = onBackClick) },
             centerContent = { CustomHeaderCenterContent(channel = channel, currentUser = currentUser) },
             trailingContent = { CustomHeaderTrailingContent() },

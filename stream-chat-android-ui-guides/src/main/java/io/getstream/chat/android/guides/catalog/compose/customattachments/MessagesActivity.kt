@@ -47,7 +47,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFact
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import java.text.SimpleDateFormat
@@ -139,7 +138,6 @@ class MessagesActivity : AppCompatActivity() {
                         .background(ChatTheme.colors.backgroundCoreApp)
                         .fillMaxSize(),
                     viewModel = messageListViewModel,
-                    reactionSorting = ReactionSortingByFirstReactionAt,
                     onThreadClick = { message ->
                         composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                         messageListViewModel.openMessageThread(message)

@@ -23,7 +23,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
-import androidx.core.net.toUri
 import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActivity
@@ -34,7 +33,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
 
 class MessagesActivity : ComponentActivity() {
 
@@ -87,12 +85,8 @@ class MessagesActivity : ComponentActivity() {
     private fun SetupContent() {
         ChannelScreen(
             viewModelFactory = factory,
-            reactionSorting = ReactionSortingByLastReactionAt,
             onBackPressed = { finish() },
             onChannelAvatarClick = ::openChannelInfo,
-            onMessageLinkClick = { _, link ->
-                openLink(link)
-            },
         )
     }
 
@@ -103,11 +97,6 @@ class MessagesActivity : ComponentActivity() {
             DirectChannelInfoActivity.createIntent(applicationContext, channelId = channel.cid)
         }
         channelInfoLauncher.launch(intent)
-    }
-
-    private fun openLink(link: String) {
-        val intent = Intent(Intent.ACTION_VIEW, link.toUri())
-        startActivity(intent)
     }
 
     companion object {

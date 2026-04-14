@@ -78,10 +78,6 @@ import io.getstream.chat.android.ui.common.utils.extensions.hasLink
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onLinkClick Handler for clicking on a link in the message.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
- * @param giphyEphemeralContent Composable that represents the default Giphy message content.
- * @param deletedMessageContent Composable that represents the default content of a deleted message.
- * @param regularMessageContent Composable that represents the default regular message content, such as attachments and
- * text.
  */
 @Composable
 public fun MessageContent(
@@ -95,26 +91,25 @@ public fun MessageContent(
     messageAlignment: MessageAlignment = MessageAlignment.Start,
     onLinkClick: ((Message, String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
-    giphyEphemeralContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.MessageGiphyContent(
+) {
+    when {
+        message.isGiphyEphemeral() -> ChatTheme.componentFactory.MessageGiphyContent(
             params = MessageGiphyContentParams(
                 message = message,
                 currentUser = currentUser,
                 onGiphyActionClick = onGiphyActionClick,
             ),
         )
-    },
-    deletedMessageContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.MessageDeletedContent(
+
+        message.isDeleted() -> ChatTheme.componentFactory.MessageDeletedContent(
             params = MessageDeletedContentParams(
                 message = message,
                 currentUser = currentUser,
                 modifier = modifier,
             ),
         )
-    },
-    regularMessageContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.MessageRegularContent(
+
+        else -> ChatTheme.componentFactory.MessageRegularContent(
             params = MessageRegularContentParams(
                 message = message,
                 currentUser = currentUser,
@@ -126,12 +121,6 @@ public fun MessageContent(
                 onUserMentionClick = onUserMentionClick,
             ),
         )
-    },
-) {
-    when {
-        message.isGiphyEphemeral() -> giphyEphemeralContent()
-        message.isDeleted() -> deletedMessageContent()
-        else -> regularMessageContent()
     }
 }
 
