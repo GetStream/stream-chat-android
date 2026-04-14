@@ -19,6 +19,7 @@
 package io.getstream.chat.android.test
 
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.result.call.dispatcher.CallDispatcherProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScheduler
@@ -50,6 +51,10 @@ public class TestCoroutineExtension : BeforeEachCallback, BeforeAllCallback, Aft
             mainDispatcher = dispatcher,
             ioDispatcher = dispatcher,
         )
+        CallDispatcherProvider.set(
+            mainDispatcher = dispatcher,
+            ioDispatcher = dispatcher,
+        )
         beforeAllCalled = true
     }
 
@@ -61,6 +66,7 @@ public class TestCoroutineExtension : BeforeEachCallback, BeforeAllCallback, Aft
     override fun afterAll(context: ExtensionContext) {
         Dispatchers.resetMain()
         DispatcherProvider.reset()
+        CallDispatcherProvider.reset()
         _scope = null
     }
 
