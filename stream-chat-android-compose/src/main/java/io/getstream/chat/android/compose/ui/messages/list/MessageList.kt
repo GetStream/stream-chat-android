@@ -18,7 +18,6 @@ package io.getstream.chat.android.compose.ui.messages.list
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material3.Text
@@ -37,10 +36,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageItemParams
 import io.getstream.chat.android.compose.ui.theme.MessageListBackgroundParams
 import io.getstream.chat.android.compose.ui.theme.MessageListEmptyContentParams
-import io.getstream.chat.android.compose.ui.theme.MessageListHelperContentParams
-import io.getstream.chat.android.compose.ui.theme.MessageListItemModifierParams
 import io.getstream.chat.android.compose.ui.theme.MessageListLoadingIndicatorParams
-import io.getstream.chat.android.compose.ui.theme.MessageListLoadingMoreItemContentParams
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Message
@@ -80,14 +76,6 @@ import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
  * @param onMessagesPageEndReached Handler for pagination when the end of newest messages have been reached.
  * @param onScrollToBottomClicked Handler when the user requests to scroll to the bottom of the messages list.
  * @param onPauseAudioRecordingAttachments Handler for lifecycle events.
- * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
- * @param emptyContent Composable that represents the empty content if there are no messages.
- * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
- * on the list state.
- * @param loadingMoreContent Composable that represents the loading more content, when we're loading the next page.
- * @param itemContent Composable that represents each item in a list. By default, we provide
- * the [MessageContainer] which sets up different message types. Users can override this to provide fully custom UI
- * and behavior.
  */
 @Composable
 public fun MessageList(
@@ -121,90 +109,53 @@ public fun MessageList(
     onMessagesPageEndReached: (String) -> Unit = { viewModel.onBottomEndRegionReached(it) },
     onScrollToBottomClicked: (() -> Unit) -> Unit = { viewModel.scrollToBottom(scrollToBottom = it) },
     onPauseAudioRecordingAttachments: () -> Unit = { viewModel.pauseAudioRecordingAttachments() },
-    loadingContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.MessageListLoadingIndicator(
-            params = MessageListLoadingIndicatorParams(modifier = modifier),
-        )
-    },
-    emptyContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.MessageListEmptyContent(params = MessageListEmptyContentParams(modifier = modifier))
-    },
-    helperContent: @Composable BoxScope.() -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageListHelperContent(
-                MessageListHelperContentParams(
-                    messageListState = viewModel.currentMessagesState.value,
-                    messagesLazyListState = messagesLazyListState,
-                    contentPadding = contentPadding,
-                    onScrollToBottomClick = onScrollToBottomClicked,
-                ),
-            )
-        }
-    },
-    loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageListLoadingMoreItemContent(params = MessageListLoadingMoreItemContentParams())
-        }
-    },
-    itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit = { messageListItem ->
-        with(ChatTheme.componentFactory) {
-            MessageItem(
-                params = MessageItemParams(
-                    messageListItem = messageListItem,
-                    onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                    onCastVote = viewModel::castVote,
-                    onRemoveVote = viewModel::removeVote,
-                    selectPoll = { message, poll, selectionType ->
-                        viewModel.displayPollMoreOptions(SelectedPoll(poll, message, selectionType))
-                    },
-                    onPollUpdated = { message, poll ->
-                        val selectedPoll = viewModel.pollState.selectedPoll
-                        if (viewModel.isShowingPollOptionDetails &&
-                            selectedPoll != null && selectedPoll.poll.id == poll.id
-                        ) {
-                            viewModel.updatePollState(poll, message, selectedPoll.pollSelectionType)
-                        }
-                    },
-                    onClosePoll = viewModel::closePoll,
-                    onAddPollOption = viewModel::addPollOption,
-                    onThreadClick = onThreadClick,
-                    onLongItemClick = onLongItemClick,
-                    onReactionsClick = viewModel::selectReactions,
-                    onGiphyActionClick = viewModel::performGiphyAction,
-                    onQuotedMessageClick = { message ->
-                        viewModel.scrollToMessage(
-                            messageId = message.id,
-                            parentMessageId = message.parentId,
-                        )
-                    },
-                    onAddAnswer = viewModel::castAnswer,
-                    onReply = onReply,
-                ),
-            )
-        }
-    },
 ) {
     MessageList(
         modifier = modifier,
         contentPadding = contentPadding,
         currentState = viewModel.currentMessagesState.value,
         messagesLazyListState = messagesLazyListState,
-        onMessagesPageStartReached = onMessagesPageStartReached,
         verticalArrangement = verticalArrangement,
         threadsVerticalArrangement = threadsVerticalArrangement,
+        onMessagesPageStartReached = onMessagesPageStartReached,
         onLastVisibleMessageChanged = onLastVisibleMessageChanged,
-        onLongItemClick = onLongItemClick,
         onScrolledToBottom = onScrollToBottom,
-        onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-        itemContent = itemContent,
-        helperContent = helperContent,
-        loadingMoreContent = loadingMoreContent,
-        loadingContent = loadingContent,
-        emptyContent = emptyContent,
         onMessagesPageEndReached = onMessagesPageEndReached,
         onScrollToBottom = onScrollToBottomClicked,
         onPauseAudioRecordingAttachments = onPauseAudioRecordingAttachments,
-        onReply = onReply,
+        messageItemParams = { messageListItem ->
+            MessageItemParams(
+                messageListItem = messageListItem,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                onCastVote = viewModel::castVote,
+                onRemoveVote = viewModel::removeVote,
+                selectPoll = { message, poll, selectionType ->
+                    viewModel.displayPollMoreOptions(SelectedPoll(poll, message, selectionType))
+                },
+                onPollUpdated = { message, poll ->
+                    val selectedPoll = viewModel.pollState.selectedPoll
+                    if (viewModel.isShowingPollOptionDetails &&
+                        selectedPoll != null && selectedPoll.poll.id == poll.id
+                    ) {
+                        viewModel.updatePollState(poll, message, selectedPoll.pollSelectionType)
+                    }
+                },
+                onClosePoll = viewModel::closePoll,
+                onAddPollOption = viewModel::addPollOption,
+                onThreadClick = onThreadClick,
+                onLongItemClick = onLongItemClick,
+                onReactionsClick = viewModel::selectReactions,
+                onGiphyActionClick = viewModel::performGiphyAction,
+                onQuotedMessageClick = { message ->
+                    viewModel.scrollToMessage(
+                        messageId = message.id,
+                        parentMessageId = message.parentId,
+                    )
+                },
+                onAddAnswer = viewModel::castAnswer,
+                onReply = onReply,
+            )
+        },
     )
 }
 
@@ -317,21 +268,10 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message
  * changes.
  * @param onScrolledToBottom Handler when the user scrolls to the bottom.
- * @param onThreadClick Handler for when the user taps on a message with an active thread.
- * @param onLongItemClick Handler for when the user long taps on an item.
- * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param onMessagesPageEndReached Handler for pagination when the end of newest messages have been reached.
  * @param onScrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
  * @param onPauseAudioRecordingAttachments Handler for lifecycle events.
- * @param background Composable that represents the background of the message list.
- * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
- * @param emptyContent Composable that represents the empty content if there are no messages.
- * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
- * on the list state.
- * @param loadingMoreContent Composable that represents the loading more content, when we're loading the next page.
- * @param itemModifier Modifier for styling the item container.
- * @param itemContent Composable that represents each item in the list, that the user can override
- * for custom UI and behavior.
+ * @param messageItemParams Factory that builds [MessageItemParams] for each message list item.
  */
 @Composable
 public fun MessageList(
@@ -345,68 +285,21 @@ public fun MessageList(
     onMessagesPageStartReached: () -> Unit = {},
     onLastVisibleMessageChanged: (Message) -> Unit = {},
     onScrolledToBottom: () -> Unit = {},
-    onThreadClick: (Message) -> Unit = {},
-    onLongItemClick: (Message) -> Unit = {},
-    onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onMessagesPageEndReached: (String) -> Unit = {},
     onScrollToBottom: (() -> Unit) -> Unit = {},
     onPauseAudioRecordingAttachments: () -> Unit = {},
-    onReply: (Message) -> Unit = {},
-    background: @Composable () -> Unit = {
-        ChatTheme.componentFactory.MessageListBackground(params = MessageListBackgroundParams())
-    },
-    loadingContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.MessageListLoadingIndicator(
-            params = MessageListLoadingIndicatorParams(modifier = modifier),
-        )
-    },
-    emptyContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.MessageListEmptyContent(params = MessageListEmptyContentParams(modifier = modifier))
-    },
-    helperContent: @Composable BoxScope.() -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageListHelperContent(
-                params = MessageListHelperContentParams(
-                    messageListState = currentState,
-                    messagesLazyListState = messagesLazyListState,
-                    contentPadding = contentPadding,
-                    onScrollToBottomClick = onScrollToBottom,
-                ),
-            )
-        }
-    },
-    loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageListLoadingMoreItemContent(params = MessageListLoadingMoreItemContentParams())
-        }
-    },
-    itemModifier: @Composable LazyItemScope.(index: Int, item: MessageListItemState) -> Modifier = { _, _ ->
-        with(ChatTheme.componentFactory) {
-            messageListItemModifier(params = MessageListItemModifierParams())
-        }
-    },
-    itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit = { messageListItem ->
-        with(ChatTheme.componentFactory) {
-            MessageItem(
-                params = MessageItemParams(
-                    messageListItem = messageListItem,
-                    onLongItemClick = onLongItemClick,
-                    onThreadClick = onThreadClick,
-                    onReply = onReply,
-                ),
-            )
-        }
-    },
+    messageItemParams: (MessageListItemState) -> MessageItemParams = ::MessageItemParams,
 ) {
     val isLoading = currentState.isLoading
     val messages = currentState.messageItems
 
     Box {
-        // Draw background behind the messages list
-        background()
-        // Draw the messages list content
+        ChatTheme.componentFactory.MessageListBackground(params = MessageListBackgroundParams())
         when {
-            isLoading -> loadingContent()
+            isLoading -> ChatTheme.componentFactory.MessageListLoadingIndicator(
+                params = MessageListLoadingIndicatorParams(modifier = modifier),
+            )
+
             messages.isNotEmpty() -> {
                 Messages(
                     modifier = modifier,
@@ -418,19 +311,21 @@ public fun MessageList(
                     threadsVerticalArrangement = threadsVerticalArrangement,
                     onLastVisibleMessageChanged = onLastVisibleMessageChanged,
                     onScrolledToBottom = onScrolledToBottom,
-                    helperContent = helperContent,
-                    loadingMoreContent = loadingMoreContent,
-                    itemModifier = itemModifier,
-                    itemContent = itemContent,
                     onMessagesEndReached = onMessagesPageEndReached,
                     onScrollToBottom = onScrollToBottom,
+                    itemContent = { messageListItem ->
+                        with(ChatTheme.componentFactory) {
+                            MessageItem(params = messageItemParams(messageListItem))
+                        }
+                    },
                 )
 
-                /** Clean up: Pause any playing audio tracks in onPause(). **/
                 LifecycleEventEffect(Lifecycle.Event.ON_PAUSE, onEvent = onPauseAudioRecordingAttachments)
             }
 
-            else -> emptyContent()
+            else -> ChatTheme.componentFactory.MessageListEmptyContent(
+                params = MessageListEmptyContentParams(modifier = modifier),
+            )
         }
     }
 }
