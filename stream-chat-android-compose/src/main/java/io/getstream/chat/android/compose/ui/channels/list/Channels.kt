@@ -56,7 +56,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param divider Customizable UI component, that represents item dividers.
  */
 @Composable
-public fun Channels(
+internal fun Channels(
     channelsState: ChannelsState,
     lazyListState: LazyListState,
     onLastItemReached: () -> Unit,
