@@ -21,6 +21,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewAction
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewController
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewEvent
@@ -33,17 +35,20 @@ import io.getstream.chat.android.ui.utils.asSingleLiveEvent
  * @param cid The full channel identifier (e.g., "messaging:123").
  * @param attachmentTypes The list of attachment types (e.g., "image", "file").
  * @param localFilter A function to filter attachments locally after fetching.
+ * @param sort The sort order for the search results. If `null`, the server default order is used.
  * @param controllerProvider The provider for [ChannelAttachmentsViewController].
  */
 public class ChannelAttachmentsViewModel(
     private val cid: String,
     private val attachmentTypes: List<String>,
     private val localFilter: (attachment: Attachment) -> Boolean = { true },
+    private val sort: QuerySorter<Message>? = null,
     controllerProvider: ViewModel.() -> ChannelAttachmentsViewController = {
         ChannelAttachmentsViewController(
             cid = cid,
             attachmentTypes = attachmentTypes,
             localFilter = localFilter,
+            sort = sort,
             scope = viewModelScope,
         )
     },

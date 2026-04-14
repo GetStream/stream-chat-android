@@ -19,6 +19,8 @@ package io.getstream.chat.android.compose.viewmodel.channel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.querysort.QuerySorter
 
 /**
  * Factory for creating instances of [ChannelAttachmentsViewModel].
@@ -26,11 +28,13 @@ import io.getstream.chat.android.models.Attachment
  * @param cid The full channel identifier (e.g., "messaging:123").
  * @param attachmentTypes The list of attachment types (e.g., "image", "file").
  * @param localFilter A function to filter attachments locally after fetching.
+ * @param sort The sort order for the search results. If `null`, the server default order is used.
  */
 public class ChannelAttachmentsViewModelFactory(
     private val cid: String,
     private val attachmentTypes: List<String>,
     private val localFilter: (attachment: Attachment) -> Boolean = { true },
+    private val sort: QuerySorter<Message>? = null,
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -38,6 +42,6 @@ public class ChannelAttachmentsViewModelFactory(
             "ChannelAttachmentsViewModelFactory can only create instances of ChannelAttachmentsViewModel"
         }
         @Suppress("UNCHECKED_CAST")
-        return ChannelAttachmentsViewModel(cid, attachmentTypes, localFilter) as T
+        return ChannelAttachmentsViewModel(cid, attachmentTypes, localFilter, sort) as T
     }
 }

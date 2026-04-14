@@ -21,7 +21,10 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SearchMessagesResult
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomMessage
@@ -246,6 +249,32 @@ internal class ChannelAttachmentsViewControllerTest {
             expectNoEvents()
         }
     }
+
+    @Test
+    fun `when sort is provided, should forward it to search and return sorted results`() = runTest {
+        val sort = QuerySortByField.ascByName<Message>("created_at")
+        val attachment = randomAttachment()
+        val message = randomMessage(cid = CID, attachments = listOf(attachment))
+        val searchMessagesResult = SearchMessagesResult(
+            messages = listOf(message),
+            next = null,
+        )
+        val sut = Fixture()
+            .givenSearchMessagesResult(sort = sort, result = searchMessagesResult)
+            .get(backgroundScope, sort = sort)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+            val viewState = awaitItem()
+
+            assertTrue(viewState is ChannelAttachmentsViewState.Content)
+            viewState as ChannelAttachmentsViewState.Content
+            val expectedItems = listOf(
+                ChannelAttachmentsViewState.Content.Item(message, attachment),
+            )
+            assertEquals(expectedItems, viewState.items)
+        }
+    }
 }
 
 private val CID = randomCID()
@@ -257,6 +286,7 @@ private class Fixture {
 
     fun givenSearchMessagesResult(
         next: String? = null,
+        sort: QuerySorter<Message>? = null,
         result: SearchMessagesResult? = null,
         error: Error? = null,
     ) = apply {
@@ -268,15 +298,20 @@ private class Fixture {
                 offset = null,
                 limit = 30,
                 next = next,
-                sort = null,
+                sort = sort,
             ),
         ) doAnswer { result?.asCall() ?: error?.asCall() }
     }
 
-    fun get(scope: CoroutineScope, localFilter: (Attachment) -> Boolean = { true }) = ChannelAttachmentsViewController(
+    fun get(
+        scope: CoroutineScope,
+        localFilter: (Attachment) -> Boolean = { true },
+        sort: QuerySorter<Message>? = null,
+    ) = ChannelAttachmentsViewController(
         cid = CID,
         attachmentTypes = listOf(ATTACHMENT_TYPE),
         localFilter = localFilter,
+        sort = sort,
         chatClient = chatClient,
         scope = scope,
     )
