@@ -294,6 +294,18 @@ public class MessageComposerController(
      */
     private var cooldownTimerJob: Job? = null
 
+    /**
+     * Represents the coroutine [Job] resolving link previews for the current input.
+     */
+    private var linkPreviewJob: Job? = null
+
+    /**
+     * The URL whose link preview the user explicitly dismissed via [cancelLinkPreview].
+     * `null` when no preview has been dismissed. Reset when the detected URL changes
+     * or when the composer is cleared.
+     */
+    private var dismissedLinkPreviewUrl: String? = null
+
     private val _messageActions = MutableStateFlow<Set<MessageAction>>(mutableSetOf())
 
     /**
@@ -393,7 +405,8 @@ public class MessageComposerController(
             handleValidationErrors()
         }.debounce(TEXT_INPUT_DEBOUNCE_TIME).onEach {
             scope.launch { handleMentionSuggestions() }
-            scope.launch { handleLinkPreviews() }
+            linkPreviewJob?.cancel()
+            linkPreviewJob = scope.launch { handleLinkPreview() }
         }.launchIn(scope)
 
         _messageActions.onEach { actions ->
@@ -479,12 +492,16 @@ public class MessageComposerController(
      * @param value Current state value.
      */
     public fun setMessageInput(value: String) {
-        if (_messageInput.value.text == value) return
-        _messageInput.value = MessageInput(value, MessageInput.Source.External)
+        setMessageInputInternal(value, MessageInput.Source.External)
     }
 
     private fun setMessageInputInternal(value: String, source: MessageInput.Source) {
         if (_messageInput.value.text == value) return
+        if (dismissedLinkPreviewUrl != null &&
+            !LinkPattern.find(value)?.value.equals(dismissedLinkPreviewUrl, ignoreCase = true)
+        ) {
+            dismissedLinkPreviewUrl = null
+        }
         _messageInput.value = MessageInput(value, source)
     }
 
@@ -689,6 +706,8 @@ public class MessageComposerController(
         _messageInput.value = MessageInput()
         clearAttachments()
         clearActiveCommand()
+        linkPreviewJob?.cancel()
+        dismissedLinkPreviewUrl = null
         _state.update { it.copy(validationErrors = emptyList()) }
         if (!isInThread) {
             _state.update { it.copy(alsoSendToChannel = false) }
@@ -731,7 +750,11 @@ public class MessageComposerController(
                 return
             }
             clearData()
-            enqueueEditMessage(message, callback, resolveAttachments)
+            enqueueEditMessage(
+                message = message.copy(skipEnrichUrl = shouldSkipEnrichUrl(message)),
+                callback = callback,
+                resolveAttachments = resolveAttachments,
+            )
             return
         }
 
@@ -740,7 +763,7 @@ public class MessageComposerController(
         }
         val preparedMessage = message.copy(
             showInChannel = isInThread && _state.value.alsoSendToChannel,
-            skipEnrichUrl = _state.value.linkPreviews.isEmpty(),
+            skipEnrichUrl = shouldSkipEnrichUrl(message),
         )
         clearData()
 
@@ -1134,19 +1157,17 @@ public class MessageComposerController(
     }
 
     /**
-     * Shows link previews if necessary.
+     * Resolves and displays the link preview for the first URL in the current input.
+     * Skips enrichment when the feature is disabled or the URL was explicitly dismissed.
      */
-    private suspend fun handleLinkPreviews() {
-        if (!config.isLinkPreviewEnabled) return
-        val urls = LinkPattern.findAll(messageText).map(MatchResult::value).toList()
-        logger.v { "[handleLinkPreviews] urls: $urls" }
-        val previews = urls.take(1)
-            .map { url -> chatClient.enrichPreview(url).await() }
-            .filterIsInstance<Result.Success<LinkPreview>>()
-            .map { it.value }
-
-        logger.v { "[handleLinkPreviews] previews: ${previews.map { it.originUrl }}" }
-        _state.update { it.copy(linkPreviews = previews) }
+    private suspend fun handleLinkPreview() {
+        val url = LinkPattern.find(messageText)?.value
+        logger.v { "[handleLinkPreview] url: $url" }
+        val preview = url
+            ?.takeIf { config.isLinkPreviewEnabled && !it.equals(dismissedLinkPreviewUrl, ignoreCase = true) }
+            ?.let { chatClient.enrichPreview(it).await().getOrNull() }
+        logger.v { "[handleLinkPreview] preview: ${preview?.originUrl}" }
+        _state.update { it.copy(linkPreview = preview) }
     }
 
     private fun loadLatestMessagesIfNeeded() {
@@ -1228,11 +1249,29 @@ public class MessageComposerController(
     }
 
     /**
-     * Cancels any link preview.
+     * Dismisses the current link preview and marks enrichment as skipped.
+     * When a message is sent after dismissal, the backend will not enrich its URLs
+     * unless the detected URL in the input changes (e.g. the user replaces the link).
      */
     public fun cancelLinkPreview() {
-        _state.update { it.copy(linkPreviews = emptyList()) }
+        logger.d { "[cancelLinkPreview] url: ${LinkPattern.find(messageText)?.value}" }
+        dismissedLinkPreviewUrl = LinkPattern.find(messageText)?.value
+        linkPreviewJob?.cancel()
+        _state.update { it.copy(linkPreview = null) }
     }
+
+    /**
+     * Determines whether the backend should skip URL enrichment for the given [message].
+     *
+     * Returns `true` when:
+     * - the caller already requested skipping (e.g. integrator override via [Message.skipEnrichUrl]),
+     * - the user explicitly dismissed the link preview, or
+     * - the message text contains no URLs.
+     *
+     * @param message The message about to be sent or edited.
+     */
+    private fun shouldSkipEnrichUrl(message: Message): Boolean =
+        message.skipEnrichUrl || dismissedLinkPreviewUrl != null || !LinkPattern.containsMatchIn(message.text)
 }
 
 private fun Attachment.sourceUriString(): String? = extraData[EXTRA_SOURCE_URI]?.toString()

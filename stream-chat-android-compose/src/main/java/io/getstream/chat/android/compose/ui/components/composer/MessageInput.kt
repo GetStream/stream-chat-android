@@ -182,11 +182,11 @@ private fun MessageInputTop(
 ) {
     val activeAction = messageComposerState.action
     val attachments = messageComposerState.attachments
-    val linkPreviews = messageComposerState.linkPreviews
+    val linkPreview = messageComposerState.linkPreview
     val showQuoted = activeAction is Reply
     val showEdit = activeAction is Edit
     val showAttachments = attachments.isNotEmpty()
-    val showLinkPreview = ChatTheme.config.composer.linkPreviewEnabled && linkPreviews.isNotEmpty()
+    val showLinkPreview = ChatTheme.config.composer.linkPreviewEnabled && linkPreview != null
     val isVisible = showQuoted || showEdit || showAttachments || showLinkPreview
 
     if (isVisible) {
@@ -230,7 +230,7 @@ private fun MessageInputTop(
             if (showLinkPreview) {
                 ChatTheme.componentFactory.MessageComposerLinkPreview(
                     params = MessageComposerLinkPreviewParams(
-                        linkPreview = linkPreviews.first(),
+                        linkPreview = linkPreview,
                         onContentClick = onLinkPreviewClick,
                         onCancelClick = onCancelLinkPreviewClick,
                     ),
@@ -467,7 +467,7 @@ internal fun MessageComposerInputLink() {
         MessageInput(
             messageComposerState = PreviewMessageComposerState.copy(
                 inputValue = PreviewLinkData.link1.originUrl,
-                linkPreviews = listOf(PreviewLinkData.link1),
+                linkPreview = PreviewLinkData.link1,
             ),
             onCancelLinkPreviewClick = {},
         )
@@ -545,7 +545,7 @@ internal fun MessageComposerInputAttachmentsAndLink() {
                     PreviewAttachmentData.attachmentImage1,
                     PreviewAttachmentData.attachmentVideo1,
                 ),
-                linkPreviews = listOf(PreviewLinkData.link1),
+                linkPreview = PreviewLinkData.link1,
             ),
         )
     }
@@ -571,7 +571,7 @@ internal fun MessageComposerInputReplyAttachmentsAndLink() {
                     PreviewAttachmentData.attachmentImage1,
                     PreviewAttachmentData.attachmentVideo1,
                 ),
-                linkPreviews = listOf(PreviewLinkData.link1),
+                linkPreview = PreviewLinkData.link1,
             ),
         )
     }
@@ -597,7 +597,7 @@ internal fun MessageComposerInputEditAttachmentsAndLink() {
                     PreviewAttachmentData.attachmentImage1,
                     PreviewAttachmentData.attachmentVideo1,
                 ),
-                linkPreviews = listOf(PreviewLinkData.link1),
+                linkPreview = PreviewLinkData.link1,
             ),
         )
     }

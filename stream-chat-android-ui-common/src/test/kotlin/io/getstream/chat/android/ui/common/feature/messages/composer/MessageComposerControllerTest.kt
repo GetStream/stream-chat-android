@@ -40,6 +40,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.test.MockRetrofitCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
@@ -51,15 +52,18 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -1268,6 +1272,186 @@ internal class MessageComposerControllerTest {
             assertNull(action.message.createdAt)
         }
 
+    @Test
+    fun `Given in-flight link preview When clearData called Then late resolution does not leak into state`() = runTest {
+        // Given
+        val url = "https://example.com"
+        val resolveSignal = CompletableDeferred<Unit>()
+        val pendingCall = MockRetrofitCall(
+            scope = this,
+            result = Result.Success(randomAttachment()),
+            doWork = { resolveSignal.await() },
+        )
+        val fixture = Fixture()
+            .givenConfig(MessageComposerController.Config(isLinkPreviewEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .givenInheritedScope(this)
+        whenever(fixture.chatClient.enrichUrl(any())) doReturn pendingCall
+        val controller = fixture.get()
+        controller.setMessageInput(url)
+        advanceUntilIdle()
+        // Resolution is in-flight, preview not yet in state.
+        assertNull(controller.state.value.linkPreview)
+
+        // When: user sends (via clearData) before resolution completes, then the
+        // enrichment response arrives late.
+        controller.clearData()
+        resolveSignal.complete(Unit)
+        // Flush the pending continuation of the in-flight resolve without advancing
+        // virtual time past the next debounce tick (which would clear state anyway).
+        runCurrent()
+
+        // Then: the late response must not leak into the composer state.
+        assertNull(controller.state.value.linkPreview)
+        advanceUntilIdle()
+    }
+
+    @Test
+    fun `Given URL typed When sendMessage called before link preview resolves Then skipEnrichUrl is false`() = runTest {
+        // Given
+        val url = "https://example.com"
+        val sentMessage = randomMessage(cid = CID, text = url)
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .givenSendMessage(sentMessage)
+        val controller = fixture.get()
+        controller.setMessageInput(url)
+        // Do NOT advanceUntilIdle — debounce hasn't fired, no link preview resolved.
+
+        // When
+        controller.sendMessage(Message(cid = CID, text = url), mock())
+        advanceUntilIdle()
+
+        // Then: backend should enrich (skipEnrichUrl = false) because the user never
+        // dismissed the preview — it just hadn't resolved yet.
+        val messageCaptor = argumentCaptor<Message>()
+        verify(fixture.chatClient).sendMessage(
+            eq(CHANNEL_TYPE),
+            eq(CHANNEL_ID),
+            messageCaptor.capture(),
+            eq(false),
+        )
+        assertFalse(messageCaptor.firstValue.skipEnrichUrl)
+    }
+
+    @Test
+    fun `Given dismissed link preview When sendMessage called Then skipEnrichUrl is true`() = runTest {
+        // Given
+        val url = "https://example.com"
+        val sentMessage = randomMessage(cid = CID, text = url)
+        val fixture = Fixture()
+            .givenConfig(MessageComposerController.Config(isLinkPreviewEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .givenSendMessage(sentMessage)
+            .givenInheritedScope(this)
+        whenever(fixture.chatClient.enrichUrl(any())) doReturn randomAttachment().asCall()
+        val controller = fixture.get()
+        controller.setMessageInput(url)
+        advanceUntilIdle()
+        assertNotNull(controller.state.value.linkPreview)
+
+        // When: user explicitly dismisses the preview, then sends.
+        controller.cancelLinkPreview()
+        controller.sendMessage(Message(cid = CID, text = url), mock())
+        advanceUntilIdle()
+
+        // Then: backend should skip enrichment because the user dismissed the preview.
+        val messageCaptor = argumentCaptor<Message>()
+        verify(fixture.chatClient).sendMessage(
+            eq(CHANNEL_TYPE),
+            eq(CHANNEL_ID),
+            messageCaptor.capture(),
+            eq(false),
+        )
+        assertTrue(messageCaptor.firstValue.skipEnrichUrl)
+    }
+
+    @Test
+    fun `Given dismissed link preview When text changed and sendMessage called Then skipEnrichUrl is false`() = runTest {
+        // Given
+        val url = "https://example.com"
+        val newUrl = "https://getstream.io"
+        val sentMessage = randomMessage(cid = CID, text = newUrl)
+        val fixture = Fixture()
+            .givenConfig(MessageComposerController.Config(isLinkPreviewEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .givenSendMessage(sentMessage)
+            .givenInheritedScope(this)
+        whenever(fixture.chatClient.enrichUrl(any())) doReturn randomAttachment().asCall()
+        val controller = fixture.get()
+        controller.setMessageInput(url)
+        advanceUntilIdle()
+        controller.cancelLinkPreview()
+
+        // When: user types a new URL after dismissing, then sends.
+        controller.setMessageInput(newUrl)
+        controller.sendMessage(Message(cid = CID, text = newUrl), mock())
+        advanceUntilIdle()
+
+        // Then: the text change resets the dismissal — backend should enrich.
+        val messageCaptor = argumentCaptor<Message>()
+        verify(fixture.chatClient).sendMessage(
+            eq(CHANNEL_TYPE),
+            eq(CHANNEL_ID),
+            messageCaptor.capture(),
+            eq(false),
+        )
+        assertFalse(messageCaptor.firstValue.skipEnrichUrl)
+    }
+
+    @Test
+    fun `Given dismissed link preview When same URL text edited and sendMessage called Then skipEnrichUrl is true`() =
+        runTest {
+            // Given
+            val url = "https://example.com"
+            val sentMessage = randomMessage(cid = CID, text = "$url hello")
+            val fixture = Fixture()
+                .givenConfig(MessageComposerController.Config(isLinkPreviewEnabled = true))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState()
+                .givenSendMessage(sentMessage)
+                .givenInheritedScope(this)
+            whenever(fixture.chatClient.enrichUrl(any())) doReturn randomAttachment().asCall()
+            val controller = fixture.get()
+            controller.setMessageInput(url)
+            advanceUntilIdle()
+            controller.cancelLinkPreview()
+
+            // When: user continues typing non-URL text after dismissing, then sends.
+            controller.setMessageInput("$url hello")
+            controller.sendMessage(Message(cid = CID, text = "$url hello"), mock())
+            advanceUntilIdle()
+
+            // Then: the dismissal is sticky — the URL didn't change, so backend should skip.
+            val messageCaptor = argumentCaptor<Message>()
+            verify(fixture.chatClient).sendMessage(
+                eq(CHANNEL_TYPE),
+                eq(CHANNEL_ID),
+                messageCaptor.capture(),
+                eq(false),
+            )
+            assertTrue(messageCaptor.firstValue.skipEnrichUrl)
+        }
+
     /**
      * Custom test implementation of [Mention] for testing purposes.
      */
@@ -1286,9 +1470,13 @@ internal class MessageComposerControllerTest {
         private val clientState: ClientState = mock()
         private val channelState: ChannelState = mock()
         private val globalState: GlobalState = mock()
-        private val inheritedScope: CoroutineScope = TestScope()
+        private var inheritedScope: CoroutineScope = TestScope()
         val mediaRecorder: StreamMediaRecorder = mock()
         private var config = MessageComposerController.Config()
+
+        fun givenInheritedScope(scope: CoroutineScope) = apply {
+            this.inheritedScope = scope
+        }
 
         fun givenAppSettings(appSettings: AppSettings = defaultAppSettings()) = apply {
             whenever(chatClient.getAppSettings()) doReturn appSettings
