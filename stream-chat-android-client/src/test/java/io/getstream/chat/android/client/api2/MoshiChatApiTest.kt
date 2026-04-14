@@ -50,6 +50,7 @@ import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.DeliveredMessageDto
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
+import io.getstream.chat.android.client.api2.model.requests.GroupedQueryChannelsRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkDeliveredRequest
@@ -89,6 +90,7 @@ import io.getstream.chat.android.client.api2.model.response.DevicesResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
+import io.getstream.chat.android.client.api2.model.response.GroupedQueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
@@ -1890,6 +1892,34 @@ internal class MoshiChatApiTest {
         )
         result `should be instance of` expected
         verify(api, times(1)).queryChannels(connectionId, expectedPayload)
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#groupedQueryChannelsInput")
+    fun testGroupedQueryChannels(
+        call: RetrofitCall<GroupedQueryChannelsResponse>,
+        expected: KClass<*>,
+    ) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.groupedQueryChannels(any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val userId = randomString()
+        val connectionId = randomString()
+        val limit = randomInt()
+        sut.setConnection(userId = userId, connectionId = connectionId)
+        val result = sut.groupedQueryChannels(limit = limit, watch = false, presence = false).await()
+        // then
+        val expectedPayload = GroupedQueryChannelsRequest(
+            limit = limit,
+            watch = false,
+            presence = false,
+        )
+        result `should be instance of` expected
+        verify(api, times(1)).groupedQueryChannels(connectionId, expectedPayload)
     }
 
     @ParameterizedTest

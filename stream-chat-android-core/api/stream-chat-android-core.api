@@ -1081,6 +1081,36 @@ public final class io/getstream/chat/android/models/GreaterThanOrEqualsFilterObj
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/models/GroupedChannels {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/models/GroupedChannels;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/GroupedChannels;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/models/GroupedChannels;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBuckets ()Ljava/util/List;
+	public final fun getFamily ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/GroupedChannelsBucket {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;II)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()I
+	public final fun component4 ()I
+	public final fun copy (Ljava/lang/String;Ljava/util/List;II)Lio/getstream/chat/android/models/GroupedChannelsBucket;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/GroupedChannelsBucket;Ljava/lang/String;Ljava/util/List;IIILjava/lang/Object;)Lio/getstream/chat/android/models/GroupedChannelsBucket;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannels ()Ljava/util/List;
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getUnreadChannels ()I
+	public final fun getUnreadCount ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/models/GuestUser {
 	public fun <init> (Lio/getstream/chat/android/models/User;Ljava/lang/String;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/User;

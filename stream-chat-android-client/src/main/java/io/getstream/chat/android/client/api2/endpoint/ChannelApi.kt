@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.UrlQueryPayload
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
+import io.getstream.chat.android.client.api2.model.requests.GroupedQueryChannelsRequest
 import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkDeliveredRequest
@@ -41,6 +42,7 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialR
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
+import io.getstream.chat.android.client.api2.model.response.GroupedQueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
 import io.getstream.chat.android.client.call.RetrofitCall
@@ -61,6 +63,18 @@ internal interface ChannelApi {
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body request: QueryChannelsRequest,
     ): RetrofitCall<QueryChannelsResponse>
+
+    /**
+     * Queries channels grouped into server-defined buckets within a family.
+     *
+     * @param connectionId The current connection ID.
+     * @param body The request body containing limit, watch, and presence parameters.
+     */
+    @POST("/channels/grouped")
+    fun groupedQueryChannels(
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
+        @Body body: GroupedQueryChannelsRequest,
+    ): RetrofitCall<GroupedQueryChannelsResponse>
 
     @POST("/channels/{type}/query")
     fun queryChannel(

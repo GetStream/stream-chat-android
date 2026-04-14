@@ -37,6 +37,7 @@ import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Flag
+import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
@@ -287,6 +288,18 @@ internal interface ChatApi {
 
     @CheckResult
     fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>>
+
+    /**
+     * Queries channels grouped into server-defined buckets within a family.
+     *
+     * @param limit The maximum number of channels to return per bucket. `null` uses the server default.
+     * @param watch Whether to start watching the returned channels for real-time events.
+     * @param presence Whether to receive presence events for the members of the returned channels.
+     *
+     * @return A [Call] containing a [GroupedChannels] result with the family and its buckets.
+     */
+    @CheckResult
+    fun groupedQueryChannels(limit: Int?, watch: Boolean, presence: Boolean): Call<GroupedChannels>
 
     @CheckResult
     fun updateUsers(users: List<User>): Call<List<User>>

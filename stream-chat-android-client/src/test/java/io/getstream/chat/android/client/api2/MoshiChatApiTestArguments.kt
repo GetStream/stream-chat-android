@@ -39,6 +39,8 @@ import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.DevicesResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
+import io.getstream.chat.android.client.api2.model.response.GroupedQueryChannelsBucket
+import io.getstream.chat.android.client.api2.model.response.GroupedQueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
@@ -436,6 +438,39 @@ internal object MoshiChatApiTestArguments {
             Result.Success::class,
         ),
         Arguments.of(RetroError<QueryChannelsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    @JvmStatic
+    fun groupedQueryChannelsInput() = listOf(
+        Arguments.of(
+            RetroSuccess(
+                GroupedQueryChannelsResponse(
+                    family = "support",
+                    buckets = listOf(
+                        GroupedQueryChannelsBucket(
+                            key = "all-open",
+                            channels = listOf(
+                                ChannelResponse(
+                                    channel = Mother.randomDownstreamChannelDto(),
+                                    hidden = randomBoolean(),
+                                    membership = Mother.randomDownstreamMemberDto(),
+                                    hide_messages_before = randomDateOrNull(),
+                                    draft = randomDownstreamDraftDto(),
+                                ),
+                            ),
+                            unread_count = randomInt(),
+                            unread_channels = randomInt(),
+                        ),
+                    ),
+                    duration = "12ms",
+                ),
+            ).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(
+            RetroError<GroupedQueryChannelsResponse>(statusCode = 500).toRetrofitCall(),
+            Result.Failure::class,
+        ),
     )
 
     @JvmStatic

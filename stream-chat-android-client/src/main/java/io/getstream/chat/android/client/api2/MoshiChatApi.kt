@@ -56,6 +56,7 @@ import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
+import io.getstream.chat.android.client.api2.model.requests.GroupedQueryChannelsRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
@@ -126,6 +127,8 @@ import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Flag
+import io.getstream.chat.android.models.GroupedChannels
+import io.getstream.chat.android.models.GroupedChannelsBucket
 import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
@@ -1312,6 +1315,35 @@ constructor(
             postponeCall(lazyQueryChannelsCall)
         } else {
             lazyQueryChannelsCall()
+        }
+    }
+
+    override fun groupedQueryChannels(limit: Int?, watch: Boolean, presence: Boolean): Call<GroupedChannels> {
+        val body = GroupedQueryChannelsRequest(limit = limit, watch = watch, presence = presence)
+        val lazyCall = {
+            channelApi.groupedQueryChannels(
+                connectionId = connectionId,
+                body = body,
+            ).map { response ->
+                GroupedChannels(
+                    family = response.family,
+                    buckets = response.buckets.map { bucket ->
+                        GroupedChannelsBucket(
+                            key = bucket.key,
+                            channels = bucket.channels.map(::flattenChannel),
+                            unreadCount = bucket.unread_count,
+                            unreadChannels = bucket.unread_channels,
+                        )
+                    },
+                )
+            }
+        }
+        val isConnectionRequired = watch || presence
+        return if (isConnectionRequired && connectionId.isBlank()) {
+            logger.i { "[groupedQueryChannels] postponing because an active connection is required" }
+            postponeCall(lazyCall)
+        } else {
+            lazyCall()
         }
     }
 

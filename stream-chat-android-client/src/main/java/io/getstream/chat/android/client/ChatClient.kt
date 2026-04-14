@@ -184,6 +184,7 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Flag
+import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Location
@@ -3143,6 +3144,24 @@ internal constructor(
         }.share(userScope) {
             QueryChannelsIdentifier(request)
         }
+    }
+
+    /**
+     * Queries channels grouped into server-defined buckets within a family.
+     *
+     * @param limit The maximum number of channels to return per bucket. `null` uses the server default.
+     * @param watch Whether to start watching the returned channels for real-time events.
+     * @param presence Whether to receive presence events for the members of the returned channels.
+     *
+     * @return A [Call] containing a [GroupedChannels] result with the family and its buckets.
+     */
+    @CheckResult
+    public fun groupedQueryChannels(
+        limit: Int? = null,
+        watch: Boolean = false,
+        presence: Boolean = false,
+    ): Call<GroupedChannels> {
+        return api.groupedQueryChannels(limit = limit, watch = watch, presence = presence)
     }
 
     /**

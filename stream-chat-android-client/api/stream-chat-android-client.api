@@ -107,6 +107,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getUnreadCounts ()Lio/getstream/result/call/Call;
 	public static final fun getVERSION_PREFIX_HEADER ()Lio/getstream/chat/android/client/header/VersionPrefixHeader;
 	public final fun getVideoCallToken (Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun groupedQueryChannels (Ljava/lang/Integer;ZZ)Lio/getstream/result/call/Call;
+	public static synthetic fun groupedQueryChannels$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/Integer;ZZILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public static final fun handlePushMessage (Lio/getstream/chat/android/models/PushMessage;)V
 	public final fun hideChannel (Ljava/lang/String;Ljava/lang/String;Z)Lio/getstream/result/call/Call;
 	public static synthetic fun hideChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/result/call/Call;
