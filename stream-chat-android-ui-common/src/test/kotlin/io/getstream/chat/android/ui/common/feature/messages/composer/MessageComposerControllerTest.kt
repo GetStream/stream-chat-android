@@ -1295,7 +1295,7 @@ internal class MessageComposerControllerTest {
         controller.setMessageInput(url)
         advanceUntilIdle()
         // Resolution is in-flight, preview not yet in state.
-        assertTrue(controller.state.value.linkPreview == null)
+        assertNull(controller.state.value.linkPreview)
 
         // When: user sends (via clearData) before resolution completes, then the
         // enrichment response arrives late.
@@ -1306,7 +1306,7 @@ internal class MessageComposerControllerTest {
         runCurrent()
 
         // Then: the late response must not leak into the composer state.
-        assertTrue(controller.state.value.linkPreview == null)
+        assertNull(controller.state.value.linkPreview)
         advanceUntilIdle()
     }
 

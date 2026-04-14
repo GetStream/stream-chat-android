@@ -497,7 +497,9 @@ public class MessageComposerController(
 
     private fun setMessageInputInternal(value: String, source: MessageInput.Source) {
         if (_messageInput.value.text == value) return
-        if (dismissedLinkPreviewUrl != null && LinkPattern.find(value)?.value != dismissedLinkPreviewUrl) {
+        if (dismissedLinkPreviewUrl != null &&
+            !LinkPattern.find(value)?.value.equals(dismissedLinkPreviewUrl, ignoreCase = true)
+        ) {
             dismissedLinkPreviewUrl = null
         }
         _messageInput.value = MessageInput(value, source)
@@ -1156,13 +1158,14 @@ public class MessageComposerController(
 
     /**
      * Resolves and displays the link preview for the first URL in the current input.
+     * Skips enrichment when the feature is disabled or the URL was explicitly dismissed.
      */
     private suspend fun handleLinkPreview() {
-        if (!config.isLinkPreviewEnabled) return
         val url = LinkPattern.find(messageText)?.value
         logger.v { "[handleLinkPreview] url: $url" }
-        val preview = url?.let { chatClient.enrichPreview(it).await().getOrNull() }
-
+        val preview = url
+            ?.takeIf { config.isLinkPreviewEnabled && !it.equals(dismissedLinkPreviewUrl, ignoreCase = true) }
+            ?.let { chatClient.enrichPreview(it).await().getOrNull() }
         logger.v { "[handleLinkPreview] preview: ${preview?.originUrl}" }
         _state.update { it.copy(linkPreview = preview) }
     }
@@ -1251,7 +1254,9 @@ public class MessageComposerController(
      * unless the detected URL in the input changes (e.g. the user replaces the link).
      */
     public fun cancelLinkPreview() {
+        logger.d { "[cancelLinkPreview] url: ${LinkPattern.find(messageText)?.value}" }
         dismissedLinkPreviewUrl = LinkPattern.find(messageText)?.value
+        linkPreviewJob?.cancel()
         _state.update { it.copy(linkPreview = null) }
     }
 
