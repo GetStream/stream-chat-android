@@ -700,6 +700,11 @@ public fun MessageDialogs(listViewModel: MessageListViewModel) {
     }
 }
 
+/**
+ * Displays poll-related dialogs based on the current poll selection state in [listViewModel].
+ *
+ * @param listViewModel The [MessageListViewModel] that provides the current poll dialog state.
+ */
 @Composable
 public fun PollDialogs(listViewModel: MessageListViewModel) {
     val dismiss = { listViewModel.displayPollMoreOptions(null) }

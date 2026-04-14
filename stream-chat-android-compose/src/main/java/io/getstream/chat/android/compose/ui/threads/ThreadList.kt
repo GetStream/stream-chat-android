@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -123,9 +124,11 @@ public fun ThreadList(
         state.loadingError -> ThreadListBannerState.Error
         state.unseenThreadsCount > 0 ->
             ThreadListBannerState.UnreadThreads(state.unseenThreadsCount)
+
         else -> null
     }
     Scaffold(
+        modifier = modifier,
         containerColor = ChatTheme.colors.backgroundCoreApp,
         topBar = {
             bannerState?.let {
@@ -135,42 +138,43 @@ public fun ThreadList(
             }
         },
         content = { padding ->
-            Box(modifier = modifier.padding(padding)) {
-                when {
-                    state.threads.isEmpty() && state.isLoading -> {
-                        ChatTheme.componentFactory.ThreadListLoadingContent(
-                            params = ThreadListLoadingContentParams(modifier = modifier),
-                        )
-                    }
-
-                    state.threads.isEmpty() -> {
-                        ChatTheme.componentFactory.ThreadListEmptyContent(
-                            params = ThreadListEmptyContentParams(modifier = modifier),
-                        )
-                    }
-
-                    else -> Threads(
-                        threads = state.threads,
-                        isLoading = state.isLoading,
-                        isLoadingMore = state.isLoadingMore,
-                        modifier = Modifier,
-                        onLoadMore = onLoadMore,
-                        itemContent = { thread ->
-                            ChatTheme.componentFactory.ThreadListItem(
-                                params = ThreadListItemParams(
-                                    thread = thread,
-                                    currentUser = currentUser,
-                                    onThreadClick = onThreadClick,
-                                ),
-                            )
-                        },
-                        loadingMoreContent = {
-                            ChatTheme.componentFactory.ThreadListLoadingMoreContent(
-                                params = ThreadListLoadingMoreContentParams(),
-                            )
-                        },
+            val contentModifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
+            when {
+                state.threads.isEmpty() && state.isLoading -> {
+                    ChatTheme.componentFactory.ThreadListLoadingContent(
+                        params = ThreadListLoadingContentParams(modifier = contentModifier),
                     )
                 }
+
+                state.threads.isEmpty() -> {
+                    ChatTheme.componentFactory.ThreadListEmptyContent(
+                        params = ThreadListEmptyContentParams(modifier = contentModifier),
+                    )
+                }
+
+                else -> Threads(
+                    threads = state.threads,
+                    isLoading = state.isLoading,
+                    isLoadingMore = state.isLoadingMore,
+                    modifier = contentModifier,
+                    onLoadMore = onLoadMore,
+                    itemContent = { thread ->
+                        ChatTheme.componentFactory.ThreadListItem(
+                            params = ThreadListItemParams(
+                                thread = thread,
+                                currentUser = currentUser,
+                                onThreadClick = onThreadClick,
+                            ),
+                        )
+                    },
+                    loadingMoreContent = {
+                        ChatTheme.componentFactory.ThreadListLoadingMoreContent(
+                            params = ThreadListLoadingMoreContentParams(),
+                        )
+                    },
+                )
             }
         },
     )
