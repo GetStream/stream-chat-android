@@ -294,6 +294,17 @@ public class MessageComposerController(
      */
     private var cooldownTimerJob: Job? = null
 
+    /**
+     * Represents the coroutine [Job] resolving link previews for the current input.
+     */
+    private var linkPreviewJob: Job? = null
+
+    /**
+     * Whether the user explicitly dismissed the link preview via [cancelLinkPreview].
+     * Reset on any text change via [setMessageInputInternal].
+     */
+    private var linkPreviewDismissed: Boolean = false
+
     private val _messageActions = MutableStateFlow<Set<MessageAction>>(mutableSetOf())
 
     /**
@@ -393,7 +404,8 @@ public class MessageComposerController(
             handleValidationErrors()
         }.debounce(TEXT_INPUT_DEBOUNCE_TIME).onEach {
             scope.launch { handleMentionSuggestions() }
-            scope.launch { handleLinkPreviews() }
+            linkPreviewJob?.cancel()
+            linkPreviewJob = scope.launch { handleLinkPreviews() }
         }.launchIn(scope)
 
         _messageActions.onEach { actions ->
@@ -479,12 +491,12 @@ public class MessageComposerController(
      * @param value Current state value.
      */
     public fun setMessageInput(value: String) {
-        if (_messageInput.value.text == value) return
-        _messageInput.value = MessageInput(value, MessageInput.Source.External)
+        setMessageInputInternal(value, MessageInput.Source.External)
     }
 
     private fun setMessageInputInternal(value: String, source: MessageInput.Source) {
         if (_messageInput.value.text == value) return
+        linkPreviewDismissed = false
         _messageInput.value = MessageInput(value, source)
     }
 
@@ -689,6 +701,8 @@ public class MessageComposerController(
         _messageInput.value = MessageInput()
         clearAttachments()
         clearActiveCommand()
+        linkPreviewJob?.cancel()
+        linkPreviewDismissed = false
         _state.update { it.copy(validationErrors = emptyList()) }
         if (!isInThread) {
             _state.update { it.copy(alsoSendToChannel = false) }
@@ -731,7 +745,11 @@ public class MessageComposerController(
                 return
             }
             clearData()
-            enqueueEditMessage(message, callback, resolveAttachments)
+            enqueueEditMessage(
+                message = message.copy(skipEnrichUrl = shouldSkipEnrichUrl(message)),
+                callback = callback,
+                resolveAttachments = resolveAttachments,
+            )
             return
         }
 
@@ -740,7 +758,7 @@ public class MessageComposerController(
         }
         val preparedMessage = message.copy(
             showInChannel = isInThread && _state.value.alsoSendToChannel,
-            skipEnrichUrl = _state.value.linkPreviews.isEmpty(),
+            skipEnrichUrl = shouldSkipEnrichUrl(message),
         )
         clearData()
 
@@ -1228,11 +1246,27 @@ public class MessageComposerController(
     }
 
     /**
-     * Cancels any link preview.
+     * Dismisses the current link preview and marks enrichment as skipped.
+     * When a message is sent after dismissal, the backend will not enrich its URLs
+     * unless the user changes the input text (which resets the dismissal).
      */
     public fun cancelLinkPreview() {
+        linkPreviewDismissed = true
         _state.update { it.copy(linkPreviews = emptyList()) }
     }
+
+    /**
+     * Determines whether the backend should skip URL enrichment for the given [message].
+     *
+     * Returns `true` when:
+     * - the caller already requested skipping (e.g. integrator override via [Message.skipEnrichUrl]),
+     * - the user explicitly dismissed the link preview, or
+     * - the message text contains no URLs.
+     *
+     * @param message The message about to be sent or edited.
+     */
+    private fun shouldSkipEnrichUrl(message: Message): Boolean =
+        message.skipEnrichUrl || linkPreviewDismissed || !LinkPattern.containsMatchIn(message.text)
 }
 
 private fun Attachment.sourceUriString(): String? = extraData[EXTRA_SOURCE_URI]?.toString()
