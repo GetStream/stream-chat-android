@@ -47,7 +47,6 @@ import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.channels.buildDefaultChannelActions
-import io.getstream.chat.android.compose.ui.theme.ChannelListEmptyContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListHeaderParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListSearchInputParams
 import io.getstream.chat.android.compose.ui.theme.ChannelMenuParams
@@ -185,14 +184,7 @@ public fun ChannelsScreen(
                             listViewModel.selectChannel(it)
                         }
                     },
-                    emptyContent = {
-                        ChatTheme.componentFactory.ChannelListEmptyContent(
-                            params = ChannelListEmptyContentParams(
-                                modifier = Modifier.fillMaxSize(),
-                                onStartChatClick = onStartChatClick,
-                            ),
-                        )
-                    },
+                    onStartChatClick = onStartChatClick,
                 )
             }
         }

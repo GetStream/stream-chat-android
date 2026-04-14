@@ -14,10 +14,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
+import io.getstream.chat.android.compose.ui.theme.ChannelListItemContentParams
+import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
@@ -156,40 +158,40 @@ private object ChannelListCustomizationSnippet {
             super.onCreate(savedInstanceState)
 
             setContent {
-                ChatTheme {
-                    CustomChannelListItem()
+                // Customize the channel items via the component factory
+                ChatTheme(componentFactory = CustomChannelItemFactory) {
+                    ChannelList(viewModel = listViewModel)
                 }
             }
         }
+    }
+}
 
-        @Composable
-        fun CustomChannelListItem() {
-            val user by listViewModel.user.collectAsState() // Fetch user
+// Customize the channel item to show only the avatar and name.
+private object CustomChannelItemFactory : ChatComponentFactory {
+    @Composable
+    override fun LazyItemScope.ChannelListItemContent(params: ChannelListItemContentParams) {
+        Row(
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            ChannelAvatar(
+                modifier = Modifier.size(40.dp),
+                channel = params.channelItem.channel,
+                currentUser = params.currentUser,
+            )
 
-            ChannelList(
-                // Set up state
-                channelContent = {
-                    Row(
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        ChannelAvatar(
-                            modifier = Modifier.size(40.dp),
-                            channel = it.channel,
-                            currentUser = user
-                        )
+            Spacer(modifier = Modifier.width(8.dp))
 
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        Text(
-                            text = ChatTheme.channelNameFormatter.formatChannelName(it.channel, user),
-                            style = ChatTheme.typography.bodyEmphasis,
-                            maxLines = 1,
-                        )
-                    }
-                }
+            Text(
+                text = ChatTheme.channelNameFormatter.formatChannelName(
+                    params.channelItem.channel,
+                    params.currentUser,
+                ),
+                style = ChatTheme.typography.bodyEmphasis,
+                maxLines = 1,
             )
         }
     }

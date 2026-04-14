@@ -24,9 +24,7 @@ import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
-import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.channels.list.Channels
-import io.getstream.chat.android.compose.ui.channels.list.SearchResultItem
 import io.getstream.chat.android.compose.ui.channels.list.WrapperItemContent
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewUserData
@@ -55,21 +53,10 @@ internal class ChannelsTest : PaparazziComposeTest {
                 itemContent = { itemState ->
                     WrapperItemContent(
                         itemState = itemState,
-                        channelContent = { channelItem ->
-                            ChannelItem(
-                                channelItem = channelItem,
-                                currentUser = PreviewUserData.user1,
-                                onChannelClick = {},
-                                onChannelLongClick = {},
-                            )
-                        },
-                        searchResultContent = { searchResultItem ->
-                            SearchResultItem(
-                                searchResultItemState = searchResultItem,
-                                currentUser = PreviewUserData.user1,
-                                onSearchResultClick = {},
-                            )
-                        },
+                        currentUser = PreviewUserData.user1,
+                        onChannelClick = {},
+                        onChannelLongClick = {},
+                        onSearchResultClick = {},
                     )
                 },
                 onLastItemReached = {},
