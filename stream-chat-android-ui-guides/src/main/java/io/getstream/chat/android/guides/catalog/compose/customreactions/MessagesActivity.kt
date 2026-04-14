@@ -30,6 +30,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionIconParams
 import io.getstream.chat.android.compose.ui.util.ReactionResolver
 import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.MessageListOptions
 import io.getstream.chat.android.guides.R
 
 /**
@@ -51,7 +52,7 @@ class MessagesActivity : AppCompatActivity() {
                     viewModelFactory = ChannelViewModelFactory(
                         context = this,
                         channelId = channelId,
-                        threadLoadOlderToNewer = true,
+                        messageListOptions = MessageListOptions(threadLoadOlderToNewer = true),
                     ),
                     onBackPressed = { finish() },
                     onHeaderTitleClick = {},

@@ -12,6 +12,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.MessageListOptions
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 
 /**
@@ -88,9 +89,11 @@ private object ChannelScreenCustomizationSnippet {
                         viewModelFactory = ChannelViewModelFactory(
                             context = this,
                             channelId = channelId,
-                            messageLimit = 30,
-                            enforceUniqueReactions = true,
-                            showSystemMessages = true
+                            messageListOptions = MessageListOptions(
+                                messageLimit = 30,
+                                enforceUniqueReactions = true,
+                                showSystemMessages = true,
+                            ),
                         ),
                     )
                 }

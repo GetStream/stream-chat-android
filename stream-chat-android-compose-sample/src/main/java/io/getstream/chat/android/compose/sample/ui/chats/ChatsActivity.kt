@@ -87,6 +87,7 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ComposerOptions
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModelFactory
 import io.getstream.chat.android.models.AttachmentType
@@ -607,7 +608,7 @@ class ChatsActivity : ComponentActivity() {
     ) = ChannelViewModelFactory(
         context = applicationContext,
         channelId = channelId,
-        isComposerLinkPreviewEnabled = customSettings().isComposerLinkPreviewEnabled,
+        composerOptions = ComposerOptions(isLinkPreviewEnabled = customSettings().isComposerLinkPreviewEnabled),
         messageId = messageId,
         parentMessageId = parentMessageId,
     )
