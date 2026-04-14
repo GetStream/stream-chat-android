@@ -406,7 +406,7 @@ public class MessageComposerController(
         }.debounce(TEXT_INPUT_DEBOUNCE_TIME).onEach {
             scope.launch { handleMentionSuggestions() }
             linkPreviewJob?.cancel()
-            linkPreviewJob = scope.launch { handleLinkPreviews() }
+            linkPreviewJob = scope.launch { handleLinkPreview() }
         }.launchIn(scope)
 
         _messageActions.onEach { actions ->
@@ -1155,19 +1155,16 @@ public class MessageComposerController(
     }
 
     /**
-     * Shows link previews if necessary.
+     * Resolves and displays the link preview for the first URL in the current input.
      */
-    private suspend fun handleLinkPreviews() {
+    private suspend fun handleLinkPreview() {
         if (!config.isLinkPreviewEnabled) return
-        val urls = LinkPattern.findAll(messageText).map(MatchResult::value).toList()
-        logger.v { "[handleLinkPreviews] urls: $urls" }
-        val previews = urls.take(1)
-            .map { url -> chatClient.enrichPreview(url).await() }
-            .filterIsInstance<Result.Success<LinkPreview>>()
-            .map { it.value }
+        val url = LinkPattern.find(messageText)?.value
+        logger.v { "[handleLinkPreview] url: $url" }
+        val preview = url?.let { chatClient.enrichPreview(it).await().getOrNull() }
 
-        logger.v { "[handleLinkPreviews] previews: ${previews.map { it.originUrl }}" }
-        _state.update { it.copy(linkPreviews = previews) }
+        logger.v { "[handleLinkPreview] preview: ${preview?.originUrl}" }
+        _state.update { it.copy(linkPreview = preview) }
     }
 
     private fun loadLatestMessagesIfNeeded() {
@@ -1255,7 +1252,7 @@ public class MessageComposerController(
      */
     public fun cancelLinkPreview() {
         dismissedLinkPreviewUrl = LinkPattern.find(messageText)?.value
-        _state.update { it.copy(linkPreviews = emptyList()) }
+        _state.update { it.copy(linkPreview = null) }
     }
 
     /**

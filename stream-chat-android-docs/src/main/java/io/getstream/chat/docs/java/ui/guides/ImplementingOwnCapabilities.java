@@ -31,7 +31,7 @@ public class ImplementingOwnCapabilities {
                 Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList(),
-                Collections.emptyList(),
+                null,
                 0,
                 MessageMode.Normal.INSTANCE,
                 false,

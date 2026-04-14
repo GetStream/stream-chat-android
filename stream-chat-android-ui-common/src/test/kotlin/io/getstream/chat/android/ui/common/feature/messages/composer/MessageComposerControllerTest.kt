@@ -63,6 +63,7 @@ import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -1294,7 +1295,7 @@ internal class MessageComposerControllerTest {
         controller.setMessageInput(url)
         advanceUntilIdle()
         // Resolution is in-flight, preview not yet in state.
-        assertTrue(controller.state.value.linkPreviews.isEmpty())
+        assertTrue(controller.state.value.linkPreview == null)
 
         // When: user sends (via clearData) before resolution completes, then the
         // enrichment response arrives late.
@@ -1305,7 +1306,7 @@ internal class MessageComposerControllerTest {
         runCurrent()
 
         // Then: the late response must not leak into the composer state.
-        assertTrue(controller.state.value.linkPreviews.isEmpty())
+        assertTrue(controller.state.value.linkPreview == null)
         advanceUntilIdle()
     }
 
@@ -1359,7 +1360,7 @@ internal class MessageComposerControllerTest {
         val controller = fixture.get()
         controller.setMessageInput(url)
         advanceUntilIdle()
-        assertEquals(1, controller.state.value.linkPreviews.size)
+        assertNotNull(controller.state.value.linkPreview)
 
         // When: user explicitly dismisses the preview, then sends.
         controller.cancelLinkPreview()
