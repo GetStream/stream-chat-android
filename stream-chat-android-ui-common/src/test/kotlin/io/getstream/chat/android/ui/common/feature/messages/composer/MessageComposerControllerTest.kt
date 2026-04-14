@@ -1414,6 +1414,43 @@ internal class MessageComposerControllerTest {
         assertFalse(messageCaptor.firstValue.skipEnrichUrl)
     }
 
+    @Test
+    fun `Given dismissed link preview When same URL text edited and sendMessage called Then skipEnrichUrl is true`() =
+        runTest {
+            // Given
+            val url = "https://example.com"
+            val sentMessage = randomMessage(cid = CID, text = "$url hello")
+            val fixture = Fixture()
+                .givenConfig(MessageComposerController.Config(isLinkPreviewEnabled = true))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState()
+                .givenSendMessage(sentMessage)
+                .givenInheritedScope(this)
+            whenever(fixture.chatClient.enrichUrl(any())) doReturn randomAttachment().asCall()
+            val controller = fixture.get()
+            controller.setMessageInput(url)
+            advanceUntilIdle()
+            controller.cancelLinkPreview()
+
+            // When: user continues typing non-URL text after dismissing, then sends.
+            controller.setMessageInput("$url hello")
+            controller.sendMessage(Message(cid = CID, text = "$url hello"), mock())
+            advanceUntilIdle()
+
+            // Then: the dismissal is sticky — the URL didn't change, so backend should skip.
+            val messageCaptor = argumentCaptor<Message>()
+            verify(fixture.chatClient).sendMessage(
+                eq(CHANNEL_TYPE),
+                eq(CHANNEL_ID),
+                messageCaptor.capture(),
+                eq(false),
+            )
+            assertTrue(messageCaptor.firstValue.skipEnrichUrl)
+        }
+
     /**
      * Custom test implementation of [Mention] for testing purposes.
      */

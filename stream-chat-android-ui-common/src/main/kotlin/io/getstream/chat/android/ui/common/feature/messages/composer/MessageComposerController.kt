@@ -300,10 +300,11 @@ public class MessageComposerController(
     private var linkPreviewJob: Job? = null
 
     /**
-     * Whether the user explicitly dismissed the link preview via [cancelLinkPreview].
-     * Reset on any text change via [setMessageInputInternal].
+     * The URL whose link preview the user explicitly dismissed via [cancelLinkPreview].
+     * `null` when no preview has been dismissed. Reset when the detected URL changes
+     * or when the composer is cleared.
      */
-    private var linkPreviewDismissed: Boolean = false
+    private var dismissedLinkPreviewUrl: String? = null
 
     private val _messageActions = MutableStateFlow<Set<MessageAction>>(mutableSetOf())
 
@@ -496,7 +497,9 @@ public class MessageComposerController(
 
     private fun setMessageInputInternal(value: String, source: MessageInput.Source) {
         if (_messageInput.value.text == value) return
-        linkPreviewDismissed = false
+        if (dismissedLinkPreviewUrl != null && LinkPattern.find(value)?.value != dismissedLinkPreviewUrl) {
+            dismissedLinkPreviewUrl = null
+        }
         _messageInput.value = MessageInput(value, source)
     }
 
@@ -702,7 +705,7 @@ public class MessageComposerController(
         clearAttachments()
         clearActiveCommand()
         linkPreviewJob?.cancel()
-        linkPreviewDismissed = false
+        dismissedLinkPreviewUrl = null
         _state.update { it.copy(validationErrors = emptyList()) }
         if (!isInThread) {
             _state.update { it.copy(alsoSendToChannel = false) }
@@ -1248,10 +1251,10 @@ public class MessageComposerController(
     /**
      * Dismisses the current link preview and marks enrichment as skipped.
      * When a message is sent after dismissal, the backend will not enrich its URLs
-     * unless the user changes the input text (which resets the dismissal).
+     * unless the detected URL in the input changes (e.g. the user replaces the link).
      */
     public fun cancelLinkPreview() {
-        linkPreviewDismissed = true
+        dismissedLinkPreviewUrl = LinkPattern.find(messageText)?.value
         _state.update { it.copy(linkPreviews = emptyList()) }
     }
 
@@ -1266,7 +1269,7 @@ public class MessageComposerController(
      * @param message The message about to be sent or edited.
      */
     private fun shouldSkipEnrichUrl(message: Message): Boolean =
-        message.skipEnrichUrl || linkPreviewDismissed || !LinkPattern.containsMatchIn(message.text)
+        message.skipEnrichUrl || dismissedLinkPreviewUrl != null || !LinkPattern.containsMatchIn(message.text)
 }
 
 private fun Attachment.sourceUriString(): String? = extraData[EXTRA_SOURCE_URI]?.toString()
