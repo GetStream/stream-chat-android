@@ -1538,7 +1538,7 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Mess
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/MessageContentKt {
-	public static final fun MessageContent (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/compose/state/messages/MessageAlignment;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V
+	public static final fun MessageContent (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/compose/state/messages/MessageAlignment;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/MessageFooterKt {
