@@ -48,8 +48,8 @@ class MessagesActivity : ComponentActivity() {
             context = this,
             channelId = cid,
             composerOptions = ComposerOptions(
-                isLinkPreviewEnabled = settings.isComposerLinkPreviewEnabled,
-                isDraftMessageEnabled = true,
+                linkPreviewEnabled = settings.isComposerLinkPreviewEnabled,
+                draftMessagesEnabled = true,
             ),
             messageId = intent.getStringExtra(KEY_MESSAGE_ID),
             parentMessageId = intent.getStringExtra(KEY_PARENT_MESSAGE_ID),

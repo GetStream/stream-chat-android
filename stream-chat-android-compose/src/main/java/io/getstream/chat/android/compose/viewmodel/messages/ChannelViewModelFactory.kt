@@ -78,13 +78,13 @@ public data class MessageListOptions(
  * Configuration for the message composer behavior.
  *
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
- * @param isLinkPreviewEnabled If the link preview is enabled in the composer.
- * @param isDraftMessageEnabled If the draft message is enabled in the composer.
+ * @param linkPreviewEnabled If the link preview is enabled in the composer.
+ * @param draftMessagesEnabled If draft messages are enabled in the composer.
  */
 public data class ComposerOptions(
     val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
-    val isLinkPreviewEnabled: Boolean = false,
-    val isDraftMessageEnabled: Boolean = true,
+    val linkPreviewEnabled: Boolean = false,
+    val draftMessagesEnabled: Boolean = true,
 )
 
 /**
@@ -179,8 +179,8 @@ public class ChannelViewModelFactory(
                     channelCid = channelId,
                     config = MessageComposerController.Config(
                         maxAttachmentCount = composerOptions.maxAttachmentCount,
-                        isLinkPreviewEnabled = composerOptions.isLinkPreviewEnabled,
-                        isDraftMessageEnabled = composerOptions.isDraftMessageEnabled,
+                        isLinkPreviewEnabled = composerOptions.linkPreviewEnabled,
+                        isDraftMessageEnabled = composerOptions.draftMessagesEnabled,
                         isActiveCommandEnabled = true,
                     ),
                     savedStateHandle = savedStateHandle ?: SavedStateHandle(),

@@ -608,7 +608,7 @@ class ChatsActivity : ComponentActivity() {
     ) = ChannelViewModelFactory(
         context = applicationContext,
         channelId = channelId,
-        composerOptions = ComposerOptions(isLinkPreviewEnabled = customSettings().isComposerLinkPreviewEnabled),
+        composerOptions = ComposerOptions(linkPreviewEnabled = customSettings().isComposerLinkPreviewEnabled),
         messageId = messageId,
         parentMessageId = parentMessageId,
     )

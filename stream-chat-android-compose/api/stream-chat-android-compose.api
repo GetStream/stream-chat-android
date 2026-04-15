@@ -6622,10 +6622,10 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/Composer
 	public final fun copy (IZZ)Lio/getstream/chat/android/compose/viewmodel/messages/ComposerOptions;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/viewmodel/messages/ComposerOptions;IZZILjava/lang/Object;)Lio/getstream/chat/android/compose/viewmodel/messages/ComposerOptions;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDraftMessagesEnabled ()Z
+	public final fun getLinkPreviewEnabled ()Z
 	public final fun getMaxAttachmentCount ()I
 	public fun hashCode ()I
-	public final fun isDraftMessageEnabled ()Z
-	public final fun isLinkPreviewEnabled ()Z
 	public fun toString ()Ljava/lang/String;
 }
 
