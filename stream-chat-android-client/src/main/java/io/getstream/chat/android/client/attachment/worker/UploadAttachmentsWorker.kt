@@ -91,6 +91,7 @@ public class UploadAttachmentsWorker(
 
         return if (!hasPendingAttachment) {
             logger.d { "[sendAttachments] #uploader; message ${message.id} doesn't have pending attachments" }
+            AttachmentsUploadStates.updateMessageAttachments(message)
             Result.Success(Unit)
         } else {
             val attachments = uploadAttachments(message)

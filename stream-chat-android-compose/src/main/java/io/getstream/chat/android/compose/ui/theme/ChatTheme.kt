@@ -137,7 +137,10 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param channelNameFormatter [ChannelNameFormatter] Used throughout the app for channel names.
  * @param messagePreviewFormatter [MessagePreviewFormatter] Used to generate a string preview for the given message.
  * @param searchResultNameFormatter [SearchResultNameFormatter] Used to format names in search results.
- * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances.
+ * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances. If you provide a custom factory
+ * **and** use a custom CDN (via [io.getstream.chat.android.client.ChatClient.Builder]), you must override the
+ * [StreamCoilImageLoaderFactory.imageLoader] overload that accepts interceptors; otherwise those features are silently
+ * ignored. If you don't use a custom CDN, overriding the single-arg method is sufficient.
  * @param messageAlignmentProvider [MessageAlignmentProvider] Used to provide message alignment for the given message.
  * @param streamCdnImageResizing Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,
  * set [StreamCdnImageResizing.imageResizingEnabled] to true if you wish to enable resizing images. Note that resizing
@@ -188,17 +191,9 @@ public fun ChatTheme(
     }
 
     val context = LocalContext.current
-    val previewMode = LocalInspectionMode.current
-    val cdn = remember { if (previewMode) null else ChatClient.instance().cdn }
-    val imageLoader = remember(imageLoaderFactory, cdn) {
-        val interceptors = buildList {
-            cdn?.let { add(CDNImageInterceptor(it)) }
-        }
-        if (interceptors.isEmpty()) {
-            imageLoaderFactory.imageLoader(context.applicationContext)
-        } else {
-            imageLoaderFactory.imageLoader(context.applicationContext, interceptors)
-        }
+    val imageLoader = remember(imageLoaderFactory) {
+        val interceptors = listOf(CDNImageInterceptor())
+        imageLoaderFactory.imageLoader(context.applicationContext, interceptors)
     }
 
     CompositionLocalProvider(
