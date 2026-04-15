@@ -23,21 +23,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.components.attachments.files.FileTypeIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.models.Attachment
@@ -68,12 +68,19 @@ public fun UnsupportedAttachmentContent(
                             padding(MessageStyling.messageSectionPadding)
                                 .background(color, RoundedCornerShape(StreamTokens.radiusLg))
                         }
-                        .padding(StreamTokens.spacingSm),
+                        .padding(
+                            start = StreamTokens.spacingSm,
+                            top = StreamTokens.spacingMd,
+                            end = StreamTokens.spacingMd,
+                            bottom = StreamTokens.spacingMd,
+                        ),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    FileTypeIcon(
-                        data = MimeTypeIconProvider.getIcon(attachment.mimeType),
-                        modifier = Modifier.size(height = 40.dp, width = 35.dp),
+                    Icon(
+                        painter = painterResource(R.drawable.stream_design_ic_unsupported_attachment),
+                        tint = ChatTheme.colors.textPrimary,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
                     )
 
                     Text(
@@ -82,7 +89,7 @@ public fun UnsupportedAttachmentContent(
                         color = MessageStyling.textColor(outgoing = state.isMine),
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(horizontal = StreamTokens.spacingSm),
+                        modifier = Modifier.padding(horizontal = StreamTokens.spacingXs),
                     )
                 }
             }
@@ -99,20 +106,25 @@ private val supportedAttachmentTypes = setOf(
     AttachmentType.AUDIO_RECORDING,
 )
 
+@Composable
+internal fun UnsupportedAttachmentContent(isMine: Boolean) {
+    UnsupportedAttachmentContent(
+        state = AttachmentState(
+            message = Message(
+                attachments = mutableListOf(
+                    Attachment(type = "unknown"),
+                    Attachment(type = "custom_type"),
+                ),
+            ),
+            isMine = isMine,
+        ),
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun OwnUnsupportedAttachmentContentPreview() {
     ChatTheme {
-        UnsupportedAttachmentContent(
-            state = AttachmentState(
-                message = Message(
-                    attachments = mutableListOf(
-                        Attachment(type = "unknown"),
-                        Attachment(type = "custom_type"),
-                    ),
-                ),
-                isMine = true,
-            ),
-        )
+        UnsupportedAttachmentContent(isMine = true)
     }
 }
