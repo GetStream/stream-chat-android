@@ -48,6 +48,46 @@ import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 
 /**
+ * Configuration for the message list behavior.
+ *
+ * @param messageLimit The number of messages to load in a single page.
+ * @param showSystemMessages If we should show system message items in the list.
+ * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
+ * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
+ * @param dateSeparatorHandler Handler that determines when the date separators should be visible.
+ * @param threadDateSeparatorHandler Handler that determines when the thread date separators should be visible.
+ * @param messagePositionHandler Determines the position of the message inside a group.
+ * @param showDateSeparatorInEmptyThread Configures if we show a date separator when threads are empty.
+ * @param showThreadSeparatorInEmptyThread Configures if we show a thread separator when threads are empty.
+ * @param threadLoadOlderToNewer Configures if the thread should load older messages to newer messages.
+ */
+public data class MessageListOptions(
+    val messageLimit: Int = MessageListController.DEFAULT_MESSAGES_LIMIT,
+    val showSystemMessages: Boolean = true,
+    val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.LastInGroup,
+    val enforceUniqueReactions: Boolean = false,
+    val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler(),
+    val threadDateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultThreadDateSeparatorHandler(),
+    val messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler(),
+    val showDateSeparatorInEmptyThread: Boolean = false,
+    val showThreadSeparatorInEmptyThread: Boolean = false,
+    val threadLoadOlderToNewer: Boolean = false,
+)
+
+/**
+ * Configuration for the message composer behavior.
+ *
+ * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
+ * @param linkPreviewEnabled If the link preview is enabled in the composer.
+ * @param draftMessagesEnabled If draft messages are enabled in the composer.
+ */
+public data class ComposerOptions(
+    val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
+    val linkPreviewEnabled: Boolean = false,
+    val draftMessagesEnabled: Boolean = true,
+)
+
+/**
  * Holds all the dependencies needed to build the ViewModels for the Messages Screen.
  * Currently, builds the [MessageComposerViewModel], [MessageListViewModel] and [AttachmentsPickerViewModel].
  *
@@ -62,22 +102,9 @@ import java.io.File
  * @param mediaRecorder The media recorder for async voice messages.
  * @param userLookupHandler Handler used to look up users for mention autocomplete.
  * @param fileToUriConverter Converts a local [File] to a URI string used as an attachment source.
- * @param messageLimit The number of messages to load in a single page.
  * @param clipboardHandler [ClipboardHandler] used to copy messages.
- * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
- * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
- * @param showSystemMessages If we should show system message items in the list.
- * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
- * @param dateSeparatorHandler Handler that determines when the date separators should be visible.
- * @param threadDateSeparatorHandler Handler that determines when the thread date separators should be visible.
- * @param messagePositionHandler Determines the position of the message inside a group.
- * @param showDateSeparatorInEmptyThread Configures if we show a date separator when threads are empty.
- * Adds the separator item when the value is `true`.
- * @param showThreadSeparatorInEmptyThread Configures if we show a thread separator when threads are empty.
- * Adds the separator item when the value is `true`.
- * @param threadLoadOlderToNewer Configures if the thread should load older messages to newer messages.
- * @param isComposerLinkPreviewEnabled If the link preview is enabled in the composer.
- * @param isComposerDraftMessageEnabled If the draft message is enabled in the composer.
+ * @param messageListOptions Configuration for the message list behavior.
+ * @param composerOptions Configuration for the message composer behavior.
  */
 public class ChannelViewModelFactory(
     private val context: Context,
@@ -90,34 +117,23 @@ public class ChannelViewModelFactory(
     private val mediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(context.applicationContext),
     private val userLookupHandler: UserLookupHandler = DefaultUserLookupHandler(chatClient, channelId),
     private val fileToUriConverter: (File) -> String = { file -> file.toUri().toString() },
-    private val messageLimit: Int = MessageListController.DEFAULT_MESSAGES_LIMIT,
     private val clipboardHandler: ClipboardHandler = ClipboardHandlerImpl(
         clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager,
         autoTranslationEnabled = autoTranslationEnabled,
         getCurrentUser = chatClient::getCurrentUser,
     ),
-    private val enforceUniqueReactions: Boolean = false,
-    private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
-    private val showSystemMessages: Boolean = true,
-    private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.LastInGroup,
-    private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler(),
-    private val threadDateSeparatorHandler: DateSeparatorHandler =
-        DateSeparatorHandler.getDefaultThreadDateSeparatorHandler(),
-    private val messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler(),
-    private val showDateSeparatorInEmptyThread: Boolean = false,
-    private val showThreadSeparatorInEmptyThread: Boolean = false,
-    private val threadLoadOlderToNewer: Boolean = false,
-    private val isComposerLinkPreviewEnabled: Boolean = false,
-    private val isComposerDraftMessageEnabled: Boolean = true,
+    private val messageListOptions: MessageListOptions = MessageListOptions(),
+    private val composerOptions: ComposerOptions = ComposerOptions(),
 ) : ViewModelProvider.Factory {
 
     private val channelStateFlow: StateFlow<ChannelState?> by lazy {
         val scope = chatClient.inheritScope { SupervisorJob(it) + DispatcherProvider.Immediate }
         when {
             messageId != null && parentMessageId == null ->
-                chatClient.watchChannelAsState(channelId, messageLimit, messageId, scope)
+                chatClient.watchChannelAsState(channelId, messageListOptions.messageLimit, messageId, scope)
+
             else ->
-                chatClient.watchChannelAsState(channelId, messageLimit, scope)
+                chatClient.watchChannelAsState(channelId, messageListOptions.messageLimit, scope)
         }
     }
 
@@ -162,41 +178,44 @@ public class ChannelViewModelFactory(
                     fileToUri = fileToUriConverter,
                     channelCid = channelId,
                     config = MessageComposerController.Config(
-                        maxAttachmentCount = maxAttachmentCount,
-                        isLinkPreviewEnabled = isComposerLinkPreviewEnabled,
-                        isDraftMessageEnabled = isComposerDraftMessageEnabled,
-                        isActiveCommandEnabled = true,
+                        maxAttachmentCount = composerOptions.maxAttachmentCount,
+                        linkPreviewEnabled = composerOptions.linkPreviewEnabled,
+                        draftMessageEnabled = composerOptions.draftMessagesEnabled,
+                        activeCommandEnabled = true,
                     ),
                     savedStateHandle = savedStateHandle ?: SavedStateHandle(),
                 ),
                 storageHelper = storageHelper,
             )
+
             MessageListViewModel::class.java -> MessageListViewModel(
                 MessageListController(
                     cid = channelId,
                     clipboardHandler = clipboardHandler,
-                    threadLoadOrderOlderToNewer = threadLoadOlderToNewer,
+                    threadLoadOrderOlderToNewer = messageListOptions.threadLoadOlderToNewer,
                     messageId = messageId,
                     parentMessageId = parentMessageId,
-                    messageLimit = messageLimit,
+                    messageLimit = messageListOptions.messageLimit,
                     chatClient = chatClient,
                     clientState = clientState,
                     channelState = channelStateFlow,
-                    enforceUniqueReactions = enforceUniqueReactions,
-                    showSystemMessages = showSystemMessages,
-                    messageFooterVisibility = messageFooterVisibility,
-                    dateSeparatorHandler = dateSeparatorHandler,
-                    threadDateSeparatorHandler = threadDateSeparatorHandler,
-                    messagePositionHandler = messagePositionHandler,
-                    showDateSeparatorInEmptyThread = showDateSeparatorInEmptyThread,
-                    showThreadSeparatorInEmptyThread = showThreadSeparatorInEmptyThread,
+                    enforceUniqueReactions = messageListOptions.enforceUniqueReactions,
+                    showSystemMessages = messageListOptions.showSystemMessages,
+                    messageFooterVisibility = messageListOptions.messageFooterVisibility,
+                    dateSeparatorHandler = messageListOptions.dateSeparatorHandler,
+                    threadDateSeparatorHandler = messageListOptions.threadDateSeparatorHandler,
+                    messagePositionHandler = messageListOptions.messagePositionHandler,
+                    showDateSeparatorInEmptyThread = messageListOptions.showDateSeparatorInEmptyThread,
+                    showThreadSeparatorInEmptyThread = messageListOptions.showThreadSeparatorInEmptyThread,
                 ),
             )
+
             AttachmentsPickerViewModel::class.java -> AttachmentsPickerViewModel(
                 storageHelper = storageHelper,
                 channelState = channelStateFlow,
                 savedStateHandle = savedStateHandle ?: SavedStateHandle(),
             )
+
             else -> throw IllegalArgumentException(
                 "ChannelViewModelFactory can only create instances of " +
                     "${MessageComposerViewModel::class.java.simpleName}, " +

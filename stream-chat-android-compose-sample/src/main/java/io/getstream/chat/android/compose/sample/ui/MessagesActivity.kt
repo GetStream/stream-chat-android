@@ -32,6 +32,7 @@ import io.getstream.chat.android.compose.ui.theme.AttachmentPickerConfig
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ComposerOptions
 import io.getstream.chat.android.models.Channel
 
 class MessagesActivity : ComponentActivity() {
@@ -46,10 +47,12 @@ class MessagesActivity : ComponentActivity() {
         ChannelViewModelFactory(
             context = this,
             channelId = cid,
-            isComposerLinkPreviewEnabled = settings.isComposerLinkPreviewEnabled,
+            composerOptions = ComposerOptions(
+                linkPreviewEnabled = settings.isComposerLinkPreviewEnabled,
+                draftMessagesEnabled = true,
+            ),
             messageId = intent.getStringExtra(KEY_MESSAGE_ID),
             parentMessageId = intent.getStringExtra(KEY_PARENT_MESSAGE_ID),
-            isComposerDraftMessageEnabled = true,
         )
     }
 

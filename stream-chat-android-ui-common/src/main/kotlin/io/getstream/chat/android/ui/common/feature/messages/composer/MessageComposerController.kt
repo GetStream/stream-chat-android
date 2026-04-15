@@ -431,7 +431,7 @@ public class MessageComposerController(
             syncAttachments()
         }.launchIn(scope)
 
-        if (config.isDraftMessageEnabled) {
+        if (config.draftMessageEnabled) {
             channelDraftMessages.onEach {
                 if (it[channelCid] == null &&
                     !currentDraftId.isNullOrEmpty() &&
@@ -506,7 +506,7 @@ public class MessageComposerController(
     }
 
     private suspend fun saveDraftMessage(messageMode: MessageMode) {
-        if (!config.isDraftMessageEnabled) return
+        if (!config.draftMessageEnabled) return
         currentDraftId = null
         when (val messageText = _messageInput.value.text) {
             "" -> clearDraftMessage(messageMode)
@@ -527,7 +527,7 @@ public class MessageComposerController(
     }
 
     private fun fetchDraftMessage(messageMode: MessageMode) {
-        if (!config.isDraftMessageEnabled) return
+        if (!config.draftMessageEnabled) return
         getDraftMessageOrEmpty(messageMode).let { draftMessage ->
             currentDraftId = draftMessage.id
             setMessageInputInternal(draftMessage.text, MessageInput.Source.DraftMessage)
@@ -715,7 +715,7 @@ public class MessageComposerController(
     }
 
     private suspend fun clearDraftMessage(messageMode: MessageMode) {
-        if (!config.isDraftMessageEnabled) return
+        if (!config.draftMessageEnabled) return
         getDraftMessage(messageMode)?.let { draftMessage ->
             chatClient.deleteDraftMessages(
                 channelType = channelType,
@@ -829,7 +829,7 @@ public class MessageComposerController(
         val activeAction = activeAction
 
         val currentUserId = chatClient.getCurrentUser()?.id
-        val fullText = if (config.isActiveCommandEnabled) {
+        val fullText = if (config.activeCommandEnabled) {
             _state.value.activeCommand?.let { "/${it.name} $message" } ?: message
         } else {
             message
@@ -960,7 +960,7 @@ public class MessageComposerController(
     public fun selectCommand(command: Command) {
         _state.update { it.copy(activeCommand = command) }
         setMessageInputInternal(
-            value = if (config.isActiveCommandEnabled) "" else "/${command.name} ",
+            value = if (config.activeCommandEnabled) "" else "/${command.name} ",
             source = MessageInput.Source.CommandSelected,
         )
         _inputFocusEvents.tryEmit(Unit)
@@ -1164,7 +1164,7 @@ public class MessageComposerController(
         val url = LinkPattern.find(messageText)?.value
         logger.v { "[handleLinkPreview] url: $url" }
         val preview = url
-            ?.takeIf { config.isLinkPreviewEnabled && !it.equals(dismissedLinkPreviewUrl, ignoreCase = true) }
+            ?.takeIf { config.linkPreviewEnabled && !it.equals(dismissedLinkPreviewUrl, ignoreCase = true) }
             ?.let { chatClient.enrichPreview(it).await().getOrNull() }
         logger.v { "[handleLinkPreview] preview: ${preview?.originUrl}" }
         _state.update { it.copy(linkPreview = preview) }
@@ -1223,16 +1223,16 @@ public class MessageComposerController(
      * Configuration for the message composer controller.
      *
      * @param maxAttachmentCount The maximum number of attachments allowed in a message.
-     * @param isLinkPreviewEnabled If link previews are enabled.
-     * @param isDraftMessageEnabled If draft messages are enabled.
-     * @param isActiveCommandEnabled If active commands are enabled.
+     * @param linkPreviewEnabled If link previews are enabled.
+     * @param draftMessageEnabled If draft messages are enabled.
+     * @param activeCommandEnabled If active commands are enabled.
      */
     @InternalStreamChatApi
     public data class Config(
         val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
-        val isLinkPreviewEnabled: Boolean = false,
-        val isDraftMessageEnabled: Boolean = true,
-        val isActiveCommandEnabled: Boolean = false,
+        val linkPreviewEnabled: Boolean = false,
+        val draftMessageEnabled: Boolean = true,
+        val activeCommandEnabled: Boolean = false,
     )
 
     private fun getDraftMessageOrEmpty(messageMode: MessageMode): DraftMessage =

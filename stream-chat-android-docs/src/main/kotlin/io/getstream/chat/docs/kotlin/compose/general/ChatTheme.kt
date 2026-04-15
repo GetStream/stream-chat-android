@@ -18,6 +18,7 @@ import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
 import io.getstream.chat.android.compose.ui.util.MessageTextFormatter
 import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.MessageListOptions
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.helper.DateFormatter
@@ -56,7 +57,7 @@ private object ChatThemeUsageSnippet {
                         viewModelFactory = ChannelViewModelFactory(
                             context = this,
                             channelId = "messaging:123",
-                            messageLimit = 30
+                            messageListOptions = MessageListOptions(messageLimit = 30),
                         ),
                         onBackPressed = { finish() },
                         onHeaderTitleClick = {},

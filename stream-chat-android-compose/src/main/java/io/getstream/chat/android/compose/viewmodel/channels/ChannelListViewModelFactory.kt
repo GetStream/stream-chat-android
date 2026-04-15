@@ -40,7 +40,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  * @param messageLimit How many messages are fetched for each channel item when loading channels.
  * When `null`, the server-side default is used.
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
- * @param isDraftMessageEnabled If the draft message feature is enabled.
+ * @param draftMessagesEnabled If the draft message feature is enabled.
  * @param messageSearchSort Optional sorting for message search results. When `null`, the server-side default is used.
  */
 public class ChannelListViewModelFactory(
@@ -51,7 +51,7 @@ public class ChannelListViewModelFactory(
     private val memberLimit: Int? = null,
     private val messageLimit: Int? = null,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
-    private val isDraftMessageEnabled: Boolean = true,
+    private val draftMessagesEnabled: Boolean = true,
     private val messageSearchSort: QuerySorter<Message>? = null,
 ) : ViewModelProvider.Factory {
 
@@ -71,7 +71,7 @@ public class ChannelListViewModelFactory(
             messageLimit = messageLimit,
             memberLimit = memberLimit,
             chatEventHandlerFactory = chatEventHandlerFactory,
-            isDraftMessageEnabled = isDraftMessageEnabled,
+            draftMessagesEnabled = draftMessagesEnabled,
             messageSearchSort = messageSearchSort,
         ) as T
     }

@@ -13,8 +13,9 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.MessageListOptions
+import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 
 /**
  * [ViewModels](https://getstream.io/chat/docs/sdk/android/compose/overview/#viewmodels)
@@ -28,9 +29,11 @@ private object OverviewViewModelsSnippet {
                 context = this,
                 chatClient = ChatClient.instance(),
                 channelId = "messaging:123",
-                enforceUniqueReactions = true,
-                messageLimit = 30,
-                threadLoadOlderToNewer = false,
+                messageListOptions = MessageListOptions(
+                    enforceUniqueReactions = true,
+                    messageLimit = 30,
+                    threadLoadOlderToNewer = false,
+                ),
             )
         }
 
