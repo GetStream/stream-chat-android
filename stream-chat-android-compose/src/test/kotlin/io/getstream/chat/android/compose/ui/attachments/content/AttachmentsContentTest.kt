@@ -97,4 +97,14 @@ internal class AttachmentsContentTest : PaparazziComposeTest {
             AudioRecordAttachmentContentItemUploading()
         }
     }
+
+    @Test
+    fun `unsupported attachment content`() {
+        snapshotWithDarkMode {
+            Column {
+                UnsupportedAttachmentContent(isMine = true)
+                UnsupportedAttachmentContent(isMine = false)
+            }
+        }
+    }
 }
