@@ -48,7 +48,7 @@ internal class CDNImageInterceptorTest {
             override suspend fun imageRequest(url: String) =
                 CDNRequest("https://cdn.example.com/image.jpg")
         }
-        val interceptor = CDNImageInterceptor(cdn)
+        val interceptor = CDNImageInterceptor { cdn }
         val request = ImageRequest.Builder(context)
             .data("https://original.com/image.jpg")
             .build()
@@ -66,7 +66,7 @@ internal class CDNImageInterceptorTest {
             override suspend fun imageRequest(url: String) =
                 CDNRequest(url, mapOf("Authorization" to "Bearer token", "X-Custom" to "value"))
         }
-        val interceptor = CDNImageInterceptor(cdn)
+        val interceptor = CDNImageInterceptor { cdn }
         val request = ImageRequest.Builder(context)
             .data("https://original.com/image.jpg")
             .build()
@@ -85,7 +85,7 @@ internal class CDNImageInterceptorTest {
             override suspend fun imageRequest(url: String) =
                 CDNRequest(url, mapOf("Authorization" to "CDN-token"))
         }
-        val interceptor = CDNImageInterceptor(cdn)
+        val interceptor = CDNImageInterceptor { cdn }
         val existingHeaders = NetworkHeaders.Builder()
             .add("Authorization", "Original-token")
             .add("X-Existing", "keep-me")
@@ -112,7 +112,7 @@ internal class CDNImageInterceptorTest {
                 return CDNRequest("https://should-not-be-used.com")
             }
         }
-        val interceptor = CDNImageInterceptor(cdn)
+        val interceptor = CDNImageInterceptor { cdn }
         val request = ImageRequest.Builder(context)
             .data("content://media/image.jpg")
             .build()
@@ -132,7 +132,7 @@ internal class CDNImageInterceptorTest {
                 throw RuntimeException("CDN unavailable")
             }
         }
-        val interceptor = CDNImageInterceptor(cdn)
+        val interceptor = CDNImageInterceptor { cdn }
         val request = ImageRequest.Builder(context)
             .data("https://original.com/image.jpg")
             .build()
@@ -141,6 +141,19 @@ internal class CDNImageInterceptorTest {
         interceptor.intercept(chain)
 
         assertTrue("Should fall back to direct proceed on CDN error", chain.directProceed)
+    }
+
+    @Test
+    fun `intercept passes through when cdn returns null`() = runTest {
+        val interceptor = CDNImageInterceptor { null }
+        val request = ImageRequest.Builder(context)
+            .data("https://original.com/image.jpg")
+            .build()
+        val chain = FakeCoilChain(request)
+
+        interceptor.intercept(chain)
+
+        assertTrue("Should pass through when CDN is null", chain.directProceed)
     }
 
     @Suppress("EmptyFunctionBlock")

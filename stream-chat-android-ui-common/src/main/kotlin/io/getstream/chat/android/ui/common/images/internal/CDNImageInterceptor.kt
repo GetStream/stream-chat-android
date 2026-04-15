@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.common.images.internal
 import coil3.intercept.Interceptor
 import coil3.network.httpHeaders
 import coil3.request.ImageResult
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.cdn.CDN
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.log.taggedLogger
@@ -34,13 +35,21 @@ import kotlinx.coroutines.withContext
  * them for the same key.
  *
  * Only HTTP/HTTPS URLs are intercepted; local resources, content URIs, etc. pass through unchanged.
+ *
+ * The [CDN] instance is resolved lazily via [cdn] on each request, so the interceptor
+ * is safe to install even before [ChatClient] is initialized (e.g. Compose previews, VRT tests).
+ * When [cdn] returns `null` the request passes through unchanged.
  */
 @InternalStreamChatApi
-public class CDNImageInterceptor(private val cdn: CDN) : Interceptor {
+public class CDNImageInterceptor(
+    private val cdn: () -> CDN? = { if (ChatClient.isInitialized) ChatClient.instance().cdn else null },
+) : Interceptor {
 
     private val logger by taggedLogger("Chat:CDNImageInterceptor")
 
     override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
+        val cdn = cdn() ?: return chain.proceed()
+
         val request = chain.request
         val url = request.data.toString()
 
