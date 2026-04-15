@@ -179,9 +179,9 @@ public class ChannelViewModelFactory(
                     channelCid = channelId,
                     config = MessageComposerController.Config(
                         maxAttachmentCount = composerOptions.maxAttachmentCount,
-                        isLinkPreviewEnabled = composerOptions.linkPreviewEnabled,
-                        isDraftMessageEnabled = composerOptions.draftMessagesEnabled,
-                        isActiveCommandEnabled = true,
+                        linkPreviewEnabled = composerOptions.linkPreviewEnabled,
+                        draftMessageEnabled = composerOptions.draftMessagesEnabled,
+                        activeCommandEnabled = true,
                     ),
                     savedStateHandle = savedStateHandle ?: SavedStateHandle(),
                 ),
