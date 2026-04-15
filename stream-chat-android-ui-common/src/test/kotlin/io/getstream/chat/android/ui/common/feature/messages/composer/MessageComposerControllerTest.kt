@@ -581,7 +581,7 @@ internal class MessageComposerControllerTest {
         // Given
         val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
         val controller = Fixture()
-            .givenConfig(MessageComposerController.Config(isActiveCommandEnabled = false))
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = false))
             .givenAppSettings()
             .givenAudioPlayer(mock())
             .givenClientState(randomUser())
@@ -605,7 +605,7 @@ internal class MessageComposerControllerTest {
         // Given
         val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
         val controller = Fixture()
-            .givenConfig(MessageComposerController.Config(isActiveCommandEnabled = true))
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
             .givenAppSettings()
             .givenAudioPlayer(mock())
             .givenClientState(randomUser())
@@ -655,7 +655,7 @@ internal class MessageComposerControllerTest {
         // Given
         val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
         val controller = Fixture()
-            .givenConfig(MessageComposerController.Config(isActiveCommandEnabled = true))
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
             .givenAppSettings()
             .givenAudioPlayer(mock())
             .givenClientState(randomUser())
@@ -679,7 +679,7 @@ internal class MessageComposerControllerTest {
         // Given
         val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
         val controller = Fixture()
-            .givenConfig(MessageComposerController.Config(isActiveCommandEnabled = true))
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
             .givenAppSettings()
             .givenAudioPlayer(mock())
             .givenClientState(randomUser())
@@ -1283,7 +1283,7 @@ internal class MessageComposerControllerTest {
             doWork = { resolveSignal.await() },
         )
         val fixture = Fixture()
-            .givenConfig(MessageComposerController.Config(isLinkPreviewEnabled = true))
+            .givenConfig(MessageComposerController.Config(linkPreviewEnabled = true))
             .givenAppSettings()
             .givenAudioPlayer(mock())
             .givenClientState(randomUser())
@@ -1348,7 +1348,7 @@ internal class MessageComposerControllerTest {
         val url = "https://example.com"
         val sentMessage = randomMessage(cid = CID, text = url)
         val fixture = Fixture()
-            .givenConfig(MessageComposerController.Config(isLinkPreviewEnabled = true))
+            .givenConfig(MessageComposerController.Config(linkPreviewEnabled = true))
             .givenAppSettings()
             .givenAudioPlayer(mock())
             .givenClientState(randomUser())
@@ -1385,7 +1385,7 @@ internal class MessageComposerControllerTest {
         val newUrl = "https://getstream.io"
         val sentMessage = randomMessage(cid = CID, text = newUrl)
         val fixture = Fixture()
-            .givenConfig(MessageComposerController.Config(isLinkPreviewEnabled = true))
+            .givenConfig(MessageComposerController.Config(linkPreviewEnabled = true))
             .givenAppSettings()
             .givenAudioPlayer(mock())
             .givenClientState(randomUser())
@@ -1422,7 +1422,7 @@ internal class MessageComposerControllerTest {
             val url = "https://example.com"
             val sentMessage = randomMessage(cid = CID, text = "$url hello")
             val fixture = Fixture()
-                .givenConfig(MessageComposerController.Config(isLinkPreviewEnabled = true))
+                .givenConfig(MessageComposerController.Config(linkPreviewEnabled = true))
                 .givenAppSettings()
                 .givenAudioPlayer(mock())
                 .givenClientState(randomUser())

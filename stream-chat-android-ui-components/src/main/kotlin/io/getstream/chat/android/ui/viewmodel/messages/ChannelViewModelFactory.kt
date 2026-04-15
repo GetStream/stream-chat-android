@@ -150,7 +150,7 @@ public class ChannelViewModelFactory @JvmOverloads constructor(
                     channelState = channelStateFlow,
                     config = MessageComposerController.Config(
                         maxAttachmentCount = maxAttachmentCount,
-                        isDraftMessageEnabled = isComposerDraftMessagesEnabled,
+                        draftMessageEnabled = isComposerDraftMessagesEnabled,
                     ),
                     savedStateHandle = savedStateHandle,
                 ),
