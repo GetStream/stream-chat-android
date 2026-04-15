@@ -19,7 +19,7 @@ package io.getstream.chat.android.ui.common.state.messages.composer
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.uiutils.extension.containsLinks
+import io.getstream.chat.android.ui.common.utils.extensions.containsLinks
 
 internal class MessageValidator(
     private val appSettings: AppSettings,

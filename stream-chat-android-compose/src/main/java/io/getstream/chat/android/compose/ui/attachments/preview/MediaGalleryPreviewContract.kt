@@ -20,9 +20,8 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.compose.ui.theme.MediaGalleryConfig
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
-import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 
 /**
@@ -36,7 +35,6 @@ public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig 
 
     /**
      * Creates the intent to start the [MediaGalleryPreviewActivity].
-     * It receives a data pair of a [String] and an [Int] that represent the messageId and the attachmentPosition.
      *
      * @return The [Intent] to start the [MediaGalleryPreviewActivity].
      */
@@ -44,9 +42,7 @@ public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig 
         return MediaGalleryPreviewActivity.getIntent(
             context,
             message = input.message,
-            attachmentPosition = input.initialPosition,
-            downloadAttachmentUriGenerator = input.downloadAttachmentUriGenerator,
-            downloadRequestInterceptor = input.downloadRequestInterceptor,
+            selectedAttachmentUrl = input.selectedAttachmentUrl,
             videoThumbnailsEnabled = input.videoThumbnailsEnabled,
             streamCdnImageResizing = input.streamCdnImageResizing,
             skipEnrichUrl = input.skipEnrichUrl,
@@ -67,9 +63,7 @@ public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig 
      * Defines the input for the [MediaGalleryPreviewContract].
      *
      * @param message The message containing the attachments.
-     * @param initialPosition The initial position of the media gallery, based on the clicked item.
-     * @param downloadAttachmentUriGenerator The URI generator for downloading attachments.
-     * @param downloadRequestInterceptor The request interceptor for downloading attachments.
+     * @param selectedAttachmentUrl The preview URL of the selected attachment to display first.
      * @param videoThumbnailsEnabled Whether video thumbnails will be displayed in previews or not.
      * @param streamCdnImageResizing The CDN image resizing strategy.
      * @param skipEnrichUrl If set to true will skip enriching URLs when you update the message
@@ -77,10 +71,8 @@ public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig 
      */
     public class Input(
         public val message: Message,
-        public val initialPosition: Int = 0,
+        public val selectedAttachmentUrl: String? = null,
         public val videoThumbnailsEnabled: Boolean,
-        public val downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
-        public val downloadRequestInterceptor: DownloadRequestInterceptor,
         public val streamCdnImageResizing: StreamCdnImageResizing,
         public val skipEnrichUrl: Boolean = false,
     )

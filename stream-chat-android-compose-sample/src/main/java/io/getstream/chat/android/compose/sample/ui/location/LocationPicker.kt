@@ -19,8 +19,11 @@ package io.getstream.chat.android.compose.sample.ui.location
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.net.Uri
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -62,15 +65,14 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.sample.ui.component.MapWebView
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModel
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.uiutils.util.openSystemSettings
 import kotlinx.coroutines.tasks.await
 import java.util.Date
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 @Composable
 internal fun LocationPicker(
@@ -220,10 +222,11 @@ private fun LocationContent(
             longitude = location!!.longitude,
         )
     } else if (showLocationPermissionRequired) {
+        val context = LocalContext.current
         LocationPermissionRequired(
             modifier = modifier,
             onClick = {
-                context.openSystemSettings()
+                openSystemSettings(context)
                 onDismiss()
             },
         )
@@ -247,24 +250,24 @@ private fun LocationPermissionRequired(
     ) {
         Text(
             modifier = Modifier.padding(bottom = 8.dp),
-            style = ChatTheme.typography.title3Bold,
+            style = ChatTheme.typography.headingMedium,
             text = title,
             textAlign = TextAlign.Center,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
 
         Text(
-            style = ChatTheme.typography.body,
+            style = ChatTheme.typography.bodyDefault,
             text = message,
             textAlign = TextAlign.Center,
-            color = ChatTheme.colors.textLowEmphasis,
+            color = ChatTheme.colors.textSecondary,
         )
 
         TextButton(
-            colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
+            colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.accentPrimary),
             onClick = onClick,
         ) {
-            Text(stringResource(id = R.string.stream_compose_grant_permission))
+            Text(stringResource(id = UiCommonR.string.stream_ui_message_composer_grant_permission_button))
         }
     }
 }
@@ -287,15 +290,15 @@ private fun LocationButton(
             width = 1.dp,
             color = if (isPrimary) {
                 if (enabled) {
-                    ChatTheme.colors.primaryAccent
+                    ChatTheme.colors.accentPrimary
                 } else {
-                    ChatTheme.colors.disabled
+                    ChatTheme.colors.textDisabled
                 }
             } else {
-                ChatTheme.colors.borders
+                ChatTheme.colors.borderCoreDefault
             },
         ),
-        colors = ButtonDefaults.outlinedButtonColors(contentColor = ChatTheme.colors.textHighEmphasis),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = ChatTheme.colors.textPrimary),
         onClick = onClick,
     ) {
         Row(
@@ -307,9 +310,9 @@ private fun LocationButton(
                 imageVector = icon,
                 contentDescription = null,
                 tint = if (enabled) {
-                    ChatTheme.colors.primaryAccent
+                    ChatTheme.colors.accentPrimary
                 } else {
-                    ChatTheme.colors.disabled
+                    ChatTheme.colors.textDisabled
                 },
             )
             Column(
@@ -317,12 +320,12 @@ private fun LocationButton(
             ) {
                 Text(
                     text = label,
-                    style = ChatTheme.typography.title3Bold,
+                    style = ChatTheme.typography.headingMedium,
                 )
                 Text(
                     text = description,
-                    style = ChatTheme.typography.footnote,
-                    color = ChatTheme.colors.textLowEmphasis,
+                    style = ChatTheme.typography.metadataDefault,
+                    color = ChatTheme.colors.textSecondary,
                 )
             }
         }
@@ -351,6 +354,15 @@ private suspend fun Context.isLocationEnabled(priority: Int): Boolean {
     } catch (e: Exception) {
         false
     }
+}
+
+private fun openSystemSettings(context: Context) {
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+        val uri: Uri = Uri.fromParts("package", context.packageName, null)
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        data = uri
+    }
+    context.startActivity(intent)
 }
 
 @Preview(showBackground = true)

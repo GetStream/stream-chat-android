@@ -17,9 +17,9 @@
 package io.getstream.chat.android.ui.common.feature.channel.header
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.watchChannelAsState
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 
-// The XML SDK has its own ViewModel for the MessageListHeaderView.
+// The XML SDK has its own ViewModel for the ChannelHeaderView.
 // This class can be later shared after a refactor of the XML SDK.
 /**
  * Controller responsible for managing the state of the channel header.

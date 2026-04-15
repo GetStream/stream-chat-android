@@ -21,8 +21,6 @@ import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isEphemeral
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.MessageModerationAction
-import io.getstream.chat.android.models.ModerationAction
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 
@@ -38,18 +36,3 @@ public fun Message.isMine(currentUser: User?): Boolean = currentUser?.id == user
 @InternalStreamChatApi
 public fun Message.shouldShowMessageStatusIndicator(): Boolean =
     !isEphemeral() && !isDeleted() && syncStatus != SyncStatus.FAILED_PERMANENTLY
-
-/**
- * @return if the message failed at moderation or not.
- */
-@Deprecated(
-    message = "Use the one from stream-chat-android-client",
-    replaceWith = ReplaceWith(
-        expression = "isModerationFailed(currentUserId)",
-        imports = ["io.getstream.chat.android.client.utils.message.isModerationError"],
-    ),
-    level = DeprecationLevel.WARNING,
-)
-public fun Message.isModerationFailed(currentUser: User?): Boolean = isMine(currentUser) &&
-    type == Message.TYPE_ERROR &&
-    (moderationDetails?.action == MessageModerationAction.bounce || moderation?.action == ModerationAction.bounce)

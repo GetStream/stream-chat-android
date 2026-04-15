@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.persistance.repository.ReactionRepositor
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
 import io.getstream.chat.android.client.persistance.repository.ThreadsRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -31,6 +32,7 @@ import io.getstream.chat.android.models.User
 /**
  * Factory that creates all repositories of SDK.
  */
+@InternalStreamChatApi
 public interface RepositoryFactory {
 
     /**
@@ -96,6 +98,7 @@ public interface RepositoryFactory {
     /**
      * Interface to delegate creation of [RepositoryFactory].
      */
+    @InternalStreamChatApi
     public interface Provider {
 
         /**

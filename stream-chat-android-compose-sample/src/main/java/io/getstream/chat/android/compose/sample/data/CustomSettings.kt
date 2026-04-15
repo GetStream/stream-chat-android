@@ -18,6 +18,9 @@ package io.getstream.chat.android.compose.sample.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 /**
  * A class that encapsulates custom settings for the app.
@@ -28,13 +31,25 @@ class CustomSettings(private val context: Context) {
         context.getSharedPreferences("custom_settings", Context.MODE_PRIVATE)
     }
 
-    var isAdaptiveLayoutEnabled: Boolean
-        get() = prefs.getBoolean(SETTINGS_KEY_ADAPTIVE_LAYOUT, false)
-        set(value) = prefs.edit().putBoolean(SETTINGS_KEY_ADAPTIVE_LAYOUT, value).apply()
+    var isAdaptiveLayoutEnabled: Boolean by booleanPref(AdaptiveLayout)
 
-    companion object {
-        private const val SETTINGS_KEY_ADAPTIVE_LAYOUT = "adaptive_layout"
-    }
+    var isComposerLinkPreviewEnabled: Boolean by booleanPref(ComposerLinkPreview)
+    var isComposerFloatingStyleEnabled: Boolean by booleanPref(ComposerFloatingStyle)
+    var isSystemAttachmentPickerEnabled: Boolean by booleanPref(SystemAttachmentPicker)
+
+    private fun booleanPref(key: String, default: Boolean = false) =
+        object : ReadWriteProperty<Any?, Boolean> {
+            override fun getValue(thisRef: Any?, property: KProperty<*>) =
+                prefs.getBoolean(key, default)
+
+            override fun setValue(thisRef: Any?, property: KProperty<*>, value: Boolean) =
+                prefs.edit { putBoolean(key, value) }
+        }
 }
+
+private const val AdaptiveLayout = "adaptive_layout"
+private const val ComposerLinkPreview = "composer_link_preview"
+private const val ComposerFloatingStyle = "composer_floating_style"
+private const val SystemAttachmentPicker = "system_attachment_picker"
 
 fun Context.customSettings(): CustomSettings = CustomSettings(this)

@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.setMessageForReply
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.models.Attachment
@@ -33,12 +34,10 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.state.extensions.setMessageForReply
 import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.feature.messages.list.MessagePositionHandler
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
@@ -60,7 +59,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import io.getstream.chat.android.state.utils.Event as EventWrapper
+import io.getstream.chat.android.client.api.state.Event as EventWrapper
 
 /**
  * View model class for [MessageListView].
@@ -109,12 +108,6 @@ public class MessageListViewModel(
      */
     public val messageFooterVisibilityState: LiveData<MessageFooterVisibility> = messageListController
         .messageFooterVisibilityState.asLiveData()
-
-    /**
-     * Regulates the visibility of deleted messages.
-     */
-    public val deletedMessageVisibility: LiveData<DeletedMessageVisibility> =
-        messageListController.deletedMessageVisibilityState.asLiveData()
 
     /**
      * Represents the current state of the message list that is a product of multiple sources.
@@ -474,16 +467,6 @@ public class MessageListViewModel(
      */
     private fun onNormalModeEntered() {
         messageListController.enterNormalMode()
-    }
-
-    /**
-     * Sets the value used to filter deleted messages.
-     * @see DeletedMessageVisibility
-     *
-     * @param deletedMessageVisibility Determines the visibility of deleted messages.
-     */
-    public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
-        messageListController.setDeletedMessageVisibility(deletedMessageVisibility)
     }
 
     /**

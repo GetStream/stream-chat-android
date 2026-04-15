@@ -46,12 +46,12 @@ import io.getstream.chat.android.ui.utils.extensions.getDimensionOrNull
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 import io.getstream.chat.android.ui.utils.extensions.getEnum
 import io.getstream.chat.android.ui.utils.extensions.use
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Style for [MessageComposerView].
  *
  * @param backgroundColor The background color of the message composer.
- * @param buttonIconDrawableTintColor The tint applied to attachments, commands and send buttons.
  * @param dividerBackgroundDrawable The background of the divider at the top.
  * @param commandSuggestionsTitleText The text for the title at the top of the command suggestions dialog.
  * @param commandSuggestionsTitleTextStyle The text style for the title at the top of the command suggestions dialog.
@@ -100,12 +100,15 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @param audioRecordingButtonEnabled If the button to record audio is enabled.
  * @param audioRecordingButtonPreferred If the button to record audio is displayed over send button while input is
  * empty.
+ * @param audioRecordingSendOnComplete If `true`, finishing a recording (mic release or complete action) sends the
+ * message immediately. If `false`, the recording is attached for manual send.
  * @param audioRecordingButtonIconDrawable The icon for the button to record audio.
  * @param audioRecordingButtonIconTintList The tint list for the button to record audio.
  * @param audioRecordingButtonWidth The width of the button to record audio.
  * @param audioRecordingButtonHeight The height of the button to record audio.
  * @param audioRecordingButtonPadding The padding of the button to record audio.
- * @param audioRecordingHoldToRecordText The info text that will be shown if touch event on audio button was too short.
+ * @param audioRecordingHoldToRecordText Optional override for the info text shown on a short touch of the audio button.
+ * When `null`, the text is resolved from string resources based on [audioRecordingSendOnComplete].
  * @param audioRecordingHoldToRecordTextStyle The text style that will be used for the "hold to record" text.
  * @param audioRecordingHoldToRecordBackgroundDrawable The drawable will be used as a background for the "hold to
  * record" text.
@@ -174,18 +177,6 @@ import io.getstream.chat.android.ui.utils.extensions.use
  */
 public data class MessageComposerViewStyle(
     @ColorInt public val backgroundColor: Int,
-    @Deprecated(
-        message = "Use the " +
-            "commandSuggestionsTitleIconDrawableTintColor" +
-            "/mentionSuggestionItemIconDrawableTintColor " +
-            "/attachmentsButtonIconTintList " +
-            "/commandsButtonIconTintList " +
-            "/sendMessageButtonIconTintList " +
-            "property instead.",
-        replaceWith = ReplaceWith("proper button tint property"),
-        level = DeprecationLevel.WARNING,
-    )
-    @ColorInt public val buttonIconDrawableTintColor: Int?,
     public val dividerBackgroundDrawable: Drawable,
     // Command suggestions content
     public val commandSuggestionsTitleText: String,
@@ -225,7 +216,7 @@ public data class MessageComposerViewStyle(
     public val messageInputVideoAttachmentIconDrawablePaddingStart: Int,
     public val messageInputVideoAttachmentIconDrawablePaddingEnd: Int,
     // Center overlap content
-    public val audioRecordingHoldToRecordText: String,
+    public val audioRecordingHoldToRecordText: String?,
     public val audioRecordingHoldToRecordTextStyle: TextStyle,
     public val audioRecordingHoldToRecordBackgroundDrawable: Drawable,
     @ColorInt public val audioRecordingHoldToRecordBackgroundDrawableTint: Int?,
@@ -272,6 +263,7 @@ public data class MessageComposerViewStyle(
     public val audioRecordingButtonVisible: Boolean,
     public val audioRecordingButtonEnabled: Boolean,
     public val audioRecordingButtonPreferred: Boolean,
+    public val audioRecordingSendOnComplete: Boolean,
     public val audioRecordingButtonIconDrawable: Drawable,
     public val audioRecordingButtonIconTintList: ColorStateList?,
     @Px public val audioRecordingButtonWidth: Int,
@@ -327,10 +319,6 @@ public data class MessageComposerViewStyle(
                 context.obtainStyledAttributes(attrs, intArrayOf(android.R.attr.background)).use {
                     backgroundColor = it.getColor(0, context.getColorCompat(R.color.stream_ui_white))
                 }
-
-                val buttonIconDrawableTintColor = a.getColorOrNull(
-                    R.styleable.MessageComposerView_streamUiMessageComposerIconDrawableTintColor,
-                )
 
                 val dividerBackgroundDrawable = a.getDrawable(
                     R.styleable.MessageComposerView_streamUiMessageComposerDividerBackgroundDrawable,
@@ -547,7 +535,7 @@ public data class MessageComposerViewStyle(
                  */
                 val audioRecordingHoldToRecordText = a.getString(
                     R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordText,
-                ) ?: context.getString(R.string.stream_ui_message_composer_hold_to_record)
+                )
                 val audioRecordingHoldToRecordTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordTextSize,
@@ -778,10 +766,14 @@ public data class MessageComposerViewStyle(
                 )
                 val audioRecordingButtonVisible = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonVisible,
-                    false,
+                    true,
                 )
                 val audioRecordingButtonPreferred = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonPreferred,
+                    false,
+                )
+                val audioRecordingSendOnComplete = a.getBoolean(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSendOnComplete,
                     false,
                 )
                 val audioRecordingButtonIconDrawable = a.getDrawableCompat(
@@ -897,7 +889,7 @@ public data class MessageComposerViewStyle(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePadding,
                     )?.toInt()
 
-                val mediumTypeface = ResourcesCompat.getFont(context, R.font.stream_roboto_medium) ?: Typeface.DEFAULT
+                val mediumTypeface = ResourcesCompat.getFont(context, UiCommonR.font.stream_roboto_medium) ?: Typeface.DEFAULT
 
                 val messageReplyShowUserAvatar = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyShowUserAvatar,
@@ -989,7 +981,6 @@ public data class MessageComposerViewStyle(
 
                 return MessageComposerViewStyle(
                     backgroundColor = backgroundColor,
-                    buttonIconDrawableTintColor = buttonIconDrawableTintColor,
                     dividerBackgroundDrawable = dividerBackgroundDrawable,
                     // Command suggestions content
                     commandSuggestionsTitleText = commandSuggestionsTitleText,
@@ -1080,6 +1071,7 @@ public data class MessageComposerViewStyle(
                     audioRecordingButtonEnabled = audioRecordingButtonEnabled,
                     audioRecordingButtonVisible = audioRecordingButtonVisible,
                     audioRecordingButtonPreferred = audioRecordingButtonPreferred,
+                    audioRecordingSendOnComplete = audioRecordingSendOnComplete,
                     audioRecordingButtonIconDrawable = audioRecordingButtonIconDrawable,
                     audioRecordingButtonIconTintList = audioRecordingButtonIconTintList,
                     audioRecordingButtonWidth = audioRecordingButtonWidth,
@@ -1438,7 +1430,7 @@ public data class MessageComposerViewStyle(
 
             val useDefaultSystemMediaPicker = a.getBoolean(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerSystemPickerEnabled,
-                false,
+                true,
             )
             val systemMediaPickerVisualMediaAllowMultiple = a.getBoolean(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerSystemPickerVisualMediaAllowMultiple,

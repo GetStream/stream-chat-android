@@ -25,10 +25,12 @@ import io.getstream.chat.android.models.Thread
  * @param isLoading Indicator if the threads are loading.
  * @param isLoadingMore Indicator if there is loading of the next page of threads in progress.
  * @param unseenThreadsCount The number of threads that we know that exist, but are not (yet) loaded in the list.
+ * @param loadingError Indicates that the last initial or refresh load failed. Not set for pagination failures.
  */
 public data class ThreadListState(
     val threads: List<Thread>,
     val isLoading: Boolean,
     val isLoadingMore: Boolean,
     val unseenThreadsCount: Int,
+    val loadingError: Boolean = false,
 )

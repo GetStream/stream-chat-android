@@ -119,7 +119,7 @@ public open class DefaultMessageComposerCommandSuggestionsContent :
         binding.commandsTitleTextView.setTextStyle(style.commandSuggestionsTitleTextStyle)
         binding.commandsTitleTextView.setStartDrawable(
             style.commandSuggestionsTitleIconDrawable.applyTint(
-                tintColor = style.commandSuggestionsTitleIconDrawableTintColor ?: style.buttonIconDrawableTintColor,
+                tintColor = style.commandSuggestionsTitleIconDrawableTintColor,
             ),
         )
     }
@@ -217,8 +217,8 @@ private class CommandViewHolder(
 
     private val Command.imageRes: Int
         @DrawableRes get() = when (name) {
-            CommandDefaults.MUTE -> UiCommonR.drawable.stream_ic_command_mute
-            CommandDefaults.UNMUTE -> UiCommonR.drawable.stream_ic_command_unmute
+            CommandDefaults.MUTE -> UiCommonR.drawable.stream_design_ic_mute
+            CommandDefaults.UNMUTE -> R.drawable.stream_ui_ic_command_unmute
             // fallback to the 'giphy' icon for backwards compatibility
             else -> R.drawable.stream_ui_ic_giphy
         }

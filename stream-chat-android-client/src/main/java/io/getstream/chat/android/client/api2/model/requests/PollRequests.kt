@@ -38,7 +38,7 @@ internal data class CreatePollRequest(
     val allow_user_suggested_options: Boolean,
     val description: String,
     val enforce_unique_vote: Boolean,
-    val max_votes_allowed: Int,
+    val max_votes_allowed: Int?,
     val name: String,
     val options: List<UpstreamOptionDto>,
     val voting_visibility: String,

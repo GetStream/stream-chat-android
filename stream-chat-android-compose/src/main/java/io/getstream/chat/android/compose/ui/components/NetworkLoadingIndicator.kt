@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -45,20 +44,18 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun NetworkLoadingIndicator(
     modifier: Modifier = Modifier,
     spinnerSize: Dp = 18.dp,
-    textStyle: TextStyle = ChatTheme.typography.title3Bold,
-    textColor: Color = ChatTheme.colors.textHighEmphasis,
+    textStyle: TextStyle = ChatTheme.typography.headingMedium,
+    textColor: Color = ChatTheme.colors.textPrimary,
 ) {
     Row(
         modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {
-        CircularProgressIndicator(
+        LoadingIndicator(
             modifier = Modifier
                 .padding(horizontal = 8.dp)
                 .size(spinnerSize),
-            strokeWidth = 2.dp,
-            color = ChatTheme.colors.primaryAccent,
         )
 
         Text(

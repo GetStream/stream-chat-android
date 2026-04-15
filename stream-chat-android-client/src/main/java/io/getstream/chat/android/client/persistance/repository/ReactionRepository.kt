@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.persistance.repository
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SyncStatus
 import java.util.Date
@@ -23,6 +24,7 @@ import java.util.Date
 /**
  * Repository to read and write reactions.
  */
+@InternalStreamChatApi
 public interface ReactionRepository {
 
     /**

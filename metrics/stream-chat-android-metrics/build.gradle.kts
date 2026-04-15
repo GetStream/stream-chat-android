@@ -20,12 +20,6 @@ android {
         create("stream-chat-android-client-stream") {
             dimension = "sdk"
         }
-        create("stream-chat-android-offline-baseline") {
-            dimension = "sdk"
-        }
-        create("stream-chat-android-offline-stream") {
-            dimension = "sdk"
-        }
         create("stream-chat-android-compose-baseline") {
             dimension = "sdk"
         }
@@ -51,6 +45,7 @@ afterEvaluate {
             plugins.apply(composePlugin.pluginId)
             android.buildFeatures.compose = true
             val configurationName = "${flavorName}Implementation"
+            dependencies.add(configurationName, dependencies.platform(libs.androidx.compose.bom))
             dependencies.add(configurationName, libs.androidx.compose.ui)
             dependencies.add(configurationName, libs.androidx.compose.ui.tooling)
             dependencies.add(configurationName, libs.androidx.compose.foundation)
@@ -67,8 +62,6 @@ dependencies {
     implementation(libs.androidx.appcompat)
 
     "stream-chat-android-client-streamImplementation"(project(":stream-chat-android-client"))
-
-    "stream-chat-android-offline-streamImplementation"(project(":stream-chat-android-offline"))
 
     "stream-chat-android-ui-components-streamImplementation"(project(":stream-chat-android-ui-components"))
 

@@ -30,7 +30,6 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.helper.DateFormatter
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageStatusIndicator
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
@@ -62,8 +61,6 @@ private const val NO_READS = 0
  * @property dateFormatter [DateFormatter]. Formats the dates in the messages.
  * @property isDirectMessage Checks if the message is direct of not.
  * @property listViewStyle [MessageListViewStyle] The style of the MessageListView and its items.
- * @property deletedMessageVisibilityHandler [DeletedMessageVisibility] Used to hide or show the the deleted
- * message accordingly to the logic provided.
  * @property getLanguageDisplayName [String] Returns the language display name for the given language code.
  */
 @Suppress("TooManyFunctions")
@@ -72,7 +69,6 @@ internal class FootnoteDecorator(
     private val isDirectMessage: () -> Boolean,
     private val isThreadEnabled: () -> Boolean,
     private val listViewStyle: MessageListViewStyle,
-    private val deletedMessageVisibilityHandler: () -> DeletedMessageVisibility,
     private val getLanguageDisplayName: (code: String) -> String,
 ) : BaseDecorator() {
 
@@ -318,12 +314,6 @@ internal class FootnoteDecorator(
                 textView.setTextStyle(style.textStyleUserName)
             }
 
-            data.isBottomPosition() &&
-                data.message.isDeleted() && !data.message.deletedForMe &&
-                deletedMessageVisibilityHandler() == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
-                showOnlyVisibleToYou(textView, style)
-            }
-
             data.isBottomPosition() && data.message.isEphemeral() -> {
                 showOnlyVisibleToYou(textView, style)
             }
@@ -351,7 +341,11 @@ internal class FootnoteDecorator(
 
     private fun setupMessageFooterTime(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
         val createdAt = data.message.getCreatedAtOrNull()
-        val editedAt = data.message.messageTextUpdatedAt.truncateFuture()?.let(dateFormatter::formatRelativeTime)
+        val editedAt = if (!data.message.isDeleted()) {
+            data.message.messageTextUpdatedAt.truncateFuture()?.let(dateFormatter::formatRelativeTime)
+        } else {
+            null
+        }
 
         when {
             createdAt == null || !data.showMessageFooter -> footnoteView.hideTimeLabel()

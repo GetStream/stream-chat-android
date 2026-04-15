@@ -51,12 +51,12 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
-    api(project(":stream-chat-android-state"))
-    implementation(project(":stream-chat-android-ui-utils"))
+    api(project(":stream-chat-android-client"))
 
     implementation(libs.stream.log)
     implementation(libs.stream.push.permissions.snackbar)
     implementation(libs.stream.result)
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.runtime)
 
     implementation(libs.androidx.activity.ktx)
@@ -81,6 +81,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
 
+    testImplementation(libs.json)
     testImplementation(libs.threetenbp)
     testImplementation(libs.androidx.core.testing)
     testImplementation(libs.androidx.test.junit)

@@ -27,27 +27,17 @@ class DeletedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(deletedAt = Date()),
-                positions = listOf(MessagePosition.TOP),
+                position = MessagePosition.TOP,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
                 message = Message(deletedAt = Date()),
-                positions = listOf(MessagePosition.MIDDLE),
+                position = MessagePosition.MIDDLE,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
                 message = Message(deletedAt = Date()),
-                positions = listOf(MessagePosition.BOTTOM),
-                isMine = true,
-            ),
-            MessageListItem.MessageItem(
-                message = Message(deletedAt = Date()),
-                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
-                isMine = false,
-            ),
-            MessageListItem.MessageItem(
-                message = Message(deletedAt = Date()),
-                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
+                position = MessagePosition.BOTTOM,
                 isMine = true,
             ),
         )

@@ -14,172 +14,596 @@
  * limitations under the License.
  */
 
+@file:Suppress("TooManyFunctions")
+
 package io.getstream.chat.android.compose.ui.components.composer
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
-import io.getstream.chat.android.compose.ui.theme.StreamColors
-import io.getstream.chat.android.compose.ui.theme.StreamTypography
-import io.getstream.chat.android.compose.ui.util.buildAnnotatedInputText
+import io.getstream.chat.android.compose.ui.theme.ComposerConfig
+import io.getstream.chat.android.compose.ui.theme.LocalChatUiConfig
+import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentsParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerEditIndicatorParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerInputBottomContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerInputCenterContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerInputLeadingContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerInputTrailingContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerLinkPreviewParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerQuotedMessageParams
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
-import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
+import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.LinkPreview
+import io.getstream.chat.android.previewdata.PreviewAttachmentData
+import io.getstream.chat.android.previewdata.PreviewCommandData
+import io.getstream.chat.android.previewdata.PreviewLinkData
+import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.state.messages.Edit
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 
 /**
  * Input field for the Messages/Conversation screen. Allows label customization, as well as handlers
  * when the input changes.
  *
  * @param messageComposerState The state of the input.
+ * @param modifier Modifier for styling.
  * @param onValueChange Handler when the value changes.
  * @param onAttachmentRemoved Handler when the user removes a selected attachment.
- * @param modifier Modifier for styling.
- * @param maxLines The number of lines that are allowed in the input.
- * @param keyboardOptions The [KeyboardOptions] to be applied to the input.
- * @param label Composable that represents the label UI, when there's no input.
- * @param innerLeadingContent Composable that represents the persistent inner leading content.
- * @param innerTrailingContent Composable that represents the persistent inner trailing content.
+ * @param onCancelAction Handler when the cancel action is clicked.
+ * @param onLinkPreviewClick Handler when a link preview is clicked.
+ * @param onCancelLinkPreviewClick Handler when the cancel link preview button is clicked.
+ * @param onSendClick Handler when the send button is clicked.
+ * @param onAlsoSendToChannelChange Handler when the "Also send to channel" checkbox is changed.
+ * @param recordingActions The [AudioRecordingActions] to be applied to the input.
+ * @param onActiveCommandDismiss Called when the user taps the dismiss button on the command chip.
  */
+@Suppress("LongMethod")
 @Composable
 public fun MessageInput(
     messageComposerState: MessageComposerState,
-    onValueChange: (String) -> Unit,
-    onAttachmentRemoved: (Attachment) -> Unit,
     modifier: Modifier = Modifier,
-    maxLines: Int = DefaultMessageInputMaxLines,
-    keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-    label: @Composable (MessageComposerState) -> Unit = {
-        ChatTheme.componentFactory.MessageComposerLabel(state = it)
-    },
-    innerLeadingContent: @Composable RowScope.() -> Unit = {},
-    innerTrailingContent: @Composable RowScope.() -> Unit = {},
+    onValueChange: (String) -> Unit = {},
+    onAttachmentRemoved: (Attachment) -> Unit = {},
+    onCancelAction: () -> Unit = {},
+    onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
+    onCancelLinkPreviewClick: (() -> Unit)? = null,
+    onSendClick: (String, List<Attachment>) -> Unit = { _, _ -> },
+    onAlsoSendToChannelChange: (Boolean) -> Unit = {},
+    recordingActions: AudioRecordingActions = AudioRecordingActions.None,
+    onActiveCommandDismiss: () -> Unit = {},
 ) {
-    val (value, attachments, activeAction) = messageComposerState
-    val canSendMessage = messageComposerState.canSendMessage()
+    Column(
+        modifier = modifier
+            .border(
+                width = 1.dp,
+                color = ChatTheme.colors.borderCoreDefault,
+                shape = MessageInputShape,
+            )
+            .then(
+                if (ChatTheme.config.composer.floatingStyleEnabled) {
+                    Modifier.shadow(6.dp, shape = MessageInputShape)
+                } else {
+                    Modifier
+                },
+            )
+            .background(
+                color = ChatTheme.colors.backgroundCoreElevation1,
+                shape = MessageInputShape,
+            )
+            .minimumInteractiveComponentSize()
+            .animateContentSize(alignment = Alignment.BottomStart),
+        verticalArrangement = Arrangement.Bottom,
+    ) {
+        MessageInputTop(
+            messageComposerState = messageComposerState,
+            onAttachmentRemoved = onAttachmentRemoved,
+            onLinkPreviewClick = onLinkPreviewClick,
+            onCancelActionClick = onCancelAction,
+            onCancelLinkPreviewClick = onCancelLinkPreviewClick,
+        )
 
-    val visualTransformation = MessageInputVisualTransformation(
-        inputFieldTheme = ChatTheme.messageComposerTheme.inputField,
-        typography = ChatTheme.typography,
-        colors = ChatTheme.colors,
-        mentions = messageComposerState.selectedMentions,
-    )
-
-    InputField(
-        modifier = modifier,
-        value = value,
-        maxLines = maxLines,
-        onValueChange = onValueChange,
-        enabled = canSendMessage,
-        innerPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-        keyboardOptions = keyboardOptions,
-        visualTransformation = visualTransformation,
-        decorationBox = { innerTextField ->
-            Column {
-                if (activeAction is Reply) {
-                    ChatTheme.componentFactory.MessageComposerQuotedMessage(
-                        modifier = Modifier.padding(horizontal = 4.dp),
-                        state = messageComposerState,
-                        quotedMessage = activeAction.message,
-                    )
-
-                    Spacer(modifier = Modifier.size(16.dp))
-                }
-
-                if (attachments.isNotEmpty() && activeAction !is Edit) {
-                    val previewFactory = ChatTheme.attachmentFactories.firstOrNull { it.canHandle(attachments) }
-
-                    previewFactory?.previewContent?.invoke(
-                        Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight(),
-                        attachments,
-                        onAttachmentRemoved,
-                    )
-
-                    Spacer(modifier = Modifier.size(16.dp))
-                }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    innerLeadingContent()
-
-                    Box(modifier = Modifier.weight(1f)) {
-                        innerTextField()
-
-                        if (value.isEmpty()) {
-                            label(messageComposerState)
-                        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .minimumInteractiveComponentSize(),
+            verticalAlignment = Alignment.Bottom,
+        ) {
+            val isRecording = messageComposerState.recording !is RecordingState.Idle
+            if (!isRecording) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.Bottom) {
+                        ChatTheme.componentFactory.MessageComposerInputLeadingContent(
+                            params = MessageComposerInputLeadingContentParams(
+                                state = messageComposerState,
+                                onActiveCommandDismiss = onActiveCommandDismiss,
+                            ),
+                        )
+                        ChatTheme.componentFactory.MessageComposerInputCenterContent(
+                            params = MessageComposerInputCenterContentParams(
+                                modifier = Modifier.weight(1f),
+                                state = messageComposerState,
+                                onValueChange = onValueChange,
+                            ),
+                        )
                     }
-
-                    innerTrailingContent()
+                    ChatTheme.componentFactory.MessageComposerInputBottomContent(
+                        params = MessageComposerInputBottomContentParams(
+                            state = messageComposerState,
+                            onAlsoSendToChannelChange = onAlsoSendToChannelChange,
+                        ),
+                    )
                 }
+            } else {
+                Spacer(Modifier.weight(1f))
             }
-        },
-    )
-}
 
-/**
- * Visual transformation applied to the message input field.
- * Applies text styling, link styling, and mention styling to the input text.
- *
- * @param inputFieldTheme The theme for the input field.
- * @param typography The typography styles to be used.
- * @param colors The color palette to be used.
- * @param mentions The set of mentions to be styled in the input text.
- */
-private class MessageInputVisualTransformation(
-    val inputFieldTheme: ComposerInputFieldTheme,
-    val typography: StreamTypography,
-    val colors: StreamColors,
-    val mentions: Set<Mention>,
-) : VisualTransformation {
-    override fun filter(text: AnnotatedString): TransformedText {
-        val textColor = inputFieldTheme.textStyle.color
-        val fontStyle = typography.body.fontStyle
-        val linkStyle = TextStyle(
-            color = colors.primaryAccent,
-            textDecoration = TextDecoration.Underline,
-        )
-        val transformed = buildAnnotatedInputText(
-            text = text.text,
-            textColor = textColor,
-            textFontStyle = fontStyle,
-            linkStyle = linkStyle,
-            mentions = mentions,
-            mentionStyleFactory = inputFieldTheme.mentionStyleFactory,
-        )
-        return TransformedText(transformed, OffsetMapping.Identity)
+            ChatTheme.componentFactory.MessageComposerInputTrailingContent(
+                params = MessageComposerInputTrailingContentParams(
+                    state = messageComposerState,
+                    recordingActions = recordingActions,
+                    onSendClick = onSendClick,
+                ),
+            )
+        }
     }
 }
 
-/**
- * The default number of lines allowed in the input. The message input will become scrollable after
- * this threshold is exceeded.
- */
-private const val DefaultMessageInputMaxLines = 6
+private val MessageInputShape = RoundedCornerShape(StreamTokens.radius3xl)
+
+@Composable
+private fun MessageInputTop(
+    messageComposerState: MessageComposerState,
+    onAttachmentRemoved: (Attachment) -> Unit,
+    onCancelActionClick: () -> Unit,
+    onLinkPreviewClick: ((LinkPreview) -> Unit)?,
+    onCancelLinkPreviewClick: (() -> Unit)?,
+) {
+    val activeAction = messageComposerState.action
+    val attachments = messageComposerState.attachments
+    val linkPreview = messageComposerState.linkPreview
+    val showQuoted = activeAction is Reply
+    val showEdit = activeAction is Edit
+    val showAttachments = attachments.isNotEmpty()
+    val showLinkPreview = ChatTheme.config.composer.linkPreviewEnabled && linkPreview != null
+    val isVisible = showQuoted || showEdit || showAttachments || showLinkPreview
+
+    if (isVisible) {
+        Column(
+            modifier = Modifier.padding(
+                top = StreamTokens.spacingSm,
+                bottom = StreamTokens.spacing2xs,
+            ),
+            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+        ) {
+            if (showEdit) {
+                ChatTheme.componentFactory.MessageComposerEditIndicator(
+                    params = MessageComposerEditIndicatorParams(
+                        state = messageComposerState,
+                        editMessage = activeAction.message,
+                        onCancelClick = onCancelActionClick,
+                    ),
+                )
+            }
+
+            if (showQuoted) {
+                ChatTheme.componentFactory.MessageComposerQuotedMessage(
+                    params = MessageComposerQuotedMessageParams(
+                        state = messageComposerState,
+                        quotedMessage = activeAction.message,
+                        onCancelClick = onCancelActionClick,
+                    ),
+                )
+            }
+
+            if (showAttachments) {
+                ChatTheme.componentFactory.MessageComposerAttachments(
+                    params = MessageComposerAttachmentsParams(
+                        modifier = Modifier.fillMaxWidth(),
+                        attachments = attachments,
+                        onAttachmentRemoved = onAttachmentRemoved,
+                    ),
+                )
+            }
+
+            if (showLinkPreview) {
+                ChatTheme.componentFactory.MessageComposerLinkPreview(
+                    params = MessageComposerLinkPreviewParams(
+                        linkPreview = linkPreview,
+                        onContentClick = onLinkPreviewClick,
+                        onCancelClick = onCancelLinkPreviewClick,
+                    ),
+                )
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputPlaceholderPreview() {
+    ChatTheme {
+        MessageComposerInputPlaceholder()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputPlaceholder() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState,
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputFilledPreview() {
+    ChatTheme {
+        MessageComposerInputFilled()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputFilled() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            inputValue = "Hello word",
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputOverflowPreview() {
+    ChatTheme {
+        MessageComposerInputOverflow()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputOverflow() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            inputValue = "I’ve been thinking about our plan for the next few weeks, " +
+                "and I wanted to check in with you about it. There are a few things I’d like to get aligned on, " +
+                "especially how we want to divide the work and what the priorities should be. " +
+                "I feel like we’ve made good progress so far, " +
+                "but there are still a couple of details that keep popping up, " +
+                "and it would be nice to sort them out before they turn into bigger issues. " +
+                "Let me know when you have a moment so we can go through everything together",
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputSlowModePreview() {
+    ChatTheme {
+        MessageComposerInputSlowMode()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputSlowMode() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            inputValue = "Slow mode, wait 9s",
+            coolDownTime = 9,
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputThreadModePreview() {
+    ChatTheme {
+        MessageComposerInputThreadMode()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputThreadMode() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            messageMode = MessageMode.MessageThread(
+                parentMessage = PreviewMessageData.message1,
+            ),
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputThreadModeAlsoSendToChannelPreview() {
+    ChatTheme {
+        MessageComposerInputThreadModeAlsoSendToChannel()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputThreadModeAlsoSendToChannel() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            messageMode = MessageMode.MessageThread(
+                parentMessage = PreviewMessageData.message1,
+            ),
+            inputValue = "Great, thanks! \uD83D\uDE4C Let me also share it in the channel",
+            alsoSendToChannel = true,
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputActiveCommandPlaceholderPreview() {
+    ChatTheme {
+        MessageComposerInputActiveCommandPlaceholder()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputActiveCommandPlaceholder() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            activeCommand = PreviewCommandData.command1,
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputActiveCommandPlaceholderInThreadModePreview() {
+    ChatTheme {
+        MessageComposerInputActiveCommandPlaceholderInThreadMode()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputActiveCommandPlaceholderInThreadMode() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            messageMode = MessageMode.MessageThread(
+                parentMessage = PreviewMessageData.message1,
+            ),
+            activeCommand = PreviewCommandData.command1,
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputActiveCommandFilledPreview() {
+    ChatTheme {
+        MessageComposerInputActiveCommandFilled()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputActiveCommandFilled() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            activeCommand = PreviewCommandData.command1,
+            inputValue = "The Office",
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputActiveCommandFilledInThreadModePreview() {
+    ChatTheme {
+        MessageComposerInputActiveCommandFilledInThreadMode()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputActiveCommandFilledInThreadMode() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            messageMode = MessageMode.MessageThread(
+                parentMessage = PreviewMessageData.message1,
+            ),
+            activeCommand = PreviewCommandData.command1,
+            inputValue = "The Office",
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputAttachmentsPreview() {
+    ChatTheme {
+        MessageComposerInputAttachments()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputAttachments() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            attachments = listOf(
+                PreviewAttachmentData.attachmentImage1,
+                PreviewAttachmentData.attachmentImage2,
+                PreviewAttachmentData.attachmentImage3,
+                PreviewAttachmentData.attachmentVideo1,
+                PreviewAttachmentData.attachmentVideo2,
+            ),
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputLinkPreview() {
+    ChatTheme {
+        MessageComposerInputLink()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputLink() {
+    val config = ChatTheme.config.copy(composer = ComposerConfig(linkPreviewEnabled = true))
+    CompositionLocalProvider(LocalChatUiConfig provides config) {
+        MessageInput(
+            messageComposerState = PreviewMessageComposerState.copy(
+                inputValue = PreviewLinkData.link1.originUrl,
+                linkPreview = PreviewLinkData.link1,
+            ),
+            onCancelLinkPreviewClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputReplyPreview() {
+    ChatTheme {
+        MessageComposerInputReply()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputReply() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            action = Reply(PreviewMessageData.message1),
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputEditPreview() {
+    ChatTheme {
+        MessageComposerInputEdit()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputEdit() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            inputValue = "I think this could work",
+            action = Edit(PreviewMessageData.message1),
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputEditEmptyPreview() {
+    ChatTheme {
+        MessageComposerInputEditEmpty()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputEditEmpty() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            action = Edit(PreviewMessageData.message1),
+        ),
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputAttachmentsAndLinkPreview() {
+    ChatTheme {
+        MessageComposerInputAttachmentsAndLink()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputAttachmentsAndLink() {
+    val config = ChatTheme.config.copy(composer = ComposerConfig(linkPreviewEnabled = true))
+    CompositionLocalProvider(LocalChatUiConfig provides config) {
+        MessageInput(
+            messageComposerState = PreviewMessageComposerState.copy(
+                inputValue = PreviewLinkData.link1.originUrl,
+                attachments = listOf(
+                    PreviewAttachmentData.attachmentImage1,
+                    PreviewAttachmentData.attachmentVideo1,
+                ),
+                linkPreview = PreviewLinkData.link1,
+            ),
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputReplyAttachmentsAndLinkPreview() {
+    ChatTheme {
+        MessageComposerInputReplyAttachmentsAndLink()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputReplyAttachmentsAndLink() {
+    val config = ChatTheme.config.copy(composer = ComposerConfig(linkPreviewEnabled = true))
+    CompositionLocalProvider(LocalChatUiConfig provides config) {
+        MessageInput(
+            messageComposerState = PreviewMessageComposerState.copy(
+                action = Reply(PreviewMessageData.message1),
+                inputValue = PreviewLinkData.link1.originUrl,
+                attachments = listOf(
+                    PreviewAttachmentData.attachmentImage1,
+                    PreviewAttachmentData.attachmentVideo1,
+                ),
+                linkPreview = PreviewLinkData.link1,
+            ),
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputEditAttachmentsAndLinkPreview() {
+    ChatTheme {
+        MessageComposerInputEditAttachmentsAndLink()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputEditAttachmentsAndLink() {
+    val config = ChatTheme.config.copy(composer = ComposerConfig(linkPreviewEnabled = true))
+    CompositionLocalProvider(LocalChatUiConfig provides config) {
+        MessageInput(
+            messageComposerState = PreviewMessageComposerState.copy(
+                action = Edit(PreviewMessageData.message1),
+                inputValue = PreviewLinkData.link1.originUrl,
+                attachments = listOf(
+                    PreviewAttachmentData.attachmentImage1,
+                    PreviewAttachmentData.attachmentVideo1,
+                ),
+                linkPreview = PreviewLinkData.link1,
+            ),
+        )
+    }
+}
+
+private val PreviewMessageComposerState = MessageComposerState(
+    ownCapabilities = ChannelCapabilities.toSet(),
+    hasCommands = true,
+)

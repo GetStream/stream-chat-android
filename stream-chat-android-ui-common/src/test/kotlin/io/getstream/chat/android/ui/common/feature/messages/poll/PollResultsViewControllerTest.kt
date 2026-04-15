@@ -33,26 +33,6 @@ import java.util.Date
 internal class PollResultsViewControllerTest {
 
     @Test
-    fun `when initialized, should sort options by vote count descending`() = runTest {
-        val option1 = Option(id = "opt1", text = "Option 1")
-        val option2 = Option(id = "opt2", text = "Option 2")
-        val option3 = Option(id = "opt3", text = "Option 3")
-        val poll = randomPoll(
-            options = listOf(option1, option2, option3),
-            voteCountsByOption = mapOf("opt1" to 5, "opt2" to 10, "opt3" to 3),
-        )
-        val sut = PollResultsViewController(poll)
-
-        sut.state.test {
-            val state = awaitItem()
-
-            assertEquals("opt2", state.results[0].option.id) // Highest vote count
-            assertEquals("opt1", state.results[1].option.id)
-            assertEquals("opt3", state.results[2].option.id) // Lowest vote count
-        }
-    }
-
-    @Test
     fun `when initialized, should mark option with highest vote count as winner`() = runTest {
         val option1 = Option(id = "opt1", text = "Option 1")
         val option2 = Option(id = "opt2", text = "Option 2")
@@ -66,8 +46,8 @@ internal class PollResultsViewControllerTest {
         sut.state.test {
             val state = awaitItem()
 
-            assertTrue(state.results[0].isWinner) // option2 has highest vote count
-            assertFalse(state.results[1].isWinner)
+            assertTrue(state.results[1].isWinner) // option2 has the highest vote count
+            assertFalse(state.results[0].isWinner)
             assertFalse(state.results[2].isWinner)
         }
     }
@@ -217,8 +197,8 @@ internal class PollResultsViewControllerTest {
         sut.state.test {
             val state = awaitItem()
 
-            assertEquals(7, state.results[0].voteCount) // option2
-            assertEquals(3, state.results[1].voteCount) // option1
+            assertEquals(3, state.results[0].voteCount) // option1
+            assertEquals(7, state.results[1].voteCount) // option2
             assertEquals(1, state.results[2].voteCount) // option3
         }
     }

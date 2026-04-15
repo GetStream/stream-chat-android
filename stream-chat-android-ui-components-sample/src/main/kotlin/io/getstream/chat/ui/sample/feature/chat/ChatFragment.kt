@@ -29,25 +29,24 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.EventObserver
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.state.utils.EventObserver
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
-import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserQueryFilter
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.RemoteUserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.DefaultUserQueryFilter
 import io.getstream.chat.android.ui.common.feature.messages.composer.transliteration.DefaultStreamTransliterator
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.list.DeleteMessage
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.EditMessage
 import io.getstream.chat.android.ui.common.state.messages.list.SendAnyway
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelHeaderViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
@@ -85,9 +84,9 @@ class ChatFragment : Fragment() {
         )
     }
 
-    private val factory: MessageListViewModelFactory by lazy {
+    private val factory: ChannelViewModelFactory by lazy {
         val chatClient = ChatClient.instance()
-        MessageListViewModelFactory(
+        ChannelViewModelFactory(
             context = requireContext().applicationContext,
             cid = args.cid,
             messageId = args.messageId,
@@ -97,7 +96,7 @@ class ChatFragment : Fragment() {
         )
     }
     private val chatViewModelFactory: ChatViewModelFactory by lazy { ChatViewModelFactory(cid = args.cid) }
-    private val headerViewModel: MessageListHeaderViewModel by viewModels { factory }
+    private val headerViewModel: ChannelHeaderViewModel by viewModels { factory }
     private val messageListViewModel: MessageListViewModel by viewModels { factory }
     private val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
     private val chatViewModel: ChatViewModel by viewModels { chatViewModelFactory }
@@ -228,19 +227,16 @@ class ChatFragment : Fragment() {
 
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                messageComposerViewModel.messageMode.collect { messageMode ->
+                messageComposerViewModel.messageComposerState.collect { composerState ->
+                    val messageMode = composerState.messageMode
                     when (messageMode) {
                         is MessageMode.Normal -> { /* no-op */ }
                         is MessageMode.MessageThread -> { /* no-op */ }
                     }
                     val modeText = messageMode.javaClass.simpleName
                     logger.d { "[onMessageModeChange] messageMode: $modeText" }
-                }
-            }
-        }
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                messageComposerViewModel.lastActiveAction.collect { messageAction ->
+
+                    val messageAction = composerState.action
                     when (messageAction) {
                         is Edit -> { /* no-op */ }
                         is Reply -> { /* no-op */ }
@@ -256,9 +252,6 @@ class ChatFragment : Fragment() {
     private fun initMessageListViewModel() {
         val calendar = Calendar.getInstance()
         messageListViewModel.apply {
-            messageListViewModel.setDeletedMessageVisibility(
-                deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER,
-            )
             bindView(binding.messageListView, viewLifecycleOwner)
             setDateSeparatorHandler { previousMessage, message ->
                 if (previousMessage == null) {

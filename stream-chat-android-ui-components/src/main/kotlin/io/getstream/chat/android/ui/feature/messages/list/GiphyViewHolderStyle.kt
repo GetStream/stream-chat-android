@@ -31,6 +31,7 @@ import io.getstream.chat.android.ui.helper.ViewStyle
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Style for [GiphyViewHolder].
@@ -60,8 +61,10 @@ public data class GiphyViewHolderStyle(
 
     internal companion object {
         operator fun invoke(context: Context, attributes: TypedArray): GiphyViewHolderStyle {
-            val boldTypeface = ResourcesCompat.getFont(context, R.font.stream_roboto_bold) ?: Typeface.DEFAULT_BOLD
-            val mediumTypeface = ResourcesCompat.getFont(context, R.font.stream_roboto_medium) ?: Typeface.DEFAULT
+            val boldTypeface =
+                ResourcesCompat.getFont(context, UiCommonR.font.stream_roboto_bold) ?: Typeface.DEFAULT_BOLD
+            val mediumTypeface =
+                ResourcesCompat.getFont(context, UiCommonR.font.stream_roboto_medium) ?: Typeface.DEFAULT
 
             val cardBackgroundColor = attributes.getColor(
                 R.styleable.MessageListView_streamUiGiphyCardBackgroundColor,

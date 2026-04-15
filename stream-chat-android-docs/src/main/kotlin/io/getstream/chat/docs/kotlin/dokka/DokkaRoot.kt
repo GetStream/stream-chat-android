@@ -4,10 +4,8 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
-import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.models.User
 import io.getstream.result.Result
-import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 
 /**
  * [DokkaRoot](https://getstream.github.io/stream-chat-android/)
@@ -40,15 +38,6 @@ class DokkaRoot {
                 }
             }
         }
-    }
-
-    fun offlinePlugin(applicationContext: Context, apiKey: String) {
-        val offlinePluginFactory = StreamOfflinePluginFactory(appContext = applicationContext)
-
-        val client = ChatClient.Builder(apiKey, applicationContext)
-            .withPlugins(offlinePluginFactory)
-            .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
-            .build()
     }
 
     fun logLevel(applicationContext: Context, apiKey: String) {

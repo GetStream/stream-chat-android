@@ -23,8 +23,8 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.uiutils.extension.getMembersStatusText
-import io.getstream.chat.android.uiutils.extension.getPreviewMessage
+import io.getstream.chat.android.ui.common.utils.extensions.getMembersStatusText
+import io.getstream.chat.android.ui.common.utils.extensions.getPreviewMessage
 
 internal fun Channel.isCurrentUserBanned(): Boolean {
     val currentUserId = ChatClient.instance().clientState.user.value?.id ?: return false
@@ -49,8 +49,8 @@ public fun Channel.getMembersStatusText(
         userOnlineResId = R.string.stream_ui_user_status_online,
         userLastSeenJustNowResId = R.string.stream_ui_user_status_last_seen_just_now,
         userLastSeenResId = R.string.stream_ui_user_status_last_seen,
-        memberCountResId = R.plurals.stream_ui_message_list_header_member_count,
-        memberCountWithOnlineResId = R.string.stream_ui_message_list_header_member_count_online,
+        memberCountResId = R.plurals.stream_ui_channel_header_member_count,
+        memberCountWithOnlineResId = R.string.stream_ui_channel_header_member_count_online,
     )
 }
 

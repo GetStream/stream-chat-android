@@ -18,46 +18,69 @@
 
 package io.getstream.chat.android.compose.ui.channels.list
 
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.client.extensions.currentUserUnreadCount
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.TypingIndicator
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
+import io.getstream.chat.android.compose.ui.theme.ChannelItemCenterContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelItemDraftPreviewParams
+import io.getstream.chat.android.compose.ui.theme.ChannelItemLeadingContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelItemMessagePreviewParams
+import io.getstream.chat.android.compose.ui.theme.ChannelItemReadStatusIndicatorParams
+import io.getstream.chat.android.compose.ui.theme.ChannelItemTrailingContentParams
+import io.getstream.chat.android.compose.ui.theme.ChannelItemUnreadCountIndicatorParams
+import io.getstream.chat.android.compose.ui.theme.ChannelListConfig
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
+import io.getstream.chat.android.compose.ui.theme.MuteIndicatorPosition
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.getLastMessage
+import io.getstream.chat.android.compose.ui.util.getLastMessageIncludingDeleted
+import io.getstream.chat.android.compose.ui.util.isOneToOne
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
@@ -80,7 +103,6 @@ import java.util.Date
  * @param trailingContent Customizable composable function that represents the trailing content of the a channel item,
  * usually information about the last message and the number of unread messages.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun ChannelItem(
     channelItem: ItemState.ChannelItemState,
@@ -91,24 +113,30 @@ public fun ChannelItem(
     leadingContent: @Composable RowScope.(ItemState.ChannelItemState) -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelItemLeadingContent(
-                channelItem = channelItem,
-                currentUser = currentUser,
+                params = ChannelItemLeadingContentParams(
+                    channelItem = channelItem,
+                    currentUser = currentUser,
+                ),
             )
         }
     },
     centerContent: @Composable RowScope.(ItemState.ChannelItemState) -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelItemCenterContent(
-                channelItem = channelItem,
-                currentUser = currentUser,
+                params = ChannelItemCenterContentParams(
+                    channelItem = channelItem,
+                    currentUser = currentUser,
+                ),
             )
         }
     },
     trailingContent: @Composable RowScope.(ItemState.ChannelItemState) -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelItemTrailingContent(
-                channelItem = channelItem,
-                currentUser = currentUser,
+                params = ChannelItemTrailingContentParams(
+                    channelItem = channelItem,
+                    currentUser = currentUser,
+                ),
             )
         }
     },
@@ -116,17 +144,25 @@ public fun ChannelItem(
     val channel = channelItem.channel
     val description = stringResource(id = R.string.stream_compose_cd_channel_item)
 
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val shape = RoundedCornerShape(StreamTokens.radiusLg)
+
     Column(
         modifier = modifier
             .testTag("Stream_ChannelItem")
             .fillMaxWidth()
             .wrapContentHeight()
             .semantics { contentDescription = description }
+            .applyIf(isFocused) { border(2.dp, ChatTheme.colors.borderUtilityFocused, shape) }
+            .clip(shape)
+            .applyIf(channelItem.isSelected) { background(ChatTheme.colors.backgroundUtilitySelected, shape) }
             .combinedClickable(
                 onClick = { onChannelClick(channel) },
                 onLongClick = { onChannelLongClick(channel) },
                 indication = ripple(),
-                interactionSource = remember { MutableInteractionSource() },
+                interactionSource = interactionSource,
             ),
     ) {
         Row(
@@ -154,17 +190,18 @@ internal fun DefaultChannelItemLeadingContent(
     currentUser: User?,
 ) {
     ChatTheme.componentFactory.ChannelAvatar(
-        modifier = Modifier
-            .padding(
-                start = ChatTheme.dimens.channelItemHorizontalPadding,
-                end = 4.dp,
-                top = ChatTheme.dimens.channelItemVerticalPadding,
-                bottom = ChatTheme.dimens.channelItemVerticalPadding,
-            )
-            .size(ChatTheme.dimens.channelAvatarSize),
-        channel = channelItem.channel,
-        currentUser = currentUser,
-        onClick = null,
+        params = ChannelAvatarParams(
+            modifier = Modifier
+                .padding(
+                    start = StreamTokens.spacingMd,
+                    end = StreamTokens.spacingMd,
+                    top = StreamTokens.spacingMd,
+                    bottom = StreamTokens.spacingMd,
+                )
+                .size(AvatarSize.ExtraLarge),
+            channel = channelItem.channel,
+            currentUser = currentUser,
+        ),
     )
 }
 
@@ -180,66 +217,181 @@ internal fun RowScope.DefaultChannelItemCenterContent(
     channelItemState: ItemState.ChannelItemState,
     currentUser: User?,
 ) {
+    val channel = channelItemState.channel
+    // Use raw last message (including deleted) for preview; fall back to filtered for non-deleted
+    val rawLastMessage = channel.getLastMessageIncludingDeleted(currentUser)
+    val isLastMessageDeleted = rawLastMessage?.isDeleted() == true
+    val lastMessage = if (isLastMessageDeleted) rawLastMessage else channel.getLastMessage(currentUser)
+    val unreadCount = channel.currentUserUnreadCount(currentUserId = currentUser?.id)
+
     Column(
         modifier = Modifier
-            .padding(start = 4.dp, end = 4.dp)
             .weight(1f)
-            .wrapContentHeight(),
-        verticalArrangement = Arrangement.Center,
+            .padding(vertical = StreamTokens.spacing3xs),
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
     ) {
-        val channelName: (@Composable (modifier: Modifier) -> Unit) = @Composable {
+        TitleRow(
+            channelItemState = channelItemState,
+            currentUser = currentUser,
+            lastMessage = lastMessage,
+            unreadCount = unreadCount,
+        )
+
+        MessageRow(
+            channelItemState = channelItemState,
+            currentUser = currentUser,
+            lastMessage = lastMessage,
+            isLastMessageDeleted = isLastMessageDeleted,
+        )
+    }
+}
+
+@Composable
+private fun TitleRow(
+    channelItemState: ItemState.ChannelItemState,
+    currentUser: User?,
+    lastMessage: Message?,
+    unreadCount: Int,
+) {
+    val channel = channelItemState.channel
+    val isMuted = channelItemState.isMuted
+    val mutePosition = ChatTheme.config.channelList.muteIndicatorPosition
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+    ) {
+        Row(
+            modifier = Modifier.weight(1f),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+        ) {
             Text(
-                modifier = it.testTag("Stream_ChannelName"),
-                text = ChatTheme.channelNameFormatter.formatChannelName(channelItemState.channel, currentUser),
-                style = ChatTheme.typography.bodyBold,
-                fontSize = 16.sp,
+                modifier = Modifier
+                    .testTag("Stream_ChannelName")
+                    .weight(1f, fill = false),
+                text = ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser),
+                style = ChatTheme.typography.headingSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
-        }
 
-        if (channelItemState.isMuted) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                channelName(Modifier.weight(weight = 1f, fill = false))
-
+            if (isMuted && mutePosition == MuteIndicatorPosition.InlineTitle) {
                 Icon(
                     modifier = Modifier
                         .testTag("Stream_ChannelMutedIcon")
-                        .padding(start = 8.dp)
                         .size(16.dp),
-                    painter = painterResource(id = R.drawable.stream_compose_ic_muted),
+                    painter = painterResource(id = R.drawable.stream_design_ic_mute),
                     contentDescription = null,
-                    tint = ChatTheme.colors.textLowEmphasis,
+                    tint = ChatTheme.colors.textTertiary,
                 )
             }
-        } else {
-            channelName(Modifier)
         }
 
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+        ) {
+            if (lastMessage != null) {
+                Timestamp(
+                    date = lastMessage.getCreatedAtOrNull(),
+                    textStyle = ChatTheme.typography.captionDefault.copy(
+                        color = ChatTheme.colors.textTertiary,
+                    ),
+                )
+            }
+
+            if (unreadCount > 0) {
+                ChatTheme.componentFactory.ChannelItemUnreadCountIndicator(
+                    params = ChannelItemUnreadCountIndicatorParams(
+                        unreadCount = unreadCount,
+                    ),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun MessageRow(
+    channelItemState: ItemState.ChannelItemState,
+    currentUser: User?,
+    lastMessage: Message?,
+    isLastMessageDeleted: Boolean,
+) {
+    val channel = channelItemState.channel
+    val isDirectMessaging = channel.isOneToOne(currentUser)
+    val isLastMessageFromCurrentUser = lastMessage?.user?.id == currentUser?.id
+    val mutePosition = ChatTheme.config.channelList.muteIndicatorPosition
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+    ) {
         if (channelItemState.typingUsers.isNotEmpty()) {
-            UserTypingIndicator(channelItemState.typingUsers)
+            UserTypingIndicator(channelItemState.typingUsers, isDirectMessaging)
         } else {
-            val lastMessageText =
-                channelItemState.draftMessage
-                    ?.let { ChatTheme.messagePreviewFormatter.formatDraftMessagePreview(it) }
-                    ?: channelItemState.channel.getLastMessage(currentUser)?.let { lastMessage ->
-                        ChatTheme.messagePreviewFormatter.formatMessagePreview(lastMessage, currentUser)
-                    }
-                    ?: AnnotatedString("")
-
-            if (lastMessageText.isNotEmpty()) {
-                Text(
-                    modifier = Modifier.testTag("Stream_MessagePreview"),
-                    text = lastMessageText,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = ChatTheme.typography.body,
-                    color = ChatTheme.colors.textLowEmphasis,
-                    inlineContent = ChatTheme.messagePreviewIconFactory.createPreviewIcons(),
+            if (isLastMessageFromCurrentUser && lastMessage != null && !isLastMessageDeleted) {
+                ChatTheme.componentFactory.ChannelItemReadStatusIndicator(
+                    params = ChannelItemReadStatusIndicatorParams(
+                        channel = channel,
+                        message = lastMessage,
+                        currentUser = currentUser,
+                    ),
                 )
             }
+            MessageContent(channelItemState, currentUser, lastMessage, isDirectMessaging)
         }
+
+        if (channelItemState.isMuted && mutePosition == MuteIndicatorPosition.TrailingBottom) {
+            Icon(
+                modifier = Modifier
+                    .testTag("Stream_ChannelMutedIcon")
+                    .size(16.dp),
+                painter = painterResource(id = R.drawable.stream_design_ic_mute),
+                contentDescription = null,
+                tint = ChatTheme.colors.textTertiary,
+            )
+        }
+    }
+}
+
+@Composable
+private fun RowScope.MessageContent(
+    channelItemState: ItemState.ChannelItemState,
+    currentUser: User?,
+    lastMessage: Message?,
+    isDirectMessaging: Boolean,
+) {
+    val draftMessage = channelItemState.draftMessage
+    when {
+        draftMessage != null -> ChatTheme.componentFactory.ChannelItemDraftPreview(
+            params = ChannelItemDraftPreviewParams(
+                draftMessage = draftMessage,
+                modifier = Modifier.weight(1f),
+            ),
+        )
+
+        lastMessage != null -> ChatTheme.componentFactory.ChannelItemMessagePreview(
+            params = ChannelItemMessagePreviewParams(
+                message = lastMessage,
+                currentUser = currentUser,
+                isDirectMessaging = isDirectMessaging,
+                modifier = Modifier.weight(1f),
+            ),
+        )
+
+        else -> Text(
+            modifier = Modifier
+                .testTag("Stream_MessagePreview")
+                .weight(1f),
+            text = stringResource(R.string.stream_compose_no_messages_yet),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = ChatTheme.typography.captionDefault,
+            color = ChatTheme.colors.textSecondary,
+        )
     }
 }
 
@@ -249,25 +401,35 @@ internal fun RowScope.DefaultChannelItemCenterContent(
  * @param users The list of users currently typing.
  */
 @Composable
-private fun UserTypingIndicator(users: List<User>) {
+private fun UserTypingIndicator(users: List<User>, isDirectMessaging: Boolean) {
+    val resources = LocalResources.current
+    val typingText = when {
+        isDirectMessaging -> stringResource(R.string.stream_compose_channel_list_typing)
+        users.size == 1 -> stringResource(R.string.stream_compose_channel_list_typing_one, users.first().name)
+        users.size == 2 -> stringResource(
+            R.string.stream_compose_channel_list_typing_two,
+            users[0].name,
+            users[1].name,
+        )
+        else -> resources.getQuantityString(
+            R.plurals.stream_compose_channel_list_typing_many,
+            users.size,
+            users.size,
+        )
+    }
     Row(
         modifier = Modifier,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs), // 4dp (was 6dp)
         verticalAlignment = Alignment.CenterVertically,
     ) {
         TypingIndicator()
         Text(
             modifier = Modifier.testTag("Stream_ChannelListTypingIndicator"),
-            text = LocalContext.current.resources.getQuantityString(
-                R.plurals.stream_compose_message_list_header_typing_users,
-                users.size,
-                users.first().name,
-                users.size - 1,
-            ),
+            text = typingText,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = ChatTheme.typography.body,
-            color = ChatTheme.colors.textLowEmphasis,
+            style = ChatTheme.typography.captionDefault,
+            color = ChatTheme.colors.textSecondary,
         )
     }
 }
@@ -285,50 +447,9 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
     channel: Channel,
     currentUser: User?,
 ) {
-    val lastMessage = channel.getLastMessage(currentUser)
-
-    if (lastMessage != null) {
-        Column(
-            modifier = Modifier
-                .padding(
-                    start = 4.dp,
-                    end = ChatTheme.dimens.channelItemHorizontalPadding,
-                    top = ChatTheme.dimens.channelItemVerticalPadding,
-                    bottom = ChatTheme.dimens.channelItemVerticalPadding,
-                )
-                .wrapContentHeight()
-                .align(Alignment.Bottom),
-            horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            val unreadCount = channel.currentUserUnreadCount(currentUserId = currentUser?.id)
-
-            if (unreadCount > 0) {
-                ChatTheme.componentFactory.ChannelItemUnreadCountIndicator(
-                    unreadCount = unreadCount,
-                    modifier = Modifier,
-                )
-            }
-
-            val isLastMessageFromCurrentUser = lastMessage.user.id == currentUser?.id
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                if (isLastMessageFromCurrentUser) {
-                    ChatTheme.componentFactory.ChannelItemReadStatusIndicator(
-                        channel = channel,
-                        message = lastMessage,
-                        currentUser = currentUser,
-                        modifier = Modifier,
-                    )
-                }
-
-                Timestamp(date = lastMessage.getCreatedAtOrNull())
-            }
-        }
-    }
+    // Timestamp, badge, and delivery status have moved to DefaultChannelItemCenterContent.
+    // This slot remains for API compatibility and provides the trailing end padding.
+    Spacer(modifier = Modifier.width(StreamTokens.spacingMd))
 }
 
 @Preview(showBackground = true)
@@ -357,6 +478,27 @@ private fun ChannelItemMutedPreview() {
 
 @Composable
 internal fun ChannelItemMuted() {
+    ChannelItem(
+        currentUser = PreviewUserData.user1,
+        channel = PreviewChannelData.channelWithMessages,
+        isMuted = true,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChannelItemMutedTrailingBottomPreview() {
+    ChatTheme(
+        config = ChatUiConfig(
+            channelList = ChannelListConfig(muteIndicatorPosition = MuteIndicatorPosition.TrailingBottom),
+        ),
+    ) {
+        ChannelItemMutedTrailingBottom()
+    }
+}
+
+@Composable
+internal fun ChannelItemMutedTrailingBottom() {
     ChannelItem(
         currentUser = PreviewUserData.user1,
         channel = PreviewChannelData.channelWithMessages,
@@ -492,15 +634,34 @@ private fun ChannelItem(
     channel: Channel,
     isMuted: Boolean = false,
     draftMessage: DraftMessage? = null,
+    isSelected: Boolean = false,
 ) {
     ChannelItem(
         channelItem = ItemState.ChannelItemState(
             channel = channel,
             isMuted = isMuted,
             draftMessage = draftMessage,
+            isSelected = isSelected,
         ),
         currentUser = currentUser,
         onChannelClick = {},
         onChannelLongClick = {},
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChannelItemSelectedPreview() {
+    ChatTheme {
+        ChannelItemSelected()
+    }
+}
+
+@Composable
+internal fun ChannelItemSelected() {
+    ChannelItem(
+        currentUser = PreviewUserData.user1,
+        channel = PreviewChannelData.channelWithMessages,
+        isSelected = true,
     )
 }

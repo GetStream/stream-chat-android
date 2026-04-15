@@ -18,39 +18,43 @@ package io.getstream.chat.android.compose.viewmodel.messages
 
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
-import io.getstream.chat.android.models.LinkPreview
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.MessageInput
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
-import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
 import io.getstream.result.Result
 import io.getstream.result.call.Call
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
  * ViewModel responsible for handling the composing and sending of messages.
  *
- * It relays all its core actions to a shared data source, as a central place for all the Composer logic.
- * Additionally, all the core data that can be reused across our SDKs is available through shared data sources, while
- * implementation-specific data is stored in respective in the [ViewModel].
+ * Delegates all state management and business logic to [MessageComposerController],
+ * including persistence of picker selections and edit-mode state across process death.
  *
  * @param messageComposerController The controller used to relay all the actions and fetch all the state.
+ * @param storageHelper Resolves deferred attachment files before sending.
  */
 public class MessageComposerViewModel(
     private val messageComposerController: MessageComposerController,
+    private val storageHelper: AttachmentStorageHelper,
 ) : ViewModel() {
+
+    /**
+     * Emits each time the message input field should request focus (e.g. after a command is selected).
+     */
+    public val inputFocusEvents: SharedFlow<Unit> = messageComposerController.inputFocusEvents
 
     /**
      * The full UI state that has all the required data.
@@ -60,62 +64,7 @@ public class MessageComposerViewModel(
     /**
      * UI state of the current composer input.
      */
-    public val input: MutableStateFlow<String> = messageComposerController.input
-
-    /**
-     * If the message will be shown in the channel after it is sent.
-     */
-    public val alsoSendToChannel: MutableStateFlow<Boolean> = messageComposerController.alsoSendToChannel
-
-    /**
-     * Represents the remaining time until the user is allowed to send the next message.
-     */
-    public val cooldownTimer: MutableStateFlow<Int> = messageComposerController.cooldownTimer
-
-    /**
-     * Represents the currently selected attachments, that are shown within the composer UI.
-     */
-    public val selectedAttachments: MutableStateFlow<List<Attachment>> = messageComposerController.selectedAttachments
-
-    /**
-     * Represents the list of validation errors for the current text input and the currently selected attachments.
-     */
-    public val validationErrors: MutableStateFlow<List<ValidationError>> = messageComposerController.validationErrors
-
-    /**
-     * Represents the list of users that can be used to autocomplete the current mention input.
-     */
-    public val mentionSuggestions: MutableStateFlow<List<User>> = messageComposerController.mentionSuggestions
-
-    /**
-     * Represents the list of commands to be displayed in the command suggestion list popup.
-     */
-    public val commandSuggestions: MutableStateFlow<List<Command>> = messageComposerController.commandSuggestions
-
-    /**
-     * Represents the list of links that can be previewed.
-     */
-    public val linkPreviews: MutableStateFlow<List<LinkPreview>> = messageComposerController.linkPreviews
-
-    /**
-     * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're
-     * sending a thread reply or a regular message.
-     */
-    public val messageMode: MutableStateFlow<MessageMode> = messageComposerController.messageMode
-
-    /**
-     * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
-     */
-    public val lastActiveAction: Flow<MessageAction?> = messageComposerController.lastActiveAction
-
-    /**
-     * Holds information about the abilities the current user
-     * is able to exercise in the given channel.
-     *
-     * e.g. send messages, delete messages, etc...
-     * For a full list @see [ChannelCapabilities].
-     */
-    public val ownCapabilities: StateFlow<Set<String>> = messageComposerController.ownCapabilities
+    public val messageInput: StateFlow<MessageInput> = messageComposerController.messageInput
 
     /**
      * Called when the input changes and the internal state needs to be updated.
@@ -155,46 +104,75 @@ public class MessageComposerViewModel(
     public fun dismissMessageActions(): Unit = messageComposerController.dismissMessageActions()
 
     /**
-     * Stores the selected attachments from the attachment picker. These will be shown in the UI,
-     * within the composer component. We upload and send these attachments once the user taps on the
-     * send button.
+     * Adds [attachments] to the staged attachment list.
      *
-     * @param attachments The attachments to store and show in the composer.
+     * Attachments are keyed by URI string, preserving insertion order.
+     *
+     * @param attachments The attachments to add.
      */
-    public fun addSelectedAttachments(attachments: List<Attachment>): Unit =
-        messageComposerController.addSelectedAttachments(attachments)
+    public fun addAttachments(attachments: List<Attachment>) {
+        messageComposerController.addAttachments(attachments)
+    }
 
     /**
-     * Removes a selected attachment from the list, when the user taps on the cancel/delete button.
-     *
-     * This will update the UI to remove it from the composer component.
+     * Removes [attachment] from the staged attachment list.
      *
      * @param attachment The attachment to remove.
      */
-    public fun removeSelectedAttachment(attachment: Attachment): Unit =
-        messageComposerController.removeSelectedAttachment(attachment)
+    public fun removeAttachment(attachment: Attachment) {
+        messageComposerController.removeAttachment(attachment)
+    }
 
     /**
-     * Creates a poll with the given [pollConfig].
+     * Removes all staged attachments whose URI string key is contained in [uris].
      *
-     * @param pollConfig Configuration for creating a poll.
+     * @param uris The URI string keys to remove.
      */
-    public fun createPoll(pollConfig: PollConfig) {
-        messageComposerController.createPoll(pollConfig = pollConfig)
+    internal fun removeAttachmentsByUris(uris: Set<String>) {
+        messageComposerController.removeAttachmentsByUris(uris)
+    }
+
+    /**
+     * Removes all staged attachments.
+     *
+     * Call this when the attachments are consumed — for example, after a message is sent,
+     * a poll is created, or a command is selected.
+     */
+    public fun clearAttachments() {
+        messageComposerController.clearAttachments()
+    }
+
+    /**
+     * Creates a poll with the given [createPollParams].
+     *
+     * @param createPollParams Configuration for creating a poll.
+     */
+    public fun createPoll(createPollParams: CreatePollParams) {
+        messageComposerController.createPoll(createPollParams = createPollParams)
     }
 
     /**
      * Sends a given message using our Stream API. Based on the internal state, we either edit an existing message,
      * or we send a new message, using our API.
      *
+     * Deferred attachments (those without a local file) are resolved on a background thread
+     * before the message is handed off to the controller.
+     *
      * It also dismisses any current message actions.
      *
      * @param message The message to send.
+     * @param callback Invoked when the API call completes.
      */
     public fun sendMessage(
         message: Message,
         callback: Call.Callback<Message> = Call.Callback { /* no-op */ },
-    ): Unit = messageComposerController.sendMessage(message, callback)
+    ) {
+        messageComposerController.sendMessage(
+            message = message,
+            callback = callback,
+            resolveAttachments = storageHelper::resolveAttachmentFiles,
+        )
+    }
 
     /**
      * Builds a new [Message] to send to our API. Based on the internal state, we use the current action's message and
@@ -208,7 +186,7 @@ public class MessageComposerViewModel(
      * @return [Message] object, with all the data required to send it to the API.
      */
     public fun buildNewMessage(
-        message: String = input.value,
+        message: String = messageInput.value.text,
         attachments: List<Attachment> = emptyList(),
     ): Message = messageComposerController.buildNewMessage(message, attachments)
 
@@ -246,12 +224,19 @@ public class MessageComposerViewModel(
     public fun selectCommand(command: Command): Unit = messageComposerController.selectCommand(command)
 
     /**
+     * @see [MessageComposerController.clearActiveCommand]
+     */
+    public fun clearActiveCommand(): Unit = messageComposerController.clearActiveCommand()
+
+    /**
      * Toggles the visibility of the command suggestion list popup.
      */
     public fun toggleCommandsVisibility(): Unit = messageComposerController.toggleCommandsVisibility()
 
     /**
      * Sets the typing updates buffer.
+     *
+     * @param buffer The buffer to use for typing updates.
      */
     public fun setTypingUpdatesBuffer(buffer: TypingUpdatesBuffer) {
         messageComposerController.typingUpdatesBuffer = buffer
@@ -262,7 +247,7 @@ public class MessageComposerViewModel(
      */
     public fun clearData(): Unit = messageComposerController.clearData()
 
-    public fun startRecording(offset: Pair<Float, Float>): Unit = messageComposerController.startRecording(offset)
+    public fun startRecording(): Unit = messageComposerController.startRecording()
 
     public fun holdRecording(offset: Pair<Float, Float>): Unit = messageComposerController.holdRecording(offset)
 
@@ -282,6 +267,13 @@ public class MessageComposerViewModel(
     public fun seekRecordingTo(progress: Float): Unit = messageComposerController.seekRecordingTo(progress)
 
     public fun sendRecording(): Unit = messageComposerController.sendRecording()
+
+    /**
+     * @see [MessageComposerController.cancelLinkPreview]
+     */
+    public fun cancelLinkPreview() {
+        messageComposerController.cancelLinkPreview()
+    }
 
     /**
      * Disposes the inner [MessageComposerController].

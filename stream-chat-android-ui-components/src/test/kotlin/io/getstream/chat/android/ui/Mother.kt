@@ -44,7 +44,7 @@ import org.mockito.kotlin.mock
 
 public fun randomMessageItem(
     message: Message = randomMessage(),
-    positions: List<MessagePosition> = listOf(),
+    position: MessagePosition = MessagePosition.NONE,
     isMine: Boolean = randomBoolean(),
     messageReadBy: List<ChannelUserRead> = listOf(),
     isThreadMode: Boolean = randomBoolean(),
@@ -53,7 +53,7 @@ public fun randomMessageItem(
 ): MessageListItem.MessageItem =
     MessageListItem.MessageItem(
         message = message,
-        positions = positions,
+        position = position,
         isMine = isMine,
         messageReadBy = messageReadBy,
         isThreadMode = isThreadMode,
@@ -254,10 +254,10 @@ public fun randomMessageListItemStyle(
     iconIndicatorRead: Drawable = mock(),
     iconIndicatorPendingSync: Drawable = mock(),
     iconOnlyVisibleToYou: Drawable = mock(),
-    textStyleMessageDeletedMine: TextStyle? = mock(),
-    messageDeletedBackgroundMine: Int? = randomInt(),
-    textStyleMessageDeletedTheirs: TextStyle? = mock(),
-    messageDeletedBackgroundTheirs: Int? = randomInt(),
+    textStyleMessageDeletedMine: TextStyle = mock(),
+    messageDeletedBackgroundMine: Int = randomInt(),
+    textStyleMessageDeletedTheirs: TextStyle = mock(),
+    messageDeletedBackgroundTheirs: Int = randomInt(),
     messageStrokeColorMine: Int = randomInt(),
     messageStrokeWidthMine: Float = randomFloat(),
     messageStrokeColorTheirs: Int = randomInt(),
@@ -330,8 +330,6 @@ public fun randomMessageListItemStyle(
     loadingMoreView = loadingMoreView,
     unreadSeparatorBackgroundColor = unreadSeparatorBackgroundColor,
     unreadSeparatorTextStyle = unreadSeparatorTextStyle,
-    messageDeletedBackground = randomInt(),
-    textStyleMessageDeleted = mock(),
 )
 
 public fun randomViewReactionsViewStyle(

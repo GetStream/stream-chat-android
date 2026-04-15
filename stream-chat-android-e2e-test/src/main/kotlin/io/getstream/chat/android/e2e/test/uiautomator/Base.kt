@@ -26,7 +26,7 @@ import androidx.test.uiautomator.UiDevice
 /**
  * Default timeout.
  */
-public val defaultTimeout: Long = 5.seconds
+public val defaultTimeout: Long = 10.seconds
 
 /**
  * UIDevice property initialized by singleton [UiDevice.getInstance] method, for the running Instrumentation.

@@ -28,6 +28,7 @@ import androidx.media3.common.C.AUDIO_CONTENT_TYPE_MUSIC
 import androidx.media3.exoplayer.ExoPlayer
 import io.getstream.chat.android.client.ChatClient.Companion.MAX_COOLDOWN_TIME_SECONDS
 import io.getstream.chat.android.client.api.ChatApi
+import io.getstream.chat.android.client.api.ChatApiConfig
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.GetThreadOptions
@@ -68,6 +69,8 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.attachment.AttachmentsSender
+import io.getstream.chat.android.client.attachment.MessagePreparer
+import io.getstream.chat.android.client.attachment.prepareForUpload
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.NativeMediaPlayerImpl
 import io.getstream.chat.android.client.audio.StreamAudioPlayer
@@ -104,13 +107,15 @@ import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.extractBaseUrl
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
+import io.getstream.chat.android.client.extensions.internal.hasPendingAttachments
 import io.getstream.chat.android.client.extensions.internal.isLaterThanDays
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
-import io.getstream.chat.android.client.interceptor.message.internal.PrepareMessageLogicImpl
 import io.getstream.chat.android.client.internal.file.StreamFileManager
+import io.getstream.chat.android.client.internal.offline.plugin.factory.StreamOfflinePluginFactory
+import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
@@ -177,6 +182,7 @@ import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionData
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
@@ -192,10 +198,8 @@ import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Mute
-import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.PushPreference
@@ -209,13 +213,12 @@ import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
+import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
-import io.getstream.chat.android.models.VideoCallInfo
-import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -250,7 +253,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import java.io.File
@@ -268,7 +270,7 @@ import kotlin.time.Duration.Companion.days
 public class ChatClient
 @Suppress("LongParameterList")
 internal constructor(
-    public val config: ChatClientConfig,
+    internal val config: ChatApiConfig,
     private val api: ChatApi,
     private val dtoMapping: DtoMapping,
     private val notifications: ChatNotifications,
@@ -1969,7 +1971,7 @@ internal constructor(
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
-     * @param pollConfig The poll configuration.
+     * @param createPollParams The poll configuration.
      *
      * @return Executable async [Call] responsible for sending a poll.
      */
@@ -1977,9 +1979,9 @@ internal constructor(
     public fun sendPoll(
         channelType: String,
         channelId: String,
-        pollConfig: PollConfig,
+        createPollParams: CreatePollParams,
     ): Call<Message> {
-        return api.createPoll(pollConfig)
+        return api.createPoll(createPollParams)
             .flatMap { poll ->
                 sendMessage(
                     channelType = channelType,
@@ -2055,25 +2057,6 @@ internal constructor(
     @CheckResult
     public fun deletePoll(pollId: String): Call<Unit> {
         return api.deletePoll(pollId)
-    }
-
-    /**
-     * Create a new option for a poll.
-     * Note: To create an option with custom data, use [createPollOption] instead.
-     *
-     * @param pollId The poll id.
-     * @param option The option to create.
-     *
-     * @return Executable async [Call] responsible for creating a new option.
-     */
-    @Deprecated("ChatClient.suggestPollOption doesn't allow passing custom data. Use createPollOption instead.")
-    @CheckResult
-    public fun suggestPollOption(
-        pollId: String,
-        option: String,
-    ): Call<Option> {
-        return createPollOption(pollId, option = PollOption(text = option))
-            .map { Option(id = it.id ?: "", text = it.text, extraData = it.extraData) }
     }
 
     /**
@@ -2174,25 +2157,6 @@ internal constructor(
      *
      * @param messageId The message id where the poll is.
      * @param pollId The poll id.
-     * @param option The option to vote for.
-     *
-     * @return Executable async [Call] responsible for casting a vote.
-     */
-    @Deprecated("Use castPollVote(messageId: String, pollId: String, optionId: String) instead.")
-    @CheckResult
-    public fun castPollVote(
-        messageId: String,
-        pollId: String,
-        option: Option,
-    ): Call<Vote> {
-        return api.castPollVote(messageId, pollId, option.id)
-    }
-
-    /**
-     * Cast a vote for a poll in a message.
-     *
-     * @param messageId The message id where the poll is.
-     * @param pollId The poll id.
      * @param optionId The id of the option to vote for.
      *
      * @return Executable async [Call] responsible for casting a vote.
@@ -2220,25 +2184,6 @@ internal constructor(
         answer: String,
     ): Call<Vote> {
         return api.castPollAnswer(messageId, pollId, answer)
-    }
-
-    /**
-     * Remove a vote for a poll in a message.
-     *
-     * @param messageId The message id where the poll is.
-     * @param pollId The poll id.
-     * @param vote The vote to remove.
-     *
-     * @return Executable async [Call] responsible for removing a vote.
-     */
-    @Deprecated("Use removePollVote(messageId: String, pollId: String, voteId: String) instead.")
-    @CheckResult
-    public fun removePollVote(
-        messageId: String,
-        pollId: String,
-        vote: Vote,
-    ): Call<Vote> {
-        return removePollVote(messageId = messageId, pollId = pollId, voteId = vote.id)
     }
 
     /**
@@ -2578,7 +2523,7 @@ internal constructor(
         message: Message,
         isRetrying: Boolean = false,
     ): Call<Message> {
-        val messageWithId = message.ensureId(getCurrentUser() ?: getStoredUser())
+        val messageWithId = message.ensureId()
         return CoroutineCall(userScope) {
             messageWithId.ensureCreatedLocallyAt(cid = "$channelType:$channelId")
                 .let { messageWithLocalDate ->
@@ -2620,7 +2565,7 @@ internal constructor(
             // Regular message
             val (type, id) = cid.cidToTypeAndId()
             // Fetch channel lastMessageAt from state, fallback to offline storage
-            val channelState = logicRegistry?.channelStateLogic(type, id)?.listenForChannelState()
+            val channelState = logicRegistry?.channelStateLogic(type, id)?.channelState()
             val lastMessageAt = channelState?.channelData?.value?.lastMessageAt
                 ?: repositoryFacade.selectChannel(cid = cid)?.lastMessageAt
             val lastMessageAtPlusOneMillisecond = lastMessageAt?.let {
@@ -2647,7 +2592,7 @@ internal constructor(
         channelId: String,
         message: DraftMessage,
     ): Call<DraftMessage> {
-        return message.ensureId(getCurrentUser() ?: getStoredUser()).let { processedDraftMessage ->
+        return message.ensureId().let { processedDraftMessage ->
             api.createDraftMessage(channelType, channelId, processedDraftMessage)
                 .retry(userScope, retryPolicy)
                 .doOnResult(userScope) { result ->
@@ -2683,35 +2628,6 @@ internal constructor(
                 plugins.forEach { listener ->
                     logger.v { "[deleteDraftMessages] #doOnResult; plugin: ${listener::class.qualifiedName}" }
                     listener.onDeleteDraftMessagesResult(result, channelType, channelId, message)
-                }
-            }
-    }
-
-    /**
-     * Query draft messages for the current user.
-     * The query can be paginated using [offset] and [limit].
-     *
-     * @param offset The offset to start querying from.
-     * @param limit The number of draft messages to return.
-     *
-     * @return Executable async [Call] responsible for querying draft messages.
-     */
-    @Deprecated(
-        message = "The offset param in the queryDraftMessages method is not used. Use the queryDrafts method instead.",
-        replaceWith = ReplaceWith("queryDrafts(filter, limit, next, sort)"),
-    )
-    @CheckResult
-    public fun queryDraftMessages(
-        offset: Int?,
-        limit: Int?,
-    ): Call<List<DraftMessage>> {
-        return api.queryDraftMessages(offset, limit)
-            .retry(userScope, retryPolicy)
-            .doOnResult(userScope) { result ->
-                logger.i { "[queryDraftMessages] result: ${result.stringify { it.toString() }}" }
-                plugins.forEach { listener ->
-                    logger.v { "[queryDraftMessages] #doOnResult; plugin: ${listener::class.qualifiedName}" }
-                    listener.onQueryDraftMessagesResult(result, offset, limit)
                 }
             }
     }
@@ -2765,7 +2681,7 @@ internal constructor(
         debugger: SendMessageDebugger,
     ): Result<Message> {
         debugger.onInterceptionStart(message)
-        val prepareMessageLogic = PrepareMessageLogicImpl(clientState, logicRegistry)
+        val prepareMessageLogic = MessagePreparer(clientState, logicRegistry)
 
         val preparedMessage = getCurrentUser()?.let { user ->
             prepareMessageLogic.prepareMessage(message, channelId, channelType, user)
@@ -2806,6 +2722,68 @@ internal constructor(
     }
 
     /**
+     * Edits an existing message, uploading any new attachments through the standard
+     * [AttachmentsSender] / [UploadAttachmentsAndroidWorker][io.getstream.chat.android.client.attachment.worker.UploadAttachmentsAndroidWorker]
+     * pipeline before updating the message on the server.
+     *
+     * When the message contains new attachments (i.e. attachments with a local [Attachment.upload]
+     * file), the method will:
+     * 1. Prepare attachments (mark new ones as [Attachment.UploadState.Idle]).
+     * 2. Optimistically upsert the prepared message into channel state so the UI shows upload
+     *    progress.
+     * 3. Delegate upload to [AttachmentsSender] (which enqueues [WorkManager][androidx.work.WorkManager]
+     *    work).
+     * 4. On success, call [updateMessage] which fires the standard edit plugin hooks.
+     * 5. On failure, revert the channel state to the original message.
+     *
+     * If the message has no new attachments, the call delegates directly to [updateMessage].
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param message The edited [Message] with resolved attachment files.
+     *
+     * @return Executable async [Call] responsible for editing the message.
+     */
+    @CheckResult
+    public fun editMessage(
+        channelType: String,
+        channelId: String,
+        message: Message,
+    ): Call<Message> = CoroutineCall(userScope) {
+        val prepared = message.copy(attachments = message.attachments.prepareForUpload())
+        if (!prepared.hasPendingAttachments()) {
+            return@CoroutineCall updateMessage(prepared).await()
+        }
+
+        val channelLogic = logicRegistry?.channelStateLogic(channelType, channelId)
+        val original = channelLogic?.channelState()?.getMessageById(message.id)
+
+        channelLogic?.upsertMessage(prepared)
+
+        val uploadResult = attachmentsSender.sendAttachments(
+            message = prepared,
+            channelType = channelType,
+            channelId = channelId,
+            isRetrying = false,
+        )
+
+        when (uploadResult) {
+            is Result.Success -> updateMessage(uploadResult.value).await()
+            is Result.Failure -> {
+                if (original != null) {
+                    channelLogic.upsertMessage(original)
+                } else {
+                    logger.w {
+                        "[editMessage] Upload failed and original message is unavailable for rollback " +
+                            "(messageId=${message.id}). Channel state may be stale."
+                    }
+                }
+                uploadResult
+            }
+        }
+    }
+
+    /**
      * Partially updates specific [Message] fields retaining the fields which were set previously.
      *
      * @param messageId The message ID.
@@ -2819,12 +2797,18 @@ internal constructor(
         messageId: String,
         set: Map<String, Any> = emptyMap(),
         unset: List<String> = emptyList(),
-    ): Call<Message> {
-        return api.partialUpdateMessage(
-            messageId = messageId,
-            set = set,
-            unset = unset,
-        )
+    ): Call<Message> = api.partialUpdateMessage(
+        messageId = messageId,
+        set = set,
+        unset = unset,
+    ).doOnResult(userScope) { result ->
+        if (result is Result.Success) {
+            val message = result.value
+            plugins.forEach { plugin ->
+                logger.v { "[partialUpdateMessage] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                plugin.onMessageEditResult(message, result)
+            }
+        }
     }
 
     /**
@@ -3586,29 +3570,6 @@ internal constructor(
         threadId: String,
     ): Call<Unit> {
         return api.markUnread(channelType, channelId, threadId = threadId)
-    }
-
-    /**
-     * Marks a thread as unread.
-     *
-     * @param channelType Type of the channel.
-     * @param channelId Id of the channel.
-     * @param threadId Id of the thread to mark as unread.
-     * @param messageId Id of the message from where the thread should be marked as unread.
-     */
-    @Deprecated(
-        "Marking a thread as unread from a given message is currently not supported. " +
-            "Passing messageId has no effect and the whole thread is marked as unread." +
-            "Use markThreadUnread(channelType, channelId, threadId) instead.",
-    )
-    @CheckResult
-    public fun markThreadUnread(
-        channelType: String,
-        channelId: String,
-        threadId: String,
-        messageId: String,
-    ): Call<Unit> {
-        return api.markUnread(channelType, channelId, messageId = messageId, threadId = threadId)
     }
 
     /**
@@ -4487,51 +4448,6 @@ internal constructor(
     }
 
     /**
-     * Creates a newly available video call, which belongs to a channel.
-     * The video call will be created based on the third-party video integration (Agora and 100ms) on your
-     * [Stream Dashboard](https://dashboard.getstream.io/).
-     *
-     * You can set the call type by passing [callType] like `video` or `audio`.
-     *
-     * @param channelType The channel type. ie messaging.
-     * @param channelId The id of the channel.
-     * @param callType Represents call type such as `video` or `audio`.
-     * @param callId A unique identifier to assign to the call. The id is case-insensitive.
-     */
-    @Deprecated(
-        "This third-party library integration is deprecated. Contact the support team for more information.",
-        level = DeprecationLevel.WARNING,
-    )
-    @CheckResult
-    public fun createVideoCall(
-        channelType: String,
-        channelId: String,
-        callType: String,
-        callId: String,
-    ): Call<VideoCallInfo> {
-        return api.createVideoCall(
-            channelType = channelType,
-            channelId = channelId,
-            callType = callType,
-            callId = callId,
-        )
-    }
-
-    /**
-     * Returns the currently available video call token.
-     *
-     * @param callId The call id, which indicates a dedicated video call id on the channel.
-     */
-    @Deprecated(
-        "This third-party library integration is deprecated. Contact the support team for more information.",
-        level = DeprecationLevel.WARNING,
-    )
-    @CheckResult
-    public fun getVideoCallToken(callId: String): Call<VideoCallToken> {
-        return api.getVideoCallToken(callId = callId)
-    }
-
-    /**
      * Downloads the given file which can be fetched through the response body.
      *
      * @param fileUrl The URL of the file that we are downloading.
@@ -4546,24 +4462,11 @@ internal constructor(
 
     /**
      * Query threads matching [query] request.
-     * To obtain the full response including the pagination cursors, use [queryThreadsResult] instead.
      *
      * @param query [QueryThreadsRequest] with query parameters to get matching users.
      */
     @CheckResult
-    public fun queryThreads(
-        query: QueryThreadsRequest,
-    ): Call<List<Thread>> {
-        return queryThreadsResult(query).map { it.threads }
-    }
-
-    /**
-     * Query threads matching [query] request.
-     *
-     * @param query [QueryThreadsRequest] with query parameters to get matching users.
-     */
-    @CheckResult
-    public fun queryThreadsResult(query: QueryThreadsRequest): Call<QueryThreadsResult> {
+    public fun queryThreads(query: QueryThreadsRequest): Call<QueryThreadsResult> {
         return api.queryThreads(query)
             .doOnStart(userScope) {
                 plugins.forEach { plugin ->
@@ -4608,7 +4511,7 @@ internal constructor(
         messageId: String,
         set: Map<String, Any> = emptyMap(),
         unset: List<String> = emptyList(),
-    ): Call<Thread> {
+    ): Call<ThreadInfo> {
         return api.partialUpdateThread(
             messageId = messageId,
             set = set,
@@ -4724,14 +4627,13 @@ internal constructor(
         private var notificationConfig: NotificationConfig = NotificationConfig(pushNotificationsEnabled = false)
         private var fileUploader: FileUploader? = null
         private var sendMessageInterceptor: SendMessageInterceptor? = null
-        private var shareFileDownloadRequestInterceptor: Interceptor? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
         private var distinctApiCalls: Boolean = true
         private var debugRequests: Boolean = false
-        private var repositoryFactoryProvider: RepositoryFactory.Provider? = null
+        private var chatClientConfig: ChatClientConfig = ChatClientConfig()
         private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.CONNECTED
         private var fileTransformer: FileTransformer = NoOpFileTransformer
         private var apiModelTransformers: ApiModelTransformers = ApiModelTransformers()
@@ -4858,23 +4760,6 @@ internal constructor(
         }
 
         /**
-         * Sets a custom [Interceptor] that will be used to intercept file download requests for the purpose of sharing
-         * the file.
-         * Use this to add custom headers or modify the request in any way.
-         *
-         * @param shareFileDownloadRequestInterceptor Your [Interceptor] implementation for the share file download
-         * call.
-         * @deprecated Use [io.getstream.chat.android.client.cdn.CDN] instead. Configure a custom CDN via
-         * [io.getstream.chat.android.client.ChatClient.Builder.cdn] to provide headers and transform URLs
-         * for all image, file, and download requests.
-         */
-        @Deprecated("Use CDN instead. Configure via ChatClient.Builder.cdn().")
-        public fun shareFileDownloadRequestInterceptor(shareFileDownloadRequestInterceptor: Interceptor): Builder {
-            this.shareFileDownloadRequestInterceptor = shareFileDownloadRequestInterceptor
-            return this
-        }
-
-        /**
          * By default, ChatClient performs a dummy HTTP call to the Stream API
          * when a user is set to initialize the HTTP connection and make subsequent
          * requests reusing this connection execute faster.
@@ -4966,20 +4851,12 @@ internal constructor(
         }
 
         /**
-         * Inject a [RepositoryFactory.Provider] to use your own DB Persistence mechanism.
-         */
-        public fun withRepositoryFactoryProvider(provider: RepositoryFactory.Provider): Builder = apply {
-            repositoryFactoryProvider = provider
-        }
-
-        /**
-         * Adds plugins factory to be used by the client.
-         * @see [PluginFactory]
+         * Specifies the client configuration.
          *
-         * @param pluginFactories The factories to be added.
+         * @param config The [ChatClientConfig] to be used.
          */
-        public fun withPlugins(vararg pluginFactories: PluginFactory): Builder = apply {
-            this.pluginFactories.addAll(pluginFactories)
+        public fun config(config: ChatClientConfig): Builder = apply {
+            chatClientConfig = config
         }
 
         /**
@@ -5062,7 +4939,7 @@ internal constructor(
             val wsProtocol = if (isInsecureConnection) "ws" else "wss"
             val lifecycle = ProcessLifecycleOwner.get().lifecycle
 
-            val config = ChatClientConfig(
+            val config = ChatApiConfig(
                 apiKey = apiKey,
                 httpUrl = forceHttpUrl ?: "$httpProtocol://$baseUrl/",
                 cdnHttpUrl = "$httpProtocol://${cdnUrl ?: baseUrl}/",
@@ -5095,7 +4972,6 @@ internal constructor(
                     fileTransformer = fileTransformer,
                     fileUploader = fileUploader,
                     sendMessageInterceptor = sendMessageInterceptor,
-                    shareFileDownloadRequestInterceptor = shareFileDownloadRequestInterceptor,
                     cdn = cdn,
                     tokenManager = tokenManager,
                     customOkHttpClient = customOkHttpClient,
@@ -5127,6 +5003,10 @@ internal constructor(
             val database = ChatClientDatabase.build(appContext)
             val repository = ChatClientRepository.from(database)
 
+            val allPluginFactories = setupPluginFactories(
+                chatClientConfig = chatClientConfig,
+            )
+
             return ChatClient(
                 config = config,
                 api = api,
@@ -5142,11 +5022,10 @@ internal constructor(
                 appSettingsManager = appSettingsManager,
                 chatSocket = module.chatSocket,
                 serverClockOffset = serverClockOffset,
-                pluginFactories = pluginFactories,
-                repositoryFactoryProvider = repositoryFactoryProvider
-                    ?: pluginFactories
-                        .filterIsInstance<RepositoryFactory.Provider>()
-                        .firstOrNull()
+                pluginFactories = allPluginFactories,
+                repositoryFactoryProvider = allPluginFactories
+                    .filterIsInstance<RepositoryFactory.Provider>()
+                    .firstOrNull()
                     ?: NoOpRepositoryFactory.Provider,
                 mutableClientState = MutableClientState(module.networkStateProvider),
                 currentUserFetcher = module.currentUserFetcher,
@@ -5171,6 +5050,22 @@ internal constructor(
                     clientState = clientState,
                     scope = clientScope,
                 )
+            }
+        }
+
+        private fun setupPluginFactories(
+            chatClientConfig: ChatClientConfig,
+        ): List<PluginFactory> {
+            return buildList {
+                // Mandatory plugins first
+                add(ThrottlingPluginFactory)
+                add(MessageDeliveredPluginFactory)
+                // State plugin
+                add(StreamStatePluginFactory(chatClientConfig, appContext))
+                // Offline plugin (if enabled)
+                if (chatClientConfig.offlineEnabled) {
+                    add(StreamOfflinePluginFactory(appContext, chatClientConfig.ignoredOfflineChannelTypes))
+                }
             }
         }
 
@@ -5202,16 +5097,6 @@ internal constructor(
     }
 
     public abstract class ChatClientBuilder @InternalStreamChatApi public constructor() {
-        /**
-         * Factories of plugins that will be added to the SDK.
-         *
-         * @see [Plugin]
-         * @see [PluginFactory]
-         */
-        protected val pluginFactories: MutableList<PluginFactory> = mutableListOf(
-            ThrottlingPluginFactory,
-            MessageDeliveredPluginFactory,
-        )
 
         /**
          * Create a [ChatClient] instance based on the current configuration

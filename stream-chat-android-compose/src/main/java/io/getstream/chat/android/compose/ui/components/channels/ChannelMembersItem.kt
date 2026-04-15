@@ -25,13 +25,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
-import io.getstream.chat.android.compose.ui.components.avatar.DefaultOnlineIndicator
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewUserData
-import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 
 /**
  * The UI component that shows a user avatar and user name, as a member of a channel.
@@ -53,23 +52,20 @@ internal fun ChannelMembersItem(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         ChatTheme.componentFactory.UserAvatar(
-            modifier = Modifier.size(ChatTheme.dimens.selectedChannelMenuUserItemAvatarSize),
-            user = member.user,
-            textStyle = ChatTheme.typography.title3Bold,
-            showOnlineIndicator = member.user.shouldShowOnlineIndicator(
-                userPresence = ChatTheme.userPresence,
-                currentUser = currentUser,
+            params = UserAvatarParams(
+                modifier = Modifier.size(64.dp),
+                user = member.user,
+                showIndicator = true,
+                showBorder = false,
             ),
-            onlineIndicator = { DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd) },
-            onClick = null,
         )
 
         Text(
             text = memberName,
-            style = ChatTheme.typography.footnoteBold,
+            style = ChatTheme.typography.metadataEmphasis,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
     }
 }

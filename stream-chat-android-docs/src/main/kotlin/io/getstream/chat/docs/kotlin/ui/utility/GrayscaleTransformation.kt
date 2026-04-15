@@ -5,13 +5,14 @@ import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.Paint
 import androidx.core.graphics.applyCanvas
-import coil.size.Size
-import coil.transform.Transformation
+import androidx.core.graphics.createBitmap
+import coil3.size.Size
+import coil3.transform.Transformation
 
 /**
  * A [Transformation] that converts an image to grayscale.
  */
-class GrayscaleTransformation : Transformation {
+class GrayscaleTransformation : Transformation() {
 
     override val cacheKey: String = GrayscaleTransformation::class.java.name
 
@@ -19,7 +20,7 @@ class GrayscaleTransformation : Transformation {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
         paint.colorFilter = COLOR_FILTER
 
-        val output = Bitmap.createBitmap(input.width, input.height, Bitmap.Config.ARGB_8888)
+        val output = createBitmap(input.width, input.height)
         output.applyCanvas {
             drawBitmap(input, 0f, 0f, paint)
         }

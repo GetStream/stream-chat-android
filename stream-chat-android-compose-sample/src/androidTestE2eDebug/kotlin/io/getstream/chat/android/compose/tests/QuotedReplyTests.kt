@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.tests
 
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.robots.assertDeletedMessage
 import io.getstream.chat.android.compose.robots.assertGiphyImage
 import io.getstream.chat.android.compose.robots.assertInvalidCommandMessage
@@ -33,6 +32,7 @@ import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
 import org.junit.Ignore
 import org.junit.Test
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 class QuotedReplyTests : StreamTestCase() {
 
@@ -244,7 +244,7 @@ class QuotedReplyTests : StreamTestCase() {
         step("AND deleted message is shown in quoted reply bubble") {
             userRobot.assertQuotedMessage(
                 text = quoteReply,
-                quote = appContext.getString(R.string.stream_ui_message_list_message_deleted),
+                quote = appContext.getString(UiCommonR.string.stream_ui_message_list_message_deleted),
             )
         }
     }
@@ -260,7 +260,7 @@ class QuotedReplyTests : StreamTestCase() {
             userRobot.quoteMessage(quoteReply)
         }
         step("WHEN user deletes a quoted message") {
-            userRobot.deleteMessage()
+            userRobot.deleteMessage(quoteReply)
         }
         step("THEN user observes Message deleted") {
             userRobot
@@ -273,14 +273,18 @@ class QuotedReplyTests : StreamTestCase() {
     @Test
     fun test_originalQuoteIsDeletedByUser_deletedMessageIsShown() {
         step("GIVEN user opens the channel") {
-            backendRobot.generateChannels(channelsCount = 1, messagesCount = 1)
+            backendRobot.generateChannels(
+                channelsCount = 1,
+                messagesCount = 1,
+                messagesText = sampleText,
+            )
             userRobot.login().openChannel()
         }
         step("AND user adds a quoted reply") {
             userRobot.quoteMessage(quoteReply)
         }
         step("WHEN user deletes an original message") {
-            userRobot.deleteMessage(messageCellIndex = 1)
+            userRobot.deleteMessage(sampleText)
         }
         step("THEN deleted message is shown") {
             userRobot.assertDeletedMessage(quoteReply)
@@ -288,7 +292,7 @@ class QuotedReplyTests : StreamTestCase() {
         step("AND deleted message is shown in quoted reply bubble") {
             userRobot.assertQuotedMessage(
                 text = quoteReply,
-                quote = appContext.getString(R.string.stream_ui_message_list_message_deleted),
+                quote = appContext.getString(UiCommonR.string.stream_ui_message_list_message_deleted),
             )
         }
     }
@@ -556,6 +560,7 @@ class QuotedReplyTests : StreamTestCase() {
     }
 
     @AllureId("5898")
+    @Ignore("https://linear.app/stream/issue/AND-1136")
     @Test
     fun test_quotedReplyInThreadAndAlsoInChannel() {
         val quotedText = messagesCount.toString()
@@ -567,7 +572,10 @@ class QuotedReplyTests : StreamTestCase() {
                 messagesText = sampleText,
                 repliesCount = messagesCount,
             )
-            userRobot.login().openChannel()
+            userRobot
+                .login()
+                .openChannel()
+                .assertMessage(sampleText) // await for the channel to be fully loaded
         }
         step("WHEN participant adds a quoted reply in thread and also in channel") {
             participantRobot.quoteMessageInThread(quoteReply, alsoSendInChannel = true)
@@ -629,7 +637,7 @@ class QuotedReplyTests : StreamTestCase() {
         step("AND deleted message is shown in quoted reply bubble") {
             userRobot.assertQuotedMessage(
                 text = quoteReply,
-                quote = appContext.getString(R.string.stream_ui_message_list_message_deleted),
+                quote = appContext.getString(UiCommonR.string.stream_ui_message_list_message_deleted),
             )
         }
     }
@@ -647,7 +655,7 @@ class QuotedReplyTests : StreamTestCase() {
                 .quoteMessage(quoteReply)
         }
         step("WHEN user deletes a quoted message") {
-            userRobot.deleteMessage()
+            userRobot.deleteMessage(quoteReply)
         }
         step("THEN deleted message is shown") {
             userRobot
@@ -670,7 +678,7 @@ class QuotedReplyTests : StreamTestCase() {
                 .quoteMessage(quoteReply)
         }
         step("WHEN user deletes an original message") {
-            userRobot.deleteMessage(messageCellIndex = 1)
+            userRobot.deleteMessage(sampleText)
         }
         step("THEN deleted message is shown") {
             userRobot.assertDeletedMessage(sampleText)
@@ -678,7 +686,7 @@ class QuotedReplyTests : StreamTestCase() {
         step("AND deleted message is shown in quoted reply bubble") {
             userRobot.assertQuotedMessage(
                 text = quoteReply,
-                quote = appContext.getString(R.string.stream_ui_message_list_message_deleted),
+                quote = appContext.getString(UiCommonR.string.stream_ui_message_list_message_deleted),
             )
         }
     }
@@ -702,7 +710,7 @@ class QuotedReplyTests : StreamTestCase() {
             userRobot.assertMessages(text = sampleText, count = 0)
         }
         step("WHEN user scrolls up to load one more page") {
-            userRobot.scrollMessageListUp(times = 5)
+            userRobot.scrollMessageListUp(times = 8)
         }
         step("THEN parent message is loaded") {
             userRobot.assertMessages(text = sampleText, count = 1)

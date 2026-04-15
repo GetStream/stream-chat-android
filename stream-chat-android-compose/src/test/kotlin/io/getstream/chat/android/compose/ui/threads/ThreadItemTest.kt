@@ -33,7 +33,7 @@ internal class ThreadItemTest : PaparazziComposeTest {
         snapshotWithDarkMode {
             ThreadItem(
                 thread = PreviewThreadData.thread,
-                currentUser = PreviewThreadData.participant2,
+                currentUser = PreviewThreadData.participant1,
                 onThreadClick = { },
             )
         }

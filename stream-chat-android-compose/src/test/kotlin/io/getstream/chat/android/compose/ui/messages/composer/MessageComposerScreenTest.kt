@@ -23,7 +23,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.test.MockedChatClientTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.randomCommand
@@ -32,6 +31,7 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.ui.common.state.messages.MessageMode.MessageThread
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Rule
 import org.junit.Test
@@ -48,7 +48,9 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    val mockViewModel: MessageComposerViewModel = mock()
+    val mockViewModel: MessageComposerViewModel = mock {
+        on { inputFocusEvents } doReturn MutableSharedFlow()
+    }
 
     @Test
     @UiThread
@@ -64,7 +66,8 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
         }
 
         composeTestRule.onNodeWithText("Instant Commands").assertExists()
-        composeTestRule.onNodeWithText("/${command.name} ${command.args}").assertExists()
+        composeTestRule.onNodeWithText(command.name.replaceFirstChar(Char::uppercase)).assertExists()
+        composeTestRule.onNodeWithText(command.description).assertExists()
     }
 
     @Test
@@ -95,7 +98,7 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
             }
         }
 
-        composeTestRule.onNodeWithText("Also send as direct message").assertExists()
+        composeTestRule.onNodeWithText("Also send in Channel").assertExists()
     }
 
     @Test
@@ -109,10 +112,7 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
             MutableStateFlow(MessageComposerState(recording = recording))
 
         composeTestRule.setContent {
-            val messageComposerTheme = MessageComposerTheme.defaultTheme().let {
-                it.copy(audioRecording = it.audioRecording.copy(enabled = true))
-            }
-            ChatTheme(messageComposerTheme = messageComposerTheme) {
+            ChatTheme {
                 MessageComposer(viewModel = mockViewModel)
             }
         }

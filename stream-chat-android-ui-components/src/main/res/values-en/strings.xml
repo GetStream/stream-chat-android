@@ -42,7 +42,6 @@
     <string name="stream_ui_channel_list_delete_confirmation_message">Are you sure you want to permanently delete this conversation?</string>
     <string name="stream_ui_channel_list_delete_confirmation_positive_button">Delete</string>
     <string name="stream_ui_channel_list_delete_confirmation_negative_button">Cancel</string>
-    <string name="stream_ui_channel_list_error_hide_channel">Failed to hide channel</string>
     <string name="stream_ui_channel_list_error_delete_channel">Failed to delete channel</string>
     <string name="stream_ui_channel_list_error_leave_channel">Failed to leave channel</string>
     <string name="stream_ui_mention" translatable="false">\@%1$s</string>
@@ -69,22 +68,22 @@
     <string name="stream_ui_message_composer_error_file_size">File is too large - max %s.</string>
     <string name="stream_ui_message_composer_error_attachment_count">Attachments count (%d) exceeded.</string>
     <string name="stream_ui_message_composer_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
-    <string name="stream_ui_message_list_header_thread_title">Thread Reply</string>
-    <string name="stream_ui_message_list_header_untitled_channel">Channel without name</string>
-    <string name="stream_ui_message_list_header_thread_subtitle">with %1$s</string>
-    <string name="stream_ui_message_list_header_disconnected">Waiting for network</string>
-    <string name="stream_ui_message_list_header_offline">Disconnected</string>
-    <string name="stream_ui_message_list_header_retry">Try Again</string>
-    <string name="stream_ui_message_list_header_member_count_online">%1$s, %2$d Online</string>
-    <plurals name="stream_ui_message_list_header_member_count">
+    <string name="stream_ui_channel_header_thread_title">Thread Reply</string>
+    <string name="stream_ui_channel_header_untitled_channel">Channel without name</string>
+    <string name="stream_ui_channel_header_thread_subtitle">with %1$s</string>
+    <string name="stream_ui_channel_header_disconnected">Waiting for network</string>
+    <string name="stream_ui_channel_header_offline">Disconnected</string>
+    <string name="stream_ui_channel_header_retry">Try Again</string>
+    <string name="stream_ui_channel_header_member_count_online">%1$s, %2$d Online</string>
+    <plurals name="stream_ui_channel_header_member_count">
         <item quantity="one">%1d Member</item>
         <item quantity="other">%1d Members</item>
     </plurals>
-    <plurals name="stream_ui_message_list_header_typing_users">
+    <plurals name="stream_ui_channel_header_typing_users">
         <item quantity="one">%s is typing</item>
         <item quantity="other">%s and %d more are typing</item>
     </plurals>
-    <string name="stream_ui_message_list_header_back_button_content_description">Back button</string>
+    <string name="stream_ui_channel_header_back_button_content_description">Back button</string>
     <string name="stream_ui_message_list_empty">No messages</string>
     <string name="stream_ui_message_list_download_started">Download started</string>
     <string name="stream_ui_message_list_giphy_title">Giphy</string>

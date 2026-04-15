@@ -21,9 +21,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.watchChannelAsState
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.widgets.typing.TypingIndicatorView
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.StateFlow

@@ -1,0 +1,315 @@
+/*
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.getstream.chat.android.compose.ui.messages.attachments
+
+import android.Manifest
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
+import io.getstream.chat.android.compose.state.messages.attachments.CameraPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.CommandPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.MediaType
+import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
+import io.getstream.chat.android.compose.ui.components.FullscreenDialog
+import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberCaptureMediaLauncher
+import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredCameraPermission
+import io.getstream.chat.android.compose.ui.messages.attachments.poll.CreatePollScreen
+import io.getstream.chat.android.compose.ui.theme.AttachmentCommandPickerParams
+import io.getstream.chat.android.compose.ui.theme.AttachmentTypeSystemPickerParams
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.previewdata.PreviewCommandData
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
+import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
+
+@Suppress("LongMethod")
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
+@Composable
+internal fun AttachmentSystemPicker(
+    channel: Channel,
+    messageMode: MessageMode,
+    attachments: List<AttachmentPickerItemState>,
+    actions: AttachmentPickerActions = AttachmentPickerActions.None,
+    onUrisSelected: (List<Uri>) -> Unit = {},
+    onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit = {},
+) {
+    val context = LocalContext.current
+    val pickerModes = ChatTheme.config.attachmentPicker.modes
+
+    val filePickerMode = remember(pickerModes) {
+        pickerModes.filterIsInstance<FilePickerMode>().firstOrNull()
+    }
+    val filePickerLauncher = rememberFilePickerLauncher(filePickerMode, onResult = onUrisSelected)
+
+    val galleryPickerMode = remember(pickerModes) {
+        pickerModes.filterIsInstance<GalleryPickerMode>().firstOrNull()
+    }
+    val mediaPickerLauncher = rememberVisualMediaPickerLauncher(galleryPickerMode, onResult = onUrisSelected)
+
+    val captureMediaMode = remember(pickerModes) {
+        pickerModes.filterIsInstance<CameraPickerMode>()
+            .map(CameraPickerMode::toCaptureMediaMode)
+            .firstOrNull()
+    }
+    val captureMediaLauncher = captureMediaMode?.let { mode ->
+        rememberCaptureMediaLauncher(mode) { file ->
+            onAttachmentsSubmitted(listOf(AttachmentMetaData(context, file)))
+        }
+    }
+    // Handling camera permission flow is only required if the host application has declared the permission.
+    val requiresCameraPermission = remember { context.isPermissionDeclared(Manifest.permission.CAMERA) }
+    val cameraPermissionState = if (requiresCameraPermission) {
+        rememberPermissionState(Manifest.permission.CAMERA) { granted ->
+            if (granted) captureMediaLauncher?.launch(Unit)
+        }
+    } else {
+        null
+    }
+    var showCameraPermissionDialog by remember { mutableStateOf(false) }
+    LaunchedEffect(cameraPermissionState?.status) {
+        showCameraPermissionDialog = false
+    }
+
+    var showCreatePollDialog by remember { mutableStateOf(false) }
+
+    var showCommandsPickerDialog by remember { mutableStateOf(false) }
+
+    val fileTypes = remember { AttachmentFilter().getSupportedMimeTypes().toTypedArray() }
+
+    ChatTheme.componentFactory.AttachmentTypeSystemPicker(
+        params = AttachmentTypeSystemPickerParams(
+            channel = channel,
+            messageMode = messageMode,
+            onModeSelected = { attachmentPickerMode ->
+                when (attachmentPickerMode) {
+                    is GalleryPickerMode -> {
+                        val mediaType = attachmentPickerMode.mediaType.toVisualMediaType()
+                        mediaPickerLauncher?.launch(PickVisualMediaRequest(mediaType))
+                    }
+
+                    is CameraPickerMode -> {
+                        if (cameraPermissionState == null || cameraPermissionState.status.isGranted) {
+                            captureMediaLauncher?.launch(Unit)
+                        } else if (cameraPermissionState.status.shouldShowRationale) {
+                            showCameraPermissionDialog = true
+                        } else {
+                            cameraPermissionState.launchPermissionRequest()
+                        }
+                    }
+
+                    is FilePickerMode -> filePickerLauncher?.launch(fileTypes)
+
+                    is PollPickerMode -> {
+                        showCreatePollDialog = true
+                        actions.onCreatePollClick()
+                    }
+
+                    is CommandPickerMode -> showCommandsPickerDialog = true
+
+                    // Custom modes are handled by customers
+                    else -> Unit
+                }
+            },
+        ),
+    )
+
+    if (showCameraPermissionDialog) {
+        CameraPermissionDialog(
+            onDismiss = { showCameraPermissionDialog = false },
+        )
+    }
+
+    if (showCreatePollDialog) {
+        FullscreenDialog(
+            onDismissRequest = {
+                showCreatePollDialog = false
+                actions.onCreatePollDismissed()
+            },
+        ) {
+            CreatePollScreen(
+                onBack = {
+                    showCreatePollDialog = false
+                    actions.onCreatePollDismissed()
+                },
+                onCreatePoll = { pollConfig ->
+                    showCreatePollDialog = false
+                    actions.onCreatePoll(pollConfig)
+                },
+            )
+        }
+    }
+
+    val commandPickerMode = remember(pickerModes) {
+        pickerModes.filterIsInstance<CommandPickerMode>().firstOrNull()
+    }
+    val commands = channel.config.commands
+    if (showCommandsPickerDialog && commandPickerMode != null) {
+        ModalBottomSheet(onDismissRequest = { showCommandsPickerDialog = false }) {
+            ChatTheme.componentFactory.AttachmentCommandPicker(
+                params = AttachmentCommandPickerParams(
+                    pickerMode = commandPickerMode,
+                    commands = commands,
+                    onCommandSelected = { command ->
+                        showCommandsPickerDialog = false
+                        actions.onCommandSelected(command)
+                    },
+                ),
+            )
+        }
+    }
+}
+
+private fun MediaType.toVisualMediaType(): PickVisualMedia.VisualMediaType =
+    when (this) {
+        MediaType.ImagesOnly -> PickVisualMedia.ImageOnly
+        MediaType.VideosOnly -> PickVisualMedia.VideoOnly
+        MediaType.ImagesAndVideos -> PickVisualMedia.ImageAndVideo
+    }
+
+@Composable
+private fun rememberFilePickerLauncher(
+    filePickerMode: FilePickerMode?,
+    onResult: (List<Uri>) -> Unit,
+) = filePickerMode?.let {
+    if (filePickerMode.allowMultipleSelection) {
+        rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris ->
+            onResult(uris)
+        }
+    } else {
+        rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            if (uri != null) {
+                onResult(listOf(uri))
+            }
+        }
+    }
+}
+
+@Composable
+private fun rememberVisualMediaPickerLauncher(
+    galleryPickerMode: GalleryPickerMode?,
+    onResult: (List<Uri>) -> Unit,
+) = galleryPickerMode?.let {
+    if (galleryPickerMode.allowMultipleSelection) {
+        rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
+            onResult(uris)
+        }
+    } else {
+        rememberLauncherForActivityResult(PickVisualMedia()) { uri ->
+            if (uri != null) {
+                onResult(listOf(uri))
+            }
+        }
+    }
+}
+
+@Composable
+private fun CameraPermissionDialog(
+    onDismiss: () -> Unit,
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier.height(350.dp),
+            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundCoreElevation1),
+        ) {
+            RequiredCameraPermission()
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentSystemPickerPreview() {
+    ChatPreviewTheme {
+        AttachmentSystemPicker()
+    }
+}
+
+@Composable
+internal fun AttachmentSystemPicker() {
+    AttachmentSystemPicker(
+        channel = Channel(),
+        messageMode = MessageMode.Normal,
+        attachments = emptyList(),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentSystemPickerWithPollsPreview() {
+    ChatPreviewTheme {
+        AttachmentSystemPickerWithPolls()
+    }
+}
+
+@Composable
+internal fun AttachmentSystemPickerWithPolls() {
+    AttachmentSystemPicker(
+        channel = Channel(
+            ownCapabilities = setOf(ChannelCapabilities.SEND_POLL),
+            config = Config(pollsEnabled = true),
+        ),
+        messageMode = MessageMode.Normal,
+        attachments = emptyList(),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentSystemPickerWithCommandsPreview() {
+    ChatPreviewTheme {
+        AttachmentSystemPickerWithCommands()
+    }
+}
+
+@Composable
+internal fun AttachmentSystemPickerWithCommands() {
+    AttachmentSystemPicker(
+        channel = Channel(config = Config(commands = listOf(PreviewCommandData.command1))),
+        messageMode = MessageMode.Normal,
+        attachments = emptyList(),
+    )
+}

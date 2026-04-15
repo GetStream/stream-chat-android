@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Color
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.utils.Utils
 import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerViewStyle
 import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.helper.StyleTransformer
@@ -20,7 +19,7 @@ class AddingRecordingSupport {
     fun customizeUiInMessageComposer(context: Context) {
         TransformStyle.messageComposerStyleTransformer = StyleTransformer { defaultStyle ->
             defaultStyle.copy(
-                audioRecordingHoldToRecordText = context.getString(R.string.stream_ui_message_composer_hold_to_record),
+                audioRecordingHoldToRecordText = context.getString(R.string.stream_ui_message_composer_hold_to_record_save),
                 audioRecordingHoldToRecordTextStyle = TextStyle(
                     size = context.getDimension(R.dimen.stream_ui_text_medium),
                     color = context.getColorCompat(R.color.stream_ui_text_color_secondary),

@@ -16,12 +16,10 @@
 
 package io.getstream.chat.android.compose.ui.channel.info
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -35,8 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
+import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.previewdata.PreviewMembersData
@@ -44,6 +42,7 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMembe
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent.BanMemberModal.Timeout
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 @Suppress("LongMethod")
 @Composable
@@ -66,40 +65,17 @@ internal fun ChannelInfoScreenModal(
             )
         }
 
-        ChannelInfoViewEvent.HideChannelModal -> {
-            var clearHistory by remember { mutableStateOf(false) }
-            SimpleDialog(
-                title = if (isGroupChannel) {
-                    stringResource(R.string.stream_ui_channel_info_option_hide_group)
-                } else {
-                    stringResource(R.string.stream_ui_channel_info_option_hide_conversation)
-                },
-                text = {
-                    HideChannelModalText(
-                        isGroupChannel = isGroupChannel,
-                        clearHistory = clearHistory,
-                        onClearHistoryClick = { clearHistory = !clearHistory },
-                    )
-                },
-                onConfirmClick = {
-                    onViewAction(ChannelInfoViewAction.HideChannelConfirmationClick(clearHistory))
-                    onDismiss()
-                },
-                onDismiss = onDismiss,
-            )
-        }
-
         ChannelInfoViewEvent.DeleteChannelModal -> {
             SimpleDialog(
                 title = if (isGroupChannel) {
-                    stringResource(R.string.stream_ui_channel_info_option_delete_group)
+                    stringResource(UiCommonR.string.stream_ui_channel_info_option_delete_group)
                 } else {
-                    stringResource(R.string.stream_ui_channel_info_option_delete_conversation)
+                    stringResource(UiCommonR.string.stream_ui_channel_info_option_delete_conversation)
                 },
                 message = if (isGroupChannel) {
-                    stringResource(R.string.stream_ui_channel_info_delete_group_modal_message)
+                    stringResource(UiCommonR.string.stream_ui_channel_info_delete_group_modal_message)
                 } else {
-                    stringResource(R.string.stream_ui_channel_info_delete_conversation_modal_message)
+                    stringResource(UiCommonR.string.stream_ui_channel_info_delete_conversation_modal_message)
                 },
                 onPositiveAction = {
                     onViewAction(ChannelInfoViewAction.DeleteChannelConfirmationClick)
@@ -112,14 +88,14 @@ internal fun ChannelInfoScreenModal(
         ChannelInfoViewEvent.LeaveChannelModal -> {
             SimpleDialog(
                 title = if (isGroupChannel) {
-                    stringResource(R.string.stream_ui_channel_info_option_leave_group)
+                    stringResource(UiCommonR.string.stream_ui_channel_info_option_leave_group)
                 } else {
-                    stringResource(R.string.stream_ui_channel_info_option_leave_conversation)
+                    stringResource(UiCommonR.string.stream_ui_channel_info_option_leave_conversation)
                 },
                 message = if (isGroupChannel) {
-                    stringResource(R.string.stream_ui_channel_info_leave_group_modal_message)
+                    stringResource(UiCommonR.string.stream_ui_channel_info_leave_group_modal_message)
                 } else {
-                    stringResource(R.string.stream_ui_channel_info_leave_conversation_modal_message)
+                    stringResource(UiCommonR.string.stream_ui_channel_info_leave_conversation_modal_message)
                 },
                 onPositiveAction = {
                     // TODO Get quit message configuration from ChatTheme
@@ -136,7 +112,7 @@ internal fun ChannelInfoScreenModal(
 
             SimpleDialog(
                 title = stringResource(
-                    R.string.stream_ui_channel_info_ban_member_modal_title,
+                    UiCommonR.string.stream_ui_channel_info_ban_member_modal_title,
                     member.user.name.takeIf(String::isNotBlank) ?: member.user.id,
                 ),
                 text = {
@@ -162,9 +138,9 @@ internal fun ChannelInfoScreenModal(
         is ChannelInfoViewEvent.RemoveMemberModal -> {
             val member = modal.member
             SimpleDialog(
-                title = stringResource(R.string.stream_ui_channel_info_member_modal_option_remove_member),
+                title = stringResource(UiCommonR.string.stream_ui_channel_info_member_modal_option_remove_member),
                 message = stringResource(
-                    R.string.stream_ui_channel_info_remove_member_modal_message,
+                    UiCommonR.string.stream_ui_channel_info_remove_member_modal_message,
                     member.user.name.takeIf(String::isNotBlank) ?: member.getUserId(),
                 ),
                 onPositiveAction = {
@@ -176,48 +152,6 @@ internal fun ChannelInfoScreenModal(
         }
 
         null -> Unit
-    }
-}
-
-@Composable
-private fun HideChannelModalText(
-    isGroupChannel: Boolean,
-    clearHistory: Boolean,
-    onClearHistoryClick: () -> Unit,
-) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            text = if (isGroupChannel) {
-                stringResource(R.string.stream_ui_channel_info_hide_group_modal_message)
-            } else {
-                stringResource(R.string.stream_ui_channel_info_hide_conversation_modal_message)
-            },
-            color = ChatTheme.colors.textHighEmphasis,
-            style = ChatTheme.typography.body,
-        )
-        Row(
-            modifier = Modifier
-                .clickable(onClick = onClearHistoryClick)
-                .padding(end = 16.dp, top = 8.dp, bottom = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Checkbox(
-                checked = clearHistory,
-                onCheckedChange = null,
-            )
-            Text(
-                text = if (isGroupChannel) {
-                    stringResource(R.string.stream_ui_channel_info_hide_group_modal_clear_history)
-                } else {
-                    stringResource(R.string.stream_ui_channel_info_hide_conversation_modal_clear_history)
-                },
-                color = ChatTheme.colors.textLowEmphasis,
-                style = ChatTheme.typography.body,
-            )
-        }
     }
 }
 
@@ -245,43 +179,21 @@ private fun BanMemberModalText(
                 val label = stringResource(
                     when (timeout) {
                         Timeout.OneHour ->
-                            R.string.stream_ui_channel_info_ban_member_modal_timeout_one_hour
+                            UiCommonR.string.stream_ui_channel_info_ban_member_modal_timeout_one_hour
 
                         Timeout.OneDay ->
-                            R.string.stream_ui_channel_info_ban_member_modal_timeout_one_day
+                            UiCommonR.string.stream_ui_channel_info_ban_member_modal_timeout_one_day
 
                         Timeout.OneWeek ->
-                            R.string.stream_ui_channel_info_ban_member_modal_timeout_one_week
+                            UiCommonR.string.stream_ui_channel_info_ban_member_modal_timeout_one_week
 
                         Timeout.NoTimeout ->
-                            R.string.stream_ui_channel_info_ban_member_modal_no_timeout
+                            UiCommonR.string.stream_ui_channel_info_ban_member_modal_no_timeout
                     },
                 )
                 Text(text = label)
             }
         }
-    }
-}
-
-@Preview
-@Composable
-private fun ChannelInfoScreenModalHideDirectChannelPreview() {
-    ChatTheme {
-        ChannelInfoScreenModal(
-            modal = ChannelInfoViewEvent.HideChannelModal,
-            isGroupChannel = false,
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun ChannelInfoScreenModalHideGroupChannelPreview() {
-    ChatTheme {
-        ChannelInfoScreenModal(
-            modal = ChannelInfoViewEvent.HideChannelModal,
-            isGroupChannel = true,
-        )
     }
 }
 
@@ -371,10 +283,12 @@ internal fun ChannelInfoScreenModal(
     isGroupChannel: Boolean,
 ) {
     ChatTheme.componentFactory.ChannelInfoScreenModal(
-        modal = modal,
-        isGroupChannel = isGroupChannel,
-        onViewAction = {},
-        onMemberViewEvent = {},
-        onDismiss = {},
+        params = ChannelInfoScreenModalParams(
+            modal = modal,
+            isGroupChannel = isGroupChannel,
+            onViewAction = {},
+            onMemberViewEvent = {},
+            onDismiss = {},
+        ),
     )
 }

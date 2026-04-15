@@ -16,18 +16,23 @@
 
 package io.getstream.chat.android.compose.ui.components.poll
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.models.Vote
-import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 @Composable
 internal fun PollVoteItem(
@@ -35,42 +40,38 @@ internal fun PollVoteItem(
     modifier: Modifier = Modifier,
 ) {
     val user = vote.user ?: return
+    val borderSize = 2.dp
 
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
     ) {
-        ChatTheme.componentFactory.Avatar(
-            modifier = Modifier.size(20.dp),
-            imageUrl = user.image,
-            initials = user.initials,
-            shape = ChatTheme.shapes.avatar,
-            textStyle = ChatTheme.typography.captionBold,
-            placeholderPainter = null,
-            errorPlaceholderPainter = null,
-            contentDescription = user.name,
-            initialsAvatarOffset = DpOffset.Zero,
-            onClick = null,
+        ChatTheme.componentFactory.UserAvatar(
+            params = UserAvatarParams(
+                modifier = Modifier
+                    .size(AvatarSize.Medium + borderSize * 2)
+                    .background(ChatTheme.colors.borderCoreOpacitySubtle, CircleShape)
+                    .padding(borderSize),
+                user = user,
+                showIndicator = false,
+                showBorder = false,
+            ),
         )
 
         Text(
             modifier = Modifier.weight(1f),
             text = user.name,
-            color = ChatTheme.colors.textHighEmphasis,
-            style = ChatTheme.typography.body,
+            color = ChatTheme.colors.textPrimary,
+            style = ChatTheme.typography.bodyDefault,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
 
         Text(
             text = ChatTheme.dateFormatter.formatRelativeDate(vote.createdAt),
-            color = ChatTheme.colors.textLowEmphasis,
-            style = ChatTheme.typography.bodyBold,
-        )
-
-        Text(
-            text = ChatTheme.dateFormatter.formatTime(vote.createdAt),
-            color = ChatTheme.colors.textLowEmphasis,
-            style = ChatTheme.typography.body,
+            color = ChatTheme.colors.textTertiary,
+            style = ChatTheme.typography.bodyDefault,
         )
     }
 }

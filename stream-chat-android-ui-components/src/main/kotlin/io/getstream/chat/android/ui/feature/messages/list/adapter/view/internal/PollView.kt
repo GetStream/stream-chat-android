@@ -44,6 +44,7 @@ import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.log.taggedLogger
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 internal class PollView : RecyclerView {
 
@@ -103,7 +104,7 @@ internal class PollView : RecyclerView {
 
         pollItems.addAll(
             poll.options
-                .take(PollsConstants.MIN_NUMBER_OF_VISIBLE_OPTIONS)
+                .take(PollsConstants.MAX_NUMBER_OF_VISIBLE_OPTIONS)
                 .map { option ->
                     PollItem.Answer(
                         option = option,
@@ -118,7 +119,7 @@ internal class PollView : RecyclerView {
         )
 
         PollItem.ShowAllOptions(count = poll.options.size)
-            .takeIf { poll.options.size > PollsConstants.MIN_NUMBER_OF_VISIBLE_OPTIONS }
+            .takeIf { poll.options.size > PollsConstants.MAX_NUMBER_OF_VISIBLE_OPTIONS }
             ?.let(pollItems::add)
 
         pollItems.add(PollItem.ViewResults)
@@ -318,7 +319,7 @@ private class ShowAllOptionsViewHolder(
 ) : PollItemViewHolder<PollItem.ShowAllOptions>(binding) {
     override fun bind(pollItem: PollItem.ShowAllOptions) {
         binding.pollShowAllOptions.text = binding.root.context.getString(
-            R.string.stream_ui_poll_action_see_all,
+            UiCommonR.string.stream_ui_poll_action_see_all,
             pollItem.count,
         )
         binding.root.setOnClickListener { onShowAllOptions() }

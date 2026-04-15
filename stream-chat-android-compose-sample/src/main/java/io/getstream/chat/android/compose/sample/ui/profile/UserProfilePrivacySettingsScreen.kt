@@ -101,7 +101,7 @@ fun UserProfilePrivacySettingsScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = ChatTheme.colors.primaryAccent,
+                containerColor = ChatTheme.colors.accentPrimary,
             ),
             shape = RoundedCornerShape(12.dp),
         ) {
@@ -110,7 +110,7 @@ fun UserProfilePrivacySettingsScreen(
                 horizontalArrangement = Arrangement.Center,
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
+                    painter = painterResource(id = R.drawable.stream_design_ic_checkmark),
                     contentDescription = null,
                     tint = Color.White,
                     modifier = Modifier.size(18.dp),
@@ -118,7 +118,7 @@ fun UserProfilePrivacySettingsScreen(
                 Spacer(modifier = Modifier.size(8.dp))
                 Text(
                     text = "Save Settings",
-                    style = ChatTheme.typography.bodyBold.copy(
+                    style = ChatTheme.typography.bodyEmphasis.copy(
                         color = Color.White,
                         fontSize = 16.sp,
                     ),
@@ -148,8 +148,8 @@ private fun SwitchItem(
     ) {
         Text(
             text = label,
-            style = ChatTheme.typography.title3,
-            color = ChatTheme.colors.textHighEmphasis,
+            style = ChatTheme.typography.headingMedium,
+            color = ChatTheme.colors.textPrimary,
         )
         Switch(
             checked = checked,

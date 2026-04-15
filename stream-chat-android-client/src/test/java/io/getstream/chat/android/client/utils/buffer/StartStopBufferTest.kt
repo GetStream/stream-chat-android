@@ -18,14 +18,12 @@ package io.getstream.chat.android.client.utils.buffer
 
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineExtension
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be in`
 import org.amshove.kluent.`should not be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExperimentalCoroutinesApi
 @ExtendWith(TestCoroutineExtension::class)
 internal class StartStopBufferTest {
 

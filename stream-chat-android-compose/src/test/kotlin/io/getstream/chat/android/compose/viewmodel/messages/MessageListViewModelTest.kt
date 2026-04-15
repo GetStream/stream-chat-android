@@ -17,8 +17,13 @@
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.state.GlobalState
+import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
+import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
@@ -31,17 +36,11 @@ import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomInt
-import io.getstream.chat.android.state.plugin.config.StatePluginConfig
-import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
-import io.getstream.chat.android.state.plugin.internal.StatePlugin
-import io.getstream.chat.android.state.plugin.state.StateRegistry
-import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.state.messages.React
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -56,7 +55,6 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
 
-@ExperimentalCoroutinesApi
 internal class MessageListViewModelTest {
 
     @Test
@@ -111,7 +109,7 @@ internal class MessageListViewModelTest {
 
         viewModel.performMessageAction(React(reaction1, message1))
 
-        verify(chatClient).sendReaction(eq(reaction1), eq(true), eq(CID), eq(false))
+        verify(chatClient).sendReaction(eq(reaction1), eq(false), eq(CID), eq(false))
     }
 
     @Test
@@ -133,7 +131,7 @@ internal class MessageListViewModelTest {
 
         viewModel.performMessageAction(React(reaction1, message1, skipPush = true))
 
-        verify(chatClient).sendReaction(eq(reaction1), eq(true), eq(CID), eq(true))
+        verify(chatClient).sendReaction(eq(reaction1), eq(false), eq(CID), eq(true))
     }
 
     @Test
@@ -152,7 +150,7 @@ internal class MessageListViewModelTest {
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelId: String = CID,
-        statePluginConfig: StatePluginConfig = StatePluginConfig(),
+        chatClientConfig: ChatClientConfig = ChatClientConfig(),
     ) {
         private val clientState: ClientState = mock()
         private val stateRegistry: StateRegistry = mock()
@@ -164,7 +162,7 @@ internal class MessageListViewModelTest {
             val statePluginFactory: StreamStatePluginFactory = mock()
             whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
             whenever(statePlugin.resolveDependency(eq(GlobalState::class))) doReturn globalState
-            whenever(statePluginFactory.resolveDependency(eq(StatePluginConfig::class))) doReturn statePluginConfig
+            whenever(statePluginFactory.resolveDependency(eq(ChatClientConfig::class))) doReturn chatClientConfig
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
             whenever(chatClient.pluginFactories) doReturn listOf(statePluginFactory)
             whenever(chatClient.clientState) doReturn clientState

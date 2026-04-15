@@ -26,7 +26,6 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.channel.attachments.ChannelFilesAttachmentsActivity
 import io.getstream.chat.android.compose.sample.ui.channel.attachments.ChannelMediaAttachmentsActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesActivity
@@ -36,6 +35,7 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import kotlinx.coroutines.flow.collectLatest
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Activity showing information about a 1-to-1 direct channel (chat).
@@ -60,7 +60,6 @@ class DirectChannelInfoActivity : ComponentActivity() {
 
     private val viewModelFactory by lazy {
         ChannelInfoViewModelFactory(
-            context = applicationContext,
             cid = channelId,
         )
     }
@@ -83,6 +82,11 @@ class DirectChannelInfoActivity : ComponentActivity() {
                         is ChannelInfoViewEvent.Error -> showError(event)
                         is ChannelInfoViewEvent.Navigation -> onNavigationEvent(event)
                         is ChannelInfoViewEvent.Modal -> Unit
+                        is ChannelInfoViewEvent.MuteUser,
+                        is ChannelInfoViewEvent.UnmuteUser,
+                        is ChannelInfoViewEvent.BlockUser,
+                        is ChannelInfoViewEvent.UnblockUser,
+                        -> Unit
                     }
                 }
             }
@@ -140,30 +144,37 @@ class DirectChannelInfoActivity : ComponentActivity() {
     private fun showError(error: ChannelInfoViewEvent.Error) {
         val message = when (error) {
             ChannelInfoViewEvent.RenameChannelError,
-            -> R.string.stream_ui_channel_info_rename_group_error
+            -> UiCommonR.string.stream_ui_channel_info_rename_group_error
 
             ChannelInfoViewEvent.MuteChannelError,
             ChannelInfoViewEvent.UnmuteChannelError,
-            -> R.string.stream_ui_channel_info_mute_conversation_error
+            -> UiCommonR.string.stream_ui_channel_info_mute_conversation_error
 
-            ChannelInfoViewEvent.HideChannelError,
-            ChannelInfoViewEvent.UnhideChannelError,
-            -> R.string.stream_ui_channel_info_hide_conversation_error
+            ChannelInfoViewEvent.MuteUserError,
+            ChannelInfoViewEvent.UnmuteUserError,
+            -> UiCommonR.string.stream_ui_channel_info_mute_user_error
+
+            ChannelInfoViewEvent.BlockUserError,
+            ChannelInfoViewEvent.UnblockUserError,
+            -> UiCommonR.string.stream_ui_channel_info_block_user_error
 
             ChannelInfoViewEvent.LeaveChannelError,
-            -> R.string.stream_ui_channel_info_leave_conversation_error
+            -> UiCommonR.string.stream_ui_channel_info_leave_conversation_error
 
             ChannelInfoViewEvent.DeleteChannelError,
-            -> R.string.stream_ui_channel_info_delete_conversation_error
+            -> UiCommonR.string.stream_ui_channel_info_delete_conversation_error
 
             ChannelInfoViewEvent.RemoveMemberError,
-            -> R.string.stream_ui_channel_info_remove_member_error
+            -> UiCommonR.string.stream_ui_channel_info_remove_member_error
+
+            ChannelInfoViewEvent.AddMembersError,
+            -> UiCommonR.string.stream_ui_channel_info_add_members_error
 
             ChannelInfoViewEvent.BanMemberError,
-            -> R.string.stream_ui_channel_info_ban_member_error
+            -> UiCommonR.string.stream_ui_channel_info_ban_member_error
 
             ChannelInfoViewEvent.UnbanMemberError,
-            -> R.string.stream_ui_channel_info_unban_member_error
+            -> UiCommonR.string.stream_ui_channel_info_unban_member_error
         }
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }

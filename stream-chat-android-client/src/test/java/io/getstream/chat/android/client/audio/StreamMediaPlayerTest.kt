@@ -149,6 +149,34 @@ internal class StreamMediaPlayerTest {
         streamPlayer.currentState shouldBeEqualTo AudioState.IDLE
     }
 
+    @Test
+    fun `test changeSpeed cycles through speeds`() = runTest {
+        /* Given */
+        val audioHash = randomInt()
+
+        /* When & Then */
+        streamPlayer.changeSpeed(audioHash) shouldBeEqualTo 1.5f
+        streamPlayer.changeSpeed(audioHash) shouldBeEqualTo 2.0f
+        streamPlayer.changeSpeed(audioHash) shouldBeEqualTo 1.0f
+        streamPlayer.changeSpeed(audioHash) shouldBeEqualTo 1.5f
+    }
+
+    @Test
+    fun `test changeSpeed maintains independent speeds per audio`() = runTest {
+        /* Given */
+        val audioHash1 = randomInt()
+        val audioHash2 = randomInt()
+
+        /* When */
+        streamPlayer.changeSpeed(audioHash1) // 1.5
+        streamPlayer.changeSpeed(audioHash1) // 2.0
+        streamPlayer.changeSpeed(audioHash2) // 1.5
+
+        /* Then */
+        streamPlayer.changeSpeed(audioHash1) shouldBeEqualTo 1.0f // cycles back
+        streamPlayer.changeSpeed(audioHash2) shouldBeEqualTo 2.0f // continues from 1.5
+    }
+
     @AfterEach
     fun tearDown() {
         userScope.cancelChildren()

@@ -37,6 +37,8 @@ import java.util.Date
  * @param replyCount The number of replies in the thread.
  * @param title The title of the thread.
  * @param updatedAt Date of the most recent update of the thread.
+ * @param channel The [Channel] object holding info about the channel in which the thread resides.
+ * @param threadParticipants The list of participants in the thread.
  * @param extraData Any additional data.
  */
 @Immutable
@@ -54,5 +56,7 @@ public data class ThreadInfo(
     val replyCount: Int,
     val title: String,
     val updatedAt: Date,
+    val channel: Channel? = null,
+    val threadParticipants: List<ThreadParticipant> = emptyList(),
     override val extraData: Map<String, Any> = emptyMap(),
 ) : CustomObject

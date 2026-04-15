@@ -21,12 +21,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
-import io.getstream.chat.android.uiutils.extension.isUploading
-import io.getstream.chat.android.uiutils.util.EmojiUtil
+import io.getstream.chat.android.ui.common.utils.EmojiUtil
+import io.getstream.chat.android.ui.common.utils.extensions.isUploading
 import kotlinx.coroutines.flow.map
 
 /**
@@ -52,11 +53,21 @@ public fun showOriginalTextAsState(cid: String, messageId: String): State<Boolea
 internal fun Message.getSenderDisplayName(
     context: Context,
     currentUser: User?,
+    isDirectMessaging: Boolean = false,
 ): String? =
-    when (user.id) {
-        currentUser?.id -> context.getString(R.string.stream_compose_channel_list_you)
-        else -> null
+    when {
+        // Always show "You:" prefix for own messages (Direct or Channel)
+        user.id == currentUser?.id -> context.getString(R.string.stream_compose_channel_list_you)
+        // Don't show any prefix for other messages in Direct channels
+        isDirectMessaging -> null
+        // Show username as prefix for other messages in Group channels
+        else -> user.name
     }
+
+/** @return If the message's attachment should occupy the full message bubble */
+internal fun Message.shouldBeDisplayedAsFullSizeAttachment(): Boolean = isGiphyEphemeral() || (
+    text.isEmpty() && replyTo == null && attachments.size == 1
+    )
 
 /**
  * @return If the message contains an attachment that is currently being uploaded.

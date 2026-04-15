@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.persistance.repository
 
 import io.getstream.chat.android.client.query.QueryChannelsSpec
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -24,6 +25,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 /**
  * Repository for queries of channels.
  */
+@InternalStreamChatApi
 public interface QueryChannelsRepository {
 
     /**

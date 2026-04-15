@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.plugin.listeners
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.result.Result
@@ -24,6 +25,7 @@ import java.util.Date
 /**
  * Listener for push notification preference changes.
  */
+@InternalStreamChatApi
 public interface PushPreferencesListener {
 
     /**

@@ -20,7 +20,7 @@ android {
         consumerProguardFiles("consumer-rules.pro")
     }
 
-    resourcePrefix = "stream_compose_"
+    resourcePrefix = "stream_"
 
     lint {
         disable += "MissingTranslation"
@@ -70,12 +70,12 @@ tasks.withType<KotlinCompile> {
 dependencies {
     api(project(":stream-chat-android-ui-common"))
     implementation(project(":stream-chat-android-previewdata"))
-    implementation(project(":stream-chat-android-ui-utils"))
 
     implementation(libs.androidx.appcompat)
     implementation(libs.stream.log)
 
     // Compose
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.lifecycle.runtime.compose)
@@ -90,8 +90,8 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
-    implementation(libs.skydoves.landscapist.coil)
     implementation(libs.coil.gif)
+    implementation(libs.coil.network.okhttp)
     implementation(libs.coil.video)
 
     // Media3

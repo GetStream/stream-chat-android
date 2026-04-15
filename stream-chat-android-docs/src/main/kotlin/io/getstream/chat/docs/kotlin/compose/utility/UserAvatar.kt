@@ -3,6 +3,7 @@
 package io.getstream.chat.docs.kotlin.compose.utility
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -11,8 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.models.User
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
+import io.getstream.chat.android.models.User
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/utility-components/user-avatar/#usage)
@@ -24,7 +25,7 @@ private object UserAvatarUsageSnippet {
         UserAvatar(
             user = user,
             // Show online indicator
-            showOnlineIndicator = true,
+            showIndicator = true,
             // Reasonable avatar size
             modifier = Modifier.size(36.dp)
         )
@@ -38,9 +39,12 @@ private object UserAvatarHandlingActionsSnippet {
 
     @Composable
     fun MyUserAvatar(user: User) {
-        UserAvatar(user = user) {
-            // Handle avatar clicks here
-        }
+        UserAvatar(
+            user = user,
+            modifier = Modifier.clickable {
+                // Handle avatar clicks here
+            }
+        )
     }
 }
 
@@ -51,10 +55,15 @@ private object UserAvatarCustomizationSnippet {
 
     @Composable
     fun MyUserAvatar(user: User) {
-        UserAvatar(
-            modifier = Modifier.size(48.dp),
-            user = user,
-            onlineIndicator = {
+        Box {
+            UserAvatar(
+                modifier = Modifier.size(48.dp),
+                user = user,
+                // Disable default indicator
+                showIndicator = false,
+            )
+
+            if (user.online) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
@@ -62,6 +71,6 @@ private object UserAvatarCustomizationSnippet {
                         .background(Color.Blue, CircleShape)
                 )
             }
-        )
+        }
     }
 }

@@ -43,9 +43,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.sample.BuildConfig
 import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.compose.R as ComposeR
 
 @Suppress("LongParameterList")
 @Composable
@@ -71,7 +73,7 @@ fun ChannelsScreenNavigationDrawer(
         }
         // New Direct Message
         NavigationDrawerItem(
-            icon = R.drawable.stream_compose_ic_new_chat,
+            icon = R.drawable.ic_new_chat,
             text = stringResource(R.string.navigation_drawer_new_direct_message),
             onClick = onNewDirectMessageClick,
         )
@@ -91,7 +93,7 @@ fun ChannelsScreenNavigationDrawer(
         Spacer(modifier = Modifier.weight(1f))
         // Sign Out
         NavigationDrawerItem(
-            icon = R.drawable.stream_compose_ic_person,
+            icon = ComposeR.drawable.stream_design_ic_account,
             text = stringResource(R.string.navigation_drawer_sign_out),
             onClick = onSignOutClick,
         )
@@ -123,14 +125,14 @@ private fun LoggedInUserHeader(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             UserAvatar(
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier.size(AvatarSize.Large),
                 user = user,
             )
             Text(
                 text = user.name,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -154,13 +156,13 @@ private fun LoggedInUserHeader(
             Text(
                 text = text,
                 fontSize = 12.sp,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = ChatTheme.colors.textSecondary,
             )
         } else {
             Text(
                 text = "No teams",
                 fontSize = 12.sp,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = ChatTheme.colors.textSecondary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -187,15 +189,15 @@ private fun NavigationDrawerItem(
     ) {
         Icon(
             painter = painterResource(icon),
-            tint = ChatTheme.colors.textHighEmphasis,
+            tint = ChatTheme.colors.textPrimary,
             contentDescription = text,
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(
             text = text,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
             fontSize = 14.sp,
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
         )
     }
 }
@@ -208,7 +210,7 @@ private fun VersionFooter() {
             .padding(vertical = 8.dp),
         textAlign = TextAlign.Center,
         text = BuildConfig.VERSION_NAME,
-        color = ChatTheme.colors.textLowEmphasis,
+        color = ChatTheme.colors.textSecondary,
         fontSize = 12.sp,
     )
 }

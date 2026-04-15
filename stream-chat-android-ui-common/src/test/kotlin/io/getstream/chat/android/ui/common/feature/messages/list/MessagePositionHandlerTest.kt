@@ -23,6 +23,7 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
+import java.util.Date
 
 internal class MessagePositionHandlerTest {
 
@@ -31,9 +32,16 @@ internal class MessagePositionHandlerTest {
     private val user1 = User(id = "user1")
     private val user2 = User(id = "user2")
 
-    private fun createMessage(user: User, isSystem: Boolean = false, isError: Boolean = false): Message {
+    private fun createMessage(
+        user: User,
+        isSystem: Boolean = false,
+        isError: Boolean = false,
+        timeOffset: Long = 0L,
+    ): Message {
         return randomMessage(
             user = user,
+            createdAt = Date(timeOffset),
+            createdLocallyAt = Date(timeOffset),
             type = when {
                 isSystem -> MessageType.SYSTEM
                 isError -> MessageType.ERROR
@@ -44,9 +52,9 @@ internal class MessagePositionHandlerTest {
 
     @Test
     fun `Message should be TOP when it starts a new user sequence`() {
-        val previousMessage = createMessage(user2)
-        val currentMessage = createMessage(user1)
-        val nextMessage = createMessage(user1)
+        val previousMessage = createMessage(user2, timeOffset = 0L)
+        val currentMessage = createMessage(user1, timeOffset = 1_000L)
+        val nextMessage = createMessage(user1, timeOffset = 2_000L)
 
         val result = defaultHandler.handleMessagePosition(
             previousMessage,
@@ -57,14 +65,14 @@ internal class MessagePositionHandlerTest {
             isInThread = false,
         )
 
-        result `should be equal to` listOf(MessagePosition.TOP)
+        result `should be equal to` MessagePosition.TOP
     }
 
     @Test
     fun `Message should be MIDDLE when it's between two messages from the same user`() {
-        val previousMessage = createMessage(user1)
-        val currentMessage = createMessage(user1)
-        val nextMessage = createMessage(user1)
+        val previousMessage = createMessage(user1, timeOffset = 0L)
+        val currentMessage = createMessage(user1, timeOffset = 1_000L)
+        val nextMessage = createMessage(user1, timeOffset = 2_000L)
 
         val result = defaultHandler.handleMessagePosition(
             previousMessage,
@@ -75,14 +83,14 @@ internal class MessagePositionHandlerTest {
             isInThread = false,
         )
 
-        result `should be equal to` listOf(MessagePosition.MIDDLE)
+        result `should be equal to` MessagePosition.MIDDLE
     }
 
     @Test
     fun `Message should be BOTTOM when it's the last message in a user sequence`() {
-        val previousMessage = createMessage(user1)
-        val currentMessage = createMessage(user1)
-        val nextMessage = createMessage(user2)
+        val previousMessage = createMessage(user1, timeOffset = 0L)
+        val currentMessage = createMessage(user1, timeOffset = 1_000L)
+        val nextMessage = createMessage(user2, timeOffset = 2_000L)
 
         val result = defaultHandler.handleMessagePosition(
             previousMessage,
@@ -93,14 +101,14 @@ internal class MessagePositionHandlerTest {
             isInThread = false,
         )
 
-        result `should be equal to` listOf(MessagePosition.BOTTOM)
+        result `should be equal to` MessagePosition.BOTTOM
     }
 
     @Test
     fun `Message should be NONE when it's a single isolated message`() {
-        val previousMessage = createMessage(user2)
-        val currentMessage = createMessage(user1)
-        val nextMessage = createMessage(user2)
+        val previousMessage = createMessage(user2, timeOffset = 0L)
+        val currentMessage = createMessage(user1, timeOffset = 1_000L)
+        val nextMessage = createMessage(user2, timeOffset = 2_000L)
 
         val result = defaultHandler.handleMessagePosition(
             previousMessage,
@@ -111,14 +119,14 @@ internal class MessagePositionHandlerTest {
             isInThread = false,
         )
 
-        result `should be equal to` listOf(MessagePosition.NONE)
+        result `should be equal to` MessagePosition.NONE
     }
 
     @Test
     fun `Message should be NONE when it doesn't match any position`() {
-        val previousMessage = createMessage(user1, isSystem = true)
-        val currentMessage = createMessage(user1, isSystem = true)
-        val nextMessage = createMessage(user1, isSystem = true)
+        val previousMessage = createMessage(user1, isSystem = true, timeOffset = 0L)
+        val currentMessage = createMessage(user1, isSystem = true, timeOffset = 1_000L)
+        val nextMessage = createMessage(user1, isSystem = true, timeOffset = 2_000L)
 
         val result = defaultHandler.handleMessagePosition(
             previousMessage,
@@ -129,14 +137,14 @@ internal class MessagePositionHandlerTest {
             isInThread = false,
         )
 
-        result `should be equal to` listOf(MessagePosition.NONE)
+        result `should be equal to` MessagePosition.NONE
     }
 
     @Test
     fun `Message should be TOP when there's a date separator before it`() {
-        val previousMessage = createMessage(user1)
-        val currentMessage = createMessage(user1)
-        val nextMessage = createMessage(user1)
+        val previousMessage = createMessage(user1, timeOffset = 0L)
+        val currentMessage = createMessage(user1, timeOffset = 1_000L)
+        val nextMessage = createMessage(user1, timeOffset = 2_000L)
 
         val result = defaultHandler.handleMessagePosition(
             previousMessage,
@@ -147,14 +155,14 @@ internal class MessagePositionHandlerTest {
             isInThread = false,
         )
 
-        result `should be equal to` listOf(MessagePosition.TOP)
+        result `should be equal to` MessagePosition.TOP
     }
 
     @Test
     fun `Message should be BOTTOM when there's a date separator after it`() {
-        val previousMessage = createMessage(user1)
-        val currentMessage = createMessage(user1)
-        val nextMessage = createMessage(user1)
+        val previousMessage = createMessage(user1, timeOffset = 0L)
+        val currentMessage = createMessage(user1, timeOffset = 1_000L)
+        val nextMessage = createMessage(user1, timeOffset = 2_000L)
 
         val result = defaultHandler.handleMessagePosition(
             previousMessage,
@@ -165,6 +173,60 @@ internal class MessagePositionHandlerTest {
             isInThread = false,
         )
 
-        result `should be equal to` listOf(MessagePosition.BOTTOM)
+        result `should be equal to` MessagePosition.BOTTOM
+    }
+
+    @Test
+    fun `Message should be NONE when time difference with previous and next exceeds 60 seconds`() {
+        val previousMessage = createMessage(user1, timeOffset = 0L)
+        val currentMessage = createMessage(user1, timeOffset = 120_000L)
+        val nextMessage = createMessage(user1, timeOffset = 240_000L)
+
+        val result = defaultHandler.handleMessagePosition(
+            previousMessage,
+            currentMessage,
+            nextMessage,
+            isAfterDateSeparator = false,
+            isBeforeDateSeparator = false,
+            isInThread = false,
+        )
+
+        result `should be equal to` MessagePosition.NONE
+    }
+
+    @Test
+    fun `Message should be TOP when time difference with previous exceeds 60 seconds`() {
+        val previousMessage = createMessage(user1, timeOffset = 0L)
+        val currentMessage = createMessage(user1, timeOffset = 120_000L)
+        val nextMessage = createMessage(user1, timeOffset = 121_000L)
+
+        val result = defaultHandler.handleMessagePosition(
+            previousMessage,
+            currentMessage,
+            nextMessage,
+            isAfterDateSeparator = false,
+            isBeforeDateSeparator = false,
+            isInThread = false,
+        )
+
+        result `should be equal to` MessagePosition.TOP
+    }
+
+    @Test
+    fun `Message should be BOTTOM when time difference with next exceeds 60 seconds`() {
+        val previousMessage = createMessage(user1, timeOffset = 0L)
+        val currentMessage = createMessage(user1, timeOffset = 1_000L)
+        val nextMessage = createMessage(user1, timeOffset = 120_000L)
+
+        val result = defaultHandler.handleMessagePosition(
+            previousMessage,
+            currentMessage,
+            nextMessage,
+            isAfterDateSeparator = false,
+            isBeforeDateSeparator = false,
+            isInThread = false,
+        )
+
+        result `should be equal to` MessagePosition.BOTTOM
     }
 }

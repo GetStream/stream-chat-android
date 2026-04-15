@@ -10,20 +10,17 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.datepicker.MaterialDatePicker
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.ChatClient.Companion.instance
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.models.Filters.eq
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.chat.android.ui.common.feature.messages.composer.mention.CompatUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
-import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserQueryFilter
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.DefaultUserQueryFilter
 import io.getstream.chat.android.ui.common.feature.messages.composer.transliteration.DefaultStreamTransliterator
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -42,16 +39,13 @@ import io.getstream.chat.android.ui.feature.messages.composer.content.MessageCom
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.helper.StyleTransformer
 import io.getstream.chat.android.ui.helper.TransformStyle
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
-import io.getstream.chat.docs.R
 import io.getstream.chat.docs.databinding.MessageComposerLeadingContentBinding
-import io.getstream.result.Result
-import io.getstream.result.call.Call
 import io.getstream.result.call.map
-import kotlin.jvm.functions.Function1
+import io.getstream.chat.android.ui.R as UiR
 
 /**
  * [Message Composer](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer)
@@ -68,7 +62,7 @@ private object MessageComposer : Fragment() {
 
         fun usage1() {
             // Create MessageComposerViewModel for a given channel
-            val factory = MessageListViewModelFactory(requireContext(), cid = "messaging:123")
+            val factory = ChannelViewModelFactory(requireContext(), cid = "messaging:123")
             val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
 
             // Bind MessageComposerViewModel with MessageComposerView
@@ -87,7 +81,7 @@ private object MessageComposer : Fragment() {
 
         fun usage2() {
             // Create ViewModels for MessageComposerView and MessageListView
-            val factory = MessageListViewModelFactory(requireContext(), cid = "messaging:123")
+            val factory = ChannelViewModelFactory(requireContext(), cid = "messaging:123")
             val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
             val messageListViewModel: MessageListViewModel by viewModels { factory }
 
@@ -199,10 +193,10 @@ private object MessageComposer : Fragment() {
                 messageComposerViewModel.setMessageInput(text)
             }
             messageComposerView.attachmentSelectionListener = { attachments ->
-                messageComposerViewModel.addSelectedAttachments(attachments)
+                messageComposerViewModel.addAttachments(attachments)
             }
             messageComposerView.attachmentRemovalListener = { attachment ->
-                messageComposerViewModel.removeSelectedAttachment(attachment)
+                messageComposerViewModel.removeAttachment(attachment)
             }
             messageComposerView.mentionSelectionListener = { user ->
                 messageComposerViewModel.selectMention(user)
@@ -242,7 +236,7 @@ private object MessageComposer : Fragment() {
             TransformStyle.messageComposerStyleTransformer = StyleTransformer { viewStyle ->
                 viewStyle.copy(
                     messageInputTextStyle = viewStyle.messageInputTextStyle.copy(
-                        color = ContextCompat.getColor(context, R.color.stream_ui_accent_red)
+                        color = ContextCompat.getColor(context, UiR.color.stream_ui_accent_red)
                     )
                 )
             }
@@ -294,7 +288,7 @@ private object MessageComposer : Fragment() {
             messageComposerView.setLeadingContent(
                 DefaultMessageComposerLeadingContent(context).also {
                     it.attachmentsButtonClickListener = {
-                        // Show attachment dialog and invoke messageComposerViewModel.addSelectedAttachments(attachments)
+                        // Show attachment dialog and invoke messageComposerViewModel.addAttachments(attachments)
                     }
                     it.commandsButtonClickListener = { messageComposerViewModel.toggleCommandsVisibility() }
                 }
@@ -303,7 +297,7 @@ private object MessageComposer : Fragment() {
                 DefaultMessageComposerCenterContent(context).also {
                     it.textInputChangeListener = { text -> messageComposerViewModel.setMessageInput(text) }
                     it.attachmentRemovalListener =
-                        { attachment -> messageComposerViewModel.removeSelectedAttachment(attachment) }
+                        { attachment -> messageComposerViewModel.removeAttachment(attachment) }
                 }
             )
             messageComposerView.setTrailingContent(
@@ -413,7 +407,7 @@ private object MessageComposer : Fragment() {
             val cid = "messaging:123"
             val defaultUserLookupHandler = DefaultUserLookupHandler(chatClient, cid)
 
-            val factory = MessageListViewModelFactory(
+            val factory = ChannelViewModelFactory(
                 context = requireContext(), cid = cid, userLookupHandler = defaultUserLookupHandler
             )
             val viewModel: MessageComposerViewModel by viewModels { factory }
@@ -426,7 +420,7 @@ private object MessageComposer : Fragment() {
                 queryMembers(query)
             }
 
-            val factory = MessageListViewModelFactory(
+            val factory = ChannelViewModelFactory(
                 context = requireContext(),
                 cid = cid,
                 userLookupHandler = customUserLookupHandler

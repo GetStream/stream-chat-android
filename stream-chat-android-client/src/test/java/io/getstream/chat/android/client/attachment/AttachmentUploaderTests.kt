@@ -27,7 +27,6 @@ import io.getstream.chat.android.randomFile
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCall
 import io.getstream.result.Result
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
@@ -47,7 +46,6 @@ import org.robolectric.annotation.Config
 import java.io.File
 import java.util.UUID
 
-@ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [33])
 internal class AttachmentUploaderTests {

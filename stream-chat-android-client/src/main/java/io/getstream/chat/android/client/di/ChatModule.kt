@@ -25,7 +25,7 @@ import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.api.AnonymousApi
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.ChatApiConfig
 import io.getstream.chat.android.client.api.ProxyChatApi
 import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
 import io.getstream.chat.android.client.api.RetrofitCdnApi
@@ -53,7 +53,6 @@ import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
 import io.getstream.chat.android.client.api2.endpoint.RemindersApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
-import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
@@ -111,8 +110,6 @@ import java.util.concurrent.TimeUnit
  * @param fileUploader Optional custom [FileUploader]; if null, a default [StreamFileUploader] is used.
  * @param sendMessageInterceptor Interceptor allowing to override the logic for sending messages with your own custom
  * logic.
- * @param shareFileDownloadRequestInterceptor Optional interceptor to customize file download requests done for the
- * purpose of sharing the file.
  * @param cdn Optional [CDN] implementation for transforming file download URLs and injecting headers.
  * @param tokenManager Manager that provides and refreshes auth tokens for authenticated requests.
  * @param customOkHttpClient Optional base [OkHttpClient] to reuse threads/connection pools and customize networking.
@@ -129,13 +126,12 @@ constructor(
     private val appContext: Context,
     private val clientScope: ClientScope,
     private val userScope: UserScope,
-    private val config: ChatClientConfig,
+    private val config: ChatApiConfig,
     private val notificationsHandler: NotificationHandler?,
     private val apiModelTransformers: ApiModelTransformers,
     private val fileTransformer: FileTransformer,
     private val fileUploader: FileUploader?,
     private val sendMessageInterceptor: SendMessageInterceptor?,
-    private val shareFileDownloadRequestInterceptor: Interceptor?,
     private val cdn: CDN?,
     private val tokenManager: TokenManager,
     private val customOkHttpClient: OkHttpClient?,
@@ -234,7 +230,7 @@ constructor(
     private fun buildRetrofit(
         endpoint: String,
         timeout: Long,
-        config: ChatClientConfig,
+        config: ChatApiConfig,
         parser: ChatParser,
         isAnonymousApi: Boolean,
     ): Retrofit {
@@ -282,7 +278,7 @@ constructor(
 
     private fun clientBuilder(
         timeout: Long,
-        config: ChatClientConfig,
+        config: ChatApiConfig,
         parser: ChatParser,
         isAnonymousApi: Boolean,
     ): OkHttpClient.Builder {
@@ -301,14 +297,14 @@ constructor(
     }
 
     private fun getAnonymousProvider(
-        config: ChatClientConfig,
+        config: ChatApiConfig,
         isAnonymousApi: Boolean,
     ): () -> Boolean {
         return { isAnonymousApi || config.isAnonymous }
     }
 
     private fun buildChatSocket(
-        chatConfig: ChatClientConfig,
+        chatConfig: ChatApiConfig,
     ) = ChatSocket(
         chatConfig.apiKey,
         chatConfig.wssUrl,
@@ -321,7 +317,7 @@ constructor(
         serverClockOffset,
     )
 
-    private fun buildApi(chatConfig: ChatClientConfig): ChatApi = ProxyChatApi(
+    private fun buildApi(chatConfig: ChatApiConfig): ChatApi = ProxyChatApi(
         delegate = MoshiChatApi(
             domainMapping = domainMapping,
             eventMapping = eventMapping,
@@ -336,7 +332,6 @@ constructor(
             buildRetrofitApi<ModerationApi>(),
             buildRetrofitApi<GeneralApi>(),
             buildRetrofitApi<ConfigApi>(),
-            buildRetrofitApi<VideoCallApi>(),
             buildFileDownloadApi(),
             buildRetrofitApi<OpenGraphApi>(),
             buildRetrofitApi<ThreadsApi>(),
@@ -395,7 +390,6 @@ constructor(
         val okHttpClient = baseClientBuilder(BASE_TIMEOUT)
             .apply {
                 cdn?.let { addInterceptor(CDNOkHttpInterceptor(it)) }
-                shareFileDownloadRequestInterceptor?.let { addInterceptor(it) }
             }
             .build()
         return Retrofit.Builder()

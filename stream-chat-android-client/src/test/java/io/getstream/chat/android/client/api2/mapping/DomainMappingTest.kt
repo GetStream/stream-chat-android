@@ -47,6 +47,7 @@ import io.getstream.chat.android.client.Mother.randomDownstreamReactionGroupDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReminderDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadInfoDto
+import io.getstream.chat.android.client.Mother.randomDownstreamThreadParticipantDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserBlockDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
 import io.getstream.chat.android.client.Mother.randomDownstreamVoteDto
@@ -60,8 +61,8 @@ import io.getstream.chat.android.client.Mother.randomUnreadChannelDto
 import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
 import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
+import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
@@ -100,7 +101,6 @@ import io.getstream.chat.android.models.ReactionGroup
 import io.getstream.chat.android.models.SearchWarning
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
-import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.UnreadChannel
 import io.getstream.chat.android.models.UnreadChannelByType
 import io.getstream.chat.android.models.UnreadCounts
@@ -120,6 +120,7 @@ import io.getstream.chat.android.randomUser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.util.Date
 
 @Suppress("LargeClass")
 internal class DomainMappingTest {
@@ -200,12 +201,12 @@ internal class DomainMappingTest {
             message = with(sut) { downstreamPendingMessageDto.message.toDomain() },
             metadata = downstreamPendingMessageDto.metadata.orEmpty(),
         )
-        val result = with(sut) { downstreamPendingMessageDto.toDomain() }
+        val result = with(sut) { downstreamPendingMessageDto.toDomain(downstreamPendingMessageDto.message.cid) }
         assertEquals(expected, result)
     }
 
     @Test
-    fun `MessageResponse is correctly mappend to PendingMessage`() {
+    fun `MessageResponse is correctly mapped to PendingMessage`() {
         val messageDto = randomDownstreamMessageDto()
         val pendingMessageMetadata = randomPendingMessageMetadata()
         val messageResponse = MessageResponse(messageDto, pendingMessageMetadata)
@@ -744,25 +745,23 @@ internal class DomainMappingTest {
     fun `DownstreamThreadDto is correctly mapped to Thread`() {
         val user1 = randomDownstreamUserDto(id = "user1")
         val user2 = randomDownstreamUserDto(id = "user2")
+        val participant1Dto = randomDownstreamThreadParticipantDto(
+            userId = user1.id,
+            user = user1,
+            lastThreadMessageAt = Date(2000),
+        )
+        val participant2Dto = randomDownstreamThreadParticipantDto(
+            userId = user2.id,
+            user = user2,
+            lastThreadMessageAt = Date(1000),
+        )
         val downstreamThreadDto = randomDownstreamThreadDto(
             createdByUserId = user1.id,
             createdBy = user1,
-            threadParticipants = listOf(
-                DownstreamThreadParticipantDto(
-                    channel_cid = "messaging:123",
-                    user = user1,
-                    user_id = user1.id,
-                ),
-                DownstreamThreadParticipantDto(
-                    channel_cid = "messaging:123",
-                    user = user2,
-                    user_id = user2.id,
-                ),
-            ),
+            // Intentionally unsorted to validate sortedByLastReply() in mapping.
+            threadParticipants = listOf(participant2Dto, participant1Dto),
             draft = randomDownstreamDraftDto(
-                message = randomDownstreamDraftMessageDto(
-                    text = "Draft message",
-                ),
+                message = randomDownstreamDraftMessageDto(text = "Draft message"),
                 channelCid = "messaging:123",
             ),
         )
@@ -778,10 +777,9 @@ internal class DomainMappingTest {
             createdByUserId = downstreamThreadDto.created_by_user_id,
             createdBy = with(sut) { downstreamThreadDto.created_by?.toDomain() },
             participantCount = downstreamThreadDto.participant_count,
-            threadParticipants = listOf(
-                ThreadParticipant(user = with(sut) { user1.toDomain() }),
-                ThreadParticipant(user = with(sut) { user2.toDomain() }),
-            ),
+            threadParticipants = with(sut) {
+                listOf(participant1Dto, participant2Dto).map { it.toDomain() }.sortedByLastReply()
+            },
             lastMessageAt = downstreamThreadDto.last_message_at,
             createdAt = downstreamThreadDto.created_at,
             updatedAt = downstreamThreadDto.updated_at,
@@ -793,9 +791,7 @@ internal class DomainMappingTest {
             read = with(sut) {
                 downstreamThreadDto.read.orEmpty().map { it.toDomain(downstreamThreadDto.last_message_at) }
             },
-            draft = with(sut) {
-                downstreamThreadDto.draft?.toDomain()
-            },
+            draft = with(sut) { downstreamThreadDto.draft?.toDomain() },
             extraData = downstreamThreadDto.extraData,
         )
         assertEquals(expected, thread)
@@ -814,12 +810,14 @@ internal class DomainMappingTest {
             createdByUserId = downstreamThreadInfoDto.created_by_user_id,
             deletedAt = downstreamThreadInfoDto.deleted_at,
             lastMessageAt = downstreamThreadInfoDto.last_message_at,
-            parentMessage = with(sut) { downstreamThreadInfoDto.parent_message?.toDomain() },
+            parentMessage = with(sut) { downstreamThreadInfoDto.parent_message?.toDomain(downstreamThreadInfoDto.channel?.toChannelInfo()) },
             parentMessageId = downstreamThreadInfoDto.parent_message_id,
             participantCount = downstreamThreadInfoDto.participant_count ?: 0,
             replyCount = downstreamThreadInfoDto.reply_count ?: 0,
             title = downstreamThreadInfoDto.title,
             updatedAt = downstreamThreadInfoDto.updated_at,
+            channel = with(sut) { downstreamThreadInfoDto.channel?.toDomain() },
+            threadParticipants = with(sut) { downstreamThreadInfoDto.thread_participants.orEmpty().map { it.toDomain() } },
             extraData = downstreamThreadInfoDto.extraData,
         )
         assertEquals(expected, threadInfo)

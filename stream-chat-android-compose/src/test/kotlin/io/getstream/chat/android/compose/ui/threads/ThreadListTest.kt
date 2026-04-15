@@ -39,14 +39,14 @@ internal class ThreadListTest : PaparazziComposeTest {
             ThreadList(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(ChatTheme.colors.appBackground),
+                    .background(ChatTheme.colors.backgroundCoreApp),
                 state = ThreadListState(
                     threads = emptyList(),
                     isLoading = true,
                     isLoadingMore = false,
                     unseenThreadsCount = 0,
                 ),
-                onUnreadThreadsBannerClick = {},
+                onBannerClick = {},
                 onThreadClick = { },
                 onLoadMore = {},
             )
@@ -59,14 +59,14 @@ internal class ThreadListTest : PaparazziComposeTest {
             ThreadList(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(ChatTheme.colors.appBackground),
+                    .background(ChatTheme.colors.backgroundCoreApp),
                 state = ThreadListState(
                     threads = emptyList(),
                     isLoading = false,
                     isLoadingMore = false,
                     unseenThreadsCount = 0,
                 ),
-                onUnreadThreadsBannerClick = {},
+                onBannerClick = {},
                 onThreadClick = { },
                 onLoadMore = {},
             )
@@ -79,14 +79,15 @@ internal class ThreadListTest : PaparazziComposeTest {
             ThreadList(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(ChatTheme.colors.appBackground),
+                    .background(ChatTheme.colors.backgroundCoreApp),
                 state = ThreadListState(
                     threads = PreviewThreadData.threadList,
                     isLoading = false,
                     isLoadingMore = false,
                     unseenThreadsCount = 0,
                 ),
-                onUnreadThreadsBannerClick = {},
+                currentUser = PreviewThreadData.participant1,
+                onBannerClick = {},
                 onThreadClick = { },
                 onLoadMore = {},
             )
@@ -99,14 +100,15 @@ internal class ThreadListTest : PaparazziComposeTest {
             ThreadList(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(ChatTheme.colors.appBackground),
+                    .background(ChatTheme.colors.backgroundCoreApp),
                 state = ThreadListState(
                     threads = PreviewThreadData.threadList,
                     isLoading = false,
                     isLoadingMore = false,
                     unseenThreadsCount = 1,
                 ),
-                onUnreadThreadsBannerClick = {},
+                currentUser = PreviewThreadData.participant1,
+                onBannerClick = {},
                 onThreadClick = { },
                 onLoadMore = {},
             )
@@ -119,14 +121,15 @@ internal class ThreadListTest : PaparazziComposeTest {
             ThreadList(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(ChatTheme.colors.appBackground),
+                    .background(ChatTheme.colors.backgroundCoreApp),
                 state = ThreadListState(
                     threads = PreviewThreadData.threadList,
                     isLoading = false,
                     isLoadingMore = true,
                     unseenThreadsCount = 0,
                 ),
-                onUnreadThreadsBannerClick = {},
+                currentUser = PreviewThreadData.participant1,
+                onBannerClick = {},
                 onThreadClick = { },
                 onLoadMore = {},
             )

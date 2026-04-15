@@ -1199,39 +1199,6 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
     }
 
     @Test
-    fun markThreadUnreadFromMessageSuccess() = runTest {
-        // given
-        val channelType = randomString()
-        val channelId = randomString()
-        val threadId = randomString()
-        val messageId = randomString()
-        val sut = Fixture()
-            .givenMarkUnreadResult(RetroSuccess(Unit).toRetrofitCall())
-            .get()
-        // when
-        val result = sut.markThreadUnread(channelType, channelId, threadId, messageId).await()
-        // then
-        verifySuccess(result, Unit)
-    }
-
-    @Test
-    fun markThreadUnreadFromMessageError() = runTest {
-        // given
-        val channelType = randomString()
-        val channelId = randomString()
-        val threadId = randomString()
-        val messageId = randomString()
-        val errorCode = positiveRandomInt()
-        val sut = Fixture()
-            .givenMarkUnreadResult(RetroError<Unit>(errorCode).toRetrofitCall())
-            .get()
-        // when
-        val result = sut.markThreadUnread(channelType, channelId, threadId, messageId).await()
-        // then
-        verifyNetworkError(result, errorCode)
-    }
-
-    @Test
     fun queryChannelsSuccess() = runTest {
         // given
         val request = Mother.randomQueryChannelsRequest()

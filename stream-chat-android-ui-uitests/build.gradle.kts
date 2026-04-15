@@ -56,7 +56,6 @@ shot {
 }
 
 dependencies {
-    implementation(project(":stream-chat-android-offline"))
     implementation(project(":stream-chat-android-ui-components"))
     implementation(project(":stream-chat-android-compose"))
 
@@ -67,6 +66,7 @@ dependencies {
     implementation(libs.android.material)
 
     // Compose
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.foundation)
@@ -74,7 +74,6 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.google.accompanist.permissions)
-    implementation(libs.skydoves.landscapist.coil)
 
     // Coil
     androidTestImplementation(libs.coil)

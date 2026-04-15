@@ -22,12 +22,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.Event
+import io.getstream.chat.android.client.api.state.watchChannelAsState
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.core.utils.Debouncer
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.state.extensions.watchChannelAsState
-import io.getstream.chat.android.state.utils.Event
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.model.MessageListItemWrapper
 import io.getstream.chat.ui.sample.application.MessageTranslator

@@ -18,19 +18,6 @@
     package="io.getstream.chat.android.ui.common"
     >
 
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32"
-        />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="29"
-        />
-
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
-
     <queries>
         <intent>
             <action android:name="android.media.action.VIDEO_CAPTURE" />
@@ -41,11 +28,6 @@
     </queries>
 
     <application>
-        <activity
-            android:name=".feature.documents.AttachmentDocumentActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            />
         <provider
             android:name=".StreamFileProvider"
             android:authorities="${applicationId}.streamfileprovider"

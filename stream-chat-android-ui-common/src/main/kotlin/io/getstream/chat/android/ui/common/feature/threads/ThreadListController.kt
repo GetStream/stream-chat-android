@@ -18,10 +18,10 @@ package io.getstream.chat.android.ui.common.feature.threads
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
+import io.getstream.chat.android.client.api.state.QueryThreadsState
+import io.getstream.chat.android.client.api.state.queryThreadsAsState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.state.extensions.queryThreadsAsState
-import io.getstream.chat.android.state.plugin.state.querythreads.QueryThreadsState
 import io.getstream.chat.android.ui.common.state.threads.ThreadListState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -75,8 +75,9 @@ public class ThreadListController(
                         it.loading,
                         it.loadingMore,
                         it.unseenThreadIds,
-                    ) { threads, loading, loadingMore, unseenThreadIds ->
-                        ThreadListState(threads, loading, loadingMore, unseenThreadIds.size)
+                        it.loadingError,
+                    ) { threads, loading, loadingMore, unseenThreadIds, loadingError ->
+                        ThreadListState(threads, loading, loadingMore, unseenThreadIds.size, loadingError)
                     }
                 }
                 .collectLatest {
@@ -89,7 +90,7 @@ public class ThreadListController(
      * Force loads the first page of threads.
      */
     public fun load() {
-        chatClient.queryThreadsResult(query = query).enqueue()
+        chatClient.queryThreads(query = query).enqueue()
     }
 
     /**
@@ -98,7 +99,7 @@ public class ThreadListController(
     public fun loadNextPage() {
         val nextPage = getNextPage() ?: return
         val nextPageQuery = query.copy(next = nextPage)
-        chatClient.queryThreadsResult(query = nextPageQuery).enqueue()
+        chatClient.queryThreads(query = nextPageQuery).enqueue()
     }
 
     private fun getNextPage(): String? {
@@ -133,6 +134,7 @@ public class ThreadListController(
             isLoading = true,
             isLoadingMore = false,
             unseenThreadsCount = 0,
+            loadingError = false,
         )
     }
 }

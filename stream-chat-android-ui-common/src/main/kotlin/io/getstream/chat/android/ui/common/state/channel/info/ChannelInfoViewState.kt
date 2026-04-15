@@ -52,29 +52,16 @@ public sealed interface ChannelInfoViewState {
          */
         public sealed interface Option {
             /**
-             * Indicates a separator option in the channel information UI.
-             */
-            public data object Separator : Option
-
-            /**
              * Indicates an option to add a member to the channel.
              */
             public data object AddMember : Option
 
             /**
-             * Indicates an option with user information.
-             *
-             * @param user The user whose information is displayed.
-             */
-            public data class UserInfo(val user: User) : Option
-
-            /**
-             * Indicates an option to rename the channel.
+             * Indicates an option to edit the channel (name, image, etc.).
              *
              * @param name The current name of the channel.
-             * @param isReadOnly Indicates if the channel is read-only.
              */
-            public data class RenameChannel(val name: String, val isReadOnly: Boolean) : Option
+            public data class EditChannel(val name: String) : Option
 
             /**
              * Indicates an option to mute the channel.
@@ -84,11 +71,18 @@ public sealed interface ChannelInfoViewState {
             public data class MuteChannel(val isMuted: Boolean) : Option
 
             /**
-             * Indicates an option to hide the channel.
+             * Indicates an option to mute the other user in a direct channel.
              *
-             * @param isHidden Indicates if the channel is hidden.
+             * @param isMuted Indicates if the user is muted.
              */
-            public data class HideChannel(val isHidden: Boolean) : Option
+            public data class MuteUser(val isMuted: Boolean) : Option
+
+            /**
+             * Indicates an option to block the other user in a direct channel.
+             *
+             * @param isBlocked Indicates if the user is blocked.
+             */
+            public data class BlockUser(val isBlocked: Boolean) : Option
 
             /**
              * Indicates an option to view the channel's pinned messages.

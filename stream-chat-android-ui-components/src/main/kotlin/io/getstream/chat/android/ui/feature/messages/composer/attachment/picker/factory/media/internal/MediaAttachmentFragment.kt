@@ -26,8 +26,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
-import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
 import io.getstream.chat.android.ui.common.permissions.VisualMediaAccess
 import io.getstream.chat.android.ui.common.permissions.resolveVisualMediaAccessState
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
@@ -49,9 +48,8 @@ internal class MediaAttachmentFragment : Fragment() {
     private var _binding: StreamUiFragmentAttachmentMediaBinding? = null
     private val binding get() = _binding!!
 
-    private val storageHelper: StorageHelper = StorageHelper()
+    private lateinit var attachmentStorageHelper: AttachmentStorageHelper
     private val permissionChecker: PermissionChecker = PermissionChecker()
-    private val attachmentFilter: AttachmentFilter = AttachmentFilter()
 
     private val gridLayoutManager = GridLayoutManager(context, SPAN_COUNT, RecyclerView.VERTICAL, false)
     private val gridSpacingItemDecoration =
@@ -78,6 +76,7 @@ internal class MediaAttachmentFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
+        attachmentStorageHelper = AttachmentStorageHelper(requireContext())
         _binding =
             StreamUiFragmentAttachmentMediaBinding.inflate(requireContext().streamThemeInflater, container, false)
         return binding.root
@@ -196,10 +195,9 @@ internal class MediaAttachmentFragment : Fragment() {
         lifecycleScope.launch(DispatcherProvider.Main) {
             binding.progressBar.isVisible = true
 
-            val attachments = withContext(DispatcherProvider.IO) {
-                storageHelper.getMediaAttachments(requireContext())
+            val filteredAttachments = withContext(DispatcherProvider.IO) {
+                attachmentStorageHelper.getMediaMetadata()
             }
-            val filteredAttachments = attachmentFilter.filterAttachments(attachments)
 
             if (filteredAttachments.isEmpty()) {
                 binding.emptyPlaceholderTextView.setTextStyle(style.mediaAttachmentNoMediaTextStyle)

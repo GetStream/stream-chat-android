@@ -22,9 +22,9 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
-import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.VotingVisibility
+import io.getstream.chat.android.randomThreadParticipant
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.Test
@@ -48,8 +48,14 @@ internal class ThreadExtensionsTests {
         createdAt = now,
         user = user2,
     )
-    private val threadParticipant1 = ThreadParticipant(user = user1)
-    private val threadParticipant2 = ThreadParticipant(user = user2)
+    private val threadParticipant1 = randomThreadParticipant(
+        user = user1,
+        lastThreadMessageAt = now,
+    )
+    private val threadParticipant2 = randomThreadParticipant(
+        user = user2,
+        lastThreadMessageAt = Date(now.time - 1_000),
+    )
     private val channelUserRead1 = ChannelUserRead(
         user = user1,
         unreadMessages = 0,
@@ -415,6 +421,97 @@ internal class ThreadExtensionsTests {
 
         // when
         val result = baseThread.markAsReadByUser(wrongThreadInfo, user2, now)
+
+        // then
+        result shouldBeEqualTo baseThread
+    }
+
+    @Test
+    fun `applyThreadInfoUpdate should update title extraData and updatedAt`() {
+        // given
+        val newUpdatedAt = Date(now.time + 5000)
+        val threadInfo = ThreadInfo(
+            activeParticipantCount = 5,
+            cid = "channel1",
+            createdAt = now,
+            createdBy = user1,
+            createdByUserId = "user1",
+            deletedAt = null,
+            lastMessageAt = Date(now.time + 3000),
+            parentMessage = parentMessage.copy(text = "Updated parent"),
+            parentMessageId = "parent1",
+            participantCount = 5,
+            replyCount = 10,
+            title = "Updated Title",
+            updatedAt = newUpdatedAt,
+            extraData = mapOf("color" to "blue", "priority" to 1),
+        )
+
+        // when
+        val result = baseThread.applyThreadUpdatedEventChanges(threadInfo)
+
+        // then
+        result.title shouldBeEqualTo "Updated Title"
+        result.updatedAt shouldBeEqualTo newUpdatedAt
+        result.extraData shouldBeEqualTo mapOf("color" to "blue", "priority" to 1)
+    }
+
+    @Test
+    fun `applyThreadInfoUpdate should not update non-updatable fields`() {
+        // given
+        val threadInfo = ThreadInfo(
+            activeParticipantCount = 99,
+            cid = "channel1",
+            createdAt = now,
+            createdBy = user1,
+            createdByUserId = "user1",
+            deletedAt = Date(now.time + 9000),
+            lastMessageAt = Date(now.time + 3000),
+            parentMessage = parentMessage.copy(text = "Different parent"),
+            parentMessageId = "parent1",
+            participantCount = 99,
+            replyCount = 99,
+            title = "New Title",
+            updatedAt = Date(now.time + 5000),
+            extraData = mapOf("key" to "value"),
+        )
+
+        // when
+        val result = baseThread.applyThreadUpdatedEventChanges(threadInfo)
+
+        // then
+        // These fields should NOT be overwritten
+        result.activeParticipantCount shouldBeEqualTo baseThread.activeParticipantCount
+        result.participantCount shouldBeEqualTo baseThread.participantCount
+        result.lastMessageAt shouldBeEqualTo baseThread.lastMessageAt
+        result.parentMessage shouldBeEqualTo baseThread.parentMessage
+        result.deletedAt shouldBeEqualTo baseThread.deletedAt
+        result.latestReplies shouldBeEqualTo baseThread.latestReplies
+        result.read shouldBeEqualTo baseThread.read
+    }
+
+    @Test
+    fun `applyThreadInfoUpdate should not update when thread info parent message id does not match`() {
+        // given
+        val threadInfo = ThreadInfo(
+            activeParticipantCount = 3,
+            cid = "channel1",
+            createdAt = now,
+            createdBy = user1,
+            createdByUserId = "user1",
+            deletedAt = null,
+            lastMessageAt = now,
+            parentMessage = parentMessage,
+            parentMessageId = "wrong_parent",
+            participantCount = 3,
+            replyCount = 2,
+            title = "Updated Title",
+            updatedAt = now,
+            extraData = mapOf("key" to "value"),
+        )
+
+        // when
+        val result = baseThread.applyThreadUpdatedEventChanges(threadInfo)
 
         // then
         result shouldBeEqualTo baseThread

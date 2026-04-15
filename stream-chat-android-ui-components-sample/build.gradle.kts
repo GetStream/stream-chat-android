@@ -146,7 +146,6 @@ shot {
 dependencies {
     implementation(project(":stream-chat-android-ui-components"))
     implementation(project(":stream-chat-android-markdown-transformer"))
-    implementation(project(":stream-chat-android-offline"))
     implementation(files("../libraries/external/MiPush_SDK_Client_5_1_8-G_3rd.aar"))
 
     implementation(libs.stream.log)
@@ -157,6 +156,7 @@ dependencies {
     implementation(libs.androidx.preference)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.fragment.ktx)
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material3)
     implementation(libs.stream.push.firebase)
     implementation(libs.stream.push.xiaomi)

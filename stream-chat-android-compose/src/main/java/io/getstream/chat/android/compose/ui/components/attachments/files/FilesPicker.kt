@@ -19,24 +19,18 @@ package io.getstream.chat.android.compose.ui.components.attachments.files
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -44,12 +38,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
+import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
+import io.getstream.chat.android.compose.ui.components.common.RadioButton
+import io.getstream.chat.android.compose.ui.components.common.RadioCheck
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.ui.common.contract.internal.SelectFilesContract
+import io.getstream.chat.android.ui.common.model.MimeType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
-import io.getstream.chat.android.uiutils.model.MimeType
 
 /**
  * Shows the UI for files the user can pick for message attachments. Exposes the logic of selecting
@@ -59,6 +57,9 @@ import io.getstream.chat.android.uiutils.model.MimeType
  * @param onItemSelected Handler when the user clicks on any file item.
  * @param onBrowseFilesResult Handler when the user clicks on the browse more files action.
  * @param modifier Modifier for styling.
+ * @param allowMultipleSelection When `true`, users can select multiple files. When `false`,
+ * only single file selection is allowed. Defaults to `true`.
+ * @param itemContent Composable for rendering individual file items.
  */
 @Composable
 public fun FilesPicker(
@@ -66,40 +67,44 @@ public fun FilesPicker(
     onItemSelected: (AttachmentPickerItemState) -> Unit,
     onBrowseFilesResult: (List<Uri>) -> Unit,
     modifier: Modifier = Modifier,
+    allowMultipleSelection: Boolean = true,
     itemContent: @Composable (AttachmentPickerItemState) -> Unit = {
         DefaultFilesPickerItem(
             fileItem = it,
             onItemSelected = onItemSelected,
+            allowMultipleSelection = allowMultipleSelection,
         )
     },
 ) {
-    val fileSelectContract = rememberLauncherForActivityResult(contract = SelectFilesContract()) {
+    val fileSelectContract = rememberLauncherForActivityResult(
+        contract = SelectFilesContract(),
+    ) {
         onBrowseFilesResult(it)
     }
 
     Column(modifier = modifier) {
-        Row(Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .testTag("Stream_FindFilesButton")
+                .fillMaxWidth()
+                .clickable { fileSelectContract.launch(allowMultipleSelection) }
+                .padding(StreamTokens.spacingSm),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
             Text(
-                modifier = Modifier.padding(16.dp),
                 text = stringResource(id = R.string.stream_compose_recent_files),
-                style = ChatTheme.typography.bodyBold,
-                color = ChatTheme.colors.textHighEmphasis,
+                style = ChatTheme.typography.bodyDefault,
+                color = ChatTheme.colors.textPrimary,
             )
-
-            Spacer(modifier = Modifier.weight(6f))
-
-            IconButton(
-                content = {
-                    Icon(
-                        modifier = Modifier.testTag("Stream_FindFilesButton"),
-                        painter = painterResource(id = R.drawable.stream_compose_ic_more_files),
-                        contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
-                        tint = ChatTheme.colors.primaryAccent,
-                    )
-                },
-                onClick = { fileSelectContract.launch(Unit) },
+            Icon(
+                painter = painterResource(id = R.drawable.stream_design_ic_chevron_right),
+                contentDescription = null,
+                tint = ChatTheme.colors.textSecondary,
             )
         }
+
+        StreamHorizontalDivider()
 
         LazyColumn(modifier) {
             items(files) { fileItem -> itemContent(fileItem) }
@@ -112,57 +117,54 @@ public fun FilesPicker(
  *
  * @param fileItem File to render.
  * @param onItemSelected Handler when the item is selected.
+ * @param allowMultipleSelection When `true`, shows a checkbox for multi-select. When `false`,
+ * shows a radio button for single-select. Defaults to `true`.
  */
 @Composable
 internal fun DefaultFilesPickerItem(
     fileItem: AttachmentPickerItemState,
     onItemSelected: (AttachmentPickerItemState) -> Unit,
+    allowMultipleSelection: Boolean = true,
 ) {
     Row(
         Modifier
             .fillMaxWidth()
             .clickable { onItemSelected(fileItem) }
-            .padding(vertical = 8.dp, horizontal = 16.dp),
+            .padding(StreamTokens.spacingSm),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
     ) {
-        Box(contentAlignment = Alignment.Center) {
-            // TODO use a Canvas maybe to draw this UI, instead of using a checkbox.
-            Checkbox(
-                checked = fileItem.isSelected,
-                onCheckedChange = null,
-                colors = CheckboxDefaults.colors(
-                    checkedColor = ChatTheme.colors.primaryAccent,
-                    uncheckedColor = ChatTheme.colors.disabled,
-                    checkmarkColor = Color.White,
-                    disabledCheckedColor = ChatTheme.colors.disabled,
-                    disabledUncheckedColor = ChatTheme.colors.disabled,
-                    disabledIndeterminateColor = ChatTheme.colors.disabled,
-                ),
-            )
-        }
-
         FilesPickerItemImage(
             fileItem = fileItem,
-            modifier = Modifier
-                .padding(start = 16.dp)
-                .size(size = 40.dp),
+            modifier = Modifier.size(size = 40.dp),
         )
 
         Column(
-            modifier = Modifier.padding(start = 16.dp),
+            modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
         ) {
             Text(
                 text = fileItem.attachmentMetaData.title ?: "",
-                style = ChatTheme.typography.bodyBold,
-                color = ChatTheme.colors.textHighEmphasis,
+                style = ChatTheme.typography.bodyDefault,
+                color = ChatTheme.colors.textPrimary,
             )
-
             Text(
                 text = MediaStringUtil.convertFileSizeByteCount(fileItem.attachmentMetaData.size),
-                style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textLowEmphasis,
+                style = ChatTheme.typography.captionDefault,
+                color = ChatTheme.colors.textTertiary,
+            )
+        }
+
+        if (allowMultipleSelection) {
+            RadioCheck(
+                checked = fileItem.isSelected,
+                onCheckedChange = null,
+            )
+        } else {
+            RadioButton(
+                checked = fileItem.isSelected,
+                onCheckedChange = null,
             )
         }
     }
@@ -170,28 +172,69 @@ internal fun DefaultFilesPickerItem(
 
 @Preview(showBackground = true)
 @Composable
-private fun FilesPickerItemsPreview() {
+private fun FilesPickerSingleSelectionPreview() {
     ChatTheme {
-        FilesPickerItems()
+        FilesPickerSingleSelection()
     }
 }
 
 @Composable
-internal fun FilesPickerItems() {
-    Column {
-        DefaultFilesPickerItem(
-            fileItem = AttachmentPickerItemState(
-                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_PDF),
-                isSelected = false,
+internal fun FilesPickerSingleSelection() {
+    FilesPicker(
+        files = listOf(
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData1,
             ),
-            onItemSelected = {},
-        )
-        DefaultFilesPickerItem(
-            fileItem = AttachmentPickerItemState(
-                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_DOC),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData2,
                 isSelected = true,
             ),
-            onItemSelected = {},
-        )
+        ),
+        onItemSelected = {},
+        onBrowseFilesResult = {},
+        allowMultipleSelection = false,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FilesPickerMultipleSelectionPreview() {
+    ChatTheme {
+        FilesPickerMultipleSelection()
     }
+}
+
+@Composable
+internal fun FilesPickerMultipleSelection() {
+    FilesPicker(
+        files = listOf(
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData1,
+                isSelected = true,
+            ),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData2,
+                isSelected = true,
+            ),
+        ),
+        onItemSelected = {},
+        onBrowseFilesResult = {},
+        allowMultipleSelection = true,
+    )
+}
+
+@Suppress("MagicNumber")
+private val AttachmentMetaData1 = AttachmentMetaData(
+    title = "PDF",
+    mimeType = MimeType.MIME_TYPE_PDF,
+).apply {
+    size = 10_000
+}
+
+@Suppress("MagicNumber")
+private val AttachmentMetaData2 = AttachmentMetaData(
+    title = "DOC",
+    mimeType = MimeType.MIME_TYPE_DOC,
+).apply {
+    size = 100_000
 }

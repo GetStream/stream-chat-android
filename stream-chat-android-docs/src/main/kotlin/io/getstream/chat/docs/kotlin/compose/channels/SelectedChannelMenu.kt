@@ -18,10 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
+import io.getstream.chat.android.compose.ui.components.channels.buildDefaultChannelActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
-import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
-import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/channel-components/selected-channel-menu/#usage)
@@ -29,7 +29,7 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
 private object SelectedChannelMenuUsageSnippet {
 
     class ChannelsActivity : AppCompatActivity() {
-        val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
+        val listViewModel: ChannelListViewModel by viewModels { ChannelListViewModelFactory() }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -44,7 +44,13 @@ private object SelectedChannelMenuUsageSnippet {
                         // The rest of your UI
 
                         if (currentlySelectedChannel != null) {
-                            val isMuted = listViewModel.isChannelMuted(currentlySelectedChannel.cid)
+                            val channelActions = buildDefaultChannelActions(
+                                selectedChannel = currentlySelectedChannel,
+                                isMuted = listViewModel.isChannelMuted(currentlySelectedChannel.cid),
+                                ownCapabilities = currentlySelectedChannel.ownCapabilities,
+                                viewModel = listViewModel,
+                                onViewInfoAction = {},
+                            )
 
                             SelectedChannelMenu(
                                 modifier = Modifier
@@ -52,9 +58,9 @@ private object SelectedChannelMenuUsageSnippet {
                                     .wrapContentHeight() // Wrap height
                                     .align(Alignment.BottomCenter), // Aligning the content to the bottom
                                 selectedChannel = currentlySelectedChannel,
-                                isMuted = isMuted,
                                 currentUser = user,
-                                onChannelOptionClick = { listViewModel.performChannelAction(it) },
+                                channelActions = channelActions,
+                                onChannelOptionConfirm = { listViewModel.executeOrConfirm(it) },
                                 onDismiss = { listViewModel.dismissChannelAction() }
                             )
                         }
@@ -71,7 +77,7 @@ private object SelectedChannelMenuUsageSnippet {
 private object SelectedChannelMenuHandlingActionsSnippet {
 
     class ChannelsActivity : AppCompatActivity() {
-        val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
+        val listViewModel: ChannelListViewModel by viewModels { ChannelListViewModelFactory() }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -86,7 +92,15 @@ private object SelectedChannelMenuHandlingActionsSnippet {
                         // The rest of your UI
 
                         if (currentlySelectedChannel != null) {
-                            val isMuted = listViewModel.isChannelMuted(currentlySelectedChannel.cid)
+                            val channelActions = buildDefaultChannelActions(
+                                selectedChannel = currentlySelectedChannel,
+                                isMuted = listViewModel.isChannelMuted(currentlySelectedChannel.cid),
+                                ownCapabilities = currentlySelectedChannel.ownCapabilities,
+                                viewModel = listViewModel,
+                                onViewInfoAction = { channel ->
+                                    // Start the channel info screen
+                                },
+                            )
 
                             SelectedChannelMenu(
                                 modifier = Modifier
@@ -94,14 +108,10 @@ private object SelectedChannelMenuHandlingActionsSnippet {
                                     .wrapContentHeight() // Wrap height
                                     .align(Alignment.BottomCenter), // Aligning the content to the bottom
                                 selectedChannel = currentlySelectedChannel,
-                                isMuted = isMuted,
                                 currentUser = user,
-                                onChannelOptionClick = { action ->
-                                    if (action is ViewInfo) {
-                                        // Start the channel info screen
-                                    } else {
-                                        listViewModel.performChannelAction(action)
-                                    }
+                                channelActions = channelActions,
+                                onChannelOptionConfirm = { action ->
+                                    listViewModel.executeOrConfirm(action)
                                 },
                                 onDismiss = { listViewModel.dismissChannelAction() }
                             )
@@ -119,7 +129,7 @@ private object SelectedChannelMenuHandlingActionsSnippet {
 private object SelectedChannelMenuCustomizationSnippet {
 
     class ChannelsActivity : AppCompatActivity() {
-        val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
+        val listViewModel: ChannelListViewModel by viewModels { ChannelListViewModelFactory() }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -134,7 +144,13 @@ private object SelectedChannelMenuCustomizationSnippet {
                         // The rest of your UI
 
                         if (currentlySelectedChannel != null) {
-                            val isMuted = listViewModel.isChannelMuted(currentlySelectedChannel.cid)
+                            val channelActions = buildDefaultChannelActions(
+                                selectedChannel = currentlySelectedChannel,
+                                isMuted = listViewModel.isChannelMuted(currentlySelectedChannel.cid),
+                                ownCapabilities = currentlySelectedChannel.ownCapabilities,
+                                viewModel = listViewModel,
+                                onViewInfoAction = {},
+                            )
 
                             SelectedChannelMenu(
                                 modifier = Modifier
@@ -144,9 +160,9 @@ private object SelectedChannelMenuCustomizationSnippet {
                                     .align(Alignment.Center), // Centering the component
                                 shape = RoundedCornerShape(16.dp), // Rounded corners for all sides
                                 selectedChannel = currentlySelectedChannel,
-                                isMuted = isMuted,
                                 currentUser = user,
-                                onChannelOptionClick = { listViewModel.performChannelAction(it) },
+                                channelActions = channelActions,
+                                onChannelOptionConfirm = { listViewModel.executeOrConfirm(it) },
                                 onDismiss = { listViewModel.dismissChannelAction() }
                             )
                         }

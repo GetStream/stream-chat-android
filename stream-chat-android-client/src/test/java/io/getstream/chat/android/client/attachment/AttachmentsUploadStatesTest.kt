@@ -51,7 +51,7 @@ internal class AttachmentsUploadStatesTest {
 
     @Test
     fun `clearStates should clear all states`() = runTest {
-        val message1 = randomMessage(attachments = listOf(randomAttachment(type = AttachmentType.IMGUR)))
+        val message1 = randomMessage(attachments = listOf(randomAttachment(type = AttachmentType.IMAGE)))
         val message2 = randomMessage(attachments = listOf(randomAttachment(type = AttachmentType.VIDEO)))
         AttachmentsUploadStates.updateMessageAttachments(message1)
         AttachmentsUploadStates.updateMessageAttachments(message2)

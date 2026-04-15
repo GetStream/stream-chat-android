@@ -29,12 +29,10 @@ import io.getstream.chat.android.compose.ui.messages.list.MessagesLazyListState
 import io.getstream.chat.android.compose.ui.util.rememberMessagesLazyListState
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
-import io.getstream.chat.android.models.ReactionSortingByCount
 import io.getstream.chat.android.previewdata.PreviewChannelUserRead
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
@@ -54,7 +52,6 @@ internal class MessageListTest : PaparazziComposeTest {
             MessageList(
                 modifier = Modifier.fillMaxSize(),
                 currentState = MessageListState(),
-                reactionSorting = ReactionSortingByCount,
             )
         }
     }
@@ -67,7 +64,6 @@ internal class MessageListTest : PaparazziComposeTest {
                 currentState = MessageListState(
                     isLoading = true,
                 ),
-                reactionSorting = ReactionSortingByCount,
             )
         }
     }
@@ -151,7 +147,6 @@ internal class MessageListTest : PaparazziComposeTest {
                         ),
                     ),
                 ),
-                reactionSorting = ReactionSortingByCount,
             )
         }
     }
@@ -226,13 +221,12 @@ private val LoadedMessageListState = MessageListState(
             message = PreviewMessageData.messageDeleted.copy(
                 user = PreviewUserData.user1,
             ),
-            deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER,
             showMessageFooter = true,
             ownCapabilities = ChannelCapabilities.toSet(),
         ),
         MessageItemState(
             message = PreviewMessageData.message1,
-            groupPosition = listOf(MessagePosition.TOP),
+            groupPosition = MessagePosition.TOP,
             ownCapabilities = ChannelCapabilities.toSet(),
         ),
         DateSeparatorItemState(Date1),
@@ -265,7 +259,6 @@ private fun MessageList(
     MessageList(
         messagesLazyListState = messagesLazyListState,
         currentState = messageListState,
-        reactionSorting = ReactionSortingByCount,
         verticalArrangement = verticalArrangement,
     )
 }

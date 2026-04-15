@@ -1,0 +1,208 @@
+// ktlint-disable filename
+
+package io.getstream.chat.docs.kotlin.compose.messages
+
+import android.os.Bundle
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.components.messageactions.MessageActions
+import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageOptionsState
+
+/**
+ * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/selected-message-menu/#usage)
+ */
+private object MessageActionsUsageSnippet {
+
+    class MyActivity : AppCompatActivity() {
+        val factory by lazy {
+            ChannelViewModelFactory(
+                context = this,
+                channelId = "messaging:123",
+            )
+        }
+
+        val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+
+            setContent {
+                ChatTheme {
+                    val currentMessagesState by listViewModel.currentMessagesState
+                    val selectedMessageState = currentMessagesState.selectedMessageState
+                    val user by listViewModel.user.collectAsState()
+
+                    Box(modifier = Modifier.fillMaxSize()) {
+
+                        // The rest of your UI
+                        if (selectedMessageState is SelectedMessageOptionsState) {
+                            val selectedMessage = selectedMessageState.message
+                            MessageActions(
+                                modifier = Modifier.align(Alignment.BottomCenter),
+                                // Define your message options
+                                messageOptions = defaultMessageOptionsState(
+                                    selectedMessage = selectedMessage,
+                                    currentUser = user,
+                                    isInThread = listViewModel.isInThread,
+                                    channel = selectedMessageState.channel
+                                ),
+                                // The message you selected
+                                message = selectedMessage,
+                                // The capabilities the user has in a given channel
+                                ownCapabilities = selectedMessageState.ownCapabilities,
+                                onMessageAction = { action ->
+                                    // Handle message action
+                                },
+                                onShowMoreReactionsSelected = {
+                                    // Handle show more reactions button click
+                                },
+                                onDismiss = {
+                                    // Handle dismiss
+                                },
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * [Handling Actions](https://getstream.io/chat/docs/sdk/android/compose/message-components/selected-message-menu/#handling-actions)
+ */
+private object MessageActionsHandlingActionsSnippet {
+
+    class MyActivity : AppCompatActivity() {
+        val factory by lazy {
+            ChannelViewModelFactory(
+                context = this,
+                channelId = "messaging:123",
+            )
+        }
+
+        val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
+        val composerViewModel by viewModels<MessageComposerViewModel>(factoryProducer = { factory })
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+
+            setContent {
+                ChatTheme {
+                    val currentMessagesState by listViewModel.currentMessagesState
+                    val selectedMessageState = currentMessagesState.selectedMessageState
+                    val user by listViewModel.user.collectAsState()
+
+                    Box(modifier = Modifier.fillMaxSize()) {
+
+                        // The rest of your UI
+
+                        if (selectedMessageState is SelectedMessageOptionsState) {
+                            val selectedMessage = selectedMessageState.message
+                            MessageActions(
+                                modifier = Modifier.align(Alignment.BottomCenter),
+                                // Define your message options
+                                messageOptions = defaultMessageOptionsState(
+                                    selectedMessage = selectedMessage,
+                                    currentUser = user,
+                                    isInThread = listViewModel.isInThread,
+                                    channel = selectedMessageState.channel
+                                ),
+                                // The message you selected
+                                message = selectedMessage,
+                                // The capabilities the user has in a given channel
+                                ownCapabilities = selectedMessageState.ownCapabilities,
+                                onMessageAction = { action ->
+                                    composerViewModel.performMessageAction(action)
+                                    listViewModel.performMessageAction(action)
+                                },
+                                onShowMoreReactionsSelected = {
+                                    listViewModel.selectExtendedReactions(selectedMessage)
+                                },
+                                onDismiss = { listViewModel.removeOverlay() }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * [Customization](https://getstream.io/chat/docs/sdk/android/compose/message-components/selected-message-menu/#customization)
+ */
+private object MessageActionsCustomizationSnippet {
+
+    class MyActivity : AppCompatActivity() {
+        val factory by lazy {
+            ChannelViewModelFactory(
+                context = this,
+                channelId = "messaging:123",
+            )
+        }
+
+        val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+
+            setContent {
+                ChatTheme {
+                    val currentMessagesState by listViewModel.currentMessagesState
+                    val selectedMessageState = currentMessagesState.selectedMessageState
+                    val user by listViewModel.user.collectAsState()
+
+                    Box(modifier = Modifier.fillMaxSize()) {
+
+                        // The rest of your UI
+
+                        if (selectedMessageState is SelectedMessageOptionsState) {
+                            val selectedMessage = selectedMessageState.message
+                            MessageActions(
+                                // Use a Modifier to customize the appearance
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .padding(horizontal = 20.dp)
+                                    .wrapContentSize(),
+                                messageOptions = defaultMessageOptionsState(
+                                    selectedMessage = selectedMessage,
+                                    currentUser = user,
+                                    isInThread = listViewModel.isInThread,
+                                    channel = selectedMessageState.channel
+                                ),
+                                // The capabilities the user has in a given channel
+                                ownCapabilities = selectedMessageState.ownCapabilities,
+                                message = selectedMessage,
+                                onMessageAction = { action ->
+                                    // Handle message action
+                                },
+                                onShowMoreReactionsSelected = {
+                                    // Handle more reactions button click
+                                },
+                                onDismiss = {
+                                    // Handle dismiss
+                                },
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

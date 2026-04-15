@@ -20,8 +20,6 @@ import io.getstream.android.push.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationReminderDueEvent
-import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PushMessage
 
 /**
@@ -71,27 +69,7 @@ public interface NotificationHandler {
      *
      * @param notification The notification to be shown.
      */
-    public fun showNotification(notification: ChatNotification) {
-        when (notification) {
-            is ChatNotification.MessageNew ->
-                showNotification(notification.channel, notification.message)
-            is ChatNotification.MessageUpdated ->
-                showNotification(notification.channel, notification.message)
-            is ChatNotification.ReactionNew ->
-                showNotification(notification.channel, notification.message)
-            is ChatNotification.NotificationReminderDue ->
-                showNotification(notification.channel, notification.message)
-        }
-    }
-
-    /**
-     * Show a notification for the given [channel] and [message]
-     *
-     * @param channel where the new message was posted
-     * @param message was received
-     */
-    @Deprecated("Use showNotification(notification: ChatNotification) instead.")
-    public fun showNotification(channel: Channel, message: Message)
+    public fun showNotification(notification: ChatNotification)
 
     /**
      * Dismiss notifications from a given [channelType] and [channelId].

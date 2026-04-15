@@ -23,7 +23,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import java.util.concurrent.atomic.AtomicInteger
 
 @Suppress("TooManyFunctions")
 internal class StreamAudioPlayer(
@@ -46,6 +45,7 @@ internal class StreamAudioPlayer(
     private val audioTracks: MutableList<TrackInfo> = mutableListOf()
     private val registeredTrackHashSet: MutableSet<Int> = mutableSetOf()
     private val seekMap: MutableMap<Int, Int> = mutableMapOf()
+    private val speedMap: MutableMap<Int, Float> = mutableMapOf()
     private var playerState = PlayerState.UNSET
         set(value) {
             logger.v { "[setPlayerState] value: $value" }
@@ -131,26 +131,27 @@ internal class StreamAudioPlayer(
         }
     }
 
-    override fun changeSpeed() {
-        if (mediaPlayer.isSpeedSettable()) {
-            logger.i { "[changeSpeed] no args" }
-            val currentSpeed = playingSpeed
-            val newSpeed = if (currentSpeed >= 2 || currentSpeed < 1) {
-                INITIAL_SPEED
-            } else {
-                currentSpeed + SPEED_INCREMENT
-            }
+    override fun changeSpeed(audioHash: Int): Float {
+        logger.i { "[changeSpeed] audioHash: $audioHash" }
+        val currentSpeed = speedMap[audioHash] ?: INITIAL_SPEED
+        val newSpeed = if (currentSpeed >= 2 || currentSpeed < 1) {
+            INITIAL_SPEED
+        } else {
+            currentSpeed + SPEED_INCREMENT
+        }
 
-            if ((playerState == PlayerState.PLAYING || playerState == PlayerState.PAUSE) &&
-                mediaPlayer.isSpeedSettable()
-            ) {
-                playingSpeed = newSpeed
-                if (playerState == PlayerState.PLAYING) {
-                    mediaPlayer.speed = newSpeed
-                }
-                publishSpeed(currentAudioHash, newSpeed)
+        speedMap[audioHash] = newSpeed
+
+        // If this is the currently playing audio, apply the speed immediately
+        if (currentAudioHash == audioHash) {
+            playingSpeed = newSpeed
+            if (playerState == PlayerState.PLAYING && mediaPlayer.isSpeedSettable()) {
+                mediaPlayer.speed = newSpeed
             }
         }
+
+        publishSpeed(audioHash, newSpeed)
+        return newSpeed
     }
 
     override fun currentSpeed(): Float = mediaPlayer.speed
@@ -163,6 +164,7 @@ internal class StreamAudioPlayer(
             onProgressListeners.clear()
             onSpeedListeners.clear()
             seekMap.clear()
+            speedMap.clear()
             audioTracks.clear()
             mediaPlayer.release()
         }
@@ -175,6 +177,7 @@ internal class StreamAudioPlayer(
         onSpeedListeners.remove(audioHash)
         audioTracks.removeAll { trackInto -> trackInto.hash == audioHash }
         seekMap.remove(audioHash)
+        speedMap.remove(audioHash)
     }
 
     override fun removeAudios(audioHashList: List<Int>) {
@@ -201,6 +204,7 @@ internal class StreamAudioPlayer(
         onSpeedListeners.clear()
         audioTracks.clear()
         seekMap.clear()
+        speedMap.clear()
     }
 
     private fun resetPlayer() {
@@ -261,8 +265,10 @@ internal class StreamAudioPlayer(
             }
             mediaPlayer.seekTo(seekTo)
             if (mediaPlayer.isSpeedSettable()) {
-                mediaPlayer.speed = playingSpeed
-                publishSpeed(currentAudioHash, playingSpeed)
+                val speed = speedMap[currentAudioHash] ?: INITIAL_SPEED
+                playingSpeed = speed
+                mediaPlayer.speed = speed
+                publishSpeed(currentAudioHash, speed)
             }
             mediaPlayer.start()
             playerState = PlayerState.PLAYING
@@ -364,40 +370,28 @@ internal class StreamAudioPlayer(
 
     private fun pollProgress() {
         val audioHash: Int = currentAudioHash
-        val prevCurPosition = AtomicInteger(-1)
-        val prevPosition = AtomicInteger(-1)
         logger.d {
             "[pollProgress] #1; audioHash: $audioHash, currentPosition: ${mediaPlayer.currentPosition}, " +
                 "duration: ${mediaPlayer.duration}"
         }
         pollJob = userScope.launch(DispatcherProvider.Main) {
             while (isActive) {
-                val curPosition = mediaPlayer.currentPosition
-                val finalPosition = when (curPosition > 0 && curPosition == prevCurPosition.get()) {
-                    true -> prevPosition.addAndGet(progressUpdatePeriod.toInt())
-                    else -> prevPosition.set(curPosition).let {
-                        curPosition
-                    }
-                }
+                val currentPosition = mediaPlayer.currentPosition
                 val durationMs = mediaPlayer.duration
-                val progress = finalPosition.toFloat() / durationMs
+                val progress = currentPosition.toFloat() / durationMs
                 if (DEBUG_POLLING) {
-                    logger.v {
-                        "[pollProgress] #2; finalPosition: $finalPosition($durationMs), " +
-                            "curPosition: $curPosition($prevPosition)"
-                    }
+                    logger.v { "[pollProgress] #2; currentPosition: $currentPosition, durationMs: $durationMs" }
                 }
                 publishProgress(
                     audioHash,
                     ProgressData(
-                        currentPosition = finalPosition,
+                        currentPosition = currentPosition,
                         progress = progress,
                         duration = durationMs,
                     ),
                 )
-                prevCurPosition.set(curPosition)
-                if (finalPosition >= durationMs) {
-                    logger.i { "[pollProgress] #3; finalPosition($finalPosition) >= durationMs($durationMs)" }
+                if (currentPosition >= durationMs) {
+                    logger.i { "[pollProgress] #3; currentPosition($currentPosition) >= durationMs($durationMs)" }
                     complete(audioHash)
                     break
                 }

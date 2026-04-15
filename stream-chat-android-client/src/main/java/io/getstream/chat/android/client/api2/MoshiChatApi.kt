@@ -39,12 +39,9 @@ import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
 import io.getstream.chat.android.client.api2.endpoint.RemindersApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
-import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
-import io.getstream.chat.android.client.api2.mapping.toDomain
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
@@ -97,13 +94,9 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.requests.UpstreamVoteDto
-import io.getstream.chat.android.client.api2.model.requests.VideoCallCreateRequest
-import io.getstream.chat.android.client.api2.model.requests.VideoCallTokenRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
-import io.getstream.chat.android.client.api2.model.response.CreateVideoCallResponse
 import io.getstream.chat.android.client.api2.model.response.PushPreferencesResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
-import io.getstream.chat.android.client.api2.model.response.VideoCallTokenResponse
 import io.getstream.chat.android.client.api2.model.response.getUserChannelPreference
 import io.getstream.chat.android.client.api2.model.response.getUserPreference
 import io.getstream.chat.android.client.call.RetrofitCall
@@ -121,6 +114,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
@@ -135,7 +129,6 @@ import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
@@ -148,12 +141,11 @@ import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
+import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
-import io.getstream.chat.android.models.VideoCallInfo
-import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -190,7 +182,6 @@ constructor(
     private val moderationApi: ModerationApi,
     private val generalApi: GeneralApi,
     private val configApi: ConfigApi,
-    private val callApi: VideoCallApi,
     private val fileDownloadApi: FileDownloadApi,
     private val ogApi: OpenGraphApi,
     private val threadsApi: ThreadsApi,
@@ -1104,23 +1095,20 @@ constructor(
     private fun flattenChannel(response: ChannelResponse): Channel = with(domainMapping) {
         return response.channel.toDomain().let { channel ->
             val channelInfo = response.channel.toChannelInfo()
-            // Pending messages are treated as regular messages from the current user, so we can merge them with the
-            // regular messages.
-            val channelMessages =
-                (response.messages + response.pending_messages.map(DownstreamPendingMessageDto::message)).map {
-                    it.toDomain(channelInfo).enrichWithCid(channel.cid)
-                }
+            val channelMessages = response.messages.map {
+                it.toDomain(channelInfo).enrichWithCid(channel.cid)
+            }
             channel.copy(
                 watcherCount = response.watcher_count,
                 read = response.read.map {
-                    it.toDomain(
-                        lastReceivedEventDate = channel.lastMessageAt ?: it.last_read,
-                    )
+                    it.toDomain(lastReceivedEventDate = channel.lastMessageAt ?: it.last_read)
                 },
                 members = response.members.map { it.toDomain() },
                 membership = response.membership?.toDomain(),
                 messages = channelMessages,
-                pendingMessages = response.pending_messages.map { it.toDomain() },
+                pendingMessages = response.pending_messages.map { pending ->
+                    pending.toDomain(channel.cid, channelInfo)
+                },
                 pinnedMessages = response.pinned_messages.map {
                     it.toDomain(channelInfo).enrichWithCid(channel.cid)
                 },
@@ -1407,33 +1395,6 @@ constructor(
             }
     }
 
-    @Deprecated(
-        "This third-party library integration is deprecated. Contact the support team for more information.",
-        level = DeprecationLevel.WARNING,
-    )
-    @Suppress("DEPRECATION")
-    override fun createVideoCall(
-        channelId: String,
-        channelType: String,
-        callId: String,
-        callType: String,
-    ): Call<VideoCallInfo> {
-        return callApi.createCall(
-            channelId = channelId,
-            channelType = channelType,
-            request = VideoCallCreateRequest(id = callId, type = callType),
-        ).map(CreateVideoCallResponse::toDomain)
-    }
-
-    @Deprecated(
-        "This third-party library integration is deprecated. Contact the support team for more information.",
-        level = DeprecationLevel.WARNING,
-    )
-    @Suppress("DEPRECATION")
-    override fun getVideoCallToken(callId: String): Call<VideoCallToken> {
-        return callApi.getCallToken(callId, VideoCallTokenRequest(callId)).map(VideoCallTokenResponse::toDomain)
-    }
-
     override fun sendEvent(
         eventType: String,
         channelType: String,
@@ -1479,19 +1440,17 @@ constructor(
         val lazyQueryThreads = {
             threadsApi.queryThreads(
                 connectionId,
-                with(dtoMapping) {
-                    io.getstream.chat.android.client.api2.model.requests.QueryThreadsRequest(
-                        filter = query.filter?.toMap(),
-                        sort = query.sort.toDto(),
-                        watch = query.watch,
-                        limit = query.limit,
-                        member_limit = query.memberLimit,
-                        next = query.next,
-                        participant_limit = query.participantLimit,
-                        prev = query.prev,
-                        reply_limit = query.replyLimit,
-                    )
-                },
+                io.getstream.chat.android.client.api2.model.requests.QueryThreadsRequest(
+                    filter = query.filter?.toMap(),
+                    sort = query.sort.toDto(),
+                    watch = query.watch,
+                    limit = query.limit,
+                    member_limit = query.memberLimit,
+                    next = query.next,
+                    participant_limit = query.participantLimit,
+                    prev = query.prev,
+                    reply_limit = query.replyLimit,
+                ),
             ).mapDomain { response ->
                 QueryThreadsResult(
                     threads = response.threads.map { it.toDomain() },
@@ -1539,7 +1498,7 @@ constructor(
      * @param set The fields to set.
      * @param unset The fields to unset.
      */
-    override fun partialUpdateThread(messageId: String, set: Map<String, Any>, unset: List<String>): Call<Thread> {
+    override fun partialUpdateThread(messageId: String, set: Map<String, Any>, unset: List<String>): Call<ThreadInfo> {
         return threadsApi.partialUpdateThread(
             messageId = messageId,
             body = PartialUpdateThreadRequest(
@@ -1651,26 +1610,26 @@ constructor(
         return pollsApi.queryPolls(request).mapDomain { it.toDomain() }
     }
 
-    override fun createPoll(pollConfig: PollConfig): Call<Poll> {
+    override fun createPoll(createPollParams: CreatePollParams): Call<Poll> {
         return pollsApi.createPoll(
             CreatePollRequest(
-                allow_answers = pollConfig.allowAnswers,
-                allow_user_suggested_options = pollConfig.allowUserSuggestedOptions,
-                description = pollConfig.description,
-                enforce_unique_vote = pollConfig.enforceUniqueVote,
-                max_votes_allowed = pollConfig.maxVotesAllowed,
-                name = pollConfig.name,
-                options = pollConfig.optionsWithExtraData.map {
+                allow_answers = createPollParams.allowAnswers,
+                allow_user_suggested_options = createPollParams.allowUserSuggestedOptions,
+                description = createPollParams.description,
+                enforce_unique_vote = createPollParams.enforceUniqueVote,
+                max_votes_allowed = createPollParams.maxVotesAllowed,
+                name = createPollParams.name,
+                options = createPollParams.optionsWithExtraData.map {
                     UpstreamOptionDto(
                         text = it.text,
                         extraData = it.extraData,
                     )
                 },
-                voting_visibility = when (pollConfig.votingVisibility) {
+                voting_visibility = when (createPollParams.votingVisibility) {
                     VotingVisibility.PUBLIC -> CreatePollRequest.VOTING_VISIBILITY_PUBLIC
                     VotingVisibility.ANONYMOUS -> CreatePollRequest.VOTING_VISIBILITY_ANONYMOUS
                 },
-                extraData = pollConfig.extraData,
+                extraData = createPollParams.extraData,
             ),
         ).mapDomain { it.poll.toDomain() }
     }

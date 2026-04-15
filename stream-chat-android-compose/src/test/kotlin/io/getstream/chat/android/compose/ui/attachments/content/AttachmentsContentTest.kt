@@ -33,13 +33,6 @@ internal class AttachmentsContentTest : PaparazziComposeTest {
     )
 
     @Test
-    fun `file attachment preview content`() {
-        snapshotWithDarkModeRow {
-            FileAttachmentPreviewContent()
-        }
-    }
-
-    @Test
     fun `file attachment content`() {
         snapshotWithDarkMode {
             Column {
@@ -52,42 +45,21 @@ internal class AttachmentsContentTest : PaparazziComposeTest {
     @Test
     fun `link attachment content`() {
         snapshotWithDarkMode {
-            LinkAttachmentContent()
+            LinkAttachmentContent(howMany = 1)
         }
     }
 
     @Test
-    fun `image attachment preview content`() {
-        snapshotWithDarkModeRow {
-            ImageAttachmentPreviewContent()
-        }
-    }
-
-    @Test
-    fun `media attachment preview items`() {
-        snapshotWithDarkModeRow {
-            MediaAttachmentPreviewItems()
-        }
-    }
-
-    @Test
-    fun `file attachment quoted content`() {
+    fun `compact link attachment content`() {
         snapshotWithDarkMode {
-            FileAttachmentQuotedContent()
-        }
-    }
-
-    @Test
-    fun `media attachment quoted content`() {
-        snapshotWithDarkMode {
-            MediaAttachmentQuotedContent()
+            LinkAttachmentContent(howMany = 2)
         }
     }
 
     @Test
     fun `file upload content`() {
         snapshotWithDarkModeRow {
-            FileUploadContent()
+            FileAttachmentContent(isMine = true, isUploading = true)
         }
     }
 
@@ -109,6 +81,30 @@ internal class AttachmentsContentTest : PaparazziComposeTest {
     fun `multiple media attachment content`() {
         snapshotWithDarkModeRow {
             MultipleMediaAttachmentContent()
+        }
+    }
+
+    @Test
+    fun `audio record attachment content`() {
+        snapshotWithDarkMode {
+            AudioRecordAttachmentContentItemPlayback()
+        }
+    }
+
+    @Test
+    fun `audio record upload content`() {
+        snapshotWithDarkMode {
+            AudioRecordAttachmentContentItemUploading()
+        }
+    }
+
+    @Test
+    fun `unsupported attachment content`() {
+        snapshotWithDarkMode {
+            Column {
+                UnsupportedAttachmentContent(isMine = true)
+                UnsupportedAttachmentContent(isMine = false)
+            }
         }
     }
 }

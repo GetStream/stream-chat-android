@@ -22,10 +22,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.MessageTheme
-import io.getstream.chat.android.compose.ui.theme.StreamColors
-import io.getstream.chat.android.compose.ui.theme.StreamShapes
-import io.getstream.chat.android.compose.ui.theme.StreamTypography
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
+import io.getstream.chat.android.compose.ui.theme.StreamDesign
+import io.getstream.chat.android.compose.ui.theme.TranslationConfig
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
@@ -64,72 +63,20 @@ public fun interface MessageTextFormatter {
         public fun defaultFormatter(
             autoTranslationEnabled: Boolean,
             isInDarkMode: Boolean = isSystemInDarkTheme(),
-            typography: StreamTypography = StreamTypography.defaultTypography(),
-            colors: StreamColors = when (isInDarkMode) {
-                true -> StreamColors.defaultDarkColors()
-                else -> StreamColors.defaultColors()
+            typography: StreamDesign.Typography = StreamDesign.Typography.default(),
+            colors: StreamDesign.Colors = when (isInDarkMode) {
+                true -> StreamDesign.Colors.defaultDark()
+                else -> StreamDesign.Colors.default()
             },
             textStyle: (isMine: Boolean, message: Message) -> TextStyle =
-                defaultTextStyle(isInDarkMode, typography, colors),
-            linkStyle: (isMine: Boolean) -> TextStyle = defaultLinkStyle(colors),
-            mentionColor: (isMine: Boolean) -> Color = defaultMentionColor(isInDarkMode, typography, colors),
+                { isMine, _ -> MessageStyling.textStyle(outgoing = isMine, typography, colors) },
+            linkStyle: (isMine: Boolean) -> TextStyle = { MessageStyling.linkStyle(typography, colors) },
+            mentionColor: (isMine: Boolean) -> Color = { colors.chatTextMention },
             builder: AnnotatedMessageTextBuilder? = null,
         ): MessageTextFormatter {
             return DefaultMessageTextFormatter(
                 autoTranslationEnabled = autoTranslationEnabled,
                 typography = typography,
-                textStyle = textStyle,
-                linkStyle = linkStyle,
-                mentionColor = mentionColor,
-                builder = builder,
-            )
-        }
-
-        /**
-         * Builds the default message text formatter.
-         *
-         * @param autoTranslationEnabled Whether the auto-translation is enabled.
-         * @param typography The typography to use for styling.
-         * @param colors The colors to use for styling.
-         * @param ownMessageTheme The theme to use for the current user's messages.
-         * @param otherMessageTheme The theme to use for other users' messages.
-         * @param builder The builder to use for customizing the text.
-         * @return The default implementation of [MessageTextFormatter].
-         *
-         * @see [DefaultMessageTextFormatter]
-         */
-        @Composable
-        public fun defaultFormatter(
-            autoTranslationEnabled: Boolean,
-            isInDarkMode: Boolean = isSystemInDarkTheme(),
-            typography: StreamTypography = StreamTypography.defaultTypography(),
-            shapes: StreamShapes = StreamShapes.defaultShapes(),
-            colors: StreamColors = when (isInDarkMode) {
-                true -> StreamColors.defaultDarkColors()
-                else -> StreamColors.defaultColors()
-            },
-            ownMessageTheme: MessageTheme = MessageTheme.defaultOwnTheme(
-                isInDarkMode = isInDarkMode,
-                typography = typography,
-                shapes = shapes,
-                colors = colors,
-            ),
-            otherMessageTheme: MessageTheme = MessageTheme.defaultOtherTheme(
-                isInDarkMode = isInDarkMode,
-                typography = typography,
-                shapes = shapes,
-                colors = colors,
-            ),
-            builder: AnnotatedMessageTextBuilder? = null,
-        ): MessageTextFormatter {
-            val textStyle = defaultTextStyle(ownMessageTheme, otherMessageTheme)
-            val linkStyle = defaultLinkStyle(ownMessageTheme, otherMessageTheme)
-            val mentionColor = defaultMentionColor(ownMessageTheme, otherMessageTheme)
-            return defaultFormatter(
-                autoTranslationEnabled = autoTranslationEnabled,
-                isInDarkMode = isInDarkMode,
-                typography = typography,
-                colors = colors,
                 textStyle = textStyle,
                 linkStyle = linkStyle,
                 mentionColor = mentionColor,
@@ -172,12 +119,12 @@ private class CompositeMessageTextFormatter(
 /**
  * Default implementation of [MessageTextFormatter].
  *
- * The default implementation automatically supports the [ChatTheme.autoTranslationEnabled] feature.
+ * The default implementation automatically supports the [TranslationConfig] auto-translation feature.
  * It also uses the [ChatTheme] to style the text including links highlighting.
  */
 private class DefaultMessageTextFormatter(
     private val autoTranslationEnabled: Boolean,
-    private val typography: StreamTypography,
+    private val typography: StreamDesign.Typography,
     private val textStyle: (isMine: Boolean, message: Message) -> TextStyle,
     private val linkStyle: (isMine: Boolean) -> TextStyle,
     private val mentionColor: (isMine: Boolean) -> Color,
@@ -199,6 +146,7 @@ private class DefaultMessageTextFormatter(
                     } ?: message.text
                 }
             }
+
             else -> message.text
         }
         val mentionedUserNames = message.mentionedUsers.map { it.name.ifEmpty { it.id } }
@@ -209,7 +157,7 @@ private class DefaultMessageTextFormatter(
         return buildAnnotatedMessageText(
             text = displayedText,
             textColor = textColor,
-            textFontStyle = typography.body.fontStyle,
+            textFontStyle = typography.bodyDefault.fontStyle,
             linkStyle = linkStyle,
             mentionsColor = mentionColor,
             mentionedUserNames = mentionedUserNames,

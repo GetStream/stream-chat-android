@@ -45,17 +45,17 @@ abstract class BaseMessagesComponentBrowserFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.messageListView.apply {
-            setMessageClickListener {}
-            setMessageLongClickListener {}
-            setMessageRetryListener {}
-            setThreadClickListener {}
-            setAttachmentClickListener { _, _ -> }
-            setAttachmentDownloadClickListener {}
-            setReactionViewClickListener {}
-            setUserClickListener {}
-            setModeratedMessageLongClickListener {}
+            setOnMessageClickListener { true }
+            setOnMessageLongClickListener { true }
+            setOnMessageRetryListener { true }
+            setOnThreadClickListener { true }
+            setOnAttachmentClickListener { _, _ -> true }
+            setOnAttachmentDownloadClickListener { true }
+            setOnReactionViewClickListener { true }
+            setOnUserClickListener { true }
+            setOnModeratedMessageLongClickListener { true }
 
-            init(Channel())
+            updateChannel(Channel())
             displayNewMessages(MessageListItemWrapper(getItems()))
         }
     }

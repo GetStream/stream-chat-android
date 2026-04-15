@@ -18,28 +18,21 @@ package io.getstream.chat.android.uitests.app
 
 import android.app.Application
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
-import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
-import io.getstream.chat.android.state.plugin.config.StatePluginConfig
-import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 
 class ChatApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
 
-        val offlinePluginFactory = StreamOfflinePluginFactory(appContext = this)
-        val statePluginFactory = StreamStatePluginFactory(
-            config = StatePluginConfig(
-                backgroundSyncEnabled = false,
-                userPresence = true,
-            ),
-            appContext = this,
+        val chatClientConfig = ChatClientConfig(
+            userPresence = true,
         )
 
         ChatClient.Builder("hrwwzsgrzapv", this)
-            .withPlugins(offlinePluginFactory, statePluginFactory)
+            .config(chatClientConfig)
             .logLevel(ChatLogLevel.NOTHING)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .build()

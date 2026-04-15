@@ -101,6 +101,16 @@ public data class Flag(
 ) : MessageAction()
 
 /**
+ * Mute the sender of the message.
+ */
+public data class MuteUser(override val message: Message) : MessageAction()
+
+/**
+ * Unmute the sender of the message.
+ */
+public data class UnmuteUser(override val message: Message) : MessageAction()
+
+/**
  * Block the sender of the message.
  */
 public data class BlockUser(override val message: Message) : MessageAction()
@@ -133,6 +143,8 @@ public fun MessageAction.updateMessage(message: Message): MessageAction {
         is Delete -> copy(message = message)
         is Flag -> copy(message = message)
         is CustomAction -> copy(message = message)
+        is MuteUser -> copy(message = message)
+        is UnmuteUser -> copy(message = message)
         is BlockUser -> copy(message = message)
         is UnblockUser -> copy(message = message)
     }

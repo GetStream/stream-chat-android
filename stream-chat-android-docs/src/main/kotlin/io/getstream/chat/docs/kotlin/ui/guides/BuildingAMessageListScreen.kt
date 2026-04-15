@@ -7,12 +7,12 @@ import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
-import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
+import io.getstream.chat.android.ui.feature.messages.header.ChannelHeaderView
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelHeaderViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
 
 /**
@@ -21,18 +21,18 @@ import io.getstream.chat.android.ui.viewmodel.messages.bindView
 class BuildingAMessageListScreen : Fragment() {
 
     private lateinit var messageListView: MessageListView
-    private lateinit var messageListHeaderView: MessageListHeaderView
+    private lateinit var channelHeaderView: ChannelHeaderView
     private lateinit var messageComposerView: MessageComposerView
 
     fun usage() {
         // Create ViewModels for the Views
-        val factory = MessageListViewModelFactory(requireContext(), cid = "messaging:123")
-        val messageListHeaderViewModel: MessageListHeaderViewModel by viewModels { factory }
+        val factory = ChannelViewModelFactory(requireContext(), cid = "messaging:123")
+        val channelHeaderViewModel: ChannelHeaderViewModel by viewModels { factory }
         val messageListViewModel: MessageListViewModel by viewModels { factory }
         val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
 
         // Bind the ViewModels with the Views
-        messageListHeaderViewModel.bindView(messageListHeaderView, viewLifecycleOwner)
+        channelHeaderViewModel.bindView(channelHeaderView, viewLifecycleOwner)
         messageListViewModel.bindView(messageListView, viewLifecycleOwner)
         messageComposerViewModel.bindView(messageComposerView, viewLifecycleOwner)
 
@@ -40,11 +40,11 @@ class BuildingAMessageListScreen : Fragment() {
         messageListViewModel.mode.observe(viewLifecycleOwner) { mode ->
             when (mode) {
                 is MessageMode.MessageThread -> {
-                    messageListHeaderViewModel.setActiveThread(mode.parentMessage)
+                    channelHeaderViewModel.setActiveThread(mode.parentMessage)
                     messageComposerViewModel.setMessageMode(MessageMode.MessageThread(mode.parentMessage))
                 }
                 is MessageMode.Normal -> {
-                    messageListHeaderViewModel.resetThread()
+                    channelHeaderViewModel.resetThread()
                     messageComposerViewModel.leaveThread()
                 }
             }
@@ -71,7 +71,7 @@ class BuildingAMessageListScreen : Fragment() {
         val backHandler = {
             messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
         }
-        messageListHeaderView.setBackButtonClickListener(backHandler)
+        channelHeaderView.setBackButtonClickListener(backHandler)
 
         // Override the default Activity's back button behaviour
         requireActivity().onBackPressedDispatcher.addCallback(

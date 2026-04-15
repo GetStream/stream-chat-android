@@ -16,13 +16,18 @@
 
 package io.getstream.chat.android.compose.ui.messages
 
+import androidx.compose.ui.Alignment
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
-import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
-import io.getstream.chat.android.compose.util.extensions.toSet
-import io.getstream.chat.android.models.ChannelCapabilities
-import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFixedStyle
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFixedStyleWithCommandSuggestions
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFixedStyleWithUserSuggestions
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFixedStyleWithVisibleAttachmentPicker
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFloatingStyle
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFloatingStyleWithCommandSuggestions
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFloatingStyleWithUserSuggestions
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFloatingStyleWithVisibleAttachmentPicker
 import org.junit.Rule
 import org.junit.Test
 
@@ -32,27 +37,72 @@ internal class MessageComposerTest : PaparazziComposeTest {
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `empty input`() {
-        snapshotWithDarkMode {
-            MessageComposer(
-                messageComposerState = MessageComposerState(
-                    ownCapabilities = ChannelCapabilities.toSet(),
-                ),
-                onSendMessage = { _, _ -> },
-            )
+    fun `fixed style`() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerFixedStyle()
         }
     }
 
     @Test
-    fun `text input`() {
-        snapshotWithDarkMode {
-            MessageComposer(
-                messageComposerState = MessageComposerState(
-                    inputValue = "Message text",
-                    ownCapabilities = ChannelCapabilities.toSet(),
-                ),
-                onSendMessage = { _, _ -> },
-            )
+    fun `fixed style with visible attachment picker`() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerFixedStyleWithVisibleAttachmentPicker()
+        }
+    }
+
+    @Test
+    fun `fixed style with user suggestions`() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerFixedStyleWithUserSuggestions()
+        }
+    }
+
+    @Test
+    fun `fixed style with command suggestions`() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerFixedStyleWithCommandSuggestions()
+        }
+    }
+
+    @Test
+    fun `floating style`() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerFloatingStyle()
+        }
+    }
+
+    @Test
+    fun `floating style with visible attachment picker`() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerFloatingStyleWithVisibleAttachmentPicker()
+        }
+    }
+
+    @Test
+    fun `floating style with user suggestions in light mode`() {
+        snapshot(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerFloatingStyleWithUserSuggestions()
+        }
+    }
+
+    @Test
+    fun `floating style with user suggestions in dark mode`() {
+        snapshot(contentAlignment = Alignment.BottomCenter, isInDarkMode = true) {
+            MessageComposerFloatingStyleWithUserSuggestions()
+        }
+    }
+
+    @Test
+    fun `floating style with command suggestions in light mode`() {
+        snapshot(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerFloatingStyleWithCommandSuggestions()
+        }
+    }
+
+    @Test
+    fun `floating style with command suggestions in dark mode`() {
+        snapshot(contentAlignment = Alignment.BottomCenter, isInDarkMode = true) {
+            MessageComposerFloatingStyleWithCommandSuggestions()
         }
     }
 }

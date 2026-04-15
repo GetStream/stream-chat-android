@@ -43,15 +43,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.attachments.preview.internal.StreamMediaPlayerContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.mirrorRtl
-
+import io.getstream.chat.android.ui.common.R as UiCommonR
 /**
  * An Activity that is capable of playing video/audio stream.
  */
@@ -80,7 +78,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
                     onPlaybackError = {
                         Toast.makeText(
                             this,
-                            R.string.stream_ui_message_list_attachment_display_error,
+                            UiCommonR.string.stream_ui_message_list_attachment_display_error,
                             Toast.LENGTH_SHORT,
                         ).show()
                         finish()
@@ -150,11 +148,10 @@ public class MediaPreviewActivity : AppCompatActivity() {
             colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black),
             navigationIcon = {
                 IconButton(
-                    modifier = Modifier.mirrorRtl(LocalLayoutDirection.current),
                     onClick = { onBackPressed() },
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+                        painter = painterResource(id = R.drawable.stream_design_ic_arrow_left),
                         contentDescription = null,
                         tint = Color.White,
                     )
@@ -165,7 +162,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
                     text = title,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Start,
-                    style = ChatTheme.typography.body,
+                    style = ChatTheme.typography.bodyDefault,
                     maxLines = 1,
                     color = Color.White,
                 )

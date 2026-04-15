@@ -30,7 +30,6 @@ import coil3.gif.MovieDrawable
 import coil3.imageLoader
 import coil3.load
 import coil3.network.NetworkHeaders
-import coil3.network.httpHeaders
 import coil3.request.ImageRequest
 import coil3.request.error
 import coil3.request.fallback
@@ -41,10 +40,6 @@ import coil3.transform.CircleCropTransformation
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.disposable.CoilDisposable
 import io.getstream.chat.android.ui.common.disposable.Disposable
-import io.getstream.chat.android.ui.common.helper.DefaultImageAssetTransformer
-import io.getstream.chat.android.ui.common.helper.DefaultImageHeadersProvider
-import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
-import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.images.internal.StreamCoil.streamImageLoader
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -52,20 +47,15 @@ import kotlinx.coroutines.withContext
 
 internal object CoilStreamImageLoader : StreamImageLoader {
 
-    override var imageHeadersProvider: ImageHeadersProvider = DefaultImageHeadersProvider
-    override var imageAssetTransformer: ImageAssetTransformer = DefaultImageAssetTransformer
-
     override suspend fun loadAsBitmap(
         context: Context,
         url: String,
         transformation: StreamImageLoader.ImageTransformation,
     ): Bitmap? = withContext(DispatcherProvider.IO) {
         url.takeUnless(String::isBlank)
-            .transformedAsset()
             ?.let { asset ->
                 val imageResult = context.streamImageLoader.execute(
                     ImageRequest.Builder(context)
-                        .httpHeaders(imageHeadersProvider.getImageRequestHeaders(asset.toString()).toNetworkHeaders())
                         .data(url)
                         .applyTransformation(transformation)
                         .build(),
@@ -154,17 +144,12 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         val calledContext = coroutineContext
 
         withContext(DispatcherProvider.IO) {
-            val asset = data.transformedAsset()
-            val headers = asset?.toString()?.let { url ->
-                imageHeadersProvider.getImageRequestHeaders(url).toNetworkHeaders()
-            } ?: NetworkHeaders.EMPTY
             val result = context.streamImageLoader.execute(
                 ImageRequest.Builder(context)
-                    .httpHeaders(headers)
                     .placeholder(placeholderDrawable)
                     .fallback(placeholderDrawable)
                     .error(placeholderDrawable)
-                    .data(asset)
+                    .data(data)
                     .listener(
                         onStart = { launch(calledContext) { onStart() } },
                         onCancel = { launch(calledContext) { onComplete() } },
@@ -223,19 +208,10 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         imageLoader: ImageLoader = context.imageLoader,
         builder: ImageRequest.Builder.() -> Unit = {},
     ): coil3.request.Disposable {
-        val asset = data.transformedAsset()
-        return this.load(
-            asset,
-            imageLoader,
-        ) {
-            asset?.toString()?.let { url ->
-                httpHeaders(imageHeadersProvider.getImageRequestHeaders(url).toNetworkHeaders())
-            }
+        return this.load(data, imageLoader) {
             builder()
         }
     }
-
-    private fun Any?.transformedAsset(): Any? = this?.let(imageAssetTransformer::transform)
 
     private fun ImageRequest.Builder.applyTransformation(
         transformation: StreamImageLoader.ImageTransformation,

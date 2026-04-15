@@ -47,7 +47,6 @@ import io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarRenderer;
 import io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarViewProvider;
 import io.getstream.chat.android.ui.widgets.avatar.UserAvatarRenderer;
 import io.getstream.chat.android.ui.widgets.avatar.UserAvatarView;
-import io.getstream.chat.docs.R;
 
 /**
  * [General Configuration](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/)
@@ -61,9 +60,9 @@ public class Configuration {
      */
     public void customReactions() {
         // Create a drawable for the non-selected reaction option
-        Drawable loveDrawable = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love);
+        Drawable loveDrawable = ContextCompat.getDrawable(context, io.getstream.chat.android.ui.R.drawable.stream_ui_ic_reaction_love);
         // Create a drawable for the selected reaction option and set a tint to it
-        Drawable loveDrawableSelected = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love).mutate();
+        Drawable loveDrawableSelected = ContextCompat.getDrawable(context, io.getstream.chat.android.ui.R.drawable.stream_ui_ic_reaction_love).mutate();
         loveDrawableSelected.setTint(Color.RED);
 
         // Create a map of reactions
@@ -81,32 +80,20 @@ public class Configuration {
         ChatUI.setMimeTypeIconProvider(mimeType -> {
             if (mimeType == null) {
                 // Generic icon for missing MIME type
-                return R.drawable.stream_ui_ic_file;
+                return io.getstream.chat.android.ui.R.drawable.stream_ui_ic_file;
             } else if (mimeType.equals("application/vnd.ms-excel")) {
                 // Special icon for XLS files
-                return R.drawable.stream_ui_ic_file_xls;
+                return io.getstream.chat.android.ui.R.drawable.stream_ui_ic_file_xls;
             } else if (mimeType.contains("audio")) {
                 // Generic icon for audio files
-                return R.drawable.stream_ui_ic_file_mp3;
+                return io.getstream.chat.android.ui.R.drawable.stream_ui_ic_file_mp3;
             } else if (mimeType.contains("video")) {
                 // Generic icon for video files
-                return R.drawable.stream_ui_ic_file_mov;
+                return io.getstream.chat.android.ui.R.drawable.stream_ui_ic_file_mov;
             } else {
                 // Generic icon for other files
-                return R.drawable.stream_ui_ic_file;
+                return io.getstream.chat.android.ui.R.drawable.stream_ui_ic_file;
             }
-        });
-    }
-
-    /**
-     * [Customizing Image Headers](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#adding-extra-headers-to-image-requests)
-     */
-    public void customizingImageHeaders() {
-        ChatUI.setImageHeadersProvider((url) -> {
-            Map<String, String> headers = new HashMap<>();
-            headers.put("token", "12345");
-
-            return headers;
         });
     }
 
@@ -126,7 +113,7 @@ public class Configuration {
             ChatUI.setFonts(new ChatFonts() {
 
                 // Fetch the font you want to use
-                final Typeface font = ResourcesCompat.getFont(context, R.font.stream_roboto_regular);
+                final Typeface font = ResourcesCompat.getFont(context, io.getstream.chat.android.ui.common.R.font.stream_roboto_regular);
 
                 @Override
                 public void setFont(@NonNull TextStyle textStyle, @NonNull TextView textView) {

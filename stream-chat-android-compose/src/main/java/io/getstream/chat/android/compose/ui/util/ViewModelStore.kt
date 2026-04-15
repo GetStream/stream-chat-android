@@ -20,12 +20,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
+import androidx.lifecycle.HasDefaultViewModelProviderFactory
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 
 /**
- * Provides a fresh ViewModelStore for the composable content.
+ * Provides a fresh [ViewModelStore] for the composable content.
  * The store is cleared when the composable leaves the composition.
  */
 @Composable
@@ -33,15 +36,12 @@ internal fun ViewModelStore(
     vararg keys: Any?,
     content: @Composable () -> Unit,
 ) {
-    // Create a fresh ViewModelStore on each new composition
+    val parentOwner = LocalViewModelStoreOwner.current
     val viewModelStore = remember { ViewModelStore() }
-    val viewModelStoreOwner = remember(viewModelStore) {
-        object : ViewModelStoreOwner {
-            override val viewModelStore: ViewModelStore = viewModelStore
-        }
+    val viewModelStoreOwner = remember(viewModelStore, parentOwner) {
+        StreamViewModelStoreOwner(viewModelStore, parentOwner)
     }
 
-    // Clear the store when the composition is disposed
     DisposableEffect(keys) {
         onDispose {
             viewModelStore.clear()
@@ -51,4 +51,25 @@ internal fun ViewModelStore(
     CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
         content()
     }
+}
+
+/**
+ * A [ViewModelStoreOwner] that uses its own [ViewModelStore] while forwarding
+ * [CreationExtras] from the parent owner (typically the Activity).
+ * This ensures that ViewModels requiring a [SavedStateHandle][androidx.lifecycle.SavedStateHandle]
+ * receive the correct extras (e.g. `SAVED_STATE_REGISTRY_OWNER_KEY`).
+ */
+private class StreamViewModelStoreOwner(
+    override val viewModelStore: ViewModelStore,
+    parentOwner: ViewModelStoreOwner?,
+) : ViewModelStoreOwner,
+    HasDefaultViewModelProviderFactory {
+
+    private val parentFactory = parentOwner as? HasDefaultViewModelProviderFactory
+
+    override val defaultViewModelProviderFactory: ViewModelProvider.Factory
+        get() = parentFactory?.defaultViewModelProviderFactory ?: ViewModelProvider.NewInstanceFactory()
+
+    override val defaultViewModelCreationExtras: CreationExtras
+        get() = parentFactory?.defaultViewModelCreationExtras ?: CreationExtras.Empty
 }

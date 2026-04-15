@@ -18,19 +18,19 @@ package io.getstream.chat.android.compose.ui.util.extensions.internal
 
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.ui.theme.StreamDimens
+
+private val GroupAvatarInitialsXOffset = 1.5.dp
+private val GroupAvatarInitialsYOffset = 2.5.dp
 
 /**
  * Function to determine the offset of initials in an avatar group, which can contain up to 4 avatars in a grid.
  *
- * @param dimens [StreamDimens] that contain the offset.
  * @param userPosition The position of the current users avatar in the group.
  * @param memberCount The number of members inside the avatar group/channel.
  *
  * @return The x and y offset of the avatar inside [DpOffset] depending on the item position inside the list.
  */
 internal fun getAvatarPositionOffset(
-    dimens: StreamDimens,
     userPosition: Int,
     memberCount: Int,
 ): DpOffset {
@@ -39,26 +39,26 @@ internal fun getAvatarPositionOffset(
 
     return when (userPosition) {
         0 -> DpOffset(
-            dimens.groupAvatarInitialsXOffset,
-            dimens.groupAvatarInitialsYOffset,
+            GroupAvatarInitialsXOffset,
+            GroupAvatarInitialsYOffset,
         )
         1 -> {
             if (memberCount == 3) {
                 center
             } else {
                 DpOffset(
-                    -dimens.groupAvatarInitialsXOffset,
-                    dimens.groupAvatarInitialsYOffset,
+                    -GroupAvatarInitialsXOffset,
+                    GroupAvatarInitialsYOffset,
                 )
             }
         }
         2 -> DpOffset(
-            dimens.groupAvatarInitialsXOffset,
-            -dimens.groupAvatarInitialsYOffset,
+            GroupAvatarInitialsXOffset,
+            -GroupAvatarInitialsYOffset,
         )
         LastIndexInAvatarGroup -> DpOffset(
-            -dimens.groupAvatarInitialsXOffset,
-            -dimens.groupAvatarInitialsYOffset,
+            -GroupAvatarInitialsXOffset,
+            -GroupAvatarInitialsYOffset,
         )
         else -> center
     }

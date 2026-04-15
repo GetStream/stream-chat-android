@@ -18,10 +18,14 @@ package io.getstream.chat.android.compose.ui.attachments.preview
 
 import android.app.Activity
 import android.content.Intent
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -33,7 +37,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.test.TestCall
-import io.getstream.chat.android.ui.common.helper.DefaultDownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -78,7 +81,10 @@ internal class MediaGalleryPreviewActivityTest : MockedChatClientTest {
             composeTestRule.waitForIdle()
 
             composeTestRule.onNodeWithContentDescription("Image options").performClick()
-            composeTestRule.onNodeWithText("Reply").performClick()
+            composeTestRule.waitForIdle()
+            composeTestRule.onNode(hasText("Reply") and hasClickAction())
+                .performSemanticsAction(SemanticsActions.OnClick)
+            composeTestRule.waitForIdle()
 
             scenario.assertResult(
                 expected = MediaGalleryPreviewResult(
@@ -99,7 +105,10 @@ internal class MediaGalleryPreviewActivityTest : MockedChatClientTest {
             composeTestRule.waitForIdle()
 
             composeTestRule.onNodeWithContentDescription("Image options").performClick()
-            composeTestRule.onNodeWithText("Show in chat").performClick()
+            composeTestRule.waitForIdle()
+            composeTestRule.onNode(hasText("Show in chat") and hasClickAction())
+                .performSemanticsAction(SemanticsActions.OnClick)
+            composeTestRule.waitForIdle()
 
             scenario.assertResult(
                 expected = MediaGalleryPreviewResult(
@@ -122,8 +131,10 @@ internal class MediaGalleryPreviewActivityTest : MockedChatClientTest {
             composeTestRule.waitForIdle()
 
             composeTestRule.onNodeWithContentDescription("Image options").performClick()
+            composeTestRule.waitForIdle()
 
-            composeTestRule.onNodeWithText("Delete").performClick()
+            composeTestRule.onNode(hasText("Delete") and hasClickAction())
+                .performSemanticsAction(SemanticsActions.OnClick)
         }
     }
 
@@ -136,8 +147,10 @@ internal class MediaGalleryPreviewActivityTest : MockedChatClientTest {
             composeTestRule.waitForIdle()
 
             composeTestRule.onNodeWithContentDescription("Image options").performClick()
+            composeTestRule.waitForIdle()
 
-            composeTestRule.onNodeWithText("Save media").performClick()
+            composeTestRule.onNode(hasText("Save media") and hasClickAction())
+                .performSemanticsAction(SemanticsActions.OnClick)
         }
     }
 
@@ -180,8 +193,6 @@ internal class MediaGalleryPreviewActivityTest : MockedChatClientTest {
         input = MediaGalleryPreviewContract.Input(
             message = message,
             videoThumbnailsEnabled = true,
-            downloadAttachmentUriGenerator = DefaultDownloadAttachmentUriGenerator,
-            downloadRequestInterceptor = {},
             streamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
         ),
     ).also {

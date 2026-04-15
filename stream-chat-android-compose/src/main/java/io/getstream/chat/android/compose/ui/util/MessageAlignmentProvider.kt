@@ -18,6 +18,8 @@ package io.getstream.chat.android.compose.ui.util
 
 import io.getstream.chat.android.compose.state.messages.MessageAlignment
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
+import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
+import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 
 /**
  *  An interface that allows to return the desired horizontal alignment for a particular [MessageItemState].
@@ -27,10 +29,10 @@ public fun interface MessageAlignmentProvider {
     /**
      * Returns [MessageAlignment] for a particular [MessageItemState].
      *
-     * @param messageItem The message whose data is used to decide which alignment to use.
-     * @return The [MessageAlignment] for the provided message.
+     * @param messageItem The item whose data is used to decide which alignment to use.
+     * @return The [MessageAlignment] for the provided item.
      */
-    public fun provideMessageAlignment(messageItem: MessageItemState): MessageAlignment
+    public fun provideMessageAlignment(messageItem: MessageListItemState): MessageAlignment
 
     public companion object {
         /**
@@ -57,7 +59,12 @@ private class DefaultMessageAlignmentProvider : MessageAlignmentProvider {
      * @param messageItem The message whose data is used to decide which alignment to use.
      * @return The [MessageAlignment] for the provided message.
      */
-    override fun provideMessageAlignment(messageItem: MessageItemState): MessageAlignment {
-        return if (messageItem.isMine) MessageAlignment.End else MessageAlignment.Start
+    override fun provideMessageAlignment(messageItem: MessageListItemState): MessageAlignment {
+        return when (messageItem) {
+            is MessageItemState -> if (messageItem.isMine) MessageAlignment.End else MessageAlignment.Start
+            is TypingItemState -> MessageAlignment.Start
+            // Unused by default in the SDK
+            else -> MessageAlignment.Start
+        }
     }
 }

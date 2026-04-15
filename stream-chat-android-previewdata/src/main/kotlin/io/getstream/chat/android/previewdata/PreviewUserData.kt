@@ -52,7 +52,7 @@ public object PreviewUserData {
         image = "https://vignette.wikia.nocookie.net/starwars/images/4/48/Chewbacca_TLJ.png",
     )
 
-    private val user6: User = User(
+    public val user6: User = User(
         id = "c-3po",
         name = "C-3PO",
         image = "https://vignette.wikia.nocookie.net/starwars/images/3/3f/C-3PO_TLJ_Card_Trader_Award_Card.png",

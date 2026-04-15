@@ -16,11 +16,13 @@
 
 package io.getstream.chat.android.client.persistance.repository
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.ChannelConfig
 
 /**
  * Repository to read and write data of [ChannelConfig]
  */
+@InternalStreamChatApi
 public interface ChannelConfigRepository {
     /**
      * Caches in memory data from DB.

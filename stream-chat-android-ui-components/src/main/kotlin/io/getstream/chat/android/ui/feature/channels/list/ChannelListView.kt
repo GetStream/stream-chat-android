@@ -37,12 +37,6 @@ import io.getstream.chat.android.ui.common.state.channels.actions.LeaveGroup
 import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
 import io.getstream.chat.android.ui.feature.channels.actions.ChannelActionsDialogViewStyle
 import io.getstream.chat.android.ui.feature.channels.actions.internal.ChannelActionsDialogFragment
-import io.getstream.chat.android.ui.feature.channels.list.ChannelListView.ChannelClickListener
-import io.getstream.chat.android.ui.feature.channels.list.ChannelListView.ChannelListItemPredicate
-import io.getstream.chat.android.ui.feature.channels.list.ChannelListView.ChannelListUpdateListener
-import io.getstream.chat.android.ui.feature.channels.list.ChannelListView.ChannelLongClickListener
-import io.getstream.chat.android.ui.feature.channels.list.ChannelListView.ErrorEventHandler
-import io.getstream.chat.android.ui.feature.channels.list.ChannelListView.UserClickListener
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.SwipeViewHolder
@@ -75,7 +69,6 @@ public class ChannelListView : FrameLayout {
 
     private var errorEventHandler = ErrorEventHandler { errorEvent ->
         when (errorEvent) {
-            is ChannelListViewModel.ErrorEvent.HideChannelError -> R.string.stream_ui_channel_list_error_hide_channel
             is ChannelListViewModel.ErrorEvent.DeleteChannelError -> R.string.stream_ui_channel_list_error_delete_channel
             is ChannelListViewModel.ErrorEvent.LeaveChannelError -> R.string.stream_ui_channel_list_error_leave_channel
         }.let(::showToast)

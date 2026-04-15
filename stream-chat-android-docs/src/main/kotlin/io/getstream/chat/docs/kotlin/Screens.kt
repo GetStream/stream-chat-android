@@ -3,23 +3,23 @@ package io.getstream.chat.docs.kotlin
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import io.getstream.chat.android.models.FilterObject
-import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.ui.feature.channels.ChannelListActivity
 import io.getstream.chat.android.ui.feature.channels.ChannelListFragment
-import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
 import io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
-import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel
-import io.getstream.chat.android.ui.feature.messages.MessageListActivity
-import io.getstream.chat.android.ui.feature.messages.MessageListFragment
+import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
+import io.getstream.chat.android.ui.feature.messages.ChannelActivity
+import io.getstream.chat.android.ui.feature.messages.ChannelFragment
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
+import io.getstream.chat.android.ui.feature.messages.header.ChannelHeaderView
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
-import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
 import io.getstream.chat.android.ui.feature.search.SearchInputView
 import io.getstream.chat.android.ui.feature.search.list.SearchResultListView
-import io.getstream.chat.docs.R
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel
+import io.getstream.chat.android.ui.R as UiR
 
 class Screens {
 
@@ -32,11 +32,11 @@ class Screens {
 
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
-                setContentView(R.layout.stream_ui_fragment_container)
+                setContentView(UiR.layout.stream_ui_fragment_container)
 
                 if (savedInstanceState == null) {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.container, ChannelListFragment.newInstance())
+                        .replace(UiR.id.container, ChannelListFragment.newInstance())
                         .commit()
                 }
             }
@@ -92,7 +92,7 @@ class Screens {
             override fun createChannelListFragment(): ChannelListFragment {
                 return ChannelListFragment.newInstance {
                     setFragment(CustomChannelListFragment())
-                    customTheme(R.style.StreamUiTheme)
+                    customTheme(UiR.style.StreamUiTheme)
                     showSearch(true)
                     showHeader(true)
                     headerTitle("Title")
@@ -143,37 +143,37 @@ class Screens {
     class MessageListScreen {
 
         /**
-         * Adding [MessageListFragment] to your Activity
+         * Adding [ChannelFragment] to your Activity
          */
-        class MyMessageListActivity : AppCompatActivity() {
+        class MyChannelActivity : AppCompatActivity() {
 
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
-                setContentView(R.layout.stream_ui_fragment_container)
+                setContentView(UiR.layout.stream_ui_fragment_container)
 
                 if (savedInstanceState == null) {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.container, MessageListFragment.newInstance(cid = "channelType:channelId") {})
+                        .replace(UiR.id.container, ChannelFragment.newInstance(cid = "channelType:channelId") {})
                         .commit()
                 }
             }
         }
 
         /**
-         * Starting [MessageListActivity] from the SDK
+         * Starting [ChannelActivity] from the SDK
          */
         fun messageListActivity(context: Context, cid: String, messageId: String?) {
-            context.startActivity(MessageListActivity.createIntent(context, cid, messageId))
+            context.startActivity(ChannelActivity.createIntent(context, cid, messageId))
         }
 
         /**
-         * Implementing click listeners of [MessageListFragment]
+         * Implementing click listeners of [ChannelFragment]
          */
-        class MyMessageListActivityWithListeners : AppCompatActivity(), MessageListFragment.BackPressListener {
+        class MyChannelActivityWithListeners : AppCompatActivity(), ChannelFragment.BackPressListener {
 
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
-                // Add MessageListFragment to the layout
+                // Add ChannelFragment to the layout
             }
 
             override fun onBackPress() {
@@ -185,14 +185,14 @@ class Screens {
     class MessageListScreenCustomization {
 
         /**
-         * Using inheritance to customize [MessageListActivity]
+         * Using inheritance to customize [ChannelActivity]
          */
-        class CustomMessageListActivity : MessageListActivity() {
+        class CustomChannelActivity : ChannelActivity() {
 
-            override fun createMessageListFragment(cid: String, messageId: String?): MessageListFragment {
-                return MessageListFragment.newInstance(cid) {
-                    setFragment(CustomMessageListFragment())
-                    customTheme(R.style.StreamUiTheme)
+            override fun createChannelFragment(cid: String, messageId: String?): ChannelFragment {
+                return ChannelFragment.newInstance(cid) {
+                    setFragment(CustomChannelFragment())
+                    customTheme(UiR.style.StreamUiTheme)
                     showHeader(true)
                     messageId(messageId)
                 }
@@ -200,14 +200,14 @@ class Screens {
         }
 
         /**
-         * Using inheritance to customize [MessageListFragment]
+         * Using inheritance to customize [ChannelFragment]
          */
-        class CustomMessageListFragment : MessageListFragment() {
+        class CustomChannelFragment : ChannelFragment() {
 
-            override fun setupMessageListHeader(messageListHeaderView: MessageListHeaderView) {
-                super.setupMessageListHeader(messageListHeaderView)
+            override fun setupChannelHeader(channelHeaderView: ChannelHeaderView) {
+                super.setupChannelHeader(channelHeaderView)
                 // Customize message list header view. For example, set a custom back button click listener:
-                messageListHeaderView.setBackButtonClickListener {
+                channelHeaderView.setBackButtonClickListener {
                     // Handle back press
                 }
             }

@@ -20,11 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import io.getstream.chat.android.compose.ui.theme.MentionStyleFactory
-import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -88,20 +84,12 @@ internal class TextUtilsKtTest {
     }
 
     @Test
-    fun `buildAnnotatedInputText should annotate URLs, emails, and mentions correctly`() {
+    fun `buildAnnotatedInputText should annotate URLs and emails correctly`() {
         // Given
-        val text = "Visit https://example.com or email test@example.com and mention @Alice"
+        val text = "Visit https://example.com or email test@example.com"
         val textColor = Color.Black
         val textFontStyle = FontStyle.Normal
         val linkStyle = TextStyle(color = Color.Blue, fontWeight = FontWeight.Bold)
-        val user = User(id = "alice-id", name = "Alice")
-        val mentions = setOf(Mention.User(user))
-        val mentionStyleFactory = object : MentionStyleFactory {
-            override fun styleFor(mention: Mention) = androidx.compose.ui.text.SpanStyle(
-                color = Color.Magenta,
-                fontWeight = FontWeight.Bold,
-            )
-        }
 
         // When
         val result = buildAnnotatedInputText(
@@ -109,8 +97,6 @@ internal class TextUtilsKtTest {
             textColor = textColor,
             textFontStyle = textFontStyle,
             linkStyle = linkStyle,
-            mentions = mentions,
-            mentionStyleFactory = mentionStyleFactory,
         )
 
         // Then
@@ -120,29 +106,15 @@ internal class TextUtilsKtTest {
         val urlAnnotations = result.getStringAnnotations(AnnotationTagUrl, 0, text.length)
         assertEquals(1, urlAnnotations.size)
         assertEquals("https://example.com", urlAnnotations[0].item)
-        assertEquals(6, urlAnnotations[0].start) // Position of "https://example.com"
+        assertEquals(6, urlAnnotations[0].start)
         assertEquals(25, urlAnnotations[0].end)
 
         // Verify email annotation
         val emailAnnotations = result.getStringAnnotations(AnnotationTagEmail, 0, text.length)
         assertEquals(1, emailAnnotations.size)
         assertEquals("mailto:test@example.com", emailAnnotations[0].item)
-        assertEquals(35, emailAnnotations[0].start) // Position of "test@example.com"
+        assertEquals(35, emailAnnotations[0].start)
         assertEquals(51, emailAnnotations[0].end)
-
-        // Verify mention annotation
-        val mentionAnnotations = result.getStringAnnotations(AnnotationTagMention, 0, text.length)
-        assertEquals(1, mentionAnnotations.size)
-        assertEquals("Alice", mentionAnnotations[0].item)
-        assertEquals(64, mentionAnnotations[0].start) // Position of "@Alice" (includes @)
-        assertEquals(70, mentionAnnotations[0].end)
-
-        // Verify mention styling was applied
-        val styles = result.spanStyles
-        val mentionStyle = styles.firstOrNull {
-            it.start == 64 && it.end == 70 && it.item.color == Color.Magenta
-        }
-        assertNotNull(mentionStyle)
     }
 
     companion object {

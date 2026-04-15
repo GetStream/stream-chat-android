@@ -35,44 +35,14 @@ public sealed interface ChannelInfoMemberViewState {
      * Represents the content state of the channel member information.
      *
      * @param member The member whose information is being displayed.
-     * @param options The list of options available for the member.
+     * @param capabilities The set of own capabilities in the channel.
+     * @param isMuted Whether the member's user is muted by the current user.
+     * @param isBlocked Whether the member's user is blocked by the current user.
      */
     public data class Content(
         val member: Member,
-        val options: List<Option>,
-    ) : ChannelInfoMemberViewState {
-
-        /**
-         * Represents the options available for the member.
-         */
-        public sealed interface Option {
-            /**
-             * Indicates an option to message the member.
-             *
-             * @param member The member to message.
-             */
-            public data class MessageMember(val member: Member) : Option
-
-            /**
-             * Indicates an option to ban the member.
-             *
-             * @param member The member to ban.
-             */
-            public data class BanMember(val member: Member) : Option
-
-            /**
-             * Indicates an option to unban the member.
-             *
-             * @param member The member to unban.
-             */
-            public data class UnbanMember(val member: Member) : Option
-
-            /**
-             * Indicates an option to remove the member from the channel.
-             *
-             * @param member The member to remove.
-             */
-            public data class RemoveMember(val member: Member) : Option
-        }
-    }
+        val capabilities: Set<String>,
+        val isMuted: Boolean,
+        val isBlocked: Boolean,
+    ) : ChannelInfoMemberViewState
 }

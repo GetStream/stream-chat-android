@@ -19,22 +19,19 @@ package io.getstream.chat.android.ui.viewmodel.messages
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.MessageInput
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
-import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.result.Result
 import io.getstream.result.call.Call
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -59,57 +56,7 @@ public class MessageComposerViewModel(
     /**
      * UI state of the current composer input.
      */
-    public val input: MutableStateFlow<String> = messageComposerController.input
-
-    /**
-     * If the message will be shown in the channel after it is sent.
-     */
-    public val alsoSendToChannel: MutableStateFlow<Boolean> = messageComposerController.alsoSendToChannel
-
-    /**
-     * Represents the remaining time until the user is allowed to send the next message.
-     */
-    public val cooldownTimer: MutableStateFlow<Int> = messageComposerController.cooldownTimer
-
-    /**
-     * Represents the currently selected attachments, that are shown within the composer UI.
-     */
-    public val selectedAttachments: MutableStateFlow<List<Attachment>> = messageComposerController.selectedAttachments
-
-    /**
-     * Represents the list of validation errors for the current text input and the currently selected attachments.
-     */
-    public val validationErrors: MutableStateFlow<List<ValidationError>> = messageComposerController.validationErrors
-
-    /**
-     * Represents the list of users that can be used to autocomplete the current mention input.
-     */
-    public val mentionSuggestions: MutableStateFlow<List<User>> = messageComposerController.mentionSuggestions
-
-    /**
-     * Represents the list of commands to be displayed in the command suggestion list popup.
-     */
-    public val commandSuggestions: MutableStateFlow<List<Command>> = messageComposerController.commandSuggestions
-
-    /**
-     * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're sending a thread
-     * reply or a regular message.
-     */
-    public val messageMode: MutableStateFlow<MessageMode> = messageComposerController.messageMode
-
-    /**
-     * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
-     */
-    public val lastActiveAction: Flow<MessageAction?> = messageComposerController.lastActiveAction
-
-    /**
-     * Holds information about the abilities the current user
-     * is able to exercise in the given channel.
-     *
-     * e.g. send messages, delete messages, etc...
-     * For a full list @see [ChannelCapabilities].
-     */
-    public val ownCapabilities: StateFlow<Set<String>> = messageComposerController.ownCapabilities
+    public val messageInput: StateFlow<MessageInput> = messageComposerController.messageInput
 
     /**
      * Called when the input changes and the internal state needs to be updated.
@@ -155,8 +102,8 @@ public class MessageComposerViewModel(
      *
      * @param attachments The attachments to store and show in the composer.
      */
-    public fun addSelectedAttachments(attachments: List<Attachment>): Unit =
-        messageComposerController.addSelectedAttachments(attachments)
+    public fun addAttachments(attachments: List<Attachment>): Unit =
+        messageComposerController.addAttachments(attachments)
 
     /**
      * Removes a selected attachment from the list, when the user taps on the cancel/delete button.
@@ -165,11 +112,18 @@ public class MessageComposerViewModel(
      *
      * @param attachment The attachment to remove.
      */
-    public fun removeSelectedAttachment(attachment: Attachment): Unit =
-        messageComposerController.removeSelectedAttachment(attachment)
+    public fun removeAttachment(attachment: Attachment): Unit =
+        messageComposerController.removeAttachment(attachment)
 
-    public fun createPoll(pollConfig: PollConfig) {
-        messageComposerController.createPoll(pollConfig)
+    /**
+     * Removes all staged attachments.
+     *
+     * Call this when the attachments are consumed — for example, after a message is sent.
+     */
+    public fun clearAttachments(): Unit = messageComposerController.clearAttachments()
+
+    public fun createPoll(createPollParams: CreatePollParams) {
+        messageComposerController.createPoll(createPollParams)
     }
 
     /**
@@ -199,8 +153,8 @@ public class MessageComposerViewModel(
      */
     @JvmOverloads
     public fun buildNewMessage(
-        message: String = input.value,
-        attachments: List<Attachment> = selectedAttachments.value,
+        message: String = messageInput.value.text,
+        attachments: List<Attachment> = messageComposerState.value.attachments,
     ): Message = messageComposerController.buildNewMessage(message, attachments)
 
     /**

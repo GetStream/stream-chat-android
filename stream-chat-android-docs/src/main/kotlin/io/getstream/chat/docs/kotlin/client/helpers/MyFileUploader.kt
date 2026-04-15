@@ -1,9 +1,9 @@
 package io.getstream.chat.docs.kotlin.client.helpers
 
-import io.getstream.result.Error
-import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.models.UploadedFile
+import io.getstream.result.Error
 import io.getstream.result.Result
 import java.io.File
 

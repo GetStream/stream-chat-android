@@ -20,9 +20,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import io.getstream.chat.android.client.api.state.Event
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.chat.android.state.utils.Event
 import io.getstream.chat.android.ui.common.feature.mentions.MentionListController
 import io.getstream.chat.android.ui.common.state.mentions.MentionListState
 import kotlinx.coroutines.flow.map

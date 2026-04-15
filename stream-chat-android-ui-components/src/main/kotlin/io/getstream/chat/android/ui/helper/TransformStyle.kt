@@ -26,7 +26,7 @@ import io.getstream.chat.android.ui.feature.mentions.list.MentionListViewStyle
 import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
-import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderViewStyle
+import io.getstream.chat.android.ui.feature.messages.header.ChannelHeaderViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.DefaultQuotedAttachmentViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.FileAttachmentViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.GiphyViewHolderStyle
@@ -103,7 +103,7 @@ public object TransformStyle {
         noopTransformer()
 
     @JvmStatic
-    public var messageListHeaderStyleTransformer: StyleTransformer<MessageListHeaderViewStyle> = noopTransformer()
+    public var channelHeaderStyleTransformer: StyleTransformer<ChannelHeaderViewStyle> = noopTransformer()
 
     @JvmStatic
     public var mentionListViewStyleTransformer: StyleTransformer<MentionListViewStyle> = noopTransformer()

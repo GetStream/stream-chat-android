@@ -8,7 +8,6 @@ on:
       - 'stream-chat-android-compose/src/main/res/values/strings.xml'
       - 'stream-chat-android-ui-common/src/main/res/values/strings.xml'
       - 'stream-chat-android-ui-components/src/main/res/values/strings.xml'
-      - 'stream-chat-android-ui-utils/src/main/res/values/strings.xml'
 
 jobs:
   localazy-upload:

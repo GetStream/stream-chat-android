@@ -37,7 +37,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiFragmentChannelListBindi
 import io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListFragmentViewStyle
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
-import io.getstream.chat.android.ui.feature.messages.MessageListActivity
+import io.getstream.chat.android.ui.feature.messages.ChannelActivity
 import io.getstream.chat.android.ui.feature.search.SearchInputView
 import io.getstream.chat.android.ui.feature.search.list.SearchResultListView
 import io.getstream.chat.android.ui.utils.extensions.findListener
@@ -163,7 +163,7 @@ public open class ChannelListFragment : Fragment() {
 
             setChannelItemClickListener {
                 if (channelListItemClickListener == null) {
-                    startActivity(MessageListActivity.createIntent(requireContext(), it.cid))
+                    startActivity(ChannelActivity.createIntent(requireContext(), it.cid))
                 } else {
                     channelListItemClickListener?.onChannelClick(it)
                 }
@@ -208,7 +208,7 @@ public open class ChannelListFragment : Fragment() {
 
             setSearchResultSelectedListener {
                 if (searchResultClickListener == null) {
-                    startActivity(MessageListActivity.createIntent(requireContext(), it.cid, it.id))
+                    startActivity(ChannelActivity.createIntent(requireContext(), it.cid, it.id))
                 } else {
                     searchResultClickListener?.onSearchResultClick(it)
                 }
@@ -269,7 +269,7 @@ public open class ChannelListFragment : Fragment() {
     }
 
     /**
-     * Click listener for channel item clicks. Navigates to [MessageListActivity] by default.
+     * Click listener for channel item clicks. Navigates to [ChannelActivity] by default.
      *
      * **Note**: Implement the click listener in parent Fragment or Activity
      * to override the default behavior.
@@ -279,7 +279,7 @@ public open class ChannelListFragment : Fragment() {
     }
 
     /**
-     * Click listener for search result items. Navigates to [MessageListActivity] by default.
+     * Click listener for search result items. Navigates to [ChannelActivity] by default.
      *
      * **Note**: Implement the click listener in parent Fragment or Activity
      * to override the default behavior.

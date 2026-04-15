@@ -72,67 +72,23 @@ internal class NotificationConfigTest {
     }
 
     @Test
-    fun `ignorePushMessageWhenUserOnline should respect deprecated ignorePushMessagesWhenUserOnline flag for MESSAGE_NEW`() {
+    fun `ignorePushMessageWhenUserOnline should always return false for TYPE_NOTIFICATION_REMINDER_DUE`() {
         // Given
-        val config = NotificationConfig(ignorePushMessagesWhenUserOnline = false)
+        val config = NotificationConfig()
         // When
-        val result = config.ignorePushMessageWhenUserOnline(ChatNotification.TYPE_MESSAGE_NEW)
+        val result = config.ignorePushMessageWhenUserOnline(ChatNotification.TYPE_NOTIFICATION_REMINDER_DUE)
         // Then
-        Assertions.assertFalse(result, "TYPE_MESSAGE_NEW should respect deprecated flag when set to false")
+        Assertions.assertFalse(result, "TYPE_NOTIFICATION_REMINDER_DUE should always be false when user is online")
     }
 
     @Test
-    fun `ignorePushMessageWhenUserOnline should respect deprecated ignorePushMessagesWhenUserOnline flag for MESSAGE_UPDATED`() {
+    fun `ignorePushMessageWhenUserOnline should return true for unknown notification types`() {
         // Given
-        val config = NotificationConfig(ignorePushMessagesWhenUserOnline = false)
+        val config = NotificationConfig()
         // When
-        val result = config.ignorePushMessageWhenUserOnline(ChatNotification.TYPE_MESSAGE_UPDATED)
+        val result = config.ignorePushMessageWhenUserOnline("unknown.type")
         // Then
-        Assertions.assertFalse(result, "TYPE_MESSAGE_UPDATED should respect deprecated flag when set to false")
-    }
-
-    @Test
-    fun `ignorePushMessageWhenUserOnline should respect deprecated ignorePushMessagesWhenUserOnline flag for REACTION_NEW`() {
-        // Given
-        val config = NotificationConfig(ignorePushMessagesWhenUserOnline = false)
-        // When
-        val result = config.ignorePushMessageWhenUserOnline(ChatNotification.TYPE_REACTION_NEW)
-        // Then
-        Assertions.assertFalse(result, "TYPE_REACTION_NEW should respect deprecated flag when set to false")
-    }
-
-    @Test
-    fun `ignorePushMessageWhenUserOnline should always return false for TYPE_NOTIFICATION_REMINDER_DUE regardless of deprecated flag`() {
-        // Given
-        val configWithTrueFlag = NotificationConfig(ignorePushMessagesWhenUserOnline = true)
-        val configWithFalseFlag = NotificationConfig(ignorePushMessagesWhenUserOnline = false)
-        // When
-        val resultWithTrueFlag =
-            configWithTrueFlag.ignorePushMessageWhenUserOnline(ChatNotification.TYPE_NOTIFICATION_REMINDER_DUE)
-        val resultWithFalseFlag =
-            configWithFalseFlag.ignorePushMessageWhenUserOnline(ChatNotification.TYPE_NOTIFICATION_REMINDER_DUE)
-        // Then
-        Assertions.assertFalse(
-            resultWithTrueFlag,
-            "TYPE_NOTIFICATION_REMINDER_DUE should always be false regardless of deprecated flag",
-        )
-        Assertions.assertFalse(
-            resultWithFalseFlag,
-            "TYPE_NOTIFICATION_REMINDER_DUE should always be false regardless of deprecated flag",
-        )
-    }
-
-    @Test
-    fun `ignorePushMessageWhenUserOnline should return true for unknown types regardless of deprecated flag`() {
-        // Given
-        val configWithTrueFlag = NotificationConfig(ignorePushMessagesWhenUserOnline = true)
-        val configWithFalseFlag = NotificationConfig(ignorePushMessagesWhenUserOnline = false)
-        // When
-        val resultWithTrueFlag = configWithTrueFlag.ignorePushMessageWhenUserOnline("unknown.type")
-        val resultWithFalseFlag = configWithFalseFlag.ignorePushMessageWhenUserOnline("unknown.type")
-        // Then
-        Assertions.assertTrue(resultWithTrueFlag, "Unknown types should always return true regardless of deprecated flag")
-        Assertions.assertTrue(resultWithFalseFlag, "Unknown types should always return true regardless of deprecated flag")
+        Assertions.assertTrue(result, "Unknown notification types should be ignored when user is online")
     }
 
     @Test

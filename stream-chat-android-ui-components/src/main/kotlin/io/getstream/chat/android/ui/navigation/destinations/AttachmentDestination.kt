@@ -26,16 +26,14 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.common.R
-import io.getstream.chat.android.ui.common.feature.documents.AttachmentDocumentActivity
 import io.getstream.chat.android.ui.common.feature.documents.DocumentAttachmentHandler
+import io.getstream.chat.android.ui.common.model.MimeType
 import io.getstream.chat.android.ui.feature.gallery.AttachmentActivity
 import io.getstream.chat.android.ui.feature.gallery.AttachmentMediaActivity
 import io.getstream.chat.android.ui.utils.load
-import io.getstream.chat.android.uiutils.model.MimeType
 import io.getstream.log.taggedLogger
 import io.getstream.photoview.dialog.PhotoViewDialog
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 public open class AttachmentDestination(
     public var message: Message,
@@ -67,7 +65,7 @@ public open class AttachmentDestination(
                 when {
                     attachment.titleLink != null || attachment.ogUrl != null || attachment.assetUrl != null -> {
                         url = attachment.titleLink ?: attachment.ogUrl ?: attachment.assetUrl
-                        type = AttachmentType.LINK
+                        type = AttachmentType.IMAGE
                     }
 
                     attachment.isGif() -> {
@@ -83,7 +81,6 @@ public open class AttachmentDestination(
             }
 
             AttachmentType.GIPHY -> url = attachment.thumbUrl
-            AttachmentType.PRODUCT -> url = attachment.assetUrl
         }
 
         if (url.isNullOrEmpty()) {
@@ -91,7 +88,7 @@ public open class AttachmentDestination(
             if (attachment.type == AttachmentType.UNKNOWN) {
                 Toast.makeText(
                     context,
-                    context.getString(R.string.stream_ui_message_list_attachment_invalid_url),
+                    context.getString(UiCommonR.string.stream_ui_message_list_attachment_invalid_url),
                     Toast.LENGTH_SHORT,
                 ).show()
             }
@@ -112,7 +109,10 @@ public open class AttachmentDestination(
             logger.e { "MimeType is null for url $url" }
             Toast.makeText(
                 context,
-                context.getString(R.string.stream_ui_message_list_attachment_invalid_mime_type, attachment.name),
+                context.getString(
+                    UiCommonR.string.stream_ui_message_list_attachment_invalid_mime_type,
+                    attachment.name,
+                ),
                 Toast.LENGTH_SHORT,
             ).show()
             return
@@ -132,19 +132,17 @@ public open class AttachmentDestination(
             }
 
             docMimeType(mimeType) -> {
-                @Suppress("DEPRECATION")
-                if (ChatUI.useDocumentGView) {
-                    start(AttachmentDocumentActivity.getIntent(context, url))
-                } else {
-                    DocumentAttachmentHandler.openAttachment(context, attachment)
-                }
+                DocumentAttachmentHandler.openAttachment(context, attachment)
             }
 
             else -> {
                 logger.e { "Could not load attachment. Mimetype: $mimeType. Type: $type" }
                 Toast.makeText(
                     context,
-                    context.getString(R.string.stream_ui_message_list_attachment_invalid_mime_type, attachment.name),
+                    context.getString(
+                        UiCommonR.string.stream_ui_message_list_attachment_invalid_mime_type,
+                        attachment.name,
+                    ),
                     Toast.LENGTH_SHORT,
                 ).show()
             }

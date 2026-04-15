@@ -30,6 +30,7 @@ import io.getstream.chat.android.compose.uiautomator.findObjects
 import io.getstream.chat.android.compose.uiautomator.height
 import io.getstream.chat.android.compose.uiautomator.isDisplayed
 import io.getstream.chat.android.compose.uiautomator.retryOnStaleObjectException
+import io.getstream.chat.android.compose.uiautomator.seconds
 import io.getstream.chat.android.compose.uiautomator.wait
 import io.getstream.chat.android.compose.uiautomator.waitForCount
 import io.getstream.chat.android.compose.uiautomator.waitForText
@@ -49,9 +50,9 @@ fun UserRobot.assertMessage(
     isClickable: Boolean = false,
 ): UserRobot {
     if (isDisplayed) {
-        val textLocator = if (isClickable) Message.clickableText else Message.text
-        assertEquals(text, textLocator.waitToAppear().waitForText(text).text)
-        assertTrue(textLocator.isDisplayed())
+        val textLocator = (if (isClickable) Message.clickableText else Message.text)
+            .text(text)
+        assertTrue(textLocator.waitToAppear().isDisplayed())
         assertTrue(Message.timestamp.isDisplayed())
     } else {
         MessageListPage.MessageList.messages.findObjects().forEach {
@@ -68,14 +69,14 @@ fun UserRobot.assertMessageAuthor(isCurrentUser: Boolean): UserRobot {
 }
 
 fun UserRobot.assertMessageTimestamps(count: Int): UserRobot {
-    assertEquals(count, Message.timestamp.findObjects().size)
+    assertEquals(count, Message.timestamp.waitForCount(count).size)
     return this
 }
 
 fun UserRobot.assertMessageDeliveryStatus(status: MessageDeliveryStatus, count: Int? = null): UserRobot {
     when (status) {
         MessageDeliveryStatus.READ -> {
-            assertTrue(Message.deliveryStatusIsRead.wait().isDisplayed())
+            assertTrue(Message.deliveryStatusIsRead.wait(30.seconds).isDisplayed())
             if (count != null) {
                 assertEquals(count, Message.deliveryStatusIsRead.waitForCount(count).size)
             }
@@ -140,11 +141,11 @@ fun UserRobot.assertDeletedMessage(text: String? = null, hard: Boolean = false):
 }
 
 fun UserRobot.assertQuotedMessage(text: String, quote: String = "", isDisplayed: Boolean = true): UserRobot {
+    val quotedMessageInList = Message.quotedMessage.hasAncestor(MessageListPage.MessageList.messages)
     if (isDisplayed) {
-        assertEquals(quote, Message.quotedMessage.waitToAppear().text)
-        assertTrue(Message.quotedMessageAvatar.isDisplayed())
+        assertEquals(quote, quotedMessageInList.waitToAppear().waitForText(quote).text)
     } else {
-        assertFalse(Message.quotedMessage.waitToDisappear().isDisplayed())
+        assertFalse(quotedMessageInList.waitToDisappear().isDisplayed())
     }
     assertMessage(text, isDisplayed = isDisplayed)
     return this
@@ -190,14 +191,7 @@ fun UserRobot.assertComposerSize(isChangeable: Boolean): UserRobot {
 
 fun UserRobot.assertTypingIndicator(isDisplayed: Boolean): UserRobot {
     if (isDisplayed) {
-        assertEquals(
-            appContext.resources.getQuantityString(
-                R.plurals.stream_compose_message_list_header_typing_users,
-                1,
-                ParticipantRobot.name,
-            ),
-            MessageListPage.MessageList.typingIndicator.waitToAppear().text,
-        )
+        assertTrue(MessageListPage.MessageList.typingIndicator.waitToAppear().isDisplayed())
     } else {
         assertFalse(MessageListPage.MessageList.typingIndicator.waitToDisappear().isDisplayed())
     }
@@ -215,20 +209,20 @@ fun UserRobot.assertAttachmentsMenu(isDisplayed: Boolean): UserRobot {
 
 fun UserRobot.assertComposerCommandsMenu(isDisplayed: Boolean): UserRobot {
     if (isDisplayed) {
-        assertTrue(Composer.suggestionList.waitToAppear().isDisplayed())
-        assertTrue(Composer.suggestionListTitle.isDisplayed())
+        assertTrue(Composer.commandSuggestionList.waitToAppear().isDisplayed())
+        assertTrue(Composer.commandSuggestionListTitle.isDisplayed())
     } else {
-        assertFalse(Composer.suggestionList.waitToDisappear().isDisplayed())
-        assertFalse(Composer.suggestionListTitle.isDisplayed())
+        assertFalse(Composer.commandSuggestionList.waitToDisappear().isDisplayed())
+        assertFalse(Composer.commandSuggestionListTitle.isDisplayed())
     }
     return this
 }
 
 fun UserRobot.assertComposerMentionsMenu(isDisplayed: Boolean): UserRobot {
     if (isDisplayed) {
-        assertTrue(Composer.participantMentionSuggestion.waitToAppear().isDisplayed())
+        assertTrue(Composer.userSuggestion.waitToAppear().isDisplayed())
     } else {
-        assertFalse(Composer.participantMentionSuggestion.waitToDisappear().isDisplayed())
+        assertFalse(Composer.userSuggestion.waitToDisappear().isDisplayed())
     }
     return this
 }
@@ -269,17 +263,13 @@ fun UserRobot.assertThreadMessage(text: String): UserRobot {
 }
 
 fun UserRobot.assertThreadReplyLabelOnParentMessage(): UserRobot {
-    assertEquals(
-        appContext.getString(R.string.stream_compose_message_list_thread_footnote_thread_reply),
-        Message.threadRepliesLabel.waitToAppear().text,
+    val expectedResult = appContext.resources.getQuantityString(
+        R.plurals.stream_compose_message_list_thread_footnote,
+        1,
+        1,
     )
-    assertTrue(Message.threadParticipantAvatar.isDisplayed())
-    return this
-}
-
-fun UserRobot.assertThreadReplyLabelOnThreadMessage(): UserRobot {
     assertEquals(
-        appContext.getString(R.string.stream_compose_thread_reply),
+        expectedResult,
         Message.threadRepliesLabel.waitToAppear().text,
     )
     assertTrue(Message.threadParticipantAvatar.isDisplayed())
@@ -304,7 +294,9 @@ fun UserRobot.assertAlsoInTheChannelLabelInThread(): UserRobot {
 
 fun UserRobot.assertGiphyImage(isDisplayed: Boolean = true): UserRobot {
     if (isDisplayed) {
-        assertTrue(Message.giphy.waitToAppear().isDisplayed())
+        device.retryOnStaleObjectException {
+            assertTrue(Message.giphy.waitToAppear().isDisplayed())
+        }
     } else {
         assertFalse(Message.giphy.waitToDisappear().isDisplayed())
     }
@@ -363,11 +355,11 @@ fun UserRobot.assertThreadReplyLabel(replies: Int, inThread: Boolean = false): U
             ThreadPage.ThreadList.repliesCountLabel.waitToAppear().waitForText(expectedResult).text,
         )
     } else {
-        val expectedResult = if (replies == 1) {
-            appContext.getString(R.string.stream_compose_message_list_thread_footnote_thread_reply)
-        } else {
-            appContext.getString(R.string.stream_compose_message_list_thread_footnote_thread_replies, replies)
-        }
+        val expectedResult = appContext.resources.getQuantityString(
+            R.plurals.stream_compose_message_list_thread_footnote,
+            replies,
+            replies,
+        )
         assertEquals(expectedResult, Message.threadRepliesLabel.waitToAppear().text)
     }
     return this
@@ -415,7 +407,6 @@ fun UserRobot.assertFile(isDisplayed: Boolean, count: Int = 1): UserRobot {
     if (isDisplayed) {
         assertEquals(count, Message.fileName.waitForCount(count).size)
         assertEquals(count, Message.fileSize.findObjects().size)
-        assertEquals(count, Message.fileDownloadButton.findObjects().size)
         assertEquals(count, Message.fileImage.waitForCount(count).size)
         if (count > 1) {
             assertTrue(Message.columnWithMultipleFileAttachments.isDisplayed())
@@ -424,7 +415,6 @@ fun UserRobot.assertFile(isDisplayed: Boolean, count: Int = 1): UserRobot {
         assertFalse(Message.fileName.waitToDisappear().isDisplayed())
         assertFalse(Message.fileSize.isDisplayed())
         assertFalse(Message.fileImage.isDisplayed())
-        assertFalse(Message.fileDownloadButton.isDisplayed())
     }
     return this
 }

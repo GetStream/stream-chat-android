@@ -26,15 +26,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import io.getstream.chat.android.client.utils.message.hasAudioRecording
 import io.getstream.chat.android.client.utils.message.hasSharedLocation
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isPoll
 import io.getstream.chat.android.client.utils.message.isPollClosed
 import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
-import io.getstream.chat.android.compose.ui.theme.StreamColors
-import io.getstream.chat.android.compose.ui.theme.StreamTypography
+import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 
@@ -47,27 +46,25 @@ public interface MessagePreviewFormatter {
      * Generates a preview title for the given message.
      *
      * @param message The message whose data is used to generate the preview title.
+     * @param currentUser The currently logged in user.
      * @return The formatted text representation of the preview title.
      */
-    public fun formatMessageTitle(message: Message): AnnotatedString
+    public fun formatMessageTitle(message: Message, currentUser: User?): AnnotatedString
 
     /**
-     * Generates a preview text for the given message.
+     * Generates a preview text for the given message content (icon + text),
+     * excluding the sender name prefix.
      *
      * @param message The message whose data is used to generate the preview text.
      * @param currentUser The currently logged in user.
+     * @param isDirectMessaging Whether the channel is a direct message conversation.
      * @return The formatted text representation for the given message.
      */
-    public fun formatMessagePreview(message: Message, currentUser: User?): AnnotatedString
-
-    /**
-     * Generates a preview text for the given draft message.
-     * This is used to show a preview of the draft message in the the channel list.
-     *
-     * @param draftMessage The draft message whose data is used to generate the preview text.
-     * @return The formatted text representation for the given draft message.
-     */
-    public fun formatDraftMessagePreview(draftMessage: DraftMessage): AnnotatedString
+    public fun formatMessagePreview(
+        message: Message,
+        currentUser: User?,
+        isDirectMessaging: Boolean,
+    ): AnnotatedString
 
     public companion object {
         /**
@@ -76,7 +73,6 @@ public interface MessagePreviewFormatter {
          * @param context The context to load string resources.
          * @param autoTranslationEnabled Whether the auto-translation is enabled.
          * @param typography The typography to use for styling.
-         * @param attachmentFactories The list of [AttachmentFactory] to use for formatting attachments.
          * @return The default implementation of [MessagePreviewFormatter].
          *
          * @see [DefaultMessagePreviewFormatter]
@@ -84,38 +80,32 @@ public interface MessagePreviewFormatter {
         public fun defaultFormatter(
             context: Context,
             autoTranslationEnabled: Boolean,
-            typography: StreamTypography,
-            attachmentFactories: List<AttachmentFactory>,
-            colors: StreamColors,
+            typography: StreamDesign.Typography,
         ): MessagePreviewFormatter {
             return DefaultMessagePreviewFormatter(
                 context = context,
                 autoTranslationEnabled = autoTranslationEnabled,
-                draftMessageLabelTextStyle = typography.footnoteBold.copy(color = colors.primaryAccent),
-                messageTextStyle = typography.bodyBold,
-                senderNameTextStyle = typography.bodyBold,
-                attachmentTextFontStyle = typography.bodyItalic,
-                attachmentFactories = attachmentFactories,
+                messageTextStyle = typography.captionEmphasis,
+                attachmentTextFontStyle = typography.captionDefault,
             )
         }
     }
 }
 
 /**
- * The default implementation of [MessagePreviewFormatter] that allows to generate a preview text for
- * a message with the following spans: sender name, message text, attachments preview text.
+ * The default implementation of [MessagePreviewFormatter] that generates a preview text for
+ * message content: icon + text / attachment labels.
  *
  * @param context The context to load string resources.
+ * @param autoTranslationEnabled Whether the auto-translation is enabled.
+ * @param messageTextStyle The text style for message text.
+ * @param attachmentTextFontStyle The text style for attachment text.
  */
-@Suppress("LongParameterList")
 private class DefaultMessagePreviewFormatter(
     private val context: Context,
     private val autoTranslationEnabled: Boolean,
-    private val draftMessageLabelTextStyle: TextStyle,
     private val messageTextStyle: TextStyle,
-    private val senderNameTextStyle: TextStyle,
     private val attachmentTextFontStyle: TextStyle,
-    private val attachmentFactories: List<AttachmentFactory>,
 ) : MessagePreviewFormatter {
 
     private companion object {
@@ -128,18 +118,23 @@ private class DefaultMessagePreviewFormatter(
      * @param message The message whose data is used to generate the preview title.
      * @return The formatted text representation of the preview title.
      */
-    override fun formatMessageTitle(message: Message): AnnotatedString {
+    override fun formatMessageTitle(message: Message, currentUser: User?): AnnotatedString {
         val channel = message.channelInfo
+        val senderName = if (message.user.id == currentUser?.id) {
+            context.getString(R.string.stream_compose_channel_list_you)
+        } else {
+            message.user.name
+        }
         return if (channel?.name != null && channel.memberCount > 2) {
             context.getString(
                 R.string.stream_compose_message_preview_sender,
-                message.user.name,
+                senderName,
                 channel.name,
             ).parseBoldTags()
         } else {
             buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append(message.user.name)
+                    append(senderName)
                 }
             }
         }
@@ -155,20 +150,22 @@ private class DefaultMessagePreviewFormatter(
     override fun formatMessagePreview(
         message: Message,
         currentUser: User?,
+        isDirectMessaging: Boolean,
     ): AnnotatedString {
         return buildAnnotatedString {
-            message.let { message ->
-                val displayedText = when (autoTranslationEnabled) {
-                    true -> currentUser?.language?.let { userLanguage ->
-                        message.getTranslation(userLanguage).ifEmpty { message.text }
-                    } ?: message.text
+            val displayedText = resolveDisplayedText(message, currentUser)
+            when {
+                message.isSystem() -> append(displayedText)
 
-                    else -> message.text
-                }.trim()
+                message.isDeleted() -> {
+                    appendInlineContent(DefaultMessagePreviewIconFactory.DELETED)
+                    append(SPACE)
+                    append(context.getString(R.string.stream_compose_message_deleted_preview))
+                }
 
-                if (message.isSystem()) {
-                    append(displayedText)
-                } else if (message.isPoll()) {
+                message.isPoll() -> {
+                    appendInlineContent(DefaultMessagePreviewIconFactory.POLL)
+                    append(SPACE)
                     if (message.isPollClosed()) {
                         append(
                             context.getString(
@@ -184,88 +181,127 @@ private class DefaultMessagePreviewFormatter(
                             ),
                         )
                     }
-                } else if (message.hasAudioRecording()) {
+                }
+
+                message.hasAudioRecording() -> {
                     appendInlineContent(DefaultMessagePreviewIconFactory.VOICE_MESSAGE)
                     append(SPACE)
                     append(context.getString(R.string.stream_compose_audio_recording_preview))
-                } else {
-                    appendSenderName(
-                        message = message,
-                        currentUser = currentUser,
-                        senderNameTextStyle = senderNameTextStyle,
-                    )
-                    if (message.hasSharedLocation()) {
-                        appendSharedLocationMessageText(
-                            message = message,
-                            textStyle = messageTextStyle,
-                        )
-                    } else {
-                        appendMessageText(
-                            messageText = displayedText,
-                            messageTextStyle = messageTextStyle,
-                        )
-                    }
-                    appendAttachmentText(
-                        attachments = message.attachments,
-                        attachmentFactories = attachmentFactories,
-                        attachmentTextStyle = attachmentTextFontStyle,
-                    )
                 }
+
+                message.hasSharedLocation() -> {
+                    appendInlineContent(DefaultMessagePreviewIconFactory.LOCATION)
+                    append(SPACE)
+                    message.sharedLocation?.let { location ->
+                        append(context.getString(location.getMessageTextResId()))
+                    }
+                }
+
+                else -> appendTypedAttachmentPreview(message.attachments, displayedText)
+            }
+        }
+    }
+
+    private fun resolveDisplayedText(message: Message, currentUser: User?): String {
+        return when (autoTranslationEnabled) {
+            true -> currentUser?.language?.let(message::getTranslation)?.ifEmpty { message.text } ?: message.text
+            else -> message.text
+        }.trim()
+    }
+
+    /**
+     * Appends a typed attachment preview (icon + label/caption) if the message contains
+     * a recognizable attachment type. Falls back to the default text + attachment formatting.
+     */
+    private fun AnnotatedString.Builder.appendTypedAttachmentPreview(
+        attachments: List<Attachment>,
+        displayedText: String,
+    ) {
+        // Classify attachments — links first (images with ogUrl are links, not photos)
+        val links = attachments.filter { it.titleLink != null || it.ogUrl != null }
+        val images = attachments.filter {
+            it.type == AttachmentType.IMAGE && it.ogUrl == null && it.titleLink == null
+        }
+        val videos = attachments.filter { it.type == AttachmentType.VIDEO }
+        val files = attachments.filter { it.type == AttachmentType.FILE }
+        val giphy = attachments.filter { it.type == AttachmentType.GIPHY }
+
+        when {
+            images.isNotEmpty() -> {
+                appendInlineContent(DefaultMessagePreviewIconFactory.PHOTO)
+                append(SPACE)
+                appendAttachmentLabel(
+                    caption = displayedText,
+                    count = images.size,
+                    singleLabelResId = R.string.stream_compose_photo_preview,
+                    pluralLabelResId = R.plurals.stream_compose_photos_preview,
+                )
+            }
+
+            videos.isNotEmpty() -> {
+                appendInlineContent(DefaultMessagePreviewIconFactory.VIDEO)
+                append(SPACE)
+                appendAttachmentLabel(
+                    caption = displayedText,
+                    count = videos.size,
+                    singleLabelResId = R.string.stream_compose_video_preview,
+                    pluralLabelResId = R.plurals.stream_compose_videos_preview,
+                )
+            }
+
+            files.isNotEmpty() -> {
+                appendInlineContent(DefaultMessagePreviewIconFactory.FILE)
+                append(SPACE)
+                appendAttachmentLabel(
+                    caption = displayedText,
+                    count = files.size,
+                    singleLabelResId = R.string.stream_compose_file_preview,
+                    pluralLabelResId = R.plurals.stream_compose_files_preview,
+                )
+            }
+
+            giphy.isNotEmpty() -> {
+                appendInlineContent(DefaultMessagePreviewIconFactory.GIPHY)
+                append(SPACE)
+                append(context.getString(R.string.stream_compose_giphy_preview))
+            }
+
+            links.isNotEmpty() -> {
+                appendInlineContent(DefaultMessagePreviewIconFactory.LINK)
+                append(SPACE)
+                if (displayedText.isNotEmpty()) {
+                    append(displayedText)
+                } else {
+                    append(context.getString(R.string.stream_compose_link_preview))
+                }
+            }
+
+            else -> {
+                // No recognizable typed attachment — use default text + attachment formatting
+                appendMessageText(displayedText, messageTextStyle)
+                appendAttachmentText(attachments, attachmentTextFontStyle)
             }
         }
     }
 
     /**
-     * Generates a preview text for the given draft message.
-     * This is used to show a preview of the draft message in the the channel list.
-     *
-     * @param draftMessage The draft message whose data is used to generate the preview text.
-     * @return The formatted text representation for the given draft message.
+     * Appends the appropriate label for an attachment preview:
+     * - If caption (message text) exists: show the caption
+     * - If no caption and single: show type label ("Photo")
+     * - If no caption and multiple: show count + plural ("2 Photos")
      */
-    override fun formatDraftMessagePreview(draftMessage: DraftMessage): AnnotatedString = buildAnnotatedString {
-        withStyle(
-            style = SpanStyle(
-                fontStyle = draftMessageLabelTextStyle.fontStyle,
-                fontFamily = draftMessageLabelTextStyle.fontFamily,
-                color = draftMessageLabelTextStyle.color,
-            ),
-        ) {
-            append(context.getString(R.string.stream_compose_channel_list_draft))
-        }
-        append(SPACE)
-        withStyle(
-            style = SpanStyle(
-                fontStyle = messageTextStyle.fontStyle,
-                fontFamily = messageTextStyle.fontFamily,
-                color = messageTextStyle.color,
-            ),
-        ) {
-            append(draftMessage.text)
-        }
-    }
-
-    /**
-     * Appends the sender name to the [AnnotatedString].
-     */
-    private fun AnnotatedString.Builder.appendSenderName(
-        message: Message,
-        currentUser: User?,
-        senderNameTextStyle: TextStyle,
+    private fun AnnotatedString.Builder.appendAttachmentLabel(
+        caption: String,
+        count: Int,
+        singleLabelResId: Int,
+        pluralLabelResId: Int,
     ) {
-        val sender = message.getSenderDisplayName(context, currentUser)
-
-        if (sender != null) {
-            append("$sender: ")
-
-            addStyle(
-                SpanStyle(
-                    fontStyle = senderNameTextStyle.fontStyle,
-                    fontWeight = senderNameTextStyle.fontWeight,
-                    fontFamily = senderNameTextStyle.fontFamily,
-                ),
-                start = 0,
-                end = sender.length,
+        when {
+            caption.isNotEmpty() -> append(caption)
+            count > 1 -> append(
+                context.resources.getQuantityString(pluralLabelResId, count, count),
             )
+            else -> append(context.getString(singleLabelResId))
         }
     }
 
@@ -292,50 +328,27 @@ private class DefaultMessagePreviewFormatter(
     }
 
     /**
-     * Appends a string representations of [attachments] to the [AnnotatedString].
+     * Appends a string representation of [attachments] to the [AnnotatedString].
+     * Falls back to the attachment's title, name, or fallback field for each item.
      */
     private fun AnnotatedString.Builder.appendAttachmentText(
         attachments: List<Attachment>,
-        attachmentFactories: List<AttachmentFactory>,
         attachmentTextStyle: TextStyle,
     ) {
-        if (attachments.isNotEmpty()) {
-            attachmentFactories
-                .firstOrNull { it.canHandle(attachments) }
-                ?.textFormatter
-                ?.let { textFormatter ->
-                    attachments.mapNotNull { attachment ->
-                        textFormatter.invoke(attachment)
-                            .let { previewText ->
-                                previewText.ifEmpty { null }
-                            }
-                    }.joinToString()
-                }?.let { attachmentText ->
-                    val startIndex = this.length
-                    append(attachmentText)
-
-                    addStyle(
-                        SpanStyle(
-                            fontStyle = attachmentTextStyle.fontStyle,
-                            fontFamily = attachmentTextStyle.fontFamily,
-                        ),
-                        start = startIndex,
-                        end = startIndex + attachmentText.length,
-                    )
-                }
-        }
-    }
-
-    private fun AnnotatedString.Builder.appendSharedLocationMessageText(
-        message: Message,
-        textStyle: TextStyle,
-    ) {
-        message.sharedLocation?.let { sharedLocation ->
-            val text = context.getString(sharedLocation.getMessageTextResId())
-            appendMessageText(
-                messageText = text,
-                messageTextStyle = textStyle,
-            )
-        }
+        if (attachments.isEmpty()) return
+        val attachmentText = attachments.mapNotNull { attachment ->
+            (attachment.title ?: attachment.name ?: attachment.fallback ?: "").ifEmpty { null }
+        }.joinToString()
+        if (attachmentText.isEmpty()) return
+        val startIndex = length
+        append(attachmentText)
+        addStyle(
+            SpanStyle(
+                fontStyle = attachmentTextStyle.fontStyle,
+                fontFamily = attachmentTextStyle.fontFamily,
+            ),
+            start = startIndex,
+            end = startIndex + attachmentText.length,
+        )
     }
 }

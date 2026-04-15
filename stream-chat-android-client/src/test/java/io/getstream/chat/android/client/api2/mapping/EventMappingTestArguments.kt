@@ -72,6 +72,7 @@ import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderCreatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderUpdatedEventDto
+import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStartEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
@@ -139,6 +140,7 @@ import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.events.ReminderCreatedEvent
 import io.getstream.chat.android.client.events.ReminderDeletedEvent
 import io.getstream.chat.android.client.events.ReminderUpdatedEvent
+import io.getstream.chat.android.client.events.ThreadUpdatedEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UnknownEvent
@@ -211,6 +213,7 @@ internal object EventMappingTestArguments {
     private val POLL = Mother.randomDownstreamPollDto()
     private val POLL_VOTE = Mother.randomDownstreamVoteDto()
     private val REMINDER = Mother.randomDownstreamReminderDto()
+    private val THREAD_INFO = Mother.randomDownstreamThreadInfoDto()
     private val AI_MESSAGE_ID = randomString()
     private val AI_STATE = randomString()
     private val DELETED_FOR_ME = randomBoolean()
@@ -565,6 +568,15 @@ internal object EventMappingTestArguments {
         channel = CHANNEL,
         unread_threads = UNREAD_THREADS,
         unread_thread_messages = UNREAD_THREAD_MESSAGES,
+    )
+
+    private val threadUpdatedDto = ThreadUpdatedEventDto(
+        type = EventType.THREAD_UPDATED,
+        created_at = EXACT_DATE,
+        cid = CID,
+        channel_type = CHANNEL_TYPE,
+        channel_id = CHANNEL_ID,
+        thread = THREAD_INFO,
     )
 
     private val notificationMutesUpdatedDto = NotificationMutesUpdatedEventDto(
@@ -1234,6 +1246,16 @@ internal object EventMappingTestArguments {
         unreadThreadMessages = notificationThreadMessageNewDto.unread_thread_messages,
     )
 
+    private val threadUpdated = ThreadUpdatedEvent(
+        type = threadUpdatedDto.type,
+        createdAt = threadUpdatedDto.created_at.date,
+        rawCreatedAt = threadUpdatedDto.created_at.rawDate,
+        cid = threadUpdatedDto.cid,
+        channelType = threadUpdatedDto.channel_type,
+        channelId = threadUpdatedDto.channel_id,
+        thread = with(domainMapping) { threadUpdatedDto.thread.toDomain() },
+    )
+
     private val notificationMutesUpdated = NotificationMutesUpdatedEvent(
         type = notificationMutesUpdatedDto.type,
         createdAt = notificationMutesUpdatedDto.created_at.date,
@@ -1582,6 +1604,7 @@ internal object EventMappingTestArguments {
         Arguments.of(notificationMarkUnreadDto, notificationMarkUnread),
         Arguments.of(notificationMessageNewDto, notificationMessageNew),
         Arguments.of(notificationThreadMessageNewDto, notificationThreadMessageNew),
+        Arguments.of(threadUpdatedDto, threadUpdated),
         Arguments.of(notificationMutesUpdatedDto, notificationMutesUpdated),
         Arguments.of(notificationRemovedFromChannelDto, notificationRemovedFromChannel),
         Arguments.of(reactionDeletedDto, reactionDeleted),

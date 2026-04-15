@@ -22,6 +22,7 @@ import com.google.firebase.FirebaseApp
 import io.getstream.android.push.firebase.FirebasePushDeviceGenerator
 import io.getstream.android.push.xiaomi.XiaomiPushDeviceGenerator
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
@@ -31,9 +32,6 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
-import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
-import io.getstream.chat.android.state.plugin.config.StatePluginConfig
-import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.DecoratorProviderFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.plus
@@ -44,10 +42,7 @@ import io.getstream.chat.ui.sample.debugger.CustomChatClientDebugger
 import io.getstream.chat.ui.sample.feature.HostActivity
 import io.getstream.chat.ui.sample.feature.chat.messagelist.decorator.CustomDecoratorProviderFactory
 
-class ChatInitializer(
-    private val context: Context,
-    private val autoTranslationEnabled: Boolean,
-) {
+class ChatInitializer(private val context: Context) {
 
     @Suppress("UNUSED_VARIABLE")
     fun init(apiKey: String) {
@@ -66,7 +61,6 @@ class ChatInitializer(
                         providerName = "chat-android-xiaomi",
                     ),
                 ),
-                autoTranslationEnabled = autoTranslationEnabled,
             )
         val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
             context = context,
@@ -96,21 +90,13 @@ class ChatInitializer(
         )
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
-        val offlinePlugin = StreamOfflinePluginFactory(context)
-
-        val statePluginFactory = StreamStatePluginFactory(
-            config = StatePluginConfig(
-                backgroundSyncEnabled = false,
-                userPresence = true,
-            ),
-            appContext = context,
-        )
+        val chatClientConfig = ChatClientConfig(userPresence = true)
 
         val client = ChatClient.Builder(apiKey, context)
             .loggerHandler(FirebaseLogger)
             .notifications(notificationConfig, notificationHandler)
             .logLevel(logLevel)
-            .withPlugins(offlinePlugin, statePluginFactory)
+            .config(chatClientConfig)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .apply {
                 if (BuildConfig.DEBUG) {
@@ -121,10 +107,8 @@ class ChatInitializer(
             .build()
 
         // Using markdown as text transformer
-        val messageTranslator = MessageTranslator(client::getCurrentUser, autoTranslationEnabled)
-        ChatUI.autoTranslationEnabled = autoTranslationEnabled
+        val messageTranslator = MessageTranslator(client::getCurrentUser, autoTranslationEnabled = true)
         ChatUI.messageTextTransformer = MarkdownTextTransformer(context, messageTranslator)
-        ChatUI.draftMessagesEnabled = true
 
         TransformStyle.viewReactionsStyleTransformer = StyleTransformer { defaultStyle ->
             defaultStyle.copy(
@@ -137,8 +121,6 @@ class ChatInitializer(
 
         TransformStyle.messageComposerStyleTransformer = StyleTransformer { defaultStyle ->
             defaultStyle.copy(
-                audioRecordingButtonVisible = true,
-                audioRecordingButtonEnabled = true,
                 audioRecordingButtonPreferred = true,
             )
         }

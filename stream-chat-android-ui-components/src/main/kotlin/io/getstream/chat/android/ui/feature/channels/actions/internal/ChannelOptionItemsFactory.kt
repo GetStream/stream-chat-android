@@ -20,31 +20,30 @@ import android.content.Context
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.state.channels.actions.Cancel
+import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
 import io.getstream.chat.android.ui.common.state.channels.actions.LeaveGroup
 import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
 import io.getstream.chat.android.ui.feature.channels.actions.ChannelActionsDialogViewStyle
-import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 
 /**
- * An interface that allows the creation of channel option items.
+ * An interface that allows the creation of channel action items.
  */
 internal interface ChannelOptionItemsFactory {
 
     /**
-     * Creates [ChannelOptionItem]s for the selected channel.
+     * Creates [ChannelAction]s for the selected channel.
      *
      * @param selectedChannel The currently selected channel.
      * @param ownCapabilities Set of capabilities the user is given for the current channel.
      * @param style The style of the dialog.
-     * @return The list of channel option items to display.
+     * @return The list of channel actions to display.
      */
     fun createChannelOptionItems(
         selectedChannel: Channel,
         ownCapabilities: Set<String>,
         style: ChannelActionsDialogViewStyle,
-    ): List<ChannelOptionItem>
+    ): List<ChannelAction>
 
     companion object {
         /**
@@ -68,55 +67,49 @@ internal open class DefaultChannelOptionItemsFactory(
 ) : ChannelOptionItemsFactory {
 
     /**
-     * Creates [ChannelOptionItem]s for the selected channel.
+     * Creates [ChannelAction]s for the selected channel.
+     *
+     * [ChannelAction.onAction] is left empty because the XML module dispatches
+     * actions through [ChannelActionsDialogFragment.ChannelOptionClickListener],
+     * not through the action's own handler.
      *
      * @param selectedChannel The currently selected channel.
      * @param ownCapabilities Set of capabilities the user is given for the current channel.
      * @param style The style of the dialog.
-     * @return The list of channel option items to display.
+     * @return The list of channel actions to display.
      */
     override fun createChannelOptionItems(
         selectedChannel: Channel,
         ownCapabilities: Set<String>,
         style: ChannelActionsDialogViewStyle,
-    ): List<ChannelOptionItem> {
+    ): List<ChannelAction> {
         val canLeaveChannel = ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL)
         val canDeleteChannel = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
 
         return listOfNotNull(
             if (style.viewInfoEnabled) {
-                ChannelOptionItem(
-                    optionText = context.getString(R.string.stream_ui_channel_list_view_info),
-                    optionIcon = context.getDrawableCompat(R.drawable.stream_ui_ic_single_user)!!,
-                    channelAction = ViewInfo(selectedChannel),
+                ViewInfo(
+                    channel = selectedChannel,
+                    label = context.getString(R.string.stream_ui_channel_list_view_info),
+                    onAction = {},
                 )
             } else {
                 null
             },
             if (style.leaveGroupEnabled && canLeaveChannel) {
-                ChannelOptionItem(
-                    optionText = context.getString(R.string.stream_ui_channel_list_leave_channel),
-                    optionIcon = context.getDrawableCompat(R.drawable.stream_ui_ic_leave_group)!!,
-                    channelAction = LeaveGroup(selectedChannel),
+                LeaveGroup(
+                    channel = selectedChannel,
+                    label = context.getString(R.string.stream_ui_channel_list_leave_channel),
+                    onAction = {},
                 )
             } else {
                 null
             },
             if (style.deleteConversationEnabled && canDeleteChannel) {
-                ChannelOptionItem(
-                    optionText = context.getString(R.string.stream_ui_channel_list_delete_channel),
-                    optionIcon = context.getDrawableCompat(R.drawable.stream_ui_ic_delete)!!,
-                    channelAction = DeleteConversation(selectedChannel),
-                    isWarningItem = true,
-                )
-            } else {
-                null
-            },
-            if (style.cancelEnabled) {
-                ChannelOptionItem(
-                    optionText = context.getString(R.string.stream_ui_channel_list_dismiss_dialog),
-                    optionIcon = context.getDrawableCompat(R.drawable.stream_ui_ic_clear)!!,
-                    channelAction = Cancel,
+                DeleteConversation(
+                    channel = selectedChannel,
+                    label = context.getString(R.string.stream_ui_channel_list_delete_channel),
+                    onAction = {},
                 )
             } else {
                 null

@@ -75,6 +75,7 @@ import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderCreatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderUpdatedEventDto
+import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStartEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
@@ -140,6 +141,7 @@ internal class EventDtoAdapter(
     private val notificationMessageNewEventAdapter = moshi.adapter(NotificationMessageNewEventDto::class.java)
     private val notificationThreadMessageNewEventAdapter =
         moshi.adapter(NotificationThreadMessageNewEventDto::class.java)
+    private val threadUpdatedEventAdapter = moshi.adapter(ThreadUpdatedEventDto::class.java)
     private val notificationInvitedEventAdapter = moshi.adapter(NotificationInvitedEventDto::class.java)
     private val notificationInviteAcceptedEventAdapter = moshi.adapter(NotificationInviteAcceptedEventDto::class.java)
     private val notificationInviteRejectedEventAdapter = moshi.adapter(NotificationInviteRejectedEventDto::class.java)
@@ -225,6 +227,7 @@ internal class EventDtoAdapter(
             EventType.NOTIFICATION_MARK_UNREAD -> notificationMarkUnreadEventAdapter
             EventType.NOTIFICATION_MESSAGE_NEW -> notificationMessageNewEventAdapter
             EventType.NOTIFICATION_THREAD_MESSAGE_NEW -> notificationThreadMessageNewEventAdapter
+            EventType.THREAD_UPDATED -> threadUpdatedEventAdapter
             EventType.NOTIFICATION_INVITED -> notificationInvitedEventAdapter
             EventType.NOTIFICATION_INVITE_ACCEPTED -> notificationInviteAcceptedEventAdapter
             EventType.NOTIFICATION_INVITE_REJECTED -> notificationInviteRejectedEventAdapter

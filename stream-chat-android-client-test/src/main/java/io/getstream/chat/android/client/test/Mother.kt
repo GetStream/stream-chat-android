@@ -48,6 +48,7 @@ import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReminderCreatedEvent
 import io.getstream.chat.android.client.events.ReminderDeletedEvent
 import io.getstream.chat.android.client.events.ReminderUpdatedEvent
+import io.getstream.chat.android.client.events.ThreadUpdatedEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UserMessagesDeletedEvent
@@ -879,5 +880,22 @@ public fun randomVoteRemovedEvent(
         messageId = messageId,
         poll = poll,
         removedVote = removedVote,
+    )
+}
+
+public fun randomThreadUpdatedEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+    thread: ThreadInfo = randomThreadInfo(cid = cid),
+): ThreadUpdatedEvent {
+    val (type, id) = cid.cidToTypeAndId()
+    return ThreadUpdatedEvent(
+        type = EventType.THREAD_UPDATED,
+        createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
+        cid = cid,
+        channelType = type,
+        channelId = id,
+        thread = thread,
     )
 }

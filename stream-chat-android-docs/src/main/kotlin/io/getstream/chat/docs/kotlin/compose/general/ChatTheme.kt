@@ -7,26 +7,18 @@ import android.text.format.DateUtils
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.MessageTheme
-import io.getstream.chat.android.compose.ui.theme.StreamColors
-import io.getstream.chat.android.compose.ui.theme.StreamShapes
-import io.getstream.chat.android.compose.ui.theme.StreamTypography
+import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
 import io.getstream.chat.android.compose.ui.util.MessageTextFormatter
-import io.getstream.chat.android.compose.ui.util.QuotedMessageTextFormatter
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
-import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.MessageListOptions
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.helper.DateFormatter
@@ -36,7 +28,7 @@ import java.util.Date
 
 abstract class ChatThemeCustomization : AppCompatActivity() {
 
-        protected lateinit var viewModelFactory: MessagesViewModelFactory
+        protected lateinit var viewModelFactory: ChannelViewModelFactory
 
         protected val autoTranslationEnabled = true
 
@@ -61,11 +53,11 @@ private object ChatThemeUsageSnippet {
 
             setContent {
                 ChatTheme {
-                    MessagesScreen(
-                        viewModelFactory = MessagesViewModelFactory(
+                    ChannelScreen(
+                        viewModelFactory = ChannelViewModelFactory(
                             context = this,
                             channelId = "messaging:123",
-                            messageLimit = 30
+                            messageListOptions = MessageListOptions(messageLimit = 30),
                         ),
                         onBackPressed = { finish() },
                         onHeaderTitleClick = {},
@@ -87,18 +79,9 @@ private object ChatThemeCustomizationSnippet {
             super.onCreate(savedInstanceState)
 
             setContent {
-                ChatTheme(
-                    shapes = StreamShapes.defaultShapes().copy( // Customizing the shapes
-                        avatar = RoundedCornerShape(8.dp),
-                        attachment = RoundedCornerShape(16.dp),
-                        inputField = RectangleShape,
-                        myMessageBubble = RoundedCornerShape(16.dp),
-                        otherMessageBubble = RoundedCornerShape(16.dp),
-                        bottomSheet = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-                    )
-                ) {
-                    MessagesScreen(
-                        viewModelFactory = MessagesViewModelFactory(
+                ChatTheme {
+                    ChannelScreen(
+                        viewModelFactory = ChannelViewModelFactory(
                             context = this,
                             channelId = "messaging:123",
                         ),
@@ -116,7 +99,7 @@ private object ChatThemeDateFormatterSnippet : ChatThemeCustomization() {
         ChatTheme(
             dateFormatter = buildDateFormatter()
         ) {
-            MessagesScreen(
+            ChannelScreen(
                 viewModelFactory = viewModelFactory,
                 onBackPressed = { finish() },
             )
@@ -165,16 +148,14 @@ private object ChatThemeDateFormatterSnippet : ChatThemeCustomization() {
 private object ChatThemeMessageTextFormatterDefaultSnippet : ChatThemeCustomization() {
 
     override val content: @Composable () -> Unit get() = {
-        val colors = if (isSystemInDarkTheme()) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
-        val typography = StreamTypography.defaultTypography()
-        val shapes = StreamShapes.defaultShapes()
+        val colors = if (isSystemInDarkTheme()) StreamDesign.Colors.defaultDark() else StreamDesign.Colors.default()
+        val typography = StreamDesign.Typography.default()
         ChatTheme(
             colors = colors,
             typography = typography,
-            shapes = shapes,
-            messageTextFormatter = buildMessageTextFormatter(typography, colors, shapes)
+            messageTextFormatter = buildMessageTextFormatter(typography, colors)
         ) {
-            MessagesScreen(
+            ChannelScreen(
                 viewModelFactory = viewModelFactory,
                 onBackPressed = { finish() },
             )
@@ -187,9 +168,8 @@ private object ChatThemeMessageTextFormatterDefaultSnippet : ChatThemeCustomizat
      */
     @Composable
     private fun buildMessageTextFormatter(
-        typography: StreamTypography,
-        colors: StreamColors,
-        shapes: StreamShapes,
+        typography: StreamDesign.Typography,
+        colors: StreamDesign.Colors,
     ): MessageTextFormatter {
         val formatter = object : MessageTextFormatter {
             override fun format(message: Message, currentUser: User?): AnnotatedString {
@@ -200,33 +180,21 @@ private object ChatThemeMessageTextFormatterDefaultSnippet : ChatThemeCustomizat
             }
         }
 
-        val quotedFormatter = object : QuotedMessageTextFormatter {
-            override fun format(message: Message, replyMessage: Message?, currentUser: User?): AnnotatedString {
-                return buildAnnotatedString {
-                    append(message.text)
-                    // add your custom styling here
-                }
-            }
-        }
-
         val previewFormatter = object : MessagePreviewFormatter {
-            override fun formatMessageTitle(message: Message): AnnotatedString {
+            override fun formatMessageTitle(message: Message, currentUser: User?): AnnotatedString {
                 return buildAnnotatedString {
                     append(message.user.name)
                     // add your custom styling here
                 }
             }
 
-            override fun formatMessagePreview(message: Message, currentUser: User?): AnnotatedString {
+            override fun formatMessagePreview(
+                message: Message,
+                currentUser: User?,
+                isDirectMessaging: Boolean,
+            ): AnnotatedString {
                 return buildAnnotatedString {
                     append(message.text)
-                    // add your custom styling here
-                }
-            }
-
-            override fun formatDraftMessagePreview(draftMessage: DraftMessage): AnnotatedString {
-                return buildAnnotatedString {
-                    append(draftMessage.text)
                     // add your custom styling here
                 }
             }
@@ -235,7 +203,6 @@ private object ChatThemeMessageTextFormatterDefaultSnippet : ChatThemeCustomizat
             autoTranslationEnabled = autoTranslationEnabled,
             typography = typography,
             colors = colors,
-            shapes = shapes,
         ) { message, currentUser ->
             addStyle(
                 SpanStyle(
@@ -250,15 +217,14 @@ private object ChatThemeMessageTextFormatterDefaultSnippet : ChatThemeCustomizat
 
 private object ChatThemeMessageTextFormatterCompositeSnippet : ChatThemeCustomization() {
     override val content: @Composable () -> Unit get() = {
-        val colors = if (isSystemInDarkTheme()) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
-        val typography = StreamTypography.defaultTypography()
-        val shapes = StreamShapes.defaultShapes()
+        val colors = if (isSystemInDarkTheme()) StreamDesign.Colors.defaultDark() else StreamDesign.Colors.default()
+        val typography = StreamDesign.Typography.default()
         ChatTheme(
             colors = colors,
             typography = typography,
-            messageTextFormatter = buildMessageTextFormatter(typography, colors, shapes)
+            messageTextFormatter = buildMessageTextFormatter(typography, colors)
         ) {
-            MessagesScreen(
+            ChannelScreen(
                 viewModelFactory = viewModelFactory,
                 onBackPressed = { finish() },
             )
@@ -268,16 +234,14 @@ private object ChatThemeMessageTextFormatterCompositeSnippet : ChatThemeCustomiz
 
     @Composable
     private fun buildMessageTextFormatter(
-        typography: StreamTypography,
-        colors: StreamColors,
-        shapes: StreamShapes,
+        typography: StreamDesign.Typography,
+        colors: StreamDesign.Colors,
     ): MessageTextFormatter {
         return MessageTextFormatter.composite(
             MessageTextFormatter.defaultFormatter(
                 autoTranslationEnabled = autoTranslationEnabled,
                 typography = typography,
                 colors = colors,
-                shapes = shapes,
             ),
             blueLettersMessageTextFormatter()
         )
@@ -289,113 +253,6 @@ private object ChatThemeMessageTextFormatterCompositeSnippet : ChatThemeCustomiz
     @Composable
     private fun blueLettersMessageTextFormatter(): MessageTextFormatter {
         return MessageTextFormatter { message, currentUser ->
-            buildAnnotatedString {
-                append(message.text)
-                addStyle(
-                    SpanStyle(
-                        color = Color.Blue,
-                    ),
-                    start = 0,
-                    end = minOf(3, message.text.length),
-                )
-            }
-        }
-    }
-}
-
-private object ChatThemeQuotedMessageTextFormatterDefaultSnippet : ChatThemeCustomization() {
-
-    override val content: @Composable () -> Unit get() = {
-        val isInDarkMode: Boolean = isSystemInDarkTheme()
-        val colors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
-        val typography = StreamTypography.defaultTypography()
-        val defaultQuotedTextFormatter = buildQuotedMessageTextFormatter(isInDarkMode, typography, colors)
-        ChatTheme(
-            colors = colors,
-            typography = typography,
-            quotedMessageTextFormatter = defaultQuotedTextFormatter
-        ) {
-            MessagesScreen(
-                viewModelFactory = viewModelFactory,
-                onBackPressed = { finish() },
-            )
-        }
-    }
-
-    /**
-     * Builds default [QuotedMessageTextFormatter] with extended functionality, which
-     * adds a blue color to the first 3 letters of the quoted message text.
-     */
-    @Composable
-    private fun buildQuotedMessageTextFormatter(
-        isInDarkMode: Boolean,
-        typography: StreamTypography,
-        colors: StreamColors,
-    ): QuotedMessageTextFormatter {
-        return QuotedMessageTextFormatter.defaultFormatter(
-            autoTranslationEnabled = autoTranslationEnabled,
-            context = LocalContext.current,
-            isInDarkMode = isInDarkMode,
-            typography = typography,
-            colors = colors,
-            ownMessageTheme = MessageTheme.defaultOwnTheme(),
-            otherMessageTheme = MessageTheme.defaultOtherTheme(),
-        ) { message, replyMessage, currentUser ->
-            addStyle(
-                SpanStyle(
-                    color = Color.Blue,
-                ),
-                start = 0,
-                end = minOf(3, length),
-            )
-        }
-    }
-}
-
-private object ChatThemeQuotedMessageTextFormatterCompositeSnippet : ChatThemeCustomization() {
-    override val content: @Composable () -> Unit get() = {
-        val isInDarkMode = isSystemInDarkTheme()
-        val colors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
-        val typography = StreamTypography.defaultTypography()
-        ChatTheme(
-            colors = colors,
-            typography = typography,
-            quotedMessageTextFormatter = buildQuotedMessageTextFormatter(isInDarkMode, typography, colors)
-        ) {
-            MessagesScreen(
-                viewModelFactory = viewModelFactory,
-                onBackPressed = { finish() },
-            )
-        }
-    }
-
-
-    @Composable
-    private fun buildQuotedMessageTextFormatter(
-        isInDarkMode: Boolean,
-        typography: StreamTypography,
-        colors: StreamColors,
-    ): QuotedMessageTextFormatter {
-        return QuotedMessageTextFormatter.composite(
-            QuotedMessageTextFormatter.defaultFormatter(
-                autoTranslationEnabled = autoTranslationEnabled,
-                context = LocalContext.current,
-                isInDarkMode = isInDarkMode,
-                typography = typography,
-                colors = colors,
-                ownMessageTheme = MessageTheme.defaultOwnTheme(),
-                otherMessageTheme = MessageTheme.defaultOtherTheme(),
-            ),
-            blueLettersQuotedMessageTextFormatter()
-        )
-    }
-
-    /**
-     * Builds a [QuotedMessageTextFormatter] that adds a blue color to the first 3 letters of the quoted message text.
-     */
-    @Composable
-    private fun blueLettersQuotedMessageTextFormatter(): QuotedMessageTextFormatter {
-        return QuotedMessageTextFormatter { message, replyMessage, currentUser ->
             buildAnnotatedString {
                 append(message.text)
                 addStyle(

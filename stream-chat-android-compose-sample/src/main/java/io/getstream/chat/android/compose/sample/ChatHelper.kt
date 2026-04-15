@@ -20,6 +20,7 @@ import android.content.Context
 import android.util.Log
 import io.getstream.android.push.firebase.FirebasePushDeviceGenerator
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
@@ -30,9 +31,6 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
-import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
-import io.getstream.chat.android.state.plugin.config.StatePluginConfig
-import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.result.Error
 import kotlinx.coroutines.flow.transformWhile
 
@@ -45,10 +43,14 @@ object ChatHelper {
 
     private const val TAG = "ChatHelper"
 
+    var apiKey: String = ""
+        private set
+
     /**
      * Initializes the SDK with the given API key.
      */
     fun initializeSdk(context: Context, apiKey: String, baseUrl: String? = null) {
+        this.apiKey = apiKey
         Log.d(TAG, "[init] apiKey: $apiKey")
         val notificationConfig = NotificationConfig(
             pushDeviceGenerators = listOf(
@@ -57,7 +59,6 @@ object ChatHelper {
                     providerName = "chat-android-firebase",
                 ),
             ),
-            autoTranslationEnabled = ChatApp.autoTranslationEnabled,
         )
         val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
             context = context,
@@ -82,21 +83,13 @@ object ChatHelper {
             },
         )
 
-        val offlinePlugin = StreamOfflinePluginFactory(context)
-
-        val statePluginFactory = StreamStatePluginFactory(
-            config = StatePluginConfig(
-                backgroundSyncEnabled = false,
-                userPresence = true,
-            ),
-            appContext = context,
-        )
+        val chatClientConfig = ChatClientConfig(userPresence = true)
 
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
         ChatClient.Builder(apiKey, context)
             .notifications(notificationConfig, notificationHandler)
-            .withPlugins(offlinePlugin, statePluginFactory)
+            .config(chatClientConfig)
             .logLevel(logLevel)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .appName("Chat Sample Compose")

@@ -27,6 +27,9 @@ import io.getstream.chat.android.client.utils.message.isModerationBounce
 import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.utils.extensions.hasLink
+import io.getstream.chat.android.ui.common.utils.extensions.isFailed
+import io.getstream.chat.android.ui.common.utils.extensions.isUploading
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.CUSTOM_ATTACHMENTS
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.DATE_DIVIDER
@@ -47,9 +50,6 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.TYPING_INDICATOR
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.UNREAD_SEPARATOR
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
-import io.getstream.chat.android.uiutils.extension.hasLink
-import io.getstream.chat.android.uiutils.extension.isFailed
-import io.getstream.chat.android.uiutils.extension.isUploading
 
 internal object MessageListItemViewTypeMapper {
 

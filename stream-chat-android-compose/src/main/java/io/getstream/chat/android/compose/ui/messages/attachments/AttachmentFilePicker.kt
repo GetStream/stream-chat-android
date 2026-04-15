@@ -1,0 +1,307 @@
+/*
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.getstream.chat.android.compose.ui.messages.attachments
+
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
+import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
+import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
+import io.getstream.chat.android.compose.ui.components.attachments.files.FilesPicker
+import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredFilesStoragePermission
+import io.getstream.chat.android.compose.ui.messages.attachments.permission.filesAccessAsState
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
+import io.getstream.chat.android.compose.ui.util.clickable
+import io.getstream.chat.android.ui.common.model.MimeType
+import io.getstream.chat.android.ui.common.permissions.FilesAccess
+import io.getstream.chat.android.ui.common.permissions.Permissions
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
+import io.getstream.chat.android.ui.common.utils.openSystemSettings
+import io.getstream.chat.android.ui.common.R as UiCommonR
+
+@Suppress("LongMethod")
+@Composable
+internal fun AttachmentFilePicker(
+    pickerMode: FilePickerMode,
+    attachments: List<AttachmentPickerItemState>,
+    onLoadAttachments: () -> Unit = {},
+    onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit = {},
+    onUrisSelected: (List<Uri>) -> Unit = {},
+) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    var showPermanentlyDeniedSnackBar by remember { mutableStateOf(false) }
+    val permissionLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
+            if (Permissions.isPermanentlyDenied(context, result)) {
+                showPermanentlyDeniedSnackBar = true
+            }
+        }
+    val filesAccess by filesAccessAsState(context, lifecycleOwner) { value ->
+        if (value != FilesAccess.DENIED) {
+            onLoadAttachments()
+        }
+    }
+
+    val snackBarHostState = remember { SnackbarHostState() }
+    Box(contentAlignment = Alignment.Center) {
+        FilesAccessContent(
+            filesAccess = filesAccess,
+            onGrantPermissionClick = { permissionLauncher.launch(Permissions.filesPermissions()) },
+            onRequestVisualMediaAccess = { permissionLauncher.launch(Permissions.visualMediaPermissions()) },
+            onRequestAudioAccess = { permissionLauncher.launch(Permissions.audioPermissions()) },
+            filePicker = {
+                FilesPicker(
+                    files = attachments,
+                    onItemSelected = onAttachmentItemSelected,
+                    allowMultipleSelection = pickerMode.allowMultipleSelection,
+                    onBrowseFilesResult = onUrisSelected,
+                )
+            },
+        )
+        StreamSnackbarHost(hostState = snackBarHostState)
+    }
+    val snackbarMessage = stringResource(id = UiCommonR.string.stream_ui_message_composer_permission_setting_message)
+    val snackbarAction = stringResource(id = UiCommonR.string.stream_ui_message_composer_permissions_setting_button)
+    LaunchedEffect(showPermanentlyDeniedSnackBar) {
+        if (showPermanentlyDeniedSnackBar) {
+            val result = snackBarHostState.showSnackbar(
+                message = snackbarMessage,
+                actionLabel = snackbarAction,
+                duration = SnackbarDuration.Short,
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                context.openSystemSettings()
+            }
+            showPermanentlyDeniedSnackBar = false
+        }
+    }
+}
+
+@Composable
+private fun FilesAccessContent(
+    filesAccess: FilesAccess,
+    filePicker: @Composable () -> Unit,
+    onGrantPermissionClick: () -> Unit,
+    onRequestVisualMediaAccess: () -> Unit,
+    onRequestAudioAccess: () -> Unit,
+) {
+    when (filesAccess) {
+        FilesAccess.DENIED -> {
+            RequiredFilesStoragePermission(onGrantPermissionClick = onGrantPermissionClick)
+        }
+
+        FilesAccess.PARTIAL_VISUAL -> {
+            Column {
+                GrantAudioAccessButton(onClick = onRequestAudioAccess)
+                AllowMoreVisualMediaButton(onClick = onRequestVisualMediaAccess)
+                filePicker()
+            }
+        }
+
+        FilesAccess.FULL_VISUAL -> {
+            Column {
+                GrantAudioAccessButton(onClick = onRequestAudioAccess)
+                filePicker()
+            }
+        }
+
+        FilesAccess.AUDIO -> {
+            Column {
+                GrantVisualMediaAccessButton(onClick = onRequestVisualMediaAccess)
+                filePicker()
+            }
+        }
+
+        FilesAccess.AUDIO_AND_PARTIAL_VISUAL -> {
+            Column {
+                AllowMoreVisualMediaButton(onClick = onRequestVisualMediaAccess)
+                filePicker()
+            }
+        }
+
+        FilesAccess.AUDIO_AND_FULL_VISUAL -> {
+            filePicker()
+        }
+    }
+}
+
+@Composable
+private fun GrantVisualMediaAccessButton(onClick: () -> Unit) {
+    RequestAdditionalAccessButton(
+        textId = UiCommonR.string.stream_ui_message_composer_permissions_files_allow_visual_media_access,
+        onClick = onClick,
+    )
+}
+
+@Composable
+private fun AllowMoreVisualMediaButton(onClick: () -> Unit) {
+    RequestAdditionalAccessButton(
+        textId = UiCommonR.string.stream_ui_message_composer_permissions_files_allow_more_visual_media,
+        onClick = onClick,
+    )
+}
+
+@Composable
+private fun GrantAudioAccessButton(onClick: () -> Unit) {
+    RequestAdditionalAccessButton(
+        textId = UiCommonR.string.stream_ui_message_composer_permissions_files_allow_audio_access,
+        onClick = onClick,
+    )
+}
+
+@Composable
+private fun RequestAdditionalAccessButton(
+    @StringRes textId: Int,
+    onClick: () -> Unit,
+) {
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(StreamTokens.spacingSm),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                text = stringResource(id = textId),
+                style = ChatTheme.typography.bodyDefault,
+                color = ChatTheme.colors.textPrimary,
+            )
+            Icon(
+                painter = painterResource(id = R.drawable.stream_design_ic_chevron_right),
+                contentDescription = null,
+                tint = ChatTheme.colors.textSecondary,
+            )
+        }
+        StreamHorizontalDivider()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentFilePickerSingleSelectionPreview() {
+    ChatPreviewTheme {
+        AttachmentFilePickerSingleSelection()
+    }
+}
+
+@Suppress("MagicNumber")
+@Composable
+internal fun AttachmentFilePickerSingleSelection() {
+    AttachmentFilePicker(
+        pickerMode = FilePickerMode(
+            allowMultipleSelection = false,
+        ),
+        attachments = listOf(
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData1,
+            ),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData2,
+                isSelected = true,
+            ),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData3,
+            ),
+        ),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentFilePickerMultipleSelectionPreview() {
+    ChatPreviewTheme {
+        AttachmentFilePickerMultipleSelection()
+    }
+}
+
+@Suppress("MagicNumber")
+@Composable
+internal fun AttachmentFilePickerMultipleSelection() {
+    AttachmentFilePicker(
+        pickerMode = FilePickerMode(),
+        attachments = listOf(
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData1,
+                isSelected = true,
+            ),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData2,
+                isSelected = true,
+            ),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData3,
+            ),
+        ),
+    )
+}
+
+@Suppress("MagicNumber")
+private val AttachmentMetaData1 = AttachmentMetaData(
+    title = "PDF",
+    mimeType = MimeType.MIME_TYPE_PDF,
+).apply {
+    size = 10_000
+}
+
+@Suppress("MagicNumber")
+private val AttachmentMetaData2 = AttachmentMetaData(
+    title = "MP3",
+    mimeType = MimeType.MIME_TYPE_MP3,
+).apply {
+    size = 100_000
+}
+
+@Suppress("MagicNumber")
+private val AttachmentMetaData3 = AttachmentMetaData(
+    title = "MP4",
+    mimeType = MimeType.MIME_TYPE_MP4,
+).apply {
+    size = 1_000_000
+}

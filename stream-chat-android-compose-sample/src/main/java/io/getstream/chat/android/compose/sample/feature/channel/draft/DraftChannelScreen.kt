@@ -28,12 +28,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
-import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
+import io.getstream.chat.android.compose.ui.messages.header.ChannelHeader
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageListEmptyContentParams
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 
 @Composable
@@ -78,12 +79,14 @@ private fun DraftChannelContent(
                     onMessageSent = { onViewAction(DraftChannelViewAction.MessageSent) },
                 )
             },
-            containerColor = ChatTheme.colors.appBackground,
+            containerColor = ChatTheme.colors.backgroundCoreApp,
         ) { padding ->
             ChatTheme.componentFactory.MessageListEmptyContent(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize(),
+                params = MessageListEmptyContentParams(
+                    modifier = Modifier
+                        .padding(padding)
+                        .fillMaxSize(),
+                ),
             )
         }
     }
@@ -102,7 +105,7 @@ private fun DraftChannelTopBar(
             modifier = Modifier.fillMaxWidth(),
         )
 
-        is ChannelHeaderViewState.Content -> MessageListHeader(
+        is ChannelHeaderViewState.Content -> ChannelHeader(
             channel = content.channel,
             currentUser = content.currentUser,
             connectionState = content.connectionState,
@@ -117,7 +120,7 @@ private fun DraftChannelBottomBar(
     onMessageSent: () -> Unit,
 ) {
     val context = LocalContext.current
-    val viewModel = viewModel<MessageComposerViewModel>(key = cid, factory = MessagesViewModelFactory(context, cid))
+    val viewModel = viewModel<MessageComposerViewModel>(key = cid, factory = ChannelViewModelFactory(context, cid))
     MessageComposer(
         viewModel = viewModel,
         onSendMessage = { message ->

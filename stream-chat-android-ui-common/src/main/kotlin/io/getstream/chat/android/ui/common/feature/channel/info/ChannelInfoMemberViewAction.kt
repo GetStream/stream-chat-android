@@ -36,6 +36,26 @@ public sealed interface ChannelInfoMemberViewAction {
     public data object UnbanMemberClick : ChannelInfoMemberViewAction
 
     /**
+     * Represents the click action to mute the member's user.
+     */
+    public data object MuteUserClick : ChannelInfoMemberViewAction
+
+    /**
+     * Represents the click action to unmute the member's user.
+     */
+    public data object UnmuteUserClick : ChannelInfoMemberViewAction
+
+    /**
+     * Represents the click action to block the member's user.
+     */
+    public data object BlockUserClick : ChannelInfoMemberViewAction
+
+    /**
+     * Represents the click action to unblock the member's user.
+     */
+    public data object UnblockUserClick : ChannelInfoMemberViewAction
+
+    /**
      * Represents the click action to remove the member.
      */
     public data object RemoveMemberClick : ChannelInfoMemberViewAction

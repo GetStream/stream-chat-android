@@ -17,12 +17,11 @@
 package io.getstream.chat.android.compose.ui.attachments.preview.internal
 
 import android.annotation.SuppressLint
-import android.util.Log
-import androidx.annotation.OptIn
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculatePan
@@ -35,6 +34,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -44,7 +45,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
@@ -55,7 +55,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.Player
-import androidx.media3.common.util.UnstableApi
 import coil3.compose.AsyncImagePainter
 import coil3.request.ImageRequest
 import io.getstream.chat.android.compose.R
@@ -67,6 +66,7 @@ import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.Attachment
 import kotlinx.coroutines.coroutineScope
 import kotlin.math.abs
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 internal const val DefaultZoomScale = 1f
 internal const val MidZoomScale = 2f
@@ -96,6 +96,7 @@ internal fun MediaGalleryImagePage(
     attachment: Attachment,
     pagerState: PagerState,
     page: Int,
+    onTap: () -> Unit = {},
 ) {
     @SuppressLint("UnusedBoxWithConstraintsScope")
     BoxWithConstraints(
@@ -120,6 +121,7 @@ internal fun MediaGalleryImagePage(
 
         var currentScale by remember { mutableFloatStateOf(DefaultZoomScale) }
         var translation by remember { mutableStateOf(Offset(0f, 0f)) }
+        var wasDragged by remember { mutableStateOf(false) }
 
         val scale by animateFloatAsState(targetValue = currentScale, label = "")
 
@@ -131,7 +133,7 @@ internal fun MediaGalleryImagePage(
             )
             Modifier
                 .aspectRatio(size.width / size.height, true)
-                .background(color = ChatTheme.colors.overlay)
+                .background(color = ChatTheme.colors.backgroundCoreScrim)
         } else {
             Modifier
         }
@@ -156,6 +158,7 @@ internal fun MediaGalleryImagePage(
                         coroutineScope {
                             awaitEachGesture {
                                 awaitFirstDown(requireUnconsumed = true)
+                                wasDragged = false
                                 do {
                                     val event = awaitPointerEvent(pass = PointerEventPass.Initial)
 
@@ -169,6 +172,9 @@ internal fun MediaGalleryImagePage(
                                     )
 
                                     val offset = event.calculatePan()
+                                    if (offset != Offset.Zero || zoom != DefaultZoomScale) {
+                                        wasDragged = true
+                                    }
                                     val newTranslationX = translation.x + offset.x * currentScale
                                     val newTranslationY = translation.y + offset.y * currentScale
 
@@ -197,8 +203,10 @@ internal fun MediaGalleryImagePage(
                         coroutineScope {
                             awaitEachGesture {
                                 awaitFirstDown()
-                                withTimeoutOrNull(DoubleTapTimeoutMs) {
+                                val secondDown = withTimeoutOrNull(DoubleTapTimeoutMs) {
                                     awaitFirstDown()
+                                }
+                                if (secondDown != null) {
                                     currentScale = when {
                                         currentScale == MaxZoomScale -> DefaultZoomScale
                                         currentScale >= MidZoomScale -> MaxZoomScale
@@ -208,6 +216,8 @@ internal fun MediaGalleryImagePage(
                                     if (currentScale == DefaultZoomScale) {
                                         translation = Offset(0f, 0f)
                                     }
+                                } else if (!wasDragged) {
+                                    onTap()
                                 }
                             }
                         }
@@ -234,11 +244,11 @@ internal fun MediaGalleryImagePage(
                 }
             }
 
-            Log.d("isCurrentPage", "${page != pagerState.currentPage}")
-
-            if (pagerState.currentPage != page) {
-                currentScale = DefaultZoomScale
-                translation = Offset(0f, 0f)
+            LaunchedEffect(pagerState.settledPage) {
+                if (pagerState.settledPage != page) {
+                    currentScale = DefaultZoomScale
+                    translation = Offset(0f, 0f)
+                }
             }
         }
     }
@@ -256,10 +266,10 @@ private fun ErrorIcon(modifier: Modifier) {
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            tint = ChatTheme.colors.disabled,
+            tint = ChatTheme.colors.textDisabled,
             modifier = Modifier.fillMaxSize(fraction = 0.4f),
-            painter = painterResource(R.drawable.stream_compose_ic_image_picker),
-            contentDescription = stringResource(R.string.stream_ui_message_list_attachment_load_failed),
+            painter = painterResource(R.drawable.stream_design_ic_image),
+            contentDescription = stringResource(UiCommonR.string.stream_ui_message_list_attachment_load_failed),
         )
     }
 }
@@ -284,31 +294,45 @@ private fun ErrorIcon(modifier: Modifier) {
  *
  * @param player The [Player] instance used for video playback.
  * @param thumbnailUrl The url of the thumbnail to display before the video is played.
- * @param showBuffering Whether to show a buffering indicator while the video is loading.
- * @param onPlaybackError Callback invoked when video playback encounters an error.
  * @param modifier The [Modifier] to be applied to the video player.
  */
-@OptIn(UnstableApi::class)
 @Composable
 internal fun MediaGalleryVideoPage(
     player: Player,
     thumbnailUrl: String?,
-    showBuffering: Boolean,
-    onPlaybackError: (error: Throwable) -> Unit,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
 ) {
     var showThumbnail by remember { mutableStateOf(true) }
+    var showBuffering by remember { mutableStateOf(player.playbackState == Player.STATE_BUFFERING) }
+    DisposableEffect(player) {
+        val listener = object : Player.Listener {
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                if (isPlaying) showThumbnail = false
+            }
+
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                showBuffering = playbackState == Player.STATE_BUFFERING
+            }
+        }
+        player.addListener(listener)
+        onDispose { player.removeListener(listener) }
+    }
     Box(
-        modifier = modifier,
+        modifier = modifier.clickable(
+            interactionSource = null,
+            indication = null,
+            onClick = onClick,
+        ),
         contentAlignment = Alignment.Center,
     ) {
         // Video player
         AndroidView(
             modifier = Modifier
                 .matchParentSize()
-                .background(Color.Black),
+                .background(ChatTheme.colors.backgroundCoreApp),
             factory = { context ->
-                createPlayerView(context, player)
+                createPlayerView(context, player, useController = false)
             },
         )
         // Thumbnail
@@ -320,7 +344,7 @@ internal fun MediaGalleryVideoPage(
                         showThumbnail = false
                         player.play()
                     },
-                thumbnailUrl = if (ChatTheme.videoThumbnailsEnabled) thumbnailUrl else null,
+                thumbnailUrl = if (ChatTheme.config.messageList.videoThumbnailsEnabled) thumbnailUrl else null,
             )
         }
         // Buffering indicator
@@ -347,7 +371,7 @@ private fun calculateMaxOffset(imageSize: Size, scale: Float, parentSize: Size):
  * Calculates max offset an image can have on a single axis.
  *
  * @param axisSize The size of the image on a given axis.
- * @param scale The current scale of of the image.
+ * @param scale The current scale of the image.
  * @param parentAxisSize The size of the parent view on a given axis.
  */
 private fun calculateMaxOffsetPerAxis(axisSize: Float, scale: Float, parentAxisSize: Float): Float {

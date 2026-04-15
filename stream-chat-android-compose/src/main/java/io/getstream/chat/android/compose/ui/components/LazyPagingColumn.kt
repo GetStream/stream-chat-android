@@ -67,7 +67,7 @@ internal fun <T> LazyPagingColumn(
         }
     }
     LoadMoreHandler(
-        listState = lazyListState,
+        lazyListState = lazyListState,
         loadMore = onLoadMore,
     )
 }

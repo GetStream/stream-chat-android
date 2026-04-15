@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.persistance.repository
 
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
@@ -25,7 +26,7 @@ import java.util.Date
 /**
  * Repository to read and write [Message] data.
  */
-
+@InternalStreamChatApi
 @Suppress("TooManyFunctions")
 public interface MessageRepository {
 
@@ -199,4 +200,15 @@ public interface MessageRepository {
      * Clear messages of this repository.
      */
     public suspend fun clear()
+
+    /**
+     * Returns all messages for [cid] that are local-only: syncStatus is one of
+     * SYNC_NEEDED, IN_PROGRESS, AWAITING_ATTACHMENTS, FAILED_PERMANENTLY, or type is
+     * "ephemeral" or "error". Used by the preservation mechanism before a server response
+     * replaces the active message window.
+     *
+     * @param cid The channel ID (format "type:id").
+     * @return List of local-only messages, unordered.
+     */
+    public suspend fun selectLocalOnlyMessagesForChannel(cid: String): List<Message>
 }
