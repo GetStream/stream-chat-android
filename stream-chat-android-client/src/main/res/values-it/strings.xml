@@ -23,8 +23,10 @@
   <string name="stream_chat_notification_empty_username">"Utente senza nome"</string>
   <string name="stream_chat_notification_group_summary_content_text">"Hai ricevuto nuovi messaggi"</string>
   <string name="stream_chat_notification_read">"Segna come letto"</string>
+  <string name="stream_chat_notification_reminder_due_title">"Hai chiesto di ricevere un promemoria per questo messaggio"</string>
   <string name="stream_chat_notification_reply">"Rispondi"</string>
   <string name="stream_chat_notification_title">"Messaggio"</string>
   <string name="stream_chat_notification_type_hint">"Digita il messaggio"</string>
   <string name="stream_chat_other_notifications_channel_name">"Altre notifiche"</string>
+  <string name="stream_ui_message_input_permission_notifications_message">"Notifiche bloccate"</string>
 </resources>
