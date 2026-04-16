@@ -219,4 +219,26 @@ internal class MessageRepositoryTests {
         // then
         verify(messageDao).deleteMessages(messageIds)
     }
+
+    @Test
+    fun `when calling clear, then all related tables are cleared`() = runTest(testDispatcher) {
+        // given
+        val repository = DatabaseMessageRepository(
+            this,
+            messageDao,
+            replyMessageDao,
+            pollDao,
+            ::randomUser,
+            randomUser(id = "currentUserId"),
+            emptySet(),
+        )
+
+        // when
+        repository.clear()
+
+        // then
+        verify(messageDao).deleteAll()
+        verify(messageDao).deleteAllDrafts()
+        verify(replyMessageDao).deleteAll()
+    }
 }

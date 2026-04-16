@@ -258,6 +258,7 @@ internal class DatabaseMessageRepository(
         replyMessageCache.evictAll()
         dbMutex.withLock {
             messageDao.deleteAll()
+            messageDao.deleteAllDrafts()
             replyMessageDao.deleteAll()
         }
     }
