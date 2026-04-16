@@ -213,8 +213,8 @@
     <string name="stream_ui_channel_header_retry">Try Again</string>
     <string name="stream_ui_channel_header_member_count_online">%1$s, %2$d Online</string>
     <plurals name="stream_ui_channel_header_member_count">
-        <item quantity="one">%1d Member</item>
-        <item quantity="other">%1d Members</item>
+        <item quantity="one">%1$d Member</item>
+        <item quantity="other">%1$d Members</item>
     </plurals>
     <plurals name="stream_ui_channel_header_typing_users">
         <item quantity="one">%s is typing</item>
