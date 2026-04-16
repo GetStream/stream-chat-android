@@ -3,10 +3,6 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>LongMethod:CustomLoginActivity.kt$CustomLoginActivity$@Composable fun CustomLoginScreen( onBackButtonClick: () -> Unit, onLoginButtonClick: (UserCredentials) -> Unit, )</ID>
-    <ID>LongMethod:MessagesActivity.kt$MessagesActivity$@Composable fun MyCustomUi()</ID>
-    <ID>MagicNumber:ChannelsActivity.kt$ChannelsActivity$0.5f</ID>
-    <ID>MagicNumber:MessagesActivity.kt$MessagesActivity$7f</ID>
-    <ID>MaxLineLength:MessagesActivity.kt$MessagesActivity$targetValue = if (isFullScreenContent) screenHeight.dp else 350.dp</ID>
     <ID>UnusedPrivateMember:ChannelsActivity.kt$ChannelsActivity$@Composable private fun MyCustomUi()</ID>
     <ID>UnusedPrivateMember:ChannelsActivity.kt$ChannelsActivity$@Composable private fun MyCustomUiSimplified()</ID>
   </CurrentIssues>
