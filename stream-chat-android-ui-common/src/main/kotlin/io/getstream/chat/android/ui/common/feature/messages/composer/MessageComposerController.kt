@@ -32,6 +32,7 @@ import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.globalStateFlow
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
+import io.getstream.chat.android.ui.common.feature.messages.composer.internal.ComposerStateSaver
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggester
@@ -102,6 +103,7 @@ import java.util.regex.Pattern
  * @param fileToUri The function used to convert a file to a URI.
  * @param config The configuration for the message composer.
  * @param globalState A flow emitting the current [GlobalState].
+ * @param stateSaver Store for persisting composer state across process death.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @InternalStreamChatApi
@@ -115,6 +117,7 @@ public class MessageComposerController(
     fileToUri: (File) -> String,
     private val config: Config = Config(),
     private val globalState: Flow<GlobalState> = chatClient.globalStateFlow,
+    private val stateSaver: ComposerStateSaver,
 ) {
 
     private val channelType = channelCid.cidToTypeAndId().first
@@ -371,6 +374,8 @@ public class MessageComposerController(
      * Sets up the data loading operations such as observing the maximum allowed message length.
      */
     init {
+        restoreAttachmentsFromStateSaver()
+
         channelState
             .filterNotNull()
             .flatMapLatest { it.channelConfig }
@@ -398,6 +403,13 @@ public class MessageComposerController(
             }.launchIn(scope)
 
         setupComposerState()
+    }
+
+    private fun restoreAttachmentsFromStateSaver() {
+        val restoredAttachments = stateSaver.restoreAttachments()
+        if (!restoredAttachments.isNullOrEmpty()) {
+            selectedAttachments.value = restoredAttachments
+        }
     }
 
     /**
@@ -502,6 +514,10 @@ public class MessageComposerController(
                 }
             }.launchIn(scope)
         }
+
+        selectedAttachments
+            .onEach { attachments -> stateSaver.saveAttachments(attachments) }
+            .launchIn(scope)
     }
 
     /**
@@ -675,6 +691,7 @@ public class MessageComposerController(
         selectedAttachments.value = emptyList()
         validationErrors.value = emptyList()
         alsoSendToChannel.value = false
+        stateSaver.clear()
     }
 
     private suspend fun clearDraftMessage(messageMode: MessageMode) {
