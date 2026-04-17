@@ -349,6 +349,26 @@ public class MessageComposerController(
      */
     private val selectedMentions: MutableSet<Mention> = mutableSetOf()
 
+    /**
+     * Pre-command input text captured when entering command mode under
+     * [Config.activeCommandEnabled]. Restored on [clearActiveCommand] when the user dismisses
+     * the command, and discarded on [clearData] (send / full reset). `null` when no command is
+     * active or when command mode is disabled.
+     */
+    private var stashedInputValue: String? = null
+
+    /**
+     * Pre-command picker-selected attachments captured when entering command mode. Shares the
+     * lifecycle of [stashedInputValue]: restored on dismiss, discarded on send.
+     */
+    private var stashedSelectedAttachments: Map<String, Attachment>? = null
+
+    /**
+     * Pre-command mention selections captured when entering command mode. Restored together
+     * with [stashedInputValue] so mention semantics of the restored draft are preserved.
+     */
+    private var stashedMentions: Set<Mention>? = null
+
     private val mentionSuggester = TypingSuggester(
         TypingSuggestionOptions(symbol = MENTION_START_SYMBOL),
     )
@@ -705,6 +725,7 @@ public class MessageComposerController(
         scope.launch { clearDraftMessage(_state.value.messageMode) }
         _messageInput.value = MessageInput()
         clearAttachments()
+        discardCommandStash()
         clearActiveCommand()
         linkPreviewJob?.cancel()
         dismissedLinkPreviewUrl = null
@@ -955,9 +976,18 @@ public class MessageComposerController(
      * Sets [MessageComposerState.activeCommand] and clears the text input so the user can type
      * the command arguments. The full `/command args` string is assembled in [buildNewMessage].
      *
+     * When [Config.activeCommandEnabled] is `true`, any pre-command input value, picker-selected
+     * attachments, and mention selections are stashed so [clearActiveCommand] can restore them if
+     * the user dismisses the command. Re-selecting a command while one is already active does not
+     * overwrite an existing stash (in-command input is command-specific and not preserved across
+     * command switches).
+     *
      * @param command The command that was selected.
      */
     public fun selectCommand(command: Command) {
+        if (config.activeCommandEnabled && stashedInputValue == null) {
+            stashPreCommandState()
+        }
         _state.update { it.copy(activeCommand = command) }
         setMessageInputInternal(
             value = if (config.activeCommandEnabled) "" else "/${command.name} ",
@@ -967,11 +997,52 @@ public class MessageComposerController(
     }
 
     /**
-     * Dismisses the active command, clearing [MessageComposerState.activeCommand] and resetting the text input.
+     * Dismisses the active command, clearing [MessageComposerState.activeCommand].
+     *
+     * When a pre-command stash exists (populated by [selectCommand] under
+     * [Config.activeCommandEnabled]), the stashed input, attachments, and mentions are restored
+     * and any text typed inside command mode is discarded. When no stash exists, the input is
+     * reset to empty (legacy behaviour).
      */
     public fun clearActiveCommand() {
         _state.update { it.copy(activeCommand = null) }
-        setMessageInputInternal("", MessageInput.Source.Default)
+        if (!restorePreCommandStateIfAny()) {
+            setMessageInputInternal("", MessageInput.Source.Default)
+        }
+    }
+
+    private fun stashPreCommandState() {
+        val currentText = _messageInput.value.text
+        // A pure command trigger (e.g. "/" or "/gi") is not user draft content — it is the
+        // popup trigger being consumed by the command. Stash empty instead so cancelling the
+        // command does not restore phantom trigger characters.
+        stashedInputValue = if (CommandPattern.matcher(currentText).find()) "" else currentText
+        stashedSelectedAttachments = LinkedHashMap(_selectedAttachments.value)
+        stashedMentions = selectedMentions.toSet()
+        _selectedAttachments.value = linkedMapOf()
+        selectedMentions.clear()
+        _state.update { it.copy(selectedMentions = emptySet()) }
+        syncAttachments()
+    }
+
+    private fun restorePreCommandStateIfAny(): Boolean {
+        val stashedInput = stashedInputValue ?: return false
+        val stashedAttachments = stashedSelectedAttachments.orEmpty()
+        val stashedMentionsSnapshot = stashedMentions.orEmpty()
+        discardCommandStash()
+        setMessageInputInternal(stashedInput, MessageInput.Source.Default)
+        _selectedAttachments.value = LinkedHashMap(stashedAttachments)
+        selectedMentions.clear()
+        selectedMentions.addAll(stashedMentionsSnapshot)
+        _state.update { it.copy(selectedMentions = selectedMentions.toSet()) }
+        syncAttachments()
+        return true
+    }
+
+    private fun discardCommandStash() {
+        stashedInputValue = null
+        stashedSelectedAttachments = null
+        stashedMentions = null
     }
 
     /**

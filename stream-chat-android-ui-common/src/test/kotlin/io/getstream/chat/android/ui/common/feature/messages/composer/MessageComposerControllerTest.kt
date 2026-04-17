@@ -45,6 +45,7 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.MentionType
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageInput
@@ -648,6 +649,253 @@ internal class MessageComposerControllerTest {
             // Then
             assertEquals(null, controller.state.value.activeCommand)
             assertEquals("", controller.state.value.inputValue)
+        }
+
+    @Test
+    fun `Given pre-command input and attachments When selectCommand called Then composer is cleared`() = runTest {
+        // Given
+        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val preCommandText = "draft message"
+        val preCommandAttachment = randomAttachment()
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+        controller.setMessageInput(preCommandText)
+        controller.addAttachments(listOf(preCommandAttachment))
+        advanceUntilIdle()
+
+        // When
+        controller.selectCommand(command)
+        advanceUntilIdle()
+
+        // Then
+        assertEquals("", controller.state.value.inputValue)
+        assertEquals(emptyList<Any>(), controller.state.value.attachments)
+        assertEquals(command, controller.state.value.activeCommand)
+    }
+
+    @Test
+    fun `Given pre-command input and attachments When clearActiveCommand called Then pre-command state is restored`() =
+        runTest {
+            // Given
+            val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+            val preCommandText = "draft message"
+            val preCommandAttachment = randomAttachment()
+            val controller = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(command))),
+                )
+                .get()
+            controller.setMessageInput(preCommandText)
+            controller.addAttachments(listOf(preCommandAttachment))
+            advanceUntilIdle()
+            controller.selectCommand(command)
+            advanceUntilIdle()
+
+            // When
+            controller.clearActiveCommand()
+            advanceUntilIdle()
+
+            // Then
+            assertNull(controller.state.value.activeCommand)
+            assertEquals(preCommandText, controller.state.value.inputValue)
+            assertEquals(listOf(preCommandAttachment), controller.state.value.attachments)
+        }
+
+    @Test
+    fun `Given command trigger text When selectCommand then clearActiveCommand called Then trigger is not restored`() =
+        runTest {
+            // Given
+            val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+            val controller = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(command))),
+                )
+                .get()
+            controller.setMessageInput("/gi")
+            advanceUntilIdle()
+
+            // When
+            controller.selectCommand(command)
+            advanceUntilIdle()
+            controller.clearActiveCommand()
+            advanceUntilIdle()
+
+            // Then: trigger characters are popup noise, not draft content — restore empty
+            assertEquals("", controller.state.value.inputValue)
+        }
+
+    @Test
+    fun `Given pre-command mention When clearActiveCommand called Then mention selection is restored`() = runTest {
+        // Given
+        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val mentionedUser = User(id = "user1", name = "John Doe")
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+        controller.setMessageInput("Hello @")
+        controller.selectMention(mentionedUser)
+        advanceUntilIdle()
+        controller.selectCommand(command)
+        advanceUntilIdle()
+
+        // When
+        controller.clearActiveCommand()
+        advanceUntilIdle()
+
+        // Then
+        assertEquals("Hello @John Doe ", controller.state.value.inputValue)
+        assertTrue(controller.state.value.selectedMentions.contains(Mention.User(mentionedUser)))
+    }
+
+    @Test
+    fun `Given in-command text When clearActiveCommand called Then in-command text is discarded`() = runTest {
+        // Given
+        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val preCommandText = "draft message"
+        val inCommandText = "cat"
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+        controller.setMessageInput(preCommandText)
+        advanceUntilIdle()
+        controller.selectCommand(command)
+        advanceUntilIdle()
+        controller.setMessageInput(inCommandText)
+        advanceUntilIdle()
+
+        // When
+        controller.clearActiveCommand()
+        advanceUntilIdle()
+
+        // Then
+        assertEquals(preCommandText, controller.state.value.inputValue)
+    }
+
+    @Test
+    fun `Given activeCommandEnabled disabled When selectCommand called Then pre-command input is not stashed`() =
+        runTest {
+            // Given
+            val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+            val preCommandText = "draft message"
+            val controller = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = false))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(command))),
+                )
+                .get()
+            controller.setMessageInput(preCommandText)
+            advanceUntilIdle()
+            controller.selectCommand(command)
+            advanceUntilIdle()
+
+            // When
+            controller.clearActiveCommand()
+            advanceUntilIdle()
+
+            // Then (legacy behaviour: no stash, input cleared to empty on dismiss)
+            assertEquals("", controller.state.value.inputValue)
+        }
+
+    @Test
+    fun `Given re-selecting command When selectCommand called again Then existing stash is preserved`() = runTest {
+        // Given
+        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val otherCommand = Command("imgur", "Search Imgur", "[text]", "fun_set")
+        val preCommandText = "draft message"
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command, otherCommand))),
+            )
+            .get()
+        controller.setMessageInput(preCommandText)
+        advanceUntilIdle()
+        controller.selectCommand(command)
+        advanceUntilIdle()
+        controller.setMessageInput("cat")
+        advanceUntilIdle()
+
+        // When: user re-selects a command without cancelling the first one
+        controller.selectCommand(otherCommand)
+        advanceUntilIdle()
+        controller.clearActiveCommand()
+        advanceUntilIdle()
+
+        // Then: dismissal restores the original pre-command draft, not the in-command text
+        assertEquals(preCommandText, controller.state.value.inputValue)
+    }
+
+    @Test
+    fun `Given an active command with stash When clearData called Then stash is discarded and composer is empty`() =
+        runTest {
+            // Given
+            val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+            val preCommandText = "draft message"
+            val preCommandAttachment = randomAttachment()
+            val controller = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(command))),
+                )
+                .get()
+            controller.setMessageInput(preCommandText)
+            controller.addAttachments(listOf(preCommandAttachment))
+            advanceUntilIdle()
+            controller.selectCommand(command)
+            advanceUntilIdle()
+
+            // When
+            controller.clearData()
+            advanceUntilIdle()
+
+            // Then
+            assertNull(controller.state.value.activeCommand)
+            assertEquals("", controller.state.value.inputValue)
+            assertEquals(emptyList<Any>(), controller.state.value.attachments)
         }
 
     @Test
@@ -1473,6 +1721,9 @@ internal class MessageComposerControllerTest {
         private var inheritedScope: CoroutineScope = TestScope()
         val mediaRecorder: StreamMediaRecorder = mock()
         private var config = MessageComposerController.Config()
+        private var userLookupHandler: UserLookupHandler = mock {
+            onBlocking { handleUserLookup(any()) } doReturn emptyList()
+        }
 
         fun givenInheritedScope(scope: CoroutineScope) = apply {
             this.inheritedScope = scope
@@ -1572,7 +1823,7 @@ internal class MessageComposerControllerTest {
                 chatClient = chatClient,
                 channelState = MutableStateFlow(channelState),
                 mediaRecorder = mediaRecorder,
-                userLookupHandler = mock(),
+                userLookupHandler = userLookupHandler,
                 fileToUri = mock(),
                 config = config,
                 globalState = MutableStateFlow(globalState),

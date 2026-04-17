@@ -115,8 +115,11 @@ public data class AttachmentPickerActions(
             },
             onCreatePollDismissed = {},
             onCommandSelected = { command ->
-                consumePickerSession(attachmentsPickerViewModel, composerViewModel)
+                // Must run before consumePickerSession: selectCommand stashes the current composer
+                // attachments for restore-on-cancel, and consumePickerSession would otherwise clear
+                // them first.
                 composerViewModel.selectCommand(command)
+                consumePickerSession(attachmentsPickerViewModel, composerViewModel)
             },
             onDismiss = { attachmentsPickerViewModel.setPickerVisible(visible = false) },
         )
