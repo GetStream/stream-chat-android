@@ -19,25 +19,19 @@ package io.getstream.chat.android.models
 /**
  * A grouped channels response returned by [ChatClient.groupedQueryChannels].
  *
- * @param family The grouped channel family configured for the current app.
- * @param buckets The grouped channel buckets returned by the backend in response order.
+ * @param groups The channel groups returned by the backend in response order.
  */
-public data class GroupedChannels(
-    public val family: String,
-    public val buckets: List<GroupedChannelsBucket>,
-)
+public data class GroupedChannels(public val groups: Map<String, GroupedChannelsGroup>)
 
 /**
- * A grouped channels bucket returned by [io.getstream.chat.android.client.ChatClient.groupedQueryChannels].
+ * A channel group returned by [ChatClient.groupedQueryChannels].
  *
- * @param key The backend-defined key for this bucket within the family.
- * @param channels The channels that belong to this bucket.
- * @param unreadCount The total unread message count across the bucket.
- * @param unreadChannels The total unread channel count in the bucket.
+ * @param channels The channels that belong to this group.
+ * @param unreadCount The total unread message count across the group.
+ * @param unreadChannels The total unread channel count in the group.
  */
-public data class GroupedChannelsBucket(
-    public val key: String,
+public data class GroupedChannelsGroup(
     public val channels: List<Channel>,
-    public val unreadCount: Int,
-    public val unreadChannels: Int,
+    public val unreadCount: Int?,
+    public val unreadChannels: Int?,
 )

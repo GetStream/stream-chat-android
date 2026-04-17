@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.plugin.listeners.DraftMessageListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
 import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
+import io.getstream.chat.android.client.plugin.listeners.GroupedQueryChannelsListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.LiveLocationListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
@@ -54,6 +55,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
@@ -87,6 +89,7 @@ public interface Plugin :
     EditMessageListener,
     QueryChannelListener,
     QueryChannelsListener,
+    GroupedQueryChannelsListener,
     TypingEventListener,
     HideChannelListener,
     MarkAllReadListener,
@@ -419,6 +422,15 @@ public interface Plugin :
 
     public override suspend fun onFetchCurrentUserResult(
         result: Result<User>,
+    ) {
+        /* No-Op */
+    }
+
+    override suspend fun onGroupedQueryChannelsResult(
+        result: Result<GroupedChannels>,
+        limit: Int?,
+        watch: Boolean,
+        presence: Boolean,
     ) {
         /* No-Op */
     }

@@ -32,10 +32,8 @@ internal class GroupedQueryChannelsResponseAdapterTest {
     @Language("JSON")
     private val json = """
         {
-          "family": "support",
-          "buckets": [
-            {
-              "key": "all-open",
+          "groups": {
+            "all-open": {
               "channels": [
                 {
                   "channel": {
@@ -85,7 +83,62 @@ internal class GroupedQueryChannelsResponseAdapterTest {
               "unread_count": 3,
               "unread_channels": 1
             }
-          ],
+          },
+          "duration": "12ms"
+        }
+    """.trimIndent()
+
+    @Language("JSON")
+    private val jsonWithoutUnreadCounters = """
+        {
+          "groups": {
+            "expired": {
+              "channels": [
+                {
+                  "channel": {
+                    "cid": "messaging:support-123",
+                    "id": "support-123",
+                    "type": "messaging",
+                    "created_at": "2024-01-01T00:00:00.000Z",
+                    "updated_at": "2024-01-02T00:00:00.000Z",
+                    "frozen": false,
+                    "disabled": false,
+                    "config": {
+                      "typing_events": true,
+                      "read_events": true,
+                      "connect_events": true,
+                      "search": true,
+                      "reactions": true,
+                      "replies": true,
+                      "quotes": true,
+                      "uploads": true,
+                      "url_enrichment": true,
+                      "custom_events": false,
+                      "push_notifications": true,
+                      "polls": false,
+                      "mutes": true,
+                      "message_retention": "infinite",
+                      "max_message_length": 5000,
+                      "automod": "disabled",
+                      "automod_behavior": "flag",
+                      "created_at": "2024-01-01T00:00:00.000Z",
+                      "updated_at": "2024-01-02T00:00:00.000Z",
+                      "commands": [],
+                      "mark_messages_pending": false
+                    },
+                    "own_capabilities": [],
+                    "member_count": 0
+                  },
+                  "members": [],
+                  "messages": [],
+                  "pinned_messages": [],
+                  "watchers": [],
+                  "watcher_count": 0,
+                  "read": []
+                }
+              ]
+            }
+          },
           "duration": "12ms"
         }
     """.trimIndent()
@@ -94,17 +147,15 @@ internal class GroupedQueryChannelsResponseAdapterTest {
     fun `Deserialize grouped query channels response`() {
         val response = parser.fromJson(json, GroupedQueryChannelsResponse::class.java)
 
-        assertEquals("support", response.family)
         assertEquals("12ms", response.duration)
-        assertEquals(1, response.buckets.size)
+        assertEquals(setOf("all-open"), response.groups.keys)
 
-        val bucket = response.buckets[0]
-        assertEquals("all-open", bucket.key)
-        assertEquals(3, bucket.unread_count)
-        assertEquals(1, bucket.unread_channels)
-        assertEquals(1, bucket.channels.size)
+        val group = response.groups["all-open"]!!
+        assertEquals(3, group.unread_count)
+        assertEquals(1, group.unread_channels)
+        assertEquals(1, group.channels.size)
 
-        val channelResponse = bucket.channels[0]
+        val channelResponse = group.channels[0]
         assertEquals("messaging:support-123", channelResponse.channel.cid)
         assertEquals("support-123", channelResponse.channel.id)
         assertEquals("messaging", channelResponse.channel.type)
@@ -129,5 +180,19 @@ internal class GroupedQueryChannelsResponseAdapterTest {
         assertEquals(emptyList<Any>(), channelResponse.watchers)
         assertEquals(0, channelResponse.watcher_count)
         assertEquals(emptyList<Any>(), channelResponse.read)
+    }
+
+    @Test
+    fun `Deserialize default unread counters when missing`() {
+        val response = parser.fromJson(jsonWithoutUnreadCounters, GroupedQueryChannelsResponse::class.java)
+
+        assertEquals("12ms", response.duration)
+        assertEquals(setOf("expired"), response.groups.keys)
+
+        val group = response.groups["expired"]!!
+        assertEquals(null, group.unread_count)
+        assertEquals(null, group.unread_channels)
+        assertEquals(1, group.channels.size)
+        assertEquals("messaging:support-123", group.channels[0].channel.cid)
     }
 }

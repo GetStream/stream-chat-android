@@ -134,6 +134,7 @@ internal object EventArguments {
     private const val unreadChannels = 5
     private const val unreadMessages = 1
     private const val totalUnreadCount = 4
+    private val groupedUnreadChannels = mapOf("direct" to 2, "support" to 5)
     private val user = User(
         id = "bender",
         role = "user",
@@ -263,6 +264,7 @@ internal object EventArguments {
         channel = channel,
         user = user,
         message = null,
+        groupedUnreadChannels = groupedUnreadChannels,
     )
     private val channelTruncatedServerSideEvent = ChannelTruncatedEvent(
         type = EventType.CHANNEL_TRUNCATED,
@@ -403,6 +405,7 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         channel = channel,
+        groupedUnreadChannels = groupedUnreadChannels,
     )
     private val notificationChannelTruncatedEvent = NotificationChannelTruncatedEvent(
         type = EventType.NOTIFICATION_CHANNEL_TRUNCATED,
@@ -456,6 +459,7 @@ internal object EventArguments {
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
         lastReadMessageId = message.id,
+        groupedUnreadChannels = groupedUnreadChannels,
     )
     private val notificationMarkUnreadEvent = NotificationMarkUnreadEvent(
         type = EventType.NOTIFICATION_MARK_UNREAD,
@@ -471,6 +475,7 @@ internal object EventArguments {
         firstUnreadMessageId = message.id,
         lastReadMessageAt = date,
         lastReadMessageId = parentMessageId,
+        groupedUnreadChannels = groupedUnreadChannels,
     )
     private val notificationMessageNewEvent = NotificationMessageNewEvent(
         type = EventType.NOTIFICATION_MESSAGE_NEW,
@@ -483,6 +488,7 @@ internal object EventArguments {
         message = message,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
+        groupedUnreadChannels = groupedUnreadChannels,
     )
     private val notificationRemovedFromChannelEvent = NotificationRemovedFromChannelEvent(
         type = EventType.NOTIFICATION_REMOVED_FROM_CHANNEL,
@@ -656,6 +662,7 @@ internal object EventArguments {
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
         channelMessageCount = 1,
+        groupedUnreadChannels = groupedUnreadChannels,
     )
     private val newMessageWithoutUnreadCountsEvent = NewMessageEvent(
         type = EventType.MESSAGE_NEW,

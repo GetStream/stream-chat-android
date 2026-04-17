@@ -21,29 +21,25 @@ import com.squareup.moshi.JsonClass
 /**
  * Raw API response for the grouped query channels endpoint (`POST /channels/grouped`).
  *
- * @param family The family identifier that groups the buckets (e.g. "support").
- * @param buckets The list of channel buckets belonging to this family.
- * @param duration The server-reported request duration (e.g. "12ms").
+ * @param groups The list of channel groups.
+ * @param duration The server-reported request duration.
  */
 @JsonClass(generateAdapter = true)
 internal data class GroupedQueryChannelsResponse(
-    val family: String,
-    val buckets: List<GroupedQueryChannelsBucket>,
+    val groups: Map<String, GroupedQueryChannelsGroup>,
     val duration: String,
 )
 
 /**
- * A single bucket within a [GroupedQueryChannelsResponse].
+ * A single group within a [GroupedQueryChannelsResponse].
  *
- * @param key The backend-defined key for this bucket within the family (e.g. "all-open").
- * @param channels The channel responses that belong to this bucket.
- * @param unread_count The total number of unread messages across all channels in this bucket.
- * @param unread_channels The number of channels with unread messages in this bucket.
+ * @param channels The channel responses that belong to this group.
+ * @param unread_count The total number of unread messages across all channels in this group.
+ * @param unread_channels The number of channels with unread messages in this group.
  */
 @JsonClass(generateAdapter = true)
-internal data class GroupedQueryChannelsBucket(
-    val key: String,
+internal data class GroupedQueryChannelsGroup(
     val channels: List<ChannelResponse>,
-    val unread_count: Int,
-    val unread_channels: Int,
+    val unread_count: Int?,
+    val unread_channels: Int?,
 )

@@ -54,6 +54,7 @@ internal fun createChannelTruncatedEventStringJson() =
             "cid": "channelType:channelId",
             "user": ${createUserJsonString()},
             "channel": ${createChannelJsonString()},
+            "grouped_unread_channels": {"direct": 2, "support": 5},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
     )
@@ -231,6 +232,7 @@ internal fun createNotificationChannelDeletedEventStringJson() =
             "cid": "channelType:channelId",
             "user": ${createUserJsonString()},
             "channel": ${createChannelJsonString()},
+            "grouped_unread_channels": {"direct": 2, "support": 5},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
     )
@@ -300,6 +302,7 @@ internal fun createNotificationMarkReadEventStringJson() =
             "watcher_count": 3,
             "total_unread_count": 4,
             "unread_channels": 5,
+            "grouped_unread_channels": {"direct": 2, "support": 5},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z",
             "last_read_message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755"
         """.trimIndent(),
@@ -316,6 +319,7 @@ internal fun createNotificationMarkUnreadEventStringJson() =
             "watcher_count": 3,
             "total_unread_count": 4,
             "unread_channels": 5,
+            "grouped_unread_channels": {"direct": 2, "support": 5},
             "unread_messages": 1,
             "first_unread_message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
             "last_read_at": "2020-06-29T06:14:28.000Z",
@@ -336,6 +340,7 @@ internal fun createNotificationMessageNewEventStringJson() =
             "watcher_count": 3,
             "total_unread_count": 4,
             "unread_channels": 5,
+            "grouped_unread_channels": {"direct": 2, "support": 5},
             "message": ${createMessageJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
@@ -558,6 +563,7 @@ internal fun createNewMessageEventStringJson() =
             "watcher_count": 3,
             "total_unread_count": 4,
             "unread_channels": 5,
+            "grouped_unread_channels": {"direct": 2, "support": 5},
             "message": ${createMessageJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z",
             "channel_message_count": 1

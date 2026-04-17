@@ -285,6 +285,7 @@ internal class EventMapping(
             user = user?.toDomain(),
             message = message?.toDomain(channel.toChannelInfo()),
             channel = channel.toDomain(),
+            groupedUnreadChannels = grouped_unread_channels,
         )
     }
 
@@ -487,6 +488,7 @@ internal class EventMapping(
             totalUnreadCount = total_unread_count,
             unreadChannels = unread_channels,
             channelMessageCount = channel_message_count,
+            groupedUnreadChannels = grouped_unread_channels,
         )
     }
 
@@ -522,6 +524,7 @@ internal class EventMapping(
             channel = channel.toDomain(),
             totalUnreadCount = total_unread_count,
             unreadChannels = unread_channels,
+            groupedUnreadChannels = grouped_unread_channels,
         )
     }
 
@@ -625,6 +628,7 @@ internal class EventMapping(
             unreadThreads = unread_threads,
             unreadThreadMessages = unread_thread_messages,
             lastReadMessageId = last_read_message_id,
+            groupedUnreadChannels = grouped_unread_channels,
         )
     }
 
@@ -648,6 +652,7 @@ internal class EventMapping(
             unreadMessages = unread_messages,
             threadId = thread_id,
             unreadThreads = unread_threads,
+            groupedUnreadChannels = grouped_unread_channels,
         )
     }
 
@@ -680,6 +685,7 @@ internal class EventMapping(
             message = message.toDomain(channel.toChannelInfo()),
             totalUnreadCount = total_unread_count,
             unreadChannels = unread_channels,
+            groupedUnreadChannels = grouped_unread_channels,
         )
     }
 

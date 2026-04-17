@@ -3162,6 +3162,11 @@ internal constructor(
         presence: Boolean = false,
     ): Call<GroupedChannels> {
         return api.groupedQueryChannels(limit = limit, watch = watch, presence = presence)
+            .doOnResult(userScope) { result ->
+                plugins.forEach { plugin ->
+                    plugin.onGroupedQueryChannelsResult(result, limit, watch, presence)
+                }
+            }
     }
 
     /**

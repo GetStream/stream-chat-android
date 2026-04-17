@@ -1082,31 +1082,27 @@ public final class io/getstream/chat/android/models/GreaterThanOrEqualsFilterObj
 }
 
 public final class io/getstream/chat/android/models/GroupedChannels {
-	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/util/List;
-	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/models/GroupedChannels;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/GroupedChannels;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/models/GroupedChannels;
+	public fun <init> (Ljava/util/Map;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/Map;)Lio/getstream/chat/android/models/GroupedChannels;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/GroupedChannels;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/models/GroupedChannels;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getBuckets ()Ljava/util/List;
-	public final fun getFamily ()Ljava/lang/String;
+	public final fun getGroups ()Ljava/util/Map;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/models/GroupedChannelsBucket {
-	public fun <init> (Ljava/lang/String;Ljava/util/List;II)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/util/List;
-	public final fun component3 ()I
-	public final fun component4 ()I
-	public final fun copy (Ljava/lang/String;Ljava/util/List;II)Lio/getstream/chat/android/models/GroupedChannelsBucket;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/GroupedChannelsBucket;Ljava/lang/String;Ljava/util/List;IIILjava/lang/Object;)Lio/getstream/chat/android/models/GroupedChannelsBucket;
+public final class io/getstream/chat/android/models/GroupedChannelsGroup {
+	public fun <init> (Ljava/util/List;Ljava/lang/Integer;Ljava/lang/Integer;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun component3 ()Ljava/lang/Integer;
+	public final fun copy (Ljava/util/List;Ljava/lang/Integer;Ljava/lang/Integer;)Lio/getstream/chat/android/models/GroupedChannelsGroup;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/GroupedChannelsGroup;Ljava/util/List;Ljava/lang/Integer;Ljava/lang/Integer;ILjava/lang/Object;)Lio/getstream/chat/android/models/GroupedChannelsGroup;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannels ()Ljava/util/List;
-	public final fun getKey ()Ljava/lang/String;
-	public final fun getUnreadChannels ()I
-	public final fun getUnreadCount ()I
+	public final fun getUnreadChannels ()Ljava/lang/Integer;
+	public final fun getUnreadCount ()Ljava/lang/Integer;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

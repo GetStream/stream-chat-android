@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannelDeletedEvent
+import io.getstream.chat.android.client.test.randomChannelTruncatedEvent
 import io.getstream.chat.android.client.test.randomChannelUpdatedEvent
 import io.getstream.chat.android.client.test.randomConnectedEvent
 import io.getstream.chat.android.client.test.randomMarkAllReadEvent
@@ -152,6 +153,27 @@ internal class EventHandlerSequentialTest {
     }
 
     @ParameterizedTest
+    @MethodSource("groupedUnreadChannelsArguments")
+    internal fun `GlobalState should be updated with proper groupedUnreadChannels values`(
+        events: List<ChatEvent>,
+        initialGroupedUnreadChannels: Map<String, Int>,
+        prepareFixture: Fixture.() -> Unit,
+        expectedGroupedUnreadChannels: Map<String, Int>,
+    ) = runTest {
+        val mutableGlobalState = MutableGlobalState(currentUser.id).apply {
+            setGroupedUnreadChannels(initialGroupedUnreadChannels)
+        }
+        val handler = Fixture()
+            .withMutableGlobalState(mutableGlobalState)
+            .apply(prepareFixture)
+            .get(this)
+
+        handler.handleEvents(*events.toTypedArray())
+
+        mutableGlobalState.groupedUnreadChannels.value `should be equal to` expectedGroupedUnreadChannels
+    }
+
+    @ParameterizedTest
     @MethodSource("sharedLocationArguments")
     fun `GlobalState should be updated with shared locations`(
         events: List<ChatEvent>,
@@ -233,6 +255,96 @@ internal class EventHandlerSequentialTest {
         private val prepareFixtureWithCurrentUser: Fixture.() -> Unit = {
             withCurrentUser(currentUser)
         }
+
+        private val groupedUnreadChannels = mapOf("direct" to positiveRandomInt(), "support" to positiveRandomInt())
+        private val initialGroupedUnreadChannels = mapOf("old" to positiveRandomInt())
+
+        @Suppress("LongMethod")
+        @JvmStatic
+        fun groupedUnreadChannelsArguments() = listOf(
+            // NewMessageEvent with grouped unreads updates GlobalState
+            Arguments.of(
+                listOf(
+                    randomNewMessageEvent(
+                        cid = randomCid,
+                        groupedUnreadChannels = groupedUnreadChannels,
+                    ),
+                ),
+                initialGroupedUnreadChannels,
+                prepareFixtureWithReadCapability,
+                groupedUnreadChannels,
+            ),
+            // NotificationMarkReadEvent with grouped unreads updates GlobalState
+            Arguments.of(
+                listOf(
+                    randomNotificationMarkReadEvent(
+                        groupedUnreadChannels = groupedUnreadChannels,
+                    ),
+                ),
+                initialGroupedUnreadChannels,
+                neutralPrepareFixture,
+                groupedUnreadChannels,
+            ),
+            // NotificationMarkUnreadEvent with grouped unreads updates GlobalState
+            Arguments.of(
+                listOf(
+                    randomNotificationMarkUnreadEvent(
+                        groupedUnreadChannels = groupedUnreadChannels,
+                    ),
+                ),
+                initialGroupedUnreadChannels,
+                neutralPrepareFixture,
+                groupedUnreadChannels,
+            ),
+            // NotificationMessageNewEvent with grouped unreads updates GlobalState
+            Arguments.of(
+                listOf(
+                    randomNotificationMessageNewEvent(
+                        cid = randomCid,
+                        groupedUnreadChannels = groupedUnreadChannels,
+                    ),
+                ),
+                initialGroupedUnreadChannels,
+                neutralPrepareFixture,
+                groupedUnreadChannels,
+            ),
+            // NotificationChannelDeletedEvent with grouped unreads updates GlobalState
+            Arguments.of(
+                listOf(
+                    randomNotificationChannelDeletedEvent(
+                        cid = randomCid,
+                        groupedUnreadChannels = groupedUnreadChannels,
+                    ),
+                ),
+                initialGroupedUnreadChannels,
+                neutralPrepareFixture,
+                groupedUnreadChannels,
+            ),
+            // ChannelTruncatedEvent with grouped unreads updates GlobalState
+            Arguments.of(
+                listOf(
+                    randomChannelTruncatedEvent(
+                        cid = randomCid,
+                        groupedUnreadChannels = groupedUnreadChannels,
+                    ),
+                ),
+                initialGroupedUnreadChannels,
+                neutralPrepareFixture,
+                groupedUnreadChannels,
+            ),
+            // Event with null grouped unreads preserves previous value
+            Arguments.of(
+                listOf(
+                    randomNewMessageEvent(
+                        cid = randomCid,
+                        groupedUnreadChannels = null,
+                    ),
+                ),
+                initialGroupedUnreadChannels,
+                prepareFixtureWithReadCapability,
+                initialGroupedUnreadChannels,
+            ),
+        )
 
         @JvmStatic
         fun unreadCountArguments() = unreadArgumentMarkAllReadEvent() +

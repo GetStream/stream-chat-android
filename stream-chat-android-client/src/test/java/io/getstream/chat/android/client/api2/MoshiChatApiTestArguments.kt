@@ -39,7 +39,7 @@ import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.DevicesResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
-import io.getstream.chat.android.client.api2.model.response.GroupedQueryChannelsBucket
+import io.getstream.chat.android.client.api2.model.response.GroupedQueryChannelsGroup
 import io.getstream.chat.android.client.api2.model.response.GroupedQueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
@@ -445,10 +445,8 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(
             RetroSuccess(
                 GroupedQueryChannelsResponse(
-                    family = "support",
-                    buckets = listOf(
-                        GroupedQueryChannelsBucket(
-                            key = "all-open",
+                    groups = mapOf(
+                        "all-open" to GroupedQueryChannelsGroup(
                             channels = listOf(
                                 ChannelResponse(
                                     channel = Mother.randomDownstreamChannelDto(),

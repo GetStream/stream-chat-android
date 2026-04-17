@@ -128,7 +128,7 @@ import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.GroupedChannels
-import io.getstream.chat.android.models.GroupedChannelsBucket
+import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
@@ -1326,13 +1326,11 @@ constructor(
                 body = body,
             ).map { response ->
                 GroupedChannels(
-                    family = response.family,
-                    buckets = response.buckets.map { bucket ->
-                        GroupedChannelsBucket(
-                            key = bucket.key,
-                            channels = bucket.channels.map(::flattenChannel),
-                            unreadCount = bucket.unread_count,
-                            unreadChannels = bucket.unread_channels,
+                    groups = response.groups.mapValues { entry ->
+                        GroupedChannelsGroup(
+                            channels = entry.value.channels.map(::flattenChannel),
+                            unreadCount = entry.value.unread_count,
+                            unreadChannels = entry.value.unread_channels,
                         )
                     },
                 )

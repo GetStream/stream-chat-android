@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.test
 import io.getstream.chat.android.client.events.AnswerCastedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
+import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
@@ -199,6 +200,28 @@ public fun randomChannelDeletedEvent(
     channel = channel,
 )
 
+public fun randomChannelTruncatedEvent(
+    createdAt: Date = Date(),
+    cid: String = randomCID(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    channel: Channel = randomChannel(),
+    user: User? = randomUser(),
+    message: Message? = null,
+    groupedUnreadChannels: Map<String, Int>? = null,
+): ChannelTruncatedEvent = ChannelTruncatedEvent(
+    type = EventType.CHANNEL_TRUNCATED,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    channel = channel,
+    user = user,
+    message = message,
+    groupedUnreadChannels = groupedUnreadChannels,
+)
+
 public fun randomNotificationChannelDeletedEvent(
     createdAt: Date = Date(),
     cid: String = randomCID(),
@@ -207,6 +230,7 @@ public fun randomNotificationChannelDeletedEvent(
     channel: Channel = randomChannel(),
     totalUnreadCount: Int = randomInt(),
     unreadChannels: Int = randomInt(),
+    groupedUnreadChannels: Map<String, Int>? = null,
 ): NotificationChannelDeletedEvent {
     return NotificationChannelDeletedEvent(
         type = EventType.NOTIFICATION_CHANNEL_DELETED,
@@ -218,6 +242,7 @@ public fun randomNotificationChannelDeletedEvent(
         channel = channel,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
+        groupedUnreadChannels = groupedUnreadChannels,
     )
 }
 
@@ -298,6 +323,7 @@ public fun randomNotificationMarkReadEvent(
     thread: ThreadInfo? = randomThreadInfo(),
     unreadThreads: Int? = randomInt(),
     unreadThreadMessages: Int? = randomInt(),
+    groupedUnreadChannels: Map<String, Int>? = null,
 ): NotificationMarkReadEvent = NotificationMarkReadEvent(
     type = EventType.NOTIFICATION_MARK_READ,
     createdAt = createdAt,
@@ -313,6 +339,7 @@ public fun randomNotificationMarkReadEvent(
     thread = thread,
     unreadThreads = unreadThreads,
     unreadThreadMessages = unreadThreadMessages,
+    groupedUnreadChannels = groupedUnreadChannels,
 )
 
 public fun randomNotificationMarkUnreadEvent(
@@ -330,6 +357,7 @@ public fun randomNotificationMarkUnreadEvent(
     threadId: String? = randomString(),
     unreadThreads: Int = randomInt(),
     unreadThreadMessages: Int = randomInt(),
+    groupedUnreadChannels: Map<String, Int>? = null,
 ): NotificationMarkUnreadEvent = NotificationMarkUnreadEvent(
     type = EventType.NOTIFICATION_MARK_UNREAD,
     createdAt = createdAt,
@@ -347,6 +375,7 @@ public fun randomNotificationMarkUnreadEvent(
     unreadMessages = unreadMessages,
     lastReadMessageAt = lastReadMessageAt,
     lastReadMessageId = lastReadMessageId,
+    groupedUnreadChannels = groupedUnreadChannels,
 )
 
 public fun randomTypingStopEvent(
@@ -442,6 +471,7 @@ public fun randomNotificationMessageNewEvent(
     message: Message = randomMessage(),
     totalUnreadCount: Int = randomInt(),
     unreadChannels: Int = randomInt(),
+    groupedUnreadChannels: Map<String, Int>? = null,
 ): NotificationMessageNewEvent = NotificationMessageNewEvent(
     type = EventType.NOTIFICATION_MESSAGE_NEW,
     createdAt = createdAt,
@@ -453,6 +483,7 @@ public fun randomNotificationMessageNewEvent(
     message = message,
     totalUnreadCount = totalUnreadCount,
     unreadChannels = unreadChannels,
+    groupedUnreadChannels = groupedUnreadChannels,
 )
 
 public fun randomMessageUpdateEvent(
@@ -526,6 +557,7 @@ public fun randomNewMessageEvent(
     totalUnreadCount: Int = randomInt(),
     unreadChannels: Int = randomInt(),
     channelMessageCount: Int? = positiveRandomInt(),
+    groupedUnreadChannels: Map<String, Int>? = null,
 ): NewMessageEvent {
     return NewMessageEvent(
         type = EventType.MESSAGE_NEW,
@@ -540,6 +572,7 @@ public fun randomNewMessageEvent(
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
         channelMessageCount = channelMessageCount,
+        groupedUnreadChannels = groupedUnreadChannels,
     )
 }
 

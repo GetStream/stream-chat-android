@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.models.GroupedChannels
-import io.getstream.chat.android.models.GroupedChannelsBucket
+import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomInt
@@ -42,10 +42,8 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
     fun groupedQueryChannelsSuccess() = runTest {
         // given
         val groupedChannels = GroupedChannels(
-            family = randomString(),
-            buckets = listOf(
-                GroupedChannelsBucket(
-                    key = randomString(),
+            groups = mapOf(
+                randomString() to GroupedChannelsGroup(
                     channels = listOf(randomChannel()),
                     unreadCount = randomInt(),
                     unreadChannels = randomInt(),

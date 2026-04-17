@@ -56,6 +56,7 @@ internal data class ChannelTruncatedEventDto(
     val user: DownstreamUserDto?,
     val message: DownstreamMessageDto?,
     val channel: DownstreamChannelDto,
+    val grouped_unread_channels: Map<String, Int>? = null,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -197,6 +198,7 @@ internal data class NewMessageEventDto(
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
     val channel_message_count: Int? = null,
+    val grouped_unread_channels: Map<String, Int>? = null,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -236,6 +238,7 @@ internal data class NotificationChannelDeletedEventDto(
     val channel: DownstreamChannelDto,
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
+    val grouped_unread_channels: Map<String, Int>? = null,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -307,6 +310,7 @@ internal data class NotificationMarkReadEventDto(
     val unread_threads: Int? = null,
     val unread_thread_messages: Int? = null,
     val last_read_message_id: String?,
+    val grouped_unread_channels: Map<String, Int>? = null,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -325,6 +329,7 @@ internal data class NotificationMarkUnreadEventDto(
     val unread_channels: Int,
     val thread_id: String? = null,
     val unread_threads: Int = 0,
+    val grouped_unread_channels: Map<String, Int>? = null,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -347,6 +352,7 @@ internal data class NotificationMessageNewEventDto(
     val message: DownstreamMessageDto,
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
+    val grouped_unread_channels: Map<String, Int>? = null,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

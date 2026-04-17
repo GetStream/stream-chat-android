@@ -35,6 +35,7 @@ import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HasChannel
+import io.getstream.chat.android.client.events.HasGroupedUnreadChannels
 import io.getstream.chat.android.client.events.HasMessage
 import io.getstream.chat.android.client.events.HasOwnUser
 import io.getstream.chat.android.client.events.HasPoll
@@ -317,6 +318,7 @@ internal class EventHandlerSequential(
         var me = clientState.user.value
         var totalUnreadCount = mutableGlobalState.totalUnreadCount.value
         var channelUnreadCount = mutableGlobalState.channelUnreadCount.value
+        var groupedUnreadChannels = mutableGlobalState.groupedUnreadChannels.value
         var unreadThreadsCount = mutableGlobalState.unreadThreadsCount.value
         var blockedUserIds = mutableGlobalState.blockedUserIds.value
 
@@ -371,6 +373,9 @@ internal class EventHandlerSequential(
                 (event as? DraftMessageUpdatedEvent)?.let { mutableGlobalState.updateDraftMessage(it.draftMessage) }
                 (event as? DraftMessageDeletedEvent)?.let { mutableGlobalState.removeDraftMessage(it.draftMessage) }
                 (event as? HasUnreadCounts)?.let { modifyValuesFromEvent(it) }
+                (event as? HasGroupedUnreadChannels)?.groupedUnreadChannels?.let {
+                    groupedUnreadChannels = it
+                }
                 (event as? HasOwnUser)?.let { modifyValuesFromUser(it.me) }
                 (event as? HasUnreadThreadCounts)?.let { modifyUnreadThreadsCount(it) }
                 (event as? UserUpdatedEvent)
@@ -388,6 +393,7 @@ internal class EventHandlerSequential(
         }
         mutableGlobalState.setTotalUnreadCount(totalUnreadCount)
         mutableGlobalState.setChannelUnreadCount(channelUnreadCount)
+        mutableGlobalState.setGroupedUnreadChannels(groupedUnreadChannels)
         mutableGlobalState.setUnreadThreadsCount(unreadThreadsCount)
         mutableGlobalState.setBlockedUserIds(blockedUserIds)
         logger.v { "[updateGlobalState] completed batchId: ${batchEvent.id}" }
