@@ -135,7 +135,7 @@ public sealed interface HasUnreadThreadCounts {
  * - notification.mark_read
  * - notification.mark_unread
  * - notification.channel_deleted
- * - channel.truncated
+ * - notification.channel_truncated
  */
 public sealed interface HasGroupedUnreadChannels {
     public val groupedUnreadChannels: Map<String, Int>?
