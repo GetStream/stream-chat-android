@@ -20,6 +20,8 @@ import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.state.QueryThreadsState
+import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomThread
@@ -205,7 +207,14 @@ internal class ThreadListControllerTest {
 
         private val queryThreadsStateFlow = MutableStateFlow<QueryThreadsState?>(null)
 
-        private val mockChatClient: ChatClient = mock()
+        private val mockClientState: ClientState = mock {
+            on { connectionState } doReturn MutableStateFlow(ConnectionState.Connected)
+            on { user } doReturn MutableStateFlow(null)
+        }
+
+        private val mockChatClient: ChatClient = mock {
+            on { clientState } doReturn mockClientState
+        }
 
         fun givenQueryThreadsState(state: QueryThreadsState) = apply {
             queryThreadsStateFlow.value = state

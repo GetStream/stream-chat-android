@@ -1605,6 +1605,23 @@ public data class MenuOptionItemParams(
 )
 
 /**
+ * Parameters for [ChatComponentFactory.ThreadListHeader].
+ *
+ * @param connectionState The current connection state.
+ * @param modifier Modifier for styling.
+ * @param title The title to display in the header.
+ * @param currentUser The currently logged in user.
+ * @param onAvatarClick Action invoked when the avatar is clicked.
+ */
+public data class ThreadListHeaderParams(
+    val connectionState: ConnectionState,
+    val modifier: Modifier = Modifier,
+    val title: String = "",
+    val currentUser: User? = null,
+    val onAvatarClick: (User?) -> Unit = {},
+)
+
+/**
  * Parameters for [ChatComponentFactory.ThreadListBanner].
  *
  * @param state The current thread list banner state.
