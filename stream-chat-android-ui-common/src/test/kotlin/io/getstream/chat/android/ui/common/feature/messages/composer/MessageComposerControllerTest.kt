@@ -50,6 +50,7 @@ import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelp
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageInput
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
@@ -896,6 +897,167 @@ internal class MessageComposerControllerTest {
             assertNull(controller.state.value.activeCommand)
             assertEquals("", controller.state.value.inputValue)
             assertEquals(emptyList<Any>(), controller.state.value.attachments)
+        }
+
+    @Test
+    fun `Given edit mode When selectCommand called Then activeCommand is not set`() = runTest {
+        // Given
+        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val editedMessage = randomMessage(cid = CID)
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+        controller.performMessageAction(Edit(editedMessage))
+        advanceUntilIdle()
+
+        // When
+        controller.selectCommand(command)
+        advanceUntilIdle()
+
+        // Then
+        assertNull(controller.state.value.activeCommand)
+        assertEquals(editedMessage.text, controller.state.value.inputValue)
+    }
+
+    @Test
+    fun `Given edit mode When user types slash Then command suggestions include all commands`() = runTest {
+        // Given
+        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val editedMessage = randomMessage(cid = CID, text = "")
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+        controller.performMessageAction(Edit(editedMessage))
+        advanceUntilIdle()
+
+        // When
+        controller.setMessageInput("/")
+        advanceUntilIdle()
+
+        // Then
+        assertEquals(listOf(command), controller.state.value.commandSuggestions)
+    }
+
+    @Test
+    fun `Given reply mode When selectCommand called with fun_set command Then activeCommand is set`() = runTest {
+        // Given
+        val giphyCommand = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val muteCommand = Command("mute", "Mute user", "[@username]", "moderation_set")
+        val repliedMessage = randomMessage(cid = CID)
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(giphyCommand, muteCommand))),
+            )
+            .get()
+        controller.performMessageAction(Reply(repliedMessage))
+        advanceUntilIdle()
+
+        // When
+        controller.selectCommand(giphyCommand)
+        advanceUntilIdle()
+
+        // Then
+        assertEquals(giphyCommand, controller.state.value.activeCommand)
+    }
+
+    @Test
+    fun `Given reply mode When user types slash Then suggestions include all commands`() = runTest {
+        // Given
+        val giphyCommand = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val muteCommand = Command("mute", "Mute user", "[@username]", "moderation_set")
+        val repliedMessage = randomMessage(cid = CID)
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(giphyCommand, muteCommand))),
+            )
+            .get()
+        controller.performMessageAction(Reply(repliedMessage))
+        advanceUntilIdle()
+
+        // When
+        controller.setMessageInput("/")
+        advanceUntilIdle()
+
+        // Then
+        assertEquals(listOf(giphyCommand, muteCommand), controller.state.value.commandSuggestions)
+    }
+
+    @Test
+    fun `Given reply mode When toggleCommandsVisibility called Then suggestions include all commands`() = runTest {
+        // Given
+        val giphyCommand = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val muteCommand = Command("mute", "Mute user", "[@username]", "moderation_set")
+        val repliedMessage = randomMessage(cid = CID)
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(giphyCommand, muteCommand))),
+            )
+            .get()
+        controller.performMessageAction(Reply(repliedMessage))
+        advanceUntilIdle()
+
+        // When
+        controller.toggleCommandsVisibility()
+        advanceUntilIdle()
+
+        // Then
+        assertEquals(listOf(giphyCommand, muteCommand), controller.state.value.commandSuggestions)
+    }
+
+    @Test
+    fun `Given edit mode When toggleCommandsVisibility called Then command suggestions include all commands`() =
+        runTest {
+            // Given
+            val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+            val editedMessage = randomMessage(cid = CID)
+            val controller = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(command))),
+                )
+                .get()
+            controller.performMessageAction(Edit(editedMessage))
+            advanceUntilIdle()
+
+            // When
+            controller.toggleCommandsVisibility()
+            advanceUntilIdle()
+
+            // Then
+            assertEquals(listOf(command), controller.state.value.commandSuggestions)
         }
 
     @Test

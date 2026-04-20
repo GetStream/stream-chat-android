@@ -982,9 +982,14 @@ public class MessageComposerController(
      * overwrite an existing stash (in-command input is command-specific and not preserved across
      * command switches).
      *
+     * No-op while the composer is in edit mode: the backend does not dispatch slash commands on
+     * message edits, so the combination is disallowed client-side to avoid emitting literal
+     * `/command` text as the edit payload.
+     *
      * @param command The command that was selected.
      */
     public fun selectCommand(command: Command) {
+        if (isInEditMode) return
         if (config.activeCommandEnabled && stashedInputValue == null) {
             stashPreCommandState()
         }
@@ -1001,8 +1006,8 @@ public class MessageComposerController(
      *
      * When a pre-command stash exists (populated by [selectCommand] under
      * [Config.activeCommandEnabled]), the stashed input, attachments, and mentions are restored
-     * and any text typed inside command mode is discarded. When no stash exists, the input is
-     * reset to empty (legacy behaviour).
+     * and any text typed inside command mode is discarded.
+     * When no stash exists, the input is reset to empty.
      */
     public fun clearActiveCommand() {
         _state.update { it.copy(activeCommand = null) }
