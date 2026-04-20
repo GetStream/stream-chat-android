@@ -253,6 +253,9 @@ internal interface MessageDao {
     @Query("DELETE FROM $MESSAGE_ENTITY_TABLE_NAME")
     suspend fun deleteAll()
 
+    @Query("DELETE FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME")
+    suspend fun deleteAllDrafts()
+
     private companion object {
         private const val SQLITE_MAX_VARIABLE_NUMBER: Int = 999
         private const val NO_LIMIT: Int = -1
