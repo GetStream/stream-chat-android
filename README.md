@@ -19,8 +19,8 @@
 <div align="center">
 
 ![stream-chat-android-client](https://img.shields.io/badge/stream--chat--android--client-5.82%20MB-lightgreen)
-![stream-chat-android-ui-components](https://img.shields.io/badge/stream--chat--android--ui--components-10.95%20MB-lightgreen)
-![stream-chat-android-compose](https://img.shields.io/badge/stream--chat--android--compose-12.22%20MB-lightgreen)
+![stream-chat-android-ui-components](https://img.shields.io/badge/stream--chat--android--ui--components-11.01%20MB-lightgreen)
+![stream-chat-android-compose](https://img.shields.io/badge/stream--chat--android--compose-12.32%20MB-lightgreen)
 
 </div>
 
