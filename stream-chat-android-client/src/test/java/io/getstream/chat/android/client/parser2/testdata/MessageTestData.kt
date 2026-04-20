@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -28,6 +29,7 @@ import io.getstream.chat.android.models.VotingVisibility
 import org.intellij.lang.annotations.Language
 import java.util.Date
 
+@Suppress("LargeClass")
 internal object MessageTestData {
 
     @Language("JSON")
@@ -133,7 +135,7 @@ internal object MessageTestData {
                 }
             ],
             "created_at": "2020-01-01T00:00:00.000Z",
-            "updated_at": "2020-01-01T03:00:00.000Z",
+            "updated_at": "2020-01-01T04:00:00.000Z",
             "is_closed": false,
             "answers_count": 1,
             "latest_answers": [
@@ -546,7 +548,7 @@ internal object MessageTestData {
                 ),
             ),
             createdAt = Date(1577836800000L), // 2020-01-01T00:00:00.000Z
-            updatedAt = Date(1577847600000L), // 2020-01-01T03:00:00.000Z
+            updatedAt = Date(1577851200000L), // 2020-01-01T04:00:00.000Z
             closed = false,
             answersCount = 1,
             answers = listOf(
@@ -563,7 +565,7 @@ internal object MessageTestData {
             extraData = emptyMap(),
         ),
         createdAt = Date(1577836800000L), // 2020-01-01T00:00:00.000Z
-        updatedAt = Date(1577847600000L), // Message updatedAt matches poll updatedAt due to parser behavior
+        updatedAt = Date(1577851200000L), // max(message 03:00, poll 04:00) = poll 04:00
         silent = false,
         i18n = emptyMap(),
         pinned = false,
@@ -647,4 +649,160 @@ internal object MessageTestData {
         showInChannel = false,
         extraData = emptyMap(),
     )
+
+    // region Quoted message with channel info (field-order independence test)
+
+    /**
+     * JSON where "quoted_message" appears BEFORE "channel" in the object.
+     * Tests that the direct parser produces the same result regardless of field order.
+     */
+    @Language("JSON")
+    val jsonWithQuotedMessageBeforeChannel = """{
+        "id": "msg-parent",
+        "cid": "messaging:general",
+        "text": "Parent message",
+        "html": "<p>Parent message</p>",
+        "type": "regular",
+        "user": {"id": "user-1", "role": "user", "banned": false, "online": true},
+        "attachments": [],
+        "latest_reactions": [],
+        "own_reactions": [],
+        "mentioned_users": [],
+        "reply_count": 0,
+        "deleted_reply_count": 0,
+        "silent": false,
+        "created_at": "2020-01-01T00:00:00.000Z",
+        "updated_at": "2020-01-01T00:00:00.000Z",
+        "quoted_message_id": "msg-quoted",
+        "quoted_message": {
+            "id": "msg-quoted",
+            "cid": "messaging:general",
+            "text": "Quoted message",
+            "html": "<p>Quoted message</p>",
+            "type": "regular",
+            "user": {"id": "user-2", "role": "user", "banned": false, "online": true},
+            "attachments": [],
+            "latest_reactions": [],
+            "own_reactions": [],
+            "mentioned_users": [],
+            "reply_count": 0,
+            "deleted_reply_count": 0,
+            "silent": false,
+            "created_at": "2020-01-01T00:00:00.000Z",
+            "updated_at": "2020-01-01T00:00:00.000Z"
+        },
+        "channel": {
+            "cid": "messaging:general",
+            "id": "general",
+            "type": "messaging",
+            "member_count": 5,
+            "name": "General"
+        }
+    }"""
+
+    /**
+     * Same JSON content but "channel" appears BEFORE "quoted_message".
+     */
+    @Language("JSON")
+    val jsonWithQuotedMessageAfterChannel = """{
+        "id": "msg-parent",
+        "cid": "messaging:general",
+        "text": "Parent message",
+        "html": "<p>Parent message</p>",
+        "type": "regular",
+        "user": {"id": "user-1", "role": "user", "banned": false, "online": true},
+        "attachments": [],
+        "latest_reactions": [],
+        "own_reactions": [],
+        "mentioned_users": [],
+        "reply_count": 0,
+        "deleted_reply_count": 0,
+        "silent": false,
+        "created_at": "2020-01-01T00:00:00.000Z",
+        "updated_at": "2020-01-01T00:00:00.000Z",
+        "channel": {
+            "cid": "messaging:general",
+            "id": "general",
+            "type": "messaging",
+            "member_count": 5,
+            "name": "General"
+        },
+        "quoted_message_id": "msg-quoted",
+        "quoted_message": {
+            "id": "msg-quoted",
+            "cid": "messaging:general",
+            "text": "Quoted message",
+            "html": "<p>Quoted message</p>",
+            "type": "regular",
+            "user": {"id": "user-2", "role": "user", "banned": false, "online": true},
+            "attachments": [],
+            "latest_reactions": [],
+            "own_reactions": [],
+            "mentioned_users": [],
+            "reply_count": 0,
+            "deleted_reply_count": 0,
+            "silent": false,
+            "created_at": "2020-01-01T00:00:00.000Z",
+            "updated_at": "2020-01-01T00:00:00.000Z"
+        }
+    }"""
+
+    val expectedChannelInfo = ChannelInfo(
+        cid = "messaging:general",
+        id = "general",
+        type = "messaging",
+        memberCount = 5,
+        name = "General",
+    )
+
+    val expectedQuotedMessageWithChannel = Message(
+        id = "msg-parent",
+        cid = "messaging:general",
+        text = "Parent message",
+        html = "<p>Parent message</p>",
+        type = "regular",
+        user = User(id = "user-1", role = "user", invisible = false, banned = false, online = true),
+        attachments = emptyList(),
+        latestReactions = emptyList(),
+        ownReactions = emptyList(),
+        mentionedUsersIds = emptyList(),
+        mentionedUsers = emptyList(),
+        replyCount = 0,
+        deletedReplyCount = 0,
+        createdAt = Date(1577836800000L),
+        updatedAt = Date(1577836800000L),
+        silent = false,
+        pinned = false,
+        shadowed = false,
+        showInChannel = false,
+        deletedForMe = false,
+        channelInfo = expectedChannelInfo,
+        replyMessageId = "msg-quoted",
+        replyTo = Message(
+            id = "msg-quoted",
+            cid = "messaging:general",
+            text = "Quoted message",
+            html = "<p>Quoted message</p>",
+            type = "regular",
+            user = User(id = "user-2", role = "user", invisible = false, banned = false, online = true),
+            attachments = emptyList(),
+            latestReactions = emptyList(),
+            ownReactions = emptyList(),
+            mentionedUsersIds = emptyList(),
+            mentionedUsers = emptyList(),
+            replyCount = 0,
+            deletedReplyCount = 0,
+            createdAt = Date(1577836800000L),
+            updatedAt = Date(1577836800000L),
+            silent = false,
+            pinned = false,
+            shadowed = false,
+            showInChannel = false,
+            deletedForMe = false,
+            channelInfo = expectedChannelInfo,
+        ),
+        extraData = emptyMap(),
+    )
+
+    // endregion
 }

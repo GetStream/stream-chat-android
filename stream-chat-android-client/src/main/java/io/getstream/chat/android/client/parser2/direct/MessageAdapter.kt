@@ -123,9 +123,9 @@ internal class MessageAdapter(
                 "message_text_updated_at" -> messageTextUpdatedAt = dateAdapter.fromJson(reader)
                 "pinned_by" -> pinnedBy = userAdapter.fromJson(reader)
                 "quoted_message" -> {
-                    // Recursive parsing: pass the fallback channel info along
-                    val resolvedChannelInfo = channel ?: fallbackChannelInfo
-                    quotedMessage = fromJson(reader, resolvedChannelInfo)
+                    // Parse with outer fallback only; parent's channel may not be parsed yet.
+                    // Post-loop enrichment ensures parity with DTO toDomain(channelInfo).
+                    quotedMessage = fromJson(reader, fallbackChannelInfo)
                 }
 
                 "quoted_message_id" -> quotedMessageId = JsonParsingUtils.readNullableString(reader)
@@ -172,6 +172,16 @@ internal class MessageAdapter(
 
         val resolvedChannelInfo = channel ?: fallbackChannelInfo
 
+        // Enrich quoted message with parent's resolved channelInfo (matching DTO toDomain behavior
+        // where parent passes its resolved channelInfo as fallback to quoted_message.toDomain())
+        val enrichedQuotedMessage = quotedMessage?.let { qm ->
+            if (resolvedChannelInfo != null && qm.channelInfo == null) {
+                qm.copy(channelInfo = resolvedChannelInfo)
+            } else {
+                qm
+            }
+        }
+
         // Filter reactions by messageId (matching DomainMapping behavior)
         val filteredLatestReactions = latestReactions.filter { it.messageId == id }
         val filteredOwnReactions = ownReactions.filter { it.messageId == id }
@@ -206,7 +216,7 @@ internal class MessageAdapter(
             replyCount = replyCount,
             deletedReplyCount = deletedReplyCount,
             replyMessageId = quotedMessageId,
-            replyTo = quotedMessage,
+            replyTo = enrichedQuotedMessage,
             shadowed = shadowed ?: false,
             showInChannel = showInChannel ?: false,
             silent = silent,

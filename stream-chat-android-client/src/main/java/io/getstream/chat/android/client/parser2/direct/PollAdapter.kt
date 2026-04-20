@@ -219,11 +219,11 @@ internal class PollAdapter(
         }
         reader.endObject()
 
-        if (id == null) return null
-        if (pollId == null) return null
-        if (optionId == null) return null
-        if (createdAt == null) return null
-        if (updatedAt == null) return null
+        JsonParsingUtils.requireField(id, "id", reader)
+        JsonParsingUtils.requireField(pollId, "poll_id", reader)
+        JsonParsingUtils.requireField(optionId, "option_id", reader)
+        JsonParsingUtils.requireField(createdAt, "created_at", reader)
+        JsonParsingUtils.requireField(updatedAt, "updated_at", reader)
 
         return ParsedVoteDto(
             id = id,

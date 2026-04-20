@@ -262,4 +262,13 @@ internal object PollTestData {
         createdBy = null,
         extraData = emptyMap(),
     )
+
+    // region Malformed vote test data
+
+    /** Poll JSON where a vote in own_votes is missing the required "id" field. */
+    @Language("JSON")
+    val jsonWithMalformedVoteMissingId =
+        """{"id":"poll1","name":"Favorite color","description":"Choose your favorite color","options":[{"id":"option1","text":"Red"}],"enforce_unique_vote":true,"allow_user_suggested_options":false,"allow_answers":false,"vote_count":1,"own_votes":[{"poll_id":"poll1","option_id":"option1","created_at":"2024-01-01T10:00:00.000Z","updated_at":"2024-01-01T11:00:00.000Z","user":{"id":"user1","role":"user","banned":false,"online":true},"is_answer":false}],"created_at":"2024-01-01T09:00:00.000Z","updated_at":"2024-01-01T12:00:00.000Z","answers_count":0,"created_by_id":"admin"}"""
+
+    // endregion
 }

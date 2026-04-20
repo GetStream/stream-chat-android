@@ -83,31 +83,25 @@ internal class MessageReminderInfoParsingTest {
     // region Error message parity
 
     @Test
-    fun `DTO path - throws on missing created_at`() {
-        assertThrows<JsonDataException> {
+    fun `Both paths - same error on missing created_at`() {
+        val dtoException = assertThrows<JsonDataException> {
             parser.fromJson(MessageReminderInfoTestData.jsonMissingCreatedAt, DownstreamReminderInfoDto::class.java)
         }
-    }
-
-    @Test
-    fun `Direct path - throws on missing created_at`() {
-        assertThrows<JsonDataException> {
+        val directException = assertThrows<JsonDataException> {
             adapter.fromJson(MessageReminderInfoTestData.jsonMissingCreatedAt)
         }
+        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `DTO path - throws on missing updated_at`() {
-        assertThrows<JsonDataException> {
+    fun `Both paths - same error on missing updated_at`() {
+        val dtoException = assertThrows<JsonDataException> {
             parser.fromJson(MessageReminderInfoTestData.jsonMissingUpdatedAt, DownstreamReminderInfoDto::class.java)
         }
-    }
-
-    @Test
-    fun `Direct path - throws on missing updated_at`() {
-        assertThrows<JsonDataException> {
+        val directException = assertThrows<JsonDataException> {
             adapter.fromJson(MessageReminderInfoTestData.jsonMissingUpdatedAt)
         }
+        assertEquals(dtoException.message, directException.message)
     }
 
     // endregion

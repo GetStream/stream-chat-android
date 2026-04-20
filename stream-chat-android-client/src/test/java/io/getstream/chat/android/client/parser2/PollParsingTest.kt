@@ -189,6 +189,24 @@ internal class PollParsingTest {
 
     // endregion
 
+    // region Malformed vote parity
+
+    @Test
+    fun `DTO path - throws on malformed vote missing id`() {
+        assertThrows<JsonDataException> {
+            parser.fromJson(PollTestData.jsonWithMalformedVoteMissingId, DownstreamPollDto::class.java)
+        }
+    }
+
+    @Test
+    fun `Direct path - throws on malformed vote missing id`() {
+        assertThrows<JsonDataException> {
+            adapter.fromJson(PollTestData.jsonWithMalformedVoteMissingId)
+        }
+    }
+
+    // endregion
+
     // region is_answer filtering tests
 
     @Test

@@ -374,6 +374,38 @@ internal class MessageParsingTest {
 
     // endregion
 
+    // region Quoted message field-order independence
+
+    @Test
+    fun `Both paths - quoted message with channel before quoted_message`() {
+        val dto = parser.fromJson(MessageTestData.jsonWithQuotedMessageAfterChannel, DownstreamMessageDto::class.java)
+        val dtoResult = with(domainMapping) { dto.toDomain() }
+        val directResult = messageAdapter.fromJson(MessageTestData.jsonWithQuotedMessageAfterChannel)
+
+        assertEquals(MessageTestData.expectedQuotedMessageWithChannel, dtoResult)
+        assertEquals(MessageTestData.expectedQuotedMessageWithChannel, directResult)
+    }
+
+    @Test
+    fun `Both paths - quoted message with channel after quoted_message`() {
+        val dto = parser.fromJson(MessageTestData.jsonWithQuotedMessageBeforeChannel, DownstreamMessageDto::class.java)
+        val dtoResult = with(domainMapping) { dto.toDomain() }
+        val directResult = messageAdapter.fromJson(MessageTestData.jsonWithQuotedMessageBeforeChannel)
+
+        assertEquals(MessageTestData.expectedQuotedMessageWithChannel, dtoResult)
+        assertEquals(MessageTestData.expectedQuotedMessageWithChannel, directResult)
+    }
+
+    @Test
+    fun `Direct path - quoted message field order does not affect result`() {
+        val resultChannelFirst = messageAdapter.fromJson(MessageTestData.jsonWithQuotedMessageAfterChannel)
+        val resultQuotedFirst = messageAdapter.fromJson(MessageTestData.jsonWithQuotedMessageBeforeChannel)
+
+        assertEquals(resultChannelFirst, resultQuotedFirst)
+    }
+
+    // endregion
+
     // region Transformer parity (both paths must apply transformers identically)
 
     @Test
