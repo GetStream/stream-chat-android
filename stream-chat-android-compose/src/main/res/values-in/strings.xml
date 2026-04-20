@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="stream_compose_add_answer">"Tambahkan Komentar"</string>
+  <string name="stream_compose_add_answer_placeholder">"Komentar Anda"</string>
+  <string name="stream_compose_add_members_already_member">"Sudah menjadi anggota"</string>
+  <string name="stream_compose_add_members_no_results">"Pengguna tidak ditemukan"</string>
+  <string name="stream_compose_add_members_title">"Tambahkan Anggota"</string>
+  <string name="stream_compose_also_sent_to_channel">"Juga dikirim ke saluran"</string>
+  <string name="stream_compose_attachment_camera_picker">"Buka Kamera"</string>
+  <string name="stream_compose_attachment_camera_picker_content">"Ambil foto dan bagikan"</string>
+  <string name="stream_compose_attachment_commands_picker">"Perintah"</string>
+  <string name="stream_compose_attachment_file_picker">"File"</string>
+  <string name="stream_compose_attachment_media_picker">"Media"</string>
+  <string name="stream_compose_attachment_poll_picker_content">"Buat polling dan biarkan semua orang memilih"</string>
+  <string name="stream_compose_attachment_poll_picker_cta">"Buat Polling"</string>
+  <string name="stream_compose_attachment_polls_picker">"Polling"</string>
+  <string name="stream_compose_attachments">"Lampiran"</string>
+  <string name="stream_compose_audio_playback_pause">"Jeda"</string>
+  <string name="stream_compose_audio_recording_delete">"Hapus rekaman"</string>
+  <string name="stream_compose_audio_recording_hint_save">"Tahan untuk merekam. Lepas untuk menyimpan."</string>
+  <string name="stream_compose_audio_recording_hint_send">"Tahan untuk merekam. Lepas untuk mengirim."</string>
+  <string name="stream_compose_audio_recording_lock">"Kunci rekaman"</string>
+  <string name="stream_compose_audio_recording_locked">"Rekaman terkunci"</string>
+  <string name="stream_compose_audio_recording_pause">"Jeda"</string>
+  <string name="stream_compose_audio_recording_play">"Putar"</string>
+  <string name="stream_compose_audio_recording_preview">"Pesan suara"</string>
+  <string name="stream_compose_audio_recording_progress">"Progres rekaman audio"</string>
+  <string name="stream_compose_audio_recording_send">"Kirim rekaman"</string>
+  <string name="stream_compose_audio_recording_slide_to_cancel">"Geser untuk membatalkan"</string>
+  <string name="stream_compose_audio_recording_start">"Rekam pesan audio"</string>
+  <string name="stream_compose_audio_recording_stop">"Hentikan rekaman"</string>
+  <string name="stream_compose_avatar_overflow_count">"+%1$d"</string>
+  <string name="stream_compose_block_user">"Blokir pengguna"</string>
+  <string name="stream_compose_cancel">"Batal"</string>
+  <string name="stream_compose_cd_channel_item">"Item saluran"</string>
+  <string name="stream_compose_cd_message_item">"Item pesan"</string>
+  <string name="stream_compose_cd_play_button">"Tombol putar"</string>
+  <string name="stream_compose_channel_list_draft">"Draf: "</string>
+  <string name="stream_compose_channel_list_empty_channels">"Belum ada percakapan"</string>
+  <string name="stream_compose_channel_list_empty_search_results">"Tidak ada hasil untuk \"%1$s\""</string>
+  <string name="stream_compose_channel_list_header_new_chat">"Obrolan baru"</string>
+  <string name="stream_compose_channel_list_start_chat">"Mulai obrolan"</string>
+  <string name="stream_compose_channel_list_typing">"Mengetik"</string>
+  <string name="stream_compose_channel_list_typing_one">"%s sedang mengetik"</string>
+  <string name="stream_compose_channel_list_typing_two">"%1$s dan %2$s sedang mengetik"</string>
+  <string name="stream_compose_channel_list_you">"Anda"</string>
+  <string name="stream_compose_confirm">"Konfirmasi"</string>
+  <string name="stream_compose_copy_message">"Salin Pesan"</string>
+  <string name="stream_compose_delete_message">"Hapus Pesan"</string>
+  <string name="stream_compose_delete_message_text">"Apakah Anda yakin ingin menghapus pesan ini?"</string>
+  <string name="stream_compose_delete_message_title">"Hapus pesan"</string>
+  <string name="stream_compose_disconnected">"Terputus"</string>
+  <string name="stream_compose_dismiss">"Tutup"</string>
+  <string name="stream_compose_edit_answer">"Perbarui Komentar Anda"</string>
+  <string name="stream_compose_edit_message">"Edit Pesan"</string>
+  <string name="stream_compose_file_preview">"File"</string>
+  <string name="stream_compose_flag_message">"Tandai Pesan"</string>
+  <string name="stream_compose_flag_message_text">"Apakah Anda ingin mengirim salinan pesan ini ke moderator untuk investigasi lebih lanjut?"</string>
+  <string name="stream_compose_flag_message_title">"Tandai Pesan"</string>
+  <string name="stream_compose_giphy_label">"GIPHY"</string>
+  <string name="stream_compose_giphy_preview">"Giphy"</string>
+  <string name="stream_compose_image_options">"Opsi gambar"</string>
+  <string name="stream_compose_image_order">"%1$d dari %2$d"</string>
+  <string name="stream_compose_image_preview_cancel_sharing">"Batalkan Berbagi"</string>
+  <string name="stream_compose_image_preview_photos">"Foto"</string>
+  <string name="stream_compose_image_preview_share">"Bagikan"</string>
+  <string name="stream_compose_in">" di "</string>
+  <string name="stream_compose_link_preview">"Tautan"</string>
+  <string name="stream_compose_mark_as_unread">"Tandai sebagai Belum Dibaca"</string>
+  <string name="stream_compose_media_gallery_preview_could_not_share_attachment">"Tidak dapat membagikan lampiran"</string>
+  <string name="stream_compose_media_gallery_preview_delete">"Hapus"</string>
+  <string name="stream_compose_media_gallery_preview_preparing">"Mempersiapkan..."</string>
+  <string name="stream_compose_media_gallery_preview_reply">"Balas"</string>
+  <string name="stream_compose_media_gallery_preview_save_image">"Simpan media"</string>
+  <string name="stream_compose_media_gallery_preview_show_in_chat">"Tampilkan di obrolan"</string>
+  <string name="stream_compose_media_gallery_share_large_file_prompt_message">"%.2f MB perlu diunduh sebelum berbagi."</string>
+  <string name="stream_compose_media_gallery_share_large_file_prompt_title">"Peringatan file besar"</string>
+  <string name="stream_compose_member_count_online">"%1$s, %2$d Online"</string>
+  <string name="stream_compose_message_composer_command_template">"/%1$s %2$s"</string>
+  <string name="stream_compose_message_composer_error_attachment_count">"Jumlah lampiran (%1$d) terlampaui."</string>
+  <string name="stream_compose_message_composer_error_file_size">"File terlalu besar - maksimal %1$s."</string>
+  <string name="stream_compose_message_composer_error_message_length">"Panjang pesan maksimal (%1$d) terlampaui."</string>
+  <string name="stream_compose_message_composer_error_sending_links_not_allowed">"Mengirim tautan tidak diizinkan dalam percakapan ini."</string>
+  <string name="stream_compose_message_composer_file_not_supported">"Tipe file tidak didukung"</string>
+  <string name="stream_compose_message_composer_instant_commands">"Perintah Instan"</string>
+  <string name="stream_compose_message_composer_save_button">"Simpan"</string>
+  <string name="stream_compose_message_composer_send_button">"Kirim"</string>
+  <string name="stream_compose_message_composer_show_in_channel">"Juga kirim di Saluran"</string>
+  <string name="stream_compose_message_composer_unsupported_attachment">"Lampiran tidak didukung"</string>
+  <string name="stream_compose_message_deleted">"Pesan dihapus"</string>
+  <string name="stream_compose_message_deleted_preview">"Pesan dihapus"</string>
+  <string name="stream_compose_message_list_auto_translated">"Diterjemahkan"</string>
+  <string name="stream_compose_message_list_empty_messages">"Tidak ada pesan"</string>
+  <string name="stream_compose_message_list_error_cannot_open_link">"Tidak ada aplikasi untuk membuka URL ini:\n%s"</string>
+  <string name="stream_compose_message_list_footnote_edited">"Diedit"</string>
+  <string name="stream_compose_message_list_giphy_cancel">"Batal"</string>
+  <string name="stream_compose_message_list_giphy_send">"Kirim"</string>
+  <string name="stream_compose_message_list_giphy_shuffle">"Acak"</string>
+  <string name="stream_compose_message_list_remind_me">"Ingatkan saya"</string>
+  <string name="stream_compose_message_list_saved_for_later">"Disimpan untuk nanti"</string>
+  <string name="stream_compose_message_list_show_translation">"Tampilkan terjemahan"</string>
+  <string name="stream_compose_message_list_thread_footnote_thread_replies">"%d balasan"</string>
+  <string name="stream_compose_message_list_thread_footnote_thread_reply">"%d balasan"</string>
+  <string name="stream_compose_message_list_unread_separator">"Pesan Belum Dibaca"</string>
+  <string name="stream_compose_message_list_unsupported_attachment">"Lampiran tidak didukung"</string>
+  <string name="stream_compose_message_list_view">"Lihat"</string>
+  <string name="stream_compose_message_list_view_original">"Lihat aslinya"</string>
+  <string name="stream_compose_message_list_you">"Anda"</string>
+  <string name="stream_compose_message_moderated">"Pesan diblokir oleh kebijakan moderasi"</string>
+  <string name="stream_compose_message_preview_sender">"&lt;b&gt;%1$s&lt;/b&gt; di &lt;b&gt;%2$s&lt;/b&gt;"</string>
+  <string name="stream_compose_mute_user">"Bisukan Pengguna"</string>
+  <string name="stream_compose_no_messages_yet">"Belum ada pesan"</string>
+  <string name="stream_compose_ok">"OK"</string>
+  <string name="stream_compose_only_visible_to_you">"Hanya terlihat oleh Anda"</string>
+  <string name="stream_compose_photo_preview">"Foto"</string>
+  <string name="stream_compose_pin_message">"Sematkan ke Obrolan ini"</string>
+  <string name="stream_compose_pinned_message_list_empty_description">"Tekan lama pesan untuk menyematkannya ke obrolan"</string>
+  <string name="stream_compose_pinned_message_list_empty_title">"Tidak ada pesan yang disematkan"</string>
+  <string name="stream_compose_pinned_message_list_results_error">"Terjadi kesalahan"</string>
+  <string name="stream_compose_pinned_to_channel">"Disematkan"</string>
+  <string name="stream_compose_pinned_to_channel_by">"Disematkan oleh %1$s"</string>
+  <string name="stream_compose_poll_answers">"Komentar Polling"</string>
+  <string name="stream_compose_poll_closed_preview">"Polling ditutup: %s"</string>
+  <string name="stream_compose_poll_created_preview">"Polling dibuat: %s"</string>
+  <string name="stream_compose_poll_end_confirmation_action">"Akhiri Polling"</string>
+  <string name="stream_compose_poll_end_confirmation_message">"Apakah Anda ingin mengakhiri polling ini sekarang? Tidak ada yang bisa memilih lagi dalam polling ini."</string>
+  <string name="stream_compose_poll_end_confirmation_title">"Akhiri polling ini?"</string>
+  <string name="stream_compose_poll_end_vote">"Akhiri Polling"</string>
+  <string name="stream_compose_poll_ended_failure">"Gagal menutup polling"</string>
+  <string name="stream_compose_poll_ended_success">"Polling berakhir"</string>
+  <string name="stream_compose_poll_option_discard_dialog_cancel">"Lanjutkan Mengedit"</string>
+  <string name="stream_compose_poll_option_discard_dialog_confirm">"Buang"</string>
+  <string name="stream_compose_poll_option_discard_dialog_description">"Apakah Anda yakin ingin membuang polling Anda?"</string>
+  <string name="stream_compose_poll_option_discard_dialog_title">"Buang polling"</string>
+  <string name="stream_compose_poll_option_description">"Tambahkan opsi"</string>
+  <string name="stream_compose_poll_option_error_duplicated">"Opsi sudah ada"</string>
+  <string name="stream_compose_poll_option_hint">"Tambahkan opsi"</string>
+  <string name="stream_compose_poll_option_label">"Opsi %d"</string>
+  <string name="stream_compose_poll_option_limit_votes">"Batasi suara per orang"</string>
+  <string name="stream_compose_poll_option_limit_votes_decrease">"Kurangi suara per orang"</string>
+  <string name="stream_compose_poll_option_limit_votes_description">"Pilih antara 2\u201310 opsi"</string>
+  <string name="stream_compose_poll_option_limit_votes_increase">"Tambah suara per orang"</string>
+  <string name="stream_compose_poll_option_limit_votes_input">"Suara per orang"</string>
+  <string name="stream_compose_poll_option_remove">"Hapus opsi polling"</string>
+  <string name="stream_compose_poll_option_reorder">"Urutkan ulang opsi polling"</string>
+  <string name="stream_compose_poll_option_results_error">"Terjadi kesalahan saat memuat hasil opsi polling. Silakan coba lagi nanti."</string>
+  <string name="stream_compose_poll_option_switch_add_comment">"Tambahkan komentar"</string>
+  <string name="stream_compose_poll_option_switch_add_comment_description">"Izinkan orang lain menambahkan komentar"</string>
+  <string name="stream_compose_poll_option_switch_anonymous_poll">"Polling anonim"</string>
+  <string name="stream_compose_poll_option_switch_anonymous_poll_description">"Sembunyikan siapa yang memilih"</string>
+  <string name="stream_compose_poll_option_switch_multiple_answers">"Suara ganda"</string>
+  <string name="stream_compose_poll_option_switch_multiple_answers_description">"Pilih lebih dari satu opsi"</string>
+  <string name="stream_compose_poll_option_switch_suggest_option">"Sarankan opsi"</string>
+  <string name="stream_compose_poll_option_switch_suggest_option_description">"Izinkan orang lain menambahkan opsi"</string>
+  <string name="stream_compose_poll_option_title">"Opsi"</string>
+  <string name="stream_compose_poll_options">"Opsi Polling"</string>
+  <string name="stream_compose_poll_question_label">"Pertanyaan"</string>
+  <string name="stream_compose_poll_questions_description">"Ajukan pertanyaan"</string>
+  <string name="stream_compose_poll_questions_title">"Pertanyaan"</string>
+  <string name="stream_compose_poll_results">"Hasil Polling"</string>
+  <string name="stream_compose_poll_suggest_option">"Sarankan Opsi"</string>
+  <string name="stream_compose_poll_title">"Buat Polling"</string>
+  <string name="stream_compose_poll_view_more">"Lihat semua"</string>
+  <string name="stream_compose_poll_view_result">"Lihat Hasil"</string>
+  <string name="stream_compose_poll_winner_badge">"Pemenang"</string>
+  <string name="stream_compose_quoted_message_audio_recording">"Pesan suara (%s)"</string>
+  <string name="stream_compose_quoted_message_giphy_tag">"Giphy"</string>
+  <string name="stream_compose_quoted_message_media">"%d media"</string>
+  <string name="stream_compose_quoted_message_reply_to">"Balas ke %s"</string>
+  <string name="stream_compose_quoted_message_you">"Anda"</string>
+  <string name="stream_compose_reactions_add">"Tambahkan reaksi"</string>
+  <string name="stream_compose_reactions_remove">"Ketuk untuk menghapus"</string>
+  <string name="stream_compose_reactions_you">"Anda"</string>
+  <string name="stream_compose_recent_files">"File Terbaru"</string>
+  <string name="stream_compose_remaining_media_attachments_count">"+%1$d"</string>
+  <string name="stream_compose_replied_to_thread">"Membalas di utas"</string>
+  <string name="stream_compose_reply">"Balas"</string>
+  <string name="stream_compose_resend_message">"Kirim ulang"</string>
+  <string name="stream_compose_scroll_to_bottom">"Gulir ke bawah"</string>
+  <string name="stream_compose_search_input_cancel">"Batal"</string>
+  <string name="stream_compose_search_input_hint">"Cari"</string>
+  <string name="stream_compose_selected_channel_menu_archive_chat">"Arsipkan Obrolan"</string>
+  <string name="stream_compose_selected_channel_menu_archive_group">"Arsipkan Grup"</string>
+  <string name="stream_compose_selected_channel_menu_block_user">"Blokir Pengguna"</string>
+  <string name="stream_compose_selected_channel_menu_delete_chat">"Hapus Obrolan"</string>
+  <string name="stream_compose_selected_channel_menu_delete_chat_confirmation_message">"Apakah Anda ingin menghapus obrolan dengan %1$s?"</string>
+  <string name="stream_compose_selected_channel_menu_delete_chat_confirmation_title">"Hapus Obrolan"</string>
+  <string name="stream_compose_selected_channel_menu_delete_group">"Hapus Grup"</string>
+  <string name="stream_compose_selected_channel_menu_delete_group_confirmation_message">"Apakah Anda ingin menghapus grup %1$s?"</string>
+  <string name="stream_compose_selected_channel_menu_delete_group_confirmation_title">"Hapus Grup"</string>
+  <string name="stream_compose_selected_channel_menu_leave_group">"Keluar dari grup"</string>
+  <string name="stream_compose_selected_channel_menu_leave_group_confirmation_message">"Apakah Anda ingin keluar dari grup %1$s?"</string>
+  <string name="stream_compose_selected_channel_menu_leave_group_confirmation_title">"Keluar dari grup"</string>
+  <string name="stream_compose_selected_channel_menu_mute_user">"Bisukan Pengguna"</string>
+  <string name="stream_compose_selected_channel_menu_pin_chat">"Sematkan Obrolan"</string>
+  <string name="stream_compose_selected_channel_menu_pin_group">"Sematkan Grup"</string>
+  <string name="stream_compose_selected_channel_menu_unarchive_chat">"Batalkan Arsip Obrolan"</string>
+  <string name="stream_compose_selected_channel_menu_unarchive_group">"Batalkan Arsip Grup"</string>
+  <string name="stream_compose_selected_channel_menu_unblock_user">"Buka Blokir Pengguna"</string>
+  <string name="stream_compose_selected_channel_menu_unmute_user">"Bunyikan Pengguna"</string>
+  <string name="stream_compose_selected_channel_menu_unpin_chat">"Lepas Sematan Obrolan"</string>
+  <string name="stream_compose_selected_channel_menu_unpin_group">"Lepas Sematan Grup"</string>
+  <string name="stream_compose_selected_channel_menu_view_info">"Lihat info"</string>
+  <string name="stream_compose_show_more_reactions">"Tampilkan lebih banyak reaksi"</string>
+  <string name="stream_compose_suggest_an_option">"Sarankan Opsi"</string>
+  <string name="stream_compose_swipe_action_more">"Lainnya"</string>
+  <string name="stream_compose_swipe_action_mute">"Bisukan"</string>
+  <string name="stream_compose_swipe_action_unmute">"Bunyikan"</string>
+  <string name="stream_compose_thread_list_banner_error">"Tidak dapat memuat utas baru. Ketuk untuk mencoba lagi"</string>
+  <string name="stream_compose_thread_list_banner_loading">"Memuat…"</string>
+  <string name="stream_compose_thread_list_empty_title">"Balas pesan untuk memulai utas"</string>
+  <string name="stream_compose_thread_reply">"Balas di utas"</string>
+  <string name="stream_compose_thread_subtitle">"dengan %1$s"</string>
+  <string name="stream_compose_thread_title">"Balasan di Utas"</string>
+  <string name="stream_compose_unblock_user">"Buka blokir pengguna"</string>
+  <string name="stream_compose_unmute_user">"Bunyikan Pengguna"</string>
+  <string name="stream_compose_unpin_message">"Lepas sematan dari Obrolan ini"</string>
+  <string name="stream_compose_user_status_last_seen">"Terakhir dilihat %1$s"</string>
+  <string name="stream_compose_user_status_last_seen_just_now">"Terakhir dilihat baru saja"</string>
+  <string name="stream_compose_user_status_online">"Online"</string>
+  <string name="stream_compose_video_preview">"Video"</string>
+  <string name="stream_compose_waiting_for_network">"Menunggu jaringan"</string>
+  <plurals name="stream_compose_channel_list_typing_many">
+    <item quantity="other">"%d orang sedang mengetik"</item>
+  </plurals>
+  <plurals name="stream_compose_files_preview">
+    <item quantity="other">"%d File"</item>
+  </plurals>
+  <plurals name="stream_compose_member_count">
+    <item quantity="other">"%1$d Anggota"</item>
+  </plurals>
+  <plurals name="stream_compose_message_list_thread_separator">
+    <item quantity="other">"%d Balasan"</item>
+  </plurals>
+  <plurals name="stream_compose_message_reactions">
+    <item quantity="other">"%d Reaksi"</item>
+  </plurals>
+  <plurals name="stream_compose_photos_preview">
+    <item quantity="other">"%d Foto"</item>
+  </plurals>
+  <plurals name="stream_compose_poll_total_vote_counts">
+    <item quantity="other">"%d suara total"</item>
+  </plurals>
+  <plurals name="stream_compose_poll_vote_counts">
+    <item quantity="other">"%d suara"</item>
+  </plurals>
+  <plurals name="stream_compose_quoted_message_files">
+    <item quantity="other">"%d file"</item>
+  </plurals>
+  <plurals name="stream_compose_quoted_message_images">
+    <item quantity="other">"%d foto"</item>
+  </plurals>
+  <plurals name="stream_compose_quoted_message_videos">
+    <item quantity="other">"%d video"</item>
+  </plurals>
+  <plurals name="stream_compose_thread_list_item_reply_count">
+    <item quantity="other">"%d balasan"</item>
+  </plurals>
+  <plurals name="stream_compose_thread_list_new_threads">
+    <item quantity="other">"%d utas baru"</item>
+  </plurals>
+  <plurals name="stream_compose_videos_preview">
+    <item quantity="other">"%d Video"</item>
+  </plurals>
+</resources>

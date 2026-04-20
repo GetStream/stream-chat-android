@@ -71,8 +71,8 @@
     <!-- Common -->
     <string name="stream_compose_member_count_online">%1$s, %2$d Online</string>
     <plurals name="stream_compose_member_count">
-        <item quantity="one">%1d Member</item>
-        <item quantity="other">%1d Members</item>
+        <item quantity="one">%1$d Member</item>
+        <item quantity="other">%1$d Members</item>
     </plurals>
     <string name="stream_compose_ok">OK</string>
     <string name="stream_compose_cancel">Cancel</string>
@@ -337,6 +337,7 @@
     <string name="stream_compose_add_members_already_member">Already a member</string>
 
     <!--  Threads  -->
+    <string name="stream_compose_thread_list_header_title">Threads</string>
     <string name="stream_compose_thread_list_empty_title">Reply to a message to start a thread</string>
     <string name="stream_compose_in">" in "</string>
     <plurals name="stream_compose_thread_list_new_threads">

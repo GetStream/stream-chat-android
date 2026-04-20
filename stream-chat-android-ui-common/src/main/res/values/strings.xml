@@ -173,7 +173,7 @@
     <string name="stream_ui_channel_info_ban_member_modal_timeout_one_week">One week</string>
     <string name="stream_ui_channel_info_ban_member_modal_no_timeout">Permanently</string>
 
-    <string name="stream_ui_channel_info_remove_member_modal_message">Are you sure you want to remove\n%s ?</string>
+    <string name="stream_ui_channel_info_remove_member_modal_message">Are you sure you want to remove\n%s?</string>
 
     <!-- Channel List -->
     <string name="stream_ui_channel_list_untitled_channel_plus_more">%1$s +%2$d more</string>

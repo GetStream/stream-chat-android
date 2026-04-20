@@ -3451,6 +3451,7 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 	public fun SwipeToReplyContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/ui/theme/SwipeToReplyContentParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ThreadListBanner (Lio/getstream/chat/android/compose/ui/theme/ThreadListBannerParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ThreadListEmptyContent (Lio/getstream/chat/android/compose/ui/theme/ThreadListEmptyContentParams;Landroidx/compose/runtime/Composer;I)V
+	public fun ThreadListHeader (Lio/getstream/chat/android/compose/ui/theme/ThreadListHeaderParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ThreadListItem (Lio/getstream/chat/android/compose/ui/theme/ThreadListItemParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ThreadListLoadingContent (Lio/getstream/chat/android/compose/ui/theme/ThreadListLoadingContentParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ThreadListLoadingMoreContent (Lio/getstream/chat/android/compose/ui/theme/ThreadListLoadingMoreContentParams;Landroidx/compose/runtime/Composer;I)V
@@ -3639,6 +3640,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFacto
 	public static fun SwipeToReplyContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/ui/theme/SwipeToReplyContentParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ThreadListBanner (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ThreadListBannerParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ThreadListEmptyContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ThreadListEmptyContentParams;Landroidx/compose/runtime/Composer;I)V
+	public static fun ThreadListHeader (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ThreadListHeaderParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ThreadListItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ThreadListItemParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ThreadListLoadingContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ThreadListLoadingContentParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ThreadListLoadingMoreContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ThreadListLoadingMoreContentParams;Landroidx/compose/runtime/Composer;I)V
@@ -6049,6 +6051,27 @@ public final class io/getstream/chat/android/compose/ui/theme/ThreadListEmptyCon
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/compose/ui/theme/ThreadListHeaderParams {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/ConnectionState;Landroidx/compose/ui/Modifier;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/ConnectionState;Landroidx/compose/ui/Modifier;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/ConnectionState;
+	public final fun component2 ()Landroidx/compose/ui/Modifier;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Lio/getstream/chat/android/models/User;
+	public final fun component5 ()Lkotlin/jvm/functions/Function1;
+	public final fun copy (Lio/getstream/chat/android/models/ConnectionState;Landroidx/compose/ui/Modifier;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/compose/ui/theme/ThreadListHeaderParams;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/ThreadListHeaderParams;Lio/getstream/chat/android/models/ConnectionState;Landroidx/compose/ui/Modifier;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ThreadListHeaderParams;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConnectionState ()Lio/getstream/chat/android/models/ConnectionState;
+	public final fun getCurrentUser ()Lio/getstream/chat/android/models/User;
+	public final fun getModifier ()Landroidx/compose/ui/Modifier;
+	public final fun getOnAvatarClick ()Lkotlin/jvm/functions/Function1;
+	public final fun getTitle ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/compose/ui/theme/ThreadListItemParams {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/models/Thread;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;)V
@@ -6137,6 +6160,14 @@ public final class io/getstream/chat/android/compose/ui/threads/ComposableSingle
 	public final fun getLambda$881034423$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
+public final class io/getstream/chat/android/compose/ui/threads/ComposableSingletons$ThreadListHeaderKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/threads/ComposableSingletons$ThreadListHeaderKt;
+	public fun <init> ()V
+	public final fun getLambda$-798078767$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1850390573$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$381085544$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class io/getstream/chat/android/compose/ui/threads/ComposableSingletons$ThreadListKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/threads/ComposableSingletons$ThreadListKt;
 	public fun <init> ()V
@@ -6192,9 +6223,17 @@ public final class io/getstream/chat/android/compose/ui/threads/ThreadListBanner
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/compose/ui/threads/ThreadListHeaderKt {
+	public static final fun ThreadListHeader (Landroidx/compose/ui/Modifier;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+}
+
 public final class io/getstream/chat/android/compose/ui/threads/ThreadListKt {
 	public static final fun ThreadList (Lio/getstream/chat/android/compose/viewmodel/threads/ThreadListViewModel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 	public static final fun ThreadList (Lio/getstream/chat/android/ui/common/state/threads/ThreadListState;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/threads/ThreadsScreenKt {
+	public static final fun ThreadsScreen (Lio/getstream/chat/android/compose/viewmodel/threads/ThreadsViewModelFactory;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/util/ChannelUtilsKt {
@@ -6815,7 +6854,9 @@ public final class io/getstream/chat/android/compose/viewmodel/pinned/PinnedMess
 public final class io/getstream/chat/android/compose/viewmodel/threads/ThreadListViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/ui/common/feature/threads/ThreadListController;)V
+	public final fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getState ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun load ()V
 	public final fun loadNextPage ()V
 }

@@ -17,6 +17,8 @@
 package io.getstream.chat.android.compose.viewmodel.threads
 
 import androidx.lifecycle.ViewModel
+import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.threads.ThreadListController
 import io.getstream.chat.android.ui.common.state.threads.ThreadListState
 import kotlinx.coroutines.flow.StateFlow
@@ -33,6 +35,16 @@ public class ThreadListViewModel(private val controller: ThreadListController) :
      * The current thread list state.
      */
     public val state: StateFlow<ThreadListState> = controller.state
+
+    /**
+     * The state of our network connection - if we're online, connecting or offline.
+     */
+    public val connectionState: StateFlow<ConnectionState> = controller.connectionState
+
+    /**
+     * The state of the currently logged in user.
+     */
+    public val user: StateFlow<User?> = controller.user
 
     /**
      * Loads the initial data when requested.

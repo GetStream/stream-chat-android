@@ -23,8 +23,10 @@
   <string name="stream_chat_notification_empty_username">"名前のないユーザー"</string>
   <string name="stream_chat_notification_group_summary_content_text">"新しいメッセージを受け取りました"</string>
   <string name="stream_chat_notification_read">"既読にする"</string>
+  <string name="stream_chat_notification_reminder_due_title">"このメッセージについてリマインドするよう依頼されました"</string>
   <string name="stream_chat_notification_reply">"返信"</string>
   <string name="stream_chat_notification_title">"チャットメッセージ"</string>
   <string name="stream_chat_notification_type_hint">"メッセージを入力する"</string>
   <string name="stream_chat_other_notifications_channel_name">"その他の通知"</string>
+  <string name="stream_ui_message_input_permission_notifications_message">"通知がブロックされています"</string>
 </resources>
