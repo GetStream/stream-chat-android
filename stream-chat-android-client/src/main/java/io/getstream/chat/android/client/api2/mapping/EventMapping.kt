@@ -285,7 +285,6 @@ internal class EventMapping(
             user = user?.toDomain(),
             message = message?.toDomain(channel.toChannelInfo()),
             channel = channel.toDomain(),
-            groupedUnreadChannels = grouped_unread_channels,
         )
     }
 
@@ -556,6 +555,7 @@ internal class EventMapping(
                 channel = channel.toDomain(),
                 totalUnreadCount = total_unread_count,
                 unreadChannels = unread_channels,
+                groupedUnreadChannels = grouped_unread_channels,
             )
         }
 
@@ -644,8 +644,8 @@ internal class EventMapping(
             cid = cid,
             channelType = channel_type,
             channelId = channel_id,
-            totalUnreadCount = total_unread_count,
-            unreadChannels = unread_channels,
+            totalUnreadCount = total_unread_count ?: 0,
+            unreadChannels = unread_channels ?: 0,
             firstUnreadMessageId = first_unread_message_id,
             lastReadMessageId = last_read_message_id,
             lastReadMessageAt = last_read_at.date,

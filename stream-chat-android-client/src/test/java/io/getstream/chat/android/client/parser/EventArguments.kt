@@ -264,7 +264,6 @@ internal object EventArguments {
         channel = channel,
         user = user,
         message = null,
-        groupedUnreadChannels = groupedUnreadChannels,
     )
     private val channelTruncatedServerSideEvent = ChannelTruncatedEvent(
         type = EventType.CHANNEL_TRUNCATED,

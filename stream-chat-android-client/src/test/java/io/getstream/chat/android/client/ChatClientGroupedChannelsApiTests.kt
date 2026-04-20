@@ -45,7 +45,6 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
             groups = mapOf(
                 randomString() to GroupedChannelsGroup(
                     channels = listOf(randomChannel()),
-                    unreadCount = randomInt(),
                     unreadChannels = randomInt(),
                 ),
             ),

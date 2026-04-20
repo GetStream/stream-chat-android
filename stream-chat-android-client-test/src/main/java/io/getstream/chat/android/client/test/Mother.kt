@@ -208,7 +208,6 @@ public fun randomChannelTruncatedEvent(
     channel: Channel = randomChannel(),
     user: User? = randomUser(),
     message: Message? = null,
-    groupedUnreadChannels: Map<String, Int>? = null,
 ): ChannelTruncatedEvent = ChannelTruncatedEvent(
     type = EventType.CHANNEL_TRUNCATED,
     createdAt = createdAt,
@@ -219,7 +218,6 @@ public fun randomChannelTruncatedEvent(
     channel = channel,
     user = user,
     message = message,
-    groupedUnreadChannels = groupedUnreadChannels,
 )
 
 public fun randomNotificationChannelDeletedEvent(
@@ -584,6 +582,7 @@ public fun randomNotificationChannelTruncatedEvent(
     channel: Channel = randomChannel(),
     totalUnreadCount: Int = randomInt(),
     unreadChannels: Int = randomInt(),
+    groupedUnreadChannels: Map<String, Int>? = null,
 ): NotificationChannelTruncatedEvent = NotificationChannelTruncatedEvent(
     type = EventType.NOTIFICATION_CHANNEL_TRUNCATED,
     createdAt = createdAt,
@@ -594,6 +593,7 @@ public fun randomNotificationChannelTruncatedEvent(
     channel = channel,
     totalUnreadCount = totalUnreadCount,
     unreadChannels = unreadChannels,
+    groupedUnreadChannels = groupedUnreadChannels,
 )
 
 public fun randomMarkAllReadEvent(

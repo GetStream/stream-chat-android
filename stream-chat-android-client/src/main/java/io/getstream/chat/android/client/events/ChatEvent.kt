@@ -183,8 +183,7 @@ public data class ChannelTruncatedEvent(
     override val channel: Channel,
     val user: User?,
     val message: Message?,
-    override val groupedUnreadChannels: Map<String, Int>? = null,
-) : CidEvent(), HasChannel, HasGroupedUnreadChannels
+) : CidEvent(), HasChannel
 
 /**
  * Triggered when a channel is updated. Could contain system [message].
@@ -431,7 +430,8 @@ public data class NotificationChannelTruncatedEvent(
     override val channel: Channel,
     override val totalUnreadCount: Int = 0,
     override val unreadChannels: Int = 0,
-) : CidEvent(), HasChannel, HasUnreadCounts
+    override val groupedUnreadChannels: Map<String, Int>? = null,
+) : CidEvent(), HasChannel, HasUnreadCounts, HasGroupedUnreadChannels
 
 /**
  * Triggered when the user accepts an invite

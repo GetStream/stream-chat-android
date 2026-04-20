@@ -27,11 +27,9 @@ public data class GroupedChannels(public val groups: Map<String, GroupedChannels
  * A channel group returned by [ChatClient.groupedQueryChannels].
  *
  * @param channels The channels that belong to this group.
- * @param unreadCount The total unread message count across the group.
  * @param unreadChannels The total unread channel count in the group.
  */
 public data class GroupedChannelsGroup(
     public val channels: List<Channel>,
-    public val unreadCount: Int?,
     public val unreadChannels: Int?,
 )

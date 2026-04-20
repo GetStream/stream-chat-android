@@ -34,12 +34,10 @@ internal data class GroupedQueryChannelsResponse(
  * A single group within a [GroupedQueryChannelsResponse].
  *
  * @param channels The channel responses that belong to this group.
- * @param unread_count The total number of unread messages across all channels in this group.
  * @param unread_channels The number of channels with unread messages in this group.
  */
 @JsonClass(generateAdapter = true)
 internal data class GroupedQueryChannelsGroup(
     val channels: List<ChannelResponse>,
-    val unread_count: Int?,
     val unread_channels: Int?,
 )

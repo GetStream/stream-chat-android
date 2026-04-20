@@ -80,7 +80,6 @@ internal class GroupedQueryChannelsResponseAdapterTest {
                   "read": []
                 }
               ],
-              "unread_count": 3,
               "unread_channels": 1
             }
           },
@@ -151,7 +150,6 @@ internal class GroupedQueryChannelsResponseAdapterTest {
         assertEquals(setOf("all-open"), response.groups.keys)
 
         val group = response.groups["all-open"]!!
-        assertEquals(3, group.unread_count)
         assertEquals(1, group.unread_channels)
         assertEquals(1, group.channels.size)
 
@@ -190,7 +188,6 @@ internal class GroupedQueryChannelsResponseAdapterTest {
         assertEquals(setOf("expired"), response.groups.keys)
 
         val group = response.groups["expired"]!!
-        assertEquals(null, group.unread_count)
         assertEquals(null, group.unread_channels)
         assertEquals(1, group.channels.size)
         assertEquals("messaging:support-123", group.channels[0].channel.cid)

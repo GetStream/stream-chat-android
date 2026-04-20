@@ -456,7 +456,6 @@ internal object MoshiChatApiTestArguments {
                                     draft = randomDownstreamDraftDto(),
                                 ),
                             ),
-                            unread_count = randomInt(),
                             unread_channels = randomInt(),
                         ),
                     ),

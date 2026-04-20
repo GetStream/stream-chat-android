@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannelDeletedEvent
-import io.getstream.chat.android.client.test.randomChannelTruncatedEvent
 import io.getstream.chat.android.client.test.randomChannelUpdatedEvent
 import io.getstream.chat.android.client.test.randomConnectedEvent
 import io.getstream.chat.android.client.test.randomMarkAllReadEvent
@@ -320,16 +319,16 @@ internal class EventHandlerSequentialTest {
                 neutralPrepareFixture,
                 groupedUnreadChannels,
             ),
-            // ChannelTruncatedEvent with grouped unreads updates GlobalState
+            // NotificationChannelTruncatedEvent with grouped unreads updates GlobalState
             Arguments.of(
                 listOf(
-                    randomChannelTruncatedEvent(
+                    randomNotificationChannelTruncatedEvent(
                         cid = randomCid,
                         groupedUnreadChannels = groupedUnreadChannels,
                     ),
                 ),
                 initialGroupedUnreadChannels,
-                neutralPrepareFixture,
+                prepareFixtureWithReadCapability,
                 groupedUnreadChannels,
             ),
             // Event with null grouped unreads preserves previous value
