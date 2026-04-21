@@ -350,24 +350,12 @@ public class MessageComposerController(
     private val selectedMentions: MutableSet<Mention> = mutableSetOf()
 
     /**
-     * Pre-command input text captured when entering command mode under
+     * Snapshot of pre-command composer state captured when entering command mode under
      * [Config.activeCommandEnabled]. Restored on [clearActiveCommand] when the user dismisses
      * the command, and discarded on [clearData] (send / full reset). `null` when no command is
      * active or when command mode is disabled.
      */
-    private var stashedInputValue: String? = null
-
-    /**
-     * Pre-command picker-selected attachments captured when entering command mode. Shares the
-     * lifecycle of [stashedInputValue]: restored on dismiss, discarded on send.
-     */
-    private var stashedSelectedAttachments: Map<String, Attachment>? = null
-
-    /**
-     * Pre-command mention selections captured when entering command mode. Restored together
-     * with [stashedInputValue] so mention semantics of the restored draft are preserved.
-     */
-    private var stashedMentions: Set<Mention>? = null
+    private var commandStash: CommandStash? = null
 
     private val mentionSuggester = TypingSuggester(
         TypingSuggestionOptions(symbol = MENTION_START_SYMBOL),
@@ -990,7 +978,7 @@ public class MessageComposerController(
      */
     public fun selectCommand(command: Command) {
         if (isInEditMode) return
-        if (config.activeCommandEnabled && stashedInputValue == null) {
+        if (config.activeCommandEnabled && commandStash == null) {
             stashPreCommandState()
         }
         _state.update { it.copy(activeCommand = command) }
@@ -1021,9 +1009,12 @@ public class MessageComposerController(
         // A pure command trigger (e.g. "/" or "/gi") is not user draft content — it is the
         // popup trigger being consumed by the command. Stash empty instead so cancelling the
         // command does not restore phantom trigger characters.
-        stashedInputValue = if (CommandPattern.matcher(currentText).find()) "" else currentText
-        stashedSelectedAttachments = LinkedHashMap(_selectedAttachments.value)
-        stashedMentions = selectedMentions.toSet()
+        val stashedInput = if (CommandPattern.matcher(currentText).find()) "" else currentText
+        commandStash = CommandStash(
+            input = stashedInput,
+            attachments = LinkedHashMap(_selectedAttachments.value),
+            mentions = selectedMentions.toSet(),
+        )
         _selectedAttachments.value = linkedMapOf()
         selectedMentions.clear()
         _state.update { it.copy(selectedMentions = emptySet()) }
@@ -1031,24 +1022,26 @@ public class MessageComposerController(
     }
 
     private fun restorePreCommandStateIfAny(): Boolean {
-        val stashedInput = stashedInputValue ?: return false
-        val stashedAttachments = stashedSelectedAttachments.orEmpty()
-        val stashedMentionsSnapshot = stashedMentions.orEmpty()
+        val stash = commandStash ?: return false
         discardCommandStash()
-        setMessageInputInternal(stashedInput, MessageInput.Source.Default)
-        _selectedAttachments.value = LinkedHashMap(stashedAttachments)
+        setMessageInputInternal(stash.input, MessageInput.Source.Default)
+        _selectedAttachments.value = LinkedHashMap(stash.attachments)
         selectedMentions.clear()
-        selectedMentions.addAll(stashedMentionsSnapshot)
+        selectedMentions.addAll(stash.mentions)
         _state.update { it.copy(selectedMentions = selectedMentions.toSet()) }
         syncAttachments()
         return true
     }
 
     private fun discardCommandStash() {
-        stashedInputValue = null
-        stashedSelectedAttachments = null
-        stashedMentions = null
+        commandStash = null
     }
+
+    private data class CommandStash(
+        val input: String,
+        val attachments: Map<String, Attachment>,
+        val mentions: Set<Mention>,
+    )
 
     /**
      * Toggles the visibility of the command suggestion list popup.
