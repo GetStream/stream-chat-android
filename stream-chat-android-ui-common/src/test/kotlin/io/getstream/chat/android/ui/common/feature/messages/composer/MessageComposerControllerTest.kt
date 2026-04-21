@@ -927,6 +927,32 @@ internal class MessageComposerControllerTest {
     }
 
     @Test
+    fun `Given picker attachment When user types slash Then command suggestions include all commands`() = runTest {
+        // Given
+        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val pickerAttachment = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+        controller.addAttachments(listOf(pickerAttachment))
+        advanceUntilIdle()
+
+        // When
+        controller.setMessageInput("/")
+        advanceUntilIdle()
+
+        // Then
+        assertEquals(listOf(command), controller.state.value.commandSuggestions)
+    }
+
+    @Test
     fun `Given edit mode When user types slash Then command suggestions include all commands`() = runTest {
         // Given
         val command = Command("giphy", "Search GIFs", "[text]", "fun_set")

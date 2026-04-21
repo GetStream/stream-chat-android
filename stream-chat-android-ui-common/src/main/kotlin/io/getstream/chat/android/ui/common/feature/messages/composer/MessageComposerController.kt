@@ -1011,9 +1011,11 @@ public class MessageComposerController(
         commandStash = CommandStash(
             input = stashedInput,
             attachments = LinkedHashMap(_selectedAttachments.value),
+            recordingAttachment = _recordingAttachment.value,
             mentions = selectedMentions.toSet(),
         )
         _selectedAttachments.value = linkedMapOf()
+        _recordingAttachment.value = null
         selectedMentions.clear()
         _state.update { it.copy(selectedMentions = emptySet()) }
         syncAttachments()
@@ -1024,6 +1026,7 @@ public class MessageComposerController(
         discardCommandStash()
         setMessageInputInternal(stash.input, MessageInput.Source.Default)
         _selectedAttachments.value = LinkedHashMap(stash.attachments)
+        _recordingAttachment.value = stash.recordingAttachment
         selectedMentions.clear()
         selectedMentions.addAll(stash.mentions)
         _state.update { it.copy(selectedMentions = selectedMentions.toSet()) }
@@ -1038,6 +1041,7 @@ public class MessageComposerController(
     private data class CommandStash(
         val input: String,
         val attachments: Map<String, Attachment>,
+        val recordingAttachment: Attachment?,
         val mentions: Set<Mention>,
     )
 
@@ -1180,7 +1184,7 @@ public class MessageComposerController(
      */
     private fun handleCommandSuggestions() {
         val containsCommand = CommandPattern.matcher(messageText).find()
-        val suggestions = if (containsCommand && _state.value.attachments.isEmpty()) {
+        val suggestions = if (containsCommand) {
             val commandPattern = messageText.removePrefix("/")
             commands.filter { it.name.startsWith(commandPattern) }
         } else {
