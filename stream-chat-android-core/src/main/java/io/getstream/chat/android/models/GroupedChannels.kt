@@ -31,5 +31,5 @@ public data class GroupedChannels(public val groups: Map<String, GroupedChannels
  */
 public data class GroupedChannelsGroup(
     public val channels: List<Channel>,
-    public val unreadChannels: Int?,
+    public val unreadChannels: Int = 0,
 )

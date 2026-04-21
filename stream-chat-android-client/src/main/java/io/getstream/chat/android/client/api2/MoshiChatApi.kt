@@ -1329,7 +1329,7 @@ constructor(
                     groups = response.groups.mapValues { entry ->
                         GroupedChannelsGroup(
                             channels = entry.value.channels.map(::flattenChannel),
-                            unreadChannels = entry.value.unread_channels,
+                            unreadChannels = entry.value.unread_channels ?: 0,
                         )
                     },
                 )
