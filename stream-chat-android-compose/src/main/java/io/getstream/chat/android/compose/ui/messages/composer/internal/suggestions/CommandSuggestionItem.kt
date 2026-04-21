@@ -40,6 +40,12 @@ import io.getstream.chat.android.compose.ui.util.extensions.internal.iconRes
 import io.getstream.chat.android.compose.ui.util.extensions.internal.isPolychromaticIcon
 import io.getstream.chat.android.models.Command
 
+/**
+ * Command suggestion row.
+ *
+ * @param enabled Controls the item's visual state only (dimmed when `false`). Taps still invoke
+ * [onCommandSelected] regardless, so the caller can surface feedback for disabled commands.
+ */
 @Composable
 internal fun CommandSuggestionItem(
     command: Command,

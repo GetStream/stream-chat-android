@@ -970,9 +970,7 @@ public class MessageComposerController(
      * overwrite an existing stash (in-command input is command-specific and not preserved across
      * command switches).
      *
-     * No-op while the composer is in edit mode: the backend does not dispatch slash commands on
-     * message edits, so the combination is disallowed client-side to avoid emitting literal
-     * `/command` text as the edit payload.
+     * No-op while the composer is in edit mode.
      *
      * @param command The command that was selected.
      */

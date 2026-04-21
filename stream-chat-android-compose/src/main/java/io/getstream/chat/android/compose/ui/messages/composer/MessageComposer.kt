@@ -89,7 +89,10 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param onLinkPreviewClick Handler when the user taps on a link preview.
  * @param onCancelLinkPreviewClick Handler when the user taps on the cancel link preview.
  * @param onUserSelected Handler when the user taps on a user suggestion item.
- * @param onCommandSelected Handler when the user taps on a command suggestion item.
+ * @param onCommandSelected Handler for every tap on a command suggestion item, regardless of the
+ * command's availability in the current composer action. The default dispatches available commands
+ * to the [viewModel] and surfaces a Toast for unavailable ones; overriding replaces both branches,
+ * so the override is responsible for filtering and any unavailability feedback.
  * @param onAlsoSendToChannelChange Handler when the "Also send to channel" checkbox is changed.
  * @param onActiveCommandDismiss Called when the user taps the dismiss button on the active command chip.
  * @param recordingActions The actions that can be performed on an audio recording.

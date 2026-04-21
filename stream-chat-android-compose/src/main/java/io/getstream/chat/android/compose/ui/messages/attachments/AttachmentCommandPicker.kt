@@ -91,6 +91,12 @@ internal fun AttachmentCommandPicker(
     }
 }
 
+/**
+ * Command grid row.
+ *
+ * @param enabled Controls the item's visual state only (dimmed when `false`). Taps still invoke
+ * [onCommandSelected] regardless, so the caller can surface feedback for disabled commands.
+ */
 @Composable
 private fun CommandItem(
     command: Command,
