@@ -993,11 +993,16 @@ public data class MessageComposerUserSuggestionItemTrailingContentParams(
  * Parameters for [ChatComponentFactory.MessageComposerCommandSuggestionItem].
  *
  * @param command The command for which the suggestion is rendered.
- * @param onCommandSelected Action invoked when the command is selected.
+ * @param onCommandSelected Invoked when the item is tapped, regardless of the derived enabled
+ * state. The receiver decides how to respond (e.g. dispatch the command when available, surface
+ * feedback when not).
+ * @param messageAction The composer action currently active; drives the item's enabled visual
+ * state. `null` treats every command as enabled. Override the factory to apply a custom rule.
  */
 public data class MessageComposerCommandSuggestionItemParams(
     val command: Command,
     val onCommandSelected: (Command) -> Unit,
+    val messageAction: MessageAction? = null,
 )
 
 /**
@@ -2338,12 +2343,15 @@ public data class AttachmentPickerMenuParams(
  * @param messageMode Current message mode.
  * @param actions The attachment picker actions.
  * @param modifier Modifier for styling.
+ * @param messageAction The composer action currently active; drives per-command enabled state in
+ * the picker's command section. `null` treats every command as enabled.
  */
 public data class AttachmentPickerParams(
     val attachmentsPickerViewModel: AttachmentsPickerViewModel,
     val messageMode: MessageMode,
     val actions: AttachmentPickerActions,
     val modifier: Modifier = Modifier,
+    val messageAction: MessageAction? = null,
 )
 
 /**
@@ -2388,6 +2396,8 @@ public data class AttachmentTypeSystemPickerParams(
  * @param onUrisSelected Called with URIs from a system picker.
  * @param actions The attachment picker actions.
  * @param onAttachmentsSubmitted Called when attachments are ready.
+ * @param messageAction The composer action currently active; drives per-command enabled state in
+ * the command section. `null` treats every command as enabled.
  */
 public data class AttachmentPickerContentParams(
     val pickerMode: AttachmentPickerMode?,
@@ -2397,6 +2407,7 @@ public data class AttachmentPickerContentParams(
     val onUrisSelected: (List<Uri>) -> Unit,
     val actions: AttachmentPickerActions,
     val onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
+    val messageAction: MessageAction? = null,
 )
 
 /**
@@ -2462,12 +2473,15 @@ public data class AttachmentPollPickerParams(
  *
  * @param pickerMode The command picker mode.
  * @param commands Available commands.
- * @param onCommandSelected Called when a slash command is selected.
+ * @param onCommandSelected Invoked when a command is tapped, regardless of [messageAction].
+ * @param messageAction The composer action currently active; drives each item's enabled state.
+ * `null` treats every command as enabled.
  */
 public data class AttachmentCommandPickerParams(
     val pickerMode: CommandPickerMode,
     val commands: List<Command>,
     val onCommandSelected: (Command) -> Unit,
+    val messageAction: MessageAction? = null,
 )
 
 /**
@@ -2479,6 +2493,8 @@ public data class AttachmentCommandPickerParams(
  * @param actions The attachment picker actions.
  * @param onUrisSelected Called with URIs from system pickers.
  * @param onAttachmentsSubmitted Called when camera-captured media is ready.
+ * @param messageAction The composer action currently active; drives per-command enabled state in
+ * the command section. `null` treats every command as enabled.
  */
 public data class AttachmentSystemPickerParams(
     val channel: Channel,
@@ -2487,4 +2503,5 @@ public data class AttachmentSystemPickerParams(
     val actions: AttachmentPickerActions,
     val onUrisSelected: (List<Uri>) -> Unit,
     val onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
+    val messageAction: MessageAction? = null,
 )

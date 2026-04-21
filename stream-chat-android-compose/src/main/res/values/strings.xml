@@ -164,6 +164,8 @@
     <string name="stream_compose_message_composer_error_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
     <string name="stream_compose_message_composer_instant_commands">Instant Commands</string>
     <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
+    <string name="stream_compose_message_composer_command_unavailable_in_reply">Not available while replying</string>
+    <string name="stream_compose_message_composer_command_unavailable_in_edit">Not available while editing</string>
     <string name="stream_compose_message_composer_show_in_channel">Also send in Channel</string>
     <string name="stream_compose_message_composer_file_not_supported">File type is not supported</string>
     <string name="stream_compose_message_composer_unsupported_attachment">Unsupported attachment</string>

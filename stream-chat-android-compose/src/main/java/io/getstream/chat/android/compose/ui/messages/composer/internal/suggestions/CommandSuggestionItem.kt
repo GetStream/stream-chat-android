@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -43,12 +44,14 @@ import io.getstream.chat.android.models.Command
 internal fun CommandSuggestionItem(
     command: Command,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     onCommandSelected: (Command) -> Unit = {},
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clickable { onCommandSelected(command) }
+            .alpha(if (enabled) FullAlpha else DisabledAlpha)
             .padding(StreamTokens.spacingSm)
             .testTag("Stream_SuggestionListGiphyButton"),
         verticalAlignment = Alignment.CenterVertically,
@@ -125,3 +128,6 @@ internal fun DefaultCommandSuggestionItemCenterContent(
         )
     }
 }
+
+private const val FullAlpha = 1f
+private const val DisabledAlpha = 0.5f

@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.R.string.stream_compose_message_composer_instant_commands
 import io.getstream.chat.android.compose.state.messages.attachments.CommandPickerMode
+import io.getstream.chat.android.compose.ui.messages.composer.internal.isAvailableFor
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -45,11 +47,16 @@ import io.getstream.chat.android.compose.ui.util.extensions.internal.iconRes
 import io.getstream.chat.android.compose.ui.util.extensions.internal.isPolychromaticIcon
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.previewdata.PreviewCommandData
+import io.getstream.chat.android.previewdata.PreviewMessageData
+import io.getstream.chat.android.ui.common.state.messages.Edit
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.Reply
 
 @Composable
 internal fun AttachmentCommandPicker(
     @Suppress("UNUSED_PARAMETER") pickerMode: CommandPickerMode, // Will be utilized in upcoming releases.
     commands: List<Command>,
+    messageAction: MessageAction? = null,
     onCommandSelected: (Command) -> Unit = {},
 ) {
     Column(
@@ -76,6 +83,7 @@ internal fun AttachmentCommandPicker(
             ) { command ->
                 CommandItem(
                     command = command,
+                    enabled = command.isAvailableFor(messageAction),
                     onCommandSelected = onCommandSelected,
                 )
             }
@@ -87,12 +95,14 @@ internal fun AttachmentCommandPicker(
 private fun CommandItem(
     command: Command,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     onCommandSelected: (Command) -> Unit = {},
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clickable { onCommandSelected(command) }
+            .alpha(if (enabled) FullAlpha else DisabledAlpha)
             .padding(StreamTokens.spacingSm),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -141,6 +151,9 @@ private fun CommandItem(
     }
 }
 
+private const val FullAlpha = 1f
+private const val DisabledAlpha = 0.5f
+
 @Preview(showBackground = true)
 @Composable
 private fun AttachmentCommandPickerPreview() {
@@ -151,12 +164,46 @@ private fun AttachmentCommandPickerPreview() {
 
 @Composable
 internal fun AttachmentCommandPicker() {
+    AttachmentCommandPicker(messageAction = null)
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentCommandPickerInEditModePreview() {
+    ChatTheme {
+        AttachmentCommandPickerInEditMode()
+    }
+}
+
+@Composable
+internal fun AttachmentCommandPickerInEditMode() {
+    AttachmentCommandPicker(messageAction = Edit(PreviewMessageData.message1))
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentCommandPickerInReplyModePreview() {
+    ChatTheme {
+        AttachmentCommandPickerInReplyMode()
+    }
+}
+
+@Composable
+internal fun AttachmentCommandPickerInReplyMode() {
+    AttachmentCommandPicker(messageAction = Reply(PreviewMessageData.message1))
+}
+
+@Composable
+private fun AttachmentCommandPicker(messageAction: MessageAction?) {
     AttachmentCommandPicker(
         pickerMode = CommandPickerMode,
         commands = listOf(
             PreviewCommandData.command1,
             PreviewCommandData.command2,
             PreviewCommandData.command3,
+            PreviewCommandData.command4,
+            PreviewCommandData.command5,
         ),
+        messageAction = messageAction,
     )
 }

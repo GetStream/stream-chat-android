@@ -37,4 +37,18 @@ internal class CommandSuggestionListTest : PaparazziComposeTest {
             CommandSuggestionList()
         }
     }
+
+    @Test
+    fun `command suggestion list in edit mode`() {
+        snapshotWithDarkModeRow {
+            CommandSuggestionListInEditMode()
+        }
+    }
+
+    @Test
+    fun `command suggestion list in reply mode`() {
+        snapshotWithDarkModeRow {
+            CommandSuggestionListInReplyMode()
+        }
+    }
 }
