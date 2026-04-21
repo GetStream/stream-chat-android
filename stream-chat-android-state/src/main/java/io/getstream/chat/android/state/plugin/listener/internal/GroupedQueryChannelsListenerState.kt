@@ -33,7 +33,7 @@ internal class GroupedQueryChannelsListenerState(
     ) {
         if (result is Result.Success) {
             val groupedUnreadChannels = result.value.groups.mapValues { (_, group) ->
-                group.unreadChannels ?: 0
+                group.unreadChannels
             }
             globalState.setGroupedUnreadChannels(groupedUnreadChannels)
         }

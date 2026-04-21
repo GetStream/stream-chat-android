@@ -60,7 +60,7 @@ internal class GroupedQueryChannelsListenerStateTest {
         val result = Result.Success(
             value = GroupedChannels(
                 groups = mapOf(
-                    "expired" to GroupedChannelsGroup(channels = emptyList(), unreadChannels = null),
+                    "expired" to GroupedChannelsGroup(channels = emptyList(), unreadChannels = 0),
                 ),
             ),
         )
