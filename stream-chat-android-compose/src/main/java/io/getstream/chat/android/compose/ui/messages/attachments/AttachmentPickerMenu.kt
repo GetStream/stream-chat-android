@@ -29,10 +29,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.compose.ui.messages.ChannelScreen
+import io.getstream.chat.android.compose.ui.messages.composer.internal.routeCommandSelection
 import io.getstream.chat.android.compose.ui.theme.AttachmentPickerParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.util.isKeyboardVisibleAsState
@@ -96,7 +98,8 @@ public fun AttachmentPickerMenu(
         else -> 350.dp
     }
 
-    val actions = remember(attachmentsPickerViewModel, composerViewModel) {
+    val context = LocalContext.current
+    val actions = remember(attachmentsPickerViewModel, composerViewModel, composerState.action) {
         val baseActions = AttachmentPickerActions.defaultActions(attachmentsPickerViewModel, composerViewModel)
         baseActions.copy(
             onCreatePollClick = {
@@ -113,7 +116,7 @@ public fun AttachmentPickerMenu(
             },
             onCommandSelected = { command ->
                 isShowingDialog = false
-                baseActions.onCommandSelected(command)
+                routeCommandSelection(command, composerState.action, context, baseActions.onCommandSelected)
             },
             onDismiss = {
                 isShowingDialog = false

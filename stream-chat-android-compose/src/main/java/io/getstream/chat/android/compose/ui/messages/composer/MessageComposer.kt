@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
-import io.getstream.chat.android.compose.ui.messages.composer.internal.isAvailableFor
+import io.getstream.chat.android.compose.ui.messages.composer.internal.rememberDefaultOnCommandSelected
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.CommandSuggestionList
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.SuggestionsMenu
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.UserSuggestionList
@@ -68,8 +68,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewCommandData
 import io.getstream.chat.android.previewdata.PreviewUserData
-import io.getstream.chat.android.ui.common.state.messages.Edit
-import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
@@ -110,7 +108,7 @@ public fun MessageComposer(
     onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onCancelLinkPreviewClick: (() -> Unit)? = { viewModel.cancelLinkPreview() },
     onUserSelected: (User) -> Unit = { viewModel.selectMention(it) },
-    onCommandSelected: (Command) -> Unit = { viewModel.selectCommand(it) },
+    onCommandSelected: (Command) -> Unit = rememberDefaultOnCommandSelected(viewModel),
     onAlsoSendToChannelChange: (Boolean) -> Unit = viewModel::setAlsoSendToChannel,
     onActiveCommandDismiss: () -> Unit = viewModel::clearActiveCommand,
     recordingActions: AudioRecordingActions = AudioRecordingActions.defaultActions(
