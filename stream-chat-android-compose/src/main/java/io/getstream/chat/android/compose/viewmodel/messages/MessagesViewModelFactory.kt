@@ -32,6 +32,9 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
+import io.getstream.chat.android.ui.common.feature.messages.composer.internal.ComposerStateSaver
+import io.getstream.chat.android.ui.common.feature.messages.composer.internal.NoOpComposerStateSaver
+import io.getstream.chat.android.ui.common.feature.messages.composer.internal.SavedStateComposerStateSaver
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
@@ -123,21 +126,7 @@ public class MessagesViewModelFactory(
      */
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
         MessageComposerViewModel::class.java to {
-            MessageComposerViewModel(
-                MessageComposerController(
-                    chatClient = chatClient,
-                    channelState = channelStateFlow,
-                    mediaRecorder = mediaRecorder,
-                    userLookupHandler = userLookupHandler,
-                    fileToUri = fileToUriConverter,
-                    channelCid = channelId,
-                    config = MessageComposerController.Config(
-                        maxAttachmentCount = maxAttachmentCount,
-                        isLinkPreviewEnabled = isComposerLinkPreviewEnabled,
-                        isDraftMessageEnabled = isComposerDraftMessageEnabled,
-                    ),
-                ),
-            )
+            createMessageComposerViewModel(NoOpComposerStateSaver)
         },
         MessageListViewModel::class.java to {
             MessageListViewModel(
@@ -190,6 +179,11 @@ public class MessagesViewModelFactory(
      * that do not require a [SavedStateHandle].
      */
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+        if (modelClass == MessageComposerViewModel::class.java) {
+            val savedStateHandle = extras.createSavedStateHandle()
+            @Suppress("UNCHECKED_CAST")
+            return createMessageComposerViewModel(SavedStateComposerStateSaver(savedStateHandle)) as T
+        }
         if (modelClass == AttachmentsPickerViewModel::class.java) {
             val savedStateHandle = extras.createSavedStateHandle()
             @Suppress("UNCHECKED_CAST")
@@ -200,5 +194,24 @@ public class MessagesViewModelFactory(
             ) as T
         }
         return create(modelClass)
+    }
+
+    private fun createMessageComposerViewModel(stateSaver: ComposerStateSaver): MessageComposerViewModel {
+        return MessageComposerViewModel(
+            MessageComposerController(
+                chatClient = chatClient,
+                channelState = channelStateFlow,
+                mediaRecorder = mediaRecorder,
+                userLookupHandler = userLookupHandler,
+                fileToUri = fileToUriConverter,
+                channelCid = channelId,
+                config = MessageComposerController.Config(
+                    maxAttachmentCount = maxAttachmentCount,
+                    isLinkPreviewEnabled = isComposerLinkPreviewEnabled,
+                    isDraftMessageEnabled = isComposerDraftMessageEnabled,
+                ),
+                stateSaver = stateSaver,
+            ),
+        )
     }
 }
