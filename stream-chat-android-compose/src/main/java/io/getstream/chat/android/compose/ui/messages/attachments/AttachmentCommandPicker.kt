@@ -20,6 +20,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.R.string.stream_compose_message_composer_instant_commands
 import io.getstream.chat.android.compose.state.messages.attachments.CommandPickerMode
+import io.getstream.chat.android.compose.ui.components.EmptyContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -61,36 +63,44 @@ internal fun AttachmentCommandPicker(
     messageAction: MessageAction? = null,
     onCommandSelected: (Command) -> Unit = {},
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth(),
-    ) {
-        Text(
-            modifier = Modifier
-                .padding(
-                    start = StreamTokens.spacingMd,
-                    end = StreamTokens.spacingMd,
-                    top = StreamTokens.spacingXs,
-                    bottom = StreamTokens.spacingMd,
-                )
-                .fillMaxWidth(),
-            text = stringResource(stream_compose_message_composer_instant_commands),
-            style = ChatTheme.typography.headingSmall,
-            color = ChatTheme.colors.textPrimary,
+    if (messageAction is Edit) {
+        EmptyContent(
+            modifier = Modifier.fillMaxSize(),
+            text = stringResource(R.string.stream_compose_message_composer_commands_unavailable_in_edit),
+            painter = painterResource(id = R.drawable.stream_design_ic_command),
         )
-        val sortedCommands = remember(commands, messageAction) {
-            commands.sortedByAvailability(messageAction)
-        }
-        LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
-            items(
-                items = sortedCommands,
-                key = Command::name,
-            ) { command ->
-                CommandItem(
-                    command = command,
-                    enabled = command.isAvailableFor(messageAction),
-                    onCommandSelected = onCommandSelected,
-                )
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(
+                        start = StreamTokens.spacingMd,
+                        end = StreamTokens.spacingMd,
+                        top = StreamTokens.spacingXs,
+                        bottom = StreamTokens.spacingMd,
+                    )
+                    .fillMaxWidth(),
+                text = stringResource(stream_compose_message_composer_instant_commands),
+                style = ChatTheme.typography.headingSmall,
+                color = ChatTheme.colors.textPrimary,
+            )
+            val sortedCommands = remember(commands, messageAction) {
+                commands.sortedByAvailability(messageAction)
+            }
+            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
+                items(
+                    items = sortedCommands,
+                    key = Command::name,
+                ) { command ->
+                    CommandItem(
+                        command = command,
+                        enabled = command.isAvailableFor(messageAction),
+                        onCommandSelected = onCommandSelected,
+                    )
+                }
             }
         }
     }
