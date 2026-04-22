@@ -312,10 +312,10 @@ public fun MessageComposer(
                     state = messageComposerState,
                 ),
             )
-        }
 
-        if (snackbarHostState.currentSnackbarData != null) {
-            SnackbarPopup(hostState = snackbarHostState)
+            if (snackbarHostState.currentSnackbarData != null) {
+                SnackbarPopup(hostState = snackbarHostState)
+            }
         }
     }
 }
