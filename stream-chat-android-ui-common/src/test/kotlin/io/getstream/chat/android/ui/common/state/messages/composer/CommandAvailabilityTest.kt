@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.common.state.messages.composer
 
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -26,9 +27,24 @@ import org.junit.jupiter.api.Test
 
 internal class CommandAvailabilityTest {
 
-    private val giphy = Command("giphy", "Search GIFs", "[text]", "fun_set")
-    private val mute = Command("mute", "Mute user", "[@username]", "moderation_set")
-    private val custom = Command("bot", "Custom bot", "", "bot_set")
+    private val giphy = Command(
+        name = randomString(),
+        description = randomString(),
+        args = randomString(),
+        set = "fun_set",
+    )
+    private val mute = Command(
+        name = randomString(),
+        description = randomString(),
+        args = randomString(),
+        set = "moderation_set",
+    )
+    private val custom = Command(
+        name = randomString(),
+        description = randomString(),
+        args = randomString(),
+        set = randomString(),
+    )
 
     @Test
     fun `No active action makes every command available`() {

@@ -39,6 +39,7 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.MockRetrofitCall
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -903,7 +904,7 @@ internal class MessageComposerControllerTest {
     @Test
     fun `Given edit mode When selectCommand called Then activeCommand is not set and event is emitted`() = runTest {
         // Given
-        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val command = Command(name = randomString(), description = randomString(), args = randomString(), set = "fun_set")
         val editedMessage = randomMessage(cid = CID)
         val editAction = Edit(editedMessage)
         val controller = Fixture()
@@ -935,7 +936,12 @@ internal class MessageComposerControllerTest {
     fun `Given reply mode When selectCommand called with moderation command Then command is not set and event is emitted`() =
         runTest {
             // Given
-            val muteCommand = Command("mute", "Mute user", "[@username]", "moderation_set")
+            val muteCommand = Command(
+                name = randomString(),
+                description = randomString(),
+                args = randomString(),
+                set = "moderation_set",
+            )
             val repliedMessage = randomMessage(cid = CID)
             val replyAction = Reply(repliedMessage)
             val controller = Fixture()
@@ -965,7 +971,12 @@ internal class MessageComposerControllerTest {
     @Test
     fun `Given reply mode When selectCommand then clearActiveCommand called Then reply action is preserved`() = runTest {
         // Given
-        val giphyCommand = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val giphyCommand = Command(
+            name = randomString(),
+            description = randomString(),
+            args = randomString(),
+            set = "fun_set",
+        )
         val repliedMessage = randomMessage(cid = CID)
         val replyAction = Reply(repliedMessage)
         val controller = Fixture()
@@ -987,7 +998,7 @@ internal class MessageComposerControllerTest {
         controller.clearActiveCommand()
         advanceUntilIdle()
 
-        // Then: reply action survives the enter/cancel round trip
+        // Then
         assertEquals(replyAction, controller.state.value.action)
         assertNull(controller.state.value.activeCommand)
     }
@@ -1021,7 +1032,7 @@ internal class MessageComposerControllerTest {
     @Test
     fun `Given edit mode When user types slash Then suggestions stay empty and event is emitted`() = runTest {
         // Given
-        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val command = Command(name = randomString(), description = randomString(), args = randomString(), set = "fun_set")
         val editedMessage = randomMessage(cid = CID, text = "")
         val editAction = Edit(editedMessage)
         val controller = Fixture()
@@ -1050,9 +1061,19 @@ internal class MessageComposerControllerTest {
 
     @Test
     fun `Given slash typed When action becomes Reply Then suggestions re-sort by availability`() = runTest {
-        // Given: moderation command listed first, fun command second (default server order)
-        val muteCommand = Command("mute", "Mute user", "[@username]", "moderation_set")
-        val giphyCommand = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        // Given
+        val muteCommand = Command(
+            name = randomString(),
+            description = randomString(),
+            args = randomString(),
+            set = "moderation_set",
+        )
+        val giphyCommand = Command(
+            name = randomString(),
+            description = randomString(),
+            args = randomString(),
+            set = "fun_set",
+        )
         val repliedMessage = randomMessage(cid = CID)
         val controller = Fixture()
             .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
@@ -1066,14 +1087,13 @@ internal class MessageComposerControllerTest {
             .get()
         controller.setMessageInput("/")
         advanceUntilIdle()
-        // Sanity: with no action, server order is preserved.
         assertEquals(listOf(muteCommand, giphyCommand), controller.state.value.commandSuggestions)
 
         // When
         controller.performMessageAction(Reply(repliedMessage))
         advanceUntilIdle()
 
-        // Then: available (giphy) first, unavailable (mute) last
+        // Then
         assertEquals(listOf(giphyCommand, muteCommand), controller.state.value.commandSuggestions)
     }
 
