@@ -1049,6 +1049,35 @@ internal class MessageComposerControllerTest {
     }
 
     @Test
+    fun `Given slash typed When action becomes Reply Then suggestions re-sort by availability`() = runTest {
+        // Given: moderation command listed first, fun command second (default server order)
+        val muteCommand = Command("mute", "Mute user", "[@username]", "moderation_set")
+        val giphyCommand = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val repliedMessage = randomMessage(cid = CID)
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(muteCommand, giphyCommand))),
+            )
+            .get()
+        controller.setMessageInput("/")
+        advanceUntilIdle()
+        // Sanity: with no action, server order is preserved.
+        assertEquals(listOf(muteCommand, giphyCommand), controller.state.value.commandSuggestions)
+
+        // When
+        controller.performMessageAction(Reply(repliedMessage))
+        advanceUntilIdle()
+
+        // Then: available (giphy) first, unavailable (mute) last
+        assertEquals(listOf(giphyCommand, muteCommand), controller.state.value.commandSuggestions)
+    }
+
+    @Test
     fun `Given reply mode When selectCommand called with fun_set command Then activeCommand is set`() = runTest {
         // Given
         val giphyCommand = Command("giphy", "Search GIFs", "[text]", "fun_set")

@@ -28,6 +28,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -51,6 +52,7 @@ import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.isAvailableFor
+import io.getstream.chat.android.ui.common.state.messages.composer.sortedByAvailability
 
 @Composable
 internal fun AttachmentCommandPicker(
@@ -76,9 +78,12 @@ internal fun AttachmentCommandPicker(
             style = ChatTheme.typography.headingSmall,
             color = ChatTheme.colors.textPrimary,
         )
+        val sortedCommands = remember(commands, messageAction) {
+            commands.sortedByAvailability(messageAction)
+        }
         LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
             items(
-                items = commands,
+                items = sortedCommands,
                 key = Command::name,
             ) { command ->
                 CommandItem(

@@ -50,6 +50,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageValidator
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.composer.isAvailableFor
+import io.getstream.chat.android.ui.common.state.messages.composer.sortedByAvailability
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.common.utils.extensions.addSchemeToUrlIfNeeded
 import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
@@ -430,6 +431,9 @@ public class MessageComposerController(
         _messageActions.onEach { actions ->
             val activeAction = actions.lastOrNull { it is Edit || it is Reply }
             _state.update { it.copy(action = activeAction) }
+            // Re-derive command suggestions so the list re-sorts by availability for the new
+            // action and the edit-mode guard fires if a command is currently being typed.
+            handleCommandSuggestions()
         }.launchIn(scope)
 
         ownCapabilities.onEach { ownCapabilities ->
@@ -1065,9 +1069,15 @@ public class MessageComposerController(
      * Toggles the visibility of the command suggestion list popup.
      */
     public fun toggleCommandsVisibility() {
-        _state.update { s ->
-            val showCommands = s.commandSuggestions.isEmpty()
-            s.copy(commandSuggestions = if (showCommands) commands else emptyList())
+        _state.update {
+            val showCommands = it.commandSuggestions.isEmpty()
+            it.copy(
+                commandSuggestions = if (showCommands) {
+                    commands.sortedByAvailability(activeAction)
+                } else {
+                    emptyList()
+                },
+            )
         }
     }
 
@@ -1213,6 +1223,7 @@ public class MessageComposerController(
         val suggestions = if (containsCommand) {
             val commandPattern = messageText.removePrefix("/")
             commands.filter { it.name.startsWith(commandPattern) }
+                .sortedByAvailability(action)
         } else {
             emptyList()
         }

@@ -41,4 +41,15 @@ public fun Command.isAvailableFor(action: MessageAction?): Boolean = when (actio
     else -> true
 }
 
+/**
+ * Returns a new list with commands available for [action] first, followed by unavailable ones.
+ * The sort is stable, so the original order is preserved within each availability group.
+ *
+ * @param action The composer action currently active, or `null` when the composer is in its
+ * default state.
+ */
+@InternalStreamChatApi
+public fun List<Command>.sortedByAvailability(action: MessageAction?): List<Command> =
+    sortedByDescending { it.isAvailableFor(action) }
+
 private const val MODERATION_COMMAND_SET: String = "moderation_set"
