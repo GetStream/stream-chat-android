@@ -58,6 +58,8 @@ import io.getstream.chat.android.compose.ui.theme.MessageComposerParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerTrailingContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.SnackbarPopup
+import io.getstream.chat.android.compose.ui.util.StreamSnackbarVariant
+import io.getstream.chat.android.compose.ui.util.StreamSnackbarVisuals
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Attachment
@@ -159,7 +161,13 @@ public fun MessageComposer(
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             val message = event.messageResOrNull()?.let(context::getString) ?: return@collect
-            snackbarHostState.showSnackbar(message = message, duration = SnackbarDuration.Short)
+            snackbarHostState.showSnackbar(
+                visuals = StreamSnackbarVisuals(
+                    message = message,
+                    duration = SnackbarDuration.Short,
+                    variant = event.snackbarVariant(),
+                ),
+            )
         }
     }
 
@@ -333,6 +341,11 @@ private fun MessageComposerViewEvent.messageResOrNull(): Int? = when (this) {
     else -> null
 }
 
+private fun MessageComposerViewEvent.snackbarVariant(): StreamSnackbarVariant = when (this) {
+    is MessageComposerViewEvent.CommandUnavailable -> StreamSnackbarVariant.Error
+    else -> StreamSnackbarVariant.Default
+}
+
 @Composable
 private fun MessageComposerSurface(
     modifier: Modifier,
@@ -397,9 +410,12 @@ private fun MessageInputValidationError(validationErrors: List<ValidationError>,
                 firstValidationError is ValidationError.AttachmentSizeExceeded
             ) {
                 snackbarHostState.showSnackbar(
-                    message = errorMessage,
-                    actionLabel = context.getString(R.string.stream_compose_ok),
-                    duration = SnackbarDuration.Indefinite,
+                    visuals = StreamSnackbarVisuals(
+                        message = errorMessage,
+                        actionLabel = context.getString(R.string.stream_compose_ok),
+                        duration = SnackbarDuration.Indefinite,
+                        variant = StreamSnackbarVariant.Error,
+                    ),
                 )
             } else {
                 Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
