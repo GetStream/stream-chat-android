@@ -19,24 +19,20 @@ package io.getstream.chat.android.ui.common.state.messages.composer
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 
 /**
- * Transient feedback surfaced by the composer. Emitted into [MessageComposerState.notices] and
- * consumed by the UI layer, which typically renders each notice as a snackbar and removes it
- * via [io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController.dismissNotice]
- * once rendered.
- *
- * In v8 this hierarchy may absorb [ValidationError] so the composer exposes a single notice stream
- * for both blocking validation and informational feedback.
+ * One-shot side-effect events emitted by the composer. Consumers typically collect these from
+ * [io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController.events]
+ * and react with transient UI (e.g. a snackbar).
  */
-public interface MessageComposerNotice {
+public interface MessageComposerViewEvent {
 
     /**
-     * Emitted when the user attempts to select or trigger a command that is not available for
-     * the current composer [action] (e.g. tapping a moderation command while in reply mode,
-     * or typing `/` while in edit mode).
+     * Emitted when the user attempts to trigger a command that is not available for the current
+     * composer [action] (e.g. tapping a moderation command while in reply mode, or typing `/`
+     * while in edit mode).
      *
      * @param action The composer action that blocked the command.
      */
     public data class CommandUnavailable(
         val action: MessageAction,
-    ) : MessageComposerNotice
+    ) : MessageComposerViewEvent
 }

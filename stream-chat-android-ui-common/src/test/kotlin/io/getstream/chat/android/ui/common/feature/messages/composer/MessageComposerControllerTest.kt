@@ -51,7 +51,7 @@ import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageInput
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
-import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerNotice
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerViewEvent
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
@@ -901,7 +901,7 @@ internal class MessageComposerControllerTest {
         }
 
     @Test
-    fun `Given edit mode When selectCommand called Then activeCommand is not set and notice is emitted`() = runTest {
+    fun `Given edit mode When selectCommand called Then activeCommand is not set and event is emitted`() = runTest {
         // Given
         val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
         val editedMessage = randomMessage(cid = CID)
@@ -919,21 +919,20 @@ internal class MessageComposerControllerTest {
         controller.performMessageAction(editAction)
         advanceUntilIdle()
 
-        // When
-        controller.selectCommand(command)
-        advanceUntilIdle()
+        // When / Then
+        controller.events.test {
+            controller.selectCommand(command)
+            advanceUntilIdle()
 
-        // Then
-        assertNull(controller.state.value.activeCommand)
-        assertEquals(editedMessage.text, controller.state.value.inputValue)
-        assertEquals(
-            listOf(MessageComposerNotice.CommandUnavailable(editAction)),
-            controller.state.value.notices,
-        )
+            assertEquals(MessageComposerViewEvent.CommandUnavailable(editAction), awaitItem())
+            assertNull(controller.state.value.activeCommand)
+            assertEquals(editedMessage.text, controller.state.value.inputValue)
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
-    fun `Given reply mode When selectCommand called with moderation command Then command is not set and notice is emitted`() =
+    fun `Given reply mode When selectCommand called with moderation command Then command is not set and event is emitted`() =
         runTest {
             // Given
             val muteCommand = Command("mute", "Mute user", "[@username]", "moderation_set")
@@ -952,16 +951,15 @@ internal class MessageComposerControllerTest {
             controller.performMessageAction(replyAction)
             advanceUntilIdle()
 
-            // When
-            controller.selectCommand(muteCommand)
-            advanceUntilIdle()
+            // When / Then
+            controller.events.test {
+                controller.selectCommand(muteCommand)
+                advanceUntilIdle()
 
-            // Then
-            assertNull(controller.state.value.activeCommand)
-            assertEquals(
-                listOf(MessageComposerNotice.CommandUnavailable(replyAction)),
-                controller.state.value.notices,
-            )
+                assertEquals(MessageComposerViewEvent.CommandUnavailable(replyAction), awaitItem())
+                assertNull(controller.state.value.activeCommand)
+                cancelAndIgnoreRemainingEvents()
+            }
         }
 
     @Test
@@ -995,36 +993,6 @@ internal class MessageComposerControllerTest {
     }
 
     @Test
-    fun `Given a notice When dismissNotice called Then notice is removed`() = runTest {
-        // Given
-        val editedMessage = randomMessage(cid = CID)
-        val editAction = Edit(editedMessage)
-        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
-        val controller = Fixture()
-            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
-            .givenAppSettings()
-            .givenAudioPlayer(mock())
-            .givenClientState(randomUser())
-            .givenGlobalState()
-            .givenChannelState(
-                configState = MutableStateFlow(Config(commands = listOf(command))),
-            )
-            .get()
-        controller.performMessageAction(editAction)
-        advanceUntilIdle()
-        controller.selectCommand(command)
-        advanceUntilIdle()
-        val notice = controller.state.value.notices.single()
-
-        // When
-        controller.dismissNotice(notice)
-        advanceUntilIdle()
-
-        // Then
-        assertTrue(controller.state.value.notices.isEmpty())
-    }
-
-    @Test
     fun `Given picker attachment When user types slash Then command suggestions include all commands`() = runTest {
         // Given
         val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
@@ -1051,7 +1019,7 @@ internal class MessageComposerControllerTest {
     }
 
     @Test
-    fun `Given edit mode When user types slash Then suggestions stay empty and notice is emitted`() = runTest {
+    fun `Given edit mode When user types slash Then suggestions stay empty and event is emitted`() = runTest {
         // Given
         val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
         val editedMessage = randomMessage(cid = CID, text = "")
@@ -1069,15 +1037,15 @@ internal class MessageComposerControllerTest {
         controller.performMessageAction(editAction)
         advanceUntilIdle()
 
-        // When
-        controller.setMessageInput("/")
-        advanceUntilIdle()
+        // When / Then
+        controller.events.test {
+            controller.setMessageInput("/")
+            advanceUntilIdle()
 
-        // Then
-        assertTrue(controller.state.value.commandSuggestions.isEmpty())
-        assertTrue(
-            controller.state.value.notices.contains(MessageComposerNotice.CommandUnavailable(editAction)),
-        )
+            assertEquals(MessageComposerViewEvent.CommandUnavailable(editAction), awaitItem())
+            assertTrue(controller.state.value.commandSuggestions.isEmpty())
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test

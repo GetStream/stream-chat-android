@@ -45,8 +45,8 @@ import io.getstream.chat.android.ui.common.state.messages.MessageInput
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
-import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerNotice
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerViewEvent
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageValidator
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.composer.isAvailableFor
@@ -253,6 +253,14 @@ public class MessageComposerController(
      * Emits each time the message input field should request focus (e.g. after a command is selected).
      */
     public val inputFocusEvents: SharedFlow<Unit> = _inputFocusEvents.asSharedFlow()
+
+    private val _events = MutableSharedFlow<MessageComposerViewEvent>(extraBufferCapacity = 1)
+
+    /**
+     * One-shot events emitted by the composer, such as feedback for unavailable commands. UI
+     * layers collect this flow and react with transient UI (e.g. a snackbar).
+     */
+    public val events: SharedFlow<MessageComposerViewEvent> = _events.asSharedFlow()
 
     // Insertion-ordered map keyed by attachment key (EXTRA_SOURCE_URI or fallback).
     // Tracks picker selections independently of edit-mode attachments, so selections
@@ -973,15 +981,15 @@ public class MessageComposerController(
      * command switches).
      *
      * When the command is not available for the current composer action (edit mode or a
-     * moderation command during reply), emits a [MessageComposerNotice.CommandUnavailable]
-     * into [MessageComposerState.notices] and returns without changing the active command.
+     * moderation command during reply), emits a [MessageComposerViewEvent.CommandUnavailable]
+     * on [events] and returns without changing the active command.
      *
      * @param command The command that was selected.
      */
     public fun selectCommand(command: Command) {
         val action = activeAction
         if (!command.isAvailableFor(action)) {
-            if (action != null) emitNotice(MessageComposerNotice.CommandUnavailable(action))
+            if (action != null) _events.tryEmit(MessageComposerViewEvent.CommandUnavailable(action))
             return
         }
         if (config.activeCommandEnabled && commandStash == null) {
@@ -1008,21 +1016,6 @@ public class MessageComposerController(
         if (!restorePreCommandStateIfAny()) {
             setMessageInputInternal("", MessageInput.Source.Default)
         }
-    }
-
-    /**
-     * Removes [notice] from [MessageComposerState.notices]. Call this from the UI layer after
-     * a notice has been rendered and dismissed. Identical notices are removed one at a time
-     * so queued snackbars drain in order.
-     *
-     * @param notice The notice to remove.
-     */
-    public fun dismissNotice(notice: MessageComposerNotice) {
-        _state.update { it.copy(notices = it.notices - notice) }
-    }
-
-    private fun emitNotice(notice: MessageComposerNotice) {
-        _state.update { it.copy(notices = it.notices + notice) }
     }
 
     private fun stashPreCommandState() {
@@ -1206,7 +1199,7 @@ public class MessageComposerController(
      * Shows the command suggestion list popup if necessary.
      *
      * While the composer is in edit mode, typing a command trigger suppresses the popup and
-     * emits a [MessageComposerNotice.CommandUnavailable] so the UI can inform the user that
+     * emits a [MessageComposerViewEvent.CommandUnavailable] so the UI can inform the user that
      * commands are blocked.
      */
     private fun handleCommandSuggestions() {
@@ -1214,7 +1207,7 @@ public class MessageComposerController(
         val action = activeAction
         if (containsCommand && action is Edit) {
             _state.update { it.copy(commandSuggestions = emptyList()) }
-            emitNotice(MessageComposerNotice.CommandUnavailable(action))
+            _events.tryEmit(MessageComposerViewEvent.CommandUnavailable(action))
             return
         }
         val suggestions = if (containsCommand) {

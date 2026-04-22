@@ -31,6 +31,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageInput
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerViewEvent
 import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
 import io.getstream.result.Result
 import io.getstream.result.call.Call
@@ -55,6 +56,12 @@ public class MessageComposerViewModel(
      * Emits each time the message input field should request focus (e.g. after a command is selected).
      */
     public val inputFocusEvents: SharedFlow<Unit> = messageComposerController.inputFocusEvents
+
+    /**
+     * One-shot events emitted by the composer, such as feedback for unavailable commands. UI
+     * layers collect this flow and react with transient UI.
+     */
+    public val events: SharedFlow<MessageComposerViewEvent> = messageComposerController.events
 
     /**
      * The full UI state that has all the required data.
