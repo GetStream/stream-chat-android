@@ -45,9 +45,11 @@ import io.getstream.chat.android.ui.common.state.messages.MessageInput
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerNotice
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageValidator
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
+import io.getstream.chat.android.ui.common.state.messages.composer.isAvailableFor
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.common.utils.extensions.addSchemeToUrlIfNeeded
 import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
@@ -970,12 +972,18 @@ public class MessageComposerController(
      * overwrite an existing stash (in-command input is command-specific and not preserved across
      * command switches).
      *
-     * No-op while the composer is in edit mode.
+     * When the command is not available for the current composer action (edit mode or a
+     * moderation command during reply), emits a [MessageComposerNotice.CommandUnavailable]
+     * into [MessageComposerState.notices] and returns without changing the active command.
      *
      * @param command The command that was selected.
      */
     public fun selectCommand(command: Command) {
-        if (isInEditMode) return
+        val action = activeAction
+        if (!command.isAvailableFor(action)) {
+            if (action != null) emitNotice(MessageComposerNotice.CommandUnavailable(action))
+            return
+        }
         if (config.activeCommandEnabled && commandStash == null) {
             stashPreCommandState()
         }
@@ -1000,6 +1008,21 @@ public class MessageComposerController(
         if (!restorePreCommandStateIfAny()) {
             setMessageInputInternal("", MessageInput.Source.Default)
         }
+    }
+
+    /**
+     * Removes [notice] from [MessageComposerState.notices]. Call this from the UI layer after
+     * a notice has been rendered and dismissed. Identical notices are removed one at a time
+     * so queued snackbars drain in order.
+     *
+     * @param notice The notice to remove.
+     */
+    public fun dismissNotice(notice: MessageComposerNotice) {
+        _state.update { it.copy(notices = it.notices - notice) }
+    }
+
+    private fun emitNotice(notice: MessageComposerNotice) {
+        _state.update { it.copy(notices = it.notices + notice) }
     }
 
     private fun stashPreCommandState() {
@@ -1181,9 +1204,19 @@ public class MessageComposerController(
 
     /**
      * Shows the command suggestion list popup if necessary.
+     *
+     * While the composer is in edit mode, typing a command trigger suppresses the popup and
+     * emits a [MessageComposerNotice.CommandUnavailable] so the UI can inform the user that
+     * commands are blocked.
      */
     private fun handleCommandSuggestions() {
         val containsCommand = CommandPattern.matcher(messageText).find()
+        val action = activeAction
+        if (containsCommand && action is Edit) {
+            _state.update { it.copy(commandSuggestions = emptyList()) }
+            emitNotice(MessageComposerNotice.CommandUnavailable(action))
+            return
+        }
         val suggestions = if (containsCommand) {
             val commandPattern = messageText.removePrefix("/")
             commands.filter { it.name.startsWith(commandPattern) }

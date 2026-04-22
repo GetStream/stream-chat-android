@@ -51,6 +51,7 @@ import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageInput
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerNotice
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
@@ -900,10 +901,11 @@ internal class MessageComposerControllerTest {
         }
 
     @Test
-    fun `Given edit mode When selectCommand called Then activeCommand is not set`() = runTest {
+    fun `Given edit mode When selectCommand called Then activeCommand is not set and notice is emitted`() = runTest {
         // Given
         val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
         val editedMessage = randomMessage(cid = CID)
+        val editAction = Edit(editedMessage)
         val controller = Fixture()
             .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
             .givenAppSettings()
@@ -914,7 +916,7 @@ internal class MessageComposerControllerTest {
                 configState = MutableStateFlow(Config(commands = listOf(command))),
             )
             .get()
-        controller.performMessageAction(Edit(editedMessage))
+        controller.performMessageAction(editAction)
         advanceUntilIdle()
 
         // When
@@ -924,6 +926,102 @@ internal class MessageComposerControllerTest {
         // Then
         assertNull(controller.state.value.activeCommand)
         assertEquals(editedMessage.text, controller.state.value.inputValue)
+        assertEquals(
+            listOf(MessageComposerNotice.CommandUnavailable(editAction)),
+            controller.state.value.notices,
+        )
+    }
+
+    @Test
+    fun `Given reply mode When selectCommand called with moderation command Then command is not set and notice is emitted`() =
+        runTest {
+            // Given
+            val muteCommand = Command("mute", "Mute user", "[@username]", "moderation_set")
+            val repliedMessage = randomMessage(cid = CID)
+            val replyAction = Reply(repliedMessage)
+            val controller = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(muteCommand))),
+                )
+                .get()
+            controller.performMessageAction(replyAction)
+            advanceUntilIdle()
+
+            // When
+            controller.selectCommand(muteCommand)
+            advanceUntilIdle()
+
+            // Then
+            assertNull(controller.state.value.activeCommand)
+            assertEquals(
+                listOf(MessageComposerNotice.CommandUnavailable(replyAction)),
+                controller.state.value.notices,
+            )
+        }
+
+    @Test
+    fun `Given reply mode When selectCommand then clearActiveCommand called Then reply action is preserved`() = runTest {
+        // Given
+        val giphyCommand = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val repliedMessage = randomMessage(cid = CID)
+        val replyAction = Reply(repliedMessage)
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(giphyCommand))),
+            )
+            .get()
+        controller.performMessageAction(replyAction)
+        advanceUntilIdle()
+
+        // When
+        controller.selectCommand(giphyCommand)
+        advanceUntilIdle()
+        controller.clearActiveCommand()
+        advanceUntilIdle()
+
+        // Then: reply action survives the enter/cancel round trip
+        assertEquals(replyAction, controller.state.value.action)
+        assertNull(controller.state.value.activeCommand)
+    }
+
+    @Test
+    fun `Given a notice When dismissNotice called Then notice is removed`() = runTest {
+        // Given
+        val editedMessage = randomMessage(cid = CID)
+        val editAction = Edit(editedMessage)
+        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+        controller.performMessageAction(editAction)
+        advanceUntilIdle()
+        controller.selectCommand(command)
+        advanceUntilIdle()
+        val notice = controller.state.value.notices.single()
+
+        // When
+        controller.dismissNotice(notice)
+        advanceUntilIdle()
+
+        // Then
+        assertTrue(controller.state.value.notices.isEmpty())
     }
 
     @Test
@@ -953,10 +1051,11 @@ internal class MessageComposerControllerTest {
     }
 
     @Test
-    fun `Given edit mode When user types slash Then command suggestions include all commands`() = runTest {
+    fun `Given edit mode When user types slash Then suggestions stay empty and notice is emitted`() = runTest {
         // Given
         val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
         val editedMessage = randomMessage(cid = CID, text = "")
+        val editAction = Edit(editedMessage)
         val controller = Fixture()
             .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
             .givenAppSettings()
@@ -967,7 +1066,7 @@ internal class MessageComposerControllerTest {
                 configState = MutableStateFlow(Config(commands = listOf(command))),
             )
             .get()
-        controller.performMessageAction(Edit(editedMessage))
+        controller.performMessageAction(editAction)
         advanceUntilIdle()
 
         // When
@@ -975,7 +1074,10 @@ internal class MessageComposerControllerTest {
         advanceUntilIdle()
 
         // Then
-        assertEquals(listOf(command), controller.state.value.commandSuggestions)
+        assertTrue(controller.state.value.commandSuggestions.isEmpty())
+        assertTrue(
+            controller.state.value.notices.contains(MessageComposerNotice.CommandUnavailable(editAction)),
+        )
     }
 
     @Test

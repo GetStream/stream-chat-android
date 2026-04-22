@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.messages.composer.internal
+package io.getstream.chat.android.ui.common.state.messages.composer
 
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.randomMessage

@@ -51,6 +51,10 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * editable unless the user doesn't have proper [ChannelCapabilities] to send messages, otherwise it's disabled.
  * @param selectedMentions The list of selected mentions in the current input.
  * @param activeCommand The command that is currently active (selected from the suggestion popup).
+ * @param notices Transient feedback messages emitted by the composer (e.g. when the user attempts
+ * an action that is unavailable for the current [action]). The UI layer renders each notice and
+ * removes it via
+ * [io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController.dismissNotice].
  */
 public data class MessageComposerState @JvmOverloads constructor(
     val inputValue: String = "",
@@ -71,4 +75,5 @@ public data class MessageComposerState @JvmOverloads constructor(
     val sendEnabled: Boolean = true,
     val selectedMentions: Set<Mention> = emptySet(),
     val activeCommand: Command? = null,
+    val notices: List<MessageComposerNotice> = emptyList(),
 )

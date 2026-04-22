@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.R.string.stream_compose_message_composer_instant_commands
 import io.getstream.chat.android.compose.state.messages.attachments.CommandPickerMode
-import io.getstream.chat.android.compose.ui.messages.composer.internal.isAvailableFor
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -51,6 +50,7 @@ import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.Reply
+import io.getstream.chat.android.ui.common.state.messages.composer.isAvailableFor
 
 @Composable
 internal fun AttachmentCommandPicker(

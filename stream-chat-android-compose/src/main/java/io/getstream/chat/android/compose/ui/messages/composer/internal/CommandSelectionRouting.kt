@@ -29,6 +29,7 @@ import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.Reply
+import io.getstream.chat.android.ui.common.state.messages.composer.isAvailableFor
 
 /**
  * Default handler for command taps in the composer. Routes available commands to

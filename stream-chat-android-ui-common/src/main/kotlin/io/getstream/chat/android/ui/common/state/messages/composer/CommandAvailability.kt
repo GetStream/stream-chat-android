@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.messages.composer.internal
+package io.getstream.chat.android.ui.common.state.messages.composer
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
@@ -25,23 +26,19 @@ import io.getstream.chat.android.ui.common.state.messages.Reply
  * Whether this [Command] is selectable in the composer given the currently-active composer
  * [action]:
  *
- * - [Edit] → always `false`; the backend does not dispatch slash commands on message edits.
- * - [Reply] → `false` for commands in the `moderation_set` (e.g. `/mute`, `/ban`) whose output
- *   is not a repliable message; `true` otherwise.
+ * - [Edit] → always `false`.
+ * - [Reply] → `false` for commands in the `moderation_set` (e.g. `/mute`, `/ban`); `true`
+ *   otherwise.
  * - `null` or any other action → `true`.
  *
  * @param action The composer action currently active, or `null` when the composer is in its
  * default state.
  */
-internal fun Command.isAvailableFor(action: MessageAction?): Boolean = when (action) {
+@InternalStreamChatApi
+public fun Command.isAvailableFor(action: MessageAction?): Boolean = when (action) {
     is Edit -> false
-    is Reply -> set != ModerationCommandSet
+    is Reply -> set != MODERATION_COMMAND_SET
     else -> true
 }
 
-/**
- * Command set value used by Stream's built-in moderation commands (e.g. `/mute`, `/ban`, `/unban`).
- * Commands in this set produce actions whose result is not a repliable message, so they are
- * treated as unavailable while the composer is in reply mode.
- */
-private const val ModerationCommandSet: String = "moderation_set"
+private const val MODERATION_COMMAND_SET: String = "moderation_set"

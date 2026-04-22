@@ -124,7 +124,6 @@ import io.getstream.chat.android.compose.ui.messages.composer.internal.attachmen
 import io.getstream.chat.android.compose.ui.messages.composer.internal.attachments.MessageComposerAttachmentFileItem
 import io.getstream.chat.android.compose.ui.messages.composer.internal.attachments.MessageComposerAttachmentMediaItem
 import io.getstream.chat.android.compose.ui.messages.composer.internal.attachments.MessageComposerAttachments
-import io.getstream.chat.android.compose.ui.messages.composer.internal.isAvailableFor
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.CommandSuggestionItem
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultCommandSuggestionItemCenterContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultCommandSuggestionItemLeadingContent
@@ -171,6 +170,7 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.React
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
+import io.getstream.chat.android.ui.common.state.messages.composer.isAvailableFor
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
 import io.getstream.chat.android.compose.ui.channel.attachments.ChannelFilesAttachmentsItem as DefaultChannelFilesAttachmentsItem
 import io.getstream.chat.android.compose.ui.channel.attachments.ChannelMediaAttachmentsItem as DefaultChannelMediaAttachmentsItem
