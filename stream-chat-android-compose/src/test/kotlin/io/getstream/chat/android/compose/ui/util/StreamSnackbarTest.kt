@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.util
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
+import com.android.resources.ScreenOrientation
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import org.junit.Rule
 import org.junit.Test
@@ -27,21 +28,42 @@ internal class StreamSnackbarTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(
-        deviceConfig = DeviceConfig.PIXEL_2,
+        deviceConfig = DeviceConfig.PIXEL_2.copy(orientation = ScreenOrientation.LANDSCAPE),
         renderingMode = SessionParams.RenderingMode.SHRINK,
     )
 
     @Test
-    fun `snackbar message only`() {
-        snapshotWithDarkMode {
-            StreamSnackbarMessageOnly()
+    fun `snackbar default`() {
+        snapshotWithDarkModeRow {
+            StreamSnackbarDefault()
         }
     }
 
     @Test
     fun `snackbar with action`() {
-        snapshotWithDarkMode {
+        snapshotWithDarkModeRow {
             StreamSnackbarWithAction()
+        }
+    }
+
+    @Test
+    fun `snackbar error`() {
+        snapshotWithDarkModeRow {
+            StreamSnackbarError()
+        }
+    }
+
+    @Test
+    fun `snackbar success`() {
+        snapshotWithDarkModeRow {
+            StreamSnackbarSuccess()
+        }
+    }
+
+    @Test
+    fun `snackbar loading`() {
+        snapshotWithDarkModeRow {
+            StreamSnackbarLoading()
         }
     }
 }

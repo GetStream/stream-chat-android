@@ -6280,9 +6280,12 @@ public final class io/getstream/chat/android/compose/ui/util/ComposableSingleton
 public final class io/getstream/chat/android/compose/ui/util/ComposableSingletons$StreamSnackbarKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/util/ComposableSingletons$StreamSnackbarKt;
 	public fun <init> ()V
+	public final fun getLambda$-1718309156$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-269638538$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$-678058255$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda$-695861522$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-784221929$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-853186653$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$2015419422$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/util/DefaultReactionResolver : io/getstream/chat/android/compose/ui/util/ReactionResolver {
