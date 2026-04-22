@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarData
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -906,6 +907,8 @@ public class SwipeToReplyContentParams
  * @param recordingActions The actions to control the audio recording.
  * @param onLinkPreviewClick Action invoked when a link preview is clicked.
  * @param onCancelLinkPreviewClick Action invoked when the cancel link preview button is clicked.
+ * @param snackbarHostState Host used by the composer to render validation errors and any
+ * notices pushed by the caller. `null` means the composer should create its own.
  */
 public data class MessageComposerParams(
     val messageComposerState: MessageComposerState,
@@ -924,6 +927,7 @@ public data class MessageComposerParams(
     val recordingActions: AudioRecordingActions = AudioRecordingActions.None,
     val onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     val onCancelLinkPreviewClick: (() -> Unit)? = null,
+    val snackbarHostState: SnackbarHostState? = null,
 )
 
 /**

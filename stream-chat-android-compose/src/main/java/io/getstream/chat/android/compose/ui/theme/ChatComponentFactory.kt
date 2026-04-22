@@ -37,6 +37,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -1207,6 +1208,7 @@ public interface ChatComponentFactory {
             onCommandSelected = params.onCommandSelected,
             onAlsoSendToChannelChange = params.onAlsoSendToChannelSelected,
             onActiveCommandDismiss = params.onActiveCommandDismiss,
+            snackbarHostState = params.snackbarHostState ?: remember { SnackbarHostState() },
             recordingActions = params.recordingActions,
             input = params.input,
         )

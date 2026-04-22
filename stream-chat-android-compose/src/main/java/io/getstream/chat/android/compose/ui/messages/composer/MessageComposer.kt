@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.messages.composer
 
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,7 +46,6 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
-import io.getstream.chat.android.compose.ui.messages.composer.internal.rememberDefaultOnCommandSelected
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.CommandSuggestionList
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.SuggestionsMenu
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.UserSuggestionList
@@ -68,7 +68,10 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewCommandData
 import io.getstream.chat.android.previewdata.PreviewUserData
+import io.getstream.chat.android.ui.common.state.messages.Edit
+import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerViewEvent
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 
@@ -89,10 +92,11 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param onLinkPreviewClick Handler when the user taps on a link preview.
  * @param onCancelLinkPreviewClick Handler when the user taps on the cancel link preview.
  * @param onUserSelected Handler when the user taps on a user suggestion item.
- * @param onCommandSelected Handler for every tap on a command suggestion item, regardless of the
- * command's availability in the current composer action. The default dispatches available commands
- * to the [viewModel] and surfaces a Toast for unavailable ones; overriding replaces both branches,
- * so the override is responsible for filtering and any unavailability feedback.
+ * @param onCommandSelected Handler for every tap on a command suggestion item, including taps on
+ * disabled items. The default forwards to [MessageComposerViewModel.selectCommand], which emits a
+ * [io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerViewEvent.CommandUnavailable]
+ * when the command is not available for the current action; overriding replaces that path, so the
+ * override is responsible for any filtering and feedback.
  * @param onAlsoSendToChannelChange Handler when the "Also send to channel" checkbox is changed.
  * @param onActiveCommandDismiss Called when the user taps the dismiss button on the active command chip.
  * @param recordingActions The actions that can be performed on an audio recording.
@@ -111,7 +115,7 @@ public fun MessageComposer(
     onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onCancelLinkPreviewClick: (() -> Unit)? = { viewModel.cancelLinkPreview() },
     onUserSelected: (User) -> Unit = { viewModel.selectMention(it) },
-    onCommandSelected: (Command) -> Unit = rememberDefaultOnCommandSelected(viewModel),
+    onCommandSelected: (Command) -> Unit = viewModel::selectCommand,
     onAlsoSendToChannelChange: (Boolean) -> Unit = viewModel::setAlsoSendToChannel,
     onActiveCommandDismiss: () -> Unit = viewModel::clearActiveCommand,
     recordingActions: AudioRecordingActions = AudioRecordingActions.defaultActions(
@@ -149,6 +153,15 @@ public fun MessageComposer(
     },
 ) {
     val messageComposerState by viewModel.messageComposerState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            val message = event.messageResOrNull()?.let(context::getString) ?: return@collect
+            snackbarHostState.showSnackbar(message = message, duration = SnackbarDuration.Short)
+        }
+    }
 
     ChatTheme.componentFactory.MessageComposer(
         params = MessageComposerParams(
@@ -162,6 +175,7 @@ public fun MessageComposer(
             onCommandSelected = onCommandSelected,
             onAlsoSendToChannelSelected = onAlsoSendToChannelChange,
             onActiveCommandDismiss = onActiveCommandDismiss,
+            snackbarHostState = snackbarHostState,
             recordingActions = recordingActions,
             input = input,
             messageComposerState = messageComposerState,
@@ -190,9 +204,13 @@ public fun MessageComposer(
  * @param onLinkPreviewClick Handler when the user taps on a link preview.
  * @param onCancelLinkPreviewClick Handler when the user taps on the cancel link preview.
  * @param onUserSelected Handler when the user taps on a user suggestion item.
- * @param onCommandSelected Handler when the user taps on a command suggestion item.
+ * @param onCommandSelected Handler when the user taps on a command suggestion item, including taps
+ * on disabled items.
  * @param onAlsoSendToChannelChange Handler when the "Also send to channel" checkbox is changed.
  * @param onActiveCommandDismiss Called when the user taps the dismiss button on the active command chip.
+ * @param snackbarHostState Host used to display transient snackbars (validation errors and any
+ * notices pushed by the caller). The VM-bound overload passes a host that it also drives from
+ * [MessageComposerViewModel.events].
  * @param recordingActions The actions that can be performed on an audio recording.
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
  */
@@ -213,6 +231,7 @@ public fun MessageComposer(
     onCommandSelected: (Command) -> Unit = {},
     onAlsoSendToChannelChange: (Boolean) -> Unit = {},
     onActiveCommandDismiss: () -> Unit = {},
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
     input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
         ChatTheme.componentFactory.MessageComposerInput(
@@ -235,7 +254,6 @@ public fun MessageComposer(
     val validationErrors = messageComposerState.validationErrors
     val userSuggestions = messageComposerState.mentionSuggestions
     val commandSuggestions = messageComposerState.commandSuggestions
-    val snackbarHostState = remember { SnackbarHostState() }
 
     MessageInputValidationError(
         validationErrors = validationErrors,
@@ -305,6 +323,16 @@ public fun MessageComposer(
 private val UserSuggestionsMaxHeight = 176.dp
 private val CommandSuggestionsMaxHeight = 208.dp
 
+@StringRes
+private fun MessageComposerViewEvent.messageResOrNull(): Int? = when (this) {
+    is MessageComposerViewEvent.CommandUnavailable -> when (action) {
+        is Edit -> R.string.stream_compose_message_composer_command_unavailable_in_edit
+        is Reply -> R.string.stream_compose_message_composer_command_unavailable_in_reply
+        else -> null
+    }
+    else -> null
+}
+
 @Composable
 private fun MessageComposerSurface(
     modifier: Modifier,
@@ -329,15 +357,6 @@ private fun MessageComposerSurface(
     }
 }
 
-/**
- * Shows a [Toast] with an error if one of the following constraints are violated:
- *
- * - The message length exceeds the maximum allowed message length.
- * - The number of selected attachments is too big.
- * - At least one of the attachments is too big.
- *
- * @param validationErrors The list of validation errors for the current user input.
- */
 @Composable
 private fun MessageInputValidationError(validationErrors: List<ValidationError>, snackbarHostState: SnackbarHostState) {
     if (validationErrors.isNotEmpty()) {
