@@ -97,6 +97,9 @@
   <string name="stream_compose_message_composer_error_message_length">"Panjang pesan maksimal (%1$d) terlampaui."</string>
   <string name="stream_compose_message_composer_error_sending_links_not_allowed">"Mengirim tautan tidak diizinkan dalam percakapan ini."</string>
   <string name="stream_compose_message_composer_file_not_supported">"Tipe file tidak didukung"</string>
+  <string name="stream_compose_message_composer_command_unavailable_in_edit">"Tidak tersedia saat mengedit"</string>
+  <string name="stream_compose_message_composer_command_unavailable_in_reply">"Tidak tersedia saat membalas"</string>
+  <string name="stream_compose_message_composer_commands_unavailable_in_edit">"Perintah tidak tersedia saat mengedit"</string>
   <string name="stream_compose_message_composer_instant_commands">"Perintah Instan"</string>
   <string name="stream_compose_message_composer_save_button">"Simpan"</string>
   <string name="stream_compose_message_composer_send_button">"Kirim"</string>

@@ -153,6 +153,9 @@
   <string name="stream_compose_message_composer_error_message_length">"La lunghezza massima del messaggio (%1$d) è stata superata."</string>
   <string name="stream_compose_message_composer_error_sending_links_not_allowed">"L\'invio di link non è consentito in questa conversazione."</string>
   <string name="stream_compose_message_composer_file_not_supported">"Tipo di file non supportato"</string>
+  <string name="stream_compose_message_composer_command_unavailable_in_edit">"Non disponibile durante la modifica"</string>
+  <string name="stream_compose_message_composer_command_unavailable_in_reply">"Non disponibile durante la risposta"</string>
+  <string name="stream_compose_message_composer_commands_unavailable_in_edit">"I comandi non sono disponibili durante la modifica"</string>
   <string name="stream_compose_message_composer_instant_commands">"Comandi istantanei"</string>
   <string name="stream_compose_message_composer_save_button">"Salva"</string>
   <string name="stream_compose_message_composer_send_button">"Invia"</string>

@@ -105,6 +105,9 @@
   <string name="stream_compose_message_composer_error_message_length">"최대 메시지 길이(%1$d)를 초과했습니다."</string>
   <string name="stream_compose_message_composer_error_sending_links_not_allowed">"이 대화에서는 링크 전송이 허용되지 않습니다."</string>
   <string name="stream_compose_message_composer_file_not_supported">"지원되지 않는 파일 형식입니다"</string>
+  <string name="stream_compose_message_composer_command_unavailable_in_edit">"수정 중에는 사용할 수 없습니다"</string>
+  <string name="stream_compose_message_composer_command_unavailable_in_reply">"답장 중에는 사용할 수 없습니다"</string>
+  <string name="stream_compose_message_composer_commands_unavailable_in_edit">"수정 중에는 명령을 사용할 수 없습니다"</string>
   <string name="stream_compose_message_composer_instant_commands">"인스턴트 명령어"</string>
   <string name="stream_compose_message_composer_save_button">"저장"</string>
   <string name="stream_compose_message_composer_send_button">"보내기"</string>
