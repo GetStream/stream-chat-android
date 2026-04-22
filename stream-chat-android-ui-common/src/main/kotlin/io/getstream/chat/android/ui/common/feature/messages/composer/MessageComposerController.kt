@@ -407,6 +407,7 @@ public class MessageComposerController(
 
     private fun restoreAttachmentsFromStateSaver() {
         val restoredAttachments = stateSaver.restoreAttachments()
+            ?.filter { it.upload == null || it.upload!!.exists() }
         if (!restoredAttachments.isNullOrEmpty()) {
             selectedAttachments.value = restoredAttachments
         }

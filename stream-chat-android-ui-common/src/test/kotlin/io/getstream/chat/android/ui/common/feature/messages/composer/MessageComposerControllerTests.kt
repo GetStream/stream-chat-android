@@ -51,6 +51,7 @@ import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import java.io.File
 import java.util.Date
 
 @ExperimentalCoroutinesApi
@@ -361,6 +362,50 @@ internal class MessageComposerControllerTests {
             .get(stateSaver = store)
 
         assertTrue(controller.selectedAttachments.value.isEmpty())
+    }
+
+    @Test
+    fun `restore drops attachments whose upload file no longer exists`() = runTest {
+        val existingFile = File.createTempFile("existing", ".jpg").apply { deleteOnExit() }
+        val missingFile = File("/tmp/non_existent_${System.nanoTime()}.jpg")
+        val store = FakeComposerStateSaver(
+            attachments = listOf(
+                Attachment(upload = existingFile, type = "image", name = "existing.jpg"),
+                Attachment(upload = missingFile, type = "image", name = "missing.jpg"),
+                Attachment(type = "image", name = "no-upload.jpg"),
+            ),
+        )
+        val controller = Fixture()
+            .givenAppSettings(
+                AppSettings(
+                    app = App(
+                        name = "test",
+                        fileUploadConfig = FileUploadConfig(
+                            allowedFileExtensions = emptyList(),
+                            allowedMimeTypes = emptyList(),
+                            blockedFileExtensions = emptyList(),
+                            blockedMimeTypes = emptyList(),
+                            sizeLimitInBytes = Long.MAX_VALUE,
+                        ),
+                        imageUploadConfig = FileUploadConfig(
+                            allowedFileExtensions = emptyList(),
+                            allowedMimeTypes = emptyList(),
+                            blockedFileExtensions = emptyList(),
+                            blockedMimeTypes = emptyList(),
+                            sizeLimitInBytes = Long.MAX_VALUE,
+                        ),
+                    ),
+                ),
+            )
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .get(stateSaver = store)
+
+        assertEquals(2, controller.selectedAttachments.value.size)
+        assertEquals("existing.jpg", controller.selectedAttachments.value[0].name)
+        assertEquals("no-upload.jpg", controller.selectedAttachments.value[1].name)
     }
 
     @Test
