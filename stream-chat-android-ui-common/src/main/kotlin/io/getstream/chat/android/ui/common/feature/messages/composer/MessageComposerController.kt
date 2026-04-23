@@ -1039,11 +1039,8 @@ public class MessageComposerController(
         val currentText = _messageInput.value.text
         // Pure command triggers ("/", "/gi", "/mute ") must stash as empty — restoring them on
         // cancel would re-fire the popup or auto-select and make the chip uncancelable.
-        val stashedInput = when {
-            CommandPattern.matcher(currentText).find() -> ""
-            AutoSelectCommandPattern.matcher(currentText).find() -> ""
-            else -> currentText
-        }
+        val isPureTrigger = CommandText.isTrigger(currentText) || CommandText.isAutoSelectTrigger(currentText)
+        val stashedInput = if (isPureTrigger) "" else currentText
         commandStash = CommandStash(
             input = stashedInput,
             attachments = LinkedHashMap(_selectedAttachments.value),
@@ -1237,21 +1234,30 @@ public class MessageComposerController(
      */
     private fun handleCommandSuggestions() {
         if (tryAutoSelectCommand(messageText)) return
-        val containsCommand = CommandPattern.matcher(messageText).find()
-        val action = activeAction
-        if (config.activeCommandEnabled && containsCommand && action is Edit) {
-            _state.update { it.copy(commandSuggestions = emptyList()) }
-            _events.tryEmit(MessageComposerViewEvent.CommandUnavailable(action))
-            return
-        }
-        val suggestions = if (containsCommand) {
-            val commandPattern = messageText.removePrefix("/")
-            commands.filter { it.name.startsWith(commandPattern) }
-                .orderedForComposer()
-        } else {
-            emptyList()
-        }
-        _state.update { it.copy(commandSuggestions = suggestions) }
+        if (suppressSuggestionsInEditMode()) return
+        _state.update { it.copy(commandSuggestions = filteredSuggestionsFor(messageText)) }
+    }
+
+    /**
+     * When [Config.activeCommandEnabled] is `true` and the composer is in edit mode, suppresses
+     * the suggestions popup for a command trigger and emits a
+     * [MessageComposerViewEvent.CommandUnavailable].
+     *
+     * @return `true` when suppression fired; callers should skip the default suggestion handling.
+     */
+    private fun suppressSuggestionsInEditMode(): Boolean {
+        if (!config.activeCommandEnabled) return false
+        val action = activeAction as? Edit ?: return false
+        if (!CommandText.isTrigger(messageText)) return false
+        _state.update { it.copy(commandSuggestions = emptyList()) }
+        _events.tryEmit(MessageComposerViewEvent.CommandUnavailable(action))
+        return true
+    }
+
+    private fun filteredSuggestionsFor(text: String): List<Command> {
+        if (!CommandText.isTrigger(text)) return emptyList()
+        val prefix = text.removePrefix("/")
+        return commands.filter { it.name.startsWith(prefix) }.orderedForComposer()
     }
 
     /**
@@ -1264,17 +1270,19 @@ public class MessageComposerController(
      */
     private fun tryAutoSelectCommand(text: String): Boolean {
         if (!config.activeCommandEnabled) return false
-        val name = AutoSelectCommandPattern.matcher(text).takeIf { it.matches() }?.group(1)
-            ?: return false
+        val name = CommandText.autoSelectName(text) ?: return false
         val command = commands.firstOrNull { it.name == name } ?: return false
         selectCommand(command)
         return true
     }
 
     /**
-     * Returns a blocking event when [text] starts with a command name that is unavailable for
-     * [action], or `null` when the message is safe to send. Gated on [Config.activeCommandEnabled]
-     * — legacy mode sends raw text verbatim.
+     * Returns a [MessageComposerViewEvent.CommandUnavailable] when [text] starts with a command
+     * name that is unavailable for [action], or `null` when the message is safe to send. Gated on
+     * [Config.activeCommandEnabled] — legacy mode sends raw text verbatim.
+     *
+     * The `activeCommand != null` / unavailable-for-action combination is prevented by
+     * [performMessageAction]'s guard, so only the typed-text path can reach this code.
      */
     private fun detectBlockingCommand(
         text: String,
@@ -1282,15 +1290,10 @@ public class MessageComposerController(
     ): MessageComposerViewEvent? {
         if (!config.activeCommandEnabled) return null
         val currentAction = action ?: return null
-        val name = InlineCommandPattern.matcher(text).takeIf { it.find() }?.group(1)
-            ?: return null
+        val name = CommandText.inlineCommandName(text) ?: return null
         val command = commands.firstOrNull { it.name == name } ?: return null
         if (command.isAvailableFor(currentAction)) return null
-        return if (_state.value.activeCommand != null) {
-            MessageComposerViewEvent.CancelCommandRequired(currentAction)
-        } else {
-            MessageComposerViewEvent.CommandUnavailable(currentAction)
-        }
+        return MessageComposerViewEvent.CommandUnavailable(currentAction)
     }
 
     /**
@@ -1374,11 +1377,28 @@ public class MessageComposerController(
         private const val MENTION_START_SYMBOL: String = "@"
 
         /**
-         * The regex pattern used to check if the message ends with incomplete command.
+         * Recognises the shapes of command text the composer cares about.
          */
-        private val CommandPattern = Pattern.compile("^/[a-z]*$")
-        private val AutoSelectCommandPattern = Pattern.compile("^/([a-z]+) $")
-        private val InlineCommandPattern = Pattern.compile("^/([a-z]+)(?:\\s|$)")
+        private object CommandText {
+
+            private val Trigger = Pattern.compile("^/[a-z]*$")
+            private val AutoSelectTrigger = Pattern.compile("^/([a-z]+) $")
+            private val InlineCommand = Pattern.compile("^/([a-z]+)(?:\\s|$)")
+
+            /** `true` for a popup trigger in progress, e.g. `/`, `/gi`. */
+            fun isTrigger(text: String): Boolean = Trigger.matcher(text).find()
+
+            /** `true` for the exact auto-select form `/name ` (space-terminated). */
+            fun isAutoSelectTrigger(text: String): Boolean = AutoSelectTrigger.matcher(text).matches()
+
+            /** The command name from an auto-select trigger, or `null` when [text] isn't one. */
+            fun autoSelectName(text: String): String? =
+                AutoSelectTrigger.matcher(text).takeIf { it.matches() }?.group(1)
+
+            /** The leading command name from [text] (`/name` optionally followed by whitespace). */
+            fun inlineCommandName(text: String): String? =
+                InlineCommand.matcher(text).takeIf { it.find() }?.group(1)
+        }
 
         internal val LinkPattern = Regex(
             "(http://|https://)?([a-zA-Z0-9]+(\\.[a-zA-Z0-9-]+)*\\.([a-zA-Z]{2,}))(/[\\w-./?%&=]*)?",

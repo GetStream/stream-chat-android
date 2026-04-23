@@ -1190,6 +1190,34 @@ internal class MessageComposerControllerTest {
         }
 
     @Test
+    fun `Given auto-selected command When action changes Then auto-select does not re-fire`() = runTest {
+        // Given
+        val command = randomCommand(name = "giphy")
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+        controller.setMessageInput("/giphy ")
+        advanceUntilIdle()
+        assertEquals(command, controller.state.value.activeCommand)
+        // Input is empty after auto-select, so action change should not re-trigger.
+
+        // When
+        controller.performMessageAction(Reply(randomMessage(cid = CID)))
+        advanceUntilIdle()
+
+        // Then
+        assertEquals(command, controller.state.value.activeCommand)
+        assertEquals("", controller.state.value.inputValue)
+    }
+
+    @Test
     fun `Given activeCommandEnabled false When user types slash name plus space Then command mode is not entered`() =
         runTest {
             // Given
