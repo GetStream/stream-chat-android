@@ -153,6 +153,8 @@
   <string name="stream_compose_message_composer_error_message_length">"मैसेज की वर्ण सीमा (%1$d) पार हो गई है।"</string>
   <string name="stream_compose_message_composer_error_sending_links_not_allowed">"इस वार्तालाप में लिंक भेजने की अनुमति नहीं है।"</string>
   <string name="stream_compose_message_composer_file_not_supported">"फ़ाइल का प्रकार समर्थित नहीं है"</string>
+  <string name="stream_compose_message_composer_cancel_command_to_edit">"संपादन करने के लिए कमांड रद्द करें"</string>
+  <string name="stream_compose_message_composer_cancel_command_to_reply">"उत्तर देने के लिए कमांड रद्द करें"</string>
   <string name="stream_compose_message_composer_command_unavailable_in_edit">"संपादन के दौरान उपलब्ध नहीं"</string>
   <string name="stream_compose_message_composer_command_unavailable_in_reply">"उत्तर देते समय उपलब्ध नहीं"</string>
   <string name="stream_compose_message_composer_commands_unavailable_in_edit">"संपादन के दौरान कमांड उपलब्ध नहीं हैं"</string>

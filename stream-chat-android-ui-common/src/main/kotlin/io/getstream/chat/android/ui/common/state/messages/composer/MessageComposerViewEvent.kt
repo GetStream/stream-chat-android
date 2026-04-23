@@ -35,4 +35,15 @@ public interface MessageComposerViewEvent {
     public data class CommandUnavailable(
         val action: MessageAction,
     ) : MessageComposerViewEvent
+
+    /**
+     * Emitted when the user attempts to switch to [action] while an active command is in progress
+     * that is not available for the target action. The user must cancel the active command before
+     * the action can apply.
+     *
+     * @param action The composer action whose attempt was rejected.
+     */
+    public data class CancelCommandRequired(
+        val action: MessageAction,
+    ) : MessageComposerViewEvent
 }

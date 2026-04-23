@@ -52,6 +52,7 @@ import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageInput
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
+import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerViewEvent
 import io.getstream.result.Result
 import io.getstream.result.call.Call
@@ -1095,6 +1096,236 @@ internal class MessageComposerControllerTest {
 
         // Then
         assertEquals(listOf(giphyCommand, muteCommand), controller.state.value.commandSuggestions)
+    }
+
+    @Test
+    fun `Given active moderation command When action becomes Reply Then event is emitted and action is not applied`() =
+        runTest {
+            // Given
+            val muteCommand = Command(
+                name = randomString(),
+                description = randomString(),
+                args = randomString(),
+                set = "moderation_set",
+            )
+            val controller = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(muteCommand))),
+                )
+                .get()
+            controller.selectCommand(muteCommand)
+            advanceUntilIdle()
+            val replyAction = Reply(randomMessage(cid = CID))
+
+            // When / Then
+            controller.events.test {
+                controller.performMessageAction(replyAction)
+                advanceUntilIdle()
+
+                assertEquals(MessageComposerViewEvent.CancelCommandRequired(replyAction), awaitItem())
+                assertEquals(muteCommand, controller.state.value.activeCommand)
+                assertNull(controller.state.value.action)
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `Given active fun command When action becomes Reply Then action applies and activeCommand preserved`() =
+        runTest {
+            // Given
+            val giphyCommand = Command(
+                name = randomString(),
+                description = randomString(),
+                args = randomString(),
+                set = "fun_set",
+            )
+            val controller = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(giphyCommand))),
+                )
+                .get()
+            controller.selectCommand(giphyCommand)
+            advanceUntilIdle()
+            val replyAction = Reply(randomMessage(cid = CID))
+
+            // When
+            controller.performMessageAction(replyAction)
+            advanceUntilIdle()
+
+            // Then
+            assertEquals(replyAction, controller.state.value.action)
+            assertEquals(giphyCommand, controller.state.value.activeCommand)
+        }
+
+    @Test
+    fun `Given activeCommandEnabled true When user types slash name plus space Then command mode is entered`() = runTest {
+        // Given
+        val giphyCommand = Command(
+            name = "giphy",
+            description = randomString(),
+            args = randomString(),
+            set = "fun_set",
+        )
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(giphyCommand))),
+            )
+            .get()
+
+        // When
+        controller.setMessageInput("/giphy ")
+        advanceUntilIdle()
+
+        // Then
+        assertEquals(giphyCommand, controller.state.value.activeCommand)
+        assertEquals("", controller.state.value.inputValue)
+    }
+
+    @Test
+    fun `Given auto-selected command via slash name space When clearActiveCommand Then chip is cleared and input is empty`() =
+        runTest {
+            // Given
+            val giphyCommand = Command(
+                name = "giphy",
+                description = randomString(),
+                args = randomString(),
+                set = "fun_set",
+            )
+            val controller = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(giphyCommand))),
+                )
+                .get()
+            controller.setMessageInput("/giphy ")
+            advanceUntilIdle()
+            assertEquals(giphyCommand, controller.state.value.activeCommand)
+
+            // When
+            controller.clearActiveCommand()
+            advanceUntilIdle()
+
+            // Then
+            assertNull(controller.state.value.activeCommand)
+            assertEquals("", controller.state.value.inputValue)
+        }
+
+    @Test
+    fun `Given activeCommandEnabled false When user types slash name plus space Then command mode is not entered`() =
+        runTest {
+            // Given
+            val giphyCommand = Command(
+                name = "giphy",
+                description = randomString(),
+                args = randomString(),
+                set = "fun_set",
+            )
+            val controller = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = false))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(giphyCommand))),
+                )
+                .get()
+
+            // When
+            controller.setMessageInput("/giphy ")
+            advanceUntilIdle()
+
+            // Then
+            assertNull(controller.state.value.activeCommand)
+            assertEquals("/giphy ", controller.state.value.inputValue)
+        }
+
+    @Test
+    fun `Given slash moderation command typed in reply mode When sendMessage called Then event is emitted and message is not sent`() =
+        runTest {
+            // Given
+            val muteCommand = Command(
+                name = "mute",
+                description = randomString(),
+                args = randomString(),
+                set = "moderation_set",
+            )
+            val controller = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(muteCommand))),
+                )
+                .get()
+            controller.performMessageAction(Reply(randomMessage(cid = CID)))
+            advanceUntilIdle()
+            val message = Message(text = "/mute @alice")
+
+            // When / Then
+            controller.events.test {
+                controller.sendMessage(message, callback = mock())
+                advanceUntilIdle()
+
+                assertEquals(
+                    MessageComposerViewEvent.CommandUnavailable(controller.state.value.action!!),
+                    awaitItem(),
+                )
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `Given active command When performMessageAction with ThreadReply Then no block and thread mode applies`() = runTest {
+        // Given
+        val muteCommand = Command(
+            name = randomString(),
+            description = randomString(),
+            args = randomString(),
+            set = "moderation_set",
+        )
+        val parentMessage = randomMessage(cid = CID)
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(muteCommand))),
+            )
+            .get()
+        controller.selectCommand(muteCommand)
+        advanceUntilIdle()
+
+        // When
+        controller.performMessageAction(ThreadReply(parentMessage))
+        advanceUntilIdle()
+
+        // Then
+        assertEquals(muteCommand, controller.state.value.activeCommand)
+        assertEquals(MessageMode.MessageThread(parentMessage), controller.state.value.messageMode)
     }
 
     @Test

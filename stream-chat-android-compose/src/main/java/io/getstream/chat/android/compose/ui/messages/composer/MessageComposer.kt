@@ -338,11 +338,18 @@ private fun MessageComposerViewEvent.messageResOrNull(): Int? = when (this) {
         is Reply -> R.string.stream_compose_message_composer_command_unavailable_in_reply
         else -> null
     }
+    is MessageComposerViewEvent.CancelCommandRequired -> when (action) {
+        is Edit -> R.string.stream_compose_message_composer_cancel_command_to_edit
+        is Reply -> R.string.stream_compose_message_composer_cancel_command_to_reply
+        else -> null
+    }
     else -> null
 }
 
 private fun MessageComposerViewEvent.snackbarVariant(): StreamSnackbarVariant = when (this) {
-    is MessageComposerViewEvent.CommandUnavailable -> StreamSnackbarVariant.Error
+    is MessageComposerViewEvent.CommandUnavailable,
+    is MessageComposerViewEvent.CancelCommandRequired,
+    -> StreamSnackbarVariant.Error
     else -> StreamSnackbarVariant.Default
 }
 

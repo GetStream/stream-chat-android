@@ -605,6 +605,14 @@ public class MessageComposerController(
      * @param messageAction The newly selected action.
      */
     public fun performMessageAction(messageAction: MessageAction) {
+        val activeCommand = _state.value.activeCommand
+        if (config.activeCommandEnabled &&
+            activeCommand != null &&
+            !activeCommand.isAvailableFor(messageAction)
+        ) {
+            _events.tryEmit(MessageComposerViewEvent.CancelCommandRequired(messageAction))
+            return
+        }
         when (messageAction) {
             is ThreadReply -> setMessageMode(MessageMode.MessageThread(messageAction.message))
             is Reply ->
@@ -763,6 +771,11 @@ public class MessageComposerController(
         resolveAttachments: (suspend (List<Attachment>) -> List<Attachment>)? = null,
     ) {
         logger.i { "[sendMessage] message.attachments.size: ${message.attachments.size}" }
+        val blocking = detectBlockingCommand(message.text, activeAction)
+        if (blocking != null) {
+            _events.tryEmit(blocking)
+            return
+        }
         val activeMessage = activeAction?.message ?: message
         val currentUserId = chatClient.getCurrentUser()?.id
 
@@ -1024,10 +1037,16 @@ public class MessageComposerController(
 
     private fun stashPreCommandState() {
         val currentText = _messageInput.value.text
-        // A pure command trigger (e.g. "/" or "/gi") is not user draft content — it is the
-        // popup trigger being consumed by the command. Stash empty instead so cancelling the
-        // command does not restore phantom trigger characters.
-        val stashedInput = if (CommandPattern.matcher(currentText).find()) "" else currentText
+        // A pure command trigger (e.g. "/", "/gi", or the "/mute " auto-select form) is not
+        // user draft content — it is the popup/auto-select trigger being consumed by the
+        // command. Stash empty so cancelling the command does not restore phantom trigger
+        // characters (which would otherwise re-trigger auto-select and make the chip
+        // uncancelable).
+        val stashedInput = when {
+            CommandPattern.matcher(currentText).find() -> ""
+            AutoSelectCommandPattern.matcher(currentText).find() -> ""
+            else -> currentText
+        }
         commandStash = CommandStash(
             input = stashedInput,
             attachments = LinkedHashMap(_selectedAttachments.value),
@@ -1213,6 +1232,7 @@ public class MessageComposerController(
      * commands are blocked.
      */
     private fun handleCommandSuggestions() {
+        if (tryAutoSelectCommand(messageText)) return
         val containsCommand = CommandPattern.matcher(messageText).find()
         val action = activeAction
         if (containsCommand && action is Edit) {
@@ -1228,6 +1248,45 @@ public class MessageComposerController(
             emptyList()
         }
         _state.update { it.copy(commandSuggestions = suggestions) }
+    }
+
+    /**
+     * Detects a `/{name} ` pattern in [text] matching a channel command and enters command mode
+     * for it via [selectCommand]. Gated on [Config.activeCommandEnabled] — legacy mode keeps the
+     * text-based flow.
+     *
+     * @return `true` when a command was auto-selected; callers should skip their default suggestion
+     * handling to avoid redundant work.
+     */
+    private fun tryAutoSelectCommand(text: String): Boolean {
+        if (!config.activeCommandEnabled) return false
+        val name = AutoSelectCommandPattern.matcher(text).takeIf { it.matches() }?.group(1)
+            ?: return false
+        val command = commands.firstOrNull { it.name == name } ?: return false
+        selectCommand(command)
+        return true
+    }
+
+    /**
+     * Returns a blocking event when [text] starts with a command name that is unavailable for
+     * [action], or `null` when the message is safe to send. Gated on [Config.activeCommandEnabled]
+     * — legacy mode sends raw text verbatim.
+     */
+    private fun detectBlockingCommand(
+        text: String,
+        action: MessageAction?,
+    ): MessageComposerViewEvent? {
+        if (!config.activeCommandEnabled) return null
+        val currentAction = action ?: return null
+        val name = InlineCommandPattern.matcher(text).takeIf { it.find() }?.group(1)
+            ?: return null
+        val command = commands.firstOrNull { it.name == name } ?: return null
+        if (command.isAvailableFor(currentAction)) return null
+        return if (_state.value.activeCommand != null) {
+            MessageComposerViewEvent.CancelCommandRequired(currentAction)
+        } else {
+            MessageComposerViewEvent.CommandUnavailable(currentAction)
+        }
     }
 
     /**
@@ -1314,6 +1373,8 @@ public class MessageComposerController(
          * The regex pattern used to check if the message ends with incomplete command.
          */
         private val CommandPattern = Pattern.compile("^/[a-z]*$")
+        private val AutoSelectCommandPattern = Pattern.compile("^/([a-z]+) $")
+        private val InlineCommandPattern = Pattern.compile("^/([a-z]+)(?:\\s|$)")
 
         internal val LinkPattern = Regex(
             "(http://|https://)?([a-zA-Z0-9]+(\\.[a-zA-Z0-9-]+)*\\.([a-zA-Z]{2,}))(/[\\w-./?%&=]*)?",
