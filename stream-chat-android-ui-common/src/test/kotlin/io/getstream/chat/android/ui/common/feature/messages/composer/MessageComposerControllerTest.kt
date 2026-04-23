@@ -38,8 +38,8 @@ import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomAttachment
+import io.getstream.chat.android.randomCommand
 import io.getstream.chat.android.randomMessage
-import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.MockRetrofitCall
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -658,7 +658,7 @@ internal class MessageComposerControllerTest {
     @Test
     fun `Given pre-command input and attachments When selectCommand called Then composer is cleared`() = runTest {
         // Given
-        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val command = randomCommand()
         val preCommandText = "draft message"
         val preCommandAttachment = randomAttachment()
         val controller = Fixture()
@@ -689,7 +689,7 @@ internal class MessageComposerControllerTest {
     fun `Given pre-command input and attachments When clearActiveCommand called Then pre-command state is restored`() =
         runTest {
             // Given
-            val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+            val command = randomCommand()
             val preCommandText = "draft message"
             val preCommandAttachment = randomAttachment()
             val controller = Fixture()
@@ -722,7 +722,7 @@ internal class MessageComposerControllerTest {
     fun `Given command trigger text When selectCommand then clearActiveCommand called Then trigger is not restored`() =
         runTest {
             // Given
-            val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+            val command = randomCommand()
             val controller = Fixture()
                 .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
                 .givenAppSettings()
@@ -749,7 +749,7 @@ internal class MessageComposerControllerTest {
     @Test
     fun `Given pre-command mention When clearActiveCommand called Then mention selection is restored`() = runTest {
         // Given
-        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val command = randomCommand()
         val mentionedUser = User(id = "user1", name = "John Doe")
         val controller = Fixture()
             .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
@@ -779,7 +779,7 @@ internal class MessageComposerControllerTest {
     @Test
     fun `Given in-command text When clearActiveCommand called Then in-command text is discarded`() = runTest {
         // Given
-        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val command = randomCommand()
         val preCommandText = "draft message"
         val inCommandText = "cat"
         val controller = Fixture()
@@ -811,7 +811,7 @@ internal class MessageComposerControllerTest {
     fun `Given activeCommandEnabled disabled When selectCommand called Then pre-command input is not stashed`() =
         runTest {
             // Given
-            val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+            val command = randomCommand()
             val preCommandText = "draft message"
             val controller = Fixture()
                 .givenConfig(MessageComposerController.Config(activeCommandEnabled = false))
@@ -839,8 +839,8 @@ internal class MessageComposerControllerTest {
     @Test
     fun `Given re-selecting command When selectCommand called again Then existing stash is preserved`() = runTest {
         // Given
-        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
-        val otherCommand = Command("imgur", "Search Imgur", "[text]", "fun_set")
+        val command = randomCommand()
+        val otherCommand = randomCommand()
         val preCommandText = "draft message"
         val controller = Fixture()
             .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
@@ -873,7 +873,7 @@ internal class MessageComposerControllerTest {
     fun `Given an active command with stash When clearData called Then stash is discarded and composer is empty`() =
         runTest {
             // Given
-            val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+            val command = randomCommand()
             val preCommandText = "draft message"
             val preCommandAttachment = randomAttachment()
             val controller = Fixture()
@@ -905,7 +905,7 @@ internal class MessageComposerControllerTest {
     @Test
     fun `Given edit mode When selectCommand called Then activeCommand is not set and event is emitted`() = runTest {
         // Given
-        val command = Command(name = randomString(), description = randomString(), args = randomString(), set = "fun_set")
+        val command = randomCommand()
         val editedMessage = randomMessage(cid = CID)
         val editAction = Edit(editedMessage)
         val controller = Fixture()
@@ -937,12 +937,7 @@ internal class MessageComposerControllerTest {
     fun `Given reply mode When selectCommand called with moderation command Then command is not set and event is emitted`() =
         runTest {
             // Given
-            val muteCommand = Command(
-                name = randomString(),
-                description = randomString(),
-                args = randomString(),
-                set = "moderation_set",
-            )
+            val muteCommand = randomCommand(set = MODERATION_SET)
             val repliedMessage = randomMessage(cid = CID)
             val replyAction = Reply(repliedMessage)
             val controller = Fixture()
@@ -972,12 +967,7 @@ internal class MessageComposerControllerTest {
     @Test
     fun `Given reply mode When selectCommand then clearActiveCommand called Then reply action is preserved`() = runTest {
         // Given
-        val giphyCommand = Command(
-            name = randomString(),
-            description = randomString(),
-            args = randomString(),
-            set = "fun_set",
-        )
+        val funCommand = randomCommand()
         val repliedMessage = randomMessage(cid = CID)
         val replyAction = Reply(repliedMessage)
         val controller = Fixture()
@@ -987,14 +977,14 @@ internal class MessageComposerControllerTest {
             .givenClientState(randomUser())
             .givenGlobalState()
             .givenChannelState(
-                configState = MutableStateFlow(Config(commands = listOf(giphyCommand))),
+                configState = MutableStateFlow(Config(commands = listOf(funCommand))),
             )
             .get()
         controller.performMessageAction(replyAction)
         advanceUntilIdle()
 
         // When
-        controller.selectCommand(giphyCommand)
+        controller.selectCommand(funCommand)
         advanceUntilIdle()
         controller.clearActiveCommand()
         advanceUntilIdle()
@@ -1007,7 +997,7 @@ internal class MessageComposerControllerTest {
     @Test
     fun `Given picker attachment When user types slash Then command suggestions include all commands`() = runTest {
         // Given
-        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val command = randomCommand()
         val pickerAttachment = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
         val controller = Fixture()
             .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
@@ -1033,7 +1023,7 @@ internal class MessageComposerControllerTest {
     @Test
     fun `Given edit mode When user types slash Then suggestions stay empty and event is emitted`() = runTest {
         // Given
-        val command = Command(name = randomString(), description = randomString(), args = randomString(), set = "fun_set")
+        val command = randomCommand()
         val editedMessage = randomMessage(cid = CID, text = "")
         val editAction = Edit(editedMessage)
         val controller = Fixture()
@@ -1063,18 +1053,8 @@ internal class MessageComposerControllerTest {
     @Test
     fun `Given slash typed When action becomes Reply Then suggestions re-sort by availability`() = runTest {
         // Given
-        val muteCommand = Command(
-            name = randomString(),
-            description = randomString(),
-            args = randomString(),
-            set = "moderation_set",
-        )
-        val giphyCommand = Command(
-            name = randomString(),
-            description = randomString(),
-            args = randomString(),
-            set = "fun_set",
-        )
+        val muteCommand = randomCommand(set = MODERATION_SET)
+        val funCommand = randomCommand()
         val repliedMessage = randomMessage(cid = CID)
         val controller = Fixture()
             .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
@@ -1083,31 +1063,26 @@ internal class MessageComposerControllerTest {
             .givenClientState(randomUser())
             .givenGlobalState()
             .givenChannelState(
-                configState = MutableStateFlow(Config(commands = listOf(muteCommand, giphyCommand))),
+                configState = MutableStateFlow(Config(commands = listOf(muteCommand, funCommand))),
             )
             .get()
         controller.setMessageInput("/")
         advanceUntilIdle()
-        assertEquals(listOf(muteCommand, giphyCommand), controller.state.value.commandSuggestions)
+        assertEquals(listOf(muteCommand, funCommand), controller.state.value.commandSuggestions)
 
         // When
         controller.performMessageAction(Reply(repliedMessage))
         advanceUntilIdle()
 
         // Then
-        assertEquals(listOf(giphyCommand, muteCommand), controller.state.value.commandSuggestions)
+        assertEquals(listOf(funCommand, muteCommand), controller.state.value.commandSuggestions)
     }
 
     @Test
     fun `Given active moderation command When action becomes Reply Then event is emitted and action is not applied`() =
         runTest {
             // Given
-            val muteCommand = Command(
-                name = randomString(),
-                description = randomString(),
-                args = randomString(),
-                set = "moderation_set",
-            )
+            val muteCommand = randomCommand(set = MODERATION_SET)
             val controller = Fixture()
                 .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
                 .givenAppSettings()
@@ -1138,12 +1113,7 @@ internal class MessageComposerControllerTest {
     fun `Given active fun command When action becomes Reply Then action applies and activeCommand preserved`() =
         runTest {
             // Given
-            val giphyCommand = Command(
-                name = randomString(),
-                description = randomString(),
-                args = randomString(),
-                set = "fun_set",
-            )
+            val funCommand = randomCommand()
             val controller = Fixture()
                 .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
                 .givenAppSettings()
@@ -1151,10 +1121,10 @@ internal class MessageComposerControllerTest {
                 .givenClientState(randomUser())
                 .givenGlobalState()
                 .givenChannelState(
-                    configState = MutableStateFlow(Config(commands = listOf(giphyCommand))),
+                    configState = MutableStateFlow(Config(commands = listOf(funCommand))),
                 )
                 .get()
-            controller.selectCommand(giphyCommand)
+            controller.selectCommand(funCommand)
             advanceUntilIdle()
             val replyAction = Reply(randomMessage(cid = CID))
 
@@ -1164,18 +1134,13 @@ internal class MessageComposerControllerTest {
 
             // Then
             assertEquals(replyAction, controller.state.value.action)
-            assertEquals(giphyCommand, controller.state.value.activeCommand)
+            assertEquals(funCommand, controller.state.value.activeCommand)
         }
 
     @Test
     fun `Given activeCommandEnabled true When user types slash name plus space Then command mode is entered`() = runTest {
         // Given
-        val giphyCommand = Command(
-            name = "giphy",
-            description = randomString(),
-            args = randomString(),
-            set = "fun_set",
-        )
+        val command = randomCommand(name = "giphy")
         val controller = Fixture()
             .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
             .givenAppSettings()
@@ -1183,7 +1148,7 @@ internal class MessageComposerControllerTest {
             .givenClientState(randomUser())
             .givenGlobalState()
             .givenChannelState(
-                configState = MutableStateFlow(Config(commands = listOf(giphyCommand))),
+                configState = MutableStateFlow(Config(commands = listOf(command))),
             )
             .get()
 
@@ -1192,7 +1157,7 @@ internal class MessageComposerControllerTest {
         advanceUntilIdle()
 
         // Then
-        assertEquals(giphyCommand, controller.state.value.activeCommand)
+        assertEquals(command, controller.state.value.activeCommand)
         assertEquals("", controller.state.value.inputValue)
     }
 
@@ -1200,12 +1165,7 @@ internal class MessageComposerControllerTest {
     fun `Given auto-selected command via slash name space When clearActiveCommand Then chip is cleared and input is empty`() =
         runTest {
             // Given
-            val giphyCommand = Command(
-                name = "giphy",
-                description = randomString(),
-                args = randomString(),
-                set = "fun_set",
-            )
+            val command = randomCommand(name = "giphy")
             val controller = Fixture()
                 .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
                 .givenAppSettings()
@@ -1213,12 +1173,12 @@ internal class MessageComposerControllerTest {
                 .givenClientState(randomUser())
                 .givenGlobalState()
                 .givenChannelState(
-                    configState = MutableStateFlow(Config(commands = listOf(giphyCommand))),
+                    configState = MutableStateFlow(Config(commands = listOf(command))),
                 )
                 .get()
             controller.setMessageInput("/giphy ")
             advanceUntilIdle()
-            assertEquals(giphyCommand, controller.state.value.activeCommand)
+            assertEquals(command, controller.state.value.activeCommand)
 
             // When
             controller.clearActiveCommand()
@@ -1233,12 +1193,7 @@ internal class MessageComposerControllerTest {
     fun `Given activeCommandEnabled false When user types slash name plus space Then command mode is not entered`() =
         runTest {
             // Given
-            val giphyCommand = Command(
-                name = "giphy",
-                description = randomString(),
-                args = randomString(),
-                set = "fun_set",
-            )
+            val command = randomCommand(name = "giphy")
             val controller = Fixture()
                 .givenConfig(MessageComposerController.Config(activeCommandEnabled = false))
                 .givenAppSettings()
@@ -1246,7 +1201,7 @@ internal class MessageComposerControllerTest {
                 .givenClientState(randomUser())
                 .givenGlobalState()
                 .givenChannelState(
-                    configState = MutableStateFlow(Config(commands = listOf(giphyCommand))),
+                    configState = MutableStateFlow(Config(commands = listOf(command))),
                 )
                 .get()
 
@@ -1263,12 +1218,7 @@ internal class MessageComposerControllerTest {
     fun `Given activeCommandEnabled false and reply mode When selectCommand called with moderation command Then activeCommand is set`() =
         runTest {
             // Given
-            val muteCommand = Command(
-                name = "mute",
-                description = randomString(),
-                args = randomString(),
-                set = "moderation_set",
-            )
+            val muteCommand = randomCommand(set = MODERATION_SET)
             val repliedMessage = randomMessage(cid = CID)
             val controller = Fixture()
                 .givenConfig(MessageComposerController.Config(activeCommandEnabled = false))
@@ -1295,7 +1245,7 @@ internal class MessageComposerControllerTest {
     fun `Given activeCommandEnabled false and edit mode When user types slash Then command suggestions are shown`() =
         runTest {
             // Given
-            val giphyCommand = Command("giphy", randomString(), randomString(), "fun_set")
+            val command = randomCommand()
             val editedMessage = randomMessage(cid = CID)
             val controller = Fixture()
                 .givenConfig(MessageComposerController.Config(activeCommandEnabled = false))
@@ -1304,7 +1254,7 @@ internal class MessageComposerControllerTest {
                 .givenClientState(randomUser())
                 .givenGlobalState()
                 .givenChannelState(
-                    configState = MutableStateFlow(Config(commands = listOf(giphyCommand))),
+                    configState = MutableStateFlow(Config(commands = listOf(command))),
                 )
                 .get()
             controller.performMessageAction(Edit(editedMessage))
@@ -1315,15 +1265,15 @@ internal class MessageComposerControllerTest {
             advanceUntilIdle()
 
             // Then (legacy: popup not suppressed in edit mode)
-            assertEquals(listOf(giphyCommand), controller.state.value.commandSuggestions)
+            assertEquals(listOf(command), controller.state.value.commandSuggestions)
         }
 
     @Test
     fun `Given activeCommandEnabled false and reply mode When toggleCommandsVisibility called Then commands keep server order`() =
         runTest {
             // Given
-            val giphyCommand = Command("giphy", randomString(), randomString(), "fun_set")
-            val muteCommand = Command("mute", randomString(), randomString(), "moderation_set")
+            val funCommand = randomCommand()
+            val muteCommand = randomCommand(set = MODERATION_SET)
             val repliedMessage = randomMessage(cid = CID)
             val controller = Fixture()
                 .givenConfig(MessageComposerController.Config(activeCommandEnabled = false))
@@ -1332,7 +1282,7 @@ internal class MessageComposerControllerTest {
                 .givenClientState(randomUser())
                 .givenGlobalState()
                 .givenChannelState(
-                    configState = MutableStateFlow(Config(commands = listOf(muteCommand, giphyCommand))),
+                    configState = MutableStateFlow(Config(commands = listOf(muteCommand, funCommand))),
                 )
                 .get()
             controller.performMessageAction(Reply(repliedMessage))
@@ -1343,19 +1293,15 @@ internal class MessageComposerControllerTest {
             advanceUntilIdle()
 
             // Then (legacy: server order preserved, moderation not pushed to the bottom)
-            assertEquals(listOf(muteCommand, giphyCommand), controller.state.value.commandSuggestions)
+            assertEquals(listOf(muteCommand, funCommand), controller.state.value.commandSuggestions)
         }
 
     @Test
     fun `Given slash moderation command typed in reply mode When sendMessage called Then event is emitted and message is not sent`() =
         runTest {
             // Given
-            val muteCommand = Command(
-                name = "mute",
-                description = randomString(),
-                args = randomString(),
-                set = "moderation_set",
-            )
+            val muteCommand = randomCommand(name = "mute", set = MODERATION_SET)
+            val replyAction = Reply(randomMessage(cid = CID))
             val controller = Fixture()
                 .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
                 .givenAppSettings()
@@ -1366,7 +1312,7 @@ internal class MessageComposerControllerTest {
                     configState = MutableStateFlow(Config(commands = listOf(muteCommand))),
                 )
                 .get()
-            controller.performMessageAction(Reply(randomMessage(cid = CID)))
+            controller.performMessageAction(replyAction)
             advanceUntilIdle()
             val message = Message(text = "/mute @alice")
 
@@ -1375,10 +1321,7 @@ internal class MessageComposerControllerTest {
                 controller.sendMessage(message, callback = mock())
                 advanceUntilIdle()
 
-                assertEquals(
-                    MessageComposerViewEvent.CommandUnavailable(controller.state.value.action!!),
-                    awaitItem(),
-                )
+                assertEquals(MessageComposerViewEvent.CommandUnavailable(replyAction), awaitItem())
                 cancelAndIgnoreRemainingEvents()
             }
         }
@@ -1386,12 +1329,7 @@ internal class MessageComposerControllerTest {
     @Test
     fun `Given active command When performMessageAction with ThreadReply Then no block and thread mode applies`() = runTest {
         // Given
-        val muteCommand = Command(
-            name = randomString(),
-            description = randomString(),
-            args = randomString(),
-            set = "moderation_set",
-        )
+        val muteCommand = randomCommand(set = MODERATION_SET)
         val parentMessage = randomMessage(cid = CID)
         val controller = Fixture()
             .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
@@ -1418,8 +1356,8 @@ internal class MessageComposerControllerTest {
     @Test
     fun `Given reply mode When selectCommand called with fun_set command Then activeCommand is set`() = runTest {
         // Given
-        val giphyCommand = Command("giphy", "Search GIFs", "[text]", "fun_set")
-        val muteCommand = Command("mute", "Mute user", "[@username]", "moderation_set")
+        val funCommand = randomCommand()
+        val muteCommand = randomCommand(set = MODERATION_SET)
         val repliedMessage = randomMessage(cid = CID)
         val controller = Fixture()
             .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
@@ -1428,25 +1366,25 @@ internal class MessageComposerControllerTest {
             .givenClientState(randomUser())
             .givenGlobalState()
             .givenChannelState(
-                configState = MutableStateFlow(Config(commands = listOf(giphyCommand, muteCommand))),
+                configState = MutableStateFlow(Config(commands = listOf(funCommand, muteCommand))),
             )
             .get()
         controller.performMessageAction(Reply(repliedMessage))
         advanceUntilIdle()
 
         // When
-        controller.selectCommand(giphyCommand)
+        controller.selectCommand(funCommand)
         advanceUntilIdle()
 
         // Then
-        assertEquals(giphyCommand, controller.state.value.activeCommand)
+        assertEquals(funCommand, controller.state.value.activeCommand)
     }
 
     @Test
     fun `Given reply mode When user types slash Then suggestions include all commands`() = runTest {
         // Given
-        val giphyCommand = Command("giphy", "Search GIFs", "[text]", "fun_set")
-        val muteCommand = Command("mute", "Mute user", "[@username]", "moderation_set")
+        val funCommand = randomCommand()
+        val muteCommand = randomCommand(set = MODERATION_SET)
         val repliedMessage = randomMessage(cid = CID)
         val controller = Fixture()
             .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
@@ -1455,7 +1393,7 @@ internal class MessageComposerControllerTest {
             .givenClientState(randomUser())
             .givenGlobalState()
             .givenChannelState(
-                configState = MutableStateFlow(Config(commands = listOf(giphyCommand, muteCommand))),
+                configState = MutableStateFlow(Config(commands = listOf(funCommand, muteCommand))),
             )
             .get()
         controller.performMessageAction(Reply(repliedMessage))
@@ -1466,14 +1404,14 @@ internal class MessageComposerControllerTest {
         advanceUntilIdle()
 
         // Then
-        assertEquals(listOf(giphyCommand, muteCommand), controller.state.value.commandSuggestions)
+        assertEquals(listOf(funCommand, muteCommand), controller.state.value.commandSuggestions)
     }
 
     @Test
     fun `Given reply mode When toggleCommandsVisibility called Then suggestions include all commands`() = runTest {
         // Given
-        val giphyCommand = Command("giphy", "Search GIFs", "[text]", "fun_set")
-        val muteCommand = Command("mute", "Mute user", "[@username]", "moderation_set")
+        val funCommand = randomCommand()
+        val muteCommand = randomCommand(set = MODERATION_SET)
         val repliedMessage = randomMessage(cid = CID)
         val controller = Fixture()
             .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
@@ -1482,7 +1420,7 @@ internal class MessageComposerControllerTest {
             .givenClientState(randomUser())
             .givenGlobalState()
             .givenChannelState(
-                configState = MutableStateFlow(Config(commands = listOf(giphyCommand, muteCommand))),
+                configState = MutableStateFlow(Config(commands = listOf(funCommand, muteCommand))),
             )
             .get()
         controller.performMessageAction(Reply(repliedMessage))
@@ -1493,14 +1431,14 @@ internal class MessageComposerControllerTest {
         advanceUntilIdle()
 
         // Then
-        assertEquals(listOf(giphyCommand, muteCommand), controller.state.value.commandSuggestions)
+        assertEquals(listOf(funCommand, muteCommand), controller.state.value.commandSuggestions)
     }
 
     @Test
     fun `Given edit mode When toggleCommandsVisibility called Then command suggestions include all commands`() =
         runTest {
             // Given
-            val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+            val command = randomCommand()
             val editedMessage = randomMessage(cid = CID)
             val controller = Fixture()
                 .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
@@ -1526,7 +1464,7 @@ internal class MessageComposerControllerTest {
     @Test
     fun `Given an active command with args When buildNewMessage called Then full command text is used`() = runTest {
         // Given
-        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val command = randomCommand(name = "giphy")
         val controller = Fixture()
             .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
             .givenAppSettings()
@@ -1550,7 +1488,7 @@ internal class MessageComposerControllerTest {
     @Test
     fun `Given an active command with no args When buildNewMessage called Then command name only is used`() = runTest {
         // Given
-        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val command = randomCommand(name = "giphy")
         val controller = Fixture()
             .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
             .givenAppSettings()
@@ -1574,7 +1512,7 @@ internal class MessageComposerControllerTest {
     @Test
     fun `Given an active command When clearData called Then activeCommand is null`() = runTest {
         // Given
-        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val command = randomCommand()
         val controller = Fixture()
             .givenAppSettings()
             .givenAudioPlayer(mock())
@@ -1592,7 +1530,7 @@ internal class MessageComposerControllerTest {
         advanceUntilIdle()
 
         // Then
-        assertEquals(null, controller.state.value.activeCommand)
+        assertNull(controller.state.value.activeCommand)
     }
 
     @Test
@@ -2465,5 +2403,6 @@ internal class MessageComposerControllerTest {
         private const val CHANNEL_TYPE = "messaging"
         private const val CHANNEL_ID = "123"
         private const val CID = "messaging:123"
+        private const val MODERATION_SET = "moderation_set"
     }
 }
