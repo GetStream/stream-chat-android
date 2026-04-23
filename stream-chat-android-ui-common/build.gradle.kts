@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.stream.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.android.junit5)
     alias(libs.plugins.androidx.baseline.profile)
 }

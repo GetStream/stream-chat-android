@@ -20,6 +20,8 @@ import android.content.Context
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.CreationExtras
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -27,6 +29,9 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
+import io.getstream.chat.android.ui.common.feature.messages.composer.internal.ComposerStateSaver
+import io.getstream.chat.android.ui.common.feature.messages.composer.internal.NoOpComposerStateSaver
+import io.getstream.chat.android.ui.common.feature.messages.composer.internal.SavedStateComposerStateSaver
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.CompatUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
@@ -135,20 +140,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
             )
         },
         MessageComposerViewModel::class.java to {
-            MessageComposerViewModel(
-                MessageComposerController(
-                    channelCid = cid,
-                    chatClient = chatClient,
-                    mediaRecorder = mediaRecorder,
-                    userLookupHandler = userLookupHandler,
-                    fileToUri = fileToUri,
-                    channelState = channelStateFlow,
-                    config = MessageComposerController.Config(
-                        maxAttachmentCount = maxAttachmentCount,
-                        isDraftMessageEnabled = isComposerDraftMessagesEnabled,
-                    ),
-                ),
-            )
+            createMessageComposerViewModel(NoOpComposerStateSaver)
         },
     )
 
@@ -158,6 +150,33 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
 
         @Suppress("UNCHECKED_CAST")
         return viewModel as T
+    }
+
+    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+        if (modelClass == MessageComposerViewModel::class.java) {
+            val savedStateHandle = extras.createSavedStateHandle()
+            @Suppress("UNCHECKED_CAST")
+            return createMessageComposerViewModel(SavedStateComposerStateSaver(savedStateHandle)) as T
+        }
+        return create(modelClass)
+    }
+
+    private fun createMessageComposerViewModel(stateSaver: ComposerStateSaver): MessageComposerViewModel {
+        return MessageComposerViewModel(
+            MessageComposerController(
+                channelCid = cid,
+                chatClient = chatClient,
+                mediaRecorder = mediaRecorder,
+                userLookupHandler = userLookupHandler,
+                fileToUri = fileToUri,
+                channelState = channelStateFlow,
+                config = MessageComposerController.Config(
+                    maxAttachmentCount = maxAttachmentCount,
+                    isDraftMessageEnabled = isComposerDraftMessagesEnabled,
+                ),
+                stateSaver = stateSaver,
+            ),
+        )
     }
 
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")

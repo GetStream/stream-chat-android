@@ -41,6 +41,7 @@ import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
+import io.getstream.chat.android.ui.common.feature.messages.composer.internal.NoOpComposerStateSaver
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.MentionType
@@ -475,6 +476,7 @@ internal class MessageComposerViewModelTest {
                     ),
                     channelState = MutableStateFlow(channelState),
                     globalState = MutableStateFlow(globalState),
+                    stateSaver = NoOpComposerStateSaver,
                 ),
             )
         }
