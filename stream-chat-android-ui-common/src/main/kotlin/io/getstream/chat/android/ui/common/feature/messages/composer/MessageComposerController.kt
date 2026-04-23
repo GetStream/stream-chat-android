@@ -362,9 +362,8 @@ public class MessageComposerController(
 
     /**
      * Snapshot of pre-command composer state captured when entering command mode under
-     * [Config.activeCommandEnabled]. Restored on [clearActiveCommand] when the user dismisses
-     * the command, and discarded on [clearData] (send / full reset). `null` when no command is
-     * active or when command mode is disabled.
+     * [Config.activeCommandEnabled]. Restored on [clearActiveCommand] and discarded on
+     * [clearData]. `null` when no command is active or when command mode is disabled.
      */
     private var commandStash: CommandStash? = null
 
@@ -997,15 +996,16 @@ public class MessageComposerController(
      * overwrite an existing stash (in-command input is command-specific and not preserved across
      * command switches).
      *
-     * When the command is not available for the current composer action (edit mode or a
-     * moderation command during reply), emits a [MessageComposerViewEvent.CommandUnavailable]
-     * on [events] and returns without changing the active command.
+     * When [Config.activeCommandEnabled] is `true` and the command is not available for the
+     * current composer action (edit mode or a moderation command during reply), emits a
+     * [MessageComposerViewEvent.CommandUnavailable] on [events] and returns without changing the
+     * active command. Legacy mode skips this check and sets the command unconditionally.
      *
      * @param command The command that was selected.
      */
     public fun selectCommand(command: Command) {
         val action = activeAction
-        if (!command.isAvailableFor(action)) {
+        if (config.activeCommandEnabled && !command.isAvailableFor(action)) {
             if (action != null) _events.tryEmit(MessageComposerViewEvent.CommandUnavailable(action))
             return
         }
@@ -1037,11 +1037,8 @@ public class MessageComposerController(
 
     private fun stashPreCommandState() {
         val currentText = _messageInput.value.text
-        // A pure command trigger (e.g. "/", "/gi", or the "/mute " auto-select form) is not
-        // user draft content — it is the popup/auto-select trigger being consumed by the
-        // command. Stash empty so cancelling the command does not restore phantom trigger
-        // characters (which would otherwise re-trigger auto-select and make the chip
-        // uncancelable).
+        // Pure command triggers ("/", "/gi", "/mute ") must stash as empty — restoring them on
+        // cancel would re-fire the popup or auto-select and make the chip uncancelable.
         val stashedInput = when {
             CommandPattern.matcher(currentText).find() -> ""
             AutoSelectCommandPattern.matcher(currentText).find() -> ""
@@ -1092,13 +1089,20 @@ public class MessageComposerController(
             val showCommands = it.commandSuggestions.isEmpty()
             it.copy(
                 commandSuggestions = if (showCommands) {
-                    commands.sortedByAvailability(activeAction)
+                    commands.orderedForComposer()
                 } else {
                     emptyList()
                 },
             )
         }
     }
+
+    /**
+     * Sorts by availability when [Config.activeCommandEnabled] is `true`; returns the list
+     * unchanged in legacy mode.
+     */
+    private fun List<Command>.orderedForComposer(): List<Command> =
+        if (config.activeCommandEnabled) sortedByAvailability(activeAction) else this
 
     /**
      * Dismisses the suggestions popup above the message composer.
@@ -1227,15 +1231,15 @@ public class MessageComposerController(
     /**
      * Shows the command suggestion list popup if necessary.
      *
-     * While the composer is in edit mode, typing a command trigger suppresses the popup and
-     * emits a [MessageComposerViewEvent.CommandUnavailable] so the UI can inform the user that
-     * commands are blocked.
+     * Under [Config.activeCommandEnabled], typing a command trigger while in edit mode suppresses
+     * the popup and emits a [MessageComposerViewEvent.CommandUnavailable]; suggestions are also
+     * sorted by availability. Legacy mode always shows the popup and preserves server ordering.
      */
     private fun handleCommandSuggestions() {
         if (tryAutoSelectCommand(messageText)) return
         val containsCommand = CommandPattern.matcher(messageText).find()
         val action = activeAction
-        if (containsCommand && action is Edit) {
+        if (config.activeCommandEnabled && containsCommand && action is Edit) {
             _state.update { it.copy(commandSuggestions = emptyList()) }
             _events.tryEmit(MessageComposerViewEvent.CommandUnavailable(action))
             return
@@ -1243,7 +1247,7 @@ public class MessageComposerController(
         val suggestions = if (containsCommand) {
             val commandPattern = messageText.removePrefix("/")
             commands.filter { it.name.startsWith(commandPattern) }
-                .sortedByAvailability(action)
+                .orderedForComposer()
         } else {
             emptyList()
         }

@@ -1260,6 +1260,93 @@ internal class MessageComposerControllerTest {
         }
 
     @Test
+    fun `Given activeCommandEnabled false and reply mode When selectCommand called with moderation command Then activeCommand is set`() =
+        runTest {
+            // Given
+            val muteCommand = Command(
+                name = "mute",
+                description = randomString(),
+                args = randomString(),
+                set = "moderation_set",
+            )
+            val repliedMessage = randomMessage(cid = CID)
+            val controller = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = false))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(muteCommand))),
+                )
+                .get()
+            controller.performMessageAction(Reply(repliedMessage))
+            advanceUntilIdle()
+
+            // When
+            controller.selectCommand(muteCommand)
+            advanceUntilIdle()
+
+            // Then
+            assertEquals(muteCommand, controller.state.value.activeCommand)
+        }
+
+    @Test
+    fun `Given activeCommandEnabled false and edit mode When user types slash Then command suggestions are shown`() =
+        runTest {
+            // Given
+            val giphyCommand = Command("giphy", randomString(), randomString(), "fun_set")
+            val editedMessage = randomMessage(cid = CID)
+            val controller = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = false))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(giphyCommand))),
+                )
+                .get()
+            controller.performMessageAction(Edit(editedMessage))
+            advanceUntilIdle()
+
+            // When
+            controller.setMessageInput("/")
+            advanceUntilIdle()
+
+            // Then (legacy: popup not suppressed in edit mode)
+            assertEquals(listOf(giphyCommand), controller.state.value.commandSuggestions)
+        }
+
+    @Test
+    fun `Given activeCommandEnabled false and reply mode When toggleCommandsVisibility called Then commands keep server order`() =
+        runTest {
+            // Given
+            val giphyCommand = Command("giphy", randomString(), randomString(), "fun_set")
+            val muteCommand = Command("mute", randomString(), randomString(), "moderation_set")
+            val repliedMessage = randomMessage(cid = CID)
+            val controller = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = false))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(muteCommand, giphyCommand))),
+                )
+                .get()
+            controller.performMessageAction(Reply(repliedMessage))
+            advanceUntilIdle()
+
+            // When
+            controller.toggleCommandsVisibility()
+            advanceUntilIdle()
+
+            // Then (legacy: server order preserved, moderation not pushed to the bottom)
+            assertEquals(listOf(muteCommand, giphyCommand), controller.state.value.commandSuggestions)
+        }
+
+    @Test
     fun `Given slash moderation command typed in reply mode When sendMessage called Then event is emitted and message is not sent`() =
         runTest {
             // Given
