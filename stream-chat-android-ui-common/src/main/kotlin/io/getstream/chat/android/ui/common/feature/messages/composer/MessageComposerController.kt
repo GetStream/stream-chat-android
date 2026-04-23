@@ -1333,7 +1333,9 @@ public class MessageComposerController(
      * @param maxAttachmentCount The maximum number of attachments allowed in a message.
      * @param linkPreviewEnabled If link previews are enabled.
      * @param draftMessageEnabled If draft messages are enabled.
-     * @param activeCommandEnabled If active commands are enabled.
+     * @param activeCommandEnabled When `true`, the active command is state and the input holds
+     * only its arguments; a pre-command draft is stashed for [clearActiveCommand]. When `false`,
+     * the `/name ` prefix lives in the input and is sent verbatim.
      */
     @InternalStreamChatApi
     public data class Config(
