@@ -37,9 +37,9 @@ public interface MessageComposerViewEvent {
     ) : MessageComposerViewEvent
 
     /**
-     * Emitted when the user attempts to switch to [action] while an active command is in progress
-     * that is not available for the target action. The user must cancel the active command before
-     * the action can apply.
+     * Emitted when the user attempts [action] (switching composer mode or sending) while an
+     * active command conflicts with the target action. The user must cancel the active command
+     * before the action can proceed.
      *
      * @param action The composer action whose attempt was rejected.
      */
