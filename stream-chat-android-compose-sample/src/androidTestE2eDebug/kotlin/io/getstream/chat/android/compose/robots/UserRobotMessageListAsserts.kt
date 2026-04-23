@@ -143,7 +143,7 @@ fun UserRobot.assertDeletedMessage(text: String? = null, hard: Boolean = false):
 fun UserRobot.assertQuotedMessage(text: String, quote: String = "", isDisplayed: Boolean = true): UserRobot {
     val quotedMessageInList = Message.quotedMessage.hasAncestor(MessageListPage.MessageList.messages)
     if (isDisplayed) {
-        assertEquals(quote, quotedMessageInList.waitToAppear().waitForText(quote).text)
+        assertEquals(quote, quotedMessageInList.waitForText(quote))
     } else {
         assertFalse(quotedMessageInList.waitToDisappear().isDisplayed())
     }
@@ -231,7 +231,7 @@ fun UserRobot.assertMentionWasApplied(): UserRobot {
     val additionalSpace = " "
     val userName = ParticipantRobot.name
     val expectedText = "@${userName}$additionalSpace"
-    val actualText = Composer.inputField.findObject().waitForText(expectedText).text
+    val actualText = Composer.inputField.waitForText(expectedText)
     assertEquals(expectedText, actualText)
     return this
 }
@@ -352,7 +352,7 @@ fun UserRobot.assertThreadReplyLabel(replies: Int, inThread: Boolean = false): U
         )
         assertEquals(
             expectedResult,
-            ThreadPage.ThreadList.repliesCountLabel.waitToAppear().waitForText(expectedResult).text,
+            ThreadPage.ThreadList.repliesCountLabel.waitForText(expectedResult),
         )
     } else {
         val expectedResult = appContext.resources.getQuantityString(

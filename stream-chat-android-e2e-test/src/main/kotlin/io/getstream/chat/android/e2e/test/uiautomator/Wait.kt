@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.uiautomator
 
 import androidx.test.uiautomator.BySelector
+import androidx.test.uiautomator.StaleObjectException
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
 
@@ -44,17 +45,40 @@ public fun BySelector.waitToDisappear(timeOutMillis: Long = defaultTimeout): ByS
     return this
 }
 
-public fun UiObject2.waitForText(
+/**
+ * Polls by re-finding the object on each iteration so a mid-poll recomposition does not produce
+ * a [StaleObjectException]. Returns the text that was observed when the match succeeded, or the
+ * last observed text on timeout — never throws. Callers typically wrap the result in an
+ * assertion to surface mismatch/timeout.
+ *
+ * @param expectedText The text to match.
+ * @param mustBeEqual When `true`, requires exact match; otherwise a substring match.
+ * @param timeOutMillis Maximum time to keep polling before returning the last observed text.
+ */
+public fun BySelector.waitForText(
     expectedText: String,
     mustBeEqual: Boolean = true,
     timeOutMillis: Long = defaultTimeout,
-): UiObject2 {
+): String {
     val endTime = System.currentTimeMillis() + timeOutMillis
-    var textPresent = false
-    while (!textPresent && System.currentTimeMillis() < endTime) {
-        textPresent = if (mustBeEqual) text == expectedText else text.contains(expectedText)
+    var lastText = ""
+    while (System.currentTimeMillis() < endTime) {
+        val actual = currentTextOrNull()
+        if (actual != null) {
+            lastText = actual
+            val matches = if (mustBeEqual) actual == expectedText else actual.contains(expectedText)
+            if (matches) return actual
+        }
     }
-    return this
+    return lastText
+}
+
+// Call [device] directly — [findObject] lies about nullability and NPEs when the selector hasn't
+// matched yet, which is the normal case during polling.
+private fun BySelector.currentTextOrNull(): String? = try {
+    device.findObject(this)?.text
+} catch (_: StaleObjectException) {
+    null
 }
 
 public fun BySelector.waitForCount(count: Int, timeOutMillis: Long = defaultTimeout): List<UiObject2> {
