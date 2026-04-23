@@ -157,7 +157,7 @@ public fun MessageComposer(
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(viewModel) {
         viewModel.events.collect { event ->
             val message = event.messageResOrNull()?.let(context::getString) ?: return@collect
             snackbarHostState.showSnackbar(
