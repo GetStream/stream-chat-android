@@ -83,13 +83,14 @@ internal class ChatClientStateCalls(
     ): QueryChannelsState {
         logger.d { "[initQueryChannelsState] request: $request" }
         chatClient.clientState.user.first { it != null }
+        val state = deferredState
+            .await()
+            .queryChannels(request.filter, request.querySort)
+            .apply { this.chatEventHandlerFactory = chatEventHandlerFactory }
         chatClient.logic.queryChannels(request).apply {
             loadOfflineChannels(request)
         }
-        return deferredState
-            .await()
-            .queryChannels(request.filter, request.querySort)
-            .also { it.chatEventHandlerFactory = chatEventHandlerFactory }
+        return state
     }
 
     /** Reference request of the channel query. */
