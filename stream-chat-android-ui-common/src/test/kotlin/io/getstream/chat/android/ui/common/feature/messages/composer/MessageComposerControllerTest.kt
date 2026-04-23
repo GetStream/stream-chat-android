@@ -1051,6 +1051,35 @@ internal class MessageComposerControllerTest {
     }
 
     @Test
+    fun `Given edit mode When user types slash prefix that matches no command Then no event is emitted`() = runTest {
+        // Given
+        val command = randomCommand(name = "giphy")
+        val editedMessage = randomMessage(cid = CID, text = "")
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+        controller.performMessageAction(Edit(editedMessage))
+        advanceUntilIdle()
+
+        // When / Then
+        controller.events.test {
+            controller.setMessageInput("/xyz")
+            advanceUntilIdle()
+
+            // Plain slash text, not a blocked command attempt → no snackbar.
+            expectNoEvents()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `Given slash typed When action becomes Reply Then suggestions re-sort by availability`() = runTest {
         // Given
         val muteCommand = randomCommand(set = MODERATION_SET)

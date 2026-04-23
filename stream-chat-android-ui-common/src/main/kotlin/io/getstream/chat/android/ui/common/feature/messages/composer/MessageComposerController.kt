@@ -1249,6 +1249,8 @@ public class MessageComposerController(
         if (!config.activeCommandEnabled) return false
         val action = activeAction as? Edit ?: return false
         if (!CommandText.isTrigger(messageText)) return false
+        val prefix = messageText.removePrefix("/")
+        if (commands.none { it.name.startsWith(prefix) }) return false
         _state.update { it.copy(commandSuggestions = emptyList()) }
         _events.tryEmit(MessageComposerViewEvent.CommandUnavailable(action))
         return true
