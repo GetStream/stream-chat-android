@@ -3156,15 +3156,15 @@ internal constructor(
      * @return A [Call] containing a [GroupedChannels] result with the family and its buckets.
      */
     @CheckResult
-    public fun groupedQueryChannels(
+    public fun queryGroupedChannels(
         limit: Int? = null,
         watch: Boolean = false,
         presence: Boolean = false,
     ): Call<GroupedChannels> {
-        return api.groupedQueryChannels(limit = limit, watch = watch, presence = presence)
+        return api.queryGroupedChannels(limit = limit, watch = watch, presence = presence)
             .doOnResult(userScope) { result ->
                 plugins.forEach { plugin ->
-                    plugin.onGroupedQueryChannelsResult(result, limit, watch, presence)
+                    plugin.onQueryGroupedChannelsResult(result, limit, watch, presence)
                 }
             }
     }

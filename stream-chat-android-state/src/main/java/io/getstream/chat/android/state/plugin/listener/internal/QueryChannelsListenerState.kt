@@ -18,10 +18,8 @@ package io.getstream.chat.android.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
-import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelsPaginationRequest
-import io.getstream.chat.android.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
+import io.getstream.chat.android.state.model.querychannels.pagination.internal.toOfflinePaginationRequest
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,24 +50,12 @@ internal class QueryChannelsListenerState(
         queryingChannelsFree.value = false
         logicProvider.queryChannels(request).run {
             setCurrentRequest(request)
-            queryOffline(request.toPagination())
+            queryOffline(request.toOfflinePaginationRequest())
         }
     }
 
     override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         logicProvider.queryChannels(request).onQueryChannelsResult(result, request)
         queryingChannelsFree.value = true
-    }
-
-    private companion object {
-
-        private fun QueryChannelsRequest.toPagination(): AnyChannelPaginationRequest =
-            QueryChannelsPaginationRequest(
-                sort = querySort,
-                channelLimit = limit,
-                channelOffset = offset,
-                messageLimit = messageLimit ?: 10,
-                memberLimit = memberLimit ?: 30,
-            ).toAnyChannelPaginationRequest()
     }
 }

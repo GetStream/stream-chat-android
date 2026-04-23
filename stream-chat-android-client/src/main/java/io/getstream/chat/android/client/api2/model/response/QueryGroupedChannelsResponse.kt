@@ -25,19 +25,19 @@ import com.squareup.moshi.JsonClass
  * @param duration The server-reported request duration.
  */
 @JsonClass(generateAdapter = true)
-internal data class GroupedQueryChannelsResponse(
-    val groups: Map<String, GroupedQueryChannelsGroup>,
+internal data class QueryGroupedChannelsResponse(
+    val groups: Map<String, QueryGroupedChannelsGroup>,
     val duration: String,
 )
 
 /**
- * A single group within a [GroupedQueryChannelsResponse].
+ * A single group within a [QueryGroupedChannelsResponse].
  *
  * @param channels The channel responses that belong to this group.
  * @param unread_channels The number of channels with unread messages in this group.
  */
 @JsonClass(generateAdapter = true)
-internal data class GroupedQueryChannelsGroup(
+internal data class QueryGroupedChannelsGroup(
     val channels: List<ChannelResponse>,
     val unread_channels: Int?,
 )

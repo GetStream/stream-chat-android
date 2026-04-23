@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.state.extensions.internal.logic
 import io.getstream.chat.android.state.extensions.state
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.state.plugin.state.StateRegistry
@@ -68,6 +69,27 @@ internal class ChatClientStateCalls(
             .await()
             .queryChannels(request.filter, request.querySort)
             .also { queryChannelsState -> queryChannelsState.chatEventHandlerFactory = chatEventHandlerFactory }
+    }
+
+    /**
+     * Creates or retrieves the [QueryChannelsState] for the given [request] without launching
+     * a remote queryChannels API call, and optimistically populates it with any channels
+     * cached in the local database. The state can be further populated later via
+     * [ChatClient.prefillQueryChannels].
+     */
+    internal suspend fun initQueryChannelsState(
+        request: QueryChannelsRequest,
+        chatEventHandlerFactory: ChatEventHandlerFactory,
+    ): QueryChannelsState {
+        logger.d { "[initQueryChannelsState] request: $request" }
+        chatClient.clientState.user.first { it != null }
+        chatClient.logic.queryChannels(request).apply {
+            loadOfflineChannels(request)
+        }
+        return deferredState
+            .await()
+            .queryChannels(request.filter, request.querySort)
+            .also { it.chatEventHandlerFactory = chatEventHandlerFactory }
     }
 
     /** Reference request of the channel query. */

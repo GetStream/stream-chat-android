@@ -423,6 +423,7 @@ internal class SyncManager(
     }
 
     private suspend fun updateActiveQueryChannels(recoverAll: Boolean): Result<Set<String>> {
+        // TODO: Exclude ChannelList pre-populated with GroupedQueryChannels
         // 2. update the results for queries that are actively being shown right now (synchronous)
         logger.d { "[updateActiveQueryChannels] recoverAll: $recoverAll" }
         val queryLogicsToRestore = logicRegistry.getActiveQueryChannelsLogic()

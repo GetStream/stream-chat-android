@@ -255,7 +255,14 @@ internal class EventHandlerSequential(
         logger.v { "[handleChatEvents] batchId: ${batchEvent.id}, batchEvent.size: ${batchEvent.size}" }
         queryChannelsLogic.parseChatEventResults(batchEvent.sortedEvents).forEach { result ->
             when (result) {
-                is EventHandlingResult.Add -> queryChannelsLogic.addChannel(result.channel)
+                is EventHandlingResult.Add -> {
+                    // Use trackChannel instead of addChannel to avoid overwriting the shared
+                    // per-channel state with a potentially stale DB-cached channel.
+                    // Channel events have already updated per-channel state (e.g., lastMessageAt)
+                    // before this method runs, and refreshChannelsState below will reconcile
+                    // the query map with the live per-channel data.
+                    queryChannelsLogic.trackChannel(result.channel)
+                }
                 is EventHandlingResult.WatchAndAdd -> queryChannelsLogic.watchAndAddChannel(result.cid)
                 is EventHandlingResult.Remove -> queryChannelsLogic.removeChannel(result.cid)
                 is EventHandlingResult.Skip -> Unit

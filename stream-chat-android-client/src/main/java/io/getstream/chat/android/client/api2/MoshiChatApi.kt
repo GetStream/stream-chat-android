@@ -56,7 +56,6 @@ import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
-import io.getstream.chat.android.client.api2.model.requests.GroupedQueryChannelsRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
@@ -74,6 +73,7 @@ import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftsRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryGroupedChannelsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryReactionsRequest
@@ -1318,10 +1318,10 @@ constructor(
         }
     }
 
-    override fun groupedQueryChannels(limit: Int?, watch: Boolean, presence: Boolean): Call<GroupedChannels> {
-        val body = GroupedQueryChannelsRequest(limit = limit, watch = watch, presence = presence)
+    override fun queryGroupedChannels(limit: Int?, watch: Boolean, presence: Boolean): Call<GroupedChannels> {
+        val body = QueryGroupedChannelsRequest(limit = limit, watch = watch, presence = presence)
         val lazyCall = {
-            channelApi.groupedQueryChannels(
+            channelApi.queryGroupedChannels(
                 connectionId = connectionId,
                 body = body,
             ).map { response ->
@@ -1337,7 +1337,7 @@ constructor(
         }
         val isConnectionRequired = watch || presence
         return if (isConnectionRequired && connectionId.isBlank()) {
-            logger.i { "[groupedQueryChannels] postponing because an active connection is required" }
+            logger.i { "[queryGroupedChannels] postponing because an active connection is required" }
             postponeCall(lazyCall)
         } else {
             lazyCall()

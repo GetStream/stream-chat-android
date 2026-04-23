@@ -32,7 +32,6 @@ import io.getstream.chat.android.client.plugin.listeners.DraftMessageListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
 import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
-import io.getstream.chat.android.client.plugin.listeners.GroupedQueryChannelsListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.LiveLocationListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
@@ -40,6 +39,7 @@ import io.getstream.chat.android.client.plugin.listeners.PushPreferencesListener
 import io.getstream.chat.android.client.plugin.listeners.QueryBlockedUsersListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.plugin.listeners.QueryGroupedChannelsListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.plugin.listeners.QueryThreadsListener
 import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
@@ -89,7 +89,7 @@ public interface Plugin :
     EditMessageListener,
     QueryChannelListener,
     QueryChannelsListener,
-    GroupedQueryChannelsListener,
+    QueryGroupedChannelsListener,
     TypingEventListener,
     HideChannelListener,
     MarkAllReadListener,
@@ -426,7 +426,7 @@ public interface Plugin :
         /* No-Op */
     }
 
-    override suspend fun onGroupedQueryChannelsResult(
+    override suspend fun onQueryGroupedChannelsResult(
         result: Result<GroupedChannels>,
         limit: Int?,
         watch: Boolean,

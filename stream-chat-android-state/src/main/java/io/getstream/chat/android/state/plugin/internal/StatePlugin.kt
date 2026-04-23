@@ -29,7 +29,6 @@ import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.DraftMessageListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
-import io.getstream.chat.android.client.plugin.listeners.GroupedQueryChannelsListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.LiveLocationListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
@@ -37,6 +36,7 @@ import io.getstream.chat.android.client.plugin.listeners.PushPreferencesListener
 import io.getstream.chat.android.client.plugin.listeners.QueryBlockedUsersListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.plugin.listeners.QueryGroupedChannelsListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.plugin.listeners.QueryThreadsListener
 import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
@@ -61,7 +61,6 @@ import io.getstream.chat.android.state.plugin.listener.internal.DeleteReactionLi
 import io.getstream.chat.android.state.plugin.listener.internal.DraftMessageListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.EditMessageListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.FetchCurrentUserListenerState
-import io.getstream.chat.android.state.plugin.listener.internal.GroupedQueryChannelsListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.HideChannelListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.LiveLocationListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.MarkAllReadListenerState
@@ -69,6 +68,7 @@ import io.getstream.chat.android.state.plugin.listener.internal.PushPreferencesL
 import io.getstream.chat.android.state.plugin.listener.internal.QueryBlockedUsersListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryChannelListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryChannelsListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.QueryGroupedChannelsListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryMembersListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryThreadsListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.SendAttachmentListenerState
@@ -116,7 +116,7 @@ public class StatePlugin internal constructor(
 ) : Plugin,
     QueryMembersListener by QueryMembersListenerState(logic),
     QueryChannelsListener by QueryChannelsListenerState(logic, queryingChannelsFree),
-    GroupedQueryChannelsListener by GroupedQueryChannelsListenerState(mutableGlobalState),
+    QueryGroupedChannelsListener by QueryGroupedChannelsListenerState(mutableGlobalState),
     QueryChannelListener by QueryChannelListenerState(logic),
     ThreadQueryListener by ThreadQueryListenerState(logic, repositoryFacade),
     ChannelMarkReadListener by ChannelMarkReadListenerState(stateRegistry),

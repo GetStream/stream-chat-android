@@ -30,10 +30,10 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 
-internal class GroupedQueryChannelsListenerStateTest {
+internal class QueryGroupedChannelsListenerStateTest {
 
     private val globalState: MutableGlobalState = mock()
-    private val listener = GroupedQueryChannelsListenerState(globalState)
+    private val listener = QueryGroupedChannelsListenerState(globalState)
 
     @Test
     fun `when result is successful, grouped unread channels should be set on global state`() = runTest {
@@ -48,7 +48,7 @@ internal class GroupedQueryChannelsListenerStateTest {
             ),
         )
         // when
-        listener.onGroupedQueryChannelsResult(result, limit = null, watch = false, presence = false)
+        listener.onQueryGroupedChannelsResult(result, limit = null, watch = false, presence = false)
         // then
         verify(globalState, times(1)).setGroupedUnreadChannels(mapOf("direct" to 3, "support" to 1))
     }
@@ -65,7 +65,7 @@ internal class GroupedQueryChannelsListenerStateTest {
             ),
         )
         // when
-        listener.onGroupedQueryChannelsResult(result, limit = 10, watch = true, presence = false)
+        listener.onQueryGroupedChannelsResult(result, limit = 10, watch = true, presence = false)
         // then
         verify(globalState, times(1)).setGroupedUnreadChannels(mapOf("expired" to 0))
     }
@@ -75,7 +75,7 @@ internal class GroupedQueryChannelsListenerStateTest {
         // given
         val result = Result.Failure(Error.GenericError("Network error"))
         // when
-        listener.onGroupedQueryChannelsResult(result, limit = null, watch = false, presence = false)
+        listener.onQueryGroupedChannelsResult(result, limit = null, watch = false, presence = false)
         // then
         verify(globalState, never()).setGroupedUnreadChannels(any())
     }

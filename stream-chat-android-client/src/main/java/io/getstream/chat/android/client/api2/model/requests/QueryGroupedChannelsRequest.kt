@@ -26,7 +26,7 @@ import com.squareup.moshi.JsonClass
  * @param presence Whether to receive presence events for the members of the returned channels.
  */
 @JsonClass(generateAdapter = true)
-internal data class GroupedQueryChannelsRequest(
+internal data class QueryGroupedChannelsRequest(
     val limit: Int?,
     val watch: Boolean,
     val presence: Boolean,

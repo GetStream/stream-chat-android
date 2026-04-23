@@ -28,6 +28,7 @@ import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
+import io.getstream.chat.android.state.model.querychannels.pagination.internal.toOfflinePaginationRequest
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.StateFlow
@@ -45,6 +46,33 @@ internal class QueryChannelsLogic(
 ) {
 
     private val logger by taggedLogger("Chat:QueryChannelsLogic")
+
+    /**
+     * Sets the current request and optimistically loads any cached channels for the given
+     * [request] from the local database. The cached channels are added to the in-memory state.
+     * Does NOT update the channels offset — callers that use this to seed state before a
+     * [prefillChannels] call can rely on prefill to set the correct offset.
+     * No remote API call is made.
+     */
+    internal suspend fun loadOfflineChannels(request: QueryChannelsRequest) {
+        setCurrentRequest(request)
+        val offlineChannels = fetchChannelsFromCache(request.toOfflinePaginationRequest(), queryChannelsDatabaseLogic)
+        // fetchChannelsFromCache suspends for DB I/O. During that suspension, a concurrent
+        // prefillChannels call may have already populated the state. Check after the DB read
+        // to avoid appending stale offline data on top of fresh prefilled channels.
+        val existing = queryChannelsStateLogic.getChannels()
+        if (!existing.isNullOrEmpty()) {
+            logger.d { "[loadOfflineChannels] skipped (channels already populated: ${existing.size})" }
+            return
+        }
+        if (offlineChannels != null) {
+            queryChannelsStateLogic.addChannelsState(offlineChannels)
+        }
+        // Ensure channels map is non-null (empty if no cache) and loading is reset, so
+        // channelsStateData transitions to OfflineNoResults instead of staying in Loading.
+        queryChannelsStateLogic.initializeChannelsIfNeeded()
+        queryChannelsStateLogic.setLoadingFirstPage(false)
+    }
 
     internal suspend fun queryOffline(pagination: AnyChannelPaginationRequest) {
         if (queryChannelsStateLogic.isLoading()) {
@@ -114,6 +142,16 @@ internal class QueryChannelsLogic(
     }
 
     /**
+     * Registers [channel] in this query's tracking without updating the shared per-channel
+     * state. Use this during event handling where per-channel state is already authoritative.
+     * A subsequent [refreshChannelState] / [refreshChannelsState] call will reconcile the
+     * query map with the live per-channel state.
+     */
+    internal fun trackChannel(channel: Channel) {
+        queryChannelsStateLogic.trackChannel(channel)
+    }
+
+    /**
      * Calls watch channel and adds result to the query.
      *
      * @param cid cid of the channel.
@@ -131,6 +169,49 @@ internal class QueryChannelsLogic(
         queryChannelsStateLogic.getQuerySpecs().let { specs ->
             queryChannelsDatabaseLogic.insertQueryChannels(specs)
         }
+    }
+
+    /**
+     * Replaces the current query's channels with the provided [channels] and persists
+     * the result to the local database. No remote API call is made.
+     */
+    internal suspend fun prefillChannels(channels: List<Channel>, request: QueryChannelsRequest) {
+        logger.d { "[prefillChannels] channels.size: ${channels.size}" }
+
+        // Set current request (needed for nextPageRequest derivation used by loadMore)
+        queryChannelsStateLogic.setCurrentRequest(request)
+
+        // Remove any existing channels from the state map so addChannelsState
+        // doesn't merge stale data with the new prefilled channels.
+        val existingChannels = queryChannelsStateLogic.getChannels()
+        if (!existingChannels.isNullOrEmpty()) {
+            queryChannelsStateLogic.removeChannels(existingChannels.keys)
+        }
+
+        // Clear query spec CIDs (replace semantics)
+        queryChannelsStateLogic.getQuerySpecs().cids = emptySet()
+
+        // Add channels to in-memory state (also updates per-channel ChannelState via LogicRegistry)
+        queryChannelsStateLogic.addChannelsState(channels)
+
+        // Set pagination offset = prefilled count
+        queryChannelsStateLogic.setChannelsOffset(channels.size)
+
+        // endOfChannels only if zero channels (allow pagination otherwise)
+        queryChannelsStateLogic.setEndOfChannels(channels.isEmpty())
+
+        // Mark loading complete
+        queryChannelsStateLogic.setLoadingFirstPage(false)
+        queryChannelsStateLogic.setLoadingMore(false)
+        queryChannelsStateLogic.setRecoveryNeeded(false)
+
+        // Persist query spec (cids) to DB
+        queryChannelsDatabaseLogic.insertQueryChannels(queryChannelsStateLogic.getQuerySpecs())
+
+        // Persist channel data (configs + channels + messages) to DB
+        val channelConfigs = channels.map { ChannelConfig(it.type, it.config) }
+        queryChannelsDatabaseLogic.insertChannelConfigs(channelConfigs)
+        queryChannelsDatabaseLogic.storeStateForChannels(channels.toSet())
     }
 
     suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {

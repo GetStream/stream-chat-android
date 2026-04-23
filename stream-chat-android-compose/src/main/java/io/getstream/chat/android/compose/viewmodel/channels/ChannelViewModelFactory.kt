@@ -41,6 +41,8 @@ import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandl
  * When `null`, the server-side default is used.
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
  * @param messageSearchSort Optional sorting for message search results. When `null`, the server-side default is used.
+ * @param skipInitialQuery When `true`, the ViewModel will not perform the initial queryChannels API call.
+ * The channel list state can then be populated via [ChannelListViewModel.prefill]. Defaults to `false`.
  */
 public class ChannelViewModelFactory(
     private val chatClient: ChatClient = ChatClient.instance(),
@@ -52,6 +54,7 @@ public class ChannelViewModelFactory(
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
     private val isDraftMessageEnabled: Boolean = false,
     private val messageSearchSort: QuerySorter<Message>? = null,
+    private val skipInitialQuery: Boolean = false,
 ) : ViewModelProvider.Factory {
 
     /**
@@ -72,6 +75,7 @@ public class ChannelViewModelFactory(
             chatEventHandlerFactory = chatEventHandlerFactory,
             isDraftMessageEnabled = isDraftMessageEnabled,
             messageSearchSort = messageSearchSort,
+            skipInitialQuery = skipInitialQuery,
         ) as T
     }
 }

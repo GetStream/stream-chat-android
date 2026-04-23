@@ -65,6 +65,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
@@ -141,6 +142,53 @@ public fun ChatClient.queryChannelsAsState(
     return getStateOrNull(coroutineScope) {
         requestsAsState(coroutineScope).queryChannels(request, chatEventHandlerFactory)
     }
+}
+
+/**
+ * Creates a [QueryChannelsState] for the given [request] without triggering a remote queryChannels
+ * API call or loading from the local cache. The returned state starts in a loading state and can be
+ * populated later via [prefillQueryChannels].
+ *
+ * Use this together with [prefillQueryChannels] when channel data is obtained from an external source
+ * (e.g., a grouped channels endpoint) and the default queryChannels call should be skipped.
+ *
+ * @param request The request's parameters combined into [QueryChannelsRequest] class.
+ * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] that will be used to create [ChatEventHandler].
+ * @param coroutineScope The [CoroutineScope] used for executing the request.
+ *
+ * @return A StateFlow object that emits a null when the user has not been connected yet and the new [QueryChannelsState] when the user changes.
+ */
+@InternalStreamChatApi
+@JvmOverloads
+public fun ChatClient.initQueryChannelsAsState(
+    request: QueryChannelsRequest,
+    chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(clientState),
+    coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
+): StateFlow<QueryChannelsState?> {
+    StreamLog.d(TAG) { "[initQueryChannelsAsState] request: $request" }
+    return getStateOrNull(coroutineScope) {
+        requestsAsState(coroutineScope).initQueryChannelsState(request, chatEventHandlerFactory)
+    }
+}
+
+/**
+ * Injects [channels] into the [QueryChannelsState] identified by the [request]'s filter and sort.
+ * The channels replace any existing data and are persisted to the local database.
+ * No remote API call is made.
+ *
+ * The state must have been previously created via [initQueryChannelsAsState] or [queryChannelsAsState].
+ *
+ * @param request The [QueryChannelsRequest] identifying the query to populate.
+ * @param channels The channels to inject into the state.
+ */
+@InternalStreamChatApi
+public suspend fun ChatClient.prefillQueryChannels(
+    request: QueryChannelsRequest,
+    channels: List<Channel>,
+) {
+    StreamLog.d(TAG) { "[prefillQueryChannels] channels.size: ${channels.size}" }
+    clientState.user.first { it != null }
+    logic.queryChannels(request).prefillChannels(channels, request)
 }
 
 /**

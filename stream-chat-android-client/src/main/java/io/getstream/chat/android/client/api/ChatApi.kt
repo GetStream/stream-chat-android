@@ -299,7 +299,7 @@ internal interface ChatApi {
      * @return A [Call] containing a [GroupedChannels] result with the family and its buckets.
      */
     @CheckResult
-    fun groupedQueryChannels(limit: Int?, watch: Boolean, presence: Boolean): Call<GroupedChannels>
+    fun queryGroupedChannels(limit: Int?, watch: Boolean, presence: Boolean): Call<GroupedChannels>
 
     @CheckResult
     fun updateUsers(users: List<User>): Call<List<User>>

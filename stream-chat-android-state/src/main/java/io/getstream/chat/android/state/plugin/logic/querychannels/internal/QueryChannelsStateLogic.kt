@@ -212,6 +212,24 @@ internal class QueryChannelsStateLogic(
     }
 
     /**
+     * Registers the given [channel] in this query's tracking (CID spec + channel map)
+     * **without** updating the shared per-channel [ChannelState].
+     *
+     * Use this instead of [addChannelsState] when the channel is already active and its
+     * per-channel state may contain fresher data than the provided [channel] object
+     * (e.g., during event handling where the channel event handler has already updated
+     * `lastMessageAt` but the DB-cached channel still has the old value).
+     *
+     * A subsequent [refreshChannels] call will pull the authoritative per-channel state
+     * into the query map.
+     */
+    internal fun trackChannel(channel: Channel) {
+        mutableState.queryChannelsSpec.cids += channel.cid
+        val existingChannels = mutableState.rawChannels ?: emptyMap()
+        mutableState.setChannels(existingChannels + (channel.cid to channel))
+    }
+
+    /**
      * Refreshes multiple channels in this query.
      * Note that it retrieves the data from the current [ChannelState] object.
      *

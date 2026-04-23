@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.UrlQueryPayload
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.GroupedQueryChannelsRequest
 import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkDeliveredRequest
@@ -30,6 +29,7 @@ import io.getstream.chat.android.client.api2.model.requests.MarkUnreadRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryGroupedChannelsRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
@@ -42,9 +42,9 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialR
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
-import io.getstream.chat.android.client.api2.model.response.GroupedQueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
+import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -71,10 +71,10 @@ internal interface ChannelApi {
      * @param body The request body containing limit, watch, and presence parameters.
      */
     @POST("/channels/grouped")
-    fun groupedQueryChannels(
+    fun queryGroupedChannels(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: GroupedQueryChannelsRequest,
-    ): RetrofitCall<GroupedQueryChannelsResponse>
+        @Body body: QueryGroupedChannelsRequest,
+    ): RetrofitCall<QueryGroupedChannelsResponse>
 
     @POST("/channels/{type}/query")
     fun queryChannel(

@@ -17,14 +17,14 @@
 package io.getstream.chat.android.models
 
 /**
- * A grouped channels response returned by [ChatClient.groupedQueryChannels].
+ * A grouped channels response returned by [ChatClient.queryGroupedChannels].
  *
  * @param groups The channel groups returned by the backend in response order.
  */
 public data class GroupedChannels(public val groups: Map<String, GroupedChannelsGroup>)
 
 /**
- * A channel group returned by [ChatClient.groupedQueryChannels].
+ * A channel group returned by [ChatClient.queryGroupedChannels].
  *
  * @param channels The channels that belong to this group.
  * @param unreadChannels The total unread channel count in the group.

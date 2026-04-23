@@ -17,7 +17,20 @@
 package io.getstream.chat.android.state.model.querychannels.pagination.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
+
+/**
+ * Converts a [QueryChannelsRequest] to an [AnyChannelPaginationRequest] for offline cache lookups.
+ */
+internal fun QueryChannelsRequest.toOfflinePaginationRequest(): AnyChannelPaginationRequest =
+    QueryChannelsPaginationRequest(
+        sort = querySort,
+        channelLimit = limit,
+        channelOffset = offset,
+        messageLimit = messageLimit ?: 10,
+        memberLimit = memberLimit ?: 30,
+    ).toAnyChannelPaginationRequest()
 
 internal fun QueryChannelsPaginationRequest.toAnyChannelPaginationRequest(): AnyChannelPaginationRequest {
     val originalRequest = this

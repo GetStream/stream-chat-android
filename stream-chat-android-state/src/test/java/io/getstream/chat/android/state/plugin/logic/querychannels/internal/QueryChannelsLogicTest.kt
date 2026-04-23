@@ -357,4 +357,134 @@ internal class QueryChannelsLogicTest {
     }
 
     // endregion
+
+    // region loadOfflineChannels
+
+    @Test
+    fun `loadOfflineChannels populates state from cache`() = runTest {
+        // Given
+        val request = QueryChannelsRequest(filter = filter, limit = 30, querySort = sort)
+        val cachedChannels = listOf(randomChannel(), randomChannel())
+        whenever(queryChannelsStateLogic.getChannels()) doReturn null
+        whenever(queryChannelsDatabaseLogic.fetchChannelsFromCache(any(), any())) doReturn cachedChannels
+
+        // When
+        logic.loadOfflineChannels(request)
+
+        // Then
+        verify(queryChannelsStateLogic).setCurrentRequest(request)
+        verify(queryChannelsStateLogic).addChannelsState(cachedChannels)
+        verify(queryChannelsStateLogic).initializeChannelsIfNeeded()
+        verify(queryChannelsStateLogic).setLoadingFirstPage(false)
+        verify(queryChannelsStateLogic, never()).setChannelsOffset(any())
+    }
+
+    @Test
+    fun `loadOfflineChannels handles null cache gracefully`() = runTest {
+        // Given
+        val request = QueryChannelsRequest(filter = filter, limit = 30, querySort = sort)
+        whenever(queryChannelsStateLogic.getChannels()) doReturn null
+        whenever(queryChannelsDatabaseLogic.fetchChannelsFromCache(any(), any())) doReturn null
+
+        // When
+        logic.loadOfflineChannels(request)
+
+        // Then
+        verify(queryChannelsStateLogic).setCurrentRequest(request)
+        verify(queryChannelsStateLogic, never()).addChannelsState(any())
+        verify(queryChannelsStateLogic).initializeChannelsIfNeeded()
+        verify(queryChannelsStateLogic).setLoadingFirstPage(false)
+    }
+
+    @Test
+    fun `loadOfflineChannels skips when channels already populated`() = runTest {
+        // Given - race condition: channels were populated by a concurrent prefill
+        val request = QueryChannelsRequest(filter = filter, limit = 30, querySort = sort)
+        val existingChannels = mapOf("messaging:ch1" to randomChannel())
+        whenever(queryChannelsStateLogic.getChannels()) doReturn existingChannels
+        whenever(queryChannelsDatabaseLogic.fetchChannelsFromCache(any(), any())) doReturn listOf(randomChannel())
+
+        // When
+        logic.loadOfflineChannels(request)
+
+        // Then - only setCurrentRequest should be called, nothing else
+        verify(queryChannelsStateLogic).setCurrentRequest(request)
+        verify(queryChannelsStateLogic, never()).addChannelsState(any())
+        verify(queryChannelsStateLogic, never()).initializeChannelsIfNeeded()
+        verify(queryChannelsStateLogic, never()).setLoadingFirstPage(any())
+    }
+
+    // endregion
+
+    // region prefillChannels
+
+    @Test
+    fun `prefillChannels replaces existing channels and updates all state`() = runTest {
+        // Given
+        val request = QueryChannelsRequest(filter = filter, limit = 30, querySort = sort)
+        val oldChannel = randomChannel(id = "old")
+        val existingChannels = mapOf(oldChannel.cid to oldChannel)
+        val newChannels = listOf(randomChannel(id = "new1"), randomChannel(id = "new2"), randomChannel(id = "new3"))
+        whenever(queryChannelsStateLogic.getChannels()) doReturn existingChannels
+
+        // When
+        logic.prefillChannels(newChannels, request)
+
+        // Then
+        verify(queryChannelsStateLogic).setCurrentRequest(request)
+        verify(queryChannelsStateLogic).removeChannels(existingChannels.keys)
+        verify(queryChannelsStateLogic).addChannelsState(newChannels)
+        verify(queryChannelsStateLogic).setChannelsOffset(3)
+        verify(queryChannelsStateLogic).setEndOfChannels(false)
+        verify(queryChannelsStateLogic).setLoadingFirstPage(false)
+        verify(queryChannelsStateLogic).setLoadingMore(false)
+        verify(queryChannelsStateLogic).setRecoveryNeeded(false)
+    }
+
+    @Test
+    fun `prefillChannels with empty list marks end of channels`() = runTest {
+        // Given
+        val request = QueryChannelsRequest(filter = filter, limit = 30, querySort = sort)
+        whenever(queryChannelsStateLogic.getChannels()) doReturn null
+
+        // When
+        logic.prefillChannels(emptyList(), request)
+
+        // Then
+        verify(queryChannelsStateLogic).setChannelsOffset(0)
+        verify(queryChannelsStateLogic).setEndOfChannels(true)
+    }
+
+    @Test
+    fun `prefillChannels skips remove when no existing channels`() = runTest {
+        // Given
+        val request = QueryChannelsRequest(filter = filter, limit = 30, querySort = sort)
+        val newChannels = listOf(randomChannel())
+        whenever(queryChannelsStateLogic.getChannels()) doReturn null
+
+        // When
+        logic.prefillChannels(newChannels, request)
+
+        // Then
+        verify(queryChannelsStateLogic, never()).removeChannels(any())
+        verify(queryChannelsStateLogic).addChannelsState(newChannels)
+    }
+
+    @Test
+    fun `prefillChannels persists to database`() = runTest {
+        // Given
+        val request = QueryChannelsRequest(filter = filter, limit = 30, querySort = sort)
+        val channels = listOf(randomChannel(), randomChannel())
+        whenever(queryChannelsStateLogic.getChannels()) doReturn null
+
+        // When
+        logic.prefillChannels(channels, request)
+
+        // Then
+        verify(queryChannelsDatabaseLogic).insertQueryChannels(queryChannelsSpec)
+        verify(queryChannelsDatabaseLogic).insertChannelConfigs(any())
+        verify(queryChannelsDatabaseLogic).storeStateForChannels(channels.toSet())
+    }
+
+    // endregion
 }

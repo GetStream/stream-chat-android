@@ -45,6 +45,8 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.state.extensions.globalStateFlow
+import io.getstream.chat.android.state.extensions.initQueryChannelsAsState
+import io.getstream.chat.android.state.extensions.prefillQueryChannels
 import io.getstream.chat.android.state.extensions.queryChannelsAsState
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
@@ -91,6 +93,8 @@ import kotlin.coroutines.cancellation.CancellationException
  * @param isDraftMessageEnabled If the draft message feature is enabled.
  * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
  * @param globalState A flow emitting the current [GlobalState].
+ * @param skipInitialQuery When `true`, the ViewModel will not perform the initial queryChannels API call.
+ * The channel list state can then be populated via [prefill]. Defaults to `false`.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @Suppress("TooManyFunctions")
@@ -106,6 +110,7 @@ public class ChannelListViewModel(
     private val isDraftMessageEnabled: Boolean = false,
     private val messageSearchSort: QuerySorter<Message>? = null,
     private val globalState: Flow<GlobalState> = chatClient.globalStateFlow,
+    private val skipInitialQuery: Boolean = false,
 ) : ViewModel() {
 
     private val logger by taggedLogger("Chat:ChannelListVM")
@@ -265,9 +270,15 @@ public class ChannelListViewModel(
             .collectLatest { (query, config, ts) ->
                 logger.i { "[observeInit] ts: $ts, query: $query, config: $config" }
                 when (query) {
-                    is SearchQuery.Empty,
-                    is SearchQuery.Channels,
-                    -> {
+                    is SearchQuery.Empty -> {
+                        searchScope.coroutineContext.cancelChildren()
+                        if (skipInitialQuery) {
+                            observeInitQueryChannels(config)
+                        } else {
+                            observeQueryChannels(config)
+                        }
+                    }
+                    is SearchQuery.Channels -> {
                         searchScope.coroutineContext.cancelChildren()
                         observeQueryChannels(
                             config.copy(
@@ -403,8 +414,42 @@ public class ChannelListViewModel(
         }
     }
 
+    /**
+     * Creates a [QueryChannelsState] without triggering an API call and starts collecting from it.
+     * Used when [skipInitialQuery] is `true` — the state can be populated later via [prefill].
+     */
+    private fun observeInitQueryChannels(config: QueryConfig<Channel>) =
+        observeQueryChannelsInternal(config, tag = "observeInitQueryChannels") { request ->
+            chatClient.initQueryChannelsAsState(
+                request = request,
+                chatEventHandlerFactory = chatEventHandlerFactory,
+                coroutineScope = chListScope,
+            )
+        }
+
+    /**
+     * Creates a [QueryChannelsState] by triggering an API call and starts collecting from it.
+     */
     @Suppress("LongMethod")
-    private fun observeQueryChannels(config: QueryConfig<Channel>) = runCatching {
+    private fun observeQueryChannels(config: QueryConfig<Channel>) =
+        observeQueryChannelsInternal(config, tag = "observeQueryChannels") { request ->
+            chatClient.queryChannelsAsState(
+                request = request,
+                chatEventHandlerFactory = chatEventHandlerFactory,
+                coroutineScope = chListScope,
+            )
+        }
+
+    /**
+     * Shared implementation for observing a [QueryChannelsState].
+     * The [createState] lambda determines how the state is created (with or without an API call).
+     */
+    @Suppress("LongMethod")
+    private fun observeQueryChannelsInternal(
+        config: QueryConfig<Channel>,
+        tag: String,
+        createState: (QueryChannelsRequest) -> StateFlow<QueryChannelsState?>,
+    ) = runCatching {
         queryChannelDebouncer.submitSuspendable {
             val queryChannelsRequest = QueryChannelsRequest(
                 filter = config.filters,
@@ -413,12 +458,7 @@ public class ChannelListViewModel(
                 messageLimit = messageLimit,
                 memberLimit = memberLimit,
             )
-            logger.d { "[observeQueryChannels] request: $queryChannelsRequest" }
-            queryChannelsState = chatClient.queryChannelsAsState(
-                request = queryChannelsRequest,
-                chatEventHandlerFactory = chatEventHandlerFactory,
-                coroutineScope = chListScope,
-            )
+            queryChannelsState = createState(queryChannelsRequest)
             queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
                 combine(
                     queryChannelsState.channelsStateData,
@@ -432,10 +472,10 @@ public class ChannelListViewModel(
                         -> channelsState.copy(
                             isLoading = true,
                             searchQuery = _searchQuery.value,
-                        ).also { logger.d { "[observeQueryChannels] state: Loading" } }
+                        ).also { logger.d { "[$tag] state: Loading" } }
 
                         ChannelsStateData.OfflineNoResults -> {
-                            logger.v { "[observeQueryChannels] state: OfflineNoResults(channels are empty)" }
+                            logger.v { "[$tag] state: OfflineNoResults(channels are empty)" }
                             channelsState.copy(
                                 isLoading = false,
                                 channelItems = emptyList(),
@@ -444,7 +484,7 @@ public class ChannelListViewModel(
                         }
 
                         is ChannelsStateData.Result -> {
-                            logger.v { "[observeQueryChannels] state: Result(channels.size: ${state.channels.size})" }
+                            logger.v { "[$tag] state: Result(channels.size: ${state.channels.size})" }
                             channelsState.copy(
                                 isLoading = false,
                                 channelItems = createChannelItems(
@@ -464,8 +504,8 @@ public class ChannelListViewModel(
         }
     }.onFailure {
         when (it is CancellationException) {
-            true -> logger.v { "[observeQueryChannels] cancelled" }
-            else -> logger.e { "[observeQueryChannels] failed: $it" }
+            true -> logger.v { "[$tag] cancelled" }
+            else -> logger.e { "[$tag] failed: $it" }
         }
     }
 
@@ -503,6 +543,36 @@ public class ChannelListViewModel(
             Filters.autocomplete("member.user.name", searchQuery),
             Filters.autocomplete("name", searchQuery),
         )
+    }
+
+    /**
+     * Injects fresh channel data into the channel list, replacing any previously loaded data.
+     * Channels are persisted to the local database for offline recovery. After prefill,
+     * pagination ([loadMore]) works normally with the correct offset.
+     *
+     * Requires [skipInitialQuery] to be `true`. Can be called at any time after ViewModel
+     * creation — if the state is not yet initialized, the call suspends until it is ready.
+     *
+     * @param channels The channels to populate the list with.
+     */
+    public fun prefill(channels: List<Channel>) {
+        logger.d { "[prefill] channels.size: ${channels.size}" }
+        if (!skipInitialQuery) {
+            logger.w { "[prefill] rejected (skipInitialQuery is false)" }
+            return
+        }
+        chListScope.launch {
+            val filter = filterFlow.filterNotNull().first()
+            val sort = querySortFlow.value
+            val request = QueryChannelsRequest(
+                filter = filter,
+                querySort = sort,
+                limit = channelLimit,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
+            )
+            chatClient.prefillQueryChannels(request, channels)
+        }
     }
 
     /**

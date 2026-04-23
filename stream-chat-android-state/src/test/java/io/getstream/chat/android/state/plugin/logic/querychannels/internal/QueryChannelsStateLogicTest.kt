@@ -16,26 +16,34 @@
 
 package io.getstream.chat.android.state.plugin.logic.querychannels.internal
 
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.query.QueryChannelsSpec
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomMember
+import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.test.TestCoroutineRule
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should contain same`
 import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -159,4 +167,179 @@ internal class QueryChannelsStateLogicTest {
 
         assertNull(result)
     }
+
+    // region Delegation
+
+    @Test
+    fun `setLoadingMore delegates to mutableState`() {
+        queryChannelsStateLogic.setLoadingMore(true)
+        verify(mutableState).setLoadingMore(true)
+    }
+
+    @Test
+    fun `setLoadingFirstPage delegates to mutableState`() {
+        queryChannelsStateLogic.setLoadingFirstPage(true)
+        verify(mutableState).setLoadingFirstPage(true)
+    }
+
+    @Test
+    fun `setCurrentRequest delegates to mutableState`() {
+        val request = QueryChannelsRequest(filter = Filters.neutral(), limit = 30)
+        queryChannelsStateLogic.setCurrentRequest(request)
+        verify(mutableState).setCurrentRequest(request)
+    }
+
+    @Test
+    fun `setEndOfChannels delegates to mutableState`() {
+        queryChannelsStateLogic.setEndOfChannels(true)
+        verify(mutableState).setEndOfChannels(true)
+    }
+
+    @Test
+    fun `setRecoveryNeeded delegates to mutableState`() {
+        queryChannelsStateLogic.setRecoveryNeeded(true)
+        verify(mutableState).setRecoveryNeeded(true)
+    }
+
+    // endregion
+
+    // region removeChannels
+
+    @Test
+    fun `removeChannels removes cids from spec and channels from state`() {
+        val chA = randomChannel(type = "messaging", id = "a")
+        val chB = randomChannel(type = "messaging", id = "b")
+        val chC = randomChannel(type = "messaging", id = "c")
+        val channels = mapOf(chA.cid to chA, chB.cid to chB, chC.cid to chC)
+        val spec = QueryChannelsSpec(Filters.neutral(), QuerySortByField.descByName(""))
+            .apply { cids = setOf(chA.cid, chB.cid, chC.cid) }
+
+        whenever(mutableState.rawChannels) doReturn channels
+        whenever(mutableState.queryChannelsSpec) doReturn spec
+
+        val logic = QueryChannelsStateLogic(mutableState, stateRegistry, logicRegistry, testCoroutines.scope)
+        logic.removeChannels(setOf(chA.cid, chC.cid))
+
+        assertEquals(setOf(chB.cid), spec.cids)
+        verify(mutableState).setChannels(mapOf(chB.cid to chB))
+    }
+
+    @Test
+    fun `removeChannels is no-op when rawChannels is null`() {
+        whenever(mutableState.rawChannels) doReturn null
+
+        queryChannelsStateLogic.removeChannels(setOf("messaging:x"))
+
+        verify(mutableState, never()).setChannels(any())
+    }
+
+    // endregion
+
+    // region initializeChannelsIfNeeded
+
+    @Test
+    fun `initializeChannelsIfNeeded sets empty map when rawChannels is null`() {
+        whenever(mutableState.rawChannels) doReturn null
+
+        queryChannelsStateLogic.initializeChannelsIfNeeded()
+
+        verify(mutableState).setChannels(emptyMap())
+    }
+
+    @Test
+    fun `initializeChannelsIfNeeded does not overwrite when rawChannels is already set`() {
+        val existing = mapOf("messaging:ch" to randomChannel())
+        whenever(mutableState.rawChannels) doReturn existing
+
+        queryChannelsStateLogic.initializeChannelsIfNeeded()
+
+        verify(mutableState, never()).setChannels(any())
+    }
+
+    // endregion
+
+    // region incrementChannelsOffset
+
+    @Test
+    fun `incrementChannelsOffset adds size to current offset`() {
+        whenever(mutableState.channelsOffset) doReturn MutableStateFlow(10)
+
+        queryChannelsStateLogic.incrementChannelsOffset(5)
+
+        verify(mutableState).setChannelsOffset(15)
+    }
+
+    // endregion
+
+    // region addChannelsState edge cases
+
+    @Test
+    fun `addChannelsState merges messages from existing channels`() = runTest {
+        val msg1 = randomMessage(id = "m1")
+        val msg2 = randomMessage(id = "m2")
+        val channelType = "messaging"
+        val channelId = "ch1"
+        val cid = "$channelType:$channelId"
+        val existingChannel = randomChannel(type = channelType, id = channelId).copy(messages = listOf(msg1))
+        val newChannel = existingChannel.copy(messages = listOf(msg2))
+        whenever(mutableState.rawChannels) doReturn mapOf(cid to existingChannel)
+
+        queryChannelsStateLogic.addChannelsState(listOf(newChannel))
+
+        val captor = argumentCaptor<Map<String, Channel>>()
+        verify(mutableState).setChannels(captor.capture())
+        val merged = captor.firstValue[cid]!!
+        val messageIds = merged.messages.map { it.id }.toSet()
+        assertTrue(messageIds.contains("m1"))
+        assertTrue(messageIds.contains("m2"))
+    }
+
+    @Test
+    fun `addChannelsState deduplicates messages by id`() = runTest {
+        val sharedMsg = randomMessage(id = "shared")
+        val channelType = "messaging"
+        val channelId = "ch1"
+        val cid = "$channelType:$channelId"
+        val existingChannel = randomChannel(type = channelType, id = channelId).copy(messages = listOf(sharedMsg))
+        val newChannel = existingChannel.copy(messages = listOf(sharedMsg.copy(text = "updated")))
+        whenever(mutableState.rawChannels) doReturn mapOf(cid to existingChannel)
+
+        queryChannelsStateLogic.addChannelsState(listOf(newChannel))
+
+        val captor = argumentCaptor<Map<String, Channel>>()
+        verify(mutableState).setChannels(captor.capture())
+        val merged = captor.firstValue[cid]!!
+        assertEquals(1, merged.messages.count { it.id == "shared" })
+    }
+
+    @Test
+    fun `addChannelsState merges members when total does not exceed memberCount`() = runTest {
+        val userA = randomUser(id = "userA")
+        val userB = randomUser(id = "userB")
+        val memberA = randomMember(user = userA)
+        val memberB = randomMember(user = userB)
+        val channelType = "messaging"
+        val channelId = "ch1"
+        val cid = "$channelType:$channelId"
+        val existingChannel = randomChannel(type = channelType, id = channelId).copy(
+            members = listOf(memberA),
+            memberCount = 10,
+        )
+        val newChannel = existingChannel.copy(
+            members = listOf(memberB),
+            memberCount = 10,
+        )
+        whenever(mutableState.rawChannels) doReturn mapOf(cid to existingChannel)
+
+        queryChannelsStateLogic.addChannelsState(listOf(newChannel))
+
+        val captor = argumentCaptor<Map<String, Channel>>()
+        verify(mutableState).setChannels(captor.capture())
+        val merged = captor.firstValue[cid]!!
+        val memberUserIds = merged.members.map { it.getUserId() }.toSet()
+        assertTrue(memberUserIds.contains("userA"))
+        assertTrue(memberUserIds.contains("userB"))
+    }
+
+    // endregion
 }

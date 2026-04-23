@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.plugin.listeners
+package io.getstream.chat.android.state.plugin.listener.internal
 
+import io.getstream.chat.android.client.plugin.listeners.QueryGroupedChannelsListener
 import io.getstream.chat.android.models.GroupedChannels
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.result.Result
 
-/**
- * Listener used when querying grouped channels from the backend.
- */
-public interface GroupedQueryChannelsListener {
+internal class QueryGroupedChannelsListenerState(
+    private val globalState: MutableGlobalState,
+) : QueryGroupedChannelsListener {
 
-    /**
-     * Called when the grouped query channels request completes.
-     *
-     * @param result The result of the grouped query channels request.
-     * @param limit The maximum number of channels per group that was requested.
-     * @param watch Whether watching was requested.
-     * @param presence Whether presence was requested.
-     */
-    public suspend fun onGroupedQueryChannelsResult(
+    override suspend fun onQueryGroupedChannelsResult(
         result: Result<GroupedChannels>,
         limit: Int?,
         watch: Boolean,
         presence: Boolean,
-    )
+    ) {
+        if (result is Result.Success) {
+            val groupedUnreadChannels = result.value.groups.mapValues { (_, group) ->
+                group.unreadChannels
+            }
+            globalState.setGroupedUnreadChannels(groupedUnreadChannels)
+        }
+    }
 }

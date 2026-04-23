@@ -34,12 +34,12 @@ import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.whenever
 
 /**
- * Tests for the [ChatClient.groupedQueryChannels] endpoint.
+ * Tests for the [ChatClient.queryGroupedChannels] endpoint.
  */
 internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
 
     @Test
-    fun groupedQueryChannelsSuccess() = runTest {
+    fun queryGroupedChannelsSuccess() = runTest {
         // given
         val groupedChannels = GroupedChannels(
             groups = mapOf(
@@ -50,33 +50,33 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
             ),
         )
         val sut = Fixture()
-            .givenGroupedQueryChannelsResult(RetroSuccess(groupedChannels).toRetrofitCall())
+            .givenQueryGroupedChannelsResult(RetroSuccess(groupedChannels).toRetrofitCall())
             .get()
         // when
-        val result = sut.groupedQueryChannels().await()
+        val result = sut.queryGroupedChannels().await()
         // then
         verifySuccess(result, groupedChannels)
     }
 
     @Test
-    fun groupedQueryChannelsError() = runTest {
+    fun queryGroupedChannelsError() = runTest {
         // given
         val errorCode = positiveRandomInt()
         val sut = Fixture()
-            .givenGroupedQueryChannelsResult(RetroError<GroupedChannels>(errorCode).toRetrofitCall())
+            .givenQueryGroupedChannelsResult(RetroError<GroupedChannels>(errorCode).toRetrofitCall())
             .get()
         // when
-        val result = sut.groupedQueryChannels().await()
+        val result = sut.queryGroupedChannels().await()
         // then
         verifyNetworkError(result, errorCode)
     }
 
     internal inner class Fixture {
 
-        fun givenGroupedQueryChannelsResult(
+        fun givenQueryGroupedChannelsResult(
             result: io.getstream.result.call.Call<GroupedChannels>,
         ) = apply {
-            whenever(api.groupedQueryChannels(anyOrNull(), any(), any())).thenReturn(result)
+            whenever(api.queryGroupedChannels(anyOrNull(), any(), any())).thenReturn(result)
         }
 
         fun get(): ChatClient = chatClient

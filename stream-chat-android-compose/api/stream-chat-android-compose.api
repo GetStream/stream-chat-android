@@ -4894,8 +4894,8 @@ public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelIn
 
 public final class io/getstream/chat/android/compose/viewmodel/channels/ChannelListViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/models/FilterObject;ILjava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;JZLio/getstream/chat/android/models/querysort/QuerySorter;Lkotlinx/coroutines/flow/Flow;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/models/FilterObject;ILjava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;JZLio/getstream/chat/android/models/querysort/QuerySorter;Lkotlinx/coroutines/flow/Flow;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/models/FilterObject;ILjava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;JZLio/getstream/chat/android/models/querysort/QuerySorter;Lkotlinx/coroutines/flow/Flow;Z)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/models/FilterObject;ILjava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;JZLio/getstream/chat/android/models/querysort/QuerySorter;Lkotlinx/coroutines/flow/Flow;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun archiveChannel (Lio/getstream/chat/android/models/Channel;)V
 	public final fun deleteConversation (Lio/getstream/chat/android/models/Channel;)V
 	public final fun dismissChannelAction ()V
@@ -4913,6 +4913,7 @@ public final class io/getstream/chat/android/compose/viewmodel/channels/ChannelL
 	public final fun muteChannel (Lio/getstream/chat/android/models/Channel;)V
 	public final fun performChannelAction (Lio/getstream/chat/android/ui/common/state/channels/actions/ChannelAction;)V
 	public final fun pinChannel (Lio/getstream/chat/android/models/Channel;)V
+	public final fun prefill (Ljava/util/List;)V
 	public final fun refresh ()V
 	public final fun selectChannel (Lio/getstream/chat/android/models/Channel;)V
 	public final fun setFilters (Lio/getstream/chat/android/models/FilterObject;)V
@@ -4927,8 +4928,8 @@ public final class io/getstream/chat/android/compose/viewmodel/channels/ChannelL
 public final class io/getstream/chat/android/compose/viewmodel/channels/ChannelViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/models/FilterObject;ILjava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;ZLio/getstream/chat/android/models/querysort/QuerySorter;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/models/FilterObject;ILjava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;ZLio/getstream/chat/android/models/querysort/QuerySorter;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/models/FilterObject;ILjava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;ZLio/getstream/chat/android/models/querysort/QuerySorter;Z)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/models/FilterObject;ILjava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;ZLio/getstream/chat/android/models/querysort/QuerySorter;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 

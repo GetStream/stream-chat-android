@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.api2.model.response.GroupedQueryChannelsResponse
+import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -24,9 +24,9 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 /**
- * Tests for JSON deserialization of [GroupedQueryChannelsResponse] using Moshi.
+ * Tests for JSON deserialization of [QueryGroupedChannelsResponse] using Moshi.
  */
-internal class GroupedQueryChannelsResponseAdapterTest {
+internal class QueryGroupedChannelsResponseAdapterTest {
     private val parser = ParserFactory.createMoshiChatParser()
 
     @Language("JSON")
@@ -144,7 +144,7 @@ internal class GroupedQueryChannelsResponseAdapterTest {
 
     @Test
     fun `Deserialize grouped query channels response`() {
-        val response = parser.fromJson(json, GroupedQueryChannelsResponse::class.java)
+        val response = parser.fromJson(json, QueryGroupedChannelsResponse::class.java)
 
         assertEquals("12ms", response.duration)
         assertEquals(setOf("all-open"), response.groups.keys)
@@ -182,7 +182,7 @@ internal class GroupedQueryChannelsResponseAdapterTest {
 
     @Test
     fun `Deserialize default unread counters when missing`() {
-        val response = parser.fromJson(jsonWithoutUnreadCounters, GroupedQueryChannelsResponse::class.java)
+        val response = parser.fromJson(jsonWithoutUnreadCounters, QueryGroupedChannelsResponse::class.java)
 
         assertEquals("12ms", response.duration)
         assertEquals(setOf("expired"), response.groups.keys)

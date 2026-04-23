@@ -39,8 +39,6 @@ import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.DevicesResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
-import io.getstream.chat.android.client.api2.model.response.GroupedQueryChannelsGroup
-import io.getstream.chat.android.client.api2.model.response.GroupedQueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
@@ -51,6 +49,8 @@ import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResp
 import io.getstream.chat.android.client.api2.model.response.QueryBlockedUsersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
+import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsGroup
+import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryMembersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
@@ -441,12 +441,12 @@ internal object MoshiChatApiTestArguments {
     )
 
     @JvmStatic
-    fun groupedQueryChannelsInput() = listOf(
+    fun queryGroupedChannelsInput() = listOf(
         Arguments.of(
             RetroSuccess(
-                GroupedQueryChannelsResponse(
+                QueryGroupedChannelsResponse(
                     groups = mapOf(
-                        "all-open" to GroupedQueryChannelsGroup(
+                        "all-open" to QueryGroupedChannelsGroup(
                             channels = listOf(
                                 ChannelResponse(
                                     channel = Mother.randomDownstreamChannelDto(),
@@ -465,7 +465,7 @@ internal object MoshiChatApiTestArguments {
             Result.Success::class,
         ),
         Arguments.of(
-            RetroError<GroupedQueryChannelsResponse>(statusCode = 500).toRetrofitCall(),
+            RetroError<QueryGroupedChannelsResponse>(statusCode = 500).toRetrofitCall(),
             Result.Failure::class,
         ),
     )
