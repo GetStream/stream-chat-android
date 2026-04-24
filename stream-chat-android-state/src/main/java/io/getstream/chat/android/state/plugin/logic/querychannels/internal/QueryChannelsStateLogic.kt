@@ -124,6 +124,12 @@ internal class QueryChannelsStateLogic(
         mutableState.setChannelsOffset(offset)
     }
 
+    internal fun getGroupKey(): String? = mutableState.groupKey
+
+    internal fun setGroupKey(key: String?) {
+        mutableState.groupKey = key
+    }
+
     /**
      * Increments the channels offset.
      *

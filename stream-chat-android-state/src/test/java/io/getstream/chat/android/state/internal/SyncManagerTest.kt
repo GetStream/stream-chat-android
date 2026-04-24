@@ -31,6 +31,8 @@ import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.GroupedChannels
+import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TimeDuration
@@ -45,6 +47,7 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.sync.internal.SyncManager
@@ -517,6 +520,176 @@ internal class SyncManagerTest {
             verify(chatClient, never()).getSyncHistory(any(), any<String>())
             verify(chatClient, never()).getSyncHistory(any(), any<Date>())
         }
+
+    // region Grouped Channels Sync
+
+    @Test
+    fun `on reconnect should call queryGroupedChannels instead of queryFirstPage for prefilled queries`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+            val channelA = randomChannel(type = "messaging", id = "a")
+            val channelB = randomChannel(type = "messaging", id = "b")
+
+            val queryLogic: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn "all"
+                on(it.currentRequest()) doReturn mock()
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+            }
+
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryLogic)
+            whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+            whenever(chatClient.queryGroupedChannels(watch = true)) doReturn TestCall(
+                Result.Success(
+                    GroupedChannels(
+                        groups = mapOf("all" to GroupedChannelsGroup(channels = listOf(channelA, channelB))),
+                    ),
+                ),
+            )
+            whenever(clientState.isOnline) doReturn true
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+            val syncManager = buildSyncManager()
+
+            // First event marks isFirstConnect=false
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+            // Second event triggers reconnect with recoverAll=true
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+
+            verify(chatClient).queryGroupedChannels()
+            verify(queryLogic, never()).queryFirstPage()
+        }
+
+    @Test
+    fun `on reconnect grouped CIDs should be excluded from updateActiveChannels`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+            val channelA = randomChannel(type = "messaging", id = "a")
+
+            val channelLogicA: ChannelLogic = mock { on(it.cid) doReturn "messaging:a" }
+            val channelLogicB: ChannelLogic = mock { on(it.cid) doReturn "messaging:b" }
+
+            val queryLogic: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn "all"
+                on(it.currentRequest()) doReturn mock()
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+            }
+
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryLogic)
+            whenever(logicRegistry.getActiveChannelsLogic()) doReturn listOf(channelLogicA, channelLogicB)
+            whenever(stateRegistry.getActiveChannelStates()) doReturn emptyList()
+            whenever(chatClient.queryGroupedChannels(watch = true)) doReturn TestCall(
+                Result.Success(
+                    GroupedChannels(
+                        groups = mapOf("all" to GroupedChannelsGroup(channels = listOf(channelA))),
+                    ),
+                ),
+            )
+            whenever(clientState.isOnline) doReturn true
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+            val syncManager = buildSyncManager()
+
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+
+            // queryChannelsInternal should NOT be called because all active CIDs
+            // (messaging:a, messaging:b) are excluded via the grouped oldCids set.
+            verify(chatClient, never()).queryChannelsInternal(any())
+        }
+
+    @Test
+    fun `on reconnect with grouped query failure should still exclude old CIDs`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+            val channelLogicA: ChannelLogic = mock { on(it.cid) doReturn "messaging:a" }
+
+            val queryLogic: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn "all"
+                on(it.currentRequest()) doReturn mock()
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+            }
+
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryLogic)
+            whenever(logicRegistry.getActiveChannelsLogic()) doReturn listOf(channelLogicA)
+            whenever(stateRegistry.getActiveChannelStates()) doReturn emptyList()
+            whenever(chatClient.queryGroupedChannels(watch = true)) doReturn TestCall(
+                Result.Failure(
+                    Error.NetworkError(message = "fail", serverErrorCode = 0, statusCode = 500),
+                ),
+            )
+            whenever(clientState.isOnline) doReturn true
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+            val syncManager = buildSyncManager()
+
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+
+            // Even on failure, old CIDs should prevent updateActiveChannels from re-watching
+            verify(chatClient, never()).queryChannelsInternal(any())
+        }
+
+    @Test
+    fun `updateActiveQueryChannels should skip grouped queries`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+            val groupedQuery: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn "all"
+                on(it.currentRequest()) doReturn mock()
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(true)
+            }
+
+            val standardQuery: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn null
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(true)
+                onBlocking { it.queryFirstPage() } doReturn Result.Success(emptyList())
+            }
+
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(groupedQuery, standardQuery)
+            whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+            whenever(stateRegistry.getActiveChannelStates()) doReturn emptyList()
+            whenever(chatClient.queryGroupedChannels()) doReturn TestCall(
+                Result.Success(GroupedChannels(groups = emptyMap())),
+            )
+            whenever(clientState.isOnline) doReturn true
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+            val syncManager = buildSyncManager()
+
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+
+            // Standard query should have queryFirstPage called (once per connect event)
+            verify(standardQuery, times(2)).queryFirstPage()
+            // Grouped query should NOT have queryFirstPage called
+            verify(groupedQuery, never()).queryFirstPage()
+        }
+
+    private fun connectedEvent(createdAt: Date, rawCreatedAt: String) = ConnectedEvent(
+        type = "type",
+        createdAt = createdAt,
+        rawCreatedAt = rawCreatedAt,
+        connectionId = randomString(),
+        me = user,
+    )
+
+    // endregion
 
     private fun TestScope.localRandomMessage() = randomMessage(
         createdLocallyAt = Date(currentTime),

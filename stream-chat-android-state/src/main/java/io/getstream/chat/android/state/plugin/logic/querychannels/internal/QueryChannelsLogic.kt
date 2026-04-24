@@ -110,6 +110,10 @@ internal class QueryChannelsLogic(
 
     internal fun filter(): FilterObject = filter
 
+    internal fun groupKey(): String? = queryChannelsStateLogic.getGroupKey()
+
+    internal fun currentRequest(): QueryChannelsRequest? = queryChannelsStateLogic.getState().currentRequest.value
+
     internal fun recoveryNeeded(): StateFlow<Boolean> {
         return queryChannelsStateLogic.getState().recoveryNeeded
     }
@@ -175,8 +179,16 @@ internal class QueryChannelsLogic(
      * Replaces the current query's channels with the provided [channels] and persists
      * the result to the local database. No remote API call is made.
      */
-    internal suspend fun prefillChannels(channels: List<Channel>, request: QueryChannelsRequest) {
-        logger.d { "[prefillChannels] channels.size: ${channels.size}" }
+    internal suspend fun prefillChannels(
+        channels: List<Channel>,
+        request: QueryChannelsRequest,
+        groupKey: String,
+    ) {
+        logger.d { "[prefillChannels] channels.size: ${channels.size}, groupKey: $groupKey" }
+
+        // Store the group key so SyncManager can route this query through
+        // queryGroupedChannels instead of individual queryChannels on reconnect.
+        queryChannelsStateLogic.setGroupKey(groupKey)
 
         // Set current request (needed for nextPageRequest derivation used by loadMore)
         queryChannelsStateLogic.setCurrentRequest(request)

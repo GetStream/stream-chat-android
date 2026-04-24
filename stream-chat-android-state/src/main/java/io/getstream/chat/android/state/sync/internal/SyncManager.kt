@@ -49,6 +49,7 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TimeDuration
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.log.taggedLogger
@@ -83,7 +84,7 @@ private const val QUERIES_TO_RETRY = 3
  * This class is responsible to sync messages, reactions and channel data. It tries to sync then, if necessary,
  * when connection is reestablished or when a health check event happens.
  */
-@Suppress("LongParameterList", "TooManyFunctions", "TooGenericExceptionCaught")
+@Suppress("LongParameterList", "TooManyFunctions", "TooGenericExceptionCaught", "LargeClass")
 internal class SyncManager(
     private val currentUserId: String,
     private val chatClient: ChatClient,
@@ -405,29 +406,93 @@ internal class SyncManager(
     private suspend fun restoreActiveChannels() {
         val recoverAll = !isFirstConnect.compareAndSet(true, false)
         logger.d { "[restoreActiveChannels] recoverAll: $recoverAll" }
-        when (val result = updateActiveQueryChannels(recoverAll)) {
-            is Result.Success -> {
-                val updatedCids = result.value
-                logger.v { "[restoreActiveChannels] updatedCids.size: ${updatedCids.size}" }
-                updateActiveChannels(
-                    recoverAll,
-                    updatedCids,
-                )
-            }
 
+        // 1. Refresh grouped query channels (prefilled ones) via a single queryGroupedChannels call.
+        val groupedCids = updateGroupedQueryChannels(recoverAll)
+
+        // 2. Refresh standard (non-grouped) query channels via individual queryFirstPage calls.
+        val standardCids = when (val result = updateActiveQueryChannels(recoverAll)) {
+            is Result.Success -> {
+                logger.v { "[restoreActiveChannels] standardCids.size: ${result.value.size}" }
+                result.value
+            }
             is Result.Failure -> {
-                logger.e { "[restoreActiveChannels] failed: ${result.value}" }
-                return
+                logger.e { "[restoreActiveChannels] standard query failed: ${result.value}" }
+                emptySet()
+            }
+        }
+
+        // 3. Re-watch individual channels not covered by steps 1 or 2.
+        updateActiveChannels(recoverAll, groupedCids + standardCids)
+    }
+
+    /**
+     * For [QueryChannelsLogic] instances populated via grouped channels ([prefill][QueryChannelsLogic.prefillChannels]),
+     * calls [ChatClient.queryGroupedChannels] once and re-prefills each with fresh data.
+     *
+     * @return The union of all CIDs from both the old state and the new grouped response,
+     *  so they can be excluded from individual channel re-watches.
+     */
+    private suspend fun updateGroupedQueryChannels(recoverAll: Boolean): Set<String> {
+        val groupedLogics = logicRegistry.getActiveQueryChannelsLogic()
+            .filter { it.groupKey() != null }
+            .filter { it.recoveryNeeded().value || recoverAll }
+
+        if (groupedLogics.isEmpty()) {
+            logger.v { "[updateGroupedQueryChannels] no grouped queries to restore" }
+            return emptySet()
+        }
+        logger.d { "[updateGroupedQueryChannels] groupedLogics.size: ${groupedLogics.size}" }
+
+        // Collect ALL active ChannelLogic CIDs (not just queryChannelsSpec.cids) because
+        // ChannelState entries persist in the StateRegistry even after prefillChannels resets
+        // the query's tracking set on previous reconnects.
+        val oldCids = logicRegistry.getActiveChannelsLogic().map { it.cid }.toMutableSet()
+        val groupKeyToLogic = mutableMapOf<String, QueryChannelsLogic>()
+        groupedLogics.forEach { logic ->
+            val key = logic.groupKey() ?: return@forEach
+            groupKeyToLogic[key] = logic
+        }
+        logger.d { "[updateGroupedQueryChannels] oldCids.size: ${oldCids.size}" }
+
+        val result = chatClient.queryGroupedChannels().await()
+
+        return when (result) {
+            is Result.Success -> {
+                val newCids = mutableSetOf<String>()
+                val grouped = result.value
+
+                groupKeyToLogic.forEach { (key, logic) ->
+                    val channels = grouped.groups[key]?.channels ?: emptyList()
+                    newCids.addAll(channels.map { it.cid })
+
+                    val currentRequest = logic.currentRequest()
+                    if (currentRequest != null) {
+                        logic.prefillChannels(channels, currentRequest, key)
+                    } else {
+                        logger.w {
+                            "[updateGroupedQueryChannels] no current request for group '$key', skipping prefill"
+                        }
+                    }
+                }
+                logger.v {
+                    "[updateGroupedQueryChannels] succeeded; oldCids=${oldCids.size}, newCids=${newCids.size}"
+                }
+                oldCids + newCids
+            }
+            is Result.Failure -> {
+                logger.e { "[updateGroupedQueryChannels] queryGroupedChannels failed: ${result.value}" }
+                oldCids
             }
         }
     }
 
     private suspend fun updateActiveQueryChannels(recoverAll: Boolean): Result<Set<String>> {
-        // TODO: Exclude ChannelList pre-populated with GroupedQueryChannels
         // 2. update the results for queries that are actively being shown right now (synchronous)
         logger.d { "[updateActiveQueryChannels] recoverAll: $recoverAll" }
         val queryLogicsToRestore = logicRegistry.getActiveQueryChannelsLogic()
             .asSequence()
+            .filter { it.groupKey() == null }
             .filter { queryChannelsLogic -> queryChannelsLogic.recoveryNeeded().value || recoverAll }
             .take(QUERIES_TO_RETRY)
             .toList()

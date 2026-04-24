@@ -87,6 +87,13 @@ internal class QueryChannelsMutableState(
     private var _channelsOffset: MutableStateFlow<Int>? = MutableStateFlow(0)
     internal val channelsOffset: StateFlow<Int> = _channelsOffset!!
 
+    /**
+     * The group key from [io.getstream.chat.android.models.GroupedChannels] that this query
+     * was populated from. Non-null means this query uses grouped channels for sync instead
+     * of individual queryChannels.
+     */
+    internal var groupKey: String? = null
+
     override var chatEventHandlerFactory: ChatEventHandlerFactory? = null
         set(value) {
             field = value
@@ -189,6 +196,7 @@ internal class QueryChannelsMutableState(
         _currentRequest = null
         _recoveryNeeded = null
         _channelsOffset = null
+        groupKey = null
     }
 }
 

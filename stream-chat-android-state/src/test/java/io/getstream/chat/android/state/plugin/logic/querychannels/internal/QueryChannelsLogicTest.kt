@@ -428,9 +428,10 @@ internal class QueryChannelsLogicTest {
         whenever(queryChannelsStateLogic.getChannels()) doReturn existingChannels
 
         // When
-        logic.prefillChannels(newChannels, request)
+        logic.prefillChannels(newChannels, request, "key")
 
         // Then
+        verify(queryChannelsStateLogic).setGroupKey("key")
         verify(queryChannelsStateLogic).setCurrentRequest(request)
         verify(queryChannelsStateLogic).removeChannels(existingChannels.keys)
         verify(queryChannelsStateLogic).addChannelsState(newChannels)
@@ -448,7 +449,7 @@ internal class QueryChannelsLogicTest {
         whenever(queryChannelsStateLogic.getChannels()) doReturn null
 
         // When
-        logic.prefillChannels(emptyList(), request)
+        logic.prefillChannels(emptyList(), request, "key")
 
         // Then
         verify(queryChannelsStateLogic).setChannelsOffset(0)
@@ -463,7 +464,7 @@ internal class QueryChannelsLogicTest {
         whenever(queryChannelsStateLogic.getChannels()) doReturn null
 
         // When
-        logic.prefillChannels(newChannels, request)
+        logic.prefillChannels(newChannels, request, "key")
 
         // Then
         verify(queryChannelsStateLogic, never()).removeChannels(any())
@@ -478,7 +479,7 @@ internal class QueryChannelsLogicTest {
         whenever(queryChannelsStateLogic.getChannels()) doReturn null
 
         // When
-        logic.prefillChannels(channels, request)
+        logic.prefillChannels(channels, request, "key")
 
         // Then
         verify(queryChannelsDatabaseLogic).insertQueryChannels(queryChannelsSpec)

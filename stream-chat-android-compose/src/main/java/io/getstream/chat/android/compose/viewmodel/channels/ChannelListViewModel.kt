@@ -242,8 +242,6 @@ public class ChannelListViewModel(
      */
     private val searchMessageState: MutableStateFlow<SearchMessageState?> = MutableStateFlow(null)
 
-    private var lastNextQuery: QueryChannelsRequest? = null
-
     /**
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
      */
@@ -554,9 +552,12 @@ public class ChannelListViewModel(
      * creation — if the state is not yet initialized, the call suspends until it is ready.
      *
      * @param channels The channels to populate the list with.
+     * @param groupKey Optional key from [io.getstream.chat.android.models.GroupedChannels.groups]
+     *  that identifies which group this list belongs to. When set, the SDK will automatically
+     *  call `queryGroupedChannels` instead of `queryChannels` during WebSocket reconnect.
      */
-    public fun prefill(channels: List<Channel>) {
-        logger.d { "[prefill] channels.size: ${channels.size}" }
+    public fun prefill(channels: List<Channel>, groupKey: String) {
+        logger.d { "[prefill] channels.size: ${channels.size}, groupKey: $groupKey" }
         if (!skipInitialQuery) {
             logger.w { "[prefill] rejected (skipInitialQuery is false)" }
             return
@@ -571,7 +572,7 @@ public class ChannelListViewModel(
                 messageLimit = messageLimit,
                 memberLimit = memberLimit,
             )
-            chatClient.prefillQueryChannels(request, channels)
+            chatClient.prefillQueryChannels(request, channels, groupKey)
         }
     }
 
@@ -677,11 +678,6 @@ public class ChannelListViewModel(
             filter = createQueryChannelsFilter(currentFilter, _searchQuery.value.query),
             querySort = querySortFlow.value,
         )
-        if (lastNextQuery == nextQuery) {
-            logger.v { "[loadMoreQueryChannels] rejected (same query)" }
-            return
-        }
-        lastNextQuery = nextQuery
         logger.v { "[loadMoreQueryChannels] offset: ${nextQuery.offset}, limit: ${nextQuery.limit}" }
         channelsState = channelsState.copy(isLoadingMore = true)
         val result = chatClient.queryChannels(nextQuery).await()

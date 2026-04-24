@@ -180,15 +180,17 @@ public fun ChatClient.initQueryChannelsAsState(
  *
  * @param request The [QueryChannelsRequest] identifying the query to populate.
  * @param channels The channels to inject into the state.
+ * @param groupKey The key identifying the group.
  */
 @InternalStreamChatApi
 public suspend fun ChatClient.prefillQueryChannels(
     request: QueryChannelsRequest,
     channels: List<Channel>,
+    groupKey: String,
 ) {
-    StreamLog.d(TAG) { "[prefillQueryChannels] channels.size: ${channels.size}" }
+    StreamLog.d(TAG) { "[prefillQueryChannels] channels.size: ${channels.size}, groupKey: $groupKey" }
     clientState.user.first { it != null }
-    logic.queryChannels(request).prefillChannels(channels, request)
+    logic.queryChannels(request).prefillChannels(channels, request, groupKey)
 }
 
 /**
