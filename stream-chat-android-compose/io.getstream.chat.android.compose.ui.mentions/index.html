@@ -41,7 +41,7 @@
 <a class="library-name--link" href="../../index.html">
                             stream-chat-android
                     </a>            </div>
-            <div class="library-version">6.37.2
+            <div class="library-version">7.0.1
             </div>
         </div>
         <div class="filter-section" id="filter-section">
@@ -81,74 +81,66 @@
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-mention-list.html"><span class="token function">MentionList</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">viewModel<span class="token operator">: </span><a href="../io.getstream.chat.android.compose.viewmodel.mentions/-mention-list-view-model/index.html">MentionListViewModel</a><span class="token punctuation">, </span></span><span class="parameter ">modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier<span class="token punctuation">, </span></span><span class="parameter ">currentUser<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token operator">?</span><span class="token operator"> = </span>ChatClient.instance().getCurrentUser()<span class="token punctuation">, </span></span><span class="parameter ">onItemClick<span class="token operator">: </span><span class="token punctuation">(</span>message<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onEvent<span class="token operator">: </span><span class="token punctuation">(</span>event<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{}<span class="token punctuation">, </span></span><span class="parameter ">pullToRefreshEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">itemContent<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/foundation/lazy/LazyItemScope.html">LazyItemScope</a><span class="token punctuation">.</span><span class="token punctuation">(</span><a href="../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.model/-message-result/index.html">MessageResult</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{ mention -&gt;
         with(ChatTheme.componentFactory) {
             MentionListItem(
-                mention = mention,
-                modifier = Modifier,
-                currentUser = currentUser,
-                onClick = onItemClick,
+                params = MentionListItemParams(
+                    mention = mention,
+                    currentUser = currentUser,
+                    onClick = onItemClick,
+                ),
             )
         }
     }<span class="token punctuation">, </span></span><span class="parameter ">loadingIndicator<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/foundation/layout/BoxScope.html">BoxScope</a><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{
         with(ChatTheme.componentFactory) {
-            MentionListLoadingIndicator(
-                modifier = Modifier,
-            )
+            MentionListLoadingIndicator(params = MentionListLoadingIndicatorParams())
         }
     }<span class="token punctuation">, </span></span><span class="parameter ">emptyContent<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/foundation/layout/BoxScope.html">BoxScope</a><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{
         with(ChatTheme.componentFactory) {
-            MentionListEmptyContent(
-                modifier = Modifier,
-            )
+            MentionListEmptyContent(params = MentionListEmptyContentParams())
         }
     }<span class="token punctuation">, </span></span><span class="parameter ">loadingItemContent<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/foundation/lazy/LazyItemScope.html">LazyItemScope</a><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{
         with(ChatTheme.componentFactory) {
-            MentionListLoadingItem(
-                modifier = Modifier,
-            )
+            MentionListLoadingItem(params = MentionListLoadingItemParams())
         }
     }<span class="token punctuation">, </span></span><span class="parameter ">pullToRefreshIndicator<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/foundation/layout/BoxScope.html">BoxScope</a><span class="token punctuation">.</span><span class="token punctuation">(</span>pullToRefreshState<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/material3/pulltorefresh/PullToRefreshState.html">PullToRefreshState</a><span class="token punctuation">, </span>isRefreshing<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{ pullToRefreshState, isRefreshing -&gt;
         if (pullToRefreshEnabled) {
             with(ChatTheme.componentFactory) {
                 MentionListPullToRefreshIndicator(
-                    modifier = Modifier,
-                    pullToRefreshState = pullToRefreshState,
-                    isRefreshing = isRefreshing,
+                    MentionListPullToRefreshIndicatorParams(
+                        pullToRefreshState = pullToRefreshState,
+                        isRefreshing = isRefreshing,
+                    ),
                 )
             }
         }
     }</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">The default stateful component that is bound to <a href="../io.getstream.chat.android.compose.viewmodel.mentions/-mention-list-view-model/index.html">MentionListViewModel</a> to display a list of mentions for the current user.</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-mention-list.html"><span class="token function">MentionList</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">state<span class="token operator">: </span><a href="../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.mentions/-mention-list-state/index.html">MentionListState</a><span class="token punctuation">, </span></span><span class="parameter ">modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier<span class="token punctuation">, </span></span><span class="parameter ">currentUser<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token operator">?</span><span class="token operator"> = </span>ChatClient.instance().getCurrentUser()<span class="token punctuation">, </span></span><span class="parameter ">onItemClick<span class="token operator">: </span><span class="token punctuation">(</span>message<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onLoadMore<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{}<span class="token punctuation">, </span></span><span class="parameter ">pullToRefreshEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">onRefresh<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{}<span class="token punctuation">, </span></span><span class="parameter ">itemContent<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/foundation/lazy/LazyItemScope.html">LazyItemScope</a><span class="token punctuation">.</span><span class="token punctuation">(</span><a href="../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.model/-message-result/index.html">MessageResult</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{ mention -&gt;
         with(ChatTheme.componentFactory) {
             MentionListItem(
-                mention = mention,
-                modifier = Modifier,
-                currentUser = currentUser,
-                onClick = onItemClick,
+                params = MentionListItemParams(
+                    mention = mention,
+                    currentUser = currentUser,
+                    onClick = onItemClick,
+                ),
             )
         }
     }<span class="token punctuation">, </span></span><span class="parameter ">loadingIndicator<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/foundation/layout/BoxScope.html">BoxScope</a><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{
         with(ChatTheme.componentFactory) {
-            MentionListLoadingIndicator(
-                modifier = Modifier,
-            )
+            MentionListLoadingIndicator(params = MentionListLoadingIndicatorParams())
         }
     }<span class="token punctuation">, </span></span><span class="parameter ">emptyContent<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/foundation/layout/BoxScope.html">BoxScope</a><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{
         with(ChatTheme.componentFactory) {
-            MentionListEmptyContent(
-                modifier = Modifier,
-            )
+            MentionListEmptyContent(params = MentionListEmptyContentParams())
         }
     }<span class="token punctuation">, </span></span><span class="parameter ">loadingItemContent<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/foundation/lazy/LazyItemScope.html">LazyItemScope</a><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{
         with(ChatTheme.componentFactory) {
-            MentionListLoadingItem(
-                modifier = Modifier,
-            )
+            MentionListLoadingItem(params = MentionListLoadingItemParams())
         }
     }<span class="token punctuation">, </span></span><span class="parameter ">pullToRefreshIndicator<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/foundation/layout/BoxScope.html">BoxScope</a><span class="token punctuation">.</span><span class="token punctuation">(</span>pullToRefreshState<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/material3/pulltorefresh/PullToRefreshState.html">PullToRefreshState</a><span class="token punctuation">, </span>isRefreshing<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{ pullToRefreshState, isRefreshing -&gt;
         if (pullToRefreshEnabled) {
             with(ChatTheme.componentFactory) {
                 MentionListPullToRefreshIndicator(
-                    modifier = Modifier,
-                    pullToRefreshState = pullToRefreshState,
-                    isRefreshing = isRefreshing,
+                    params = MentionListPullToRefreshIndicatorParams(
+                        pullToRefreshState = pullToRefreshState,
+                        isRefreshing = isRefreshing,
+                    ),
                 )
             }
         }
