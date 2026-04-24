@@ -88,9 +88,12 @@ public fun BySelector.waitForText(
             val matches = if (mustBeEqual) actual == expectedText else actual.contains(expectedText)
             if (matches) return actual
         }
+        Thread.sleep(POLL_INTERVAL_MILLIS)
     }
     return lastText
 }
+
+private const val POLL_INTERVAL_MILLIS = 50L
 
 // Call [device] directly — [findObject] lies about nullability and NPEs when the selector hasn't
 // matched yet, which is the normal case during polling.
