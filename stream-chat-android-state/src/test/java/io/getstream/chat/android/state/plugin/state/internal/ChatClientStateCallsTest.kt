@@ -96,7 +96,7 @@ internal class ChatClientStateCallsTest {
     }
 
     @Test
-    fun `initQueryChannelsState creates state without API call and configures it`() = runTest {
+    fun `initQueryChannelsState creates state without API call`() = runTest {
         // Given - user is connected
         userFlow.value = User(id = "test-user")
         val factory = ChatEventHandlerFactory(clientState)
@@ -104,8 +104,7 @@ internal class ChatClientStateCallsTest {
         // When
         val result = chatClientStateCalls.initQueryChannelsState(request, factory)
 
-        // Then
-        verify(queryChannelsLogic).loadOfflineChannels(request)
+        // Then — no API call, no offline load (offline read happens later in prefillChannels)
         verify(chatClient, never()).queryChannels(any())
         assertNotNull(result)
     }
@@ -125,7 +124,6 @@ internal class ChatClientStateCallsTest {
 
         // Then - should not have completed yet
         assertEquals(false, completed)
-        verify(queryChannelsLogic, never()).loadOfflineChannels(any())
 
         // When - user connects
         userFlow.value = User(id = "test-user")
@@ -133,7 +131,6 @@ internal class ChatClientStateCallsTest {
 
         // Then - should complete now
         assertEquals(true, completed)
-        verify(queryChannelsLogic).loadOfflineChannels(request)
         job.cancel()
     }
 

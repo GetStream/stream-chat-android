@@ -38,8 +38,13 @@ public interface QueryChannelsRepository {
      *
      * @param filter [FilterObject]
      * @param querySort [QuerySorter]
+     * @param groupKey Optional stable key that overrides the filter+sort hash for lookup.
      */
-    public suspend fun selectBy(filter: FilterObject, querySort: QuerySorter<Channel>): QueryChannelsSpec?
+    public suspend fun selectBy(
+        filter: FilterObject,
+        querySort: QuerySorter<Channel>,
+        groupKey: String? = null,
+    ): QueryChannelsSpec?
 
     /**
      * Clear QueryChannels of this repository.

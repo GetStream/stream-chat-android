@@ -43,10 +43,13 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
         // given
         val groupedChannels = GroupedChannels(
             groups = mapOf(
-                randomString() to GroupedChannelsGroup(
-                    channels = listOf(randomChannel()),
-                    unreadChannels = randomInt(),
-                ),
+                randomString().let { key ->
+                    key to GroupedChannelsGroup(
+                        groupKey = key,
+                        channels = listOf(randomChannel()),
+                        unreadChannels = randomInt(),
+                    )
+                },
             ),
         )
         val sut = Fixture()

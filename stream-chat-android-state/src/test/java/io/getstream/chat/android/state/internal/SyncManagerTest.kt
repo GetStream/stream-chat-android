@@ -543,7 +543,7 @@ internal class SyncManagerTest {
             whenever(chatClient.queryGroupedChannels(watch = true)) doReturn TestCall(
                 Result.Success(
                     GroupedChannels(
-                        groups = mapOf("all" to GroupedChannelsGroup(channels = listOf(channelA, channelB))),
+                        groups = mapOf("all" to GroupedChannelsGroup(groupKey = "all", channels = listOf(channelA, channelB))),
                     ),
                 ),
             )
@@ -586,7 +586,7 @@ internal class SyncManagerTest {
             whenever(chatClient.queryGroupedChannels(watch = true)) doReturn TestCall(
                 Result.Success(
                     GroupedChannels(
-                        groups = mapOf("all" to GroupedChannelsGroup(channels = listOf(channelA))),
+                        groups = mapOf("all" to GroupedChannelsGroup(groupKey = "all", channels = listOf(channelA))),
                     ),
                 ),
             )

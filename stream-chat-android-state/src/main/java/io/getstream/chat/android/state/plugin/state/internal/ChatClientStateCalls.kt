@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
-import io.getstream.chat.android.state.extensions.internal.logic
 import io.getstream.chat.android.state.extensions.state
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.state.plugin.state.StateRegistry
@@ -83,14 +82,10 @@ internal class ChatClientStateCalls(
     ): QueryChannelsState {
         logger.d { "[initQueryChannelsState] request: $request" }
         chatClient.clientState.user.first { it != null }
-        val state = deferredState
+        return deferredState
             .await()
             .queryChannels(request.filter, request.querySort)
             .apply { this.chatEventHandlerFactory = chatEventHandlerFactory }
-        chatClient.logic.queryChannels(request).apply {
-            loadOfflineChannels(request)
-        }
-        return state
     }
 
     /** Reference request of the channel query. */

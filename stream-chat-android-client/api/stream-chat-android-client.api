@@ -3061,7 +3061,8 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 public abstract interface class io/getstream/chat/android/client/persistance/repository/QueryChannelsRepository {
 	public abstract fun clear (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertQueryChannels (Lio/getstream/chat/android/client/query/QueryChannelsSpec;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun selectBy (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun selectBy (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun selectBy$default (Lio/getstream/chat/android/client/persistance/repository/QueryChannelsRepository;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/ReactionRepository {
@@ -3483,9 +3484,11 @@ public final class io/getstream/chat/android/client/query/QueryChannelsSpec {
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCids ()Ljava/util/Set;
 	public final fun getFilter ()Lio/getstream/chat/android/models/FilterObject;
+	public final fun getGroupKey ()Ljava/lang/String;
 	public final fun getQuerySort ()Lio/getstream/chat/android/models/querysort/QuerySorter;
 	public fun hashCode ()I
 	public final fun setCids (Ljava/util/Set;)V
+	public final fun setGroupKey (Ljava/lang/String;)V
 	public fun toString ()Ljava/lang/String;
 }
 

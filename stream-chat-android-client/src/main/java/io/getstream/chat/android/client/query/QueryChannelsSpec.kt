@@ -24,5 +24,6 @@ public data class QueryChannelsSpec(
     val filter: FilterObject,
     val querySort: QuerySorter<Channel>,
 ) {
+    var groupKey: String? = null
     var cids: Set<String> = emptySet()
 }

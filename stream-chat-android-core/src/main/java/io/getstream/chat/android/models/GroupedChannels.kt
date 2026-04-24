@@ -30,6 +30,7 @@ public data class GroupedChannels(public val groups: Map<String, GroupedChannels
  * @param unreadChannels The total unread channel count in the group.
  */
 public data class GroupedChannelsGroup(
+    public val groupKey: String,
     public val channels: List<Channel>,
     public val unreadChannels: Int = 0,
 )

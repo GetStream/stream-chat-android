@@ -37,6 +37,7 @@ import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
@@ -551,13 +552,11 @@ public class ChannelListViewModel(
      * Requires [skipInitialQuery] to be `true`. Can be called at any time after ViewModel
      * creation — if the state is not yet initialized, the call suspends until it is ready.
      *
-     * @param channels The channels to populate the list with.
-     * @param groupKey Optional key from [io.getstream.chat.android.models.GroupedChannels.groups]
-     *  that identifies which group this list belongs to. When set, the SDK will automatically
-     *  call `queryGroupedChannels` instead of `queryChannels` during WebSocket reconnect.
+     * @param group The [GroupedChannelsGroup] containing the channels and group key.
+     *  The group key identifies which group this list belongs to.
      */
-    public fun prefill(channels: List<Channel>, groupKey: String) {
-        logger.d { "[prefill] channels.size: ${channels.size}, groupKey: $groupKey" }
+    public fun prefill(group: GroupedChannelsGroup) {
+        logger.d { "[prefill] channels.size: ${group.channels.size}, groupKey: ${group.groupKey}" }
         if (!skipInitialQuery) {
             logger.w { "[prefill] rejected (skipInitialQuery is false)" }
             return
@@ -572,7 +571,7 @@ public class ChannelListViewModel(
                 messageLimit = messageLimit,
                 memberLimit = memberLimit,
             )
-            chatClient.prefillQueryChannels(request, channels, groupKey)
+            chatClient.prefillQueryChannels(request, group)
         }
     }
 

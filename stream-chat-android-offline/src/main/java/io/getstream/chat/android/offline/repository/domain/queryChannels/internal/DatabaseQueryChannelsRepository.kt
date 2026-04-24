@@ -44,8 +44,13 @@ internal class DatabaseQueryChannelsRepository(
      * @param filter [FilterObject]
      * @param querySort [QuerySorter]
      */
-    override suspend fun selectBy(filter: FilterObject, querySort: QuerySorter<Channel>): QueryChannelsSpec? {
-        return queryChannelsDao.select(generateId(filter, querySort))?.let(Companion::toModel)
+    override suspend fun selectBy(
+        filter: FilterObject,
+        querySort: QuerySorter<Channel>,
+        groupKey: String?,
+    ): QueryChannelsSpec? {
+        val id = groupKey ?: generateId(filter, querySort)
+        return queryChannelsDao.select(id)?.let(Companion::toModel)
     }
 
     override suspend fun clear() {
@@ -59,7 +64,7 @@ internal class DatabaseQueryChannelsRepository(
 
         private fun toEntity(queryChannelsSpec: QueryChannelsSpec): QueryChannelsEntity =
             QueryChannelsEntity(
-                generateId(queryChannelsSpec.filter, queryChannelsSpec.querySort),
+                queryChannelsSpec.groupKey ?: generateId(queryChannelsSpec.filter, queryChannelsSpec.querySort),
                 queryChannelsSpec.filter,
                 queryChannelsSpec.querySort,
                 queryChannelsSpec.cids.toList(),

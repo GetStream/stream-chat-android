@@ -4913,7 +4913,7 @@ public final class io/getstream/chat/android/compose/viewmodel/channels/ChannelL
 	public final fun muteChannel (Lio/getstream/chat/android/models/Channel;)V
 	public final fun performChannelAction (Lio/getstream/chat/android/ui/common/state/channels/actions/ChannelAction;)V
 	public final fun pinChannel (Lio/getstream/chat/android/models/Channel;)V
-	public final fun prefill (Ljava/util/List;Ljava/lang/String;)V
+	public final fun prefill (Lio/getstream/chat/android/models/GroupedChannelsGroup;)V
 	public final fun refresh ()V
 	public final fun selectChannel (Lio/getstream/chat/android/models/Channel;)V
 	public final fun setFilters (Lio/getstream/chat/android/models/FilterObject;)V

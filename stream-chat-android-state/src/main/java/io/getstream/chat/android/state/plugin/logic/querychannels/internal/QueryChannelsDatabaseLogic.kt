@@ -51,7 +51,7 @@ internal class QueryChannelsDatabaseLogic(
         queryChannelsSpec: QueryChannelsSpec?,
     ): List<Channel>? {
         val cachedSpec = queryChannelsSpec?.let {
-            queryChannelsRepository.selectBy(it.filter, it.querySort)
+            queryChannelsRepository.selectBy(it.filter, it.querySort, it.groupKey)
         }
         return if (cachedSpec != null) {
             // Spec is present in DB, fetch channels according to it

@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.query.request.ChannelFilterRequest.filte
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
@@ -176,51 +177,55 @@ internal class QueryChannelsLogic(
     }
 
     /**
-     * Replaces the current query's channels with the provided [channels] and persists
+     * Replaces the current query's channels with the provided [group]'s channels and persists
      * the result to the local database. No remote API call is made.
+     *
+     * Before writing fresh data, an optimistic offline load is performed: cached channels from
+     * a prior session are read from the DB using the stable [GroupedChannelsGroup.groupKey] and
+     * shown immediately. This mirrors iOS where the CoreData observer re-evaluates its predicate
+     * as soon as `query.groupKey` is set.
      */
     internal suspend fun prefillChannels(
-        channels: List<Channel>,
+        group: GroupedChannelsGroup,
         request: QueryChannelsRequest,
-        groupKey: String,
     ) {
+        val groupKey = group.groupKey
+        val channels = group.channels
         logger.d { "[prefillChannels] channels.size: ${channels.size}, groupKey: $groupKey" }
 
-        // Store the group key so SyncManager can route this query through
-        // queryGroupedChannels instead of individual queryChannels on reconnect.
+        // 1. Set groupKey so all DB operations use the stable key.
+        //    Also signals SyncManager to route reconnect through queryGroupedChannels.
         queryChannelsStateLogic.setGroupKey(groupKey)
 
-        // Set current request (needed for nextPageRequest derivation used by loadMore)
+        // 2. Set current request (needed for nextPageRequest derivation used by loadMore)
         queryChannelsStateLogic.setCurrentRequest(request)
 
-        // Remove any existing channels from the state map so addChannelsState
-        // doesn't merge stale data with the new prefilled channels.
+        // 3. Optimistic offline load: read cached channels from DB using the stable groupKey.
+        val cachedChannels = fetchChannelsFromCache(
+            request.toOfflinePaginationRequest(),
+            queryChannelsDatabaseLogic,
+        )
+        if (!cachedChannels.isNullOrEmpty()) {
+            logger.d { "[prefillChannels] showing ${cachedChannels.size} cached channels" }
+            queryChannelsStateLogic.addChannelsState(cachedChannels)
+            queryChannelsStateLogic.setLoadingFirstPage(false)
+        }
+
+        // 4. Replace with fresh channels from the API
         val existingChannels = queryChannelsStateLogic.getChannels()
         if (!existingChannels.isNullOrEmpty()) {
             queryChannelsStateLogic.removeChannels(existingChannels.keys)
         }
-
-        // Clear query spec CIDs (replace semantics)
         queryChannelsStateLogic.getQuerySpecs().cids = emptySet()
-
-        // Add channels to in-memory state (also updates per-channel ChannelState via LogicRegistry)
         queryChannelsStateLogic.addChannelsState(channels)
-
-        // Set pagination offset = prefilled count
         queryChannelsStateLogic.setChannelsOffset(channels.size)
-
-        // endOfChannels only if zero channels (allow pagination otherwise)
         queryChannelsStateLogic.setEndOfChannels(channels.isEmpty())
-
-        // Mark loading complete
         queryChannelsStateLogic.setLoadingFirstPage(false)
         queryChannelsStateLogic.setLoadingMore(false)
         queryChannelsStateLogic.setRecoveryNeeded(false)
 
-        // Persist query spec (cids) to DB
+        // 5. Persist fresh data to DB under the stable groupKey
         queryChannelsDatabaseLogic.insertQueryChannels(queryChannelsStateLogic.getQuerySpecs())
-
-        // Persist channel data (configs + channels + messages) to DB
         val channelConfigs = channels.map { ChannelConfig(it.type, it.config) }
         queryChannelsDatabaseLogic.insertChannelConfigs(channelConfigs)
         queryChannelsDatabaseLogic.storeStateForChannels(channels.toSet())

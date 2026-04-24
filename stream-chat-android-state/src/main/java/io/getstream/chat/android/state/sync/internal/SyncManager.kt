@@ -463,12 +463,12 @@ internal class SyncManager(
                 val grouped = result.value
 
                 groupKeyToLogic.forEach { (key, logic) ->
-                    val channels = grouped.groups[key]?.channels ?: emptyList()
-                    newCids.addAll(channels.map { it.cid })
+                    val group = grouped.groups[key] ?: return@forEach
+                    newCids.addAll(group.channels.map { it.cid })
 
                     val currentRequest = logic.currentRequest()
                     if (currentRequest != null) {
-                        logic.prefillChannels(channels, currentRequest, key)
+                        logic.prefillChannels(group, currentRequest)
                     } else {
                         logger.w {
                             "[updateGroupedQueryChannels] no current request for group '$key', skipping prefill"

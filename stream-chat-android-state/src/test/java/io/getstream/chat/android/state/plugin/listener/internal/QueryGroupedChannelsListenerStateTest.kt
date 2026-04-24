@@ -42,8 +42,8 @@ internal class QueryGroupedChannelsListenerStateTest {
         val result = Result.Success(
             value = GroupedChannels(
                 groups = mapOf(
-                    "direct" to GroupedChannelsGroup(channels = emptyList(), unreadChannels = 3),
-                    "support" to GroupedChannelsGroup(channels = emptyList(), unreadChannels = 1),
+                    "direct" to GroupedChannelsGroup(groupKey = "direct", channels = emptyList(), unreadChannels = 3),
+                    "support" to GroupedChannelsGroup(groupKey = "support", channels = emptyList(), unreadChannels = 1),
                 ),
             ),
         )
@@ -60,7 +60,7 @@ internal class QueryGroupedChannelsListenerStateTest {
         val result = Result.Success(
             value = GroupedChannels(
                 groups = mapOf(
-                    "expired" to GroupedChannelsGroup(channels = emptyList(), unreadChannels = 0),
+                    "expired" to GroupedChannelsGroup(groupKey = "expired", channels = emptyList(), unreadChannels = 0),
                 ),
             ),
         )

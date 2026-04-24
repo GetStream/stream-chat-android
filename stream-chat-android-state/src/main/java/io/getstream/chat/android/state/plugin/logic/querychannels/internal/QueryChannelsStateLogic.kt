@@ -128,6 +128,7 @@ internal class QueryChannelsStateLogic(
 
     internal fun setGroupKey(key: String?) {
         mutableState.groupKey = key
+        mutableState.queryChannelsSpec.groupKey = key
     }
 
     /**

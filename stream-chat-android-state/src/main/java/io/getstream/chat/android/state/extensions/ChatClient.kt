@@ -35,6 +35,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
@@ -179,18 +180,16 @@ public fun ChatClient.initQueryChannelsAsState(
  * The state must have been previously created via [initQueryChannelsAsState] or [queryChannelsAsState].
  *
  * @param request The [QueryChannelsRequest] identifying the query to populate.
- * @param channels The channels to inject into the state.
- * @param groupKey The key identifying the group.
+ * @param group The [GroupedChannelsGroup] containing the channels and group key.
  */
 @InternalStreamChatApi
 public suspend fun ChatClient.prefillQueryChannels(
     request: QueryChannelsRequest,
-    channels: List<Channel>,
-    groupKey: String,
+    group: GroupedChannelsGroup,
 ) {
-    StreamLog.d(TAG) { "[prefillQueryChannels] channels.size: ${channels.size}, groupKey: $groupKey" }
+    StreamLog.d(TAG) { "[prefillQueryChannels] channels.size: ${group.channels.size}, groupKey: ${group.groupKey}" }
     clientState.user.first { it != null }
-    logic.queryChannels(request).prefillChannels(channels, request, groupKey)
+    logic.queryChannels(request).prefillChannels(group, request)
 }
 
 /**
