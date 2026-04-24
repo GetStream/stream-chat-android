@@ -25,14 +25,33 @@ public fun sleep(timeOutMillis: Long = defaultTimeout) {
     Thread.sleep(timeOutMillis)
 }
 
+/**
+ * Waits up to [timeOutMillis] for an object matching this selector and returns it.
+ *
+ * @param timeOutMillis Maximum time to wait before failing.
+ * @throws IllegalStateException when the timeout elapses without a matching object.
+ */
 public fun BySelector.waitToAppear(timeOutMillis: Long = defaultTimeout): UiObject2 {
     wait(timeOutMillis)
-    return findObject()
+    return device.findObject(this)
+        ?: error("waitToAppear timed out after ${timeOutMillis}ms; no object matched selector: $this")
 }
 
+/**
+ * Waits up to [timeOutMillis] for objects matching this selector and returns the one at [withIndex].
+ *
+ * @param withIndex The zero-based index of the object to return.
+ * @param timeOutMillis Maximum time to wait before failing.
+ * @throws IllegalStateException when the timeout elapses without enough matching objects.
+ */
 public fun BySelector.waitToAppear(withIndex: Int, timeOutMillis: Long = defaultTimeout): UiObject2 {
     wait(timeOutMillis)
-    return findObjects()[withIndex]
+    val objects = device.findObjects(this)
+    return objects.getOrNull(withIndex)
+        ?: error(
+            "waitToAppear(withIndex=$withIndex) timed out after ${timeOutMillis}ms; " +
+                "only ${objects.size} objects matched selector: $this",
+        )
 }
 
 public fun BySelector.wait(timeOutMillis: Long = defaultTimeout): BySelector {
@@ -46,9 +65,9 @@ public fun BySelector.waitToDisappear(timeOutMillis: Long = defaultTimeout): ByS
 }
 
 /**
- * Polls by re-finding the object on each iteration so a mid-poll recomposition does not produce
- * a [StaleObjectException]. Returns the text that was observed when the match succeeded, or the
- * last observed text on timeout — never throws. Callers typically wrap the result in an
+ * Waits for an object matching this selector whose text matches [expectedText]. Returns the
+ * matched text, or the last observed text on timeout. Never throws — recompositions and
+ * mid-poll node recycling are absorbed internally, so callers should wrap the result in an
  * assertion to surface mismatch/timeout.
  *
  * @param expectedText The text to match.
