@@ -37,7 +37,10 @@ fun UserRobot.assertMessageInChannelPreview(text: String, fromCurrentUser: Boole
         false -> "${ParticipantRobot.name}: $text"
         null -> text
     }
-    assertEquals(expectedPreview, Channel.messagePreview.waitToAppear().waitForText(expectedPreview).text.trimEnd())
+    assertEquals(
+        expectedPreview,
+        Channel.messagePreview.waitForText(expectedPreview, mustBeEqual = false).trimEnd(),
+    )
     return this
 }
 
