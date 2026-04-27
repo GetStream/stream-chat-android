@@ -119,10 +119,8 @@ fun UserRobot.assertMessageFailedIcon(isDisplayed: Boolean): UserRobot {
 
 fun UserRobot.assertEditedMessage(text: String): UserRobot {
     assertMessage(text)
-    assertEquals(
-        appContext.getString(R.string.stream_compose_message_list_footnote_edited),
-        Message.editedLabel.waitToAppear().text,
-    )
+    val expectedLabel = appContext.getString(R.string.stream_compose_message_list_footnote_edited)
+    assertEquals(expectedLabel, Message.editedLabel.waitForText(expectedLabel))
     return this
 }
 
@@ -143,7 +141,7 @@ fun UserRobot.assertDeletedMessage(text: String? = null, hard: Boolean = false):
 fun UserRobot.assertQuotedMessage(text: String, quote: String = "", isDisplayed: Boolean = true): UserRobot {
     val quotedMessageInList = Message.quotedMessage.hasAncestor(MessageListPage.MessageList.messages)
     if (isDisplayed) {
-        assertEquals(quote, quotedMessageInList.waitToAppear().waitForText(quote).text)
+        assertEquals(quote, quotedMessageInList.waitForText(quote))
     } else {
         assertFalse(quotedMessageInList.waitToDisappear().isDisplayed())
     }
@@ -231,14 +229,13 @@ fun UserRobot.assertMentionWasApplied(): UserRobot {
     val additionalSpace = " "
     val userName = ParticipantRobot.name
     val expectedText = "@${userName}$additionalSpace"
-    val actualText = Composer.inputField.findObject().waitForText(expectedText).text
+    val actualText = Composer.inputField.waitForText(expectedText)
     assertEquals(expectedText, actualText)
     return this
 }
 
 fun UserRobot.assertComposerText(expectedText: String): UserRobot {
-    val actualText = Composer.inputField.waitToAppear().text
-    assertEquals(expectedText, actualText)
+    assertEquals(expectedText, Composer.inputField.waitForText(expectedText))
     return this
 }
 
@@ -268,27 +265,20 @@ fun UserRobot.assertThreadReplyLabelOnParentMessage(): UserRobot {
         1,
         1,
     )
-    assertEquals(
-        expectedResult,
-        Message.threadRepliesLabel.waitToAppear().text,
-    )
+    assertEquals(expectedResult, Message.threadRepliesLabel.waitForText(expectedResult))
     assertTrue(Message.threadParticipantAvatar.isDisplayed())
     return this
 }
 
 fun UserRobot.assertAlsoInTheChannelLabelInChannel(): UserRobot {
-    assertEquals(
-        appContext.getString(R.string.stream_compose_replied_to_thread),
-        Message.messageHeaderLabel.waitToAppear().text,
-    )
+    val expectedLabel = appContext.getString(R.string.stream_compose_replied_to_thread)
+    assertEquals(expectedLabel, Message.messageHeaderLabel.waitForText(expectedLabel))
     return this
 }
 
 fun UserRobot.assertAlsoInTheChannelLabelInThread(): UserRobot {
-    assertEquals(
-        appContext.getString(R.string.stream_compose_also_sent_to_channel),
-        Message.messageHeaderLabel.waitToAppear().text,
-    )
+    val expectedLabel = appContext.getString(R.string.stream_compose_also_sent_to_channel)
+    assertEquals(expectedLabel, Message.messageHeaderLabel.waitForText(expectedLabel))
     return this
 }
 
@@ -352,7 +342,7 @@ fun UserRobot.assertThreadReplyLabel(replies: Int, inThread: Boolean = false): U
         )
         assertEquals(
             expectedResult,
-            ThreadPage.ThreadList.repliesCountLabel.waitToAppear().waitForText(expectedResult).text,
+            ThreadPage.ThreadList.repliesCountLabel.waitForText(expectedResult),
         )
     } else {
         val expectedResult = appContext.resources.getQuantityString(
@@ -360,7 +350,7 @@ fun UserRobot.assertThreadReplyLabel(replies: Int, inThread: Boolean = false): U
             replies,
             replies,
         )
-        assertEquals(expectedResult, Message.threadRepliesLabel.waitToAppear().text)
+        assertEquals(expectedResult, Message.threadRepliesLabel.waitForText(expectedResult))
     }
     return this
 }
