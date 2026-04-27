@@ -49,6 +49,8 @@ import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
+import io.getstream.chat.android.state.plugin.state.internal.WatchedChannelStateFlow
+import io.getstream.chat.android.state.plugin.state.internal.WatchedChannelRecord
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.state.plugin.state.querythreads.QueryThreadsState
 import io.getstream.log.StreamLog
@@ -71,6 +73,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -210,9 +213,22 @@ public fun ChatClient.watchChannelAsState(
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): StateFlow<ChannelState?> {
     StreamLog.i(TAG) { "[watchChannelAsState] cid: $cid, messageLimit: $messageLimit" }
-    return getStateOrNull(coroutineScope) {
+    val record = WatchedChannelRecord(cid)
+    // Register the record in a short-lived coroutine that waits for initialization.
+    // IMPORTANT: do NOT capture record in the getStateOrNull lambda — that lambda
+    // is kept alive by the coroutineScope (ChatClient-scoped) and would prevent
+    // the record from being GC'd when the caller drops the returned flow.
+    // This launch completes after registration, releasing its lambda captures.
+    coroutineScope.launch {
+        runCatching {
+            clientState.initializationState.first { it == InitializationState.COMPLETE }
+            state.trackWatchedChannel(record)
+        }
+    }
+    val flow = getStateOrNull(coroutineScope) {
         requestsAsState(coroutineScope).watchChannel(cid, messageLimit, stateConfig.userPresence)
     }
+    return WatchedChannelStateFlow(flow, record)
 }
 
 /**

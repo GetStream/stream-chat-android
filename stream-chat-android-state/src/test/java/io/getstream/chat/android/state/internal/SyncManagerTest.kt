@@ -564,15 +564,12 @@ internal class SyncManagerTest {
         }
 
     @Test
-    fun `on reconnect grouped CIDs should be excluded from updateActiveChannels`() =
+    fun `on reconnect with only grouped queries updateActiveChannels should not run`() =
         runTest(testDispatcher) {
             val createdAt = localDate()
             val rawCreatedAt = streamDateFormatter.format(createdAt)
 
             val channelA = randomChannel(type = "messaging", id = "a")
-
-            val channelLogicA: ChannelLogic = mock { on(it.cid) doReturn "messaging:a" }
-            val channelLogicB: ChannelLogic = mock { on(it.cid) doReturn "messaging:b" }
 
             val queryLogic: QueryChannelsLogic = mock {
                 on(it.groupKey()) doReturn "all"
@@ -581,8 +578,6 @@ internal class SyncManagerTest {
             }
 
             whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryLogic)
-            whenever(logicRegistry.getActiveChannelsLogic()) doReturn listOf(channelLogicA, channelLogicB)
-            whenever(stateRegistry.getActiveChannelStates()) doReturn emptyList()
             whenever(chatClient.queryGroupedChannels(watch = true)) doReturn TestCall(
                 Result.Success(
                     GroupedChannels(
@@ -600,18 +595,15 @@ internal class SyncManagerTest {
             syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
             delay(100)
 
-            // queryChannelsInternal should NOT be called because all active CIDs
-            // (messaging:a, messaging:b) are excluded via the grouped oldCids set.
+            // The standard path (updateActiveChannels) should not run when only grouped queries exist.
             verify(chatClient, never()).queryChannelsInternal(any())
         }
 
     @Test
-    fun `on reconnect with grouped query failure should still exclude old CIDs`() =
+    fun `on reconnect with grouped query failure standard path should not run`() =
         runTest(testDispatcher) {
             val createdAt = localDate()
             val rawCreatedAt = streamDateFormatter.format(createdAt)
-
-            val channelLogicA: ChannelLogic = mock { on(it.cid) doReturn "messaging:a" }
 
             val queryLogic: QueryChannelsLogic = mock {
                 on(it.groupKey()) doReturn "all"
@@ -620,8 +612,6 @@ internal class SyncManagerTest {
             }
 
             whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryLogic)
-            whenever(logicRegistry.getActiveChannelsLogic()) doReturn listOf(channelLogicA)
-            whenever(stateRegistry.getActiveChannelStates()) doReturn emptyList()
             whenever(chatClient.queryGroupedChannels(watch = true)) doReturn TestCall(
                 Result.Failure(
                     Error.NetworkError(message = "fail", serverErrorCode = 0, statusCode = 500),
@@ -637,7 +627,7 @@ internal class SyncManagerTest {
             syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
             delay(100)
 
-            // Even on failure, old CIDs should prevent updateActiveChannels from re-watching
+            // The standard path should not run when only grouped queries exist, even on failure.
             verify(chatClient, never()).queryChannelsInternal(any())
         }
 

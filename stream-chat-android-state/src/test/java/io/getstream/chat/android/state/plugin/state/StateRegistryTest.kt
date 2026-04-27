@@ -24,13 +24,16 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.state.plugin.config.MessageLimitConfig
+import io.getstream.chat.android.state.plugin.state.internal.WatchedChannelRecord
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.test.TestScope
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotSame
 import org.junit.jupiter.api.Assertions.assertSame
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -249,4 +252,41 @@ internal class StateRegistryTest {
         // Then
         assertSame(state1, state2)
     }
+
+    // region WatchedChannelRecord tracking
+
+    @Test
+    fun `trackWatchedChannel should make CID available in getTrackedWatchedChannels`() {
+        val record = WatchedChannelRecord("messaging:123")
+        stateRegistry.trackWatchedChannel(record)
+
+        assertEquals(setOf("messaging:123"), stateRegistry.getTrackedWatchedChannels())
+    }
+
+    @Test
+    fun `getTrackedWatchedChannels should return empty set when nothing tracked`() {
+        assertTrue(stateRegistry.getTrackedWatchedChannels().isEmpty())
+    }
+
+    @Test
+    fun `trackWatchedChannel should deduplicate CIDs from multiple records`() {
+        val record1 = WatchedChannelRecord("messaging:123")
+        val record2 = WatchedChannelRecord("messaging:123")
+        stateRegistry.trackWatchedChannel(record1)
+        stateRegistry.trackWatchedChannel(record2)
+
+        assertEquals(setOf("messaging:123"), stateRegistry.getTrackedWatchedChannels())
+    }
+
+    @Test
+    fun `clear should remove all tracked records`() {
+        val record = WatchedChannelRecord("messaging:123")
+        stateRegistry.trackWatchedChannel(record)
+
+        stateRegistry.clear()
+
+        assertTrue(stateRegistry.getTrackedWatchedChannels().isEmpty())
+    }
+
+    // endregion
 }

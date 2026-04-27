@@ -31,6 +31,7 @@ import io.getstream.chat.android.state.plugin.config.MessageLimitConfig
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.channel.thread.internal.ThreadMutableState
+import io.getstream.chat.android.state.plugin.state.internal.WatchedChannelRecord
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.state.plugin.state.querythreads.QueryThreadsState
@@ -40,6 +41,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.StateFlow
+import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -71,6 +73,8 @@ public class StateRegistry(
     private val queryThreads: ConcurrentHashMap<Pair<FilterObject?, QuerySorter<Thread>>, QueryThreadsMutableState> =
         ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadMutableState> = ConcurrentHashMap()
+
+    private val watchedChannelRecords = mutableListOf<WeakReference<WatchedChannelRecord>>()
 
     /**
      * Returns [QueryChannelsState] associated with particular [filter] and [sort].
@@ -184,6 +188,32 @@ public class StateRegistry(
     internal fun getActiveChannelStates(): List<ChannelState> = channels.values.toList()
 
     /**
+     * Tracks a channel that was watched via [io.getstream.chat.android.state.extensions.watchChannelAsState].
+     * The record lives as long as the caller holds the returned [StateFlow].
+     * When the caller is GC'd, the tracker is GC'd and the weak reference goes null.
+     * Used during reconnect to re-watch only channels the user still has open.
+     *
+     * @param record The [WatchedChannelRecord] identifying the watched channel.
+     */
+    internal fun trackWatchedChannel(record: WatchedChannelRecord) {
+        synchronized(watchedChannelRecords) {
+            watchedChannelRecords.removeAll { it.get() == null }
+            watchedChannelRecords.add(WeakReference(record))
+        }
+    }
+
+    /**
+     * Retrieves that channel CIDs which were registered via [trackWatchedChannel] and are still strongly referenced.
+     * Use to retrieve watched channels whose [StateFlow] is referenced by a consumer.
+     */
+    internal fun getTrackedWatchedChannels(): Set<String> {
+        synchronized(watchedChannelRecords) {
+            watchedChannelRecords.removeAll { it.get() == null }
+            return watchedChannelRecords.mapNotNull { it.get()?.cid }.toSet()
+        }
+    }
+
+    /**
      * Clear state of all state objects.
      */
     public fun clear() {
@@ -196,6 +226,9 @@ public class StateRegistry(
         queryThreads.clear()
         threads.forEach { it.value.destroy() }
         threads.clear()
+        synchronized(watchedChannelRecords) {
+            watchedChannelRecords.clear()
+        }
     }
 
     internal fun handleBatchEvent(batchEvent: BatchEvent) {
