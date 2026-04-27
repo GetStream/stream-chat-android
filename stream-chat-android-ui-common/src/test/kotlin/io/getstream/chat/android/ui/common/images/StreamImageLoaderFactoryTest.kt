@@ -24,7 +24,6 @@ import coil3.gif.AnimatedImageDecoder
 import coil3.gif.GifDecoder
 import coil3.memory.MemoryCache
 import coil3.network.NetworkFetcher
-import coil3.serviceLoaderEnabled
 import coil3.video.VideoFrameDecoder
 import okio.Path.Companion.toOkioPath
 import org.amshove.kluent.internal.assertEquals
@@ -106,8 +105,8 @@ internal class StreamImageLoaderFactoryTest {
     }
 
     @Test
-    fun `newImageLoader registers network fetcher explicitly without relying on ServiceLoader`() {
-        val sut = StreamImageLoaderFactory(builder = { serviceLoaderEnabled(false) })
+    fun `newImageLoader registers network fetcher for HTTP URLs`() {
+        val sut = StreamImageLoaderFactory()
 
         val imageLoader = sut.newImageLoader(context)
 
