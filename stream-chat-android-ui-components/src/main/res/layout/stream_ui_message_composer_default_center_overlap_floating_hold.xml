@@ -28,7 +28,7 @@
         android:background="@drawable/stream_ui_message_composer_audio_record_hold_background"
         android:paddingHorizontal="16dp"
         android:gravity="center_vertical"
-        android:text="@string/stream_ui_message_composer_hold_to_record"
+        android:text="@string/stream_ui_message_composer_hold_to_record_save"
         android:textColor="@color/stream_ui_white_snow"
         android:textStyle="bold"
         />

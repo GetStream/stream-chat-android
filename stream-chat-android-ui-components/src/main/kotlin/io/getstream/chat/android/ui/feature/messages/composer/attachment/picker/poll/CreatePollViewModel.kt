@@ -18,10 +18,9 @@ package io.getstream.chat.android.ui.feature.messages.composer.attachment.picker
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.VotingVisibility
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.utils.PollsConstants
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,6 +33,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * ViewModel class for creating a poll.
@@ -57,17 +57,6 @@ public class CreatePollViewModel : ViewModel() {
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     /**
-     * The error message for the maximum number of answers allowed.
-     */
-    @Deprecated(
-        "Use multipleAnswersError instead. This property will be removed in future versions.",
-        ReplaceWith("multipleAnswersError"),
-        level = DeprecationLevel.WARNING,
-    )
-    public val maxAnswerError: StateFlow<Int?> =
-        multipleAnswersErrorFlow().stateIn(viewModelScope, SharingStarted.Lazily, null)
-
-    /**
      * A shared flow that emits an error when the range of multiple answers is invalid.
      */
     public val multipleAnswersError: SharedFlow<Int?> =
@@ -77,8 +66,8 @@ public class CreatePollViewModel : ViewModel() {
         when {
             !allowMultipleVotes || maxAnswer == null -> null
             maxAnswer
-                !in PollsConstants.MIN_NUMBER_OF_MULTIPLE_ANSWERS..PollsConstants.MAX_NUMBER_OF_MULTIPLE_ANSWERS ->
-                R.string.stream_ui_poll_multiple_answers_error
+                !in PollsConstants.MULTIPLE_ANSWERS_RANGE ->
+                UiCommonR.string.stream_ui_poll_multiple_answers_error
 
             else -> null
         }
@@ -88,7 +77,7 @@ public class CreatePollViewModel : ViewModel() {
      * The poll configuration.
      * If the poll is not ready to be created, it will be null.
      */
-    public val pollConfig: StateFlow<PollConfig?> = createPoll
+    public val createPollParams: StateFlow<CreatePollParams?> = createPoll
         .flatMapLatest { pollIsReady.filter { it } }
         .flatMapLatest {
             combine(
@@ -97,7 +86,7 @@ public class CreatePollViewModel : ViewModel() {
                 allowMultipleVotes,
                 maxAnswers,
             ) { title, options, allowMultipleVotes, maxAnswers ->
-                PollConfig(
+                CreatePollParams(
                     name = title,
                     options = options.map { PollOption(text = it.text) },
                     votingVisibility = if (annonymousPoll) VotingVisibility.ANONYMOUS else VotingVisibility.PUBLIC,

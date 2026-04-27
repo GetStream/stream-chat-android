@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.user
 
 import io.getstream.chat.android.client.Mother.randomConnectedEvent
-import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.ChatApiConfig
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.network.NetworkStateProvider
@@ -82,7 +82,7 @@ internal class CurrentUserFetcherTests {
         fetcher = CurrentUserFetcher(
             networkStateProvider = networkStateProvider,
             socketFactory = socketFactory,
-            ChatClientConfig(
+            ChatApiConfig(
                 apiKey = randomString(),
                 httpUrl = randomString(),
                 cdnHttpUrl = randomString(),

@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.user
 
-import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.ChatApiConfig
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.network.NetworkStateProvider
@@ -42,7 +42,7 @@ import java.io.UnsupportedEncodingException
 internal class CurrentUserFetcher(
     private val networkStateProvider: NetworkStateProvider,
     private val socketFactory: SocketFactory,
-    private val config: ChatClientConfig,
+    private val config: ChatApiConfig,
 ) {
 
     private val logger by taggedLogger("Chat:CurrentUserFetcher")
@@ -71,7 +71,7 @@ internal class CurrentUserFetcher(
         }
     }
 
-    private fun User.toConnectionConf(config: ChatClientConfig): ConnectionConf = when (config.isAnonymous) {
+    private fun User.toConnectionConf(config: ChatApiConfig): ConnectionConf = when (config.isAnonymous) {
         true -> AnonymousConnectionConf(config.wssUrl, config.apiKey, this)
         false -> UserConnectionConf(config.wssUrl, config.apiKey, this)
     }.asReconnectionConf()

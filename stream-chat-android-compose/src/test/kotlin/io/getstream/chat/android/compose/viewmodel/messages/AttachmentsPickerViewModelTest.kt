@@ -16,290 +16,688 @@
 
 package io.getstream.chat.android.compose.viewmodel.messages
 
+import android.net.Uri
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.compose.state.messages.attachments.Files
-import io.getstream.chat.android.compose.state.messages.attachments.Images
-import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
+import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.models.toChannelData
+import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.test.TestCoroutineRule
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.junit.Rule
+import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.kotlin.any
+import org.junit.jupiter.api.assertInstanceOf
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-@ExperimentalCoroutinesApi
-@ExtendWith(TestCoroutineExtension::class)
 internal class AttachmentsPickerViewModelTest {
 
-    private val channelState = MutableStateFlow(mock<ChannelState>())
+    @get:Rule
+    val testCoroutineRule = TestCoroutineRule()
+
+    private val storageHelper: AttachmentStorageHelper = mock()
+    private val channelState = MutableStateFlow(mockChannelState())
 
     @Test
     fun `Given images on the file system When showing attachments picker Should show available images`() {
-        val storageHelper: StorageHelperWrapper = mock {
-            whenever(it.getMedia()) doReturn listOf(imageAttachment1, imageAttachment2)
-        }
-        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+        val viewModel = createViewModel()
 
-        viewModel.changeAttachmentState(true)
-        viewModel.loadData()
+        viewModel.setPickerVisible(visible = true)
+        viewModel.loadMediaItems(imageAttachment1, imageAttachment2)
 
-        assertTrue(viewModel.isShowingAttachments)
-        assertEquals(Images, viewModel.attachmentsPickerMode)
-        assertEquals(2, viewModel.images.size)
-        assertEquals(0, viewModel.files.size)
-        assertFalse(viewModel.hasPickedImages)
-        assertFalse(viewModel.hasPickedFiles)
-        assertEquals(0, viewModel.getSelectedAttachments().size)
+        assertTrue(viewModel.isPickerVisible)
+        assertNull(viewModel.pickerMode)
+        assertEquals(2, viewModel.attachments.size)
+        assertEquals(0, viewModel.attachments.count { it.isSelected })
     }
 
     @Test
     fun `Given files on the file system When showing attachments picker Should show available files`() {
-        val storageHelper: StorageHelperWrapper = mock {
-            whenever(it.getFiles()) doReturn listOf(fileAttachment1, fileAttachment2)
-        }
-        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+        val viewModel = createViewModel()
 
-        viewModel.changeAttachmentState(true)
-        viewModel.changeAttachmentPickerMode(Files)
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(FilePickerMode())
+        viewModel.loadFileItems(fileAttachment1, fileAttachment2)
 
-        assertTrue(viewModel.isShowingAttachments)
-        assertEquals(Files, viewModel.attachmentsPickerMode)
-        assertEquals(0, viewModel.images.size)
-        assertEquals(2, viewModel.files.size)
-        assertFalse(viewModel.hasPickedImages)
-        assertFalse(viewModel.hasPickedFiles)
-        assertEquals(0, viewModel.getSelectedAttachments().size)
+        assertTrue(viewModel.isPickerVisible)
+        assertInstanceOf<FilePickerMode>(viewModel.pickerMode)
+        assertEquals(2, viewModel.attachments.size)
+        assertEquals(0, viewModel.attachments.count { it.isSelected })
     }
 
     @Test
-    fun `Given images on the file system When showing attachments picker and selecting an image Should show the selection`() {
-        val storageHelper: StorageHelperWrapper = mock {
-            whenever(it.getMedia()) doReturn listOf(imageAttachment1, imageAttachment2)
-            whenever(it.getAttachmentsForUpload(any())) doReturn listOf(Attachment(type = "image"))
-        }
-        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+    fun `Given images on the file system When selecting an image Should show the selection`() {
+        val viewModel = createViewModel()
 
-        viewModel.changeAttachmentState(true)
-        viewModel.loadData()
-        viewModel.changeSelectedAttachments(viewModel.images.first())
+        viewModel.setPickerVisible(visible = true)
+        viewModel.loadMediaItems(imageAttachment1, imageAttachment2)
+        viewModel.select(viewModel.attachments.first())
 
-        assertTrue(viewModel.isShowingAttachments)
-        assertEquals(Images, viewModel.attachmentsPickerMode)
-        assertEquals(2, viewModel.images.size)
-        assertEquals(0, viewModel.files.size)
-        assertTrue(viewModel.hasPickedImages)
-        assertFalse(viewModel.hasPickedFiles)
-        assertEquals(1, viewModel.getSelectedAttachments().size)
+        assertTrue(viewModel.isPickerVisible)
+        assertNull(viewModel.pickerMode)
+        assertEquals(2, viewModel.attachments.size)
+        assertEquals(1, viewModel.attachments.count { it.isSelected })
     }
 
     @Test
-    fun `Given files on the file system When showing and hiding attachments picker Should reset the picker state`() {
-        val storageHelper: StorageHelperWrapper = mock {
-            whenever(it.getFiles()) doReturn listOf(fileAttachment1, fileAttachment2)
-        }
-        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+    fun `Given selected images When deselecting earlier item Should update selection`() {
+        val viewModel = createViewModel()
 
-        viewModel.changeAttachmentState(true)
-        viewModel.changeAttachmentPickerMode(Files)
-        viewModel.changeAttachmentState(false)
+        viewModel.setPickerVisible(visible = true)
+        viewModel.loadMediaItems(imageAttachment1, imageAttachment2)
+        viewModel.select(viewModel.attachments.first())
+        viewModel.select(viewModel.attachments.last())
+        viewModel.deselect(viewModel.attachments.first())
 
-        assertFalse(viewModel.isShowingAttachments)
-        assertEquals(Images, viewModel.attachmentsPickerMode)
-        assertEquals(0, viewModel.images.size)
-        assertEquals(0, viewModel.files.size)
-        assertFalse(viewModel.hasPickedImages)
-        assertFalse(viewModel.hasPickedFiles)
-        assertEquals(0, viewModel.getSelectedAttachments().size)
+        assertFalse(viewModel.attachments.first().isSelected)
+        assertTrue(viewModel.attachments.last().isSelected)
     }
 
     @Test
-    fun `Given hidden attachment picker When create the view model Should not load any files from the file system`() {
-        val storageHelper: StorageHelperWrapper = mock()
-        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+    fun `Given files When showing and hiding attachments picker Should reset the picker state`() {
+        val viewModel = createViewModel()
 
-        assertFalse(viewModel.isShowingAttachments)
-        verify(storageHelper, never()).getFiles()
-        verify(storageHelper, never()).getMedia()
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(FilePickerMode())
+        viewModel.setPickerVisible(visible = false)
+
+        assertFalse(viewModel.isPickerVisible)
+        assertNull(viewModel.pickerMode)
+        assertEquals(0, viewModel.attachments.size)
+        assertEquals(0, viewModel.attachments.count { it.isSelected })
     }
 
     @Test
-    fun `Given selected images When getting selected attachments async Should invoke callback with attachments for upload`() = runTest {
-        val expectedAttachments = listOf(
-            Attachment(type = "image", upload = mock()),
-            Attachment(type = "image", upload = mock()),
-        )
-        val storageHelper: StorageHelperWrapper = mock {
-            whenever(it.getMedia()) doReturn listOf(imageAttachment1, imageAttachment2)
-            whenever(it.getAttachmentsForUpload(any())) doReturn expectedAttachments
-        }
-        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+    fun `When changing picker mode Should not load attachments`() {
+        val viewModel = createViewModel()
 
-        viewModel.changeAttachmentState(true)
-        viewModel.loadData()
-        viewModel.changeSelectedAttachments(viewModel.images.first())
-        viewModel.changeSelectedAttachments(viewModel.images.last())
+        viewModel.setPickerMode(FilePickerMode())
 
-        var result: List<Attachment>? = null
-        viewModel.getSelectedAttachmentsAsync { result = it }
-        advanceUntilIdle()
-
-        assertEquals(2, result?.size)
-        assertEquals(expectedAttachments, result)
+        assertInstanceOf<FilePickerMode>(viewModel.pickerMode)
+        assertEquals(0, viewModel.attachments.size)
+        verify(storageHelper, never()).getFileMetadata()
+        verify(storageHelper, never()).getMediaMetadata()
     }
 
     @Test
-    fun `Given selected files When getting selected attachments async Should invoke callback with attachments for upload`() = runTest {
-        val expectedAttachments = listOf(
-            Attachment(type = "file", upload = mock()),
-        )
-        val storageHelper: StorageHelperWrapper = mock {
-            whenever(it.getFiles()) doReturn listOf(fileAttachment1, fileAttachment2)
-            whenever(it.getAttachmentsForUpload(any())) doReturn expectedAttachments
-        }
-        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+    fun `Given hidden attachment picker When create the view model Should not load any files`() {
+        val viewModel = createViewModel()
 
-        viewModel.changeAttachmentState(true)
-        viewModel.changeAttachmentPickerMode(Files)
-        viewModel.changeSelectedAttachments(viewModel.files.first())
-
-        var result: List<Attachment>? = null
-        viewModel.getSelectedAttachmentsAsync { result = it }
-        advanceUntilIdle()
-
-        assertEquals(1, result?.size)
-        assertEquals(expectedAttachments, result)
+        assertFalse(viewModel.isPickerVisible)
+        verify(storageHelper, never()).getFileMetadata()
+        verify(storageHelper, never()).getMediaMetadata()
     }
 
     @Test
-    fun `Given attachment metadata When getting attachments from metadata async Should invoke callback with attachments for upload`() = runTest {
+    fun `Given attachment metadata When getting attachments from metadata Should return attachments`() {
         val metadata = listOf(imageAttachment1, imageAttachment2)
         val expectedAttachments = listOf(
             Attachment(type = "image", upload = mock()),
             Attachment(type = "image", upload = mock()),
         )
-        val storageHelper: StorageHelperWrapper = mock {
-            whenever(it.getAttachmentsForUpload(metadata)) doReturn expectedAttachments
-        }
-        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+        whenever(storageHelper.toAttachments(metadata)) doReturn expectedAttachments
+        val viewModel = createViewModel()
 
-        var result: List<Attachment>? = null
-        viewModel.getAttachmentsFromMetadataAsync(metadata) { result = it }
-        advanceUntilIdle()
+        val result = viewModel.getAttachmentsFromMetadata(metadata)
 
-        assertEquals(2, result?.size)
         assertEquals(expectedAttachments, result)
     }
 
     @Test
-    fun `Given metadata with unresolvable URIs When getting attachments async Should set hasUnresolvedAttachments`() = runTest {
-        val metadata = listOf(imageAttachment1, imageAttachment2)
-        val storageHelper: StorageHelperWrapper = mock {
-            whenever(it.getAttachmentsForUpload(metadata)) doReturn listOf(Attachment(type = "image", upload = mock()))
-        }
-        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+    fun `Should toggle the attachment state`() {
+        val viewModel = createViewModel()
 
-        assertFalse(viewModel.hasUnresolvedAttachments)
+        viewModel.togglePickerVisibility()
+        assertTrue(viewModel.isPickerVisible)
 
-        var result: List<Attachment>? = null
-        viewModel.getAttachmentsFromMetadataAsync(metadata) { result = it }
-        advanceUntilIdle()
-
-        assertEquals(1, result?.size)
-        assertTrue(viewModel.hasUnresolvedAttachments)
+        viewModel.togglePickerVisibility()
+        assertFalse(viewModel.isPickerVisible)
     }
 
     @Test
-    fun `Given selected images with unresolvable URIs When getting selected async Should set hasUnresolvedAttachments`() = runTest {
-        val storageHelper: StorageHelperWrapper = mock {
-            whenever(it.getMedia()) doReturn listOf(imageAttachment1, imageAttachment2)
-            whenever(it.getAttachmentsForUpload(any())) doReturn listOf(Attachment(type = "image", upload = mock()))
-        }
-        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+    fun `Given multiple selected attachments When removing first Should unselect it`() {
+        val viewModel = createViewModel()
 
-        viewModel.changeAttachmentState(true)
-        viewModel.loadData()
-        viewModel.changeSelectedAttachments(viewModel.images.first())
-        viewModel.changeSelectedAttachments(viewModel.images.last())
+        viewModel.setPickerVisible(visible = true)
+        viewModel.loadMediaItems(imageAttachment1, imageAttachment2)
+        viewModel.select(viewModel.attachments.first())
+        viewModel.select(viewModel.attachments.last())
+
+        viewModel.removeFromSelection(imageUri1.toString())
+
+        assertFalse(viewModel.attachments.first().isSelected)
+        assertTrue(viewModel.attachments.last().isSelected)
+    }
+
+    @Test
+    fun `Given selected images When switching to files tab Should preserve image selections`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(GalleryPickerMode())
+        viewModel.loadMediaItems(imageAttachment1, imageAttachment2)
+        viewModel.select(viewModel.attachments.first())
+
+        viewModel.setPickerMode(FilePickerMode())
+        viewModel.loadFileItems(fileAttachment1)
+
+        viewModel.setPickerMode(GalleryPickerMode())
+        assertTrue(viewModel.attachments.first().isSelected)
+    }
+
+    @Test
+    fun `Given existing selections When reloading items Should preserve selections`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(GalleryPickerMode())
+        viewModel.loadMediaItems(imageAttachment1, imageAttachment2)
+        viewModel.select(viewModel.attachments.first())
+
+        viewModel.loadMediaItems(imageAttachment1, imageAttachment2)
+
+        assertTrue(viewModel.attachments.first().isSelected)
+        assertFalse(viewModel.attachments.last().isSelected)
+    }
+
+    @Test
+    fun `Given selections across tabs When removing from other tab Should deselect it`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(GalleryPickerMode())
+        viewModel.loadMediaItems(imageAttachment1)
+        viewModel.select(viewModel.attachments.first())
+
+        viewModel.setPickerMode(FilePickerMode())
+        viewModel.loadFileItems(fileAttachment1)
+
+        viewModel.removeFromSelection(imageUri1.toString())
+
+        viewModel.setPickerMode(GalleryPickerMode())
+        assertFalse(viewModel.attachments.first().isSelected)
+    }
+
+    @Test
+    fun `Given selections When hiding picker Should preserve selection on reopen`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.loadMediaItems(imageAttachment1, imageAttachment2)
+        viewModel.select(viewModel.attachments.first())
+
+        viewModel.setPickerVisible(visible = false)
+        viewModel.setPickerVisible(visible = true)
+        viewModel.loadMediaItems(imageAttachment1, imageAttachment2)
+
+        assertTrue(viewModel.attachments.first().isSelected)
+        assertFalse(viewModel.attachments.last().isSelected)
+    }
+
+    @Test
+    fun `Given selections When calling clearSelection Should remove all selections`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(GalleryPickerMode())
+        viewModel.loadMediaItems(imageAttachment1)
+        viewModel.select(viewModel.attachments.first())
+        viewModel.setPickerMode(FilePickerMode())
+        viewModel.loadFileItems(fileAttachment1)
+        viewModel.select(viewModel.attachments.first())
+
+        viewModel.clearSelection()
+
+        viewModel.setPickerMode(GalleryPickerMode())
+        assertFalse(viewModel.attachments.first().isSelected)
+        viewModel.setPickerMode(FilePickerMode())
+        assertFalse(viewModel.attachments.first().isSelected)
+    }
+
+    @Test
+    fun `Given selections When hiding picker Should clear cached data`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(FilePickerMode())
+        viewModel.loadFileItems(fileAttachment1)
+
+        viewModel.setPickerVisible(visible = false)
+
+        assertFalse(viewModel.isPickerVisible)
+        assertNull(viewModel.pickerMode)
+        assertEquals(0, viewModel.attachments.size)
+    }
+
+    @Test
+    fun `Given an image selected in media tab When loading files tab with same URI Should show it selected`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(GalleryPickerMode())
+        viewModel.loadMediaItems(imageAttachment1, imageAttachment2)
+        viewModel.select(viewModel.attachments.first())
+
+        viewModel.setPickerMode(FilePickerMode())
+        viewModel.loadFileItems(imageAttachment1, fileAttachment1)
+
+        assertTrue(viewModel.attachments.first().isSelected)
+        assertFalse(viewModel.attachments.last().isSelected)
+    }
+
+    @Test
+    fun `Given same file selected via media tab When selecting in media tab Should sync to files tab`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(GalleryPickerMode())
+        viewModel.loadMediaItems(imageAttachment1)
+        viewModel.setPickerMode(FilePickerMode())
+        viewModel.loadFileItems(imageAttachment1, fileAttachment1)
+
+        viewModel.setPickerMode(GalleryPickerMode())
+        viewModel.select(viewModel.attachments.first())
+
+        viewModel.setPickerMode(FilePickerMode())
+        assertTrue(viewModel.attachments.first().isSelected)
+    }
+
+    @Test
+    fun `Given same file selected in both tabs When deselecting in one tab Should deselect in both`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(GalleryPickerMode())
+        viewModel.loadMediaItems(imageAttachment1)
+        viewModel.setPickerMode(FilePickerMode())
+        viewModel.loadFileItems(imageAttachment1)
+
+        viewModel.setPickerMode(GalleryPickerMode())
+        viewModel.select(viewModel.attachments.first())
+        viewModel.deselect(viewModel.attachments.first())
+
+        assertFalse(viewModel.attachments.first().isSelected)
+        viewModel.setPickerMode(FilePickerMode())
+        assertFalse(viewModel.attachments.first().isSelected)
+    }
+
+    @Test
+    fun `Given same file in both tabs When selecting Should appear selected in both tabs`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(GalleryPickerMode())
+        viewModel.loadMediaItems(imageAttachment1)
+        viewModel.setPickerMode(FilePickerMode())
+        viewModel.loadFileItems(imageAttachment1)
+
+        viewModel.setPickerMode(GalleryPickerMode())
+        viewModel.select(viewModel.attachments.first())
+
+        assertTrue(viewModel.attachments.first().isSelected)
+        viewModel.setPickerMode(FilePickerMode())
+        assertTrue(viewModel.attachments.first().isSelected)
+    }
+
+    @Test
+    fun `Given same file in both tabs When removing by URI Should deselect in both tabs`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(GalleryPickerMode())
+        viewModel.loadMediaItems(imageAttachment1)
+        viewModel.setPickerMode(FilePickerMode())
+        viewModel.loadFileItems(imageAttachment1)
+
+        viewModel.setPickerMode(GalleryPickerMode())
+        viewModel.select(viewModel.attachments.first())
+
+        viewModel.removeFromSelection(imageUri1.toString())
+
+        assertFalse(viewModel.attachments.first().isSelected)
+        viewModel.setPickerMode(FilePickerMode())
+        assertFalse(viewModel.attachments.first().isSelected)
+    }
+
+    @Test
+    fun `Given single-select mode When a second item is selected Then the first is automatically deselected`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(GalleryPickerMode(allowMultipleSelection = false))
+        viewModel.loadMediaItems(imageAttachment1, imageAttachment2)
+        viewModel.select(viewModel.attachments.first())
+
+        viewModel.select(viewModel.attachments.last())
+
+        assertFalse(viewModel.attachments.first().isSelected)
+        assertTrue(viewModel.attachments.last().isSelected)
+    }
+
+    @Test
+    fun `Given single-select mode When selectItem is called Then returns the previously selected URIs`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(GalleryPickerMode(allowMultipleSelection = false))
+        viewModel.loadMediaItems(imageAttachment1, imageAttachment2)
+        viewModel.select(viewModel.attachments.first())
+
+        val replaced = viewModel.selectItem(imageUri2.toString())
+
+        assertEquals(setOf(imageUri1.toString()), replaced)
+    }
+
+    @Test
+    fun `Given multi-select gallery mode When selecting multiple items Then all remain selected`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(GalleryPickerMode(allowMultipleSelection = true))
+        viewModel.loadMediaItems(imageAttachment1, imageAttachment2)
+        viewModel.select(viewModel.attachments.first())
+        viewModel.select(viewModel.attachments.last())
+
+        assertTrue(viewModel.attachments.first().isSelected)
+        assertTrue(viewModel.attachments.last().isSelected)
+    }
+
+    @Test
+    fun `Given multi-select file mode When selecting multiple items Then all remain selected`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(FilePickerMode(allowMultipleSelection = true))
+        viewModel.loadFileItems(fileAttachment1, fileAttachment2)
+        viewModel.select(viewModel.attachments.first())
+        viewModel.select(viewModel.attachments.last())
+
+        assertTrue(viewModel.attachments.first().isSelected)
+        assertTrue(viewModel.attachments.last().isSelected)
+    }
+
+    @Test
+    fun `loadAttachments loads file metadata for FilePickerMode`() = runTest {
+        val expectedMetadata = listOf(fileAttachment1, fileAttachment2)
+        whenever(storageHelper.getFileMetadata()) doReturn expectedMetadata
+        val viewModel = createViewModel()
+        viewModel.setPickerMode(FilePickerMode())
+
+        viewModel.loadAttachments()
+        advanceUntilIdle()
+
+        assertEquals(expectedMetadata.size, viewModel.attachments.size)
+    }
+
+    @Test
+    fun `loadAttachments loads media metadata for GalleryPickerMode`() = runTest {
+        val expectedMetadata = listOf(imageAttachment1, imageAttachment2)
+        whenever(storageHelper.getMediaMetadata()) doReturn expectedMetadata
+        val viewModel = createViewModel()
+        viewModel.setPickerMode(GalleryPickerMode())
+
+        viewModel.loadAttachments()
+        advanceUntilIdle()
+
+        assertEquals(expectedMetadata.size, viewModel.attachments.size)
+    }
+
+    @Test
+    fun `resolveAndSubmitUris emits resolved attachments`() = runTest {
+        val uris = listOf(imageUri1, imageUri2)
+        val metadata = listOf(imageAttachment1, imageAttachment2)
+        val expectedAttachments = uris.map(::attachmentWithSourceUri)
+        whenever(storageHelper.resolveMetadata(uris)) doReturn metadata
+        whenever(storageHelper.partitionResolvable(metadata)) doReturn (metadata to emptyList())
+        whenever(storageHelper.toAttachments(metadata)) doReturn expectedAttachments
+        val viewModel = createViewModel()
+
+        val results = mutableListOf<SubmittedAttachments>()
+        val job = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.submittedAttachments.collect(results::add)
+        }
+        viewModel.resolveAndSubmitUris(uris)
+        advanceUntilIdle()
+        job.cancel()
+
+        assertEquals(1, results.size)
+        assertEquals(expectedAttachments, results.first().attachments)
+        assertFalse(results.first().hasUnsupportedFiles)
+    }
+
+    @Test
+    fun `resolveAndSubmitUris sets hasUnsupportedFiles when URIs are filtered`() = runTest {
+        val uris = listOf(imageUri1, imageUri2)
+        val filteredMetadata = listOf(imageAttachment1)
+        val expectedAttachments = listOf(attachmentWithSourceUri(imageUri1))
+        whenever(storageHelper.resolveMetadata(uris)) doReturn filteredMetadata
+        whenever(storageHelper.partitionResolvable(filteredMetadata)) doReturn (filteredMetadata to emptyList())
+        whenever(storageHelper.toAttachments(filteredMetadata)) doReturn expectedAttachments
+        val viewModel = createViewModel()
+
+        val results = mutableListOf<SubmittedAttachments>()
+        val job = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.submittedAttachments.collect(results::add)
+        }
+        viewModel.resolveAndSubmitUris(uris)
+        advanceUntilIdle()
+        job.cancel()
+
+        assertEquals(1, results.size)
+        assertTrue(results.first().hasUnsupportedFiles)
+    }
+
+    @Test
+    fun `resolveAndSubmitUris does nothing for empty URIs`() = runTest {
+        val viewModel = createViewModel()
+
+        val results = mutableListOf<SubmittedAttachments>()
+        val job = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.submittedAttachments.collect(results::add)
+        }
+        viewModel.resolveAndSubmitUris(emptyList())
+        advanceUntilIdle()
+        job.cancel()
+
+        assertTrue(results.isEmpty())
+    }
+
+    @Test
+    fun `Given inaccessible URIs When resolving Should set hasUnresolvedAttachments`() = runTest {
+        val uris = listOf(imageUri1, imageUri2)
+        val metadata = listOf(imageAttachment1, imageAttachment2)
+        val accessibleMetadata = listOf(imageAttachment1)
+        val inaccessibleMetadata = listOf(imageAttachment2)
+        val accessibleAttachments = listOf(attachmentWithSourceUri(imageUri1))
+        whenever(storageHelper.resolveMetadata(uris)) doReturn metadata
+        whenever(storageHelper.partitionResolvable(metadata)) doReturn (accessibleMetadata to inaccessibleMetadata)
+        whenever(storageHelper.toAttachments(accessibleMetadata)) doReturn accessibleAttachments
+        val viewModel = createViewModel()
 
         assertFalse(viewModel.hasUnresolvedAttachments)
 
-        var result: List<Attachment>? = null
-        viewModel.getSelectedAttachmentsAsync { result = it }
+        val results = mutableListOf<SubmittedAttachments>()
+        val job = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.submittedAttachments.collect(results::add)
+        }
+        viewModel.resolveAndSubmitUris(uris)
         advanceUntilIdle()
+        job.cancel()
 
-        assertEquals(1, result?.size)
+        assertEquals(1, results.first().attachments.size)
         assertTrue(viewModel.hasUnresolvedAttachments)
+        assertFalse(results.first().hasUnsupportedFiles)
     }
 
     @Test
     fun `Given hasUnresolvedAttachments is true When clearing Should reset to false`() = runTest {
+        val uris = listOf(imageUri1, imageUri2)
         val metadata = listOf(imageAttachment1, imageAttachment2)
-        val storageHelper: StorageHelperWrapper = mock {
-            whenever(it.getAttachmentsForUpload(metadata)) doReturn listOf(Attachment(type = "image", upload = mock()))
-        }
-        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+        val accessibleMetadata = listOf(imageAttachment1)
+        val inaccessibleMetadata = listOf(imageAttachment2)
+        whenever(storageHelper.resolveMetadata(uris)) doReturn metadata
+        whenever(storageHelper.partitionResolvable(metadata)) doReturn (accessibleMetadata to inaccessibleMetadata)
+        whenever(storageHelper.toAttachments(accessibleMetadata)) doReturn listOf(attachmentWithSourceUri(imageUri1))
+        val viewModel = createViewModel()
 
-        viewModel.getAttachmentsFromMetadataAsync(metadata) {}
+        val job = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.submittedAttachments.collect {}
+        }
+        viewModel.resolveAndSubmitUris(uris)
         advanceUntilIdle()
         assertTrue(viewModel.hasUnresolvedAttachments)
 
         viewModel.clearUnresolvedAttachments()
         assertFalse(viewModel.hasUnresolvedAttachments)
+        job.cancel()
     }
 
     @Test
-    fun `Given all attachments resolved When getting attachments async Should not set hasUnresolvedAttachments`() = runTest {
+    fun `Given all URIs accessible When resolving Should not set hasUnresolvedAttachments`() = runTest {
+        val uris = listOf(imageUri1, imageUri2)
         val metadata = listOf(imageAttachment1, imageAttachment2)
-        val expectedAttachments = listOf(
-            Attachment(type = "image", upload = mock()),
-            Attachment(type = "image", upload = mock()),
-        )
-        val storageHelper: StorageHelperWrapper = mock {
-            whenever(it.getAttachmentsForUpload(metadata)) doReturn expectedAttachments
+        val expectedAttachments = uris.map(::attachmentWithSourceUri)
+        whenever(storageHelper.resolveMetadata(uris)) doReturn metadata
+        whenever(storageHelper.partitionResolvable(metadata)) doReturn (metadata to emptyList())
+        whenever(storageHelper.toAttachments(metadata)) doReturn expectedAttachments
+        val viewModel = createViewModel()
+
+        val results = mutableListOf<SubmittedAttachments>()
+        val job = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.submittedAttachments.collect(results::add)
         }
-        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
-
-        var result: List<Attachment>? = null
-        viewModel.getAttachmentsFromMetadataAsync(metadata) { result = it }
+        viewModel.resolveAndSubmitUris(uris)
         advanceUntilIdle()
+        job.cancel()
 
-        assertEquals(2, result?.size)
+        assertEquals(2, results.first().attachments.size)
         assertFalse(viewModel.hasUnresolvedAttachments)
     }
 
-    companion object {
+    @Test
+    fun `Given unresolvable and unsupported URIs When resolving Should set both flags correctly`() = runTest {
+        val extraUri = Uri.parse("content://media/external/files/999")
+        val uris = listOf(imageUri1, imageUri2, extraUri)
+        val metadata = listOf(imageAttachment1, imageAttachment2)
+        val accessibleMetadata = listOf(imageAttachment1)
+        val inaccessibleMetadata = listOf(imageAttachment2)
+        val accessibleAttachments = listOf(attachmentWithSourceUri(imageUri1))
+        whenever(storageHelper.resolveMetadata(uris)) doReturn metadata
+        whenever(storageHelper.partitionResolvable(metadata)) doReturn (accessibleMetadata to inaccessibleMetadata)
+        whenever(storageHelper.toAttachments(accessibleMetadata)) doReturn accessibleAttachments
+        val viewModel = createViewModel()
+
+        val results = mutableListOf<SubmittedAttachments>()
+        val job = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.submittedAttachments.collect(results::add)
+        }
+        viewModel.resolveAndSubmitUris(uris)
+        advanceUntilIdle()
+        job.cancel()
+
+        assertTrue(viewModel.hasUnresolvedAttachments)
+        assertTrue(results.first().hasUnsupportedFiles)
+    }
+
+    private fun createViewModel(): AttachmentsPickerViewModel =
+        AttachmentsPickerViewModel(storageHelper, channelState)
+
+    /**
+     * Selects an item by adding its URI to the picker selection.
+     * Assumes the item is not yet selected.
+     */
+    private fun AttachmentsPickerViewModel.select(item: AttachmentPickerItemState) {
+        val uriString = item.attachmentMetaData.uri?.toString() ?: return
+        selectItem(uriString)
+    }
+
+    /**
+     * Deselects an item by removing its URI from the picker selection.
+     * Assumes the item is currently selected.
+     */
+    private fun AttachmentsPickerViewModel.deselect(item: AttachmentPickerItemState) {
+        val uriString = item.attachmentMetaData.uri?.toString() ?: return
+        removeFromSelection(uriString)
+    }
+
+    /**
+     * Sets media items on the ViewModel by mocking [AttachmentStorageHelper.getMediaMetadata]
+     * and calling [AttachmentsPickerViewModel.loadAttachments].
+     * The picker mode must be [GalleryPickerMode] or `null` (the default).
+     */
+    private fun AttachmentsPickerViewModel.loadMediaItems(vararg items: AttachmentMetaData) {
+        whenever(storageHelper.getMediaMetadata()) doReturn items.toList()
+        loadAttachments()
+    }
+
+    /**
+     * Sets file items on the ViewModel by mocking [AttachmentStorageHelper.getFileMetadata]
+     * and calling [AttachmentsPickerViewModel.loadAttachments].
+     * The picker mode must be [FilePickerMode].
+     */
+    private fun AttachmentsPickerViewModel.loadFileItems(vararg items: AttachmentMetaData) {
+        whenever(storageHelper.getFileMetadata()) doReturn items.toList()
+        loadAttachments()
+    }
+
+    private fun mockChannelState(): ChannelState {
+        val channel = randomChannel()
+        return mock {
+            on { channelData } doReturn MutableStateFlow(channel.toChannelData())
+            on { channelConfig } doReturn MutableStateFlow(channel.config)
+            on { toChannel() } doReturn channel
+        }
+    }
+
+    private companion object {
+
+        private val imageUri1 = Uri.parse("content://media/external/images/1")
+        private val imageUri2 = Uri.parse("content://media/external/images/2")
+        private val fileUri1 = Uri.parse("content://media/external/files/100")
+        private val fileUri2 = Uri.parse("content://media/external/files/101")
 
         private val imageAttachment1 = AttachmentMetaData(
+            uri = imageUri1,
             mimeType = "image/jpeg",
             title = "img_1.jpeg",
             type = "image",
         )
         private val imageAttachment2 = AttachmentMetaData(
+            uri = imageUri2,
             mimeType = "image/png",
             title = "img_2.png",
             type = "image",
         )
         private val fileAttachment1 = AttachmentMetaData(
+            uri = fileUri1,
             mimeType = "application/pdf",
             title = "pdf_1.pdf",
             type = "file",
         )
         private val fileAttachment2 = AttachmentMetaData(
+            uri = fileUri2,
             mimeType = "application/pdf",
             title = "pdf_2.pdf",
             type = "file",
         )
+
+        private fun attachmentWithSourceUri(uri: Uri): Attachment =
+            Attachment(extraData = mapOf(EXTRA_SOURCE_URI to uri.toString()))
     }
 }

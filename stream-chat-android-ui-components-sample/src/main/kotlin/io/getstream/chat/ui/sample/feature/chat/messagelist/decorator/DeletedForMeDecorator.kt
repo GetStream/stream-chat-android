@@ -35,7 +35,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.imp
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessagePlainTextViewHolder
-import io.getstream.chat.ui.sample.R
+import io.getstream.chat.android.ui.R as UiR
 
 class DeletedForMeDecorator : BaseDecorator() {
 
@@ -45,7 +45,7 @@ class DeletedForMeDecorator : BaseDecorator() {
 
     override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
         val container = (viewHolder.binding.footnote as View)
-            .findViewById<ViewGroup>(R.id.messageFooterContainerInner)
+            .findViewById<ViewGroup>(UiR.id.messageFooterContainerInner)
         setupDeletedForMeView(container, data)
     }
 
@@ -106,8 +106,8 @@ class DeletedForMeDecorator : BaseDecorator() {
             marginStart = Utils.dpToPx(MARGIN_START_DP)
             marginEnd = Utils.dpToPx(MARGIN_END_DP)
         }
-        TextViewCompat.setTextAppearance(this, R.style.StreamUiTextAppearance_Footnote)
-        setTextColor(ContextCompat.getColor(container.context, R.color.stream_ui_text_color_primary))
+        TextViewCompat.setTextAppearance(this, UiR.style.StreamUiTextAppearance_Footnote)
+        setTextColor(ContextCompat.getColor(container.context, UiR.color.stream_ui_text_color_primary))
         text = "Deleted only for me"
     }
 }

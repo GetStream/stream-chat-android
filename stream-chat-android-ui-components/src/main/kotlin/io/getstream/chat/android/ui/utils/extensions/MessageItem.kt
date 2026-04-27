@@ -28,7 +28,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
  */
 @InternalStreamChatApi
 public fun MessageListItem.MessageItem.isBottomPosition(): Boolean {
-    return MessagePosition.BOTTOM in positions || MessagePosition.NONE in positions
+    return MessagePosition.BOTTOM == position || MessagePosition.NONE == position
 }
 
 @InternalStreamChatApi

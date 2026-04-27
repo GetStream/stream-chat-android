@@ -17,7 +17,9 @@
 package io.getstream.chat.android.ui.common.utils
 
 import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
@@ -25,6 +27,7 @@ import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomChannelCapabilities
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomSyncStatus
 import org.amshove.kluent.`should be`
@@ -127,13 +130,27 @@ internal class CapabilitiesHelperTest {
     }
 
     @ParameterizedTest
+    @MethodSource("canMuteUserArguments")
+    fun `Verify canMuteUser() extension function returns proper value`(
+        localFlag: Boolean,
+        currentUser: User?,
+        message: Message,
+        channel: Channel,
+        expectedResult: Boolean,
+    ) {
+        canMuteUser(localFlag, currentUser, message, channel) `should be` expectedResult
+    }
+
+    @ParameterizedTest
     @MethodSource("canMarkAsUnreadArguments")
     fun `Verify canMarkAsUnread() extension function return proper value`(
         localFlag: Boolean,
+        currentUser: User?,
+        message: Message,
         ownCapabilities: Set<String>,
         expectedResult: Boolean,
     ) {
-        canMarkAsUnread(localFlag, ownCapabilities) `should be` expectedResult
+        canMarkAsUnread(localFlag, currentUser, message, ownCapabilities) `should be` expectedResult
     }
 
     @ParameterizedTest
@@ -192,18 +209,35 @@ internal class CapabilitiesHelperTest {
 
         @JvmStatic
         fun canMarkAsUnreadArguments() = listOf(
+            // case: UI flag disabled
             Arguments.of(
                 false,
-                randomChannelCapabilities(),
+                currentUser,
+                randomMessage(),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.READ_EVENTS)),
                 false,
             ),
+            // case: no READ_EVENTS capability
             Arguments.of(
-                randomBoolean(),
+                true,
+                currentUser,
+                randomMessage(),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.READ_EVENTS)),
                 false,
             ),
+            // case: own message
             Arguments.of(
                 true,
+                currentUser,
+                randomMessage(user = currentUser),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.READ_EVENTS)),
+                false,
+            ),
+            // case: all conditions met
+            Arguments.of(
+                true,
+                currentUser,
+                randomMessage(),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.READ_EVENTS)),
                 true,
             ),
@@ -251,6 +285,13 @@ internal class CapabilitiesHelperTest {
                 currentUser.takeIf { randomBoolean() },
                 randomMessage(command = AttachmentType.GIPHY, sharedLocation = null),
                 randomChannelCapabilities(),
+                false,
+            ),
+            Arguments.of(
+                true,
+                currentUser,
+                randomMessage(poll = randomPoll(), command = null, sharedLocation = null),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.UPDATE_ANY_MESSAGE)),
                 false,
             ),
             Arguments.of(
@@ -309,6 +350,42 @@ internal class CapabilitiesHelperTest {
                 true,
                 currentUser.takeIf { randomBoolean() },
                 randomMessage(),
+                true,
+            ),
+        )
+
+        @JvmStatic
+        fun canMuteUserArguments() = listOf(
+            // UI flag disabled
+            Arguments.of(
+                false,
+                currentUser.takeIf { randomBoolean() },
+                randomMessage(),
+                Channel(config = Config(muteEnabled = true)),
+                false,
+            ),
+            // own message
+            Arguments.of(
+                randomBoolean(),
+                currentUser,
+                randomMessage(user = currentUser),
+                Channel(config = Config(muteEnabled = true)),
+                false,
+            ),
+            // mute disabled in channel config
+            Arguments.of(
+                true,
+                currentUser.takeIf { randomBoolean() },
+                randomMessage(),
+                Channel(config = Config(muteEnabled = false)),
+                false,
+            ),
+            // all conditions met
+            Arguments.of(
+                true,
+                currentUser.takeIf { randomBoolean() },
+                randomMessage(),
+                Channel(config = Config(muteEnabled = true)),
                 true,
             ),
         )

@@ -19,12 +19,12 @@ package io.getstream.chat.android.ui.feature.messages.composer.attachment.previe
 import android.view.ViewGroup
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
+import io.getstream.chat.android.ui.common.utils.extensions.isAnyFileType
 import io.getstream.chat.android.ui.databinding.StreamUiFileAttachmentPreviewBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewViewHolder
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.loadAttachmentThumb
-import io.getstream.chat.android.uiutils.extension.isAnyFileType
 import io.getstream.log.taggedLogger
 
 /**
@@ -41,8 +41,9 @@ public class FileAttachmentPreviewFactory : AttachmentPreviewFactory {
      * @return True if the factory is able to provide a preview for the given [Attachment].
      */
     public override fun canHandle(attachment: Attachment): Boolean {
-        logger.i { "[canHandle] isAnyFileType: ${attachment.isAnyFileType()}; $attachment" }
-        return attachment.isAnyFileType()
+        val isAnyFileType = attachment.isAnyFileType()
+        logger.i { "[canHandle] isAnyFileType: $isAnyFileType; $attachment" }
+        return isAnyFileType
     }
 
     /**

@@ -21,13 +21,15 @@ package io.getstream.chat.android.ui.common.utils
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.message.hasSharedLocation
 import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.client.utils.message.isPoll
 import io.getstream.chat.android.client.utils.message.isThreadReply
 import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.uiutils.extension.hasLink
+import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 
 private fun Message.isMessageFailed(): Boolean = syncStatus == SyncStatus.FAILED_PERMANENTLY
 private fun Message.isSynced(): Boolean = syncStatus == SyncStatus.COMPLETED
@@ -131,7 +133,7 @@ public fun canEditMessage(
     ownCapabilities: Set<String>,
 ): Boolean = editMessageEnabled &&
     with(ownCapabilities) { ((message.isOwnMessage(currentUser) && canEditOwnMessage()) || canEditAnyMessage()) } &&
-    !message.isGiphyCommand() && !message.hasSharedLocation()
+    !message.isGiphyCommand() && !message.isPoll() && !message.hasSharedLocation()
 
 /**
  * Determines whether the given message can be deleted.
@@ -195,6 +197,27 @@ public fun canPinMessage(
 ): Boolean = pinMessageEnabled && message.isSynced() && ownCapabilities.canPinMessage()
 
 /**
+ * Determines whether the user who sent the given message can be muted.
+ *
+ * A user can be muted when:
+ * - Mute user functionality is enabled in the UI configuration
+ * - Muting is enabled in the channel configuration
+ * - The message was not sent by the current user (users cannot mute themselves)
+ *
+ * @param muteUserEnabled Whether the mute user feature is enabled in the UI.
+ * @param currentUser The currently authenticated user.
+ * @param message The message whose sender to check for mute eligibility.
+ * @param channel The channel where the message was sent.
+ * @return `true` if the message sender can be muted, `false` otherwise.
+ */
+public fun canMuteUser(
+    muteUserEnabled: Boolean,
+    currentUser: User?,
+    message: Message,
+    channel: Channel,
+): Boolean = muteUserEnabled && channel.config.muteEnabled && !message.isOwnMessage(currentUser)
+
+/**
  * Determines whether the user who sent the given message can be blocked.
  *
  * A user can be blocked when:
@@ -218,15 +241,20 @@ public fun canBlockUser(
  * Messages can be marked as unread when:
  * - Mark as unread functionality is enabled in the UI configuration
  * - The user has the capability to receive read events in the channel
+ * - The message was not sent by the current user (users cannot mark their own messages as unread)
  *
  * @param markAsUnreadEnabled Whether the mark as unread feature is enabled in the UI.
+ * @param currentUser The currently authenticated user.
+ * @param message The message to check for mark as unread eligibility.
  * @param ownCapabilities The set of capabilities the current user has in the channel.
- * @return `true` if messages can be marked as unread, `false` otherwise.
+ * @return `true` if the message can be marked as unread, `false` otherwise.
  */
 public fun canMarkAsUnread(
     markAsUnreadEnabled: Boolean,
+    currentUser: User?,
+    message: Message,
     ownCapabilities: Set<String>,
-): Boolean = markAsUnreadEnabled && ownCapabilities.canMarkAsUnread()
+): Boolean = markAsUnreadEnabled && ownCapabilities.canMarkAsUnread() && !message.isOwnMessage(currentUser)
 
 /**
  * Determines whether the given message can be retried.

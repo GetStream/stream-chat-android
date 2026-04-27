@@ -21,8 +21,6 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.state.plugin.config.StatePluginConfig
-import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.uitests.app.login.LoginActivity
 import io.getstream.chat.android.uitests.ui.util.CoroutineTaskExecutorRule
 import io.getstream.chat.android.uitests.util.readFileContents
@@ -65,17 +63,8 @@ internal abstract class BaseUiTest {
     }
 
     private fun setupStreamSdk() {
-        val statePluginFactory = StreamStatePluginFactory(
-            config = StatePluginConfig(
-                backgroundSyncEnabled = false,
-                userPresence = false,
-            ),
-            appContext = context,
-        )
-
         ChatClient.Builder("hrwwzsgrzapv", context)
             .baseUrl(mockWebServer.url("/").toString())
-            .withPlugins(statePluginFactory)
             .logLevel(ChatLogLevel.ALL)
             .build()
     }

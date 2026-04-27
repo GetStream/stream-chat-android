@@ -18,7 +18,6 @@ package io.getstream.chat.ui.sample.feature.chat.messagelist.decorator
 
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.helper.DateFormatter
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.DecoratorProvider
@@ -32,7 +31,6 @@ class CustomDecoratorProviderFactory : DecoratorProviderFactory {
         messageListViewStyle: MessageListViewStyle,
         showAvatarPredicate: MessageListView.ShowAvatarPredicate,
         messageBackgroundFactory: MessageBackgroundFactory,
-        deletedMessageVisibility: () -> DeletedMessageVisibility,
         getLanguageDisplayName: (code: String) -> String,
     ): DecoratorProvider = CustomDecoratorProvider(
         channel,
@@ -40,7 +38,6 @@ class CustomDecoratorProviderFactory : DecoratorProviderFactory {
         messageListViewStyle,
         showAvatarPredicate,
         messageBackgroundFactory,
-        deletedMessageVisibility,
         getLanguageDisplayName,
     )
 }
@@ -51,7 +48,6 @@ class CustomDecoratorProvider(
     messageListViewStyle: MessageListViewStyle,
     showAvatarPredicate: MessageListView.ShowAvatarPredicate,
     messageBackgroundFactory: MessageBackgroundFactory,
-    deletedMessageVisibility: () -> DeletedMessageVisibility,
     getLanguageDisplayName: (code: String) -> String,
 ) : DecoratorProvider {
     override val decorators by lazy {

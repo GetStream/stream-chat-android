@@ -72,21 +72,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.component.PaneRow
 import io.getstream.chat.android.compose.sample.ui.component.PaneTitle
 import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.UnreadChannel
@@ -97,6 +94,7 @@ import io.getstream.chat.android.models.User
 import kotlinx.coroutines.flow.collectLatest
 import java.io.File
 import java.util.Calendar
+import io.getstream.chat.android.compose.R as ComposeR
 
 @Suppress("LongMethod")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -137,7 +135,7 @@ fun UserProfileScreen(
             }
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        containerColor = ChatTheme.colors.appBackground,
+        containerColor = ChatTheme.colors.backgroundCoreApp,
     ) { paddingValues ->
         UserProfileScreenContent(
             modifier = Modifier.padding(paddingValues),
@@ -160,7 +158,7 @@ fun UserProfileScreen(
     when (modalSheet) {
         ModalSheet.UnreadCounts -> ModalBottomSheet(
             onDismissRequest = { modalSheet = null },
-            containerColor = ChatTheme.colors.appBackground,
+            containerColor = ChatTheme.colors.backgroundCoreApp,
         ) {
             UnreadCounts(state.unreadCounts)
         }
@@ -168,7 +166,7 @@ fun UserProfileScreen(
         ModalSheet.PushPreferences -> ModalBottomSheet(
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             onDismissRequest = { modalSheet = null },
-            containerColor = ChatTheme.colors.appBackground,
+            containerColor = ChatTheme.colors.backgroundCoreApp,
         ) {
             UserProfilePushPreferencesScreen(
                 preferences = state.user?.pushPreference ?: PushPreference(PushPreferenceLevel.all, null),
@@ -185,7 +183,7 @@ fun UserProfileScreen(
 
         ModalSheet.UpdateProfilePicture -> ModalBottomSheet(
             onDismissRequest = { modalSheet = null },
-            containerColor = ChatTheme.colors.appBackground,
+            containerColor = ChatTheme.colors.backgroundCoreApp,
         ) {
             UpdateProfilePicture(
                 onChooseFromLibraryClick = {
@@ -207,7 +205,7 @@ fun UserProfileScreen(
 
         ModalSheet.UpdatePrivacySettings -> ModalBottomSheet(
             onDismissRequest = { modalSheet = null },
-            containerColor = ChatTheme.colors.appBackground,
+            containerColor = ChatTheme.colors.backgroundCoreApp,
         ) {
             state.user?.let { user ->
                 UserProfilePrivacySettingsScreen(
@@ -256,13 +254,12 @@ private fun TopBar(onNavigationIconClick: () -> Unit) {
         title = {},
         navigationIcon = {
             BackButton(
-                modifier = Modifier.mirrorRtl(layoutDirection = LocalLayoutDirection.current),
-                painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+                painter = painterResource(id = ComposeR.drawable.stream_design_ic_arrow_left),
                 onBackPressed = onNavigationIconClick,
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = ChatTheme.colors.appBackground,
+            containerColor = ChatTheme.colors.backgroundCoreApp,
         ),
     )
 }
@@ -282,8 +279,8 @@ private fun LinearProgressIndicator(
                 LinearProgressIndicator(
                     modifier = Modifier.fillMaxWidth(),
                     progress = { state.progress },
-                    color = ChatTheme.colors.primaryAccent,
-                    trackColor = ChatTheme.colors.inputBackground,
+                    color = ChatTheme.colors.accentPrimary,
+                    trackColor = ChatTheme.colors.backgroundCoreSurfaceDefault,
                     drawStopIndicator = { /* Don't draw the stop indicator */ },
                 )
             }
@@ -291,8 +288,8 @@ private fun LinearProgressIndicator(
             else -> {
                 LinearProgressIndicator(
                     modifier = Modifier.fillMaxWidth(),
-                    color = ChatTheme.colors.primaryAccent,
-                    trackColor = ChatTheme.colors.inputBackground,
+                    color = ChatTheme.colors.accentPrimary,
+                    trackColor = ChatTheme.colors.backgroundCoreSurfaceDefault,
                 )
             }
         }
@@ -345,13 +342,13 @@ private fun UserProfileScreenContent(
                 ) {
                     Text(
                         text = "Name",
-                        style = ChatTheme.typography.title3,
-                        color = ChatTheme.colors.textHighEmphasis,
+                        style = ChatTheme.typography.headingMedium,
+                        color = ChatTheme.colors.textPrimary,
                     )
                     Text(
                         text = user.name.takeIf(String::isNotBlank) ?: user.id,
-                        style = ChatTheme.typography.body,
-                        color = ChatTheme.colors.textLowEmphasis,
+                        style = ChatTheme.typography.bodyDefault,
+                        color = ChatTheme.colors.textSecondary,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -366,13 +363,13 @@ private fun UserProfileScreenContent(
                     ) {
                         Text(
                             text = "Average Response Time",
-                            style = ChatTheme.typography.title3,
-                            color = ChatTheme.colors.textHighEmphasis,
+                            style = ChatTheme.typography.headingMedium,
+                            color = ChatTheme.colors.textPrimary,
                         )
                         Text(
                             text = LocalContext.current.formatTime(seconds = avgResponseTimeInSeconds),
-                            style = ChatTheme.typography.body,
-                            color = ChatTheme.colors.textLowEmphasis,
+                            style = ChatTheme.typography.bodyDefault,
+                            color = ChatTheme.colors.textSecondary,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
@@ -418,13 +415,13 @@ private fun NavigationItem(
     ) {
         Text(
             text = label,
-            style = ChatTheme.typography.title3,
-            color = ChatTheme.colors.textHighEmphasis,
+            style = ChatTheme.typography.headingMedium,
+            color = ChatTheme.colors.textPrimary,
         )
         Icon(
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = null,
-            tint = ChatTheme.colors.textLowEmphasis,
+            tint = ChatTheme.colors.textSecondary,
         )
     }
 }
@@ -446,24 +443,21 @@ private fun UserProfilePicture(
             ),
     ) {
         UserAvatar(
-            modifier = Modifier
-                .size(72.dp),
+            modifier = Modifier.size(72.dp),
             user = user,
-            showOnlineIndicator = false,
-            onClick = null,
         )
         Icon(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .size(24.dp)
                 .background(
-                    color = ChatTheme.colors.barsBackground,
+                    color = ChatTheme.colors.backgroundCoreElevation1,
                     shape = CircleShape,
                 )
                 .padding(4.dp),
             imageVector = Icons.Rounded.Edit,
             contentDescription = null,
-            tint = ChatTheme.colors.textLowEmphasis,
+            tint = ChatTheme.colors.textSecondary,
         )
     }
 }
@@ -482,8 +476,8 @@ private fun UpdateProfilePicture(
     ) {
         Text(
             text = "Update Profile Picture",
-            style = ChatTheme.typography.title3Bold,
-            color = ChatTheme.colors.textHighEmphasis,
+            style = ChatTheme.typography.headingMedium,
+            color = ChatTheme.colors.textPrimary,
             modifier = Modifier.padding(16.dp),
         )
         TextButton(
@@ -493,14 +487,14 @@ private fun UpdateProfilePicture(
             Icon(
                 imageVector = Icons.Rounded.PhotoLibrary,
                 contentDescription = null,
-                tint = ChatTheme.colors.textLowEmphasis,
+                tint = ChatTheme.colors.textSecondary,
             )
             Spacer(modifier = Modifier.size(8.dp))
             Text(
                 modifier = Modifier.weight(1f),
                 text = "Choose from library",
-                style = ChatTheme.typography.title3,
-                color = ChatTheme.colors.textHighEmphasis,
+                style = ChatTheme.typography.headingMedium,
+                color = ChatTheme.colors.textPrimary,
             )
         }
         TextButton(
@@ -510,14 +504,14 @@ private fun UpdateProfilePicture(
             Icon(
                 imageVector = Icons.Rounded.PhotoCamera,
                 contentDescription = null,
-                tint = ChatTheme.colors.textLowEmphasis,
+                tint = ChatTheme.colors.textSecondary,
             )
             Spacer(modifier = Modifier.size(8.dp))
             Text(
                 modifier = Modifier.weight(1f),
                 text = "Take a photo",
-                style = ChatTheme.typography.title3,
-                color = ChatTheme.colors.textHighEmphasis,
+                style = ChatTheme.typography.headingMedium,
+                color = ChatTheme.colors.textPrimary,
             )
         }
         TextButton(
@@ -527,14 +521,14 @@ private fun UpdateProfilePicture(
             Icon(
                 imageVector = Icons.Rounded.Delete,
                 contentDescription = null,
-                tint = ChatTheme.colors.errorAccent.copy(alpha = 0.8f),
+                tint = ChatTheme.colors.accentError.copy(alpha = 0.8f),
             )
             Spacer(modifier = Modifier.size(8.dp))
             Text(
                 modifier = Modifier.weight(1f),
                 text = "Remove picture",
-                style = ChatTheme.typography.title3,
-                color = ChatTheme.colors.errorAccent,
+                style = ChatTheme.typography.headingMedium,
+                color = ChatTheme.colors.accentError,
             )
         }
     }
@@ -602,13 +596,13 @@ private fun LazyListScope.summary(
         ) {
             Text(
                 text = title,
-                style = ChatTheme.typography.body,
-                color = ChatTheme.colors.textHighEmphasis,
+                style = ChatTheme.typography.bodyDefault,
+                color = ChatTheme.colors.textPrimary,
             )
             Text(
                 text = "$count",
-                style = ChatTheme.typography.bodyBold,
-                color = ChatTheme.colors.textHighEmphasis,
+                style = ChatTheme.typography.bodyEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
         }
     }
@@ -636,13 +630,13 @@ private fun LazyListScope.unreadChannels(
             ) {
                 Text(
                     text = item.cid,
-                    style = ChatTheme.typography.bodyBold,
-                    color = ChatTheme.colors.textHighEmphasis,
+                    style = ChatTheme.typography.bodyEmphasis,
+                    color = ChatTheme.colors.textPrimary,
                 )
                 Text(
                     text = "Last read ${ChatTheme.dateFormatter.formatRelativeTime(item.lastRead)}",
-                    style = ChatTheme.typography.footnote,
-                    color = ChatTheme.colors.textLowEmphasis,
+                    style = ChatTheme.typography.metadataDefault,
+                    color = ChatTheme.colors.textSecondary,
                 )
             }
             CountText(
@@ -675,18 +669,18 @@ private fun LazyListScope.unreadThreads(
             ) {
                 Text(
                     text = item.parentMessageId,
-                    style = ChatTheme.typography.bodyBold,
-                    color = ChatTheme.colors.textHighEmphasis,
+                    style = ChatTheme.typography.bodyEmphasis,
+                    color = ChatTheme.colors.textPrimary,
                 )
                 Text(
                     text = "Last read ${ChatTheme.dateFormatter.formatRelativeTime(item.lastRead)}",
-                    style = ChatTheme.typography.footnote,
-                    color = ChatTheme.colors.textLowEmphasis,
+                    style = ChatTheme.typography.metadataDefault,
+                    color = ChatTheme.colors.textSecondary,
                 )
                 Text(
                     text = "Last read message: ${item.lastReadMessageId}",
-                    style = ChatTheme.typography.footnote,
-                    color = ChatTheme.colors.textLowEmphasis,
+                    style = ChatTheme.typography.metadataDefault,
+                    color = ChatTheme.colors.textSecondary,
                 )
             }
             CountText(
@@ -722,15 +716,15 @@ private fun LazyListScope.unreadChannelsByType(
             ) {
                 Text(
                     text = item.channelType,
-                    style = ChatTheme.typography.bodyBold,
-                    color = ChatTheme.colors.textHighEmphasis,
+                    style = ChatTheme.typography.bodyEmphasis,
+                    color = ChatTheme.colors.textPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
                     text = "${item.channelsCount} channels",
-                    style = ChatTheme.typography.footnote,
-                    color = ChatTheme.colors.textLowEmphasis,
+                    style = ChatTheme.typography.metadataDefault,
+                    color = ChatTheme.colors.textSecondary,
                 )
             }
             CountText(
@@ -758,8 +752,8 @@ private fun LazyListScope.unreadChannelsByTeam(
             Text(
                 modifier = Modifier.align(Alignment.CenterVertically),
                 text = team,
-                style = ChatTheme.typography.body,
-                color = ChatTheme.colors.textHighEmphasis,
+                style = ChatTheme.typography.bodyDefault,
+                color = ChatTheme.colors.textPrimary,
             )
             CountText(
                 count = count,
@@ -779,8 +773,8 @@ private fun CountText(
             .background(backgroundColor, RoundedCornerShape(6.dp))
             .padding(horizontal = 8.dp, vertical = 4.dp),
         text = count.toString(),
-        style = ChatTheme.typography.bodyBold,
-        color = ChatTheme.colors.textLowEmphasis,
+        style = ChatTheme.typography.bodyEmphasis,
+        color = ChatTheme.colors.textSecondary,
     )
 }
 

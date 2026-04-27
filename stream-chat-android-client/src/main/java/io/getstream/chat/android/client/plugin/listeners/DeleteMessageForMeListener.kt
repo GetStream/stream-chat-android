@@ -17,12 +17,14 @@
 package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.result.Result
 
 /**
  * Listener for requests of deleting a message for the current user and for the results of such requests.
  */
+@InternalStreamChatApi
 public interface DeleteMessageForMeListener {
 
     /**

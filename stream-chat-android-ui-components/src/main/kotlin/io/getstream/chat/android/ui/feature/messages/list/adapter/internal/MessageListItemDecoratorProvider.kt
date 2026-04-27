@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.internal
 
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.helper.DateFormatter
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
@@ -46,7 +45,6 @@ import io.getstream.chat.android.ui.utils.extensions.isCurrentUserBanned
  * @param messageListViewStyle [MessageListViewStyle] The style of the MessageListView and its items.
  * @param showAvatarPredicate [MessageListView.ShowAvatarPredicate] Checks if should show the avatar or not accordingly with the provided logic.
  * @param messageBackgroundFactory [MessageBackgroundFactory] Factory that customizes the background of messages.
- * @param deletedMessageVisibility [DeletedMessageVisibility] Used to hide or show the the deleted message accordingly to the logic provided.
  */
 @Suppress("LongParameterList")
 internal class MessageListItemDecoratorProvider(
@@ -55,7 +53,6 @@ internal class MessageListItemDecoratorProvider(
     messageListViewStyle: MessageListViewStyle,
     showAvatarPredicate: MessageListView.ShowAvatarPredicate,
     messageBackgroundFactory: MessageBackgroundFactory,
-    deletedMessageVisibility: () -> DeletedMessageVisibility,
     getLanguageDisplayName: (code: String) -> String,
     decoratorPredicate: (Decorator) -> Boolean,
 ) : DecoratorProvider {
@@ -76,7 +73,6 @@ internal class MessageListItemDecoratorProvider(
                 { channel.isDirectMessaging() },
                 { channel.config.isThreadEnabled },
                 messageListViewStyle,
-                deletedMessageVisibility,
                 getLanguageDisplayName,
             ),
             PinIndicatorDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.pinMessageEnabled },

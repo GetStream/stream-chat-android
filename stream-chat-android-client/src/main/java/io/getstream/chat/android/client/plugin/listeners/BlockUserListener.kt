@@ -17,12 +17,14 @@
 package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.UserBlock
 import io.getstream.result.Result
 
 /**
  * Listener for [ChatClient.blockUser] requests.
  */
+@InternalStreamChatApi
 public interface BlockUserListener {
 
     /**

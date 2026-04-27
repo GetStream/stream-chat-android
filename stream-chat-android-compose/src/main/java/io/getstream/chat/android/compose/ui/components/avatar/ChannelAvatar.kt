@@ -16,203 +16,335 @@
 
 package io.getstream.chat.android.compose.ui.components.avatar
 
-import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.BoxWithConstraintsScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
+import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.common.CountBadge
+import io.getstream.chat.android.compose.ui.components.common.CountBadgeSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
-import io.getstream.chat.android.previewdata.PreviewUserData
-import io.getstream.chat.android.ui.common.utils.extensions.initials
-import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
+import io.getstream.chat.android.ui.common.utils.extensions.isOneToOne
 
 /**
- * Represents the [Channel] avatar that's shown when browsing channels or when you open the Messages screen.
+ * The default avatar for a channel.
  *
- * Based on the state of the [Channel] and the number of members, it shows different types of images.
+ * This component displays the channel image, the user avatar for direct messages, or a placeholder.
  *
- * @param channel The channel whose data we need to show.
- * @param currentUser The current user, used to determine avatar data.
- * @param modifier Modifier for styling.
- * @param shape The shape of the avatar.
- * @param textStyle The [TextStyle] that will be used for the initials.
- * @param groupAvatarTextStyle The [TextStyle] that will be used for the initials in sectioned avatar.
- * @param showOnlineIndicator If we show online indicator or not.
- * @param onlineIndicatorAlignment The alignment of online indicator.
- * @param onlineIndicator Custom composable that allows to replace the default online indicator.
- * @param contentDescription The description to use for the avatar.
- * @param onClick The handler when the user clicks on the avatar.
+ * @param channel The channel whose avatar will be displayed.
+ * @param currentUser The user currently logged in.
+ * @param modifier The modifier to be applied to this layout.
+ * @param showIndicator Whether to overlay a status indicator to show whether the user is online for 1:1 channels.
+ * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
  */
 @Composable
 public fun ChannelAvatar(
     channel: Channel,
     currentUser: User?,
     modifier: Modifier = Modifier,
-    shape: Shape = ChatTheme.shapes.avatar,
-    textStyle: TextStyle = ChatTheme.typography.title3Bold,
-    groupAvatarTextStyle: TextStyle = ChatTheme.typography.captionBold,
-    showOnlineIndicator: Boolean = true,
-    onlineIndicatorAlignment: OnlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
-    onlineIndicator: @Composable BoxScope.() -> Unit = {
-        DefaultOnlineIndicator(onlineIndicatorAlignment)
-    },
-    contentDescription: String? = null,
-    onClick: (() -> Unit)? = null,
+    showIndicator: Boolean = false,
+    showBorder: Boolean = false,
 ) {
-    val members = channel.members
-    val memberCount = members.size
+    val testTagModifier = modifier.testTag("Stream_ChannelAvatar")
 
-    when {
-        /**
-         * If the channel has an image we load that as a priority.
-         */
-        channel.image.isNotEmpty() -> {
-            ChatTheme.componentFactory.Avatar(
-                modifier = modifier.testTag("Stream_ChannelAvatar"),
-                imageUrl = channel.image,
-                initials = channel.initials,
-                textStyle = textStyle,
-                shape = shape,
-                placeholderPainter = null,
-                errorPlaceholderPainter = null,
-                contentDescription = contentDescription ?: channel.name,
-                initialsAvatarOffset = DpOffset.Zero,
-                onClick = onClick,
+    if (channel.image.isNotEmpty()) {
+        SimpleGroupAvatar(
+            modifier = testTagModifier,
+            channel = channel,
+            currentUser = currentUser,
+            showIndicator = showIndicator,
+            showBorder = showBorder,
+        )
+    } else {
+        val directMessageRecipient = directMessageRecipient(channel, currentUser)
+
+        if (directMessageRecipient != null) {
+            UserAvatar(
+                modifier = testTagModifier,
+                user = directMessageRecipient,
+                showIndicator = showIndicator,
+                showBorder = showBorder,
             )
-        }
-
-        /**
-         * If the channel has one member we show the member's image or initials.
-         */
-        memberCount == 1 -> {
-            val user = members.first().user
-
-            ChatTheme.componentFactory.UserAvatar(
-                modifier = modifier.testTag("Stream_ChannelAvatar"),
-                user = user,
-                textStyle = ChatTheme.typography.title3Bold,
-                showOnlineIndicator = showOnlineIndicator && user.shouldShowOnlineIndicator(
-                    userPresence = ChatTheme.userPresence,
-                    currentUser = currentUser,
-                ),
-                onlineIndicator = onlineIndicator,
-                onClick = onClick,
-            )
-        }
-        /**
-         * If the channel has two members and one of the is the current user - we show the other
-         * member's image or initials.
-         */
-        memberCount == 2 && members.any { it.user.id == currentUser?.id } -> {
-            val user = members.first { it.user.id != currentUser?.id }.user
-
-            ChatTheme.componentFactory.UserAvatar(
-                modifier = modifier.testTag("Stream_ChannelAvatar"),
-                user = user,
-                textStyle = ChatTheme.typography.title3Bold,
-                showOnlineIndicator = showOnlineIndicator && user.shouldShowOnlineIndicator(
-                    userPresence = ChatTheme.userPresence,
-                    currentUser = currentUser,
-                ),
-                onlineIndicator = onlineIndicator,
-                onClick = onClick,
-            )
-        }
-        /**
-         * If the channel has more than two members - we load a matrix of their images or initials.
-         */
-        else -> {
-            val users = members.filter { it.user.id != currentUser?.id }.map { it.user }
-
-            ChatTheme.componentFactory.GroupAvatar(
-                users = users,
-                modifier = modifier.testTag("Stream_ChannelAvatar"),
-                shape = shape,
-                textStyle = groupAvatarTextStyle,
-                onClick = onClick,
+        } else {
+            StackedGroupAvatar(
+                modifier = testTagModifier,
+                channel = channel,
+                currentUser = currentUser,
+                showIndicator = showIndicator,
+                showBorder = showBorder,
             )
         }
     }
 }
 
-/**
- * Preview of [ChannelAvatar] for a channel with an avatar image.
- *
- * Should show a channel image.
- */
-@Preview(showBackground = true, name = "ChannelAvatar Preview (With image)")
 @Composable
-private fun ChannelWithImageAvatarPreview() {
-    ChannelAvatarPreview(PreviewChannelData.channelWithImage)
-}
-
-/**
- * Preview of [ChannelAvatar] for a direct conversation with an online user.
- *
- * Should show a user avatar with an online indicator.
- */
-@Preview(showBackground = true, name = "ChannelAvatar Preview (Online user)")
-@Composable
-private fun ChannelAvatarForDirectChannelWithOnlineUserPreview() {
-    ChannelAvatarPreview(PreviewChannelData.channelWithOnlineUser)
-}
-
-/**
- * Preview of [ChannelAvatar] for a direct conversation with only one user.
- *
- * Should show a user avatar with an online indicator.
- */
-@Preview(showBackground = true, name = "ChannelAvatar Preview (Only one user)")
-@Composable
-private fun ChannelAvatarForDirectChannelWithOneUserPreview() {
-    ChannelAvatarPreview(PreviewChannelData.channelWithOneUser)
-}
-
-/**
- * Preview of [ChannelAvatar] for a channel without image and with few members.
- *
- * Should show an avatar with 2 sections that represent the avatars of the first
- * 2 members of the channel.
- */
-@Preview(showBackground = true, name = "ChannelAvatar Preview (Few members)")
-@Composable
-private fun ChannelAvatarForChannelWithFewMembersPreview() {
-    ChannelAvatarPreview(PreviewChannelData.channelWithFewMembers)
-}
-
-/**
- * Preview of [ChannelAvatar] for a channel without image and with many members.
- *
- * Should show an avatar with 4 sections that represent the avatars of the first
- * 4 members of the channel.
- */
-@Preview(showBackground = true, name = "ChannelAvatar Preview (Many members)")
-@Composable
-private fun ChannelAvatarForChannelWithManyMembersPreview() {
-    ChannelAvatarPreview(PreviewChannelData.channelWithManyMembers)
-}
-
-/**
- * Shows [ChannelAvatar] preview for the provided parameters.
- *
- * @param channel The channel used to show the preview.
- */
-@Composable
-private fun ChannelAvatarPreview(channel: Channel) {
-    ChatTheme {
-        ChannelAvatar(
-            channel = channel,
-            currentUser = PreviewUserData.user1,
-            modifier = Modifier.size(36.dp),
+private fun SimpleGroupAvatar(
+    channel: Channel,
+    currentUser: User?,
+    showIndicator: Boolean,
+    showBorder: Boolean,
+    modifier: Modifier,
+) {
+    WithChannelIndicator(
+        channel = channel,
+        currentUser = currentUser,
+        showIndicator = showIndicator,
+        modifier = modifier,
+    ) {
+        Avatar(
+            imageUrl = channel.image,
+            fallback = { ChannelAvatarPlaceholder(channel, size = this.maxWidth) },
+            showBorder = showBorder,
         )
+    }
+}
+
+@Composable
+private fun WithChannelIndicator(
+    channel: Channel,
+    currentUser: User?,
+    showIndicator: Boolean,
+    modifier: Modifier = Modifier,
+    content: @Composable BoxWithConstraintsScope.() -> Unit,
+) {
+    BoxWithConstraints(modifier) {
+        content()
+
+        if (showIndicator) {
+            val isOnline = remember(channel.members, currentUser?.id) {
+                channel.members.any { it.user.id != currentUser?.id && it.user.online }
+            }
+            val dimensions = resolveIndicatorDimensions()
+            OnlineIndicator(
+                isOnline = isOnline,
+                dimensions = dimensions,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .offset(
+                        x = dimensions.offset,
+                        y = -dimensions.offset,
+                    ),
+            )
+        }
+    }
+}
+
+private object StackedGroupAvatarSpecs {
+    private val alignments2 = listOf(Alignment.TopStart, Alignment.BottomEnd)
+    private val alignments3 = listOf(Alignment.TopCenter, Alignment.BottomStart, Alignment.BottomEnd)
+    private val alignments4 = listOf(Alignment.TopStart, Alignment.TopEnd, Alignment.BottomStart, Alignment.BottomEnd)
+    private val alignmentsMore = listOf(Alignment.TopStart, Alignment.TopEnd)
+    private val alignmentsByIndex = listOf(emptyList(), alignments2, alignments2, alignments3, alignments4)
+
+    fun alignmentsFor(membersCount: Int): List<Alignment> {
+        return alignmentsByIndex.getOrElse(membersCount) { alignmentsMore }
+    }
+
+    @Composable
+    fun baseModifier(avatarSize: Dp): Modifier {
+        val borderWidth = StreamTokens.spacing3xs
+
+        return Modifier
+            .size(avatarSize + borderWidth)
+            .border(BorderStroke(borderWidth, ChatTheme.colors.borderCoreOnInverse), CircleShape)
+            .padding(borderWidth)
+    }
+}
+
+@Suppress("MagicNumber", "LongMethod")
+@Composable
+private fun StackedGroupAvatar(
+    channel: Channel,
+    currentUser: User?,
+    showIndicator: Boolean,
+    showBorder: Boolean,
+    modifier: Modifier,
+) {
+    WithChannelIndicator(
+        channel = channel,
+        currentUser = currentUser,
+        showIndicator = showIndicator,
+        modifier = modifier,
+    ) {
+        val dimensions = resolveStackedAvatarDimensions()
+        val baseModifier = StackedGroupAvatarSpecs.baseModifier(dimensions.avatarSize)
+        val membersCount = channel.members.size
+        val alignments = StackedGroupAvatarSpecs.alignmentsFor(membersCount)
+
+        when (membersCount) {
+            0 -> ChannelAvatarPlaceholder(
+                channel = channel,
+                size = maxWidth,
+                modifier = Modifier
+                    .applyIf(showBorder) { border(1.dp, ChatTheme.colors.borderCoreOpacitySubtle, CircleShape) }
+                    .clip(CircleShape),
+            )
+
+            1 -> {
+                val colors = ChatTheme.colors
+
+                UserAvatar(
+                    user = channel.members.first().user,
+                    showBorder = showBorder,
+                    modifier = baseModifier.align(alignments[0]),
+                )
+
+                UserAvatarIconPlaceholder(
+                    background = colors.avatarBgPlaceholder,
+                    foreground = colors.avatarTextPlaceholder,
+                    modifier = baseModifier
+                        .clip(CircleShape)
+                        .applyIf(showBorder) { border(1.dp, ChatTheme.colors.borderCoreOpacitySubtle, CircleShape) }
+                        .align(alignments[1]),
+                )
+            }
+
+            else -> {
+                val displayMembers = remember(channel.members, currentUser?.id) {
+                    if (membersCount > 4) {
+                        channel.members.filter { it.user.id != currentUser?.id }
+                    } else {
+                        channel.members
+                    }
+                }
+                for (i in alignments.indices) {
+                    UserAvatar(
+                        user = displayMembers[i].user,
+                        showBorder = showBorder,
+                        modifier = baseModifier.align(alignments[i]),
+                    )
+                }
+                if (membersCount > 4) {
+                    val count = (membersCount - alignments.size).coerceAtMost(99)
+                    CountBadge(
+                        text = stringResource(R.string.stream_compose_avatar_overflow_count, count),
+                        size = dimensions.badgeSize,
+                        fixedFontSize = true,
+                        modifier = Modifier.align(Alignment.BottomCenter),
+                    )
+                }
+            }
+        }
+    }
+}
+
+private fun BoxWithConstraintsScope.resolveStackedAvatarDimensions(): StackedGroupAvatarDimensions {
+    return when {
+        // Beyond the largest fixed tier: keep the same edge gap as XXL so the container looks equally full.
+        maxWidth > AvatarSize.ExtraExtraLarge -> {
+            val avatarScaled = maxWidth - AvatarSize.ExtraExtraLarge + AvatarSize.Large
+            val badgeScale = maxWidth / AvatarSize.ExtraExtraLarge
+            val badgeScaled = CountBadgeSize.Large.copy(spacing = CountBadgeSize.Large.spacing * badgeScale)
+            StackedGroupAvatarDimensions(avatarSize = avatarScaled, badgeSize = badgeScaled)
+        }
+        maxWidth >= AvatarSize.ExtraExtraLarge -> StackedGroupAvatarDimensions.XXL
+        maxWidth >= AvatarSize.ExtraLarge -> StackedGroupAvatarDimensions.XL
+        else -> StackedGroupAvatarDimensions.L
+    }
+}
+
+private data class StackedGroupAvatarDimensions(val avatarSize: Dp, val badgeSize: CountBadgeSize) {
+    companion object {
+        val XXL = StackedGroupAvatarDimensions(avatarSize = AvatarSize.ExtraLarge, badgeSize = CountBadgeSize.Large)
+        val XL = StackedGroupAvatarDimensions(avatarSize = AvatarSize.Medium, badgeSize = CountBadgeSize.Small)
+        val L = StackedGroupAvatarDimensions(avatarSize = AvatarSize.Small, badgeSize = CountBadgeSize.ExtraSmall)
+    }
+}
+
+@Composable
+internal fun ChannelAvatarPlaceholder(channel: Channel, size: Dp, modifier: Modifier = Modifier) {
+    val (background, foreground) = rememberAvatarPlaceholderColors(channel.cid)
+
+    Box(
+        modifier
+            .background(background)
+            .size(size),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.stream_design_ic_users),
+            contentDescription = null,
+            tint = foreground,
+            modifier = Modifier
+                .background(background)
+                .size(size.toPlaceholderIconSize()),
+        )
+    }
+}
+
+/** Returns the other participant if this is a 1-to-1 direct message involving the current user. */
+@Composable
+private fun directMessageRecipient(channel: Channel, currentUser: User?): User? {
+    val currentUserId = currentUser?.id ?: return null
+
+    return remember(channel, currentUserId) {
+        if (channel.isOneToOne(currentUser)) {
+            channel.members.first { it.user.id != currentUserId }.user
+        } else {
+            null
+        }
+    }
+}
+
+@Suppress("MagicNumber")
+@Preview
+@Composable
+private fun ChannelAvatarContentPreview() {
+    ChatTheme {
+        ChannelAvatarContent()
+    }
+}
+
+@Suppress("MagicNumber")
+@Composable
+internal fun ChannelAvatarContent() {
+    val sizes = AvatarSize.run { listOf(ExtraExtraLarge, ExtraLarge, Large, Medium, Small, ExtraSmall) }
+    val variants = listOf(0, 1, 2, 3, 4, 5, 13, 1000)
+    Column(
+        modifier = Modifier
+            .background(ChatTheme.colors.backgroundCoreApp)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        variants.forEach { howMany ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                sizes.forEach { size ->
+                    ChannelAvatar(
+                        channel = PreviewChannelData.makeChannelWithMembers(howMany),
+                        currentUser = null,
+                        modifier = Modifier.size(size),
+                    )
+                }
+            }
+        }
     }
 }

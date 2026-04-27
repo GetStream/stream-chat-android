@@ -25,34 +25,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.BackButton
+import io.getstream.chat.android.compose.ui.components.button.StreamButton
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.mirrorRtl
 
 /**
  * Poll's creation header (toolbar) Composable that consist of several components.
  *
  * @param modifier The [Modifier] for styling.
- * @param color The color of the surface.
- * @param shape The shape of the surface.
- * @param elevation The elevation of the surface.
  * @param onBackPressed A lambda that will be executed if users click the back button on the default [leadingContent].
  * @param enabledCreation Represents if user can click the creation button or not.
  * @param onPollCreateClicked A lambda that will be executed if users click the poll creation button.
@@ -66,9 +58,6 @@ import io.getstream.chat.android.compose.ui.util.mirrorRtl
 @Composable
 public fun PollCreationHeader(
     modifier: Modifier = Modifier,
-    color: Color = ChatTheme.colors.appBackground,
-    shape: Shape = ChatTheme.shapes.header,
-    elevation: Dp = 0.dp,
     onBackPressed: () -> Unit = {},
     enabledCreation: Boolean,
     onPollCreateClicked: () -> Unit,
@@ -78,9 +67,7 @@ public fun PollCreationHeader(
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        shadowElevation = elevation,
-        color = color,
-        shape = shape,
+        color = ChatTheme.colors.backgroundCoreApp,
     ) {
         Row(
             modifier = Modifier
@@ -105,13 +92,8 @@ public fun PollCreationHeader(
 
 @Composable
 internal fun DefaultPollOptionsHeaderLeadingContent(onBackPressed: () -> Unit) {
-    val layoutDirection = LocalLayoutDirection.current
-
     BackButton(
-        modifier = Modifier
-            .mirrorRtl(layoutDirection = layoutDirection)
-            .padding(end = 32.dp),
-        painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+        painter = painterResource(id = R.drawable.stream_design_ic_arrow_left),
         onBackPressed = onBackPressed,
     )
 }
@@ -124,10 +106,10 @@ internal fun DefaultPollOptionsHeaderCenterContent(modifier: Modifier, title: St
     ) {
         Text(
             text = title,
-            style = ChatTheme.typography.title3Bold,
+            style = ChatTheme.typography.headingMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
     }
 }
@@ -137,17 +119,14 @@ internal fun DefaultPollOptionsHeaderTrailingContent(
     enabled: Boolean,
     onPollCreateClicked: () -> Unit,
 ) {
-    IconButton(
-        enabled = enabled,
-        colors = IconButtonDefaults.iconButtonColors(
-            contentColor = ChatTheme.colors.primaryAccent,
-            disabledContentColor = ChatTheme.colors.textLowEmphasis,
-        ),
+    StreamButton(
         onClick = onPollCreateClicked,
+        enabled = enabled,
+        style = StreamButtonStyleDefaults.primarySolid,
     ) {
         Icon(
-            painter = painterResource(R.drawable.stream_compose_ic_send),
-            contentDescription = stringResource(R.string.stream_compose_send_message),
+            painter = painterResource(R.drawable.stream_design_ic_checkmark),
+            contentDescription = stringResource(R.string.stream_compose_poll_title),
         )
     }
 }

@@ -34,7 +34,7 @@ import io.getstream.result.Result
 import io.getstream.result.call.Call
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import io.getstream.chat.android.state.utils.Event as EventWrapper
+import io.getstream.chat.android.client.api.state.Event as EventWrapper
 
 class AddChannelViewModel : ViewModel() {
 

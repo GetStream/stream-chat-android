@@ -35,12 +35,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
@@ -49,6 +51,11 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageListHelperContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageListItemModifierParams
+import io.getstream.chat.android.compose.ui.theme.MessageListLoadingMoreItemContentParams
+import io.getstream.chat.android.compose.ui.theme.ScrollToBottomButtonParams
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.util.isAppInForegroundAsState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.list.HasMessageListItemState
@@ -77,11 +84,9 @@ import kotlin.math.abs
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
  * scroll state and focused message offset.
  * @param verticalArrangement Vertical arrangement of the regular message list.
- * Default: [Arrangement.Top].
+ * Default: [Arrangement.Bottom].
  * @param threadsVerticalArrangement Vertical arrangement of the thread message list.
  * Default: [Arrangement.Bottom].
- * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
- * Default: `null`.
  * @param onMessagesStartReached Handler for pagination, when the user reaches chronologically the start of messages.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message
  * changes.
@@ -100,12 +105,11 @@ import kotlin.math.abs
  */
 @Composable
 @Suppress("LongParameterList", "LongMethod", "ComplexMethod")
-public fun Messages(
+internal fun Messages(
     messagesState: MessageListState,
     messagesLazyListState: MessagesLazyListState,
-    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
     threadsVerticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
-    threadMessagesStart: ThreadMessagesStart? = null,
     onMessagesStartReached: () -> Unit,
     onLastVisibleMessageChanged: (Message) -> Unit,
     onScrolledToBottom: () -> Unit,
@@ -116,20 +120,23 @@ public fun Messages(
     helperContent: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             MessageListHelperContent(
-                messageListState = messagesState,
-                messagesLazyListState = messagesLazyListState,
-                onScrollToBottomClick = onScrollToBottom,
+                params = MessageListHelperContentParams(
+                    messageListState = messagesState,
+                    messagesLazyListState = messagesLazyListState,
+                    contentPadding = contentPadding,
+                    onScrollToBottomClick = onScrollToBottom,
+                ),
             )
         }
     },
     loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
-            MessageListLoadingMoreItemContent()
+            MessageListLoadingMoreItemContent(params = MessageListLoadingMoreItemContentParams())
         }
     },
     itemModifier: @Composable LazyItemScope.(index: Int, item: MessageListItemState) -> Modifier = { _, _ ->
         with(ChatTheme.componentFactory) {
-            messageListItemModifier()
+            messageListItemModifier(params = MessageListItemModifierParams())
         }
     },
     itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit,
@@ -138,7 +145,8 @@ public fun Messages(
 ) {
     val lazyListState = messagesLazyListState.lazyListState
     val messages = messagesState.messageItems
-    val endOfOldMessages = messagesState.endOfOldMessagesReached
+    // Using rememberUpdatedState to ensure we have the latest value in the LoadMoreHandler effect below
+    val endOfOldMessages by rememberUpdatedState(messagesState.endOfOldMessagesReached)
     val endOfNewMessages = messagesState.endOfNewMessagesReached
     val isLoadingMoreNewMessages = messagesState.isLoadingNewerMessages
     val isLoadingMoreOldMessages = messagesState.isLoadingOlderMessages
@@ -148,6 +156,7 @@ public fun Messages(
     Box(modifier = modifier) {
         LazyColumn(
             modifier = Modifier
+                .graphicsLayer { clip = false }
                 .testTag("Stream_Messages")
                 .fillMaxSize()
                 .onSizeChanged {
@@ -169,7 +178,6 @@ public fun Messages(
             verticalArrangement = messagesState.getVerticalArrangement(
                 messagesVerticalArrangement = verticalArrangement,
                 threadsVerticalArrangement = threadsVerticalArrangement,
-                threadMessagesStart = threadMessagesStart,
             ),
             reverseLayout = true,
             contentPadding = contentPadding,
@@ -237,6 +245,18 @@ public fun Messages(
         }
     }
 
+    // Handle edge case: list content doesn't fill the screen but there are older messages to load.
+    // This can happen when the message list is cleared and replaced with only a few messages (after a re-watch).
+    LaunchedEffect(lazyListState) {
+        snapshotFlow { lazyListState.layoutInfo.totalItemsCount to lazyListState.canScrollForward }
+            .distinctUntilChanged()
+            .collect { (totalItems, canScrollForward) ->
+                if (totalItems > 0 && !canScrollForward && !endOfOldMessages) {
+                    onMessagesStartReached()
+                }
+            }
+    }
+
     // Loads more (newer) messages when the user scrolls to the bottom of the list.
     val isMessagesEndReached by remember(endOfNewMessages) {
         derivedStateOf {
@@ -273,17 +293,8 @@ public fun Messages(
 private fun MessageListState.getVerticalArrangement(
     messagesVerticalArrangement: Arrangement.Vertical,
     threadsVerticalArrangement: Arrangement.Vertical,
-    threadMessagesStart: ThreadMessagesStart?,
 ): Arrangement.Vertical =
-    when (parentMessageId != null) {
-        true -> when (threadMessagesStart) {
-            ThreadMessagesStart.BOTTOM -> Arrangement.Bottom
-            ThreadMessagesStart.TOP -> Arrangement.Top
-            null -> threadsVerticalArrangement
-        }
-
-        false -> messagesVerticalArrangement
-    }
+    if (parentMessageId != null) threadsVerticalArrangement else messagesVerticalArrangement
 
 /**
  * Represents the default scrolling behavior and UI for [Messages], based on the state of messages and the scroll state.
@@ -292,10 +303,12 @@ private fun MessageListState.getVerticalArrangement(
  * @param messagesLazyListState The scrolling state of the list, used to manipulate and trigger scroll events.
  * @param scrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
  */
+@Suppress("LongMethod")
 @Composable
 internal fun BoxScope.DefaultMessagesHelperContent(
     messagesState: MessageListState,
     messagesLazyListState: MessagesLazyListState,
+    contentPadding: PaddingValues,
     scrollToBottom: (() -> Unit) -> Unit,
 ) {
     val lazyListState = messagesLazyListState.lazyListState
@@ -356,16 +369,28 @@ internal fun BoxScope.DefaultMessagesHelperContent(
         firstVisibleItemIndex,
         areNewestMessagesLoaded,
     )
+
     with(ChatTheme.componentFactory) {
         ScrollToBottomButton(
-            modifier = Modifier.align(Alignment.BottomEnd),
-            visible = scrollToBottomButtonVisible,
-            count = messagesState.unreadCount,
-            onClick = {
-                scrollToBottom {
-                    coroutineScope.launch { lazyListState.scrollToItem(0) }
-                }
-            },
+            params = ScrollToBottomButtonParams(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(contentPadding)
+                    .then(
+                        if (ChatTheme.config.composer.floatingStyleEnabled) {
+                            Modifier.padding(horizontal = StreamTokens.spacingMd)
+                        } else {
+                            Modifier.padding(StreamTokens.spacingMd)
+                        },
+                    ),
+                visible = scrollToBottomButtonVisible,
+                count = messagesState.unreadCount,
+                onClick = {
+                    scrollToBottom {
+                        coroutineScope.launch { lazyListState.scrollToItem(0) }
+                    }
+                },
+            ),
         )
     }
 }

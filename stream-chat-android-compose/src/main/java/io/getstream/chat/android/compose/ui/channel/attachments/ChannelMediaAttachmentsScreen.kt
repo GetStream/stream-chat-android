@@ -16,34 +16,33 @@
 
 package io.getstream.chat.android.compose.ui.channel.attachments
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
-import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.components.common.VideoBadge
+import io.getstream.chat.android.compose.ui.theme.ChannelMediaAttachmentsTopBarParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModel
@@ -114,11 +113,13 @@ private fun ChannelMediaAttachmentsContent(
         modifier = modifier,
         topBar = {
             ChatTheme.componentFactory.ChannelMediaAttachmentsTopBar(
-                gridState = gridState,
-                onNavigationIconClick = onNavigationIconClick,
+                params = ChannelMediaAttachmentsTopBarParams(
+                    gridState = gridState,
+                    onNavigationIconClick = onNavigationIconClick,
+                ),
             )
         },
-        containerColor = ChatTheme.colors.appBackground,
+        containerColor = ChatTheme.colors.backgroundCoreApp,
     ) { padding ->
         ChannelMediaAttachmentsGrid(
             modifier = Modifier
@@ -136,7 +137,7 @@ private fun ChannelMediaAttachmentsContent(
 }
 
 @Composable
-internal fun LazyGridItemScope.ChannelMediaAttachmentsItem(
+internal fun ChannelMediaAttachmentsItem(
     modifier: Modifier,
     item: ChannelAttachmentsViewState.Content.Item,
     onClick: () -> Unit,
@@ -156,32 +157,26 @@ internal fun LazyGridItemScope.ChannelMediaAttachmentsItem(
             contentScale = ContentScale.Crop,
         )
 
-        @Suppress("MagicNumber")
-        UserAvatar(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(8.dp)
-                .fillMaxSize(.25f)
-                .aspectRatio(1f)
-                .background(
-                    color = Color.White,
-                    shape = ChatTheme.shapes.avatar,
-                )
-                .padding(1.dp),
-            user = item.message.user,
-            showOnlineIndicator = false,
+        val borderSize = 2.dp
+
+        ChatTheme.componentFactory.UserAvatar(
+            params = UserAvatarParams(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(StreamTokens.spacingXs)
+                    .size(AvatarSize.Small + borderSize)
+                    .border(borderSize, ChatTheme.colors.borderCoreOnInverse, CircleShape)
+                    .padding(borderSize),
+                user = item.message.user,
+            ),
         )
 
         if (item.attachment.isVideo()) {
-            @Suppress("MagicNumber")
-            Icon(
+            VideoBadge(
                 modifier = Modifier
-                    .align(Alignment.Center)
-                    .fillMaxWidth(.4f)
-                    .aspectRatio(1f),
-                imageVector = Icons.Rounded.PlayArrow,
-                tint = Color.White,
-                contentDescription = stringResource(R.string.stream_compose_cd_play_button),
+                    .align(Alignment.BottomStart)
+                    .padding(StreamTokens.spacingXs),
+                durationInSeconds = item.attachment.duration?.toLong() ?: 0,
             )
         }
     }

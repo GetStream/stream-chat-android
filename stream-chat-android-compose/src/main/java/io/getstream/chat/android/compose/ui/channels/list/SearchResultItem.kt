@@ -31,15 +31,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
-import io.getstream.chat.android.compose.ui.components.avatar.DefaultOnlineIndicator
+import io.getstream.chat.android.compose.ui.components.channels.MessagePreviewContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.SearchResultItemCenterContentParams
+import io.getstream.chat.android.compose.ui.theme.SearchResultItemLeadingContentParams
+import io.getstream.chat.android.compose.ui.theme.SearchResultItemTrailingContentParams
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 
 /**
  * The basic search result item that show the message and the channel name in a list and expose click actions.
@@ -63,17 +66,23 @@ public fun SearchResultItem(
     onSearchResultClick: ((Message) -> Unit)? = null,
     leadingContent: @Composable RowScope.(ItemState.SearchResultItemState) -> Unit = {
         with(ChatTheme.componentFactory) {
-            SearchResultItemLeadingContent(it, currentUser)
+            SearchResultItemLeadingContent(
+                params = SearchResultItemLeadingContentParams(searchResultItem = it, currentUser = currentUser),
+            )
         }
     },
     centerContent: @Composable RowScope.(ItemState.SearchResultItemState) -> Unit = {
         with(ChatTheme.componentFactory) {
-            SearchResultItemCenterContent(it, currentUser)
+            SearchResultItemCenterContent(
+                params = SearchResultItemCenterContentParams(searchResultItem = it, currentUser = currentUser),
+            )
         }
     },
     trailingContent: @Composable RowScope.(ItemState.SearchResultItemState) -> Unit = {
         with(ChatTheme.componentFactory) {
-            SearchResultItemTrailingContent(it)
+            SearchResultItemTrailingContent(
+                params = SearchResultItemTrailingContentParams(searchResultItem = it),
+            )
         }
     },
 ) {
@@ -91,6 +100,7 @@ public fun SearchResultItem(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingMd),
         ) {
             leadingContent(searchResultItemState)
             centerContent(searchResultItemState)
@@ -120,24 +130,18 @@ internal fun DefaultSearchResultItemLeadingContent(
         )
         .let { user ->
             ChatTheme.componentFactory.UserAvatar(
-                user = user,
-                modifier = Modifier
-                    .padding(
-                        start = ChatTheme.dimens.channelItemHorizontalPadding,
-                        end = 4.dp,
-                        top = ChatTheme.dimens.channelItemVerticalPadding,
-                        bottom = ChatTheme.dimens.channelItemVerticalPadding,
-                    )
-                    .size(ChatTheme.dimens.channelAvatarSize),
-                textStyle = ChatTheme.typography.title3Bold,
-                showOnlineIndicator = user.shouldShowOnlineIndicator(
-                    userPresence = ChatTheme.userPresence,
-                    currentUser = currentUser,
+                params = UserAvatarParams(
+                    user = user,
+                    modifier = Modifier
+                        .padding(
+                            start = StreamTokens.spacingMd,
+                            end = 0.dp,
+                            top = StreamTokens.spacingMd,
+                            bottom = StreamTokens.spacingMd,
+                        )
+                        .size(48.dp),
+                    showIndicator = true,
                 ),
-                onlineIndicator = {
-                    DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd)
-                },
-                onClick = null,
             )
         }
 }
@@ -156,29 +160,28 @@ internal fun RowScope.DefaultSearchResultItemCenterContent(
 ) {
     Column(
         modifier = Modifier
-            .padding(start = 4.dp, end = 4.dp)
+            .padding(
+                start = StreamTokens.spacing2xs,
+                end = StreamTokens.spacing2xs,
+                top = StreamTokens.spacing3xs,
+                bottom = StreamTokens.spacing3xs,
+            )
             .weight(1f)
             .wrapContentHeight(),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
     ) {
         Text(
             text = ChatTheme.searchResultNameFormatter.formatMessageTitle(searchResultItemState, currentUser),
-            style = ChatTheme.typography.bodyBold,
-            fontSize = 16.sp,
+            style = ChatTheme.typography.bodyDefault,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
 
-        Text(
-            text = ChatTheme.messagePreviewFormatter.formatMessagePreview(
-                searchResultItemState.message,
-                currentUser,
-            ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = ChatTheme.typography.body,
-            color = ChatTheme.colors.textLowEmphasis,
+        MessagePreviewContent(
+            message = searchResultItemState.message,
+            currentUser = currentUser,
+            isDirectMessaging = false,
         )
     }
 }
@@ -195,17 +198,21 @@ internal fun RowScope.DefaultSearchResultItemTrailingContent(
     Column(
         modifier = Modifier
             .padding(
-                start = 4.dp,
-                end = ChatTheme.dimens.channelItemHorizontalPadding,
-                top = ChatTheme.dimens.channelItemVerticalPadding,
-                bottom = ChatTheme.dimens.channelItemVerticalPadding,
+                start = StreamTokens.spacing2xs,
+                end = StreamTokens.spacingMd,
+                top = StreamTokens.spacingMd,
+                bottom = StreamTokens.spacingMd,
             )
             .wrapContentHeight()
-            .align(Alignment.Bottom),
+            .align(Alignment.CenterVertically),
         horizontalAlignment = Alignment.End,
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Timestamp(date = searchResultItemState.message.createdAt)
-        }
+        Timestamp(
+            date = searchResultItemState.message.createdAt,
+            textStyle = ChatTheme.typography.captionDefault.copy(
+                color = ChatTheme.colors.textTertiary,
+                lineHeight = 20.sp,
+            ),
+        )
     }
 }

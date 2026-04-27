@@ -62,7 +62,7 @@ fun MessageReminderStatusLabel(remindAt: Date?) {
     }
 
     val (text, color) = if (remindAt == null) {
-        stringResource(R.string.reminders_status_save_for_later) to ChatTheme.colors.primaryAccent
+        stringResource(R.string.reminders_status_save_for_later) to ChatTheme.colors.accentPrimary
     } else {
         val delta = (remindAt.time - ticker.time)
         val isOverdue = delta < 0
@@ -78,9 +78,9 @@ fun MessageReminderStatusLabel(remindAt: Date?) {
             if (seconds > 0) append("${seconds}s")
         }.ifEmpty { "0s" }
         if (isOverdue) {
-            stringResource(R.string.reminders_status_overdue_by, durationString) to ChatTheme.colors.errorAccent
+            stringResource(R.string.reminders_status_overdue_by, durationString) to ChatTheme.colors.accentError
         } else {
-            stringResource(R.string.reminders_status_due_in, durationString) to ChatTheme.colors.primaryAccent
+            stringResource(R.string.reminders_status_due_in, durationString) to ChatTheme.colors.accentPrimary
         }
     }
     Text(

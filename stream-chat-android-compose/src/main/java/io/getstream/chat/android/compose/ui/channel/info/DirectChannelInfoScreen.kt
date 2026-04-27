@@ -18,17 +18,19 @@ package io.getstream.chat.android.compose.ui.channel.info
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,15 +41,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.ui.components.ContentBox
-import io.getstream.chat.android.compose.ui.components.avatar.DefaultOnlineIndicator
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.theme.ChannelInfoOptionItemParams
+import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.DirectChannelInfoAvatarContainerParams
+import io.getstream.chat.android.compose.ui.theme.DirectChannelInfoTopBarParams
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
+import io.getstream.chat.android.compose.ui.util.bottomBorder
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
@@ -62,9 +70,9 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewE
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
-import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 import kotlinx.coroutines.flow.collectLatest
 import java.util.Date
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * A stateful screen component that displays the channel info for a direct channel,
@@ -109,12 +117,14 @@ private fun DirectChannelInfoScaffold(
         modifier = modifier,
         topBar = {
             ChatTheme.componentFactory.DirectChannelInfoTopBar(
-                headerState = headerState,
-                listState = listState,
-                onNavigationIconClick = onNavigationIconClick,
+                params = DirectChannelInfoTopBarParams(
+                    headerState = headerState,
+                    listState = listState,
+                    onNavigationIconClick = onNavigationIconClick,
+                ),
             )
         },
-        containerColor = ChatTheme.colors.barsBackground,
+        containerColor = ChatTheme.colors.backgroundCoreApp,
     ) { padding ->
         DirectChannelInfoContent(
             state = infoState,
@@ -140,11 +150,13 @@ private fun DirectChannelInfoScreenModal(viewModel: ChannelInfoViewModel) {
     }
 
     ChatTheme.componentFactory.ChannelInfoScreenModal(
-        modal = modal,
-        isGroupChannel = false,
-        onViewAction = viewModel::onViewAction,
-        onMemberViewEvent = viewModel::onMemberViewEvent,
-        onDismiss = { modal = null },
+        params = ChannelInfoScreenModalParams(
+            modal = modal,
+            isGroupChannel = false,
+            onViewAction = viewModel::onViewAction,
+            onMemberViewEvent = viewModel::onMemberViewEvent,
+            onDismiss = { modal = null },
+        ),
     )
 }
 
@@ -153,17 +165,31 @@ private fun DirectChannelInfoScreenModal(viewModel: ChannelInfoViewModel) {
 internal fun DirectChannelInfoTopBar(
     onNavigationIconClick: () -> Unit,
 ) {
-    TopAppBar(
-        title = {},
+    CenterAlignedTopAppBar(
+        modifier = Modifier.bottomBorder(color = ChatTheme.colors.borderCoreSubtle),
+        title = {
+            Text(
+                text = stringResource(UiCommonR.string.stream_ui_channel_info_contact_title),
+                style = ChatTheme.typography.headingMedium,
+                maxLines = 1,
+            )
+        },
         navigationIcon = {
             ChannelInfoNavigationIcon(
                 onClick = onNavigationIconClick,
             )
         },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = ChatTheme.colors.barsBackground),
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = ChatTheme.colors.backgroundCoreApp,
+            scrolledContainerColor = ChatTheme.colors.backgroundCoreApp,
+            titleContentColor = ChatTheme.colors.textPrimary,
+            navigationIconContentColor = ChatTheme.colors.textPrimary,
+            actionIconContentColor = ChatTheme.colors.textPrimary,
+        ),
     )
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun DirectChannelInfoContent(
     state: ChannelInfoViewState,
@@ -177,22 +203,55 @@ private fun DirectChannelInfoContent(
         isLoading = isLoading,
     ) {
         val content = state as ChannelInfoViewState.Content
-        Column(
+        val navigationOptions = content.options.filterNavigation()
+        val actionOptions = content.options.filterActions()
+
+        LazyColumn(
+            state = listState,
             modifier = Modifier.matchParentSize(),
+            contentPadding = PaddingValues(
+                start = StreamTokens.spacingMd,
+                end = StreamTokens.spacingMd,
+                top = StreamTokens.spacing2xl,
+                bottom = StreamTokens.spacing3xl,
+            ),
+            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingMd),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            content.members.firstOrNull()?.user?.let { user ->
-                ChatTheme.componentFactory.DirectChannelInfoAvatarContainer(user)
+            item {
+                content.members.firstOrNull()?.user?.let { user ->
+                    ChatTheme.componentFactory.DirectChannelInfoAvatarContainer(
+                        params = DirectChannelInfoAvatarContainerParams(user = user),
+                    )
+                }
             }
-            LazyColumn(state = listState) {
-                items(content.options) { option ->
-                    with(ChatTheme.componentFactory) {
-                        ChannelInfoOptionItem(
-                            option = option,
-                            isGroupChannel = false,
-                            onViewAction = onViewAction,
-                        )
+            if (navigationOptions.isNotEmpty()) {
+                item {
+                    ChannelInfoSection {
+                        navigationOptions.forEach { option ->
+                            ChatTheme.componentFactory.ChannelInfoOptionItem(
+                                params = ChannelInfoOptionItemParams(
+                                    option = option,
+                                    isGroupChannel = false,
+                                    onViewAction = onViewAction,
+                                ),
+                            )
+                        }
+                    }
+                }
+            }
+            if (actionOptions.isNotEmpty()) {
+                item {
+                    ChannelInfoSection {
+                        actionOptions.forEach { option ->
+                            ChatTheme.componentFactory.ChannelInfoOptionItem(
+                                params = ChannelInfoOptionItemParams(
+                                    option = option,
+                                    isGroupChannel = false,
+                                    onViewAction = onViewAction,
+                                ),
+                            )
+                        }
                     }
                 }
             }
@@ -203,35 +262,54 @@ private fun DirectChannelInfoContent(
 @Composable
 internal fun DirectChannelInfoAvatarContainer(user: User) {
     Column(
+        modifier = Modifier.padding(bottom = StreamTokens.spacingMd),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         ChatTheme.componentFactory.UserAvatar(
-            modifier = Modifier.size(72.dp),
-            user = user,
-            textStyle = ChatTheme.typography.title3Bold,
-            showOnlineIndicator = user.shouldShowOnlineIndicator(
-                userPresence = ChatTheme.userPresence,
-                currentUser = null,
+            params = UserAvatarParams(
+                modifier = Modifier.size(AvatarSize.ExtraExtraLarge),
+                user = user,
+                showIndicator = true,
+                showBorder = false,
             ),
-            onlineIndicator = { DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd) },
-            onClick = null,
         )
+        Spacer(modifier = Modifier.height(StreamTokens.spacingMd))
         Text(
             text = user.name.takeIf(String::isNotBlank) ?: user.id,
-            style = ChatTheme.typography.title3Bold,
-            color = ChatTheme.colors.textHighEmphasis,
+            style = ChatTheme.typography.headingLarge,
+            color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
+        Spacer(modifier = Modifier.height(StreamTokens.spacingXs))
         Text(
             text = user.getLastSeenText(LocalContext.current),
-            style = ChatTheme.typography.footnote,
-            color = ChatTheme.colors.textLowEmphasis,
+            style = ChatTheme.typography.captionDefault,
+            color = ChatTheme.colors.textSecondary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
     }
+}
+
+/**
+ * Filters navigation options: Pinned Messages, Photos & Videos, Files.
+ */
+internal fun List<ChannelInfoViewState.Content.Option>.filterNavigation() = filter { option ->
+    option is ChannelInfoViewState.Content.Option.PinnedMessages ||
+        option is ChannelInfoViewState.Content.Option.MediaAttachments ||
+        option is ChannelInfoViewState.Content.Option.FilesAttachments
+}
+
+/**
+ * Filters action options: Mute, Leave, Delete, Block.
+ */
+internal fun List<ChannelInfoViewState.Content.Option>.filterActions() = filter { option ->
+    option is ChannelInfoViewState.Content.Option.MuteChannel ||
+        option is ChannelInfoViewState.Content.Option.MuteUser ||
+        option is ChannelInfoViewState.Content.Option.BlockUser ||
+        option is ChannelInfoViewState.Content.Option.LeaveChannel ||
+        option is ChannelInfoViewState.Content.Option.DeleteChannel
 }
 
 @Preview
@@ -277,11 +355,11 @@ internal fun DirectChannelInfoContent() {
                 items = listOf(member),
             ),
             options = listOf(
-                ChannelInfoViewState.Content.Option.UserInfo(user = member.user),
-                ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
-                ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                 ChannelInfoViewState.Content.Option.PinnedMessages,
-                ChannelInfoViewState.Content.Option.Separator,
+                ChannelInfoViewState.Content.Option.MediaAttachments,
+                ChannelInfoViewState.Content.Option.FilesAttachments,
+                ChannelInfoViewState.Content.Option.MuteUser(isMuted = false),
+                ChannelInfoViewState.Content.Option.BlockUser(isBlocked = false),
                 ChannelInfoViewState.Content.Option.DeleteChannel,
             ),
         ),

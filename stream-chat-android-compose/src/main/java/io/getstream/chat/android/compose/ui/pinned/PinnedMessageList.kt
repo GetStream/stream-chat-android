@@ -17,22 +17,16 @@
 package io.getstream.chat.android.compose.ui.pinned
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,17 +36,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
+import io.getstream.chat.android.compose.ui.components.EmptyContent
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.parseBoldTags
+import io.getstream.chat.android.compose.ui.theme.PinnedMessageListEmptyContentParams
+import io.getstream.chat.android.compose.ui.theme.PinnedMessageListItemDividerParams
+import io.getstream.chat.android.compose.ui.theme.PinnedMessageListItemParams
+import io.getstream.chat.android.compose.ui.theme.PinnedMessageListLoadingContentParams
+import io.getstream.chat.android.compose.ui.theme.PinnedMessageListLoadingMoreContentParams
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -69,16 +66,6 @@ import kotlinx.coroutines.flow.collectLatest
  * @param modifier [Modifier] instance for general styling.
  * @param currentUser The currently logged [User], used for formatting the message preview.
  * @param onPinnedMessageClick Action to be invoked when the user clicks on a message from the list.
- * @param itemContent Composable rendering each [Message] item in the list. Override this to provide custom component
- * for rendering the items.
- * @param itemDivider Composable rendering the divider between messages. Override this to provide (or remove) the
- * default divider.
- * @param emptyContent Composable shown when there are no pinned messages to display. Override this to provide custom
- * component for rendering the empty state.
- * @param loadingContent Composable shown during the initial loading of the pinned messages. Override this to provide a
- * custom initial loading state.
- * @param loadingMoreContent Composable shown at the bottom of the list during the loading of more pinned messages
- * (pagination). Override this to provide a custom loading component shown during the loading of more items.
  */
 @Composable
 public fun PinnedMessageList(
@@ -86,21 +73,6 @@ public fun PinnedMessageList(
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onPinnedMessageClick: (Message) -> Unit = {},
-    itemContent: @Composable (Message) -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListItem(it, currentUser, onPinnedMessageClick)
-    },
-    itemDivider: @Composable (Int) -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListItemDivider()
-    },
-    emptyContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListEmptyContent(modifier)
-    },
-    loadingContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListLoadingContent(modifier)
-    },
-    loadingMoreContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListLoadingMoreContent()
-    },
 ) {
     val state by viewModel.state.collectAsState()
     PinnedMessageList(
@@ -109,11 +81,6 @@ public fun PinnedMessageList(
         currentUser = currentUser,
         onPinnedMessageClick = onPinnedMessageClick,
         onLoadMore = viewModel::loadMore,
-        itemContent = itemContent,
-        itemDivider = itemDivider,
-        emptyContent = emptyContent,
-        loadingContent = loadingContent,
-        loadingMoreContent = loadingMoreContent,
     )
 
     // Error emissions
@@ -135,16 +102,6 @@ public fun PinnedMessageList(
  * @param onPinnedMessageClick Action to be invoked when the user clicks on a message from the list.
  * @param onLoadMore Action to be invoked when the user scrolls to the end of the list and more pinned messages should
  * be loaded.
- * @param itemContent Composable rendering each [Message] item in the list. Override this to provide custom component
- * for rendering the items.
- * @param itemDivider Composable rendering the divider between messages. Override this to provide (or remove) the
- * default divider.
- * @param emptyContent Composable shown when there are no pinned messages to display. Override this to provide custom
- * component for rendering the empty state.
- * @param loadingContent Composable shown during the initial loading of the pinned messages. Override this to provide a
- * custom initial loading state.
- * @param loadingMoreContent Composable shown at the bottom of the list during the loading of more pinned messages
- * (pagination). Override this to provide a custom loading component shown during the loading of more items.
  */
 @Composable
 internal fun PinnedMessageList(
@@ -153,31 +110,42 @@ internal fun PinnedMessageList(
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onPinnedMessageClick: (Message) -> Unit,
     onLoadMore: () -> Unit,
-    itemContent: @Composable (Message) -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListItem(it, currentUser, onPinnedMessageClick)
-    },
-    itemDivider: @Composable (Int) -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListItemDivider()
-    },
-    emptyContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListEmptyContent(modifier)
-    },
-    loadingContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListLoadingContent(modifier)
-    },
-    loadingMoreContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.PinnedMessageListLoadingMoreContent()
-    },
 ) {
     when {
-        state.results.isEmpty() && state.isLoading -> loadingContent()
-        state.results.isEmpty() && !state.isLoading -> emptyContent()
+        state.results.isEmpty() && state.isLoading -> {
+            ChatTheme.componentFactory.PinnedMessageListLoadingContent(
+                params = PinnedMessageListLoadingContentParams(modifier = modifier),
+            )
+        }
+
+        state.results.isEmpty() && !state.isLoading -> {
+            ChatTheme.componentFactory.PinnedMessageListEmptyContent(
+                params = PinnedMessageListEmptyContentParams(modifier = modifier),
+            )
+        }
+
         else -> PinnedMessages(
             messages = state.results.map { it.message },
             modifier = modifier,
-            itemContent = itemContent,
-            itemDivider = itemDivider,
-            loadingMoreContent = loadingMoreContent,
+            itemContent = { message ->
+                ChatTheme.componentFactory.PinnedMessageListItem(
+                    params = PinnedMessageListItemParams(
+                        message = message,
+                        currentUser = currentUser,
+                        onClick = onPinnedMessageClick,
+                    ),
+                )
+            },
+            itemDivider = { _ ->
+                ChatTheme.componentFactory.PinnedMessageListItemDivider(
+                    params = PinnedMessageListItemDividerParams(),
+                )
+            },
+            loadingMoreContent = {
+                ChatTheme.componentFactory.PinnedMessageListLoadingMoreContent(
+                    params = PinnedMessageListLoadingMoreContentParams(),
+                )
+            },
             onLoadMore = onLoadMore,
         )
     }
@@ -208,7 +176,7 @@ private fun PinnedMessages(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.appBackground),
+            .background(ChatTheme.colors.backgroundCoreApp),
     ) {
         LazyColumn(state = listState) {
             itemsIndexed(messages) { index, pinnedMessage ->
@@ -237,39 +205,14 @@ private fun PinnedMessages(
  */
 @Composable
 internal fun DefaultPinnedMessageListEmptyContent(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.background(ChatTheme.colors.appBackground),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Image(
-            modifier = Modifier.size(112.dp),
-            painter = painterResource(R.drawable.stream_compose_ic_pinned_messages_empty),
-            contentDescription = null,
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = stringResource(id = R.string.stream_compose_pinned_message_list_empty_title),
-            textAlign = TextAlign.Center,
-            style = ChatTheme.typography.captionBold,
-            color = ChatTheme.colors.textHighEmphasis,
-            fontSize = 16.sp,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            text = stringResource(id = R.string.stream_compose_pinned_message_list_empty_description).parseBoldTags(),
-            textAlign = TextAlign.Center,
-            style = ChatTheme.typography.bodyBold,
-            color = ChatTheme.colors.textLowEmphasis,
-            fontSize = 16.sp,
-        )
-    }
+    EmptyContent(
+        text = stringResource(id = R.string.stream_compose_pinned_message_list_empty_description),
+        painter = painterResource(R.drawable.stream_design_ic_pin),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = StreamTokens.spacingMd),
+        title = stringResource(id = R.string.stream_compose_pinned_message_list_empty_title),
+    )
 }
 
 /**
@@ -279,7 +222,7 @@ internal fun DefaultPinnedMessageListEmptyContent(modifier: Modifier = Modifier)
  */
 @Composable
 internal fun DefaultPinnedMessageListLoadingContent(modifier: Modifier = Modifier) {
-    Box(modifier = modifier.background(ChatTheme.colors.appBackground)) {
+    Box(modifier = modifier.background(ChatTheme.colors.backgroundCoreApp)) {
         LoadingIndicator(modifier)
     }
 }
@@ -292,8 +235,13 @@ internal fun DefaultPinnedMessageListLoadingMoreContent() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.appBackground)
-            .padding(top = 8.dp, start = 8.dp, end = 8.dp, bottom = 40.dp),
+            .background(ChatTheme.colors.backgroundCoreApp)
+            .padding(
+                top = StreamTokens.spacingXs,
+                start = StreamTokens.spacingXs,
+                end = StreamTokens.spacingXs,
+                bottom = StreamTokens.spacing3xl,
+            ),
         contentAlignment = Alignment.Center,
     ) {
         LoadingIndicator(modifier = Modifier.size(16.dp))

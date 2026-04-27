@@ -16,39 +16,50 @@
 
 package io.getstream.chat.android.compose.ui.threads
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.theme.ThreadListBannerParams
+import io.getstream.chat.android.compose.ui.theme.ThreadListEmptyContentParams
+import io.getstream.chat.android.compose.ui.theme.ThreadListItemParams
+import io.getstream.chat.android.compose.ui.theme.ThreadListLoadingContentParams
+import io.getstream.chat.android.compose.ui.theme.ThreadListLoadingMoreContentParams
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
@@ -61,59 +72,29 @@ import io.getstream.chat.android.ui.common.state.threads.ThreadListState
  * @param viewModel The [ThreadListViewModel] handling the loading of the threads.
  * @param modifier [Modifier] instance for general styling.
  * @param currentUser The currently logged [User], used for formatting the message in the thread preview.
- * @param onUnreadThreadsBannerClick Action invoked when the user clicks on the "Unread threads" banner. By default, it
+ * @param onBannerClick Action invoked when the user clicks on the banner. By default, it
  * calls [ThreadListViewModel.load] to force reload the list of threads, loading the newly created/updated threads.
  * @param onThreadClick Action invoked when the usr clicks on a thread item in the list. No-op by default.
  * @param onLoadMore Action invoked when the current thread page was scrolled to the end, and a next page should be
  * loaded. By default, it calls [ThreadListViewModel.loadNextPage] to load the next page of threads.
- * @param unreadThreadsBanner Composable rendering the "Unread threads" banner on the top of the list. Override it to
- * provide a custom component to be rendered for displaying the number of new unread threads.
- * @param itemContent Composable rendering each [Thread] item in the list. Override this to provide a custom component
- * for rendering the items.
- * @param emptyContent Composable shown when there are no threads to display. Override this to provide custom component
- * for rendering the empty state.
- * @param loadingContent Composable shown during the initial loading of the threads. Override this to provide a custom
- * initial loading state.
- * @param loadingMoreContent Composable shown at the bottom of the list during the loading of more threads (pagination).
- * Override this to provide a custom loading component shown during the loading of more items.
  */
 @Composable
 public fun ThreadList(
     viewModel: ThreadListViewModel,
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
-    onUnreadThreadsBannerClick: () -> Unit = { viewModel.load() },
+    onBannerClick: () -> Unit = { viewModel.load() },
     onThreadClick: (Thread) -> Unit = {},
     onLoadMore: () -> Unit = { viewModel.loadNextPage() },
-    unreadThreadsBanner: @Composable (Int) -> Unit = {
-        ChatTheme.componentFactory.ThreadListUnreadThreadsBanner(it, onUnreadThreadsBannerClick)
-    },
-    itemContent: @Composable (Thread) -> Unit = {
-        ChatTheme.componentFactory.ThreadListItem(it, currentUser, onThreadClick)
-    },
-    emptyContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.ThreadListEmptyContent(modifier)
-    },
-    loadingContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.ThreadListLoadingContent(modifier)
-    },
-    loadingMoreContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.ThreadListLoadingMoreContent()
-    },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     ThreadList(
         state = state,
         modifier = modifier,
         currentUser = currentUser,
-        onUnreadThreadsBannerClick = onUnreadThreadsBannerClick,
+        onBannerClick = onBannerClick,
         onThreadClick = onThreadClick,
         onLoadMore = onLoadMore,
-        unreadThreadsBanner = unreadThreadsBanner,
-        itemContent = itemContent,
-        emptyContent = emptyContent,
-        loadingContent = loadingContent,
-        loadingMoreContent = loadingMoreContent,
     )
 }
 
@@ -124,64 +105,76 @@ public fun ThreadList(
  * @param state The [ThreadListState] holding the current thread list state.
  * @param modifier [Modifier] instance for general styling.
  * @param currentUser The currently logged [User], used for formatting the message in the thread preview.
- * @param onUnreadThreadsBannerClick Action invoked when the user clicks on the "Unread threads" banner.
+ * @param onBannerClick Action invoked when the user clicks on the banner.
  * @param onThreadClick Action invoked when the usr clicks on a thread item in the list.
  * @param onLoadMore Action invoked when the current thread page was scrolled to the end, and a next page should be
  * loaded.
- * @param unreadThreadsBanner Composable rendering the "Unread threads" banner on the top of the list. Override it to
- * provide a custom component to be rendered for displaying the number of new unread threads.
- * @param itemContent Composable rendering each [Thread] item in the list. Override this to provide a custom component
- * for rendering the items.
- * @param emptyContent Composable shown when there are no threads to display. Override this to provide custom component
- * for rendering the empty state.
- * @param loadingContent Composable shown during the initial loading of the threads. Override this to provide a custom
- * initial loading state.
- * @param loadingMoreContent Composable shown at the bottom of the list during the loading of more threads (pagination).
- * Override this to provide a custom loading component shown during the loading of more items.
  */
 @Composable
 public fun ThreadList(
     state: ThreadListState,
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
-    onUnreadThreadsBannerClick: () -> Unit,
+    onBannerClick: () -> Unit,
     onThreadClick: (Thread) -> Unit,
     onLoadMore: () -> Unit,
-    unreadThreadsBanner: @Composable (Int) -> Unit = {
-        ChatTheme.componentFactory.ThreadListUnreadThreadsBanner(it, onUnreadThreadsBannerClick)
-    },
-    itemContent: @Composable (Thread) -> Unit = {
-        ChatTheme.componentFactory.ThreadListItem(it, currentUser, onThreadClick)
-    },
-    emptyContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.ThreadListEmptyContent(modifier)
-    },
-    loadingContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.ThreadListLoadingContent(modifier)
-    },
-    loadingMoreContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.ThreadListLoadingMoreContent()
-    },
 ) {
+    val bannerState: ThreadListBannerState? = when {
+        state.isLoading && state.threads.isNotEmpty() -> ThreadListBannerState.Loading
+        state.loadingError -> ThreadListBannerState.Error
+        state.unseenThreadsCount > 0 ->
+            ThreadListBannerState.UnreadThreads(state.unseenThreadsCount)
+
+        else -> null
+    }
     Scaffold(
-        containerColor = ChatTheme.colors.appBackground,
+        modifier = modifier,
+        containerColor = ChatTheme.colors.backgroundCoreApp,
         topBar = {
-            unreadThreadsBanner(state.unseenThreadsCount)
+            bannerState?.let {
+                ChatTheme.componentFactory.ThreadListBanner(
+                    params = ThreadListBannerParams(state = it, onClick = onBannerClick),
+                )
+            }
         },
         content = { padding ->
-            Box(modifier = modifier.padding(padding)) {
-                when {
-                    state.threads.isEmpty() && state.isLoading -> loadingContent()
-                    state.threads.isEmpty() -> emptyContent()
-                    else -> Threads(
-                        threads = state.threads,
-                        isLoadingMore = state.isLoadingMore,
-                        modifier = modifier,
-                        onLoadMore = onLoadMore,
-                        itemContent = itemContent,
-                        loadingMoreContent = loadingMoreContent,
+            val contentModifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
+            when {
+                state.threads.isEmpty() && state.isLoading -> {
+                    ChatTheme.componentFactory.ThreadListLoadingContent(
+                        params = ThreadListLoadingContentParams(modifier = contentModifier),
                     )
                 }
+
+                state.threads.isEmpty() -> {
+                    ChatTheme.componentFactory.ThreadListEmptyContent(
+                        params = ThreadListEmptyContentParams(modifier = contentModifier),
+                    )
+                }
+
+                else -> Threads(
+                    threads = state.threads,
+                    isLoading = state.isLoading,
+                    isLoadingMore = state.isLoadingMore,
+                    modifier = contentModifier,
+                    onLoadMore = onLoadMore,
+                    itemContent = { thread ->
+                        ChatTheme.componentFactory.ThreadListItem(
+                            params = ThreadListItemParams(
+                                thread = thread,
+                                currentUser = currentUser,
+                                onThreadClick = onThreadClick,
+                            ),
+                        )
+                    },
+                    loadingMoreContent = {
+                        ChatTheme.componentFactory.ThreadListLoadingMoreContent(
+                            params = ThreadListLoadingMoreContentParams(),
+                        )
+                    },
+                )
             }
         },
     )
@@ -191,6 +184,7 @@ public fun ThreadList(
  * Composable representing a non-empty list of threads.
  *
  * @param threads The non-empty [List] of [Thread]s to show.
+ * @param isLoading Indicator if the list is being refreshed (e.g. banner tap).
  * @param isLoadingMore Indicator if there is loading of the next page of threads in progress.
  * @param modifier [Modifier] instance for general styling.
  * @param onLoadMore Action invoked when the current thread page was scrolled to the end, and a next page should be
@@ -202,6 +196,7 @@ public fun ThreadList(
 @Composable
 private fun Threads(
     threads: List<Thread>,
+    isLoading: Boolean,
     isLoadingMore: Boolean,
     modifier: Modifier,
     onLoadMore: () -> Unit,
@@ -209,6 +204,13 @@ private fun Threads(
     loadingMoreContent: @Composable () -> Unit,
 ) {
     val listState = rememberLazyListState()
+    var wasLoading by remember { mutableStateOf(isLoading) }
+    LaunchedEffect(isLoading) {
+        if (wasLoading && !isLoading) {
+            listState.animateScrollToItem(0)
+        }
+        wasLoading = isLoading
+    }
     Box(modifier = modifier) {
         LazyColumn(state = listState) {
             items(
@@ -242,21 +244,18 @@ internal fun DefaultThreadListEmptyContent(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Image(
-            modifier = Modifier.size(112.dp),
-            painter = painterResource(R.drawable.stream_compose_ic_threads_empty),
+        Icon(
+            painter = painterResource(R.drawable.stream_design_ic_message_bubbles),
             contentDescription = null,
+            tint = ChatTheme.colors.textTertiary,
         )
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(StreamTokens.spacingXs))
         Text(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.width(160.dp),
             text = stringResource(id = R.string.stream_compose_thread_list_empty_title),
             textAlign = TextAlign.Center,
-            color = ChatTheme.colors.textLowEmphasis,
-            fontSize = 20.sp,
-            lineHeight = 25.sp,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+            color = ChatTheme.colors.textSecondary,
+            style = ChatTheme.typography.captionDefault,
         )
     }
 }
@@ -268,8 +267,15 @@ internal fun DefaultThreadListEmptyContent(modifier: Modifier = Modifier) {
  */
 @Composable
 internal fun DefaultThreadListLoadingContent(modifier: Modifier = Modifier) {
-    Box(modifier = modifier.background(ChatTheme.colors.appBackground)) {
-        LoadingIndicator(modifier)
+    LazyColumn(
+        modifier = modifier
+            .background(ChatTheme.colors.backgroundCoreApp)
+            .testTag("Stream_ThreadListLoading"),
+        userScrollEnabled = false,
+    ) {
+        items(count = 7) {
+            ThreadListLoadingItem()
+        }
     }
 }
 
@@ -281,7 +287,7 @@ internal fun DefaultThreadListLoadingMoreContent() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.appBackground)
+            .background(ChatTheme.colors.backgroundCoreApp)
             .padding(top = 8.dp, start = 8.dp, end = 8.dp, bottom = 40.dp),
         contentAlignment = Alignment.Center,
     ) {

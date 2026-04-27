@@ -20,7 +20,21 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.provider.Settings
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+
+/**
+ * Forwards user to the application settings screen.
+ */
+@InternalStreamChatApi
+public fun Context.openSystemSettings() {
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+        val uri: Uri = Uri.fromParts("package", packageName, null)
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        data = uri
+    }
+    startActivity(intent)
+}
 
 /**
  * Returns if we need to check for the given permission or not.

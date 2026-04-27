@@ -18,6 +18,7 @@ package io.getstream.chat.android.previewdata
 
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.User
 
 /**
  * Provides sample channels that will be used to render previews.
@@ -90,5 +91,14 @@ public object PreviewChannelData {
             PreviewMessageData.message1,
             PreviewMessageData.message2,
         ),
+    )
+
+    public fun makeChannelWithMembers(howMany: Int): Channel = Channel(
+        type = "channelType",
+        id = "channelWith${howMany}Members",
+        members = List(howMany) { n ->
+            Member(user = User(id = "user$n", name = "User $n"))
+        },
+        memberCount = howMany,
     )
 }

@@ -38,13 +38,3 @@ public sealed interface PollOptionError {
 public data class PollOptionDuplicated(
     override val message: String,
 ) : PollOptionError
-
-/**
- * This error indicates that this poll creation input (number type) is exceed the maximum value.
- *
- * @property message The error message of this option.
- */
-@Immutable
-public data class PollOptionNumberExceed(
-    override val message: String,
-) : PollOptionError

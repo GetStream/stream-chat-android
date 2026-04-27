@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
 /**
  * The view that's shown when there's no data available. Consists of an icon and a caption below it.
@@ -47,33 +48,33 @@ public fun EmptyContent(
     title: String? = null,
 ) {
     Column(
-        modifier = modifier.background(color = ChatTheme.colors.appBackground),
+        modifier = modifier.background(color = ChatTheme.colors.backgroundCoreApp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Icon(
             painter = painter,
             contentDescription = null,
-            tint = ChatTheme.colors.disabled,
-            modifier = Modifier.size(96.dp),
+            tint = ChatTheme.colors.textTertiary,
+            modifier = Modifier.size(32.dp),
         )
 
-        Spacer(Modifier.size(16.dp))
+        Spacer(Modifier.size(StreamTokens.spacingSm))
 
         if (title != null) {
             Text(
                 text = title,
-                style = ChatTheme.typography.title3,
-                color = ChatTheme.colors.textHighEmphasis,
+                style = ChatTheme.typography.headingSmall,
+                color = ChatTheme.colors.textPrimary,
                 textAlign = TextAlign.Center,
             )
-            Spacer(Modifier.size(8.dp))
+            Spacer(Modifier.size(StreamTokens.spacingXs))
         }
 
         Text(
             text = text,
-            style = ChatTheme.typography.title3,
-            color = ChatTheme.colors.textLowEmphasis,
+            style = ChatTheme.typography.bodyDefault,
+            color = ChatTheme.colors.textSecondary,
             textAlign = TextAlign.Center,
         )
     }

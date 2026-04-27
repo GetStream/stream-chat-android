@@ -18,6 +18,17 @@ package io.getstream.chat.android.ui.common.feature.messages.list
 
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.ThreadState
+import io.getstream.chat.android.client.api.state.awaitRepliesAsState
+import io.getstream.chat.android.client.api.state.cancelEphemeralMessage
+import io.getstream.chat.android.client.api.state.getMessageUsingCache
+import io.getstream.chat.android.client.api.state.getRepliesAsState
+import io.getstream.chat.android.client.api.state.globalState
+import io.getstream.chat.android.client.api.state.loadMessageById
+import io.getstream.chat.android.client.api.state.loadMessagesAroundId
+import io.getstream.chat.android.client.api.state.loadNewerMessages
+import io.getstream.chat.android.client.api.state.loadNewestMessages
+import io.getstream.chat.android.client.api.state.loadOlderMessages
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.channel.state.ChannelState
@@ -56,17 +67,6 @@ import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
-import io.getstream.chat.android.state.extensions.awaitRepliesAsState
-import io.getstream.chat.android.state.extensions.cancelEphemeralMessage
-import io.getstream.chat.android.state.extensions.getMessageUsingCache
-import io.getstream.chat.android.state.extensions.getRepliesAsState
-import io.getstream.chat.android.state.extensions.globalState
-import io.getstream.chat.android.state.extensions.loadMessageById
-import io.getstream.chat.android.state.extensions.loadMessagesAroundId
-import io.getstream.chat.android.state.extensions.loadNewerMessages
-import io.getstream.chat.android.state.extensions.loadNewestMessages
-import io.getstream.chat.android.state.extensions.loadOlderMessages
-import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
 import io.getstream.chat.android.ui.common.helper.ClipboardHandler
 import io.getstream.chat.android.ui.common.state.messages.BlockUser
@@ -75,15 +75,16 @@ import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.MarkAsUnread
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import io.getstream.chat.android.ui.common.state.messages.MuteUser
 import io.getstream.chat.android.ui.common.state.messages.Pin
 import io.getstream.chat.android.ui.common.state.messages.React
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.Resend
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.state.messages.UnblockUser
+import io.getstream.chat.android.ui.common.state.messages.UnmuteUser
 import io.getstream.chat.android.ui.common.state.messages.list.CancelGiphy
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.HasMessageListItemState
@@ -130,11 +131,14 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -162,7 +166,6 @@ import io.getstream.chat.android.ui.common.state.messages.Flag as FlagMessage
  * @param chatClient The client used to communicate with the API.
  * @param clientState The current state of the SDK.
  * @param channelState The state of the channel.
- * @param deletedMessageVisibility The [DeletedMessageVisibility] to be applied to the list.
  * @param showSystemMessages Determines if the system messages should be shown or not.
  * @param messageFooterVisibility Determines if and when the message footer is visible or not.
  * @param enforceUniqueReactions Determines whether the user can send only a single or multiple reactions to a message.
@@ -185,10 +188,9 @@ public class MessageListController(
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
     public val channelState: StateFlow<ChannelState?>,
-    private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val showSystemMessages: Boolean = true,
-    private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
-    private val enforceUniqueReactions: Boolean = true,
+    private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.LastInGroup,
+    private val enforceUniqueReactions: Boolean = false,
     private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler(),
     private val threadDateSeparatorHandler: DateSeparatorHandler =
         DateSeparatorHandler.getDefaultThreadDateSeparatorHandler(),
@@ -225,7 +227,7 @@ public class MessageListController(
      */
     public val unreadLabelState: MutableStateFlow<UnreadLabel?> = MutableStateFlow(null)
     private val showUnreadButtonState = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
-    private val updateUnreadLabelState = MutableStateFlow(true)
+    private var lastProcessedReadMessageId: String? = null
     private val originalTranslationsStore by lazy { MessageOriginalTranslationsStore.forChannel(cid) }
 
     /**
@@ -282,11 +284,22 @@ public class MessageListController(
     public val isInThread: Boolean
         get() = _mode.value is MessageMode.MessageThread
 
+    private val _events: MutableSharedFlow<Event> = MutableSharedFlow()
+
     /**
-     * Emits error events.
+     * Flow of one-shot events emitted by the controller, such as action successes and errors.
+     *
+     * @see Event
      */
-    private val _errorEvents: MutableStateFlow<ErrorEvent?> = MutableStateFlow(null)
-    public val errorEvents: StateFlow<ErrorEvent?> = _errorEvents
+    public val events: SharedFlow<Event> = _events.asSharedFlow()
+
+    /**
+     * Flow of events representing errors happening in the controller.
+     *
+     * @see [ErrorEvent]
+     */
+    public val errorEvents: StateFlow<ErrorEvent?> =
+        _events.filterIsInstance<ErrorEvent>().stateIn(scope, SharingStarted.Eagerly, null)
 
     // TODO separate unreads to message list unreads and thread unreads after
     //  https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
@@ -389,13 +402,6 @@ public class MessageListController(
     public val messageFooterVisibilityState: StateFlow<MessageFooterVisibility> = _messageFooterVisibilityState
 
     /**
-     * Regulates the visibility of deleted messages.
-     */
-    private val _deletedMessageVisibilityState: MutableStateFlow<DeletedMessageVisibility> =
-        MutableStateFlow(deletedMessageVisibility)
-    public val deletedMessageVisibilityState: StateFlow<DeletedMessageVisibility> = _deletedMessageVisibilityState
-
-    /**
      * Represents the message we wish to scroll to.
      */
     private var focusedMessage: MutableStateFlow<Message?> = MutableStateFlow(null)
@@ -469,7 +475,6 @@ public class MessageListController(
                 channelState.reads,
                 _showSystemMessagesState,
                 _dateSeparatorHandler,
-                _deletedMessageVisibilityState,
                 _messageFooterVisibilityState,
                 _messagePositionHandler,
                 typingUsers,
@@ -484,16 +489,15 @@ public class MessageListController(
                 val reads = data[1] as List<ChannelUserRead>
                 val showSystemMessages = data[2] as Boolean
                 val dateSeparatorHandler = data[3] as DateSeparatorHandler
-                val deletedMessageVisibility = data[4] as DeletedMessageVisibility
-                val messageFooterVisibility = data[5] as MessageFooterVisibility
-                val messagePositionHandler = data[6] as MessagePositionHandler
-                val typingUsers = data[7] as List<User>
-                val focusedMessage = data[8] as Message?
-                val endOfNewerMessages = data[9] as Boolean
-                val unreadLabel = data[10] as UnreadLabel?
-                val members = data[11] as List<Member>
-                val endOfOlderMessages = data[12] as Boolean
-                val messagesInOriginalLanguage = data[13] as Set<String>
+                val messageFooterVisibility = data[4] as MessageFooterVisibility
+                val messagePositionHandler = data[5] as MessagePositionHandler
+                val typingUsers = data[6] as List<User>
+                val focusedMessage = data[7] as Message?
+                val endOfNewerMessages = data[8] as Boolean
+                val unreadLabel = data[9] as UnreadLabel?
+                val members = data[10] as List<Member>
+                val endOfOlderMessages = data[11] as Boolean
+                val messagesInOriginalLanguage = data[12] as Set<String>
 
                 when (state) {
                     is MessagesState.Loading,
@@ -504,18 +508,17 @@ public class MessageListController(
                         isLoading = false,
                         messageItems = emptyList(),
                     )
+
                     is MessagesState.Result -> _messageListState.value.copy(
                         isLoading = false,
                         messageItems = groupMessages(
                             messages = filterMessagesToShow(
                                 messages = state.messages,
                                 showSystemMessages = showSystemMessages,
-                                deletedMessageVisibility = deletedMessageVisibility,
                             ),
                             isInThread = false,
                             reads = reads,
                             dateSeparatorHandler = dateSeparatorHandler,
-                            deletedMessageVisibility = deletedMessageVisibility,
                             messageFooterVisibility = messageFooterVisibility,
                             messagePositionHandler = messagePositionHandler,
                             typingUsers = typingUsers,
@@ -569,44 +572,32 @@ public class MessageListController(
     /**
      * Observes and updates the unread label state by combining multiple data sources:
      * - Button visibility preference ([showUnreadButtonState])
-     * - Update trigger state ([updateUnreadLabelState])
      * - Channel state with all messages
      * - User read state ([ChannelUserRead])
      *
-     * The unread label is only calculated when all of the following conditions are met:
-     * 1. Updates are enabled ([updateUnreadLabelState] is true)
-     * 2. Not started for a thread ([isStartedForThread] is false)
-     * 3. The last read message ID has changed from the previous state
+     * The unread label is recalculated whenever [ChannelUserRead.lastReadMessageId] changes,
+     * but the result is "sticky": a null calculation never overwrites a non-null label.
+     * This ensures the separator persists when the user auto-reads messages by scrolling,
+     * while still reacting to mark-as-unread events (which move [lastReadMessageId] backward
+     * and produce a new non-null label).
      *
-     * Once conditions are met, delegates the actual calculation to [UnreadLabelCalculator] which
-     * handles the complex logic of determining unread message state, including edge cases for
-     * own messages, mark as unread functionality, and offline/pending message scenarios.
-     *
-     * After calculation, updates [unreadLabelState] and resets the update trigger to prevent
-     * unnecessary recalculations until the next state change.
+     * Delegates the actual calculation to [UnreadLabelCalculator] which handles the complex
+     * logic of determining unread message state, including edge cases for own messages,
+     * mark as unread functionality, and offline/pending message scenarios.
      */
     @Suppress("MagicNumber")
     private fun observeUnreadLabelState() {
         combine(
             showUnreadButtonState.onStart { emit(true) },
-            updateUnreadLabelState,
             channelState.filterNotNull(),
             channelState.filterNotNull().flatMapLatest { it.read },
-        ) { data ->
-            val shouldShowButton = data[0] as Boolean
-            val shouldUpdateLabelState = data[1] as Boolean
-            val channel = data[2] as ChannelState
-            val read = data[3] as ChannelUserRead?
-
-            // Only proceed with calculation if all conditions are met
+        ) { shouldShowButton, channel, read ->
             read
-                ?.takeIf { shouldUpdateLabelState }
                 ?.takeIf { !isStartedForThread }
-                ?.takeIf {
-                    val previousUnreadMessageId = unreadLabelState.value?.lastReadMessageId
-                    it.lastReadMessageId != null && previousUnreadMessageId != it.lastReadMessageId
-                }
+                ?.takeIf { it.lastReadMessageId != null && lastProcessedReadMessageId != it.lastReadMessageId }
                 ?.let { channelUserRead ->
+                    lastProcessedReadMessageId = channelUserRead.lastReadMessageId
+
                     // Delegate to the calculator for the complex unread label logic
                     val unreadLabel = unreadLabelCalculator.calculateUnreadLabel(
                         channelUserRead = channelUserRead,
@@ -615,10 +606,11 @@ public class MessageListController(
                         shouldShowButton = shouldShowButton,
                     )
 
-                    // Update the state with the calculated label
-                    unreadLabelState.value = unreadLabel
-                    // Prevent recalculation until the next trigger
-                    updateUnreadLabelState.value = false
+                    // Only update the label if the calculator produced a non-null result. This makes the label sticky:
+                    // once shown, it persists until the user leaves the channel.
+                    if (unreadLabel != null) {
+                        unreadLabelState.value = unreadLabel
+                    }
                 }
         }.launchIn(scope)
     }
@@ -783,7 +775,6 @@ public class MessageListController(
                 reads,
                 _showSystemMessagesState,
                 _threadDateSeparatorHandler,
-                _deletedMessageVisibilityState,
                 _messageFooterVisibilityState,
                 _messagePositionHandler,
                 typingUsers,
@@ -796,14 +787,13 @@ public class MessageListController(
                 val reads = data[1] as List<ChannelUserRead>
                 val showSystemMessages = data[2] as Boolean
                 val dateSeparatorHandler = data[3] as DateSeparatorHandler
-                val deletedMessageVisibility = data[4] as DeletedMessageVisibility
-                val messageFooterVisibility = data[5] as MessageFooterVisibility
-                val messagePositionHandler = data[6] as MessagePositionHandler
-                val typingUsers = data[7] as List<User>
-                val focusedMessage = data[8] as Message?
-                val members = data[9] as List<Member>
-                val ownCapabilities = data[10] as Set<String>
-                val messagesInOriginalLanguage = data[11] as Set<String>
+                val messageFooterVisibility = data[4] as MessageFooterVisibility
+                val messagePositionHandler = data[5] as MessagePositionHandler
+                val typingUsers = data[6] as List<User>
+                val focusedMessage = data[7] as Message?
+                val members = data[8] as List<Member>
+                val ownCapabilities = data[9] as Set<String>
+                val messagesInOriginalLanguage = data[10] as Set<String>
 
                 _threadListState.value.copy(
                     isLoading = false,
@@ -811,11 +801,9 @@ public class MessageListController(
                         messages = filterMessagesToShow(
                             messages = messages,
                             showSystemMessages = showSystemMessages,
-                            deletedMessageVisibility = deletedMessageVisibility,
                         ),
                         isInThread = true,
                         reads = reads,
-                        deletedMessageVisibility = deletedMessageVisibility,
                         dateSeparatorHandler = dateSeparatorHandler,
                         messageFooterVisibility = messageFooterVisibility,
                         messagePositionHandler = messagePositionHandler,
@@ -860,7 +848,6 @@ public class MessageListController(
      * @param messages The messages we need to group.
      * @param isInThread If we are in inside a thread.
      * @param reads The list of read states.
-     * @param deletedMessageVisibility Determines visibility of deleted messages.
      * @param dateSeparatorHandler Handler used to determine when the date separator should be visible.
      * @param messageFooterVisibility Determines when the message footer should be visible.
      * @param messagePositionHandler Determines the message position inside a group of messages.
@@ -879,7 +866,6 @@ public class MessageListController(
         messages: List<Message>,
         isInThread: Boolean,
         reads: List<ChannelUserRead>,
-        deletedMessageVisibility: DeletedMessageVisibility,
         dateSeparatorHandler: DateSeparatorHandler,
         messageFooterVisibility: MessageFooterVisibility,
         messagePositionHandler: MessagePositionHandler,
@@ -940,8 +926,7 @@ public class MessageListController(
                 isInThread = isInThread,
             )
 
-            val isLastMessageInGroup =
-                position.contains(MessagePosition.BOTTOM) || position.contains(MessagePosition.NONE)
+            val isLastMessageInGroup = position == MessagePosition.BOTTOM || position == MessagePosition.NONE
 
             val shouldShowFooter = messageFooterVisibility.shouldShowMessageFooter(
                 message = message,
@@ -991,7 +976,6 @@ public class MessageListController(
                         isInThread = isInThread,
                         isMessageRead = isMessageRead,
                         isMessageDelivered = isMessageDelivered,
-                        deletedMessageVisibility = deletedMessageVisibility,
                         showMessageFooter = shouldShowFooter,
                         messageReadBy = messageReadBy,
                         focusState = if (isMessageFocused) MessageFocused else null,
@@ -1046,32 +1030,16 @@ public class MessageListController(
      *
      * @param messages List of all messages.
      * @param showSystemMessages Whether we should show system messages or not.
-     * @param deletedMessageVisibility The visibility of deleted messages. We filter them out if
-     * [DeletedMessageVisibility.ALWAYS_HIDDEN].
      *
      * @return Filtered messages.
      */
     private fun filterMessagesToShow(
         messages: List<Message>,
         showSystemMessages: Boolean,
-        deletedMessageVisibility: DeletedMessageVisibility,
     ): List<Message> {
-        val currentUser = user.value
-
         return messages.filter { message ->
-            val isDeletedMessage = message.isDeleted()
             val isSystemMessage = message.isSystem() || message.isError()
-
-            when {
-                isDeletedMessage -> when (deletedMessageVisibility) {
-                    DeletedMessageVisibility.ALWAYS_VISIBLE -> true
-                    DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> message.user.id == currentUser?.id
-                    DeletedMessageVisibility.ALWAYS_HIDDEN -> false
-                }
-
-                isSystemMessage -> showSystemMessages
-                else -> true
-            }
+            !isSystemMessage || showSystemMessages
         }
     }
 
@@ -1217,6 +1185,7 @@ public class MessageListController(
                 if (endOfOlderMessages || loadingOlderMessages) return
                 chatClient.loadOlderMessages(cid, messageLimit).enqueue()
             }
+
             is MessageMode.MessageThread -> threadLoadMore(mode)
         }
     }
@@ -1509,12 +1478,12 @@ public class MessageListController(
                 if (it.isModerationError(currentUserId)) {
                     SelectedMessageFailedModerationState(
                         message = it,
-                        ownCapabilities = ownCapabilities.value,
+                        channel = channel.value,
                     )
                 } else {
                     SelectedMessageOptionsState(
                         message = it,
-                        ownCapabilities = ownCapabilities.value,
+                        channel = channel.value,
                     )
                 }
             },
@@ -1531,7 +1500,7 @@ public class MessageListController(
             changeSelectMessageState(
                 SelectedMessageReactionsState(
                     message = message,
-                    ownCapabilities = ownCapabilities.value,
+                    channel = channel.value,
                 ),
             )
         }
@@ -1547,7 +1516,7 @@ public class MessageListController(
             changeSelectMessageState(
                 SelectedMessageReactionsPickerState(
                     message = message,
-                    ownCapabilities = ownCapabilities.value,
+                    channel = channel.value,
                 ),
             )
         }
@@ -1614,6 +1583,8 @@ public class MessageListController(
                 _messageActions.value = _messageActions.value + messageAction
             }
 
+            is MuteUser -> muteUser(messageAction.message.user)
+            is UnmuteUser -> unmuteUser(messageAction.message.user)
             is BlockUser -> blockUser(messageAction.message.user.id)
             is UnblockUser -> unblockUser(messageAction.message.user.id)
             is Copy -> copyMessage(messageAction.message)
@@ -1816,9 +1787,7 @@ public class MessageListController(
                         ErrorEvent.MarkUnreadError(it)
                     }
                 } else {
-                    // Emit with shouldShowButton = false
                     showUnreadButtonState.tryEmit(false)
-                    updateUnreadLabelState.value = true
                 }
             }
         }
@@ -1991,11 +1960,10 @@ public class MessageListController(
      */
     public fun closePoll(pollId: String) {
         chatClient.closePoll(pollId = pollId)
-            .enqueue(onError = { error ->
-                onActionResult(error) {
-                    ErrorEvent.PollCastingVoteError(it)
-                }
-            })
+            .enqueue(
+                onSuccess = { poll -> emitEvent(Event.PollClosingSuccess(poll)) },
+                onError = { error -> onActionResult(error, ErrorEvent::PollClosingError) },
+            )
     }
 
     /**
@@ -2342,16 +2310,6 @@ public class MessageListController(
     }
 
     /**
-     * Sets the value used to filter deleted messages.
-     * @see DeletedMessageVisibility
-     *
-     * @param deletedMessageVisibility Changes the visibility of deleted messages.
-     */
-    public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
-        _deletedMessageVisibilityState.value = deletedMessageVisibility
-    }
-
-    /**
      * Sets whether the system messages should be visible.
      *
      * @param areSystemMessagesVisible Whether system messages should be visible or not.
@@ -2372,6 +2330,10 @@ public class MessageListController(
         }
     }
 
+    private fun emitEvent(event: Event) {
+        scope.launch { _events.emit(event) }
+    }
+
     /**
      * Quality of life function that notifies the result of an action and logs any error in case the action has failed.
      *
@@ -2384,7 +2346,7 @@ public class MessageListController(
     ) {
         val errorMessage = error.message
         logger.e { errorMessage }
-        _errorEvents.value = onError(error)
+        emitEvent(onError(error))
     }
 
     /**
@@ -2448,11 +2410,24 @@ public class MessageListController(
     }
 
     /**
+     * Represents errors happening in [MessageListController].
+     */
+    public sealed interface Event {
+
+        /**
+         * Emitted when a poll is successfully closed.
+         *
+         * @param poll The closed [Poll].
+         */
+        public data class PollClosingSuccess(val poll: Poll) : Event
+    }
+
+    /**
      * A class designed for error event propagation.
      *
      * @param streamError Contains the original [Throwable] along with a message.
      */
-    public sealed class ErrorEvent(public open val streamError: Error) {
+    public sealed class ErrorEvent(public open val streamError: Error) : Event {
 
         /**
          * When an error occurs while muting a user.
@@ -2504,7 +2479,7 @@ public class MessageListController(
         public data class PollRemovingVoteError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
-         * When an error occurs while closing a vote.
+         * When an error occurs while closing a poll.
          *
          * @param streamError Contains the original [Throwable] along with a message.
          */

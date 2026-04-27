@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.previewdata
 
-import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
@@ -28,6 +28,7 @@ import java.util.Date
 /**
  * Provides sample messages that will be used to render previews.
  */
+@OptIn(InternalStreamChatApi::class)
 public object PreviewMessageData {
 
     public val message1: Message = Message(
@@ -116,20 +117,8 @@ public object PreviewMessageData {
         type = MessageType.REGULAR,
         user = User(id = "test-user", name = "Test User"),
         attachments = listOf(
-            Attachment(
-                name = "image1.jpg",
-                fileSize = 2000000,
-                type = "image",
-                mimeType = "image/jpeg",
-                imageUrl = "https://example.com/image1.jpg",
-            ),
-            Attachment(
-                name = "video1.mp4",
-                fileSize = 2000000,
-                type = "video",
-                mimeType = "video/mp4",
-                thumbUrl = "https://example.com/thumb1.jpg",
-            ),
+            PreviewAttachmentData.attachmentImage1,
+            PreviewAttachmentData.attachmentVideo1,
         ),
         createdAt = Date(),
     )

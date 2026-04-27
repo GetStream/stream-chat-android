@@ -37,6 +37,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageOption
 import io.getstream.chat.android.ui.common.state.messages.list.defaultMessageModerationOptions
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Dialog that is shown when user clicks or long taps on a moderated message. Gives the user the ability to either
@@ -119,20 +120,20 @@ internal fun DefaultModeratedDialogOptions(
 internal fun DefaultModeratedMessageDialogTitle() {
     Spacer(modifier = Modifier.height(12.dp))
 
-    val painter = painterResource(id = R.drawable.stream_compose_ic_flag)
+    val painter = painterResource(id = R.drawable.stream_design_ic_flag)
     Image(
         painter = painter,
         contentDescription = "",
-        colorFilter = ColorFilter.tint(ChatTheme.colors.primaryAccent),
+        colorFilter = ColorFilter.tint(ChatTheme.colors.accentPrimary),
     )
 
     Spacer(modifier = Modifier.height(4.dp))
 
     Text(
-        text = stringResource(id = R.string.stream_ui_moderation_dialog_title),
+        text = stringResource(id = UiCommonR.string.stream_ui_moderation_dialog_title),
         textAlign = TextAlign.Center,
-        style = ChatTheme.typography.title3,
-        color = ChatTheme.colors.textHighEmphasis,
+        style = ChatTheme.typography.headingMedium,
+        color = ChatTheme.colors.textPrimary,
     )
 }
 
@@ -147,9 +148,9 @@ internal fun DefaultModeratedMessageDialogDescription() {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp),
-        text = stringResource(id = R.string.stream_ui_moderation_dialog_description),
+        text = stringResource(id = UiCommonR.string.stream_ui_moderation_dialog_description),
         textAlign = TextAlign.Center,
-        style = ChatTheme.typography.body,
-        color = ChatTheme.colors.textLowEmphasis,
+        style = ChatTheme.typography.bodyDefault,
+        color = ChatTheme.colors.textSecondary,
     )
 }

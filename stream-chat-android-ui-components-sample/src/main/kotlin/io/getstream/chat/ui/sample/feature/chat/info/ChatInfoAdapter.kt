@@ -25,7 +25,6 @@ import io.getstream.chat.ui.sample.databinding.ChatInfoMemberItemBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoOptionItemBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoSeparatorItemBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoStatefulOptionItemBinding
-import java.lang.IllegalStateException
 
 open class ChatInfoAdapter : ListAdapter<ChatInfoItem, BaseViewHolder<*>>(
     object : DiffUtil.ItemCallback<ChatInfoItem>() {

@@ -1,4 +1,5 @@
 *.iml
+.planning/
 .composite
 buildSrc/build
 .gradle

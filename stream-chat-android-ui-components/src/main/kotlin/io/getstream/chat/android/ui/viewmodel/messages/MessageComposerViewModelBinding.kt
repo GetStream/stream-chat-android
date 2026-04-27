@@ -22,8 +22,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.alsoSendToChannelSelectionListener
@@ -88,7 +88,7 @@ public fun MessageComposerViewModel.bindView(
     textInputChangeListener: (String) -> Unit = this.textInputChangeListener,
     attachmentSelectionListener: (List<Attachment>) -> Unit = this.attachmentSelectionListener,
     attachmentRemovalListener: (Attachment) -> Unit = this.attachmentRemovalListener,
-    pollSubmissionListener: (PollConfig) -> Unit = this.pollSubmissionListener,
+    pollSubmissionListener: (CreatePollParams) -> Unit = this.pollSubmissionListener,
     mentionSelectionListener: (User) -> Unit = this.mentionSelectionListener,
     commandSelectionListener: (Command) -> Unit = this.commandSelectionListener,
     alsoSendToChannelSelectionListener: (Boolean) -> Unit = this.alsoSendToChannelSelectionListener,
@@ -98,11 +98,15 @@ public fun MessageComposerViewModel.bindView(
     audioRecordButtonHoldListener: () -> Unit = this.audioRecordButtonHoldListener,
     audioRecordButtonLockListener: () -> Unit = this.audioRecordButtonLockListener,
     audioRecordButtonCancelListener: () -> Unit = this.audioRecordButtonCancelListener,
-    audioRecordButtonReleaseListener: () -> Unit = this.audioRecordButtonReleaseListener,
+    audioRecordButtonReleaseListener: () -> Unit = this.audioRecordButtonReleaseListener(
+        view.composerStyle.audioRecordingSendOnComplete,
+    ),
     audioDeleteButtonClickListener: () -> Unit = this.audioDeleteButtonClickListener,
     audioStopButtonClickListener: () -> Unit = this.audioStopButtonClickListener,
     audioPlaybackButtonClickListener: () -> Unit = this.audioPlaybackButtonClickListener,
-    audioCompleteButtonClickListener: () -> Unit = this.audioCompleteButtonClickListener,
+    audioCompleteButtonClickListener: () -> Unit = this.audioCompleteButtonClickListener(
+        view.composerStyle.audioRecordingSendOnComplete,
+    ),
     audioSliderDragStartListener: (Float) -> Unit = this.audioSliderDragStartListener,
     audioSliderDragStopListener: (Float) -> Unit = this.audioSliderDragStopListener,
 ) {
@@ -173,7 +177,7 @@ public fun MessageComposerViewModel.bindViewDefaults(
     textInputChangeListener: ((String) -> Unit)? = null,
     attachmentSelectionListener: ((List<Attachment>) -> Unit)? = null,
     attachmentRemovalListener: ((Attachment) -> Unit)? = null,
-    pollSubmissionListener: ((PollConfig) -> Unit)? = null,
+    pollSubmissionListener: ((CreatePollParams) -> Unit)? = null,
     mentionSelectionListener: ((User) -> Unit)? = null,
     commandSelectionListener: ((Command) -> Unit)? = null,
     alsoSendToChannelSelectionListener: ((Boolean) -> Unit)? = null,
@@ -191,6 +195,7 @@ public fun MessageComposerViewModel.bindViewDefaults(
     audioSliderDragStartListener: ((Float) -> Unit)? = null,
     audioSliderDragStopListener: ((Float) -> Unit)? = null,
 ) {
+    val sendOnComplete = view.composerStyle.audioRecordingSendOnComplete
     bindView(
         view = view,
         lifecycleOwner = lifecycleOwner,
@@ -209,11 +214,13 @@ public fun MessageComposerViewModel.bindViewDefaults(
         audioRecordButtonHoldListener = this.audioRecordButtonHoldListener and audioRecordButtonHoldListener,
         audioRecordButtonLockListener = this.audioRecordButtonLockListener and audioRecordButtonLockListener,
         audioRecordButtonCancelListener = this.audioRecordButtonCancelListener and audioRecordButtonCancelListener,
-        audioRecordButtonReleaseListener = this.audioRecordButtonReleaseListener and audioRecordButtonReleaseListener,
+        audioRecordButtonReleaseListener = this.audioRecordButtonReleaseListener(sendOnComplete) and
+            audioRecordButtonReleaseListener,
         audioDeleteButtonClickListener = this.audioDeleteButtonClickListener and audioDeleteButtonClickListener,
         audioStopButtonClickListener = this.audioStopButtonClickListener and audioStopButtonClickListener,
         audioPlaybackButtonClickListener = this.audioPlaybackButtonClickListener and audioPlaybackButtonClickListener,
-        audioCompleteButtonClickListener = this.audioCompleteButtonClickListener and audioCompleteButtonClickListener,
+        audioCompleteButtonClickListener = this.audioCompleteButtonClickListener(sendOnComplete) and
+            audioCompleteButtonClickListener,
         audioSliderDragStartListener = this.audioSliderDragStartListener and audioSliderDragStartListener,
         audioSliderDragStopListener = this.audioSliderDragStopListener and audioSliderDragStopListener,
     )
@@ -240,19 +247,11 @@ private infix fun (() -> Unit).and(that: (() -> Unit)?): () -> Unit = when (that
 }
 
 internal object MessageComposerViewModelDefaults {
-    val MessageComposerViewModel.sendMessageButtonClickListener: (Message) -> Unit
-        get() = {
-            sendMessage(it)
-        }
+    val MessageComposerViewModel.sendMessageButtonClickListener: (Message) -> Unit get() = ::sendMessage
     val MessageComposerViewModel.textInputChangeListener: (String) -> Unit get() = { setMessageInput(it) }
-    val MessageComposerViewModel.attachmentSelectionListener: (List<Attachment>) -> Unit
-        get() = {
-            addSelectedAttachments(
-                it,
-            )
-        }
-    val MessageComposerViewModel.pollSubmissionListener: (PollConfig) -> Unit get() = { createPoll(it) }
-    val MessageComposerViewModel.attachmentRemovalListener: (Attachment) -> Unit get() = { removeSelectedAttachment(it) }
+    val MessageComposerViewModel.attachmentSelectionListener: (List<Attachment>) -> Unit get() = ::addAttachments
+    val MessageComposerViewModel.pollSubmissionListener: (CreatePollParams) -> Unit get() = { createPoll(it) }
+    val MessageComposerViewModel.attachmentRemovalListener: (Attachment) -> Unit get() = ::removeAttachment
     val MessageComposerViewModel.mentionSelectionListener: (User) -> Unit get() = { selectMention(it) }
     val MessageComposerViewModel.commandSelectionListener: (Command) -> Unit get() = { selectCommand(it) }
     val MessageComposerViewModel.alsoSendToChannelSelectionListener: (Boolean) -> Unit get() = { setAlsoSendToChannel(it) }
@@ -262,11 +261,22 @@ internal object MessageComposerViewModelDefaults {
     val MessageComposerViewModel.audioRecordButtonHoldListener: () -> Unit get() = { startRecording() }
     val MessageComposerViewModel.audioRecordButtonLockListener: () -> Unit get() = { lockRecording() }
     val MessageComposerViewModel.audioRecordButtonCancelListener: () -> Unit get() = { cancelRecording() }
-    val MessageComposerViewModel.audioRecordButtonReleaseListener: () -> Unit get() = { sendRecording() }
     val MessageComposerViewModel.audioDeleteButtonClickListener: () -> Unit get() = { cancelRecording() }
     val MessageComposerViewModel.audioStopButtonClickListener: () -> Unit get() = { stopRecording() }
     val MessageComposerViewModel.audioPlaybackButtonClickListener: () -> Unit get() = { toggleRecordingPlayback() }
-    val MessageComposerViewModel.audioCompleteButtonClickListener: () -> Unit get() = { completeRecording() }
     val MessageComposerViewModel.audioSliderDragStartListener: (Float) -> Unit get() = { pauseRecording() }
     val MessageComposerViewModel.audioSliderDragStopListener: (Float) -> Unit get() = { seekRecordingTo(it) }
+
+    fun MessageComposerViewModel.audioRecordButtonReleaseListener(sendOnComplete: Boolean): () -> Unit =
+        defaultAudioRecordingFinishedListener(sendOnComplete)
+
+    fun MessageComposerViewModel.audioCompleteButtonClickListener(sendOnComplete: Boolean): () -> Unit =
+        defaultAudioRecordingFinishedListener(sendOnComplete)
+
+    fun MessageComposerViewModel.defaultAudioRecordingFinishedListener(sendOnComplete: Boolean): () -> Unit =
+        if (sendOnComplete) {
+            { sendRecording() }
+        } else {
+            { completeRecording() }
+        }
 }

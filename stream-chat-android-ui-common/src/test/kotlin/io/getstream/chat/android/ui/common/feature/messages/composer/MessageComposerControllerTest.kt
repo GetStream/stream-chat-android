@@ -1,0 +1,1593 @@
+/*
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.getstream.chat.android.ui.common.feature.messages.composer
+
+import androidx.lifecycle.SavedStateHandle
+import app.cash.turbine.test
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.GlobalState
+import io.getstream.chat.android.client.audio.AudioPlayer
+import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.models.App
+import io.getstream.chat.android.models.AppSettings
+import io.getstream.chat.android.models.ChannelData
+import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.FileUploadConfig
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageModerationAction
+import io.getstream.chat.android.models.MessageModerationDetails
+import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomAttachment
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.test.MockRetrofitCall
+import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.asCall
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.MentionType
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
+import io.getstream.chat.android.ui.common.state.messages.Edit
+import io.getstream.chat.android.ui.common.state.messages.MessageInput
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import io.getstream.result.Result
+import io.getstream.result.call.Call
+import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
+import java.io.File
+import java.util.Date
+
+@Suppress("LargeClass")
+@OptIn(ExperimentalCoroutinesApi::class)
+internal class MessageComposerControllerTest {
+
+    @Test
+    fun `test valid URLs with LinkPattern`() {
+        val pattern = MessageComposerController.LinkPattern
+        val validUrls = listOf(
+            "https://www.example.com",
+            "http://www.example.com",
+            "www.example.com",
+            "example.com",
+            "https://subdomain.example.com",
+            "http://example.com/path/to/page?name=parameter&another=value",
+            "example.co.uk",
+        )
+        validUrls.forEach { url ->
+            assertTrue(pattern.matches(url), "Expected $url to be a valid URL")
+        }
+    }
+
+    @Test
+    fun `test invalid URLs with LinkPattern`() {
+        val pattern = MessageComposerController.LinkPattern
+        val invalidUrls = listOf(
+            "http//www.example.com",
+            "htp://example.com",
+            "://example.com",
+            "example",
+            "http://example..com",
+            "http://-example.com",
+            "http://example",
+        )
+        invalidUrls.forEach { url ->
+            assertFalse(pattern.matches(url), "Expected $url to be an invalid URL")
+        }
+    }
+
+    @Test
+    fun `test hasCommands is read from channelConfig`() = runTest {
+        // given
+        val commands = listOf(Command("giphy", "Add GIF", "giphy", set = "giphy"))
+        val config = Config(commands = commands)
+        val configFlow = MutableStateFlow(config)
+        // when
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState(configState = configFlow)
+            .get()
+        // then
+        assertTrue(controller.state.value.hasCommands)
+    }
+
+    @Test
+    fun `test pollsEnabled is read from channelConfig`() = runTest {
+        // given
+        val config = Config(pollsEnabled = true)
+        val configFlow = MutableStateFlow(config)
+        // when
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState(configState = configFlow)
+            .get()
+        // then
+        assertTrue(controller.state.value.pollsEnabled)
+    }
+
+    @Test
+    fun `Given user mention When selectMention called Then message input is autocompleted with user name`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val user = User(id = "user1", name = "John Doe")
+        controller.setMessageInput("Hello @")
+
+        // When
+        controller.selectMention(user)
+
+        // Then
+        assertEquals("Hello @John Doe ", controller.messageInput.value.text)
+        assertEquals(1, controller.state.value.selectedMentions.size)
+        assertTrue(controller.state.value.selectedMentions.contains(Mention.User(user)))
+    }
+
+    @Test
+    fun `Given partial mention text When selectMention called Then partial text is replaced with full name`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val user = User(id = "user1", name = "John Doe")
+        controller.setMessageInput("Hello @jo")
+
+        // When
+        controller.selectMention(user)
+
+        // Then
+        assertEquals("Hello @John Doe ", controller.messageInput.value.text)
+    }
+
+    @Test
+    fun `Given custom mention When selectMention called Then message input is autocompleted with display text`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val customMention = CustomTestMention("Channel Name")
+        controller.setMessageInput("Notify @")
+
+        // When
+        controller.selectMention(customMention)
+
+        // Then
+        assertEquals("Notify @Channel Name ", controller.messageInput.value.text)
+        assertEquals(1, controller.state.value.selectedMentions.size)
+        assertTrue(controller.state.value.selectedMentions.contains(customMention))
+    }
+
+    @Test
+    fun `Given multiple mentions When selectMention called multiple times Then all mentions are tracked`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val user1 = User(id = "user1", name = "John Doe")
+        val user2 = User(id = "user2", name = "Jane Smith")
+
+        // When
+        controller.setMessageInput("Hello @")
+        controller.selectMention(user1)
+        controller.setMessageInput("Hello @John Doe and @")
+        controller.selectMention(user2)
+
+        // Then
+        assertEquals("Hello @John Doe and @Jane Smith ", controller.messageInput.value.text)
+        assertEquals(2, controller.state.value.selectedMentions.size)
+    }
+
+    @Test
+    fun `Given message input source is MentionSelected When selectMention called Then source is set to MentionSelected`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val user = User(id = "user1", name = "John Doe")
+        controller.setMessageInput("Hello @")
+
+        // When
+        controller.selectMention(user)
+
+        // Then
+        assertEquals(MessageInput.Source.MentionSelected, controller.messageInput.value.source)
+    }
+
+    @Test
+    fun `Given idle state When startRecording is called Then delegates to media recorder`() = runTest {
+        // Given
+        val mockFile: File = mock()
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .givenMediaRecorderStartSuccess(mockFile)
+        val controller = fixture.get()
+
+        // When
+        controller.startRecording()
+        advanceUntilIdle()
+
+        // Then
+        verify(fixture.mediaRecorder).startAudioRecording(
+            any<String>(),
+            any<Long>(),
+            any<Boolean>(),
+        )
+    }
+
+    @Test
+    fun `Given no attachments When addAttachments called Then attachments are set`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val attachments = listOf(
+            randomAttachment(extraData = mapOf("io.getstream.sourceUri" to "uri:1")),
+            randomAttachment(extraData = mapOf("io.getstream.sourceUri" to "uri:2")),
+        )
+
+        // When
+        controller.addAttachments(attachments)
+
+        // Then
+        assertEquals(attachments.size, controller.state.value.attachments.size)
+    }
+
+    @Test
+    fun `Given staged attachments When removeAttachment called Then the matching URI is removed`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val a1 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+        val a2 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:2"))
+        controller.addAttachments(listOf(a1, a2))
+
+        // When
+        controller.removeAttachment(a1)
+
+        // Then
+        assertEquals(1, controller.state.value.attachments.size)
+        assertEquals("uri:2", controller.state.value.attachments.first().extraData[EXTRA_SOURCE_URI])
+    }
+
+    @Test
+    fun `Given staged attachments When removeAttachment called with unknown URI Then nothing changes`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val a1 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+        controller.addAttachments(listOf(a1))
+        val unknown = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:unknown"))
+
+        // When
+        controller.removeAttachment(unknown)
+
+        // Then
+        assertEquals(1, controller.state.value.attachments.size)
+    }
+
+    @Test
+    fun `Given staged attachments When removeAttachmentsByUris called Then matching URIs are removed`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val a1 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+        val a2 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:2"))
+        val a3 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:3"))
+        controller.addAttachments(listOf(a1, a2, a3))
+
+        // When
+        controller.removeAttachmentsByUris(setOf("uri:1", "uri:3"))
+
+        // Then
+        assertEquals(1, controller.state.value.attachments.size)
+        assertEquals("uri:2", controller.state.value.attachments.first().extraData[EXTRA_SOURCE_URI])
+    }
+
+    @Test
+    fun `Given staged attachments When removeAttachmentsByUris called with empty set Then nothing changes`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val a1 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+        controller.addAttachments(listOf(a1))
+
+        // When
+        controller.removeAttachmentsByUris(emptySet())
+
+        // Then
+        assertEquals(1, controller.state.value.attachments.size)
+    }
+
+    @Test
+    fun `Given staged attachments When clearAttachments called Then attachments list is empty`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        controller.addAttachments(
+            listOf(
+                randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1")),
+                randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:2")),
+            ),
+        )
+
+        // When
+        controller.clearAttachments()
+
+        // Then
+        assertTrue(controller.state.value.attachments.isEmpty())
+    }
+
+    @Test
+    fun `Given a staged attachment When addAttachments called with same URI Then value is updated and count stays the same`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val original = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+        val updated = original.copy(type = "updated_type", extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+        controller.addAttachments(listOf(original))
+
+        // When
+        controller.addAttachments(listOf(updated))
+
+        // Then
+        assertEquals(1, controller.state.value.attachments.size)
+        assertEquals("updated_type", controller.state.value.attachments.first().type)
+    }
+
+    @Test
+    fun `Given attachments added and cleared When state is collected Then it reflects the updated attachments`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val a1 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+        val a2 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:2"))
+
+        controller.state.test {
+            awaitItem() // initial empty emission
+
+            // When
+            controller.addAttachments(listOf(a1, a2))
+            assertEquals(2, awaitItem().attachments.size)
+
+            controller.clearAttachments()
+            assertTrue(awaitItem().attachments.isEmpty())
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `Given picker attachments staged When entering and dismissing edit mode Then picker selections are preserved`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val pickerAttachment = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+        controller.addAttachments(listOf(pickerAttachment))
+
+        // When
+        controller.performMessageAction(Edit(randomMessage(cid = CID)))
+        controller.dismissMessageActions()
+
+        // Then
+        assertEquals(1, controller.state.value.attachments.size)
+        assertEquals("uri:1", controller.state.value.attachments.first().extraData[EXTRA_SOURCE_URI])
+    }
+
+    @Test
+    fun `Given edit mode with remote attachment When add picker attachment Then both are staged`() = runTest {
+        // Given
+        val remoteAttachment = randomAttachment()
+        val pickerAttachment = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:picker"))
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        controller.performMessageAction(Edit(randomMessage(cid = CID, attachments = listOf(remoteAttachment))))
+
+        // When
+        controller.addAttachments(listOf(pickerAttachment))
+
+        // Then
+        assertEquals(2, controller.state.value.attachments.size)
+    }
+
+    @Test
+    fun `Given edit mode with remote attachment When remove remote attachment Then it is removed`() = runTest {
+        // Given
+        val remoteAttachment = randomAttachment()
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        controller.performMessageAction(Edit(randomMessage(cid = CID, attachments = listOf(remoteAttachment))))
+
+        // When
+        controller.removeAttachment(remoteAttachment)
+
+        // Then
+        assertTrue(controller.state.value.attachments.isEmpty())
+    }
+
+    @Test
+    fun `Given edit mode When dismiss Then edit attachments are cleared and picker selections are preserved`() = runTest {
+        // Given
+        val remoteAttachment = randomAttachment()
+        val pickerAttachment = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:picker"))
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        controller.addAttachments(listOf(pickerAttachment))
+        controller.performMessageAction(Edit(randomMessage(cid = CID, attachments = listOf(remoteAttachment))))
+
+        // When
+        controller.dismissMessageActions()
+
+        // Then
+        assertEquals(1, controller.state.value.attachments.size)
+        assertEquals("uri:picker", controller.state.value.attachments.first().extraData[EXTRA_SOURCE_URI])
+    }
+
+    @Test
+    fun `Given a command When selectCommand called Then inputFocusEvents emits`() = runTest {
+        // Given
+        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+
+        controller.inputFocusEvents.test {
+            // When
+            controller.selectCommand(command)
+
+            // Then
+            awaitItem()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `Given activeCommand is disabled When selectCommand called Then activeCommand is set and inputValue is not empty`() = runTest {
+        // Given
+        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = false))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+
+        // When
+        controller.selectCommand(command)
+        advanceUntilIdle()
+
+        // Then
+        assertEquals(command, controller.state.value.activeCommand)
+        assertEquals("/${command.name} ", controller.state.value.inputValue)
+    }
+
+    @Test
+    fun `Given a command When selectCommand called Then activeCommand is set and inputValue is empty`() = runTest {
+        // Given
+        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+
+        // When
+        controller.selectCommand(command)
+        advanceUntilIdle()
+
+        // Then
+        assertEquals(command, controller.state.value.activeCommand)
+        assertEquals("", controller.state.value.inputValue)
+    }
+
+    @Test
+    fun `Given an active command When clearActiveCommand called Then activeCommand is null and inputValue is empty`() =
+        runTest {
+            // Given
+            val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+            val controller = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(command))),
+                )
+                .get()
+            controller.selectCommand(command)
+            advanceUntilIdle()
+
+            // When
+            controller.clearActiveCommand()
+            advanceUntilIdle()
+
+            // Then
+            assertEquals(null, controller.state.value.activeCommand)
+            assertEquals("", controller.state.value.inputValue)
+        }
+
+    @Test
+    fun `Given an active command with args When buildNewMessage called Then full command text is used`() = runTest {
+        // Given
+        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+        controller.selectCommand(command)
+        advanceUntilIdle()
+
+        // When
+        val message = controller.buildNewMessage("hello world")
+
+        // Then
+        assertEquals("/giphy hello world", message.text)
+    }
+
+    @Test
+    fun `Given an active command with no args When buildNewMessage called Then command name only is used`() = runTest {
+        // Given
+        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val controller = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+        controller.selectCommand(command)
+        advanceUntilIdle()
+
+        // When
+        val message = controller.buildNewMessage("")
+
+        // Then
+        assertEquals("/giphy", message.text)
+    }
+
+    @Test
+    fun `Given an active command When clearData called Then activeCommand is null`() = runTest {
+        // Given
+        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+        controller.selectCommand(command)
+        advanceUntilIdle()
+
+        // When
+        controller.clearData()
+        advanceUntilIdle()
+
+        // Then
+        assertEquals(null, controller.state.value.activeCommand)
+    }
+
+    @Test
+    fun `Given normal mode When sendMessage called Then chatClient sendMessage is invoked with correct message`() = runTest {
+        // Given
+        val currentUser = User("uid1")
+        val sentMessage = randomMessage(cid = CID, text = "Hello World")
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(currentUser)
+            .givenGlobalState()
+            .givenChannelState()
+            .givenSendMessage(sentMessage)
+        val controller = fixture.get()
+
+        val message = Message(cid = CID, text = "Hello World")
+        val callback: Call.Callback<Message> = mock()
+
+        // When
+        controller.sendMessage(message, callback)
+        advanceUntilIdle()
+
+        // Then
+        val messageCaptor = argumentCaptor<Message>()
+        verify(fixture.chatClient).sendMessage(
+            eq(CHANNEL_TYPE),
+            eq(CHANNEL_ID),
+            messageCaptor.capture(),
+            eq(false),
+        )
+        val capturedMessage = messageCaptor.firstValue
+        assertEquals("Hello World", capturedMessage.text)
+        assertEquals(CID, capturedMessage.cid)
+        assertFalse(capturedMessage.showInChannel)
+        assertTrue(capturedMessage.skipEnrichUrl)
+    }
+
+    @Test
+    fun `Given normal mode When sendMessage called Then data is cleared`() = runTest {
+        // Given
+        val currentUser = User("uid1")
+        val sentMessage = randomMessage(cid = CID, text = "Hello World")
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(currentUser)
+            .givenGlobalState()
+            .givenChannelState()
+            .givenSendMessage(sentMessage)
+        val controller = fixture.get()
+
+        controller.setMessageInput("Hello World")
+        controller.addAttachments(listOf(randomAttachment()))
+
+        val message = Message(cid = CID, text = "Hello World")
+        val callback: Call.Callback<Message> = mock()
+
+        // When
+        controller.sendMessage(message, callback)
+        advanceUntilIdle()
+
+        // Then
+        assertEquals("", controller.messageInput.value.text)
+        assertEquals(emptyList<Any>(), controller.state.value.attachments)
+    }
+
+    @Test
+    fun `Given thread mode with alsoSendToChannel true When sendMessage called Then showInChannel is true`() = runTest {
+        // Given
+        val currentUser = User("uid1")
+        val parentMessage = randomMessage(id = "parent-id", cid = CID)
+        val sentMessage = randomMessage(cid = CID, text = "Thread reply")
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(currentUser)
+            .givenGlobalState()
+            .givenChannelState()
+            .givenSendMessage(sentMessage)
+        val controller = fixture.get()
+
+        controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+        controller.setAlsoSendToChannel(true)
+
+        val message = Message(cid = CID, text = "Thread reply", parentId = "parent-id")
+        val callback: Call.Callback<Message> = mock()
+
+        // When
+        controller.sendMessage(message, callback)
+        advanceUntilIdle()
+
+        // Then
+        val messageCaptor = argumentCaptor<Message>()
+        verify(fixture.chatClient).sendMessage(
+            eq(CHANNEL_TYPE),
+            eq(CHANNEL_ID),
+            messageCaptor.capture(),
+            eq(false),
+        )
+        val capturedMessage = messageCaptor.firstValue
+        assertTrue(capturedMessage.showInChannel)
+        assertEquals("Thread reply", capturedMessage.text)
+    }
+
+    @Test
+    fun `Given thread mode with alsoSendToChannel false When sendMessage called Then showInChannel is false`() = runTest {
+        // Given
+        val currentUser = User("uid1")
+        val parentMessage = randomMessage(id = "parent-id", cid = CID)
+        val sentMessage = randomMessage(cid = CID, text = "Thread reply")
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(currentUser)
+            .givenGlobalState()
+            .givenChannelState()
+            .givenSendMessage(sentMessage)
+        val controller = fixture.get()
+
+        controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+        controller.setAlsoSendToChannel(false)
+
+        val message = Message(cid = CID, text = "Thread reply", parentId = "parent-id")
+        val callback: Call.Callback<Message> = mock()
+
+        // When
+        controller.sendMessage(message, callback)
+        advanceUntilIdle()
+
+        // Then
+        val messageCaptor = argumentCaptor<Message>()
+        verify(fixture.chatClient).sendMessage(
+            eq(CHANNEL_TYPE),
+            eq(CHANNEL_ID),
+            messageCaptor.capture(),
+            eq(false),
+        )
+        val capturedMessage = messageCaptor.firstValue
+        assertFalse(capturedMessage.showInChannel)
+        assertEquals("Thread reply", capturedMessage.text)
+    }
+
+    @Test
+    fun `Given thread mode with alsoSendToChannel true When clearData called Then alsoSendToChannel remains true`() =
+        runTest {
+            // Given
+            val parentMessage = randomMessage()
+            val fixture = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState()
+            val controller = fixture.get()
+
+            controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+            controller.setAlsoSendToChannel(true)
+
+            // When
+            controller.clearData()
+            advanceUntilIdle()
+
+            // Then
+            assertTrue(controller.state.value.alsoSendToChannel)
+        }
+
+    @Test
+    fun `Given normal mode with alsoSendToChannel true When clearData called Then alsoSendToChannel is false`() =
+        runTest {
+            // Given
+            val fixture = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState()
+            val controller = fixture.get()
+            controller.setAlsoSendToChannel(true)
+
+            // When
+            controller.clearData()
+            advanceUntilIdle()
+
+            // Then
+            assertFalse(controller.state.value.alsoSendToChannel)
+        }
+
+    @Test
+    fun `Given edit mode with text changes When sendMessage called Then editMessage is invoked`() = runTest {
+        // Given
+        val currentUser = User("uid1")
+        val originalMessage = randomMessage(
+            id = "msg-id",
+            cid = CID,
+            text = "Original text",
+            user = currentUser,
+        )
+        val updatedMessage = originalMessage.copy(text = "Updated text")
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(currentUser)
+            .givenGlobalState()
+            .givenChannelState()
+            .givenEditMessage(updatedMessage)
+        val controller = fixture.get()
+
+        // Enter edit mode
+        controller.performMessageAction(Edit(originalMessage))
+
+        val message = originalMessage.copy(text = "Updated text")
+        val callback: Call.Callback<Message> = mock()
+
+        // When
+        controller.sendMessage(message, callback)
+        advanceUntilIdle()
+
+        // Then
+        verify(fixture.chatClient).editMessage(
+            eq("messaging"),
+            eq("123"),
+            any(),
+        )
+        verify(fixture.chatClient, never()).sendMessage(any(), any(), any(), any())
+    }
+
+    @Test
+    fun `Given edit mode with no text changes When sendMessage called Then no API call is made and data is cleared`() = runTest {
+        // Given
+        val currentUser = User("uid1")
+        val originalMessage = randomMessage(
+            id = "msg-id",
+            cid = CID,
+            text = "Same text",
+            user = currentUser,
+        )
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(currentUser)
+            .givenGlobalState()
+            .givenChannelState()
+        val controller = fixture.get()
+
+        // Enter edit mode
+        controller.performMessageAction(Edit(originalMessage))
+
+        // Send message with same text
+        val message = originalMessage.copy(text = "Same text")
+        val callback: Call.Callback<Message> = mock()
+
+        // When
+        controller.sendMessage(message, callback)
+        advanceUntilIdle()
+
+        // Then - no API calls should be made
+        verify(fixture.chatClient, never()).editMessage(any(), any(), any())
+        verify(fixture.chatClient, never()).sendMessage(any(), any(), any(), any())
+        // And data should be cleared
+        assertEquals("", controller.messageInput.value.text)
+        assertEquals(emptyList<Any>(), controller.state.value.attachments)
+    }
+
+    @Test
+    fun `Given moderation error message When sendMessage called Then old message is deleted and new one is sent`() = runTest {
+        // Given
+        val currentUser = User("uid1")
+        val moderationErrorMessage = randomMessage(
+            id = "moderated-msg-id",
+            cid = CID,
+            text = "Bad content",
+            user = currentUser,
+            type = MessageType.ERROR,
+            syncStatus = SyncStatus.FAILED_PERMANENTLY,
+        ).copy(
+            moderationDetails = MessageModerationDetails(
+                originalText = "Bad content",
+                action = MessageModerationAction.bounce,
+                errorMsg = "Content moderation error",
+            ),
+        )
+        val newMessage = Message(cid = CID, text = "Fixed content")
+        val sentMessage = randomMessage(cid = CID, text = "Fixed content")
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(currentUser)
+            .givenCurrentUser(currentUser)
+            .givenGlobalState()
+            .givenChannelState()
+            .givenDeleteMessage(moderationErrorMessage)
+            .givenSendMessage(sentMessage)
+        val controller = fixture.get()
+
+        // Enter edit mode with moderation error message
+        controller.performMessageAction(Edit(moderationErrorMessage))
+
+        val callback: Call.Callback<Message> = mock()
+
+        // When
+        controller.sendMessage(newMessage, callback)
+        advanceUntilIdle()
+
+        // Then
+        verify(fixture.chatClient).deleteMessage(eq("moderated-msg-id"), eq(true))
+        val messageCaptor = argumentCaptor<Message>()
+        verify(fixture.chatClient).sendMessage(
+            eq(CHANNEL_TYPE),
+            eq(CHANNEL_ID),
+            messageCaptor.capture(),
+            eq(false),
+        )
+        assertEquals("Fixed content", messageCaptor.firstValue.text)
+    }
+
+    @Test
+    fun `Given endOfNewerMessages is true When sendMessage called Then loadNewestMessages is not called`() = runTest {
+        // Given
+        val currentUser = User("uid1")
+        val sentMessage = randomMessage(cid = CID, text = "Hello")
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(currentUser)
+            .givenGlobalState()
+            .givenChannelState(endOfNewerMessagesState = MutableStateFlow(true))
+            .givenSendMessage(sentMessage)
+        val controller = fixture.get()
+
+        val message = Message(cid = CID, text = "Hello")
+        val callback: Call.Callback<Message> = mock()
+
+        // When
+        controller.sendMessage(message, callback)
+        advanceUntilIdle()
+
+        // Then
+        verify(fixture.chatClient, never()).inheritScope(any())
+    }
+
+    @Test
+    fun `Given thread mode and endOfNewerMessages is false When sendMessage called Then loadNewestMessages is not called`() = runTest {
+        // Given
+        val currentUser = User("uid1")
+        val parentMessage = randomMessage(id = "parent-id", cid = CID)
+        val sentMessage = randomMessage(cid = CID, text = "Thread reply")
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(currentUser)
+            .givenGlobalState()
+            .givenChannelState(endOfNewerMessagesState = MutableStateFlow(false))
+            .givenSendMessage(sentMessage)
+        val controller = fixture.get()
+
+        controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+
+        val message = Message(cid = CID, text = "Thread reply", parentId = "parent-id")
+        val callback: Call.Callback<Message> = mock()
+
+        // When
+        controller.sendMessage(message, callback)
+        advanceUntilIdle()
+
+        // Then
+        verify(fixture.chatClient, never()).inheritScope(any())
+    }
+
+    @Test
+    fun `Given endOfNewerMessages is false When sendMessage called Then loadNewestMessages is called`() = runTest {
+        // Given
+        val currentUser = User("uid1")
+        val sentMessage = randomMessage(cid = CID, text = "Hello")
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(currentUser)
+            .givenGlobalState()
+            .givenChannelState(endOfNewerMessagesState = MutableStateFlow(false))
+            .givenSendMessage(sentMessage)
+        val controller = fixture.get()
+
+        val message = Message(cid = CID, text = "Hello")
+        val callback: Call.Callback<Message> = mock()
+
+        // When
+        controller.sendMessage(message, callback)
+        advanceUntilIdle()
+
+        // Then
+        verify(fixture.chatClient).inheritScope(any())
+    }
+
+    @Test
+    fun `Given URI-less attachments When addAttachments called Then all attachments are staged`() = runTest {
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val a1 = randomAttachment(name = "location.pin", type = "location")
+        val a2 = randomAttachment(name = "card.custom", type = "custom")
+
+        controller.addAttachments(listOf(a1, a2))
+
+        assertEquals(2, controller.state.value.attachments.size)
+    }
+
+    @Test
+    fun `Given URI-less attachment staged When removeAttachment called Then it is removed by fallback key`() = runTest {
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val attachment = randomAttachment(name = "location.pin", type = "location")
+        controller.addAttachments(listOf(attachment))
+
+        controller.removeAttachment(attachment)
+
+        assertTrue(controller.state.value.attachments.isEmpty())
+    }
+
+    @Test
+    fun `Given edit-mode attachment with URI When removeAttachment called Then edit-mode list is checked before picker`() =
+        runTest {
+            val controller = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState()
+                .get()
+            val remoteAttachment = randomAttachment()
+            controller.performMessageAction(Edit(randomMessage(cid = CID, attachments = listOf(remoteAttachment))))
+
+            controller.removeAttachment(remoteAttachment)
+
+            assertTrue(controller.state.value.attachments.isEmpty())
+        }
+
+    @Test
+    fun `Given picker attachments When syncAttachments called after recording completes Then recording attachment is preserved`() =
+        runTest {
+            val controller = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState()
+                .get()
+            val pickerAttachment = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+            controller.addAttachments(listOf(pickerAttachment))
+            assertEquals(1, controller.state.value.attachments.size)
+
+            // Simulate recording completion by adding another picker attachment
+            // (which triggers syncAttachments) — the existing attachment should survive
+            val pickerAttachment2 = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:2"))
+            controller.addAttachments(listOf(pickerAttachment2))
+
+            assertEquals(2, controller.state.value.attachments.size)
+        }
+
+    @Test
+    fun `Given clearAttachments called When recording was completed Then recording attachment is also cleared`() =
+        runTest {
+            val controller = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState()
+                .get()
+            val pickerAttachment = randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:1"))
+            controller.addAttachments(listOf(pickerAttachment))
+
+            controller.clearAttachments()
+
+            assertTrue(controller.state.value.attachments.isEmpty())
+        }
+
+    @Test
+    fun `Given persisted edit session When controller restores Then edit action uses full message from channel state`() =
+        runTest {
+            val fullMessage = randomMessage(
+                id = "msg-1",
+                cid = CID,
+                text = "original",
+                createdAt = Date(),
+            )
+            val editedText = "edited text"
+            val savedStateHandle = SavedStateHandle()
+            ComposerSessionRepository(savedStateHandle).save(
+                selectedAttachments = emptyList(),
+                editMode = ComposerSessionRepository.EditMode(
+                    message = fullMessage.copy(text = editedText),
+                    attachments = emptyList(),
+                ),
+            )
+
+            val controller = Fixture(savedStateHandle = savedStateHandle)
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState()
+                .givenMessageById(fullMessage)
+                .get()
+            advanceUntilIdle()
+
+            assertEquals(editedText, controller.messageInput.value.text)
+            val action = controller.state.value.action
+            assertTrue(action is Edit)
+            assertEquals(fullMessage.id, (action as Edit).message.id)
+            assertEquals(fullMessage.createdAt, action.message.createdAt)
+        }
+
+    @Test
+    fun `Given persisted edit session When channel state has no message Then edit action falls back to stripped message`() =
+        runTest {
+            val messageId = "msg-2"
+            val editedText = "edited text"
+            val savedStateHandle = SavedStateHandle()
+            ComposerSessionRepository(savedStateHandle).save(
+                selectedAttachments = emptyList(),
+                editMode = ComposerSessionRepository.EditMode(
+                    message = Message(id = messageId, cid = CID, text = editedText),
+                    attachments = emptyList(),
+                ),
+            )
+
+            val controller = Fixture(savedStateHandle = savedStateHandle)
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState()
+                .get()
+            advanceUntilIdle()
+
+            assertEquals(editedText, controller.messageInput.value.text)
+            val action = controller.state.value.action
+            assertTrue(action is Edit)
+            assertEquals(messageId, (action as Edit).message.id)
+            assertNull(action.message.createdAt)
+        }
+
+    @Test
+    fun `Given in-flight link preview When clearData called Then late resolution does not leak into state`() = runTest {
+        // Given
+        val url = "https://example.com"
+        val resolveSignal = CompletableDeferred<Unit>()
+        val pendingCall = MockRetrofitCall(
+            scope = this,
+            result = Result.Success(randomAttachment()),
+            doWork = { resolveSignal.await() },
+        )
+        val fixture = Fixture()
+            .givenConfig(MessageComposerController.Config(linkPreviewEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .givenInheritedScope(this)
+        whenever(fixture.chatClient.enrichUrl(any())) doReturn pendingCall
+        val controller = fixture.get()
+        controller.setMessageInput(url)
+        advanceUntilIdle()
+        // Resolution is in-flight, preview not yet in state.
+        assertNull(controller.state.value.linkPreview)
+
+        // When: user sends (via clearData) before resolution completes, then the
+        // enrichment response arrives late.
+        controller.clearData()
+        resolveSignal.complete(Unit)
+        // Flush the pending continuation of the in-flight resolve without advancing
+        // virtual time past the next debounce tick (which would clear state anyway).
+        runCurrent()
+
+        // Then: the late response must not leak into the composer state.
+        assertNull(controller.state.value.linkPreview)
+        advanceUntilIdle()
+    }
+
+    @Test
+    fun `Given URL typed When sendMessage called before link preview resolves Then skipEnrichUrl is false`() = runTest {
+        // Given
+        val url = "https://example.com"
+        val sentMessage = randomMessage(cid = CID, text = url)
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .givenSendMessage(sentMessage)
+        val controller = fixture.get()
+        controller.setMessageInput(url)
+        // Do NOT advanceUntilIdle — debounce hasn't fired, no link preview resolved.
+
+        // When
+        controller.sendMessage(Message(cid = CID, text = url), mock())
+        advanceUntilIdle()
+
+        // Then: backend should enrich (skipEnrichUrl = false) because the user never
+        // dismissed the preview — it just hadn't resolved yet.
+        val messageCaptor = argumentCaptor<Message>()
+        verify(fixture.chatClient).sendMessage(
+            eq(CHANNEL_TYPE),
+            eq(CHANNEL_ID),
+            messageCaptor.capture(),
+            eq(false),
+        )
+        assertFalse(messageCaptor.firstValue.skipEnrichUrl)
+    }
+
+    @Test
+    fun `Given dismissed link preview When sendMessage called Then skipEnrichUrl is true`() = runTest {
+        // Given
+        val url = "https://example.com"
+        val sentMessage = randomMessage(cid = CID, text = url)
+        val fixture = Fixture()
+            .givenConfig(MessageComposerController.Config(linkPreviewEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .givenSendMessage(sentMessage)
+            .givenInheritedScope(this)
+        whenever(fixture.chatClient.enrichUrl(any())) doReturn randomAttachment().asCall()
+        val controller = fixture.get()
+        controller.setMessageInput(url)
+        advanceUntilIdle()
+        assertNotNull(controller.state.value.linkPreview)
+
+        // When: user explicitly dismisses the preview, then sends.
+        controller.cancelLinkPreview()
+        controller.sendMessage(Message(cid = CID, text = url), mock())
+        advanceUntilIdle()
+
+        // Then: backend should skip enrichment because the user dismissed the preview.
+        val messageCaptor = argumentCaptor<Message>()
+        verify(fixture.chatClient).sendMessage(
+            eq(CHANNEL_TYPE),
+            eq(CHANNEL_ID),
+            messageCaptor.capture(),
+            eq(false),
+        )
+        assertTrue(messageCaptor.firstValue.skipEnrichUrl)
+    }
+
+    @Test
+    fun `Given dismissed link preview When text changed and sendMessage called Then skipEnrichUrl is false`() = runTest {
+        // Given
+        val url = "https://example.com"
+        val newUrl = "https://getstream.io"
+        val sentMessage = randomMessage(cid = CID, text = newUrl)
+        val fixture = Fixture()
+            .givenConfig(MessageComposerController.Config(linkPreviewEnabled = true))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .givenSendMessage(sentMessage)
+            .givenInheritedScope(this)
+        whenever(fixture.chatClient.enrichUrl(any())) doReturn randomAttachment().asCall()
+        val controller = fixture.get()
+        controller.setMessageInput(url)
+        advanceUntilIdle()
+        controller.cancelLinkPreview()
+
+        // When: user types a new URL after dismissing, then sends.
+        controller.setMessageInput(newUrl)
+        controller.sendMessage(Message(cid = CID, text = newUrl), mock())
+        advanceUntilIdle()
+
+        // Then: the text change resets the dismissal — backend should enrich.
+        val messageCaptor = argumentCaptor<Message>()
+        verify(fixture.chatClient).sendMessage(
+            eq(CHANNEL_TYPE),
+            eq(CHANNEL_ID),
+            messageCaptor.capture(),
+            eq(false),
+        )
+        assertFalse(messageCaptor.firstValue.skipEnrichUrl)
+    }
+
+    @Test
+    fun `Given dismissed link preview When same URL text edited and sendMessage called Then skipEnrichUrl is true`() =
+        runTest {
+            // Given
+            val url = "https://example.com"
+            val sentMessage = randomMessage(cid = CID, text = "$url hello")
+            val fixture = Fixture()
+                .givenConfig(MessageComposerController.Config(linkPreviewEnabled = true))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState()
+                .givenSendMessage(sentMessage)
+                .givenInheritedScope(this)
+            whenever(fixture.chatClient.enrichUrl(any())) doReturn randomAttachment().asCall()
+            val controller = fixture.get()
+            controller.setMessageInput(url)
+            advanceUntilIdle()
+            controller.cancelLinkPreview()
+
+            // When: user continues typing non-URL text after dismissing, then sends.
+            controller.setMessageInput("$url hello")
+            controller.sendMessage(Message(cid = CID, text = "$url hello"), mock())
+            advanceUntilIdle()
+
+            // Then: the dismissal is sticky — the URL didn't change, so backend should skip.
+            val messageCaptor = argumentCaptor<Message>()
+            verify(fixture.chatClient).sendMessage(
+                eq(CHANNEL_TYPE),
+                eq(CHANNEL_ID),
+                messageCaptor.capture(),
+                eq(false),
+            )
+            assertTrue(messageCaptor.firstValue.skipEnrichUrl)
+        }
+
+    /**
+     * Custom test implementation of [Mention] for testing purposes.
+     */
+    private data class CustomTestMention(
+        override val display: String,
+    ) : Mention {
+        override val type: MentionType = MentionType("channel")
+    }
+
+    private class Fixture(
+        val chatClient: ChatClient = mock(),
+        private val cid: String = CID,
+        private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
+    ) {
+
+        private val clientState: ClientState = mock()
+        private val channelState: ChannelState = mock()
+        private val globalState: GlobalState = mock()
+        private var inheritedScope: CoroutineScope = TestScope()
+        val mediaRecorder: StreamMediaRecorder = mock()
+        private var config = MessageComposerController.Config()
+
+        fun givenInheritedScope(scope: CoroutineScope) = apply {
+            this.inheritedScope = scope
+        }
+
+        fun givenAppSettings(appSettings: AppSettings = defaultAppSettings()) = apply {
+            whenever(chatClient.getAppSettings()) doReturn appSettings
+        }
+
+        fun givenConfig(config: MessageComposerController.Config) = apply {
+            this.config = config
+        }
+
+        private fun defaultAppSettings(): AppSettings {
+            val fileUploadConfig = FileUploadConfig(
+                allowedFileExtensions = emptyList(),
+                allowedMimeTypes = emptyList(),
+                blockedFileExtensions = emptyList(),
+                blockedMimeTypes = emptyList(),
+                sizeLimitInBytes = AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
+            )
+            return AppSettings(
+                app = App(
+                    name = "test-app",
+                    fileUploadConfig = fileUploadConfig,
+                    imageUploadConfig = fileUploadConfig,
+                ),
+            )
+        }
+
+        fun givenAudioPlayer(audioPlayer: AudioPlayer) = apply {
+            whenever(chatClient.audioPlayer) doReturn audioPlayer
+        }
+
+        fun givenMediaRecorderStartSuccess(file: File) = apply {
+            whenever(
+                mediaRecorder.startAudioRecording(any<String>(), any<Long>(), any<Boolean>()),
+            ) doReturn Result.Success(file)
+        }
+
+        fun givenClientState(user: User) = apply {
+            whenever(clientState.user) doReturn MutableStateFlow(user)
+            whenever(chatClient.clientState) doReturn clientState
+        }
+
+        fun givenCurrentUser(user: User) = apply {
+            whenever(chatClient.getCurrentUser()) doReturn user
+        }
+
+        fun givenChannelState(
+            channelDataState: StateFlow<ChannelData> = MutableStateFlow(
+                value = ChannelData(CHANNEL_ID, CHANNEL_TYPE),
+            ),
+            configState: StateFlow<Config> = MutableStateFlow(Config()),
+            membersState: StateFlow<List<Member>> = MutableStateFlow(emptyList()),
+            lastSentMessageDateState: StateFlow<Date?> = MutableStateFlow(null),
+            endOfNewerMessagesState: StateFlow<Boolean> = MutableStateFlow(true),
+        ) = apply {
+            whenever(channelState.cid) doReturn cid
+            whenever(channelState.channelData) doReturn channelDataState
+            whenever(channelState.channelConfig) doReturn configState
+            whenever(channelState.members) doReturn membersState
+            whenever(channelState.lastSentMessageDate) doReturn lastSentMessageDateState
+            whenever(channelState.endOfNewerMessages) doReturn endOfNewerMessagesState
+        }
+
+        fun givenSendMessage(message: Message) = apply {
+            whenever(chatClient.sendMessage(any(), any(), any(), any())) doReturn message.asCall()
+            whenever(chatClient.markMessageRead(any(), any(), any())) doReturn Unit.asCall()
+        }
+
+        fun givenMessageById(message: Message) = apply {
+            whenever(channelState.getMessageById(eq(message.id))) doReturn message
+        }
+
+        fun givenEditMessage(message: Message) = apply {
+            whenever(chatClient.editMessage(any(), any(), any())) doReturn message.asCall()
+        }
+
+        fun givenDeleteMessage(message: Message) = apply {
+            whenever(chatClient.deleteMessage(any(), any())) doReturn message.asCall()
+        }
+
+        fun givenGlobalState(
+            channelDrafts: Map<String, DraftMessage> = mapOf(),
+            threadDrafts: Map<String, DraftMessage> = mapOf(),
+        ) = apply {
+            whenever(globalState.channelDraftMessages) doReturn MutableStateFlow(channelDrafts)
+            whenever(globalState.threadDraftMessages) doReturn MutableStateFlow(threadDrafts)
+        }
+
+        fun get(): MessageComposerController {
+            whenever(chatClient.inheritScope(any())) doReturn inheritedScope
+
+            return MessageComposerController(
+                channelCid = cid,
+                chatClient = chatClient,
+                channelState = MutableStateFlow(channelState),
+                mediaRecorder = mediaRecorder,
+                userLookupHandler = mock(),
+                fileToUri = mock(),
+                config = config,
+                globalState = MutableStateFlow(globalState),
+                savedStateHandle = savedStateHandle,
+            )
+        }
+    }
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+
+        private const val CHANNEL_TYPE = "messaging"
+        private const val CHANNEL_ID = "123"
+        private const val CID = "messaging:123"
+    }
+}

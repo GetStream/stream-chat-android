@@ -8,18 +8,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.outlined.AddCircle
-import androidx.compose.material.icons.outlined.Send
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -27,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,47 +39,54 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.chat.android.compose.state.messages.attachments.Files
-import io.getstream.chat.android.compose.state.messages.attachments.Images
-import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.CameraPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerBack
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
+import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerActions
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
+import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
+import io.getstream.chat.android.compose.ui.theme.AttachmentPickerContentParams
+import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.LocalComponentFactory
+import io.getstream.chat.android.compose.ui.theme.MessageComposerInputTrailingContentParams
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.docs.R
+import io.getstream.chat.android.compose.R as ComposeR
 
 @Composable
 fun CustomComposerAndAttachmentsPicker(cid: String?, onBackClick: () -> Unit = {}) {
     cid?.let {
-        val viewModelFactory = MessagesViewModelFactory(LocalContext.current, channelId = cid)
+        val viewModelFactory = ChannelViewModelFactory(LocalContext.current, channelId = cid)
         val listViewModel = viewModel(
             modelClass = MessageListViewModel::class.java,
-            factory = viewModelFactory
+            factory = viewModelFactory,
         )
         val composerViewModel = viewModel(
             modelClass = MessageComposerViewModel::class.java,
-            factory = viewModelFactory
+            factory = viewModelFactory,
         )
         val attachmentsPickerViewModel = viewModel(
             modelClass = AttachmentsPickerViewModel::class.java,
-            factory = viewModelFactory
+            factory = viewModelFactory,
         )
 
-        val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
+        val isPickerVisible = attachmentsPickerViewModel.isPickerVisible
         val backAction = remember(composerViewModel, attachmentsPickerViewModel) {
             {
                 when {
-                    attachmentsPickerViewModel.isShowingAttachments -> {
-                        attachmentsPickerViewModel.changeAttachmentState(false)
+                    attachmentsPickerViewModel.isPickerVisible -> {
+                        attachmentsPickerViewModel.setPickerVisible(visible = false)
                     }
 
                     else -> onBackClick()
@@ -92,36 +99,32 @@ fun CustomComposerAndAttachmentsPicker(cid: String?, onBackClick: () -> Unit = {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
             Scaffold(
                 topBar = {
-                    CustomMessageListHeader(cid = cid, onBackClick = onBackClick)
+                    CustomChannelHeader(cid = cid, onBackClick = onBackClick)
                 },
                 bottomBar = {
                     CustomMessageComposer(
                         composerViewModel = composerViewModel,
-                        attachmentsPickerViewModel = attachmentsPickerViewModel
+                        attachmentsPickerViewModel = attachmentsPickerViewModel,
                     )
                 },
                 content = {
                     MessageList(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(ChatTheme.colors.appBackground)
+                            .background(ChatTheme.colors.backgroundCoreApp)
                             .padding(it),
                         viewModel = listViewModel,
                     )
-                }
+                },
             )
 
-            if (isShowingAttachments) {
+            if (isPickerVisible) {
                 CustomAttachmentsPicker(
                     attachmentsPickerViewModel = attachmentsPickerViewModel,
-                    onAttachmentsSelected = { attachments ->
-                        attachmentsPickerViewModel.changeAttachmentState(false)
-                        composerViewModel.addSelectedAttachments(attachments)
-                    },
-                    onDismiss = {
-                        attachmentsPickerViewModel.changeAttachmentState(false)
-                        attachmentsPickerViewModel.dismissAttachments()
-                    }
+                    actions = AttachmentPickerActions.defaultActions(
+                        attachmentsPickerViewModel,
+                        composerViewModel,
+                    ),
                 )
             }
         }
@@ -133,86 +136,95 @@ private fun CustomMessageComposer(
     composerViewModel: MessageComposerViewModel,
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
 ) {
-    MessageComposer(
-        viewModel = composerViewModel,
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        input = { composerState ->
-            MessageInput(
-                messageComposerState = composerState,
-                onValueChange = { composerViewModel.setMessageInput(it) },
-                onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
-                modifier = Modifier
-                    .padding(horizontal = 10.dp)
-                    .align(Alignment.CenterVertically),
-                label = {
-                    Text(
-                        modifier = Modifier.padding(start = 4.dp),
-                        text = "Type a message",
-                        color = ChatTheme.colors.textLowEmphasis
+    CompositionLocalProvider(LocalComponentFactory provides object : ChatComponentFactory {
+        @Composable
+        override fun MessageComposerInputTrailingContent(params: MessageComposerInputTrailingContentParams) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(
+                    onClick = {
+                        attachmentsPickerViewModel.setPickerVisible(visible = true)
+                    },
+                    content = {
+                        Icon(
+                            imageVector = Icons.Outlined.AddCircle,
+                            contentDescription = null,
+                            tint = Color.DarkGray,
+                        )
+                    },
+                )
+                IconButton(
+                    enabled = params.state.canSendMessage(),
+                    onClick = { params.onSendClick(params.state.inputValue, params.state.attachments) },
+                    content = {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.Send,
+                            contentDescription = null,
+                            tint = Color.DarkGray,
+                        )
+                    },
+                )
+            }
+        }
+    }) {
+        MessageComposer(
+            viewModel = composerViewModel,
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            input = { composerState ->
+                val onSendClick: (String, List<Attachment>) -> Unit = { text, attachments ->
+                    composerViewModel.sendMessage(
+                        message = composerViewModel.buildNewMessage(
+                            message = text,
+                            attachments = attachments,
+                        ),
                     )
-                },
-                innerTrailingContent = {
-                    Row {
-                        IconButton(
-                            modifier = Modifier.size(24.dp),
-                            onClick = {
-                                attachmentsPickerViewModel.changeAttachmentState(showAttachments = true)
-                            },
-                            content = {
-                                Icon(
-                                    imageVector = Icons.Outlined.AddCircle,
-                                    contentDescription = null,
-                                    tint = Color.DarkGray
-                                )
-                            }
-                        )
-                        Spacer(modifier = Modifier.width(20.dp))
-                        IconButton(
-                            modifier = Modifier.size(24.dp),
-                            onClick = {
-                                composerViewModel.sendMessage(
-                                    composerViewModel.buildNewMessage(
-                                        composerState.inputValue,
-                                        composerState.attachments
-                                    )
-                                )
-                            },
-                            content = {
-                                Icon(
-                                    imageVector = Icons.Outlined.Send,
-                                    contentDescription = null,
-                                    tint = Color.DarkGray
-                                )
-                            }
-                        )
-                    }
                 }
-            )
-        },
-        onAttachmentsClick = { attachmentsPickerViewModel.changeAttachmentState(showAttachments = true) },
-        integrations = {}
-    )
+                MessageInput(
+                    messageComposerState = composerState,
+                    onValueChange = composerViewModel::setMessageInput,
+                    onAttachmentRemoved = composerViewModel::removeAttachment,
+                    onCancelAction = composerViewModel::dismissMessageActions,
+                    onSendClick = onSendClick,
+                    recordingActions = AudioRecordingActions.defaultActions(
+                        viewModel = composerViewModel,
+                        sendOnComplete = ChatTheme.config.composer.audioRecordingSendOnComplete,
+                    ),
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp)
+                        .align(Alignment.CenterVertically),
+                )
+            },
+            onAttachmentsClick = { attachmentsPickerViewModel.setPickerVisible(visible = true) },
+        )
+    }
 }
+
+/**
+ * The default picker modes available in the attachment picker.
+ */
+private val DefaultPickerModes: List<AttachmentPickerMode> = listOf(
+    GalleryPickerMode(),
+    FilePickerMode(),
+    CameraPickerMode(),
+)
 
 @Composable
 private fun CustomAttachmentsPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
-    onAttachmentsSelected: (List<Attachment>) -> Unit,
-    onDismiss: () -> Unit,
-    tabFactories: List<AttachmentsPickerTabFactory> = ChatTheme.attachmentsPickerTabFactories,
+    actions: AttachmentPickerActions,
+    pickerModes: List<AttachmentPickerMode> = DefaultPickerModes,
 ) {
     var shouldShowMenu by remember { mutableStateOf(true) }
-    var selectedOptionIndex by remember { mutableStateOf(-1) }
+    var selectedModeIndex by remember { mutableStateOf(-1) }
 
     Box(
         // Gray overlay
         modifier = Modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.overlay)
+            .background(ChatTheme.colors.backgroundCoreScrim)
             .clickable(
-                onClick = onDismiss,
+                onClick = actions.onDismiss,
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
             ),
@@ -227,51 +239,59 @@ private fun CustomAttachmentsPicker(
                     interactionSource = remember { MutableInteractionSource() },
                 ),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            shape = ChatTheme.shapes.bottomSheet,
-            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.inputBackground),
+            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundCoreSurfaceDefault),
         ) {
             Box(modifier = Modifier.padding(vertical = 24.dp)) {
                 if (shouldShowMenu) {
                     // Show the menu with Images, Files, Camera options
                     AttachmentsTypeMenu(
-                        attachmentsPickerViewModel.channel,
-                        tabFactories = tabFactories,
+                        channel = attachmentsPickerViewModel.channel,
+                        pickerModes = pickerModes,
                         onClick = {
-                            selectedOptionIndex = it
+                            selectedModeIndex = it
                             shouldShowMenu = false
                         },
                     )
                 } else {
-                    // Show the selected tabFactory, with back and submit buttons
+                    // Show the selected picker content with back and submit buttons
                     Column(
                         modifier = Modifier.padding(horizontal = 8.dp),
                     ) {
                         AttachmentsPickerToolbar(
                             onBackClick = {
                                 shouldShowMenu = true
-                                selectedOptionIndex = -1
+                                selectedModeIndex = -1
                             },
-                            isSubmitEnabled = attachmentsPickerViewModel.hasPickedAttachments,
+                            isSubmitEnabled = attachmentsPickerViewModel.attachments.any { it.isSelected },
                             onSubmitClick = {
-                                onAttachmentsSelected(attachmentsPickerViewModel.getSelectedAttachments())
+                                actions.onAttachmentsSelected(
+                                    attachmentsPickerViewModel.getAttachmentsFromMetadata(
+                                        attachmentsPickerViewModel.attachments
+                                            .filter(AttachmentPickerItemState::isSelected)
+                                            .map(AttachmentPickerItemState::attachmentMetaData),
+                                    ),
+                                )
                             },
                         )
 
-                        tabFactories.getOrNull(selectedOptionIndex)
-                            ?.PickerTabContent(
-                                onAttachmentPickerAction = { pickerAction ->
-                                    when (pickerAction) {
-                                        AttachmentPickerBack -> onDismiss.invoke()
-                                        is AttachmentPickerPollCreation -> Unit
-                                    }
-                                },
-                                attachments = attachmentsPickerViewModel.attachments,
-                                onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
-                                onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
-                                onAttachmentsSubmitted = {
-                                    onAttachmentsSelected(attachmentsPickerViewModel.getAttachmentsFromMetaData(it))
-                                },
+                        pickerModes.getOrNull(selectedModeIndex)?.let { pickerMode ->
+                            ChatTheme.componentFactory.AttachmentPickerContent(
+                                params = AttachmentPickerContentParams(
+                                    pickerMode = pickerMode,
+                                    commands = attachmentsPickerViewModel.channel.config.commands,
+                                    attachments = attachmentsPickerViewModel.attachments,
+                                    onLoadAttachments = attachmentsPickerViewModel::loadAttachments,
+                                    onUrisSelected = attachmentsPickerViewModel::resolveAndSubmitUris,
+                                    actions = actions,
+                                    onAttachmentsSubmitted = { metaData ->
+                                        actions.onAttachmentsSelected(
+                                            attachmentsPickerViewModel.getAttachmentsFromMetadata(metaData),
+                                        )
+                                    },
+                                ),
                             )
+                        }
                     }
                 }
             }
@@ -279,10 +299,11 @@ private fun CustomAttachmentsPicker(
     }
 }
 
+@Suppress("UNUSED_PARAMETER")
 @Composable
 private fun AttachmentsTypeMenu(
     channel: Channel,
-    tabFactories: List<AttachmentsPickerTabFactory>,
+    pickerModes: List<AttachmentPickerMode>,
     onClick: (Int) -> Unit,
 ) {
     Row(
@@ -290,10 +311,9 @@ private fun AttachmentsTypeMenu(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        tabFactories.forEachIndexed { index, tabFactory ->
+        pickerModes.forEachIndexed { index, pickerMode ->
             AttachmentsTypeMenuItem(
-                tabFactory = tabFactory,
-                isEnabled = tabFactory.isPickerTabEnabled(channel),
+                pickerMode = pickerMode,
                 index = index,
                 onClick = onClick,
             )
@@ -303,30 +323,29 @@ private fun AttachmentsTypeMenu(
 
 @Composable
 private fun AttachmentsTypeMenuItem(
-    tabFactory: AttachmentsPickerTabFactory,
-    isEnabled: Boolean,
+    pickerMode: AttachmentPickerMode,
     index: Int,
     onClick: (Int) -> Unit,
 ) {
     Column(
-        modifier = Modifier.clickable(enabled = isEnabled) { onClick(index) },
+        modifier = Modifier.clickable { onClick(index) },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         val backgroundColor: Color
         val label: String
 
-        when (tabFactory.attachmentsPickerMode) {
-            is Images -> {
+        when (pickerMode) {
+            is GalleryPickerMode -> {
                 backgroundColor = Color(0xFFCCCCFF)
                 label = "Images"
             }
 
-            is Files -> {
+            is FilePickerMode -> {
                 backgroundColor = Color(0xFFFFCCCC)
                 label = "Files"
             }
 
-            is MediaCapture -> {
+            is CameraPickerMode -> {
                 backgroundColor = Color(0xFFFFCC99)
                 label = "Camera"
             }
@@ -344,7 +363,18 @@ private fun AttachmentsTypeMenuItem(
                 .background(backgroundColor, shape = CircleShape),
             contentAlignment = Alignment.Center,
         ) {
-            tabFactory.PickerTabIcon(isEnabled, isSelected = false)
+            Icon(
+                painter = painterResource(
+                    when (pickerMode) {
+                        is GalleryPickerMode -> ComposeR.drawable.stream_design_ic_gallery
+                        is FilePickerMode -> ComposeR.drawable.stream_design_ic_folder
+                        is CameraPickerMode -> ComposeR.drawable.stream_design_ic_camera
+                        else -> R.drawable.ic_menu
+                    }
+                ),
+                contentDescription = label,
+                modifier = Modifier.size(24.dp),
+            )
         }
         Text(text = label)
     }
@@ -358,7 +388,7 @@ private fun AttachmentsPickerToolbar(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         IconButton(onClick = onBackClick) {
             Icon(
@@ -369,16 +399,16 @@ private fun AttachmentsPickerToolbar(
         }
         IconButton(
             enabled = isSubmitEnabled,
-            onClick = onSubmitClick
+            onClick = onSubmitClick,
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_check),
                 contentDescription = "Submit Attachments",
                 modifier = Modifier.size(24.dp),
                 tint = if (isSubmitEnabled) {
-                    ChatTheme.colors.primaryAccent
+                    ChatTheme.colors.accentPrimary
                 } else {
-                    ChatTheme.colors.textLowEmphasis
+                    ChatTheme.colors.textSecondary
                 },
             )
         }
@@ -390,8 +420,8 @@ private fun AttachmentsPickerToolbar(
 fun PreviewCustomAttachmentPickerOptions() {
     ChatTheme {
         AttachmentsTypeMenu(
-            Channel(),
-            tabFactories = ChatTheme.attachmentsPickerTabFactories,
+            channel = Channel(),
+            pickerModes = DefaultPickerModes,
         ) {}
     }
 }

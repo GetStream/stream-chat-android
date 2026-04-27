@@ -321,7 +321,6 @@
         <attr name="streamUiIconBannedIndicator" format="reference" />
 
         <!-- Message deleted style -->
-        <attr name="streamUiDeletedMessageBackgroundColor" format="color" />
         <attr name="streamUiMessageTextSizeMessageDeleted" format="dimension|reference" />
         <attr name="streamUiMessageTextColorMessageDeleted" format="color" />
         <attr name="streamUiMessageTextFontMessageDeleted" format="reference" />

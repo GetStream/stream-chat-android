@@ -27,6 +27,7 @@ import java.util.Date
 /**
  * Provides sample thread data that will be used to render component previews.
  */
+@Suppress("MagicNumber")
 public object PreviewThreadData {
 
     /**
@@ -40,7 +41,12 @@ public object PreviewThreadData {
     public val participant2: User = User(id = "uid2", name = "Second participant")
 
     /**
-     * Single thread with 2 participants.
+     * A third participant in the thread.
+     */
+    public val participant3: User = User(id = "uid3", name = "Third participant")
+
+    /**
+     * Single thread with 2 participants (1 reply). With unread messages.
      */
     public val thread: Thread = Thread(
         activeParticipantCount = 2,
@@ -50,60 +56,35 @@ public object PreviewThreadData {
         parentMessage = Message(
             id = "pmid1",
             text = "Hey everyone, who's up for a group ride this Saturday morning?",
+            replyCount = 3,
+            user = participant1,
         ),
         createdByUserId = "uid2",
         createdBy = participant2,
         participantCount = 2,
         threadParticipants = listOf(
-            ThreadParticipant(participant1),
-            ThreadParticipant(participant2),
-        ),
-        lastMessageAt = Date(),
-        createdAt = Date(),
-        updatedAt = Date(),
-        deletedAt = null,
-        title = "Group ride preparation and discussion",
-        latestReplies = listOf(
-            Message(id = "mid1", text = "See you all there, stay safe on the roads!", user = participant1),
-        ),
-        read = listOf(
-            ChannelUserRead(
+            ThreadParticipant(
+                user = participant3,
+                lastThreadMessageAt = Date(1_735_710_000_000),
+            ),
+            ThreadParticipant(
                 user = participant2,
-                lastReceivedEventDate = Date(),
-                unreadMessages = 3,
-                lastRead = Date(),
-                lastReadMessageId = null,
+                lastThreadMessageAt = Date(1_735_700_000_000),
+            ),
+            ThreadParticipant(
+                user = participant1,
+                lastThreadMessageAt = Date(1_735_690_000_000),
             ),
         ),
-        draft = null,
-    )
-
-    /**
-     * Single thread with 2 participants.
-     */
-    public val thread2: Thread = Thread(
-        activeParticipantCount = 2,
-        cid = "cid",
-        channel = Channel(),
-        parentMessageId = "pmid2",
-        parentMessage = Message(
-            id = "pmid2",
-            text = "Hello hello!",
-        ),
-        createdByUserId = "uid2",
-        createdBy = participant1,
-        participantCount = 2,
-        threadParticipants = listOf(
-            ThreadParticipant(participant1),
-            ThreadParticipant(participant2),
-        ),
         lastMessageAt = Date(),
         createdAt = Date(),
         updatedAt = Date(),
         deletedAt = null,
         title = "Group ride preparation and discussion",
         latestReplies = listOf(
-            Message(id = "mid1", text = "Welcome to the group!", user = participant2),
+            Message(id = "mid4", text = "Energy bars and bananas are always a safe bet.", user = participant1),
+            Message(id = "mid5", text = "I'll bring some trail mix and electrolyte drinks.", user = participant2),
+            Message(id = "mid6", text = "Count me in for sandwiches, easy to carry.", user = participant3),
         ),
         read = listOf(
             ChannelUserRead(
@@ -118,7 +99,102 @@ public object PreviewThreadData {
     )
 
     /**
+     * Single thread with 2 participants (2 replies, one from each). No unread messages.
+     */
+    public val thread2: Thread = Thread(
+        activeParticipantCount = 2,
+        cid = "cid",
+        channel = Channel(),
+        parentMessageId = "pmid2",
+        parentMessage = Message(
+            id = "pmid2",
+            text = "Has anyone tried the new bike lane on River Road?",
+            replyCount = 2,
+            user = participant2,
+        ),
+        createdByUserId = "uid2",
+        createdBy = participant2,
+        participantCount = 2,
+        threadParticipants = listOf(
+            ThreadParticipant(
+                user = participant2,
+                lastThreadMessageAt = Date(1_735_700_000_000),
+            ),
+            ThreadParticipant(
+                user = participant1,
+                lastThreadMessageAt = Date(1_735_690_000_000),
+            ),
+        ),
+        lastMessageAt = Date(),
+        createdAt = Date(),
+        updatedAt = Date(),
+        deletedAt = null,
+        title = "New bike lane discussion",
+        latestReplies = listOf(
+            Message(id = "mid2", text = "Yes, it's smooth but a bit narrow near the bridge.", user = participant1),
+            Message(id = "mid3", text = "Agreed, watch out for pedestrians around the park exit.", user = participant2),
+        ),
+        read = listOf(
+            ChannelUserRead(
+                user = participant2,
+                lastReceivedEventDate = Date(),
+                unreadMessages = 0,
+                lastRead = Date(),
+                lastReadMessageId = "mid3",
+            ),
+        ),
+        draft = null,
+    )
+
+    /**
+     * Single thread with 3 participants (3 replies, one from each). No unread messages.
+     */
+    public val thread3: Thread = Thread(
+        activeParticipantCount = 3,
+        cid = "cid",
+        channel = Channel(),
+        parentMessageId = "pmid3",
+        parentMessage = Message(
+            id = "pmid3",
+            text = "What snacks should we bring for the trail ride next weekend?",
+            replyCount = 1,
+            user = participant3,
+        ),
+        createdByUserId = "uid2",
+        createdBy = participant2,
+        participantCount = 3,
+        threadParticipants = listOf(
+            ThreadParticipant(
+                user = participant2,
+                lastThreadMessageAt = null,
+            ),
+            ThreadParticipant(
+                user = participant3,
+                lastThreadMessageAt = null,
+            ),
+        ),
+        lastMessageAt = Date(),
+        createdAt = Date(),
+        updatedAt = Date(),
+        deletedAt = null,
+        title = "Trail ride snack planning",
+        latestReplies = listOf(
+            Message(id = "mid1", text = "See you all there, stay safe on the roads!", user = participant2),
+        ),
+        read = listOf(
+            ChannelUserRead(
+                user = participant2,
+                lastReceivedEventDate = Date(),
+                unreadMessages = 0,
+                lastRead = Date(),
+                lastReadMessageId = "mid1",
+            ),
+        ),
+        draft = null,
+    )
+
+    /**
      * List of threads.
      */
-    public val threadList: List<Thread> = listOf(thread, thread2)
+    public val threadList: List<Thread> = listOf(thread, thread2, thread3)
 }

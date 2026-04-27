@@ -21,9 +21,39 @@ import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 
 /**
+ * The content URI stored when the attachment was created from a device picker,
+ * before the file is resolved at send time.
+ */
+internal val Attachment.sourceUri: String?
+    get() = extraData[EXTRA_SOURCE_URI] as? String
+
+/**
+ * Stable identity for `LazyList` keys.
+ *
+ * Prefers the immutable [sourceUri], falls back to [Attachment.upload] path,
+ * then [hashCode] as a last resort.
+ */
+internal val Attachment.stableKey: String
+    get() = sourceUri ?: upload?.absolutePath ?: hashCode().toString()
+
+/**
+ * Best available data source for rendering an unsent attachment preview.
+ *
+ * Prefers [Attachment.upload] (local file), then [Attachment.imageUrl] (CDN URL for images), then [Attachment.thumbUrl]
+ * (CDN URL for video thumbnails), then [sourceUri] (content URI from the picker).
+ */
+internal val Attachment.localPreviewData: Any?
+    get() = upload ?: imageUrl ?: thumbUrl ?: sourceUri
+
+/**
+ * Image preview data for a sent or received attachment.
+ *
+ * Returns the CDN image URL (with Stream resizing applied) or the local [Attachment.upload] file
+ * for images and videos (when video thumbnails are enabled). Returns `null` for other types.
  * This property checks if the attachment is an image or a video with enabled thumbnails.
  * If so, it returns the appropriate URL (applied with Stream CDN image resizing if enabled)
  * or the upload [java.io.File] object.
@@ -39,7 +69,7 @@ internal val Attachment.imagePreviewData: Any?
             imageUrl
                 ?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
                 ?: upload
-        isVideo() && ChatTheme.videoThumbnailsEnabled ->
+        isVideo() && ChatTheme.config.messageList.videoThumbnailsEnabled ->
             thumbUrl
                 ?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
                 ?: upload

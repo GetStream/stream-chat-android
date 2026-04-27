@@ -19,8 +19,8 @@ package io.getstream.chat.android.ui.helper
 import android.util.Log
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.model.MimeType
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.file.internal.FileAttachmentAdapter
-import io.getstream.chat.android.uiutils.model.MimeType
 
 /**
  * Provides icons for file attachments.

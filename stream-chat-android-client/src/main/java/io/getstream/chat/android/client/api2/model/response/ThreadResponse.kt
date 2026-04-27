@@ -19,15 +19,28 @@ package io.getstream.chat.android.client.api2.model.response
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 
 /**
  * Response for [ThreadsApi.getThread]
  *
- * @param thread: The thread object.
- * @param duration: The duration of the request.
+ * @param thread The thread object.
+ * @param duration The duration of the request.
  */
 @JsonClass(generateAdapter = true)
 internal data class ThreadResponse(
     val thread: DownstreamThreadDto,
+    val duration: String,
+)
+
+/**
+ * Response for [ThreadsApi.partialUpdateThread]
+ *
+ * @param thread The Thread info object.
+ * @param duration The duration of the request.
+ */
+@JsonClass(generateAdapter = true)
+internal data class ThreadInfoResponse(
+    val thread: DownstreamThreadInfoDto,
     val duration: String,
 )

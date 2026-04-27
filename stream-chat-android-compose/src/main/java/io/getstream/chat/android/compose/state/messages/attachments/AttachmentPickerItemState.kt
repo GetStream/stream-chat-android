@@ -19,13 +19,16 @@ package io.getstream.chat.android.compose.state.messages.attachments
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 /**
- * Represents each attachment item in our attachment picker. Each item can be selected and has an
- * appropriate set of metadata to describe it.
+ * Represents the state of a single item in the attachment picker.
  *
- * @param attachmentMetaData The metadata for the item, holding the links, size, types, name etc.
- * @param isSelected If the item is selected or not.
+ * Each item displayed in the attachment picker (images, videos, files) is represented by this class,
+ * which holds both the metadata about the attachment and its current selection state.
+ *
+ * @param attachmentMetaData The metadata describing the attachment, including its URI, file name,
+ * size, MIME type, and other relevant information.
+ * @param isSelected Whether this item is currently selected.
  */
 public data class AttachmentPickerItemState(
     val attachmentMetaData: AttachmentMetaData,
-    val isSelected: Boolean,
+    val isSelected: Boolean = false,
 )

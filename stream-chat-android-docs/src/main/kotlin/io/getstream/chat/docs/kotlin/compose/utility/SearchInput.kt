@@ -32,7 +32,7 @@ private object SearchInputUsageSnippet {
 
         SearchInput(
             modifier = Modifier
-                .background(color = ChatTheme.colors.appBackground)
+                .background(color = ChatTheme.colors.backgroundCoreApp)
                 .padding(horizontal = 12.dp, vertical = 8.dp)
                 .fillMaxWidth(),
             query = searchQuery,
@@ -80,7 +80,7 @@ private object SearchInputCustomizationSnippet {
 
         SearchInput(
             modifier = Modifier
-                .background(color = ChatTheme.colors.appBackground)
+                .background(color = ChatTheme.colors.backgroundCoreApp)
                 .padding(horizontal = 12.dp, vertical = 12.dp)
                 .fillMaxWidth(),
             query = searchQuery,
@@ -98,8 +98,8 @@ private object SearchInputCustomizationSnippet {
                 // Customize the hint
                 Text(
                     text = "Search channels",
-                    style = ChatTheme.typography.body,
-                    color = ChatTheme.colors.textLowEmphasis,
+                    style = ChatTheme.typography.bodyDefault,
+                    color = ChatTheme.colors.textSecondary,
                 )
             }
         )

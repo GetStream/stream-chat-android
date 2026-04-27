@@ -19,7 +19,7 @@
     <style name="AppTheme" parent="AppTheme.Base" />
 
     <style name="AppTheme.Base" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:windowBackground">@color/stream_compose_bars_background</item>
+        <item name="android:windowBackground">#FFFFFF</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 </resources>

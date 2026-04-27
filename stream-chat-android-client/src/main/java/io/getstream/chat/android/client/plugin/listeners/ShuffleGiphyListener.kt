@@ -16,12 +16,14 @@
 
 package io.getstream.chat.android.client.plugin.listeners
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.result.Result
 
 /**
  * Listener for [io.getstream.chat.android.client.ChatClient.shuffleGiphy] calls.
  */
+@InternalStreamChatApi
 public interface ShuffleGiphyListener {
 
     /**

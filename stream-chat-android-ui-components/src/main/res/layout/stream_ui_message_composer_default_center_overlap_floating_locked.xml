@@ -16,7 +16,6 @@
 -->
 <ImageView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/stream_ui_message_composer_overlapping_content_floating_locked_width"
     android:layout_height="@dimen/stream_ui_message_composer_overlapping_content_floating_locked_width"

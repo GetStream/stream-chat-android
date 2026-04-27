@@ -30,32 +30,6 @@ import io.getstream.chat.android.ui.common.feature.threads.ThreadListController
  */
 public class ThreadsViewModelFactory(private val query: QueryThreadsRequest) : ViewModelProvider.Factory {
 
-    /**
-     * Creates a factory instance with the specified parameters.
-     *
-     * @see ThreadListViewModel
-     *
-     * @param threadLimit The number of threads to load per page.
-     * @param threadReplyLimit The number of replies per thread to load.
-     * @param threadParticipantLimit The number of participants per thread to load.
-     */
-    @Deprecated(
-        message = "Use ThreadsViewModelFactory(QueryThreadsRequest) instead, to provide more query options such" +
-            " as filtering and sorting.",
-        level = DeprecationLevel.WARNING,
-    )
-    public constructor(
-        threadLimit: Int = ThreadListController.DEFAULT_THREAD_LIMIT,
-        threadReplyLimit: Int = ThreadListController.DEFAULT_THREAD_REPLY_LIMIT,
-        threadParticipantLimit: Int = ThreadListController.DEFAULT_THREAD_PARTICIPANT_LIMIT,
-    ) : this(
-        query = QueryThreadsRequest(
-            limit = threadLimit,
-            replyLimit = threadReplyLimit,
-            participantLimit = threadParticipantLimit,
-        ),
-    )
-
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass == ThreadListViewModel::class.java) {
             "ThreadsViewModelFactory can only create instances of ThreadListViewModel"

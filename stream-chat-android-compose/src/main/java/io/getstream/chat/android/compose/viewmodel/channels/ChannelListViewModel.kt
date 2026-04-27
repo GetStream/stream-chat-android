@@ -23,7 +23,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.event.ChatEventHandler
+import io.getstream.chat.android.client.api.event.ChatEventHandlerFactory
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.state.ChannelsStateData
+import io.getstream.chat.android.client.api.state.GlobalState
+import io.getstream.chat.android.client.api.state.QueryChannelsState
+import io.getstream.chat.android.client.api.state.globalStateFlow
+import io.getstream.chat.android.client.api.state.queryChannelsAsState
 import io.getstream.chat.android.compose.state.QueryConfig
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
@@ -38,20 +45,13 @@ import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
-import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
-import io.getstream.chat.android.state.extensions.globalStateFlow
-import io.getstream.chat.android.state.extensions.queryChannelsAsState
-import io.getstream.chat.android.state.plugin.state.global.GlobalState
-import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
-import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
-import io.getstream.chat.android.ui.common.state.channels.actions.Cancel
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
-import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
+import io.getstream.chat.android.ui.common.utils.extensions.defaultChannelListFilter
 import io.getstream.log.taggedLogger
 import io.getstream.result.call.toUnitCall
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -88,7 +88,7 @@ import kotlin.coroutines.cancellation.CancellationException
  * When `null`, the server-side default is used.
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
  * @param searchDebounceMs The debounce time for search queries.
- * @param isDraftMessageEnabled If the draft message feature is enabled.
+ * @param draftMessagesEnabled If the draft message feature is enabled.
  * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
  * @param globalState A flow emitting the current [GlobalState].
  */
@@ -103,7 +103,7 @@ public class ChannelListViewModel(
     private val messageLimit: Int? = null,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
     searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
-    private val isDraftMessageEnabled: Boolean = false,
+    private val draftMessagesEnabled: Boolean = true,
     private val messageSearchSort: QuerySorter<Message>? = null,
     private val globalState: Flow<GlobalState> = chatClient.globalStateFlow,
 ) : ViewModel() {
@@ -199,6 +199,14 @@ public class ChannelListViewModel(
      */
     public val channelMutes: StateFlow<List<ChannelMute>> = globalState
         .flatMapLatest { it.channelMutes }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    private val globalMuted: StateFlow<List<Mute>> = globalState
+        .flatMapLatest { it.muted }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    private val globalBlockedUserIds: StateFlow<List<String>> = globalState
+        .flatMapLatest { it.blockedUserIds }
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     private val typingChannels: StateFlow<Map<String, TypingEvent>> = globalState
@@ -451,7 +459,7 @@ public class ChannelListViewModel(
                                     channels = state.channels,
                                     channelMutes = channelMutes,
                                     typingEvents = typingChannels,
-                                    draftMessages = channelDraftMessages.takeIf { isDraftMessageEnabled } ?: emptyMap(),
+                                    draftMessages = channelDraftMessages.takeIf { draftMessagesEnabled } ?: emptyMap(),
                                 ),
                                 isLoadingMore = false,
                                 endOfChannels = queryChannelsState.endOfChannels.value,
@@ -526,17 +534,6 @@ public class ChannelListViewModel(
      *
      * The new operation will hold the channels that match the new query.
      */
-    @Deprecated(
-        message = "Use setSearchQuery instead",
-        replaceWith = ReplaceWith(
-            expression = "setSearchQuery(SearchQuery.Channels(newQuery))",
-            imports = ["io.getstream.chat.android.compose.state.channels.list.SearchQuery"],
-        ),
-    )
-    public fun setSearchQuery(newQuery: String) {
-        this._searchQuery.value = SearchQuery.Messages(newQuery)
-    }
-
     public fun setSearchQuery(searchQuery: SearchQuery) {
         logger.d { "[setSearchQuery] searchQuery: $searchQuery" }
         this._searchQuery.value = searchQuery
@@ -624,23 +621,27 @@ public class ChannelListViewModel(
     }
 
     /**
-     * Clears the active action if we've chosen [Cancel], otherwise, stores the selected action as
-     * the currently active action, in [activeChannelAction].
+     * Executes the given [ChannelAction] immediately if it doesn't require confirmation,
+     * or stores it as [activeChannelAction] to show a confirmation dialog.
      *
-     * It also removes the [selectedChannel] if the action is [Cancel].
-     *
-     * @param channelAction The selected action.
+     * @param action The action to execute or confirm.
      */
-    public fun performChannelAction(channelAction: ChannelAction) {
-        if (channelAction is Cancel) {
-            selectedChannel.value = null
-        }
-
-        activeChannelAction = if (channelAction == Cancel) {
-            null
+    public fun executeOrConfirm(action: ChannelAction) {
+        if (action.confirmationPopup != null) {
+            activeChannelAction = action
         } else {
-            channelAction
+            action.onAction()
+            dismissChannelAction()
         }
+    }
+
+    /**
+     * Executes the currently pending [activeChannelAction] after user confirmation
+     * and dismisses it from the UI.
+     */
+    public fun confirmPendingAction() {
+        activeChannelAction?.onAction?.invoke()
+        dismissChannelAction()
     }
 
     /**
@@ -725,6 +726,66 @@ public class ChannelListViewModel(
         chatClient.clientState.user.value?.let { user ->
             chatClient.channel(channel.type, channel.id).removeMembers(listOf(user.id)).enqueue()
         }
+    }
+
+    /**
+     * Mutes a user (used for DM channels).
+     *
+     * @param userId The ID of the user to mute.
+     */
+    public fun muteUser(userId: String) {
+        dismissChannelAction()
+        chatClient.muteUser(userId).enqueue()
+    }
+
+    /**
+     * Unmutes a user (used for DM channels).
+     *
+     * @param userId The ID of the user to unmute.
+     */
+    public fun unmuteUser(userId: String) {
+        dismissChannelAction()
+        chatClient.unmuteUser(userId).enqueue()
+    }
+
+    /**
+     * Blocks a user (used for DM channels).
+     *
+     * @param userId The ID of the user to block.
+     */
+    public fun blockUser(userId: String) {
+        dismissChannelAction()
+        chatClient.blockUser(userId).enqueue()
+    }
+
+    /**
+     * Unblocks a user (used for DM channels).
+     *
+     * @param userId The ID of the user to unblock.
+     */
+    public fun unblockUser(userId: String) {
+        dismissChannelAction()
+        chatClient.unblockUser(userId).enqueue()
+    }
+
+    /**
+     * Checks if a user is muted by the current user.
+     *
+     * @param userId The ID of the user to check.
+     * @return True if the user is muted.
+     */
+    public fun isUserMuted(userId: String): Boolean {
+        return globalMuted.value.any { it.target?.id == userId }
+    }
+
+    /**
+     * Checks if a user is blocked by the current user.
+     *
+     * @param userId The ID of the user to check.
+     * @return True if the user is blocked.
+     */
+    public fun isUserBlocked(userId: String): Boolean {
+        return globalBlockedUserIds.value.contains(userId)
     }
 
     /**

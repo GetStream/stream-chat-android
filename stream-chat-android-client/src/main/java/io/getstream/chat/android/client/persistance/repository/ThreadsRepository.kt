@@ -16,12 +16,14 @@
 
 package io.getstream.chat.android.client.persistance.repository
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 
 /**
  * Repository for read/write operations related to threads.
  */
+@InternalStreamChatApi
 public interface ThreadsRepository {
 
     /**

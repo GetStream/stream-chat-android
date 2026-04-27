@@ -16,29 +16,61 @@
 
 package io.getstream.chat.android.ui.common.utils.extensions
 
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import android.content.Context
+import android.text.format.DateUtils
+import androidx.annotation.StringRes
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.model.UserPresence
+import java.util.Date
 
+/**
+ * Returns the initials of the user.
+ */
 public val User.initials: String
     get() = name.initials()
 
+/**
+ * Finds a user in the list by their name or id.
+ */
 public fun List<User>.getUserByNameOrId(nameOrId: String): User? {
     return firstOrNull { it.name == nameOrId } ?: firstOrNull { it.id == nameOrId }
 }
 
 /**
- * Determines if the online indicator should be shown for the user based on the user presence configuration.
+ * Returns a string describing the elapsed time since the user was online (was watching the channel).
  *
- * @param userPresence The user presence configuration.
- * @param currentUser The current user.
+ * Depending on the elapsed time, the string can have one of the following formats:
+ * - Online
+ * - Last seen just now
+ * - Last seen 13 hours ago
+ *
+ * @param context The context to load string resources.
+ * @param userOnlineResId Resource id for the online text.
+ * @param userLastSeenJustNowResId Resource id for the just now text.
+ * @param userLastSeenResId Resource id for the last seen text.
+ * @return A string that represents the elapsed time since the user was online.
  */
-@InternalStreamChatApi
-public fun User.shouldShowOnlineIndicator(
-    userPresence: UserPresence,
-    currentUser: User?,
-): Boolean =
-    when {
-        id == currentUser?.id -> userPresence.currentUser.showOnlineIndicator
-        else -> userPresence.otherUsers.showOnlineIndicator
+public fun User.getLastSeenText(
+    context: Context,
+    @StringRes userOnlineResId: Int,
+    @StringRes userLastSeenJustNowResId: Int,
+    @StringRes userLastSeenResId: Int,
+): String {
+    if (online) {
+        return context.getString(userOnlineResId)
     }
+
+    return (lastActive ?: updatedAt ?: createdAt)?.let {
+        if (it.isInLastMinute()) {
+            context.getString(userLastSeenJustNowResId)
+        } else {
+            context.getString(
+                userLastSeenResId,
+                DateUtils.getRelativeTimeSpanString(it.time).toString(),
+            )
+        }
+    } ?: ""
+}
+
+private fun Date.isInLastMinute(): Boolean = (Date().time - ONE_MINUTE_IN_MILLIS < time)
+
+private const val ONE_MINUTE_IN_MILLIS = 60000

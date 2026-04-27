@@ -528,6 +528,19 @@ public data class NotificationMessageNewEvent(
 ) : CidEvent(), HasChannel, HasMessage, HasUnreadCounts
 
 /**
+ * Triggered when a thread is updated.
+ */
+public data class ThreadUpdatedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    val thread: ThreadInfo,
+) : CidEvent()
+
+/**
  * Triggered when a message is added to a channel as a thread reply.
  */
 public data class NotificationThreadMessageNewEvent(

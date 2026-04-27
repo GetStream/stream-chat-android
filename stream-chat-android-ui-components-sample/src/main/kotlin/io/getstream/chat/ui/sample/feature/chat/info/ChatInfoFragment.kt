@@ -40,7 +40,7 @@ class ChatInfoFragment : Fragment() {
 
     private val args: ChatInfoFragmentArgs by navArgs()
     private val viewModel: ChannelInfoViewModel by viewModels {
-        ChannelInfoViewModelFactory(context = requireContext(), cid = args.cid)
+        ChannelInfoViewModelFactory(cid = args.cid)
     }
     private val adapter: ChatInfoAdapter = ChatInfoAdapter()
 
@@ -91,6 +91,11 @@ class ChatInfoFragment : Fragment() {
                 is ChannelInfoViewEvent.Error -> showError(event, isGroupChannel = false)
                 is ChannelInfoViewEvent.Navigation -> onNavigationEvent(event)
                 is ChannelInfoViewEvent.Modal -> showModal(event, viewModel, isGroupChannel = false)
+                is ChannelInfoViewEvent.MuteUser,
+                is ChannelInfoViewEvent.UnmuteUser,
+                is ChannelInfoViewEvent.BlockUser,
+                is ChannelInfoViewEvent.UnblockUser,
+                -> Unit
             }
         }
     }
@@ -167,14 +172,6 @@ class ChatInfoFragment : Fragment() {
 
                 is ChatInfoItem.Option.DeleteChannel ->
                     viewModel.onViewAction(ChannelInfoViewAction.DeleteChannelClick)
-
-                is ChatInfoItem.Option.HideChannel -> viewModel.onViewAction(
-                    if (option.isChecked) {
-                        ChannelInfoViewAction.UnhideChannelClick
-                    } else {
-                        ChannelInfoViewAction.HideChannelClick
-                    },
-                )
 
                 // Already handled
                 is ChatInfoItem.Option.Stateful.MuteChannel -> Unit

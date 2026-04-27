@@ -53,7 +53,7 @@ public fun MenuOptionItem(
     leadingIcon: @Composable RowScope.() -> Unit,
     title: String,
     titleColor: Color,
-    style: TextStyle = ChatTheme.typography.bodyBold,
+    style: TextStyle = ChatTheme.typography.bodyEmphasis,
     itemHeight: Dp = 56.dp,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,

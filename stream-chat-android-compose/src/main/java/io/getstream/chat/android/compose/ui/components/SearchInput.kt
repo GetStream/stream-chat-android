@@ -16,18 +16,24 @@
 
 package io.getstream.chat.android.compose.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,14 +41,22 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.SearchInputClearButtonParams
+import io.getstream.chat.android.compose.ui.theme.SearchInputLabelParams
+import io.getstream.chat.android.compose.ui.theme.SearchInputLeadingIconParams
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
 /**
  * The search component that allows the user to fill in a search query and filter their items.
@@ -59,6 +73,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param label The label shown in the search component, when there's no input.
  * @param clearButton The clear button shown when the search is focused and not empty.
  */
+@Suppress("LongMethod")
 @Composable
 public fun SearchInput(
     query: String,
@@ -67,15 +82,15 @@ public fun SearchInput(
     onSearchStarted: () -> Unit = {},
     leadingIcon: @Composable RowScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
-            SearchInputLeadingIcon()
+            SearchInputLeadingIcon(params = SearchInputLeadingIconParams())
         }
     },
     label: @Composable () -> Unit = {
-        ChatTheme.componentFactory.SearchInputLabel()
+        ChatTheme.componentFactory.SearchInputLabel(params = SearchInputLabelParams())
     },
     clearButton: (@Composable RowScope.() -> Unit) = {
         with(ChatTheme.componentFactory) {
-            SearchInputClearButton(onClick = { onValueChange("") })
+            SearchInputClearButton(params = SearchInputClearButtonParams(onClick = { onValueChange("") }))
         }
     },
 ) {
@@ -87,8 +102,23 @@ public fun SearchInput(
         null
     }
 
-    InputField(
+    var textState by remember { mutableStateOf(TextFieldValue(text = query)) }
+    if (textState.text != query) {
+        LaunchedEffect(query) {
+            if (textState.text != query) {
+                textState = textState.copy(
+                    text = query,
+                    selection = TextRange(query.length),
+                )
+            }
+        }
+    }
+
+    val shape = RoundedCornerShape(StreamTokens.radius3xl)
+
+    BasicTextField(
         modifier = modifier
+            .defaultMinSize(minHeight = 48.dp)
             .onFocusEvent { newState ->
                 val wasPreviouslyFocused = isFocused
 
@@ -97,12 +127,36 @@ public fun SearchInput(
                 }
 
                 isFocused = newState.isFocused
-            },
-        value = query,
-        onValueChange = onValueChange,
+            }
+            .border(
+                border = BorderStroke(1.dp, ChatTheme.colors.borderCoreDefault),
+                shape = shape,
+            )
+            .clip(shape),
+        value = textState,
+        onValueChange = {
+            textState = it
+            if (query != it.text) {
+                onValueChange(it.text)
+            }
+        },
+        textStyle = ChatTheme.typography.bodyDefault.copy(
+            color = ChatTheme.colors.textPrimary,
+        ),
+        cursorBrush = SolidColor(ChatTheme.colors.accentPrimary),
+        singleLine = true,
+        maxLines = 1,
+        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
         decorationBox = { innerTextField ->
             Row(
-                Modifier.fillMaxWidth(),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = StreamTokens.spacingMd,
+                        end = StreamTokens.spacingMd,
+                        top = StreamTokens.spacingSm,
+                        bottom = StreamTokens.spacingSm,
+                    ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 leadingIcon()
@@ -118,8 +172,6 @@ public fun SearchInput(
                 trailingContent?.invoke(this)
             }
         },
-        maxLines = 1,
-        innerPadding = PaddingValues(4.dp),
     )
 }
 
@@ -129,10 +181,10 @@ public fun SearchInput(
 @Composable
 internal fun DefaultSearchLeadingIcon() {
     Icon(
-        modifier = Modifier.padding(horizontal = 6.dp),
-        painter = painterResource(id = R.drawable.stream_compose_ic_search),
+        modifier = Modifier.padding(end = StreamTokens.spacingXs),
+        painter = painterResource(id = R.drawable.stream_design_ic_search),
         contentDescription = null,
-        tint = ChatTheme.colors.textLowEmphasis,
+        tint = ChatTheme.colors.textTertiary,
     )
 }
 
@@ -143,8 +195,8 @@ internal fun DefaultSearchLeadingIcon() {
 internal fun DefaultSearchLabel() {
     Text(
         text = stringResource(id = R.string.stream_compose_search_input_hint),
-        style = ChatTheme.typography.body,
-        color = ChatTheme.colors.textLowEmphasis,
+        style = ChatTheme.typography.bodyDefault,
+        color = ChatTheme.colors.textTertiary,
     )
 }
 
@@ -155,14 +207,14 @@ internal fun DefaultSearchLabel() {
 internal fun DefaultSearchClearButton(onClick: () -> Unit) {
     IconButton(
         modifier = Modifier
-            .padding(horizontal = 4.dp)
-            .size(24.dp),
+            .padding(start = StreamTokens.spacingXs)
+            .size(20.dp),
         onClick = onClick,
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_clear),
+            painter = painterResource(id = R.drawable.stream_design_ic_x_circle),
             contentDescription = stringResource(id = R.string.stream_compose_search_input_cancel),
-            tint = ChatTheme.colors.textLowEmphasis,
+            tint = ChatTheme.colors.textTertiary,
         )
     }
 }
@@ -175,7 +227,7 @@ private fun SearchInputPreview() {
 
         SearchInput(
             modifier = Modifier
-                .background(color = ChatTheme.colors.appBackground)
+                .background(color = ChatTheme.colors.backgroundCoreApp)
                 .padding(horizontal = 12.dp, vertical = 8.dp)
                 .fillMaxWidth(),
             query = searchQuery,

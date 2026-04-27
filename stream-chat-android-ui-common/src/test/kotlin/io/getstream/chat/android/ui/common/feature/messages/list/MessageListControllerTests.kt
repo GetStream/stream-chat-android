@@ -18,12 +18,16 @@ package io.getstream.chat.android.ui.common.feature.messages.list
 
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.state.GlobalState
+import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
+import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.createDate
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Channel
@@ -52,18 +56,12 @@ import io.getstream.chat.android.randomPollVote
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
-import io.getstream.chat.android.state.plugin.config.StatePluginConfig
-import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
-import io.getstream.chat.android.state.plugin.internal.StatePlugin
-import io.getstream.chat.android.state.plugin.state.StateRegistry
-import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.suspendableRandomMessageList
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.callFrom
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
@@ -105,7 +103,6 @@ import org.mockito.kotlin.whenever
 import java.util.Date
 
 @Suppress("LargeClass")
-@ExperimentalCoroutinesApi
 internal class MessageListControllerTests {
 
     @Test
@@ -169,7 +166,10 @@ internal class MessageListControllerTests {
     @Test
     fun `Given regular message followed and preceded by current user message When grouping messages Should add middle position to message`() =
         runTest {
-            val messages = randomMessageList(3) { randomMessage(user = user1) }
+            val now = java.util.Date()
+            val messages = randomMessageList(3) {
+                randomMessage(user = user1, createdAt = now, createdLocallyAt = now)
+            }
             val messagesState = MutableStateFlow(messages)
             val controller = Fixture()
                 .givenCurrentUser()
@@ -177,7 +177,7 @@ internal class MessageListControllerTests {
                 .givenChannelState(messagesState = messagesState)
                 .get(dateSeparatorHandler = { _, _ -> false })
 
-            val expectedPosition = listOf(MessagePosition.MIDDLE)
+            val expectedPosition = MessagePosition.MIDDLE
             val messagePosition = (controller.messageListState.value.messageItems[1] as MessageItemState).groupPosition
 
             messagePosition `should be equal to` expectedPosition
@@ -198,7 +198,7 @@ internal class MessageListControllerTests {
                 .givenChannelState(messagesState = messagesState)
                 .get(dateSeparatorHandler = { _, _ -> false })
 
-            val expectedPosition = listOf(MessagePosition.NONE)
+            val expectedPosition = MessagePosition.NONE
             val messagePosition = (controller.messageListState.value.messageItems[1] as MessageItemState).groupPosition
 
             messagePosition `should be equal to` expectedPosition
@@ -219,7 +219,7 @@ internal class MessageListControllerTests {
                 .givenChannelState(messagesState = messagesState)
                 .get(dateSeparatorHandler = { _, _ -> false })
 
-            val expectedPosition = listOf(MessagePosition.NONE)
+            val expectedPosition = MessagePosition.NONE
             val messagePosition = (controller.messageListState.value.messageItems[1] as MessageItemState).groupPosition
 
             messagePosition `should be equal to` expectedPosition
@@ -264,28 +264,8 @@ internal class MessageListControllerTests {
         dateSeparatorCount `should be equal to` 0
     }
 
-    // deleted visibility
     @Test
-    fun `When deleted visibility is never When grouping messages Should not add any deleted messages`() = runTest {
-        var message = 0
-        val messages = randomMessageList {
-            message++
-            randomMessage(deletedAt = if (message % 2 == 0) randomDate() else null)
-        }
-        val messagesState = MutableStateFlow(messages)
-        val controller = Fixture()
-            .givenCurrentUser()
-            .givenChannelQuery()
-            .givenChannelState(messagesState = messagesState)
-            .get(deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_HIDDEN)
-
-        val deletedMessageCount =
-            controller.messageListState.value.messageItems.count { it is MessageItemState && it.message.isDeleted() }
-        deletedMessageCount `should be equal to` 0
-    }
-
-    @Test
-    fun `When deleted visibility is always When grouping messages Should add all deleted messages`() = runTest {
+    fun `When grouping messages Should include all deleted messages`() = runTest {
         var message = 0
         val messages = randomMessageList {
             message++
@@ -301,26 +281,6 @@ internal class MessageListControllerTests {
         val messagesCount = controller.messageListState.value.messageItems.count { it is MessageItemState }
         messagesCount `should be equal to` 10
     }
-
-    @Test
-    fun `When deleted visibility is current user When grouping messages Should not see other users deleted messages`() =
-        runTest {
-            var message = 0
-            val messages = randomMessageList {
-                message++
-                randomMessage(deletedAt = if (message % 2 == 0) randomDate() else null)
-            }
-            val messagesState = MutableStateFlow(messages)
-            val controller = Fixture()
-                .givenCurrentUser()
-                .givenChannelQuery()
-                .givenChannelState(messagesState = messagesState)
-                .get(deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER)
-
-            val deletedMessageCount =
-                controller.messageListState.value.messageItems.count { it is MessageItemState && it.message.isDeleted() }
-            deletedMessageCount `should be equal to` 0
-        }
 
     // footer visibility
     @Test
@@ -762,6 +722,52 @@ internal class MessageListControllerTests {
         }
 
     @Test
+    fun `Show unread label, when read state update arrives after markUnread succeeds`() = runTest {
+        val user = randomUser()
+        val messageA = randomMessage(id = "message_a")
+        val messageB = randomMessage(id = "message_b")
+        val messageC = randomMessage(id = "message_c")
+        val messages = listOf(messageA, messageB, messageC)
+        // Channel starts fully read: read state points to the last message
+        val channelUserRead = MutableStateFlow(
+            randomChannelUserRead(
+                user = user,
+                lastReadMessageId = messageC.id,
+                unreadMessages = 0,
+            ),
+        )
+        val messagesState = MutableStateFlow(messages)
+        val controller = Fixture()
+            .givenCurrentUser(user)
+            .givenChannelState(messagesState = messagesState, read = channelUserRead)
+            .givenMarkMessageUnread()
+            .get()
+
+        // Verify no unread label initially
+        controller.unreadLabelState.value.shouldBeNull()
+
+        // User marks messageB as unread: API succeeds but the server event hasn't arrived yet
+        controller.markUnread(messageB)
+
+        // The stale read state (still pointing to messageC) should not produce a label
+        controller.unreadLabelState.value.shouldBeNull()
+
+        // Now the server event arrives and updates the read state
+        channelUserRead.emit(
+            randomChannelUserRead(
+                user = user,
+                lastReadMessageId = messageA.id,
+                unreadMessages = 2,
+            ),
+        )
+
+        // The unread label should now be visible
+        val unreadLabel = controller.unreadLabelState.value
+        unreadLabel.`should not be null`()
+        unreadLabel.lastReadMessageId `should be equal to` messageA.id
+    }
+
+    @Test
     fun `When deleting message with playing audio, audio is stopped before deletion`() = runTest {
         val messageId = randomString()
         val audioRecording = randomAttachment(type = AttachmentType.AUDIO_RECORDING)
@@ -806,26 +812,27 @@ internal class MessageListControllerTests {
     }
 
     @Test
-    fun `When deleting message with audio attachment, and different audio is playing, audio is not stopped before deletion`() = runTest {
-        val messageId = randomString()
-        val audioRecording = randomAttachment(type = AttachmentType.AUDIO_RECORDING)
-        val messages = listOf(randomMessage(id = messageId, attachments = listOf(audioRecording)))
-        val messagesState = MutableStateFlow(messages)
+    fun `When deleting message with audio attachment, and different audio is playing, audio is not stopped before deletion`() =
+        runTest {
+            val messageId = randomString()
+            val audioRecording = randomAttachment(type = AttachmentType.AUDIO_RECORDING)
+            val messages = listOf(randomMessage(id = messageId, attachments = listOf(audioRecording)))
+            val messagesState = MutableStateFlow(messages)
 
-        val audioPlayer = mock<AudioPlayer>().apply {
-            whenever(currentState) doReturn AudioState.PLAYING
-            whenever(currentPlayingId) doReturn randomAttachment().audioHash
+            val audioPlayer = mock<AudioPlayer>().apply {
+                whenever(currentState) doReturn AudioState.PLAYING
+                whenever(currentPlayingId) doReturn randomAttachment().audioHash
+            }
+
+            val controller = Fixture()
+                .givenCurrentUser()
+                .givenChannelState(messagesState = messagesState)
+                .givenAudioPlayer(audioPlayer)
+                .givenDeleteMessage(callFrom { messages.first() })
+                .get()
+            controller.deleteMessage(messages.first())
+            verify(audioPlayer, times(0)).pause()
         }
-
-        val controller = Fixture()
-            .givenCurrentUser()
-            .givenChannelState(messagesState = messagesState)
-            .givenAudioPlayer(audioPlayer)
-            .givenDeleteMessage(callFrom { messages.first() })
-            .get()
-        controller.deleteMessage(messages.first())
-        verify(audioPlayer, times(0)).pause()
-    }
 
     @Test
     fun `When deleting message without attachments, audio is not stopped before deletion`() = runTest {
@@ -1002,52 +1009,54 @@ internal class MessageListControllerTests {
     }
 
     @Test
-    fun `When reactToMessage is called with skipPush set to true, sendReaction is invoked with skipPush true`() = runTest {
-        val messageId = randomString()
-        val reactionType = "love"
-        val reaction = randomReaction(messageId = messageId, type = reactionType)
-        val message = randomMessage(id = messageId, ownReactions = emptyList())
-        val messagesState = MutableStateFlow(listOf(message))
-        val chatClient = mock<ChatClient>()
-        val controller = Fixture(chatClient = chatClient)
-            .givenCurrentUser()
-            .givenChannelState(messagesState = messagesState)
-            .givenSendReaction(callFrom { reaction })
-            .get()
+    fun `When reactToMessage is called with skipPush set to true, sendReaction is invoked with skipPush true`() =
+        runTest {
+            val messageId = randomString()
+            val reactionType = "love"
+            val reaction = randomReaction(messageId = messageId, type = reactionType)
+            val message = randomMessage(id = messageId, ownReactions = emptyList())
+            val messagesState = MutableStateFlow(listOf(message))
+            val chatClient = mock<ChatClient>()
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser()
+                .givenChannelState(messagesState = messagesState)
+                .givenSendReaction(callFrom { reaction })
+                .get()
 
-        controller.reactToMessage(reaction, message, skipPush = true)
+            controller.reactToMessage(reaction, message, skipPush = true)
 
-        verify(chatClient).sendReaction(
-            enforceUnique = true,
-            reaction = reaction,
-            cid = CID,
-            skipPush = true,
-        )
-    }
+            verify(chatClient).sendReaction(
+                enforceUnique = false,
+                reaction = reaction,
+                cid = CID,
+                skipPush = true,
+            )
+        }
 
     @Test
-    fun `When reactToMessage is called with default skipPush value, sendReaction is invoked with skipPush false`() = runTest {
-        val messageId = randomString()
-        val reactionType = "love"
-        val reaction = randomReaction(messageId = messageId, type = reactionType)
-        val message = randomMessage(id = messageId, ownReactions = emptyList())
-        val messagesState = MutableStateFlow(listOf(message))
-        val chatClient = mock<ChatClient>()
-        val controller = Fixture(chatClient = chatClient)
-            .givenCurrentUser()
-            .givenChannelState(messagesState = messagesState)
-            .givenSendReaction(callFrom { reaction })
-            .get()
+    fun `When reactToMessage is called with default skipPush value, sendReaction is invoked with skipPush false`() =
+        runTest {
+            val messageId = randomString()
+            val reactionType = "love"
+            val reaction = randomReaction(messageId = messageId, type = reactionType)
+            val message = randomMessage(id = messageId, ownReactions = emptyList())
+            val messagesState = MutableStateFlow(listOf(message))
+            val chatClient = mock<ChatClient>()
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser()
+                .givenChannelState(messagesState = messagesState)
+                .givenSendReaction(callFrom { reaction })
+                .get()
 
-        controller.reactToMessage(reaction, message)
+            controller.reactToMessage(reaction, message)
 
-        verify(chatClient).sendReaction(
-            enforceUnique = true,
-            reaction = reaction,
-            cid = CID,
-            skipPush = false,
-        )
-    }
+            verify(chatClient).sendReaction(
+                enforceUnique = false,
+                reaction = reaction,
+                cid = CID,
+                skipPush = false,
+            )
+        }
 
     @Test
     fun `When reactToMessage is called for existing reaction, deleteReaction is invoked`() = runTest {
@@ -1092,7 +1101,7 @@ internal class MessageListControllerTests {
         controller.reactToMessage(reaction, message)
 
         verify(chatClient).sendReaction(
-            enforceUnique = true,
+            enforceUnique = false,
             reaction = reaction,
             cid = CID,
             skipPush = false,
@@ -1128,7 +1137,7 @@ internal class MessageListControllerTests {
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val cid: String = CID,
-        statePluginConfig: StatePluginConfig = StatePluginConfig(),
+        chatClientConfig: ChatClientConfig = ChatClientConfig(),
     ) {
         private val clientState: ClientState = mock()
         private val stateRegistry: StateRegistry = mock()
@@ -1139,7 +1148,7 @@ internal class MessageListControllerTests {
             val statePlugin: StatePlugin = mock()
             val statePluginFactory: StreamStatePluginFactory = mock()
             whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
-            whenever(statePluginFactory.resolveDependency(eq(StatePluginConfig::class))) doReturn statePluginConfig
+            whenever(statePluginFactory.resolveDependency(eq(ChatClientConfig::class))) doReturn chatClientConfig
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
             whenever(chatClient.pluginFactories) doReturn listOf(statePluginFactory)
             whenever(chatClient.clientState) doReturn clientState
@@ -1238,7 +1247,6 @@ internal class MessageListControllerTests {
 
         fun get(
             dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler(),
-            deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
             showSystemMessages: Boolean = true,
         ): MessageListController {
             return MessageListController(
@@ -1246,7 +1254,6 @@ internal class MessageListControllerTests {
                 chatClient = chatClient,
                 clipboardHandler = mock(),
                 dateSeparatorHandler = dateSeparatorHandler,
-                deletedMessageVisibility = deletedMessageVisibility,
                 showSystemMessages = showSystemMessages,
                 threadLoadOrderOlderToNewer = false,
                 channelState = MutableStateFlow(channelState),
@@ -1266,6 +1273,7 @@ internal class MessageListControllerTests {
         private val user1 = User(id = "Jc", name = "Jc Miñarro")
         private val user2 = User(id = "NotJc", name = "Not Jc Miñarro")
 
+        @OptIn(ExperimentalCoroutinesApi::class)
         private fun nowDate() = Date(testCoroutines.dispatcher.scheduler.currentTime)
 
         private fun nowMessage(author: User, type: String, text: String = randomString()): Message {

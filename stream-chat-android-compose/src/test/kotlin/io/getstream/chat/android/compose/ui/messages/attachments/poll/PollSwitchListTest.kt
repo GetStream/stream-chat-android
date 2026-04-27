@@ -30,7 +30,7 @@ internal class PollSwitchListTest : PaparazziComposeTest {
     @Test
     fun `list items`() {
         snapshotWithDarkMode {
-            PollSwitchList()
+            PollSwitchListPreviewContent()
         }
     }
 }

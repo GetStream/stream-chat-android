@@ -29,11 +29,6 @@ public sealed interface ChannelInfoViewEvent {
     public sealed interface Modal : ChannelInfoViewEvent
 
     /**
-     * Indicates an event to present a modal for hiding a channel.
-     */
-    public data object HideChannelModal : Modal
-
-    /**
      * Indicates an event to present a modal for leaving a channel.
      */
     public data object LeaveChannelModal : Modal
@@ -103,6 +98,34 @@ public sealed interface ChannelInfoViewEvent {
     public data class RemoveMemberModal(val member: Member) : Modal
 
     /**
+     * Indicates an event to mute a member's user.
+     *
+     * @param member The member whose user is to be muted.
+     */
+    public data class MuteUser(val member: Member) : ChannelInfoViewEvent
+
+    /**
+     * Indicates an event to unmute a member's user.
+     *
+     * @param member The member whose user is to be unmuted.
+     */
+    public data class UnmuteUser(val member: Member) : ChannelInfoViewEvent
+
+    /**
+     * Indicates an event to block a member's user.
+     *
+     * @param member The member whose user is to be blocked.
+     */
+    public data class BlockUser(val member: Member) : ChannelInfoViewEvent
+
+    /**
+     * Indicates an event to unblock a member's user.
+     *
+     * @param member The member whose user is to be unblocked.
+     */
+    public data class UnblockUser(val member: Member) : ChannelInfoViewEvent
+
+    /**
      * Represents navigation events.
      *
      * @param reason The reason for navigation or null if not applicable.
@@ -112,11 +135,6 @@ public sealed interface ChannelInfoViewEvent {
          * Represents the reason for navigation.
          */
         public sealed interface Reason {
-            /**
-             * Indicates the channel was successfully hidden.
-             */
-            public data object HideChannelSuccess : Reason
-
             /**
              * Indicates the user successfully left the channel.
              */
@@ -181,19 +199,29 @@ public sealed interface ChannelInfoViewEvent {
     public data object MuteChannelError : Error
 
     /**
+     * Indicates an error occurred while muting a user.
+     */
+    public data object MuteUserError : Error
+
+    /**
+     * Indicates an error occurred while unmuting a user.
+     */
+    public data object UnmuteUserError : Error
+
+    /**
+     * Indicates an error occurred while blocking a user.
+     */
+    public data object BlockUserError : Error
+
+    /**
+     * Indicates an error occurred while unblocking a user.
+     */
+    public data object UnblockUserError : Error
+
+    /**
      * Indicates an error occurred while unmuting a channel.
      */
     public data object UnmuteChannelError : Error
-
-    /**
-     * Indicates an error occurred while hiding a channel.
-     */
-    public data object HideChannelError : Error
-
-    /**
-     * Indicates an error occurred while unhiding a channel.
-     */
-    public data object UnhideChannelError : Error
 
     /**
      * Indicates an error occurred while leaving a channel.
@@ -219,4 +247,9 @@ public sealed interface ChannelInfoViewEvent {
      * Indicates an error occurred while removing a member.
      */
     public data object RemoveMemberError : Error
+
+    /**
+     * Indicates an error occurred while adding members to the channel.
+     */
+    public data object AddMembersError : Error
 }

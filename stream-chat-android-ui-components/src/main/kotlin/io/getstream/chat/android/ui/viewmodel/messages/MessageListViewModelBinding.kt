@@ -19,10 +19,10 @@
 package io.getstream.chat.android.ui.viewmodel.messages
 
 import androidx.lifecycle.LifecycleOwner
+import io.getstream.chat.android.client.api.state.EventObserver
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.state.utils.EventObserver
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.feature.gallery.toAttachment
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
@@ -55,12 +55,8 @@ public fun MessageListViewModel.bindView(
     view: MessageListView,
     lifecycleOwner: LifecycleOwner,
 ) {
-    deletedMessageVisibility.observe(lifecycleOwner) {
-        view.setDeletedMessageVisibility(it)
-    }
-
     channel.observe(lifecycleOwner) {
-        view.init(it)
+        view.updateChannel(it)
     }
     view.setEndRegionReachedHandler { onEvent(EndRegionReached) }
     view.setBottomEndRegionReachedHandler { messageId -> onEvent(BottomEndRegionReached(messageId)) }
@@ -98,13 +94,14 @@ public fun MessageListViewModel.bindView(
             onEvent(DownloadAttachment(downloadAttachmentCall))
         }
     }
-    view.setReplyMessageClickListener { replyTo ->
+    view.setOnReplyMessageClickListener { replyTo ->
         onEvent(
             MessageListViewModel.Event.ShowMessage(
                 messageId = replyTo.id,
                 parentMessageId = replyTo.parentId,
             ),
         )
+        true
     }
     view.setOnScrollToBottomHandler { scrollToBottom { view.scrollToBottom() } }
     view.setMessageUserBlockHandler { message ->

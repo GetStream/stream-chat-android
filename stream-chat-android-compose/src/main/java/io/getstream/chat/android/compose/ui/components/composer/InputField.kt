@@ -22,6 +22,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
@@ -33,10 +34,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
@@ -48,11 +45,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
-import io.getstream.chat.android.compose.ui.theme.StreamColors
-import io.getstream.chat.android.compose.ui.theme.StreamTypography
+import io.getstream.chat.android.compose.ui.theme.StreamDesign
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedInputText
 
 /**
@@ -81,17 +76,16 @@ public fun InputField(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
-    border: BorderStroke = BorderStroke(1.dp, ChatTheme.colors.borders),
+    border: BorderStroke = BorderStroke(1.dp, ChatTheme.colors.borderCoreDefault),
     innerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
     visualTransformation: VisualTransformation = DefaultInputFieldVisualTransformation(
-        inputFieldTheme = ChatTheme.messageComposerTheme.inputField,
         typography = ChatTheme.typography,
         colors = ChatTheme.colors,
     ),
     decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit,
 ) {
-    var textState by remember { mutableStateOf(TextFieldValue(text = value)) }
+    var textState by remember { mutableStateOf(TextFieldValue(text = value, selection = TextRange(value.length))) }
 
     if (textState.text != value) {
         // Workaround to move cursor to the end after selecting a suggestion
@@ -105,17 +99,14 @@ public fun InputField(
         }
     }
 
-    val theme = ChatTheme.messageComposerTheme.inputField
-    val description = stringResource(id = R.string.stream_compose_cd_message_input)
+    val colors = ChatTheme.colors
 
     BasicTextField(
         modifier = modifier
-            .border(border = border, shape = theme.borderShape)
-            .clip(shape = theme.borderShape)
-            .background(theme.backgroundColor)
-            .padding(innerPadding)
-            .semantics { contentDescription = description }
-            .testTag("Stream_ComposerInputField"),
+            .border(border = border, shape = InputFieldBorder)
+            .clip(shape = InputFieldBorder)
+            .background(colors.backgroundCoreSurfaceDefault)
+            .padding(innerPadding),
         value = textState,
         onValueChange = {
             textState = it
@@ -124,8 +115,8 @@ public fun InputField(
             }
         },
         visualTransformation = visualTransformation,
-        textStyle = theme.textStyle,
-        cursorBrush = SolidColor(theme.cursorBrushColor),
+        textStyle = ChatTheme.typography.bodyDefault.copy(color = colors.textPrimary),
+        cursorBrush = SolidColor(colors.accentPrimary),
         decorationBox = { innerTextField -> decorationBox(innerTextField) },
         maxLines = maxLines,
         singleLine = maxLines == 1,
@@ -134,31 +125,21 @@ public fun InputField(
     )
 }
 
-/**
- * Default visual transformation for the [InputField] composable.
- * Applies text styling and link styling to the input text.
- *
- * @param inputFieldTheme The theme for the input field.
- * @param typography The typography styles to be used.
- * @param colors The color palette to be used.
- */
+private val InputFieldBorder = RoundedCornerShape(StreamTokens.radius3xl)
+
 private class DefaultInputFieldVisualTransformation(
-    val inputFieldTheme: ComposerInputFieldTheme,
-    val typography: StreamTypography,
-    val colors: StreamColors,
+    val typography: StreamDesign.Typography,
+    val colors: StreamDesign.Colors,
 ) : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
-        val textColor = inputFieldTheme.textStyle.color
-        val fontStyle = typography.body.fontStyle
-        val linkStyle = TextStyle(
-            color = colors.primaryAccent,
-            textDecoration = TextDecoration.Underline,
-        )
         val transformed = buildAnnotatedInputText(
             text = text.text,
-            textColor = textColor,
-            textFontStyle = fontStyle,
-            linkStyle = linkStyle,
+            textColor = colors.textPrimary,
+            textFontStyle = typography.bodyDefault.fontStyle,
+            linkStyle = TextStyle(
+                color = colors.accentPrimary,
+                textDecoration = TextDecoration.Underline,
+            ),
         )
         return TransformedText(transformed, OffsetMapping.Identity)
     }
@@ -168,11 +149,34 @@ private class DefaultInputFieldVisualTransformation(
 @Composable
 private fun InputFieldPreview() {
     ChatTheme {
-        InputField(
-            modifier = Modifier.fillMaxWidth(),
-            value = "InputFieldPreview",
-            onValueChange = { _ -> },
-            decorationBox = { innerTextField -> innerTextField.invoke() },
-        )
+        InputFieldFilled()
     }
+}
+
+@Composable
+internal fun InputFieldFilled() {
+    InputField(
+        modifier = Modifier.fillMaxWidth(),
+        value = "Some text",
+        onValueChange = {},
+        decorationBox = { innerTextField -> innerTextField() },
+    )
+}
+
+@Preview
+@Composable
+private fun InputFieldEmptyPreview() {
+    ChatTheme {
+        InputFieldEmpty()
+    }
+}
+
+@Composable
+internal fun InputFieldEmpty() {
+    InputField(
+        modifier = Modifier.fillMaxWidth(),
+        value = "",
+        onValueChange = {},
+        decorationBox = { innerTextField -> innerTextField() },
+    )
 }

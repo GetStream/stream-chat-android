@@ -19,8 +19,11 @@ package io.getstream.chat.android.compose.ui.pinned
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import io.getstream.chat.android.compose.ui.messages.preview.internal.MessagePreviewItem
+import io.getstream.chat.android.compose.ui.pinned.internal.PinnedMessageItemContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.PinnedMessageListItemCenterContentParams
+import io.getstream.chat.android.compose.ui.theme.PinnedMessageListItemLeadingContentParams
+import io.getstream.chat.android.compose.ui.theme.PinnedMessageListItemTrailingContentParams
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 
@@ -45,24 +48,30 @@ public fun PinnedMessageItem(
     modifier: Modifier = Modifier,
     leadingContent: @Composable RowScope.(Message) -> Unit = {
         with(ChatTheme.componentFactory) {
-            PinnedMessageListItemLeadingContent(it, currentUser)
+            PinnedMessageListItemLeadingContent(
+                params = PinnedMessageListItemLeadingContentParams(message = it, currentUser = currentUser),
+            )
         }
     },
     centerContent: @Composable RowScope.(Message) -> Unit = {
         with(ChatTheme.componentFactory) {
-            PinnedMessageListItemCenterContent(it, currentUser)
+            PinnedMessageListItemCenterContent(
+                params = PinnedMessageListItemCenterContentParams(message = it, currentUser = currentUser),
+            )
         }
     },
     trailingContent: @Composable RowScope.(Message) -> Unit = {
         with(ChatTheme.componentFactory) {
-            PinnedMessageListItemTrailingContent(it)
+            PinnedMessageListItemTrailingContent(
+                params = PinnedMessageListItemTrailingContentParams(message = it),
+            )
         }
     },
 ) {
-    MessagePreviewItem(
+    PinnedMessageItemContent(
         message = message,
         currentUser = currentUser,
-        onMessagePreviewClick = onPinnedMessageClick,
+        onPinnedMessageClick = onPinnedMessageClick,
         modifier = modifier,
         leadingContent = leadingContent,
         centerContent = centerContent,

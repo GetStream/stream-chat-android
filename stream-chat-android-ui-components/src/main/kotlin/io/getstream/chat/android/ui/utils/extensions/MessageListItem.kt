@@ -43,7 +43,7 @@ public fun MessageListItemCommon.toUiMessageListItem(): MessageListItem {
         is TypingItemState -> MessageListItem.TypingItem(users = typingUsers)
         is MessageItemState -> MessageListItem.MessageItem(
             message = message,
-            positions = groupPosition,
+            position = groupPosition,
             isMine = isMine,
             messageReadBy = messageReadBy,
             isThreadMode = isInThread,

@@ -44,7 +44,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                     attachments = mutableListOf(Attachment(type = "image", imageUrl = uri1)),
                     text = "Some text",
                 ),
-                positions = listOf(MessagePosition.TOP),
+                position = MessagePosition.TOP,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
@@ -55,7 +55,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                     ),
                     text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
                 ),
-                positions = listOf(MessagePosition.MIDDLE),
+                position = MessagePosition.MIDDLE,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
@@ -67,7 +67,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                     ),
                     text = "Hi!",
                 ),
-                positions = listOf(MessagePosition.BOTTOM),
+                position = MessagePosition.BOTTOM,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
@@ -78,7 +78,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                     ),
                     text = "Lorem ipsum dolor sit amet",
                 ),
-                positions = listOf(MessagePosition.TOP),
+                position = MessagePosition.TOP,
                 isMine = false,
             ),
             MessageListItem.MessageItem(
@@ -90,7 +90,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                     ),
                     text = "Another message",
                 ),
-                positions = listOf(MessagePosition.MIDDLE),
+                position = MessagePosition.MIDDLE,
                 isMine = false,
             ),
             MessageListItem.MessageItem(
@@ -103,7 +103,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                     ),
                     text = "Bye!!!",
                 ),
-                positions = listOf(MessagePosition.BOTTOM),
+                position = MessagePosition.BOTTOM,
                 isMine = false,
             ),
             MessageListItem.MessageItem(
@@ -118,7 +118,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                     ),
                     text = "Bye!!!",
                 ),
-                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
+                position = MessagePosition.TOP,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
@@ -131,7 +131,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                     text = "Hi!",
                     syncStatus = SyncStatus.FAILED_PERMANENTLY,
                 ),
-                positions = listOf(MessagePosition.BOTTOM),
+                position = MessagePosition.BOTTOM,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
@@ -144,7 +144,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                     ),
                     text = "Hi! https://www.google.com/",
                 ),
-                positions = listOf(MessagePosition.BOTTOM),
+                position = MessagePosition.BOTTOM,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
@@ -157,7 +157,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                     ),
                     text = "Hi! https://www.google.com/",
                 ),
-                positions = listOf(MessagePosition.BOTTOM),
+                position = MessagePosition.BOTTOM,
                 isMine = false,
             ),
         )

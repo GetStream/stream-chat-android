@@ -46,7 +46,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,11 +65,13 @@ import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.list.ChannelsActivity
+import io.getstream.chat.android.compose.sample.ui.SampleChatTheme
 import io.getstream.chat.android.compose.sample.ui.chats.ChatsActivity
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
 import io.getstream.result.Error
 import kotlinx.coroutines.launch
+import io.getstream.chat.android.compose.R as ComposeR
 
 /**
  * An Activity that allows users to manually log in to an environment with an API key,
@@ -84,7 +85,7 @@ class CustomLoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ChatTheme(allowUIAutomationTest = true) {
+            SampleChatTheme {
                 CustomLoginScreen(
                     onBackButtonClick = ::finish,
                     onLoginButtonClick = { userCredentials ->
@@ -109,7 +110,7 @@ class CustomLoginActivity : AppCompatActivity() {
         onLoginButtonClick: (UserCredentials) -> Unit,
     ) {
         Scaffold(
-            containerColor = ChatTheme.colors.appBackground,
+            containerColor = ChatTheme.colors.backgroundCoreApp,
             topBar = { CustomLoginToolbar(onClick = onBackButtonClick) },
             content = {
                 Column(
@@ -125,14 +126,64 @@ class CustomLoginActivity : AppCompatActivity() {
                     var userTokenText by remember { mutableStateOf("") }
                     var userNameText by remember { mutableStateOf("") }
                     var isAdaptiveLayoutEnabled by remember { mutableStateOf(settings.isAdaptiveLayoutEnabled) }
+                    var isComposerLinkPreviewEnabled by remember {
+                        mutableStateOf(settings.isComposerLinkPreviewEnabled)
+                    }
+                    var isComposerFloatingStyleEnabled by remember {
+                        mutableStateOf(settings.isComposerFloatingStyleEnabled)
+                    }
+                    var isSystemAttachmentPickerEnabled by remember {
+                        mutableStateOf(settings.isSystemAttachmentPickerEnabled)
+                    }
 
                     val isLoginButtonEnabled = apiKeyText.isNotEmpty() &&
                         userIdText.isNotEmpty() &&
                         userTokenText.isNotEmpty()
 
-                    LaunchedEffect(isAdaptiveLayoutEnabled) {
-                        settings.isAdaptiveLayoutEnabled = isAdaptiveLayoutEnabled
-                    }
+                    val featureFlags = listOf(
+                        FeatureFlag(
+                            label = stringResource(R.string.custom_login_flag_adaptive_layout_label),
+                            description = stringResource(R.string.custom_login_flag_adaptive_layout_description),
+                            value = isAdaptiveLayoutEnabled,
+                            onValueChange = {
+                                isAdaptiveLayoutEnabled = it
+                                settings.isAdaptiveLayoutEnabled = it
+                            },
+                        ),
+                        FeatureFlag(
+                            label = stringResource(R.string.custom_login_flag_composer_link_preview_label),
+                            description = stringResource(
+                                R.string.custom_login_flag_composer_link_preview_description,
+                            ),
+                            value = isComposerLinkPreviewEnabled,
+                            onValueChange = {
+                                isComposerLinkPreviewEnabled = it
+                                settings.isComposerLinkPreviewEnabled = it
+                            },
+                        ),
+                        FeatureFlag(
+                            label = stringResource(R.string.custom_login_flag_composer_floating_style_label),
+                            description = stringResource(
+                                R.string.custom_login_flag_composer_floating_style_description,
+                            ),
+                            value = isComposerFloatingStyleEnabled,
+                            onValueChange = {
+                                isComposerFloatingStyleEnabled = it
+                                settings.isComposerFloatingStyleEnabled = it
+                            },
+                        ),
+                        FeatureFlag(
+                            label = stringResource(R.string.custom_login_flag_system_attachment_picker_label),
+                            description = stringResource(
+                                R.string.custom_login_flag_system_attachment_picker_description,
+                            ),
+                            value = isSystemAttachmentPickerEnabled,
+                            onValueChange = {
+                                isSystemAttachmentPickerEnabled = it
+                                settings.isSystemAttachmentPickerEnabled = it
+                            },
+                        ),
+                    )
 
                     CustomLoginInputField(
                         hint = stringResource(id = R.string.custom_login_hint_api_key),
@@ -160,10 +211,14 @@ class CustomLoginActivity : AppCompatActivity() {
 
                     HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
-                    EnableAdaptiveScreenField(
-                        value = isAdaptiveLayoutEnabled,
-                        onValueChange = { isChecked -> isAdaptiveLayoutEnabled = isChecked },
-                    )
+                    featureFlags.forEach { flag ->
+                        FeatureFlagField(
+                            value = flag.value,
+                            label = flag.label,
+                            description = flag.description,
+                            onValueChange = flag.onValueChange,
+                        )
+                    }
 
                     Spacer(modifier = Modifier.weight(1f))
 
@@ -187,7 +242,7 @@ class CustomLoginActivity : AppCompatActivity() {
                         modifier = Modifier.padding(16.dp),
                         text = stringResource(R.string.sdk_version_template, BuildConfig.STREAM_CHAT_VERSION),
                         fontSize = 14.sp,
-                        color = ChatTheme.colors.textLowEmphasis,
+                        color = ChatTheme.colors.textSecondary,
                     )
                 }
             },
@@ -206,13 +261,13 @@ class CustomLoginActivity : AppCompatActivity() {
                     onClick = onClick,
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+                        painter = painterResource(id = ComposeR.drawable.stream_design_ic_arrow_left),
                         contentDescription = null,
                         tint = Color.Black,
                     )
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = ChatTheme.colors.barsBackground),
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = ChatTheme.colors.backgroundCoreElevation1),
         )
     }
 
@@ -231,17 +286,17 @@ class CustomLoginActivity : AppCompatActivity() {
             onValueChange = { onValueChange(it) },
             singleLine = true,
             label = { Text(hint) },
-            shape = ChatTheme.shapes.inputField,
+            shape = RoundedCornerShape(24.dp),
             colors = TextFieldDefaults.colors(
-                focusedTextColor = ChatTheme.colors.textHighEmphasis,
-                unfocusedTextColor = ChatTheme.colors.textHighEmphasis,
-                focusedContainerColor = ChatTheme.colors.inputBackground,
-                unfocusedContainerColor = ChatTheme.colors.inputBackground,
-                cursorColor = ChatTheme.colors.primaryAccent,
+                focusedTextColor = ChatTheme.colors.textPrimary,
+                unfocusedTextColor = ChatTheme.colors.textPrimary,
+                focusedContainerColor = ChatTheme.colors.backgroundCoreSurfaceDefault,
+                unfocusedContainerColor = ChatTheme.colors.backgroundCoreSurfaceDefault,
+                cursorColor = ChatTheme.colors.accentPrimary,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                focusedLabelColor = ChatTheme.colors.primaryAccent,
-                unfocusedLabelColor = ChatTheme.colors.textLowEmphasis,
+                focusedLabelColor = ChatTheme.colors.accentPrimary,
+                unfocusedLabelColor = ChatTheme.colors.textSecondary,
             ),
         )
     }
@@ -258,8 +313,8 @@ class CustomLoginActivity : AppCompatActivity() {
             enabled = enabled,
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = ChatTheme.colors.primaryAccent,
-                disabledContainerColor = ChatTheme.colors.disabled,
+                containerColor = ChatTheme.colors.accentPrimary,
+                disabledContainerColor = ChatTheme.colors.backgroundUtilityDisabled,
             ),
             onClick = onClick,
         ) {
@@ -272,8 +327,10 @@ class CustomLoginActivity : AppCompatActivity() {
     }
 
     @Composable
-    private fun EnableAdaptiveScreenField(
+    private fun FeatureFlagField(
         value: Boolean,
+        label: String,
+        description: String,
         onValueChange: (Boolean) -> Unit,
     ) {
         Row(
@@ -285,20 +342,20 @@ class CustomLoginActivity : AppCompatActivity() {
                 checked = value,
                 onCheckedChange = onValueChange,
                 colors = SwitchDefaults.colors(
-                    checkedThumbColor = ChatTheme.colors.primaryAccent,
-                    checkedTrackColor = ChatTheme.colors.primaryAccent.copy(alpha = 0.5f),
-                    uncheckedThumbColor = ChatTheme.colors.textLowEmphasis,
-                    uncheckedTrackColor = ChatTheme.colors.textLowEmphasis.copy(alpha = 0.5f),
+                    checkedThumbColor = ChatTheme.colors.accentPrimary,
+                    checkedTrackColor = ChatTheme.colors.accentPrimary.copy(alpha = 0.5f),
+                    uncheckedThumbColor = ChatTheme.colors.textSecondary,
+                    uncheckedTrackColor = ChatTheme.colors.textSecondary.copy(alpha = 0.5f),
                 ),
             )
             Column {
                 Text(
-                    text = stringResource(id = R.string.custom_login_enable_adaptive_layout),
-                    style = ChatTheme.typography.title3,
+                    text = label,
+                    style = ChatTheme.typography.headingMedium,
                 )
                 Text(
-                    text = stringResource(id = R.string.custom_login_enable_adaptive_layout_description),
-                    style = ChatTheme.typography.footnote,
+                    text = description,
+                    style = ChatTheme.typography.metadataDefault,
                 )
             }
         }
@@ -327,6 +384,13 @@ class CustomLoginActivity : AppCompatActivity() {
     private fun showError(error: Error) {
         Toast.makeText(this, "Login failed: ${error.message}", Toast.LENGTH_SHORT).show()
     }
+
+    private data class FeatureFlag(
+        val label: String,
+        val description: String,
+        val value: Boolean,
+        val onValueChange: (Boolean) -> Unit,
+    )
 
     companion object {
         fun createIntent(context: Context): Intent {

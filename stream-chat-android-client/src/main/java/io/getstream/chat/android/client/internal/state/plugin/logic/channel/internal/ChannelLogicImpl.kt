@@ -1,0 +1,425 @@
+/*
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal
+
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.Pagination
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.WatchChannelRequest
+import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
+import io.getstream.chat.android.client.errors.isPermanent
+import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
+import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
+import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
+import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
+import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PendingMessage
+import io.getstream.chat.android.models.PushPreference
+import io.getstream.chat.android.models.toChannelData
+import io.getstream.result.Result
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.util.Date
+
+/**
+ * Default implementation of [ChannelLogic] that manages channel state and handles channel operations.
+ *
+ * This class is responsible for:
+ * - Loading channel data from the local database and remote API
+ * - Managing message pagination (loading older/newer messages, loading around a specific message)
+ * - Handling channel events and updating state accordingly
+ * - Managing channel members, watchers, and read states
+ *
+ * @param cid The unique identifier for the channel in the format "type:id".
+ * @param messagesUpdateLogic The logic for managing channel message updates.
+ * @param repository The repository for accessing persisted channel and message data.
+ * @param state The mutable channel state implementation.
+ * @param mutableGlobalState The global mutable state shared across channels.
+ * @param userPresence Whether to subscribe to user presence event
+ * @param coroutineScope The coroutine scope for launching asynchronous operations.
+ * @param getCurrentUserId A function that returns the current user's ID, or null if not available.
+ * @param now A function that returns the current time in milliseconds.
+ */
+@Suppress("TooManyFunctions", "LongParameterList")
+internal class ChannelLogicImpl(
+    override val cid: String,
+    override val messagesUpdateLogic: ChannelMessagesUpdateLogic,
+    private val repository: RepositoryFacade,
+    private val state: ChannelStateImpl,
+    private val mutableGlobalState: MutableGlobalState,
+    private val userPresence: Boolean,
+    private val coroutineScope: CoroutineScope,
+    getCurrentUserId: () -> String?,
+    now: () -> Long,
+) : ChannelLogic {
+
+    private val eventHandler = ChannelEventHandlerImpl(
+        cid = cid,
+        state = state,
+        globalState = mutableGlobalState,
+        coroutineScope = coroutineScope,
+        getCurrentUserId = getCurrentUserId,
+        now = now,
+    )
+
+    override suspend fun updateStateFromDatabase(query: QueryChannelRequest) {
+        if (query.isNotificationUpdate) return
+        if (query.isFilteringMessages()) return
+        // Populate from DB ONLY if loading latest messages
+        val channel = fetchOfflineChannel(cid, query) ?: return
+        val localOnlyMessages = repository.selectLocalOnlyMessagesForChannel(cid)
+        updateDataForChannel(
+            channel = channel,
+            messageLimit = query.messagesLimit(),
+            shouldRefreshMessages = true,
+            // Note: The following arguments are NOT used. But they are kept for backwards compatibility.
+            scrollUpdate = false,
+            isNotificationUpdate = query.isNotificationUpdate,
+            isChannelsStateUpdate = true,
+        )
+        // Set the currently known oldest message until online data is retrieved
+        state.paginationManager.setOldestMessage(channel.messages.lastOrNull())
+        state.setLocalOnlyMessages(localOnlyMessages)
+    }
+
+    override fun setPaginationDirection(query: QueryChannelRequest) {
+        state.paginationManager.begin(query)
+    }
+
+    override fun onQueryChannelResult(query: QueryChannelRequest, result: Result<Channel>) {
+        val limit = query.messagesLimit()
+        val isNotificationUpdate = query.isNotificationUpdate
+        // Update pagination state only if it's not a notification update and the call was made for fetching messages
+        // (from LoadNotificationDataWorker) and a limit is set (otherwise we are not loading messages)
+        if (!isNotificationUpdate && limit != 0) {
+            state.paginationManager.end(query, result)
+        }
+        when (result) {
+            is Result.Success -> {
+                val channel = result.value
+                // Update channel data
+                val channelData = channel.toChannelData()
+                state.updateChannelData {
+                    // Enrich own_capabilities
+                    if (channelData.ownCapabilities.isEmpty()) {
+                        channelData.copy(ownCapabilities = state.channelData.value.ownCapabilities)
+                    } else {
+                        channelData
+                    }
+                }
+                // Update member/watcher data
+                state.setMemberCount(channel.memberCount)
+                state.upsertMembers(channel.members)
+                state.upsertWatchers(channel.watchers, channel.watcherCount)
+                // Update reads
+                state.updateReads(channel.read)
+                // Update config
+                state.setChannelConfig(channel.config)
+                // Update messages
+                if (limit > 0) {
+                    updateMessages(query, channel)
+                }
+                // Add pinned messages
+                state.addPinnedMessages(channel.pinnedMessages)
+                // Reset recovery state
+                if (!isNotificationUpdate && limit != 0) {
+                    state.setRecoveryNeeded(false)
+                }
+            }
+
+            is Result.Failure -> {
+                // Mark the channel as needing recovery if the error is not permanent
+                val isPermanent = result.value.isPermanent()
+                state.setRecoveryNeeded(recoveryNeeded = !isPermanent)
+            }
+        }
+    }
+
+    override suspend fun watch(limit: Int, userPresence: Boolean): Result<Channel> {
+        val request = QueryChannelPaginationRequest(limit)
+            .toWatchChannelRequest(userPresence)
+            .apply {
+                shouldRefresh = true
+            }
+        return queryChannel(request)
+    }
+
+    override suspend fun loadAfter(messageId: String, limit: Int): Result<Channel> {
+        val request = QueryChannelPaginationRequest(limit)
+            .apply {
+                messageFilterValue = messageId
+                messageFilterDirection = Pagination.GREATER_THAN
+            }
+            .toWatchChannelRequest(userPresence)
+        return queryChannel(request)
+    }
+
+    override suspend fun loadBefore(messageId: String?, limit: Int): Result<Channel> {
+        val messageId = messageId ?: state.getOldestMessage()?.id
+        val request = QueryChannelPaginationRequest(limit)
+            .apply {
+                if (messageId != null) {
+                    messageFilterValue = messageId
+                    messageFilterDirection = Pagination.LESS_THAN
+                }
+            }
+            .toWatchChannelRequest(userPresence)
+        return queryChannel(request)
+    }
+
+    override suspend fun loadAround(messageId: String): Result<Channel> {
+        val request = QueryChannelPaginationRequest()
+            .apply {
+                messageFilterValue = messageId
+                messageFilterDirection = Pagination.AROUND_ID
+            }
+            .toWatchChannelRequest(userPresence)
+            .apply {
+                // Refresh all messages in the channel
+                shouldRefresh = true
+            }
+        return queryChannel(request)
+    }
+
+    override fun getMessage(messageId: String): Message? {
+        return state.getMessageById(messageId)
+    }
+
+    override fun upsertMessage(message: Message) {
+        state.upsertMessage(message)
+    }
+
+    override fun updateLastMessageAt(message: Message) {
+        state.updateLastMessageAt(message)
+    }
+
+    override fun deleteMessage(message: Message) {
+        state.deleteMessage(message.id)
+    }
+
+    override fun upsertMembers(members: List<Member>) {
+        state.upsertMembers(members)
+    }
+
+    override fun setHidden(hidden: Boolean) {
+        state.setHidden(hidden)
+    }
+
+    override fun hideMessagesBefore(date: Date) {
+        state.hideMessagesBefore(date)
+    }
+
+    override fun removeMessagesBefore(date: Date) {
+        state.removeMessagesBefore(date, systemMessage = null)
+    }
+
+    override fun setPushPreference(preference: PushPreference) {
+        state.setPushPreference(preference)
+    }
+
+    override fun setRepliedMessage(message: Message?) {
+        state.setRepliedMessage(message)
+    }
+
+    override fun markRead(): Boolean {
+        return state.markRead()
+    }
+
+    override fun typingEventsEnabled(): Boolean {
+        return state.channelConfig.value.typingEventsEnabled
+    }
+
+    override fun getLastStartTypingEvent(): Date? {
+        return state.getLastStartTypingEvent()
+    }
+
+    override fun setLastStartTypingEvent(date: Date?) {
+        state.setLastStartTypingEvent(date)
+    }
+
+    override fun setKeystrokeParentMessageId(messageId: String?) {
+        state.setKeystrokeParentMessageId(messageId)
+    }
+
+    override suspend fun updateDataForChannel(
+        channel: Channel,
+        messageLimit: Int,
+        shouldRefreshMessages: Boolean,
+        scrollUpdate: Boolean,
+        isNotificationUpdate: Boolean,
+        isChannelsStateUpdate: Boolean,
+    ) {
+        // This is called when:
+        // 1. After QueryChannels completes (offline/online)
+        // 2. After QueryChannels from SyncManager
+        // 3. After adding a channel to the channel list (on ChatEvent)
+
+        // Update channel data
+        val channelData = channel.toChannelData()
+        state.updateChannelData {
+            // Enrich own_capabilities
+            if (channelData.ownCapabilities.isEmpty()) {
+                channelData.copy(ownCapabilities = state.channelData.value.ownCapabilities)
+            } else {
+                channelData
+            }
+        }
+        // Update member/watcher data
+        state.setMemberCount(channel.memberCount)
+        state.upsertMembers(channel.members)
+        state.upsertWatchers(channel.watchers, channel.watcherCount)
+        // Update reads
+        state.updateReads(channel.read)
+        // Update channel config
+        state.setChannelConfig(channel.config)
+        // Set pending messages
+        state.setPendingMessages(channel.pendingMessages.map(PendingMessage::message))
+        // Update messages based on the relationship between the incoming page and existing state.
+        if (messageLimit > 0) {
+            val sortedMessages = withContext(Dispatchers.Default) {
+                channel.messages.sortedBy { it.getCreatedAtOrNull() }
+            }
+            val currentMessages = state.messages.value
+            when {
+                shouldRefreshMessages || currentMessages.isEmpty() -> {
+                    // Initial load (DB seed or first fetch) or explicit refresh — full replace
+                    state.setMessages(sortedMessages)
+                    state.paginationManager.setEndOfOlderMessages(channel.messages.size < messageLimit)
+                }
+                state.insideSearch.value -> {
+                    // User's window was already trimmed away from the latest (insideSearch set by
+                    // trimNewestMessages, or a prior jump-to-message). Stay at current position;
+                    // refresh the "jump to latest" cache with the server's current latest page.
+                    state.upsertCachedLatestMessages(sortedMessages, preserveAttachmentUrls = true)
+                }
+                hasGap(currentMessages, sortedMessages) -> {
+                    // Incoming page is newer than the current window with no overlap. Inserting the
+                    // incoming messages would create a fragmented list. Instead, treat the user's
+                    // position as a mid-page: store the incoming as the "latest" cache and signal the UI.
+                    state.upsertCachedLatestMessages(sortedMessages, preserveAttachmentUrls = true)
+                    state.setInsideSearch(true)
+                    state.paginationManager.setEndOfNewerMessages(false)
+                }
+                else -> {
+                    // Incoming messages are contiguous with (or overlap) the current window.
+                    // Upsert preserves the user's scroll position while adding/updating messages.
+                    state.upsertMessages(sortedMessages, preserveAttachmentUrls = true)
+                    state.paginationManager.setEndOfOlderMessages(channel.messages.size < messageLimit)
+                }
+            }
+        }
+        // Add pinned messages
+        state.addPinnedMessages(channel.pinnedMessages)
+    }
+
+    override fun handleEvents(events: List<ChatEvent>) {
+        for (event in events) {
+            handleEvent(event)
+        }
+    }
+
+    override fun handleEvent(event: ChatEvent) {
+        eventHandler.handle(event)
+    }
+
+    private suspend fun queryChannel(request: WatchChannelRequest): Result<Channel> {
+        state.paginationManager.begin(request)
+        val (type, id) = cid.cidToTypeAndId()
+        return ChatClient.instance()
+            .queryChannel(type, id, request, skipOnRequest = true)
+            .await()
+    }
+
+    private fun updateMessages(query: QueryChannelRequest, channel: Channel) {
+        when {
+            !query.isFilteringMessages() -> {
+                // Loading newest messages (no pagination):
+                // 1. Clear any cached latest messages (we are replacing the whole list)
+                // 2. Replace the active messages with the loaded ones
+                state.clearCachedLatestMessages()
+                state.setMessages(channel.messages)
+                state.setInsideSearch(false)
+            }
+
+            query.isFilteringAroundIdMessages() -> {
+                // Loading messages around a specific message:
+                // 1. Cache the current messages (for access to latest messages) (unless already inside search)
+                // 2. Replace the active messages with the loaded ones
+                if (state.insideSearch.value) {
+                    // We are currently around a message, don't cache the latest messages, just replace the active set
+                    // Otherwise, the cached message set will wrongly hold the previous "around" set, instead of the
+                    // latest messages
+                    state.setMessages(channel.messages)
+                } else {
+                    // We are currently showing the latest messages, cache them first, then replace the active set
+                    state.cacheLatestMessages()
+                    state.setMessages(channel.messages)
+                    state.setInsideSearch(true)
+                }
+            }
+
+            query.isFilteringNewerMessages() -> {
+                // Loading newer messages - append
+                state.upsertMessages(channel.messages)
+                state.trimOldestMessages()
+                val endReached = query.messagesLimit() > channel.messages.size
+                if (endReached) {
+                    // Reached the latest messages
+                    state.clearCachedLatestMessages()
+                    state.setInsideSearch(false)
+                }
+            }
+
+            query.filteringOlderMessages() -> {
+                // Loading older messages - prepend
+                state.upsertMessages(channel.messages)
+                state.trimNewestMessages()
+            }
+        }
+        // Replace pending messages — server always returns the full latest set (up to 100, ASC).
+        state.setPendingMessages(channel.pendingMessages.map { it.message })
+    }
+
+    private suspend fun fetchOfflineChannel(cid: String, request: QueryChannelRequest): Channel? {
+        // Fetch channel data from DB
+        val channel = repository.selectChannel(cid) ?: return null
+        // Fetch messages for the channel
+        val messages = repository
+            .selectMessagesForChannel(cid, request.toAnyChannelPaginationRequest())
+        // Enrich the channel with messages
+        return channel.copy(messages = messages)
+    }
+
+    private fun hasGap(currentMessages: List<Message>, incomingMessages: List<Message>): Boolean {
+        val currentNewest = currentMessages.maxByOrNull { it.getCreatedAtOrDefault(NEVER) }
+        val incomingOldest = incomingMessages.firstOrNull()
+        return currentMessages.isNotEmpty() &&
+            currentNewest != null &&
+            incomingOldest != null &&
+            currentMessages.none { it.id == incomingOldest.id } &&
+            incomingOldest.getCreatedAtOrDefault(NEVER).after(currentNewest.getCreatedAtOrDefault(NEVER))
+    }
+}

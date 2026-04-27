@@ -30,11 +30,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.client.test.MockedChatClientTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -47,36 +54,38 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
 
     fun snapshot(
         isInDarkMode: Boolean = false,
+        contentAlignment: Alignment = Alignment.TopStart,
+        backgroundColor: Color = Color.Unspecified,
         composable: @Composable () -> Unit,
     ) {
         paparazzi.snapshot {
-            CompositionLocalProvider(
-                LocalInspectionMode provides true,
-                LocalOnBackPressedDispatcherOwner provides FakeBackDispatcherOwner,
-                LocalActivityResultRegistryOwner provides NoOpRegistryOwner,
-            ) {
+            TestEnvironment {
                 ChatTheme(isInDarkMode = isInDarkMode) {
-                    Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
-                        composable.invoke()
+                    Box(
+                        modifier = Modifier
+                            .background(backgroundColor.takeOrElse(ChatTheme.colors::backgroundCoreApp)),
+                        contentAlignment = contentAlignment,
+                    ) {
+                        composable()
                     }
                 }
             }
         }
     }
 
-    fun snapshotWithDarkMode(composable: @Composable () -> Unit) {
+    fun snapshotWithDarkMode(
+        contentAlignment: Alignment = Alignment.TopStart,
+        composable: @Composable () -> Unit,
+    ) {
         paparazzi.snapshot {
-            CompositionLocalProvider(
-                LocalInspectionMode provides true,
-                LocalOnBackPressedDispatcherOwner provides FakeBackDispatcherOwner,
-                LocalActivityResultRegistryOwner provides NoOpRegistryOwner,
-            ) {
+            TestEnvironment {
                 Column {
                     ChatTheme(isInDarkMode = true) {
                         Box(
                             modifier = Modifier
                                 .weight(.5f)
-                                .background(ChatTheme.colors.appBackground),
+                                .background(ChatTheme.colors.backgroundCoreApp),
+                            contentAlignment = contentAlignment,
                         ) {
                             composable()
                         }
@@ -85,7 +94,8 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
                         Box(
                             modifier = Modifier
                                 .weight(.5f)
-                                .background(ChatTheme.colors.appBackground),
+                                .background(ChatTheme.colors.backgroundCoreApp),
+                            contentAlignment = contentAlignment,
                         ) {
                             composable()
                         }
@@ -95,19 +105,19 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
         }
     }
 
-    fun snapshotWithDarkModeRow(composable: @Composable () -> Unit) {
+    fun snapshotWithDarkModeRow(
+        contentAlignment: Alignment = Alignment.TopStart,
+        composable: @Composable () -> Unit,
+    ) {
         paparazzi.snapshot {
-            CompositionLocalProvider(
-                LocalInspectionMode provides true,
-                LocalOnBackPressedDispatcherOwner provides FakeBackDispatcherOwner,
-                LocalActivityResultRegistryOwner provides NoOpRegistryOwner,
-            ) {
+            TestEnvironment {
                 Row {
                     ChatTheme(isInDarkMode = true) {
                         Box(
                             modifier = Modifier
                                 .weight(.5f)
-                                .background(ChatTheme.colors.appBackground),
+                                .background(ChatTheme.colors.backgroundCoreApp),
+                            contentAlignment = contentAlignment,
                         ) {
                             composable()
                         }
@@ -116,7 +126,8 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
                         Box(
                             modifier = Modifier
                                 .weight(.5f)
-                                .background(ChatTheme.colors.appBackground),
+                                .background(ChatTheme.colors.backgroundCoreApp),
+                            contentAlignment = contentAlignment,
                         ) {
                             composable()
                         }
@@ -125,6 +136,24 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
             }
         }
     }
+}
+
+@Composable
+private fun TestEnvironment(content: @Composable () -> Unit) {
+    CompositionLocalProvider(
+        LocalInspectionMode provides true,
+        LocalViewModelStoreOwner provides FakeViewModelStoreOwner,
+        LocalOnBackPressedDispatcherOwner provides FakeBackDispatcherOwner,
+        LocalActivityResultRegistryOwner provides NoOpRegistryOwner,
+        content = content,
+    )
+}
+
+/**
+ * A fake [ViewModelStoreOwner] necessary for composable components that use [ViewModel].
+ */
+private val FakeViewModelStoreOwner = object : ViewModelStoreOwner {
+    override val viewModelStore: ViewModelStore = ViewModelStore()
 }
 
 /**

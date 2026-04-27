@@ -2,21 +2,17 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>LargeClass:MessageComposerController.kt$MessageComposerController</ID>
     <ID>LargeClass:MessageListController.kt$MessageListController</ID>
     <ID>LongMethod:MessageListController.kt$MessageListController$@Suppress("MagicNumber") private fun observeMessagesListState()</ID>
     <ID>LongParameterList:MessagePositionHandler.kt$MessagePositionHandler$( previousMessage: Message?, message: Message, nextMessage: Message?, isAfterDateSeparator: Boolean, isBeforeDateSeparator: Boolean, isInThread: Boolean, )</ID>
     <ID>MagicNumber:AudioRecordingController.kt$AudioRecordingController$10</ID>
     <ID>MagicNumber:AudioRecordingController.kt$AudioRecordingController$100</ID>
     <ID>MagicNumber:AudioRecordingController.kt$AudioRecordingController$20</ID>
-    <ID>MagicNumber:AudioRecordingController.kt$AudioRecordingController$20_000</ID>
-    <ID>MagicNumber:AudioRecordingController.kt$AudioRecordingController$32767f</ID>
-    <ID>MagicNumber:AudioRecordingController.kt$AudioRecordingController$50</ID>
-    <ID>MagicNumber:AudioRecordingController.kt$AudioRecordingController$90.0</ID>
     <ID>MagicNumber:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$1000</ID>
     <ID>MagicNumber:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$1000f</ID>
     <ID>MagicNumber:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$20</ID>
     <ID>MaxLineLength:AudioPlayerController.kt$AudioPlayerController$seekTo</ID>
-    <ID>TooGenericExceptionCaught:DefaultQueryFilter.kt$DefaultQueryFilter$e: Throwable</ID>
     <ID>TooGenericExceptionCaught:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$e: Exception</ID>
     <ID>TooGenericExceptionCaught:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$e: Throwable</ID>
     <ID>TooGenericExceptionCaught:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$exception: Exception</ID>
@@ -25,14 +21,5 @@
     <ID>TooManyFunctions:AudioRecordingController.kt$AudioRecordingController</ID>
     <ID>TooManyFunctions:MessageListController.kt$MessageListController</ID>
     <ID>TooManyFunctions:StreamMediaRecorder.kt$StreamMediaRecorder</ID>
-    <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$private fun FloatArray.downsample(): Float</ID>
-    <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$private fun FloatArray.downsampleAverage(): Float</ID>
-    <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$private fun FloatArray.downsampleRms(): Float</ID>
-    <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$private fun IntArray.downsampleRms(): Int</ID>
-    <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$private fun List&lt;Float>.downsample(targetSamples: Int): List&lt;Float></ID>
-    <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$private fun List&lt;Int>.downsampleToSingleMax(): Int</ID>
-    <ID>UnusedPrivateMember:DefaultQueryFilter.kt$DefaultQueryFilter$private fun minLevenshteinDistance(search: String, target: String): Int</ID>
-    <ID>VariableNaming:AudioRecordingController.kt$AudioRecordingController$val MAX_AMPLITUDE = 32767f</ID>
-    <ID>VariableNaming:AudioRecordingController.kt$AudioRecordingController$val MAX_DB = 90.0 // Maximum decibel level for normalization</ID>
   </CurrentIssues>
 </SmellBaseline>

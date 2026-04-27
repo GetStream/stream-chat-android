@@ -46,6 +46,34 @@ public sealed interface ChannelInfoMemberViewEvent {
     public data class UnbanMember(val member: Member) : ChannelInfoMemberViewEvent
 
     /**
+     * Indicates an event to proceed with muting a member's user.
+     *
+     * @param member The member whose user is to be muted.
+     */
+    public data class MuteUser(val member: Member) : ChannelInfoMemberViewEvent
+
+    /**
+     * Indicates an event to proceed with unmuting a member's user.
+     *
+     * @param member The member whose user is to be unmuted.
+     */
+    public data class UnmuteUser(val member: Member) : ChannelInfoMemberViewEvent
+
+    /**
+     * Indicates an event to proceed with blocking a member's user.
+     *
+     * @param member The member whose user is to be blocked.
+     */
+    public data class BlockUser(val member: Member) : ChannelInfoMemberViewEvent
+
+    /**
+     * Indicates an event to proceed with unblocking a member's user.
+     *
+     * @param member The member whose user is to be unblocked.
+     */
+    public data class UnblockUser(val member: Member) : ChannelInfoMemberViewEvent
+
+    /**
      * Indicates an event to proceed with removing a member.
      *
      * @param member The member to be removed.

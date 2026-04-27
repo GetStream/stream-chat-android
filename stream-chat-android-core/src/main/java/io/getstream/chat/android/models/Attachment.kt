@@ -45,8 +45,9 @@ import java.io.File
  * @param type The type of the attachment. e.g "file", "image, "audio".
  * @param image The image attachment.
  * @param name The attachment name.
- * @param fallback Alternative description in the case of an image attachment
- * (img alt in HTML).
+ * @param fallback Fallback text used when [title] and [name] are absent.
+ * Displayed in channel-list previews and other summary surfaces.
+ * For image attachments this corresponds to the HTML img alt attribute.
  * @param originalHeight The original height of the attachment.
  * Provided if the attachment is of type "image".
  * @param originalWidth The original width of the attachment.

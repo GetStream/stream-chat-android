@@ -31,6 +31,7 @@ import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FileUploadConfig
@@ -49,7 +50,6 @@ import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.QueryDraftsResult
@@ -851,10 +851,10 @@ public fun randomPollConfig(
     options: List<String> = listOf(randomString()),
     votingVisibility: VotingVisibility = VotingVisibility.PUBLIC,
     enforceUniqueVote: Boolean = randomBoolean(),
-    maxVotesAllowed: Int = positiveRandomInt(),
+    maxVotesAllowed: Int? = positiveRandomInt(),
     allowUserSuggestedOptions: Boolean = randomBoolean(),
     allowAnswers: Boolean = randomBoolean(),
-): PollConfig = PollConfig(
+): CreatePollParams = CreatePollParams(
     name = name,
     description = description,
     options = options.map { PollOption(text = it) },
@@ -871,7 +871,7 @@ public fun randomPoll(
     description: String = randomString(),
     votingVisibility: VotingVisibility = VotingVisibility.PUBLIC,
     enforceUniqueVote: Boolean = randomBoolean(),
-    maxVotesAllowed: Int = positiveRandomInt(),
+    maxVotesAllowed: Int? = positiveRandomInt(),
     voteCount: Int = positiveRandomInt(),
     voteCountsByOption: Map<String, Int> = emptyMap(),
     allowUserSuggestedOptions: Boolean = randomBoolean(),
@@ -978,7 +978,7 @@ public fun randomThread(
     createdByUserId: String = randomString(),
     createdBy: User = randomUser(id = createdByUserId),
     participantCount: Int = positiveRandomInt(),
-    threadParticipants: List<ThreadParticipant> = List(positiveRandomInt(5)) { ThreadParticipant(randomUser()) },
+    threadParticipants: List<ThreadParticipant> = List(positiveRandomInt(5)) { randomThreadParticipant() },
     lastMessageAt: Date = randomDate(),
     createdAt: Date = randomDate(),
     updatedAt: Date = randomDate(),
@@ -1021,6 +1021,8 @@ public fun randomThreadInfo(
     deletedAt: Date? = randomDateOrNull(),
     replyCount: Int = positiveRandomInt(),
     title: String = randomString(),
+    channel: Channel? = null,
+    threadParticipants: List<ThreadParticipant> = emptyList(),
 ): ThreadInfo = ThreadInfo(
     activeParticipantCount = activeParticipantCount,
     cid = cid,
@@ -1035,6 +1037,22 @@ public fun randomThreadInfo(
     deletedAt = deletedAt,
     replyCount = replyCount,
     title = title,
+    channel = channel,
+    threadParticipants = threadParticipants,
+)
+
+/**
+ * Creates a random [ThreadParticipant] fixture.
+ *
+ * @param user The participant user.
+ * @param lastThreadMessageAt Timestamp of the participant's latest thread reply, if available.
+ */
+public fun randomThreadParticipant(
+    user: User = randomUser(),
+    lastThreadMessageAt: Date? = randomDateOrNull(),
+): ThreadParticipant = ThreadParticipant(
+    user = user,
+    lastThreadMessageAt = lastThreadMessageAt,
 )
 
 public fun randomAppSettings(
@@ -1210,13 +1228,10 @@ public fun randomAttachmentType(): String =
 
 public fun attachmentTypes(): List<String> = listOf(
     AttachmentType.IMAGE,
-    AttachmentType.IMGUR,
     AttachmentType.GIPHY,
     AttachmentType.VIDEO,
     AttachmentType.AUDIO,
-    AttachmentType.PRODUCT,
     AttachmentType.FILE,
-    AttachmentType.LINK,
     AttachmentType.AUDIO_RECORDING,
     AttachmentType.UNKNOWN,
 )

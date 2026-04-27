@@ -31,9 +31,9 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import io.getstream.chat.android.client.api.state.EventObserver
 import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.state.utils.EventObserver
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListHeaderViewModel
 import io.getstream.chat.android.ui.viewmodel.channels.bindView
 import io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
@@ -48,6 +48,7 @@ import io.getstream.chat.ui.sample.feature.EXTRA_MESSAGE_ID
 import io.getstream.chat.ui.sample.feature.EXTRA_PARENT_MESSAGE_ID
 import io.getstream.chat.ui.sample.feature.userlogin.UserLoginViewModel
 import io.getstream.chat.ui.sample.util.extensions.useAdjustNothing
+import io.getstream.chat.android.ui.R as UiR
 
 class HomeFragment : Fragment() {
 
@@ -168,16 +169,16 @@ class HomeFragment : Fragment() {
             setOnNavigationItemReselectedListener {}
             setBackgroundResource(R.drawable.shape_bottom_navigation_background)
             getOrCreateBadge(R.id.channels_fragment).apply {
-                backgroundColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_accent_red)
-                badgeTextColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_literal_white)
+                backgroundColor = ContextCompat.getColor(requireContext(), UiR.color.stream_ui_accent_red)
+                badgeTextColor = ContextCompat.getColor(requireContext(), UiR.color.stream_ui_literal_white)
             }
             getOrCreateBadge(R.id.mentions_fragment).apply {
-                backgroundColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_accent_red)
-                badgeTextColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_literal_white)
+                backgroundColor = ContextCompat.getColor(requireContext(), UiR.color.stream_ui_accent_red)
+                badgeTextColor = ContextCompat.getColor(requireContext(), UiR.color.stream_ui_literal_white)
             }
             getOrCreateBadge(R.id.threads_fragment).apply {
-                backgroundColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_accent_red)
-                badgeTextColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_literal_white)
+                backgroundColor = ContextCompat.getColor(requireContext(), UiR.color.stream_ui_accent_red)
+                badgeTextColor = ContextCompat.getColor(requireContext(), UiR.color.stream_ui_literal_white)
             }
         }
     }

@@ -17,6 +17,8 @@
 package io.getstream.chat.android.previewdata
 
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.ReactionGroup
+import java.util.Date
 
 /**
  * Provides sample reactions that will be used to render component previews.
@@ -46,4 +48,19 @@ public object PreviewReactionData {
     public val oneReaction: List<Reaction> = listOf(reaction1)
 
     public val manyReaction: List<Reaction> = listOf(reaction1, reaction2, reaction3, reaction4)
+
+    public val oneReactionGroup: Map<String, ReactionGroup> = oneReaction.toReactionGroups()
+
+    public val manyReactionGroups: Map<String, ReactionGroup> = manyReaction.toReactionGroups()
+
+    private fun List<Reaction>.toReactionGroups(): Map<String, ReactionGroup> =
+        groupBy { it.type }.mapValues { (type, reactions) ->
+            ReactionGroup(
+                type = type,
+                count = reactions.size,
+                sumScore = reactions.size,
+                firstReactionAt = Date(),
+                lastReactionAt = Date(),
+            )
+        }
 }

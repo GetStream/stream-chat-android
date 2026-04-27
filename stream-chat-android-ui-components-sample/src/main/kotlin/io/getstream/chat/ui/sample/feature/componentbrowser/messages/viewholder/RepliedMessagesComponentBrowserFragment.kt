@@ -67,7 +67,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                     ),
                 ),
                 isMine = true,
-                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
+                position = MessagePosition.TOP,
             ),
             MessageListItem.MessageItem(
                 message = Message(
@@ -76,7 +76,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                     user = me,
                     replyTo = Message(text = "Text from reply message", user = other),
                 ),
-                positions = listOf(MessagePosition.TOP),
+                position = MessagePosition.TOP,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
@@ -92,7 +92,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                         user = other,
                     ),
                 ),
-                positions = listOf(MessagePosition.MIDDLE),
+                position = MessagePosition.MIDDLE,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
@@ -110,7 +110,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                         user = other,
                     ),
                 ),
-                positions = listOf(MessagePosition.BOTTOM),
+                position = MessagePosition.BOTTOM,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
@@ -125,12 +125,12 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                         user = me,
                     ),
                 ),
-                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
+                position = MessagePosition.TOP,
                 isMine = false,
             ),
             MessageListItem.MessageItem(
                 message = theirMessage,
-                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
+                position = MessagePosition.TOP,
                 isMine = false,
             ),
             MessageListItem.MessageItem(
@@ -147,7 +147,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                     text = "Bye!!!",
                     replyTo = theirMessage,
                 ),
-                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
+                position = MessagePosition.TOP,
                 isMine = true,
             ),
         )

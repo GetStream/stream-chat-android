@@ -30,7 +30,6 @@ import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.ModerationAction
 import io.getstream.chat.android.models.SyncStatus
-import io.getstream.chat.android.models.User
 import io.getstream.result.Error
 import io.getstream.result.Result
 import java.util.UUID
@@ -80,15 +79,6 @@ public fun Message.isErrorOrFailed(): Boolean = isError() || isFailed()
  * @return If the message is deleted, either for soft delete, hard delete or deleted for the current user.
  */
 public fun Message.isDeleted(): Boolean = deletedAt != null || deletedForMe
-
-/**
- * @return If the message is pinned and not deleted.
- */
-@Deprecated(
-    message = "This function is deprecated, please use isPinned() instead",
-    replaceWith = ReplaceWith("isPinned()"),
-)
-public fun Message.isPinnedAndNotDeleted(): Boolean = pinned && !isDeleted()
 
 /**
  * @return If the message is a valid pinned message.
@@ -244,23 +234,50 @@ public fun Message.shouldDeleteRemote(currentUserId: String?): Result<Unit> {
 
 /**
  * Ensures the message has an id.
- * If the message doesn't have an id, a unique message id is generated.
+ * If the message doesn't have an id, a unique message id is generated (lowercase UUID).
  * @return the message with an id.
  */
-internal fun Message.ensureId(currentUser: User?): Message =
-    copy(id = id.takeIf { it.isNotBlank() } ?: generateMessageId(currentUser))
+internal fun Message.ensureId(): Message =
+    copy(id = id.takeIf { it.isNotBlank() } ?: fallbackMessageId())
 
 /**
  * Ensures the draft message has an id.
- * If the draft message doesn't have an id, a unique message id is generated.
+ * If the draft message doesn't have an id, a unique message id is generated (lowercase UUID).
  * @return the draft message with an id.
  */
-internal fun DraftMessage.ensureId(currentUser: User?): DraftMessage =
-    copy(id = id.takeIf { it.isNotBlank() } ?: generateMessageId(currentUser))
+internal fun DraftMessage.ensureId(): DraftMessage =
+    copy(id = id.takeIf { it.isNotBlank() } ?: fallbackMessageId())
 
 /**
- * Returns a unique message id prefixed with user id.
+ * Generates a fallback message id (lowercase UUID).
  */
-private fun generateMessageId(user: User?): String {
-    return "${user?.id}-${UUID.randomUUID()}"
-}
+internal fun fallbackMessageId(): String = UUID.randomUUID().toString().lowercase()
+
+/**
+ * Returns true if this message is local-only and must be preserved across server message
+ * window replacements. Local-only messages are never returned by the server after the
+ * initial send attempt completes.
+ *
+ * Covers:
+ * - Pending sends: SYNC_NEEDED, IN_PROGRESS
+ * - Attachment upload in-flight: AWAITING_ATTACHMENTS
+ * - Send failed: FAILED_PERMANENTLY (user must see to retry or dismiss)
+ * - Ephemeral: type == "ephemeral" (e.g. Giphy previews — not re-delivered by server)
+ * - Error type: type == "error" (client-generated, not re-delivered by server)
+ *
+ * DOES NOT include COMPLETED messages — those are already in the server response.
+ */
+internal fun Message.isLocalOnly(): Boolean =
+    syncStatus in LocalOnlySyncStatuses || type in LocalOnlyMessageTypes
+
+internal val LocalOnlySyncStatuses = setOf(
+    SyncStatus.SYNC_NEEDED, // new message or pending edit/delete
+    SyncStatus.IN_PROGRESS, // send in flight
+    SyncStatus.AWAITING_ATTACHMENTS, // attachment upload pending
+    SyncStatus.FAILED_PERMANENTLY, // permanent failure — user must see to retry
+)
+
+internal val LocalOnlyMessageTypes = setOf(
+    MessageType.EPHEMERAL, // giphy preview etc. — not re-delivered by server
+    MessageType.ERROR, // error type — not re-delivered by server
+)

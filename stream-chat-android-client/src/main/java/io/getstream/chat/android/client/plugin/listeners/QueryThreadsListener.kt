@@ -18,12 +18,14 @@ package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.result.Result
 
 /**
- * Listener for [ChatClient.queryChannels] requests.
+ * Listener for [ChatClient.queryThreads] requests.
  */
+@InternalStreamChatApi
 public interface QueryThreadsListener {
 
     /**

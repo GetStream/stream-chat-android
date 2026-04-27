@@ -37,38 +37,38 @@ import java.io.File
  * - Videos: `{externalFilesDir}/Movies/`
  * With fallback to cache directories if external storage is unavailable.
  *
- * [pictureFile] and [videoFile] are set during [createIntent] and used by [parseResult] to resolve
- * the captured file. After process death these references are lost; callers can restore them via
- * [restoreFilePaths] before the pending result is dispatched.
+ * After [createIntent] the caller should persist [pictureFile] and [videoFile] paths
+ * so they can be restored after process death via the constructor.
  *
  * @param mode The capture mode determining what media types can be captured.
  * @param fileManager Manager for creating temporary files in external storage.
- * @param onFilesCreated Optional callback invoked inside [createIntent] after destination files
- * are created, giving the caller an opportunity to persist the file references before the
- * external activity starts.
+ * @param pictureFile Previously created photo file to restore after process death.
+ * @param videoFile Previously created video file to restore after process death.
  */
 @InternalStreamChatApi
 public class CaptureMediaContract(
     private val mode: Mode,
     private val fileManager: StreamFileManager = StreamFileManager(),
-    private val onFilesCreated: ((pictureFile: File?, videoFile: File?) -> Unit)? = null,
+    pictureFile: File? = null,
+    videoFile: File? = null,
 ) : ActivityResultContract<Unit, File?>() {
 
     /**
-     * The destination file for a captured photo.
-     * Set by [createIntent]; can be restored externally after process death.
+     * The photo destination file created by [createIntent], or restored via constructor.
      */
-    private var pictureFile: File? = null
+    @InternalStreamChatApi
+    public var pictureFile: File? = pictureFile
+        private set
 
     /**
-     * The destination file for a captured video.
-     * Set by [createIntent]; can be restored externally after process death.
+     * The video destination file created by [createIntent], or restored via constructor.
      */
-    private var videoFile: File? = null
+    @InternalStreamChatApi
+    public var videoFile: File? = videoFile
+        private set
 
     override fun createIntent(context: Context, input: Unit): Intent {
         val intents: List<Intent> = mode.intents(context)
-        onFilesCreated?.invoke(pictureFile, videoFile)
         val initialIntent = intents.lastOrNull() ?: Intent()
         return Intent.createChooser(initialIntent, mode.label(context))
             .apply {
@@ -77,25 +77,6 @@ public class CaptureMediaContract(
                     (intents - initialIntent).toTypedArray(),
                 )
             }
-    }
-
-    /**
-     * Restores [pictureFile] and [videoFile] from previously persisted absolute paths.
-     *
-     * After process death the in-memory file references are lost, so the pending
-     * [ActivityResultContract] callback would be unable to locate the captured media.
-     * Call this method **before** the result is dispatched (e.g. in `onCreate`) to
-     * reconstruct the destination files so that [parseResult] can return the correct file.
-     *
-     * Passing `null` for either parameter leaves the corresponding file reference unchanged.
-     *
-     * @param picturePath Absolute path of the photo destination file, or `null`.
-     * @param videoPath Absolute path of the video destination file, or `null`.
-     */
-    @InternalStreamChatApi
-    public fun restoreFilePaths(picturePath: String?, videoPath: String?) {
-        picturePath?.let { pictureFile = File(it) }
-        videoPath?.let { videoFile = File(it) }
     }
 
     private fun getRecordVideoIntents(context: Context): List<Intent> {

@@ -25,6 +25,7 @@ import coil3.gif.AnimatedImageDecoder
 import coil3.gif.GifDecoder
 import coil3.intercept.Interceptor
 import coil3.memory.MemoryCache
+import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.allowHardware
 import coil3.request.crossfade
 import coil3.video.VideoFrameDecoder
@@ -82,6 +83,7 @@ public class StreamImageLoaderFactory(
             }
             .components {
                 interceptors.forEach { add(it) }
+                add(OkHttpNetworkFetcherFactory())
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     add(AnimatedImageDecoder.Factory(enforceMinimumFrameDelay = true))
                 } else {

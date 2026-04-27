@@ -32,16 +32,16 @@ import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.result.Result
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.util.Date
 
-@ExperimentalCoroutinesApi
 internal class MessageUtilsTest {
 
     @Test
@@ -178,24 +178,6 @@ internal class MessageUtilsTest {
     fun `isDeleted should return false for non-deleted message`() {
         val message = randomMessage(deletedAt = null, deletedForMe = false)
         message.isDeleted() shouldBeEqualTo false
-    }
-
-    @Test
-    fun `isPinnedAndNotDeleted should return true for pinned and not deleted message`() {
-        val message = randomMessage(pinned = true, deletedAt = null, deletedForMe = false)
-        message.isPinnedAndNotDeleted() shouldBeEqualTo true
-    }
-
-    @Test
-    fun `isPinnedAndNotDeleted should return false for non-pinned message`() {
-        val message = randomMessage(pinned = false)
-        message.isPinnedAndNotDeleted() shouldBeEqualTo false
-    }
-
-    @Test
-    fun `isPinnedAndNotDeleted should return false for deleted message`() {
-        val message = randomMessage(pinned = true, deletedAt = Date())
-        message.isPinnedAndNotDeleted() shouldBeEqualTo false
     }
 
     @Test
@@ -556,34 +538,78 @@ internal class MessageUtilsTest {
     fun `ensureId should return message with existing id`() {
         val messageId = randomString()
         val message = randomMessage(id = messageId)
-        val result = message.ensureId(randomUser())
-        result.id shouldBeEqualTo messageId
+        val messageWithId = message.ensureId()
+        Assertions.assertEquals(messageId, messageWithId.id)
     }
 
     @Test
     fun `ensureId should generate id for message without id`() {
-        val userId = randomString()
-        val user = randomUser(id = userId)
         val message = randomMessage(id = "")
-        val result = message.ensureId(user)
-        result.id.startsWith(userId) shouldBeEqualTo true
+        val messageWithId = message.ensureId()
+        Assertions.assertTrue(UuidRegex.matches(messageWithId.id))
     }
 
     @Test
     fun `ensureId should return draft message with existing id`() {
         val draftId = randomString()
-        val draftMessage = randomDraftMessage(id = draftId)
-        val result = draftMessage.ensureId(null)
-        result.id shouldBeEqualTo draftId
+        val draft = randomDraftMessage(id = draftId)
+        val draftWithId = draft.ensureId()
+        Assertions.assertEquals(draftId, draftWithId.id)
     }
 
     @Test
     fun `ensureId should generate id for draft message without id`() {
-        val userId = randomString()
-        val user = User(id = userId)
-        val draftMessage = randomDraftMessage(id = "")
-        val result = draftMessage.ensureId(user)
-        result.id.startsWith(userId) shouldBeEqualTo true
+        val draft = randomDraftMessage(id = "")
+        val draftWithId = draft.ensureId()
+        Assertions.assertTrue(UuidRegex.matches(draftWithId.id))
+    }
+
+    @Test
+    fun `isLocalOnly returns true for SyncStatus SYNC_NEEDED`() {
+        val message = randomMessage(syncStatus = SyncStatus.SYNC_NEEDED, type = MessageType.REGULAR)
+        assertTrue(message.isLocalOnly())
+    }
+
+    @Test
+    fun `isLocalOnly returns true for SyncStatus IN_PROGRESS`() {
+        val message = randomMessage(syncStatus = SyncStatus.IN_PROGRESS, type = MessageType.REGULAR)
+        assertTrue(message.isLocalOnly())
+    }
+
+    @Test
+    fun `isLocalOnly returns true for SyncStatus AWAITING_ATTACHMENTS`() {
+        val message = randomMessage(syncStatus = SyncStatus.AWAITING_ATTACHMENTS, type = MessageType.REGULAR)
+        assertTrue(message.isLocalOnly())
+    }
+
+    @Test
+    fun `isLocalOnly returns true for SyncStatus FAILED_PERMANENTLY`() {
+        val message = randomMessage(syncStatus = SyncStatus.FAILED_PERMANENTLY, type = MessageType.REGULAR)
+        assertTrue(message.isLocalOnly())
+    }
+
+    @Test
+    fun `isLocalOnly returns true for type ephemeral with COMPLETED syncStatus`() {
+        val message = randomMessage(syncStatus = SyncStatus.COMPLETED, type = MessageType.EPHEMERAL)
+        assertTrue(message.isLocalOnly())
+    }
+
+    @Test
+    fun `isLocalOnly returns true for type error with COMPLETED syncStatus`() {
+        val message = randomMessage(syncStatus = SyncStatus.COMPLETED, type = MessageType.ERROR)
+        assertTrue(message.isLocalOnly())
+    }
+
+    @Test
+    fun `isLocalOnly returns false for SyncStatus COMPLETED with type regular`() {
+        val message = randomMessage(syncStatus = SyncStatus.COMPLETED, type = MessageType.REGULAR)
+        assertFalse(message.isLocalOnly())
+    }
+
+    @Test
+    fun `isLocalOnly returns false for system message with COMPLETED`() {
+        val message = randomMessage(syncStatus = SyncStatus.COMPLETED, type = MessageType.SYSTEM)
+        assertFalse(message.isLocalOnly())
     }
 
     @Test
@@ -666,5 +692,11 @@ internal class MessageUtilsTest {
         )
         val result = message.shouldDeleteRemote(randomString())
         assertTrue(result is Result.Success)
+    }
+
+    private companion object {
+
+        // Regex matching lowercase UUID format
+        private val UuidRegex = "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$".toRegex()
     }
 }

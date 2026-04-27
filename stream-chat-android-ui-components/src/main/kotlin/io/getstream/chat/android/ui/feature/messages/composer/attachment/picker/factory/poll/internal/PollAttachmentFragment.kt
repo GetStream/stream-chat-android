@@ -21,7 +21,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentPollBinding
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.AttachmentsPickerTabListener
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.poll.CreatePollDialogFragment
@@ -55,8 +55,8 @@ internal class PollAttachmentFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         context.getFragmentManager()?.let {
             CreatePollDialogFragment.newInstance(object : CreatePollDialogFragment.CreatePollDialogListener {
-                override fun onCreatePoll(pollConfig: PollConfig) {
-                    attachmentsPickerTabListener?.onPollSubmitted(pollConfig)
+                override fun onCreatePoll(createPollParams: CreatePollParams) {
+                    attachmentsPickerTabListener?.onPollSubmitted(createPollParams)
                 }
 
                 override fun onDismiss() {

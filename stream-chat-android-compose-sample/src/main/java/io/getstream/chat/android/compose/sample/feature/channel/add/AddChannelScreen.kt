@@ -21,7 +21,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,7 +29,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -57,11 +55,12 @@ import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.feature.channel.add.component.SearchUserResultsContent
 import io.getstream.chat.android.compose.sample.feature.channel.add.component.SearchUserTextField
 import io.getstream.chat.android.compose.sample.ui.component.AppToolbar
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.User
 
 /**
@@ -102,14 +101,11 @@ fun AddChannelScreen(
             state.draftCid?.let { cid ->
                 val context = LocalContext.current
                 val viewModel = remember(cid) {
-                    val factory = MessagesViewModelFactory(context, cid)
+                    val factory = ChannelViewModelFactory(context, cid)
                     factory.create(MessageComposerViewModel::class.java)
                 }
                 MessageComposer(
                     viewModel = viewModel,
-                    integrations = {
-                        Spacer(Modifier.width(8.dp))
-                    },
                     onSendMessage = {
                         viewModel.sendMessage(it)
                         onMessageSent()
@@ -151,13 +147,13 @@ private fun AddChannelToolbar(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.barsBackground),
+            .background(ChatTheme.colors.backgroundCoreElevation1),
     ) {
         AppToolbar(title = stringResource(id = R.string.add_channel_title), onBack = onBack, elevation = 0.dp)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(ChatTheme.colors.barsBackground)
+                .background(ChatTheme.colors.backgroundCoreElevation1)
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -169,7 +165,7 @@ private fun AddChannelToolbar(
                     .padding(top = 20.dp),
                 text = stringResource(id = R.string.add_channel_to),
                 fontSize = 14.sp,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = ChatTheme.colors.textSecondary,
             )
             Spacer(modifier = Modifier.size(8.dp))
             // Selected users + Search field
@@ -193,14 +189,14 @@ private fun AddChannelToolbar(
                 Icon(
                     painter = painterResource(iconId),
                     contentDescription = null,
-                    tint = ChatTheme.colors.textLowEmphasis,
+                    tint = ChatTheme.colors.textSecondary,
                 )
             }
         }
-        HorizontalDivider(color = ChatTheme.colors.borders, thickness = 1.dp)
+        HorizontalDivider(color = ChatTheme.colors.borderCoreDefault, thickness = 1.dp)
         if (!hasSelectedUsers) {
             CreateGroupSection(onClick = onCreateGroupClick)
-            HorizontalDivider(color = ChatTheme.colors.borders, thickness = 1.dp)
+            HorizontalDivider(color = ChatTheme.colors.borderCoreDefault, thickness = 1.dp)
         }
     }
 }
@@ -215,7 +211,7 @@ private fun CreateGroupSection(onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.barsBackground)
+            .background(ChatTheme.colors.backgroundCoreElevation1)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = ripple(),
@@ -225,7 +221,7 @@ private fun CreateGroupSection(onClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            tint = ChatTheme.colors.primaryAccent,
+            tint = ChatTheme.colors.accentPrimary,
             painter = painterResource(id = R.drawable.ic_create_group),
             contentDescription = null,
         )
@@ -234,7 +230,7 @@ private fun CreateGroupSection(onClick: () -> Unit) {
             text = stringResource(id = R.string.add_channel_create_group),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
     }
 }
@@ -245,7 +241,6 @@ private fun CreateGroupSection(onClick: () -> Unit) {
  * @param selectedUsers The list of selected users.
  * @param onUserClick Action to be invoked when a user is clicked.
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SelectedUsersList(
     selectedUsers: List<User>,
@@ -254,7 +249,7 @@ private fun SelectedUsersList(
     FlowRow(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.barsBackground)
+            .background(ChatTheme.colors.backgroundCoreElevation1)
             .padding(12.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -281,12 +276,11 @@ private fun SelectedUserChip(
 ) {
     SuggestionChip(
         modifier = Modifier.height(32.dp),
-        colors = SuggestionChipDefaults.suggestionChipColors(containerColor = ChatTheme.colors.appBackground),
+        colors = SuggestionChipDefaults.suggestionChipColors(containerColor = ChatTheme.colors.backgroundCoreApp),
         shape = RoundedCornerShape(16.dp),
         icon = {
             UserAvatar(
-                modifier = Modifier.size(24.dp),
-                textStyle = ChatTheme.typography.title3Bold.copy(fontSize = 12.sp),
+                modifier = Modifier.size(AvatarSize.Small),
                 user = user,
             )
         },
@@ -296,7 +290,7 @@ private fun SelectedUserChip(
             Text(
                 text = user.name,
                 fontSize = 12.sp,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
         },
     )

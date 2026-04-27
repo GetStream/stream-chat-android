@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -26,41 +26,44 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import io.getstream.chat.android.client.utils.attachment.isAudio
+import io.getstream.chat.android.client.utils.attachment.isFile
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
+import io.getstream.chat.android.compose.ui.components.LoadingIndicator
+import io.getstream.chat.android.compose.ui.components.attachments.files.FileTypeIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
+import io.getstream.chat.android.compose.ui.theme.FileAttachmentItemParams
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
-import io.getstream.chat.android.compose.ui.util.clickable
+import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePreviewData
-import io.getstream.chat.android.compose.util.attachmentDownloadState
-import io.getstream.chat.android.compose.util.onDownloadHandleRequest
+import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Attachment.UploadState
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.model.MimeType
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
-import io.getstream.chat.android.uiutils.model.MimeType
 
 /**
  * Builds a file attachment message which shows a list of files.
@@ -68,9 +71,9 @@ import io.getstream.chat.android.uiutils.model.MimeType
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
  * @param modifier Modifier for styling.
+ * @param showFileSize Whether to show the file size or not.
  * @param onItemClick Lambda called when an item gets clicked.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun FileAttachmentContent(
     attachmentState: AttachmentState,
@@ -81,8 +84,10 @@ public fun FileAttachmentContent(
         attachment: Attachment,
     ) -> Unit = ::onFileAttachmentContentItemClick,
 ) {
-    val (message, isMine, onItemLongClick) = attachmentState
+    val message = attachmentState.message
     val previewHandlers = ChatTheme.attachmentPreviewHandlers
+
+    val shouldBeFullSize = message.shouldBeDisplayedAsFullSizeAttachment()
 
     Column(
         modifier = modifier
@@ -90,27 +95,33 @@ public fun FileAttachmentContent(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = {},
-                onLongClick = { onItemLongClick(message) },
+                onLongClick = { attachmentState.onLongItemClick(message) },
             )
             .testTag("Stream_MultipleFileAttachmentsColumn"),
     ) {
         for (attachment in message.attachments) {
-            ChatTheme.componentFactory.FileAttachmentItem(
-                modifier = Modifier
-                    .padding(2.dp)
-                    .fillMaxWidth()
-                    .combinedClickable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() },
-                        onClick = {
-                            onItemClick(previewHandlers, attachment)
-                        },
-                        onLongClick = { onItemLongClick(message) },
+            if (attachment.isFile() || attachment.isAudio()) {
+                ChatTheme.componentFactory.FileAttachmentItem(
+                    params = FileAttachmentItemParams(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .applyIf(!shouldBeFullSize) {
+                                val color = MessageStyling.attachmentBackgroundColor(attachmentState.isMine)
+                                padding(MessageStyling.messageSectionPadding)
+                                    .background(color, fileAttachmentShape)
+                            }
+                            .combinedClickable(
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() },
+                                onClick = { onItemClick(previewHandlers, attachment) },
+                                onLongClick = { attachmentState.onLongItemClick(message) },
+                            ),
+                        attachment = attachment,
+                        isMine = attachmentState.isMine,
+                        showFileSize = showFileSize,
                     ),
-                attachment = attachment,
-                isMine = isMine,
-                showFileSize = showFileSize,
-            )
+                )
+            }
         }
     }
 }
@@ -130,75 +141,79 @@ public fun FileAttachmentItem(
     showFileSize: (Attachment) -> Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val fileAttachmentTheme: FileAttachmentTheme = when {
-        isMine -> ChatTheme.ownFileAttachmentTheme
-        else -> ChatTheme.otherFileAttachmentTheme
-    }
-
-    Surface(
-        modifier = modifier,
-        color = fileAttachmentTheme.background,
-        shape = fileAttachmentTheme.itemShape,
+    Row(
+        modifier.padding(StreamTokens.spacingSm),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp, horizontal = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            FileAttachmentImage(
-                attachment = attachment,
-                isMine = isMine,
-            )
-            FileAttachmentDescription(
-                attachment = attachment,
-                isMine = isMine,
-                showFileSize = showFileSize,
-            )
-            FileAttachmentDownloadIcon(
-                attachment = attachment,
-                isMine = isMine,
-            )
+        FileAttachmentImage(
+            attachment = attachment,
+            isMine = isMine,
+        )
+        val textColor = when (isMine) {
+            true -> ChatTheme.colors.chatTextOutgoing
+            false -> ChatTheme.colors.chatTextIncoming
         }
+        FileAttachmentDescription(
+            attachment = attachment,
+            style = FileAttachmentStyle(
+                titleTextStyle = ChatTheme.typography.captionEmphasis,
+                titleColor = textColor,
+                fileSizeTextStyle = ChatTheme.typography.metadataDefault,
+                fileSizeTextColor = textColor,
+            ),
+            showFileSize = showFileSize,
+        )
     }
 }
 
+private val fileAttachmentShape = RoundedCornerShape(StreamTokens.radiusLg)
+
+internal data class FileAttachmentStyle(
+    val titleTextStyle: TextStyle,
+    val titleColor: Color,
+    val fileSizeTextStyle: TextStyle,
+    val fileSizeTextColor: Color,
+)
+
 /**
- *  Displays information about the attachment such as
- *  the attachment title and its size in bytes.
- *
- *  @param attachment The attachment for which the information is displayed.
+ *  Displays information about the attachment such as the attachment title and its file size in bytes.
  */
 @Composable
 internal fun RowScope.FileAttachmentDescription(
     attachment: Attachment,
-    isMine: Boolean,
+    style: FileAttachmentStyle,
     showFileSize: (Attachment) -> Boolean,
 ) {
-    val fileAttachmentTheme: FileAttachmentTheme = when {
-        isMine -> ChatTheme.ownFileAttachmentTheme
-        else -> ChatTheme.otherFileAttachmentTheme
-    }
     Column(
         modifier = Modifier
             .weight(1f)
-            .padding(start = 16.dp, end = 8.dp),
+            .padding(start = StreamTokens.spacingSm),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
             modifier = Modifier.testTag("Stream_FileAttachmentName"),
             text = attachment.getDisplayableName() ?: "",
-            style = fileAttachmentTheme.fileNameTextStyle,
-            maxLines = 1,
+            style = style.titleTextStyle,
+            color = style.titleColor,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
         )
 
-        if (showFileSize(attachment)) {
+        val uploadState = attachment.uploadState
+        if (uploadState is UploadState.InProgress) {
+            FileUploadProgressIndicator(
+                state = uploadState,
+                textColor = style.fileSizeTextColor,
+            )
+        } else if (showFileSize(attachment)) {
             Text(
-                modifier = Modifier.testTag("Stream_FileAttachmentSize"),
+                modifier = Modifier
+                    .padding(top = StreamTokens.spacing2xs)
+                    .testTag("Stream_FileAttachmentSize"),
                 text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong()),
-                style = fileAttachmentTheme.fileMetadataTextStyle,
+                style = style.fileSizeTextStyle,
+                color = style.fileSizeTextColor,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -206,54 +221,34 @@ internal fun RowScope.FileAttachmentDescription(
     }
 }
 
-/**
- * Downloads the given attachment when clicked.
- *
- * @param attachment The attachment to download.
- */
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-private fun RowScope.FileAttachmentDownloadIcon(attachment: Attachment, isMine: Boolean) {
-    val fileAttachmentTheme: FileAttachmentTheme = when {
-        isMine -> ChatTheme.ownFileAttachmentTheme
-        else -> ChatTheme.otherFileAttachmentTheme
-    }
-    if (LocalInspectionMode.current) {
-        Icon(
-            modifier = Modifier
-                .align(Alignment.Top)
-                .padding(end = 2.dp),
-            painter = fileAttachmentTheme.downloadIconStyle.painter,
-            contentDescription = stringResource(id = R.string.stream_compose_download),
-            tint = fileAttachmentTheme.downloadIconStyle.tint,
+private fun FileUploadProgressIndicator(state: UploadState.InProgress, textColor: Color) {
+    Row(
+        modifier = Modifier.padding(top = StreamTokens.spacing2xs),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+    ) {
+        LoadingIndicator(
+            progress = state.progressFraction(),
+            modifier = Modifier.size(14.dp),
         )
-        return
+        Text(
+            modifier = Modifier.testTag("Stream_FileAttachmentSize"),
+            text = "${MediaStringUtil.convertFileSizeByteCount(state.bytesUploaded)} / " +
+                MediaStringUtil.convertFileSizeByteCount(state.totalBytes),
+            style = ChatTheme.typography.metadataDefault,
+            color = textColor,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
-
-    val (writePermissionState, downloadPayload) = attachmentDownloadState()
-    val context = LocalContext.current
-    val downloadAttachmentUriGenerator = ChatTheme.streamDownloadAttachmentUriGenerator
-    val downloadRequestInterceptor = ChatTheme.streamDownloadRequestInterceptor
-    Icon(
-        modifier = Modifier
-            .align(Alignment.Top)
-            .padding(end = 2.dp)
-            .testTag("Stream_FileAttachmentDownloadButton")
-            .clickable(bounded = false) {
-                onDownloadHandleRequest(
-                    context = context,
-                    payload = attachment,
-                    permissionState = writePermissionState,
-                    downloadPayload = downloadPayload,
-                    generateDownloadUri = downloadAttachmentUriGenerator::generateDownloadUri,
-                    interceptRequest = downloadRequestInterceptor::intercept,
-                )
-            },
-        painter = fileAttachmentTheme.downloadIconStyle.painter,
-        contentDescription = stringResource(id = R.string.stream_compose_download),
-        tint = fileAttachmentTheme.downloadIconStyle.tint,
-    )
 }
+
+/**
+ * Returns the upload progress as a fraction between 0f and 1f.
+ */
+internal fun UploadState.InProgress.progressFraction(): Float =
+    if (totalBytes > 0) (bytesUploaded / totalBytes.toFloat()).coerceIn(0f, 1f) else 0f
 
 /**
  * Represents the image that's shown in file attachments. This can be either an image/icon that represents the file type
@@ -266,36 +261,32 @@ public fun FileAttachmentImage(
     attachment: Attachment,
     isMine: Boolean,
 ) {
-    val fileAttachmentTheme: FileAttachmentTheme = when {
-        isMine -> ChatTheme.ownFileAttachmentTheme
-        else -> ChatTheme.otherFileAttachmentTheme
-    }
-    val isImage = attachment.isImage()
-    val isVideoWithThumbnails = attachment.isVideo() && ChatTheme.videoThumbnailsEnabled
-
-    val data = attachment.imagePreviewData ?: MimeTypeIconProvider.getIconRes(attachment.mimeType)
-
-    val shape = if (isImage || isVideoWithThumbnails) fileAttachmentTheme.imageThumbnail else null
-
-    val imageModifier = Modifier
+    val baseModifier = Modifier
         .size(height = 40.dp, width = 35.dp)
-        .let { baseModifier ->
-            if (shape != null) baseModifier.clip(shape) else baseModifier
-        }
         .testTag("Stream_FileAttachmentImage")
+    val data = attachment.imagePreviewData
 
-    val contentScale = if (isImage || isVideoWithThumbnails) {
-        ContentScale.Crop
+    if (data != null) {
+        val showThumbnail = attachment.isImage() ||
+            attachment.isVideo() && ChatTheme.config.messageList.videoThumbnailsEnabled
+        val imageModifier = if (showThumbnail) {
+            baseModifier.clip(RoundedCornerShape(StreamTokens.radiusMd))
+        } else {
+            baseModifier
+        }
+
+        StreamAsyncImage(
+            modifier = imageModifier,
+            data = data,
+            contentScale = if (showThumbnail) ContentScale.Crop else ContentScale.Fit,
+            contentDescription = null,
+        )
     } else {
-        ContentScale.Fit
+        FileTypeIcon(
+            data = MimeTypeIconProvider.getIcon(attachment.mimeType),
+            modifier = baseModifier,
+        )
     }
-
-    StreamAsyncImage(
-        modifier = imageModifier,
-        data = data,
-        contentScale = contentScale,
-        contentDescription = null,
-    )
 }
 
 /**
@@ -329,11 +320,50 @@ private fun OtherFileAttachmentContentPreview() {
 }
 
 @Composable
-internal fun FileAttachmentContent(isMine: Boolean) {
+internal fun FileAttachmentContent(isMine: Boolean, isUploading: Boolean = false) {
+    val attachments = listOf(
+        Attachment(
+            mimeType = MimeType.MIME_TYPE_PDF,
+            type = AttachmentType.FILE,
+            title = "test_document.pdf",
+            uploadState = if (isUploading) {
+                UploadState.InProgress(
+                    bytesUploaded = 512 * 1024,
+                    totalBytes = 1024 * 1024,
+                )
+            } else {
+                null
+            },
+        ),
+    )
     FileAttachmentContent(
         attachmentState = AttachmentState(
-            message = Message(attachments = listOf(Attachment(mimeType = MimeType.MIME_TYPE_PDF))),
+            message = Message(attachments = attachments),
             isMine = isMine,
         ),
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun UploadingFileAttachmentContentPreview() {
+    ChatTheme {
+        val attachments = listOf(
+            Attachment(
+                mimeType = MimeType.MIME_TYPE_PDF,
+                type = AttachmentType.FILE,
+                fileSize = 6_500_000,
+                uploadState = UploadState.InProgress(
+                    bytesUploaded = 2_500_000,
+                    totalBytes = 6_500_000,
+                ),
+            ),
+        )
+        FileAttachmentContent(
+            attachmentState = AttachmentState(
+                message = Message(attachments = attachments),
+                isMine = true,
+            ),
+        )
+    }
 }

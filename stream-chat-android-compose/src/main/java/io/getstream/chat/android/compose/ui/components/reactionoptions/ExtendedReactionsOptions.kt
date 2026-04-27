@@ -16,26 +16,18 @@
 
 package io.getstream.chat.android.compose.ui.components.reactionoptions
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.ReactionIcon
+import io.getstream.chat.android.compose.ui.theme.ReactionMenuOptionItemParams
 import io.getstream.chat.android.models.Reaction
-
-/**
- * The default maximum number of columns when showing reactions and users.
- */
-private const val DefaultNumberOfColumns = 5
 
 /**
  * Displays all available reactions a user can set on a message.
@@ -44,42 +36,33 @@ private const val DefaultNumberOfColumns = 5
  * @param onReactionOptionSelected Handler that propagates click events on each item.
  * @param modifier Modifier for styling.
  * @param cells Describes the way cells are formed inside [ExtendedReactionsOptions].
- * @param itemContent Composable that allows the user to customize the individual items shown
- * in [ExtendedReactionsOptions]. By default it shows individual reactions.
  */
-@ExperimentalFoundationApi
 @Composable
-public fun ExtendedReactionsOptions(
+internal fun ExtendedReactionsOptions(
     ownReactions: List<Reaction>,
     onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
     modifier: Modifier = Modifier,
-    cells: GridCells = GridCells.Fixed(DefaultNumberOfColumns),
-    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
-    itemContent: @Composable LazyGridScope.(ReactionOptionItemState) -> Unit = { option ->
-        with(ChatTheme.componentFactory) {
-            ExtendedReactionMenuOptionItem(
-                modifier = Modifier.padding(vertical = 8.dp),
-                onReactionOptionSelected = onReactionOptionSelected,
-                option = option,
-            )
-        }
-    },
+    cells: GridCells = GridCells.Adaptive(minSize = 56.dp),
 ) {
-    val pushEmojiFactory = ChatTheme.reactionPushEmojiFactory
-    val options = reactionTypes.entries.map { (type, reactionIcon) ->
-        val isSelected = ownReactions.any { ownReaction -> ownReaction.type == type }
+    val resolver = ChatTheme.reactionResolver
+    val options = resolver.supportedReactions.map { type ->
+        val isSelected = ownReactions.any { it.type == type }
         ReactionOptionItemState(
-            painter = reactionIcon.getPainter(isSelected),
             type = type,
-            emojiCode = pushEmojiFactory.emojiCode(type),
+            isSelected = isSelected,
+            emojiCode = resolver.emojiCode(type),
         )
     }
 
     LazyVerticalGrid(modifier = modifier, columns = cells) {
-        items(options) { item ->
-            key(item.type) {
-                this@LazyVerticalGrid.itemContent(item)
-            }
+        items(options, key = ReactionOptionItemState::type) { item ->
+            ChatTheme.componentFactory.ReactionMenuOptionItem(
+                params = ReactionMenuOptionItemParams(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    onReactionOptionSelected = onReactionOptionSelected,
+                    option = item,
+                ),
+            )
         }
     }
 }
@@ -87,7 +70,6 @@ public fun ExtendedReactionsOptions(
 /**
  * Preview for [ExtendedReactionsOptions] with no reaction selected.
  */
-@ExperimentalFoundationApi
 @Preview(showBackground = true, name = "ExtendedReactionOptions Preview")
 @Composable
 internal fun ExtendedReactionOptionsPreview() {
@@ -102,7 +84,6 @@ internal fun ExtendedReactionOptionsPreview() {
 /**
  * Preview for [ExtendedReactionsOptions] with a selected reaction.
  */
-@ExperimentalFoundationApi
 @Preview(showBackground = true, name = "ExtendedReactionOptions Preview (With Own Reaction)")
 @Composable
 internal fun ExtendedReactionOptionsWithOwnReactionPreview() {

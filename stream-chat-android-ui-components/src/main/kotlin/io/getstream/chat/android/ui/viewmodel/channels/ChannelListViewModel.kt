@@ -24,9 +24,15 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.event.ChatEventHandlerFactory
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.state.ChannelsStateData
+import io.getstream.chat.android.client.api.state.Event
+import io.getstream.chat.android.client.api.state.GlobalState
+import io.getstream.chat.android.client.api.state.QueryChannelsState
+import io.getstream.chat.android.client.api.state.globalStateFlow
+import io.getstream.chat.android.client.api.state.queryChannelsAsState
 import io.getstream.chat.android.client.errors.extractCause
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.DraftMessage
@@ -35,19 +41,11 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
-import io.getstream.chat.android.state.extensions.globalState
-import io.getstream.chat.android.state.extensions.globalStateFlow
-import io.getstream.chat.android.state.extensions.queryChannelsAsState
-import io.getstream.chat.android.state.plugin.state.global.GlobalState
-import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
-import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
-import io.getstream.chat.android.state.utils.Event
+import io.getstream.chat.android.ui.common.utils.extensions.defaultChannelListFilter
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
 import io.getstream.chat.android.ui.utils.extensions.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.utils.extensions.addFlow
 import io.getstream.chat.android.ui.utils.extensions.isMuted
-import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
 import io.getstream.log.TaggedLogger
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
@@ -97,46 +95,6 @@ public class ChannelListViewModel(
     private val chatClient: ChatClient = ChatClient.instance(),
     private val globalState: Flow<GlobalState> = chatClient.globalStateFlow,
 ) : ViewModel() {
-
-    /**
-     * ViewModel class for [ChannelListView].
-     * Responsible for keeping the channels list up to date.
-     * Can be bound to the view using [ChannelListViewModel.bindView] function.
-     *
-     * @param filter Filter for querying channels, should never be empty.
-     * @param sort Defines the ordering of the channels.
-     * @param limit The maximum number of channels to fetch.
-     * @param messageLimit The number of messages to fetch for each channel.
-     * When `null`, the server-side default is used.
-     * @param memberLimit The number of members to fetch per channel.
-     * When `null`, the server-side default is used.
-     * @param isDraftMessagesEnabled Enables or disables draft messages.
-     * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] that will be used to create [ChatEventHandler].
-     * @param chatClient Entry point for all low-level operations.
-     * @param globalState The current [GlobalState].
-     */
-    @Deprecated("Use the constructor which accepts a Flow<GlobalState> for the globalState instead.")
-    public constructor(
-        filter: FilterObject? = null,
-        sort: QuerySorter<Channel> = DEFAULT_SORT,
-        limit: Int = DEFAULT_CHANNEL_LIMIT,
-        messageLimit: Int? = null,
-        memberLimit: Int? = null,
-        isDraftMessagesEnabled: Boolean = true,
-        chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
-        chatClient: ChatClient = ChatClient.instance(),
-        globalState: GlobalState = chatClient.globalState,
-    ) : this(
-        filter = filter,
-        sort = sort,
-        limit = limit,
-        messageLimit = messageLimit,
-        memberLimit = memberLimit,
-        isDraftMessagesEnabled = isDraftMessagesEnabled,
-        chatEventHandlerFactory = chatEventHandlerFactory,
-        chatClient = chatClient,
-        globalState = MutableStateFlow(globalState),
-    )
 
     private var queryJob: Job? = null
 
@@ -374,26 +332,6 @@ public class ChannelListViewModel(
     }
 
     /**
-     * Hides the given channel.
-     */
-    public fun hideChannel(channel: Channel) {
-        val (channelType, channelId) = channel.cid.cidToTypeAndId()
-        chatClient.hideChannel(
-            channelType = channelType,
-            channelId = channelId,
-            clearHistory = false,
-        ).enqueue(
-            onError = { error ->
-                logger.e {
-                    "Could not hide channel with id: ${channel.id}. " +
-                        "Error: ${error.message}. Cause: ${error.extractCause()}"
-                }
-                _errorEvents.postValue(Event(ErrorEvent.HideChannelError(error)))
-            },
-        )
-    }
-
-    /**
      * Marks all of the channels as read.
      */
     public fun markAllRead() {
@@ -529,13 +467,6 @@ public class ChannelListViewModel(
          * @param streamError Contains error data such as a [Throwable] and a message.
          */
         public data class DeleteChannelError(override val streamError: Error) : ErrorEvent(streamError)
-
-        /**
-         * Event for errors upon hiding a channel.
-         *
-         * @param streamError Contains error data such as a [Throwable] and a message.
-         */
-        public data class HideChannelError(override val streamError: Error) : ErrorEvent(streamError)
     }
 
     public companion object {

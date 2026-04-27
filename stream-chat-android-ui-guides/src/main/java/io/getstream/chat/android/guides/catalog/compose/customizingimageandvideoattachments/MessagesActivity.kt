@@ -21,53 +21,50 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
-import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.LinkAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.UnsupportedAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.UploadAttachmentFactory
-import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.messages.ChannelScreen
+import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
-import io.getstream.chat.android.guides.catalog.compose.customizingimageandvideoattachments.factory.customMediaAttachmentFactory
+import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentMediaItemParams
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.MessageListOptions
+import io.getstream.chat.android.guides.catalog.compose.customizingimageandvideoattachments.ui.CustomPlayButton
+import io.getstream.chat.android.models.AttachmentType
+
+private const val PlayButtonWidthFraction = 0.35f
+private const val PlayButtonAspectRatio = 1.20f
 
 /**
  * An activity featuring a fully functional message list screen with a custom
- * media attachment factory.
+ * media attachment preview in the composer.
  */
 class MessagesActivity : ComponentActivity() {
 
-    private val messagesViewModelFactory by lazy {
-        MessagesViewModelFactory(
+    private val channelViewModelFactory by lazy {
+        ChannelViewModelFactory(
             context = this,
-            requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
-            threadLoadOlderToNewer = true,
+            channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
+            messageListOptions = MessageListOptions(threadLoadOlderToNewer = true),
         )
     }
-
-    /**
-     * A list of attachment factories that mimics the order of those
-     * found in [StreamAttachmentFactories.defaults] while
-     * replacing the default media attachment factory with a
-     * custom one.
-     */
-    private val attachmentFactories = listOf(
-        UploadAttachmentFactory(),
-        LinkAttachmentFactory(linkDescriptionMaxLines = 5),
-        GiphyAttachmentFactory(),
-        customMediaAttachmentFactory,
-        FileAttachmentFactory(),
-        UnsupportedAttachmentFactory,
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ChatTheme(attachmentFactories = attachmentFactories) {
-                MessagesScreen(
-                    viewModelFactory = messagesViewModelFactory,
+            ChatTheme(componentFactory = CustomMediaChatComponentFactory) {
+                ChannelScreen(
+                    viewModelFactory = channelViewModelFactory,
                     onBackPressed = { finish() },
                 )
             }
@@ -87,6 +84,36 @@ class MessagesActivity : ComponentActivity() {
         fun getIntent(context: Context, channelId: String): Intent {
             return Intent(context, MessagesActivity::class.java).apply {
                 putExtra(KEY_CHANNEL_ID, channelId)
+            }
+        }
+    }
+}
+
+/**
+ * A custom [ChatComponentFactory] that renders a custom play button overlay
+ * above video attachments in the message composer preview.
+ *
+ * To customize the overlay in the message list, override [MediaAttachmentContent].
+ */
+object CustomMediaChatComponentFactory : ChatComponentFactory {
+
+    @Composable
+    override fun MessageComposerAttachmentMediaItem(
+        params: MessageComposerAttachmentMediaItemParams,
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            super.MessageComposerAttachmentMediaItem(params)
+            if (params.attachment.type == AttachmentType.VIDEO) {
+                CustomPlayButton(
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .background(
+                            color = Color(red = 255, blue = 255, green = 255, alpha = 220),
+                            shape = RoundedCornerShape(8.dp),
+                        )
+                        .fillMaxWidth(PlayButtonWidthFraction)
+                        .aspectRatio(PlayButtonAspectRatio),
+                )
             }
         }
     }

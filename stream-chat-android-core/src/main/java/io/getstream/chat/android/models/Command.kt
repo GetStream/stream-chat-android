@@ -50,4 +50,16 @@ public object CommandDefaults {
      */
     @InternalStreamChatApi
     public const val GIPHY: String = "giphy"
+
+    /**
+     * Command for banning a member.
+     */
+    @InternalStreamChatApi
+    public const val BAN: String = "ban"
+
+    /**
+     * Command for unbanning a member.
+     */
+    @InternalStreamChatApi
+    public const val UNBAN: String = "unban"
 }

@@ -82,11 +82,20 @@ public class AudioPlayerController(
             "[togglePlayback] audioHash: $audioHash, currentPlayingId; $currentPlayingId, " +
                 "isCurrentTrack: $isCurrentTrack, isProgressRunning: $isProgressRunning, state: ${curState.stringify()}"
         }
-        when (isCurrentTrack && isProgressRunning) {
-            true -> when (curState.current.isPlaying) {
-                true -> pause()
-                else -> resume()
+
+        val hasPartialProgress = isCurrentTrack && isProgressRunning
+        val isLoadedInPlayer = currentPlayingId == audioHash
+        when {
+            // Audio is partially played and currently loaded -> toggle play/pause
+            hasPartialProgress && isLoadedInPlayer -> {
+                if (curState.current.isPlaying) pause() else resume()
             }
+            // Audio is partially played but another audio is loaded -> save progress and switch
+            hasPartialProgress -> {
+                setState(curState.copy(seekTo = curState.seekTo + (audioHash to curState.current.playingProgress)))
+                play(attachment)
+            }
+            // No prior progress -> start from the beginning
             else -> play(attachment)
         }
     }
@@ -101,12 +110,18 @@ public class AudioPlayerController(
             return
         }
         val audioHash = attachment.audioHash
+        val newSpeed = audioPlayer.changeSpeed(audioHash)
         val curState = state.value
-        if (curState.current.playingId != audioHash) {
-            logger.v { "[startSeek] rejected (not playing): $audioHash" }
-            return
-        }
-        audioPlayer.changeSpeed()
+        val isCurrentlyPlaying = curState.current.playingId == audioHash
+        val newState = curState.copy(
+            current = if (isCurrentlyPlaying) {
+                curState.current.copy(playingSpeed = newSpeed)
+            } else {
+                curState.current
+            },
+            speeds = curState.speeds + (audioHash to newSpeed),
+        )
+        setState(newState)
     }
 
     public fun startSeek(attachment: Attachment) {
@@ -134,6 +149,7 @@ public class AudioPlayerController(
                     isPlaying = audioState == AudioState.PLAYING,
                     isSeeking = true,
                 )
+
                 else -> curState.current
             },
         )
@@ -167,6 +183,7 @@ public class AudioPlayerController(
                     playingProgress = progress,
                     playbackInMs = positionInMs,
                 )
+
                 else -> curState.current
             },
             seekTo = curState.seekTo + (audioHash to progress),
@@ -314,10 +331,12 @@ public class AudioPlayerController(
             return
         }
         logger.d { "[onAudioPlayingSpeed] speed: $speed, state: ${curState.stringify()}" }
+        val audioHash = curState.current.playingId
         val newState = curState.copy(
             current = curState.current.copy(
                 playingSpeed = speed,
             ),
+            speeds = curState.speeds + (audioHash to speed),
         )
         setState(newState)
     }

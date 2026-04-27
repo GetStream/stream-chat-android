@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.plugin.listeners
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.FilterObject
@@ -26,6 +27,7 @@ import io.getstream.result.Result
 /**
  * Listener for draft message.
  */
+@InternalStreamChatApi
 public interface DraftMessageListener {
 
     /**
@@ -56,23 +58,6 @@ public interface DraftMessageListener {
         channelType: String,
         channelId: String,
         message: DraftMessage,
-    )
-
-    /**
-     * Side effect to be invoked when the original request is completed with a response.
-     *
-     * @param result [Result] response from the original request.
-     * @param offset The offset of the query.
-     * @param limit The limit of the query.
-     */
-    @Deprecated(
-        message = "The offset param in the onQueryDraftMessagesResult method is not used. Use the " +
-            "onQueryDraftMessagesResult(Result, FilterObject, Int, String?, QuerySorter) method instead.",
-    )
-    public suspend fun onQueryDraftMessagesResult(
-        result: Result<List<DraftMessage>>,
-        offset: Int?,
-        limit: Int?,
     )
 
     /**

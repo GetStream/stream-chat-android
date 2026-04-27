@@ -17,10 +17,10 @@
 package io.getstream.chat.android.ui.common.feature.messages.composer.mention
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.state
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.state.extensions.state
-import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.DefaultQueryFilter
+import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.DefaultUserQueryFilter
 import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.QueryFilter
 import io.getstream.log.taggedLogger
 
@@ -31,10 +31,10 @@ import io.getstream.log.taggedLogger
  * @param channelCid The CID of the channel we are querying for members.
  * @param filter The filter used to filter the users.
  */
-public class LocalUserLookupHandler @JvmOverloads constructor(
+internal class LocalUserLookupHandler(
     private val chatClient: ChatClient,
     private val channelCid: String,
-    private val filter: QueryFilter<User> = DefaultQueryFilter { it.name.ifBlank { it.id } },
+    private val filter: QueryFilter<User> = DefaultUserQueryFilter(),
 ) : UserLookupHandler {
 
     private val logger by taggedLogger("Chat:UserLookupLocal")

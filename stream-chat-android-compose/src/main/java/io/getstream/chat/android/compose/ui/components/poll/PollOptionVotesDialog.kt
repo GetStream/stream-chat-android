@@ -46,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -53,10 +54,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.R.plurals.stream_compose_poll_vote_counts
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.viewmodel.messages.PollOptionVotesViewModel
 import io.getstream.chat.android.models.Option
@@ -96,7 +99,7 @@ internal fun PollOptionVotesDialog(
         sheetMaxWidth = Dp.Unspecified,
         shape = RoundedCornerShape(0.dp),
         dragHandle = {},
-        containerColor = ChatTheme.colors.barsBackground,
+        containerColor = ChatTheme.colors.backgroundCoreElevation1,
     ) {
         ViewModelStore {
             val viewModel = viewModel {
@@ -163,8 +166,8 @@ private fun Content(
             LazyColumn(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .clip(shape = ChatTheme.shapes.pollOptionInput)
-                    .background(ChatTheme.colors.inputBackground)
+                    .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
+                    .background(ChatTheme.colors.backgroundCoreSurfaceDefault)
                     .padding(16.dp),
                 state = listState,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -176,15 +179,19 @@ private fun Content(
                     ) {
                         if (state.isWinner) {
                             Icon(
-                                modifier = Modifier.padding(end = 8.dp),
-                                painter = painterResource(id = R.drawable.stream_compose_ic_award),
-                                tint = ChatTheme.colors.textHighEmphasis,
-                                contentDescription = null,
+                                modifier = Modifier.padding(end = StreamTokens.spacingXs),
+                                painter = painterResource(R.drawable.stream_design_ic_trophy),
+                                tint = ChatTheme.colors.textPrimary,
+                                contentDescription = stringResource(R.string.stream_compose_poll_winner_badge),
                             )
                         }
                         Text(
-                            text = stringResource(id = R.string.stream_compose_poll_vote_counts, state.voteCount),
-                            color = ChatTheme.colors.textHighEmphasis,
+                            text = pluralStringResource(
+                                stream_compose_poll_vote_counts,
+                                state.voteCount,
+                                state.voteCount,
+                            ),
+                            color = ChatTheme.colors.textPrimary,
                             fontSize = 16.sp,
                         )
                     }

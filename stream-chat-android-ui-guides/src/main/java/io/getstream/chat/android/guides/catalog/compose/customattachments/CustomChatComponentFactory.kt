@@ -1,0 +1,278 @@
+/*
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.getstream.chat.android.guides.catalog.compose.customattachments
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
+import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.CustomAttachmentContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerAttachmentsParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerLeadingContentParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerQuotedMessageParams
+import io.getstream.chat.android.compose.ui.theme.MessageQuotedContentParams
+import io.getstream.chat.android.guides.R
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
+
+/**
+ * A custom [ChatComponentFactory] that adds support for date attachments.
+ */
+object CustomChatComponentFactory : ChatComponentFactory {
+    @Composable
+    override fun CustomAttachmentContent(params: CustomAttachmentContentParams) {
+        if (params.state.message.attachments.any { it.type == "date" }) {
+            DateAttachmentContent(params.state, params.modifier)
+        }
+    }
+
+    @Composable
+    override fun MessageComposerAttachments(params: MessageComposerAttachmentsParams) {
+        val (dateAttachments, otherAttachments) = params.attachments.partition { it.type == "date" }
+
+        Column(modifier = params.modifier) {
+            if (dateAttachments.isNotEmpty()) {
+                DateAttachmentPreviewContent(
+                    modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                    attachments = dateAttachments,
+                    onAttachmentRemoved = params.onAttachmentRemoved,
+                )
+            }
+            if (otherAttachments.isNotEmpty()) {
+                super.MessageComposerAttachments(
+                    params = params.copy(
+                        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                        attachments = otherAttachments,
+                    ),
+                )
+            }
+        }
+    }
+
+    @Composable
+    override fun MessageQuotedContent(params: MessageQuotedContentParams) {
+        val quotedMessage = params.message
+        if (quotedMessage.attachments.any { it.type == "date" }) {
+            QuotedDateAttachmentContent(
+                message = quotedMessage,
+                modifier = params.modifier,
+            )
+        } else {
+            super.MessageQuotedContent(params)
+        }
+    }
+
+    @Composable
+    override fun MessageComposerQuotedMessage(params: MessageComposerQuotedMessageParams) {
+        val quotedMessage = params.quotedMessage
+        if (quotedMessage.attachments.any { it.type == "date" }) {
+            Box(modifier = params.modifier.padding(horizontal = 8.dp)) {
+                QuotedDateAttachmentContent(message = quotedMessage)
+
+                ComposerCancelIcon(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(x = 4.dp, y = (-4).dp),
+                    onClick = params.onCancelClick,
+                )
+            }
+        } else {
+            super.MessageComposerQuotedMessage(params)
+        }
+    }
+
+    @Composable
+    override fun MessageComposerLeadingContent(params: MessageComposerLeadingContentParams) {
+        IconButton(
+            modifier = params.modifier
+                .size(48.dp)
+                .padding(12.dp),
+            content = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_calendar),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textSecondary,
+                )
+            },
+            onClick = params.onAttachmentsClick,
+        )
+    }
+}
+
+/**
+ * Represents the UI shown in the message input preview before sending.
+ *
+ * @param attachments Selected attachments.
+ * @param onAttachmentRemoved Handler when the user removes an attachment.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+fun DateAttachmentPreviewContent(
+    attachments: List<Attachment>,
+    onAttachmentRemoved: (Attachment) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val attachment = attachments.first { it.type == "date" }
+    val formattedDate = attachment.extraData["payload"].toString()
+
+    Box(
+        modifier = modifier
+            .padding(horizontal = 8.dp)
+            .wrapContentHeight()
+            .clip(RoundedCornerShape(16.dp))
+            .background(color = ChatTheme.colors.accentSuccess.copy(alpha = 0.2f)),
+    ) {
+        Row(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(start = 16.dp, top = 16.dp, bottom = 16.dp, end = 32.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                modifier = Modifier.size(16.dp),
+                painter = painterResource(id = R.drawable.ic_calendar),
+                contentDescription = null,
+                tint = ChatTheme.colors.textPrimary,
+            )
+
+            Text(
+                text = formattedDate,
+                style = ChatTheme.typography.bodyDefault,
+                maxLines = 1,
+                color = ChatTheme.colors.textPrimary,
+            )
+        }
+
+        ComposerCancelIcon(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(4.dp),
+            onClick = { onAttachmentRemoved(attachment) },
+        )
+    }
+}
+
+/**
+ * Represents the UI shown in the message list for date attachments.
+ *
+ * @param attachmentState The state of the attachment.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+fun DateAttachmentContent(
+    attachmentState: AttachmentState,
+    modifier: Modifier = Modifier,
+) {
+    val attachment = attachmentState.message.attachments.first { it.type == "date" }
+    val formattedDate = attachment.extraData["payload"].toString()
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(ChatTheme.colors.accentSuccess.copy(alpha = 0.2f))
+            .padding(12.dp),
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                modifier = Modifier.size(16.dp),
+                painter = painterResource(id = R.drawable.ic_calendar),
+                contentDescription = null,
+                tint = ChatTheme.colors.textPrimary,
+            )
+
+            Text(
+                text = formattedDate,
+                style = ChatTheme.typography.bodyDefault,
+                maxLines = 1,
+                color = ChatTheme.colors.textPrimary,
+            )
+        }
+    }
+}
+
+/**
+ * Represents the UI shown for date attachments in quoted messages.
+ */
+@Composable
+fun QuotedDateAttachmentContent(
+    message: Message,
+    modifier: Modifier = Modifier,
+) {
+    val attachment = message.attachments.first { it.type == "date" }
+    val formattedDate = attachment.extraData["payload"].toString()
+
+    Column(
+        modifier = modifier
+            .padding(8.dp)
+            .background(ChatTheme.colors.accentSuccess.copy(alpha = 0.2f), RoundedCornerShape(12.dp))
+            .padding(12.dp),
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                modifier = Modifier.size(16.dp),
+                painter = painterResource(id = R.drawable.ic_calendar),
+                contentDescription = null,
+                tint = ChatTheme.colors.textPrimary,
+            )
+
+            Text(
+                text = formattedDate,
+                style = ChatTheme.typography.bodyDefault,
+                maxLines = 1,
+                color = ChatTheme.colors.textPrimary,
+            )
+        }
+
+        if (message.text.isNotBlank()) {
+            Text(
+                text = message.text,
+                style = ChatTheme.typography.bodyDefault,
+                maxLines = 2,
+                color = ChatTheme.colors.textSecondary,
+            )
+        }
+    }
+}

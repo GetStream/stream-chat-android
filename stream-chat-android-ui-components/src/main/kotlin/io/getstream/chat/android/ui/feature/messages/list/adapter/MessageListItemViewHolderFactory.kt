@@ -104,18 +104,6 @@ public open class MessageListItemViewHolderFactory {
      * A container containing listeners used by the ViewHolders for
      * setting reactions, opening message options, etc.
      */
-    @Deprecated(
-        message = "Use MessageListListeners instead",
-        replaceWith = ReplaceWith("MessageListListeners"),
-        level = DeprecationLevel.WARNING,
-    )
-    protected var listenerContainer: MessageListListenerContainer? = null
-        private set
-
-    /**
-     * A container containing listeners used by the ViewHolders for
-     * setting reactions, opening message options, etc.
-     */
     protected var listeners: MessageListListeners? = null
         private set
 
@@ -124,7 +112,6 @@ public open class MessageListItemViewHolderFactory {
      */
     internal fun setListeners(listeners: MessageListListeners?) {
         this.listeners = listeners
-        this.listenerContainer = listeners?.let { MessageListListenersAdapter(it) }
     }
 
     /**

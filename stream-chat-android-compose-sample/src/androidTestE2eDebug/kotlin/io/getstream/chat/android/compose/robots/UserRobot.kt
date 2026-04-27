@@ -83,6 +83,23 @@ class UserRobot {
         return this
     }
 
+    fun openContextMenu(messageText: String): UserRobot {
+        val messageTextSelector = Message.text
+            .text(messageText)
+            .hasAncestor(MessageList.messages)
+        val clickableTextSelector = Message.clickableText
+            .text(messageText)
+            .hasAncestor(MessageList.messages)
+
+        val target = when {
+            clickableTextSelector.isDisplayed() -> clickableTextSelector
+            else -> messageTextSelector
+        }
+
+        target.waitToAppear().longPress()
+        return this
+    }
+
     fun typeText(text: String): UserRobot {
         Composer.inputField.waitToAppear().typeText(text)
         return this
@@ -99,12 +116,12 @@ class UserRobot {
     }
 
     fun tapOnSendButton(): UserRobot {
-        Composer.sendButton.findObject().click()
+        Composer.sendButton.waitToAppear().click()
         return this
     }
 
-    fun tapOnAttachmentCancelIcon(): UserRobot {
-        Composer.attachmentCancelIcon.waitToAppear().click()
+    fun tapOnLinkPreviewCancelButton(): UserRobot {
+        Composer.linkPreviewCancelButton.waitToAppear().click()
         return this
     }
 
@@ -121,10 +138,18 @@ class UserRobot {
         return this
     }
 
+    fun deleteMessage(text: String): UserRobot {
+        openContextMenu(text)
+        ContextMenu.delete.waitToAppear().click()
+        ContextMenu.ok.waitToAppear().click()
+        return this
+    }
+
     fun editMessage(newText: String, messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
         ContextMenu.edit.waitToAppear().click()
-        sendMessage(newText)
+        typeText(newText)
+        Composer.saveButton.waitToAppear().click()
         return this
     }
 
@@ -310,10 +335,10 @@ class UserRobot {
         return this
     }
 
-    fun uploadAttachment(type: AttachmentType, multiple: Boolean = false, send: Boolean = true): UserRobot {
+    fun attachFile(type: AttachmentType, multiple: Boolean = false): UserRobot {
         val count = if (multiple) 2 else 1
+        Composer.attachmentsButton.waitToAppear().click()
         repeat(count) {
-            Composer.attachmentsButton.waitToAppear().click()
             AttachmentPicker.filesTab.waitToAppear().click()
             AttachmentPicker.findFilesButton.waitToAppear().click()
 
@@ -326,19 +351,12 @@ class UserRobot {
                     .click()
             }
 
-            if (type == AttachmentType.FILE) AttachmentPicker.pdf1 else AttachmentPicker.image1
-
-            if (it == 0) {
-                val attachment = if (type == AttachmentType.FILE) AttachmentPicker.pdf1 else AttachmentPicker.image1
-                attachment.waitToAppear().click()
+            val attachment = if (it == 0) {
+                if (type == AttachmentType.FILE) AttachmentPicker.pdf1 else AttachmentPicker.image1
             } else {
-                val attachment = if (type == AttachmentType.FILE) AttachmentPicker.pdf2 else AttachmentPicker.image2
-                attachment.waitToAppear().click()
+                if (type == AttachmentType.FILE) AttachmentPicker.pdf2 else AttachmentPicker.image2
             }
-        }
-
-        if (send) {
-            Composer.sendButton.waitToAppear().click()
+            attachment.waitToAppear().click()
         }
 
         return this

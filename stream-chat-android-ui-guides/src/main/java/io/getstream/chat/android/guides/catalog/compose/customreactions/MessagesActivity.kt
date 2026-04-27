@@ -21,13 +21,16 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
-import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.messages.ChannelScreen
+import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.ReactionIcon
-import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.ui.theme.ReactionIconParams
+import io.getstream.chat.android.compose.ui.util.ReactionResolver
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.MessageListOptions
 import io.getstream.chat.android.guides.R
 
 /**
@@ -40,13 +43,16 @@ class MessagesActivity : AppCompatActivity() {
         val channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID))
 
         setContent {
-            // Pass your factory to ChatTheme here
-            ChatTheme(reactionIconFactory = CustomReactionIconFactory()) {
-                MessagesScreen(
-                    viewModelFactory = MessagesViewModelFactory(
+            // Pass your custom implementations to ChatTheme
+            ChatTheme(
+                reactionResolver = CustomReactionResolver(),
+                componentFactory = CustomComponentFactory(),
+            ) {
+                ChannelScreen(
+                    viewModelFactory = ChannelViewModelFactory(
                         context = this,
                         channelId = channelId,
-                        threadLoadOlderToNewer = true,
+                        messageListOptions = MessageListOptions(threadLoadOlderToNewer = true),
                     ),
                     onBackPressed = { finish() },
                     onHeaderTitleClick = {},
@@ -66,38 +72,28 @@ class MessagesActivity : AppCompatActivity() {
     }
 }
 
-class CustomReactionIconFactory : ReactionIconFactory {
+/**
+ * Implement [ReactionResolver] if you want to customize which reactions are available
+ * and what emoji each type maps to.
+ */
+class CustomReactionResolver : ReactionResolver {
 
-    override fun isReactionSupported(type: String): Boolean {
-        return supportedReactions.contains(type)
-    }
+    override val supportedReactions: Set<String> = linkedSetOf(
+        THUMBS_UP,
+        THUMBS_DOWN,
+        MOOD_GOOD,
+        MOOD_BAD,
+    )
 
-    @Composable
-    override fun createReactionIcon(type: String): ReactionIcon {
-        return when (type) {
-            THUMBS_UP -> ReactionIcon(
-                painter = painterResource(R.drawable.ic_thumb_up),
-                selectedPainter = painterResource(R.drawable.ic_thumb_up_selected),
-            )
-            THUMBS_DOWN -> ReactionIcon(
-                painter = painterResource(R.drawable.ic_thumb_down),
-                selectedPainter = painterResource(R.drawable.ic_thumb_down_selected),
-            )
-            MOOD_GOOD -> ReactionIcon(
-                painter = painterResource(R.drawable.ic_mood_good),
-                selectedPainter = painterResource(R.drawable.ic_mood_good_selected),
-            )
-            MOOD_BAD -> ReactionIcon(
-                painter = painterResource(R.drawable.ic_mood_bad),
-                selectedPainter = painterResource(R.drawable.ic_mood_bad_selected),
-            )
-            else -> throw IllegalArgumentException("Unsupported reaction type")
-        }
-    }
+    // Here we return only the reactions that should show up in quick access
+    override val defaultReactions: List<String> = listOf(THUMBS_UP, THUMBS_DOWN)
 
-    @Composable
-    override fun createReactionIcons(): Map<String, ReactionIcon> {
-        return supportedReactions.associateWith { createReactionIcon(it) }
+    override fun emojiCode(type: String): String? = when (type) {
+        THUMBS_UP -> "👍"
+        THUMBS_DOWN -> "👎"
+        MOOD_GOOD -> "🙂"
+        MOOD_BAD -> "😞"
+        else -> null
     }
 
     companion object {
@@ -105,12 +101,25 @@ class CustomReactionIconFactory : ReactionIconFactory {
         private const val THUMBS_DOWN: String = "thumbs_down"
         private const val MOOD_GOOD: String = "mood_good"
         private const val MOOD_BAD: String = "mood_bad"
+    }
+}
 
-        private val supportedReactions = setOf(
-            THUMBS_UP,
-            THUMBS_DOWN,
-            MOOD_GOOD,
-            MOOD_BAD,
-        )
+/**
+ * Implement [ChatComponentFactory] if you want to render something other than emojis for specific
+ * reaction types. For types that should still use emojis, you can delegate to `super`.
+ */
+class CustomComponentFactory : ChatComponentFactory {
+
+    @Composable
+    override fun ReactionIcon(params: ReactionIconParams) {
+        if (params.type == "mood_good") {
+            Image(
+                painter = painterResource(R.drawable.ic_mood_good),
+                contentDescription = params.type,
+                modifier = params.modifier,
+            )
+        } else {
+            super.ReactionIcon(params)
+        }
     }
 }

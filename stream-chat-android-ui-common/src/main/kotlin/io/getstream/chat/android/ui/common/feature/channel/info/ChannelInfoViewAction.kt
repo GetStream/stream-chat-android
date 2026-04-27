@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.common.feature.channel.info
 
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.User
 
 /**
  * Represents actions that can be performed from the channel information view.
@@ -40,13 +39,6 @@ public sealed interface ChannelInfoViewAction {
      * @param member The member that was clicked.
      */
     public data class MemberClick(val member: Member) : ChannelInfoViewAction
-
-    /**
-     * Represents the user info click action.
-     *
-     * @param user The clicked user.
-     */
-    public data class UserInfoClick(val user: User) : ChannelInfoViewAction
 
     /**
      * Represents the rename channel click action.
@@ -81,21 +73,24 @@ public sealed interface ChannelInfoViewAction {
     public data object UnmuteChannelClick : ChannelInfoViewAction
 
     /**
-     * Represents the hide channel click action.
+     * Represents the mute user click action.
      */
-    public data object HideChannelClick : ChannelInfoViewAction
+    public data object MuteUserClick : ChannelInfoViewAction
 
     /**
-     * Represents the confirmation click action for hiding a channel.
-     *
-     * @param clearHistory Whether to clear the channel history when hiding.
+     * Represents the unmute user click action.
      */
-    public data class HideChannelConfirmationClick(val clearHistory: Boolean) : ChannelInfoViewAction
+    public data object UnmuteUserClick : ChannelInfoViewAction
 
     /**
-     * Represents the unhide channel click action.
+     * Represents the block user click action.
      */
-    public data object UnhideChannelClick : ChannelInfoViewAction
+    public data object BlockUserClick : ChannelInfoViewAction
+
+    /**
+     * Represents the unblock user click action.
+     */
+    public data object UnblockUserClick : ChannelInfoViewAction
 
     /**
      * Represents the leave channel click action.

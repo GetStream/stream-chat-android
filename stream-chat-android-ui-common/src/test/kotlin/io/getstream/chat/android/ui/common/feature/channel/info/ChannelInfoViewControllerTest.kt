@@ -18,13 +18,17 @@ package io.getstream.chat.android.ui.common.feature.channel.info
 
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.query.AddMembersParams
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.randomCID
@@ -37,12 +41,12 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent.Navigation
-import io.getstream.chat.android.ui.common.helper.CopyToClipboardHandler
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
@@ -91,12 +95,10 @@ internal class ChannelInfoViewControllerTest {
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.UserInfo(user = currentMember.user),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -133,12 +135,12 @@ internal class ChannelInfoViewControllerTest {
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.UserInfo(user = otherMember.user),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
+                        ChannelInfoViewState.Content.Option.MuteUser(isMuted = false),
+                        ChannelInfoViewState.Content.Option.BlockUser(isBlocked = false),
                     ),
                 ),
                 awaitItem(),
@@ -172,12 +174,10 @@ internal class ChannelInfoViewControllerTest {
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -203,12 +203,10 @@ internal class ChannelInfoViewControllerTest {
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -221,12 +219,9 @@ internal class ChannelInfoViewControllerTest {
     fun `expand and collapse group channel content`() = runTest {
         val channel = randomChannel(members = randomMembers(10), ownCapabilities = emptySet())
         val options = listOf(
-            ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
-            ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
             ChannelInfoViewState.Content.Option.PinnedMessages,
             ChannelInfoViewState.Content.Option.MediaAttachments,
             ChannelInfoViewState.Content.Option.FilesAttachments,
-            ChannelInfoViewState.Content.Option.Separator,
         )
         val sut = Fixture()
             .given(channel = channel)
@@ -309,12 +304,12 @@ internal class ChannelInfoViewControllerTest {
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.UserInfo(user = otherMember.user),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
+                        ChannelInfoViewState.Content.Option.MuteUser(isMuted = false),
+                        ChannelInfoViewState.Content.Option.BlockUser(isBlocked = false),
                     ),
                 ),
                 awaitItem(),
@@ -340,13 +335,12 @@ internal class ChannelInfoViewControllerTest {
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.UserInfo(user = otherMember.user),
-                        ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
+                        ChannelInfoViewState.Content.Option.MuteUser(isMuted = false),
+                        ChannelInfoViewState.Content.Option.BlockUser(isBlocked = false),
                         ChannelInfoViewState.Content.Option.DeleteChannel,
                     ),
                 ),
@@ -376,12 +370,10 @@ internal class ChannelInfoViewControllerTest {
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -408,33 +400,18 @@ internal class ChannelInfoViewControllerTest {
                     ),
                     options = listOf(
                         ChannelInfoViewState.Content.Option.AddMember,
-                        ChannelInfoViewState.Content.Option.RenameChannel(
-                            name = updatedChannel.name,
-                            isReadOnly = false,
-                        ),
+                        ChannelInfoViewState.Content.Option.EditChannel(name = updatedChannel.name),
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
-                        ChannelInfoViewState.Content.Option.LeaveChannel,
+
+                        ChannelInfoViewState.Content.Option.DeleteChannel,
                     ),
                 ),
                 awaitItem(),
             )
         }
-    }
-
-    @Test
-    fun `user info click`() = runTest {
-        val user = randomUser()
-        val fixture = Fixture()
-        val sut = fixture.get(backgroundScope)
-
-        sut.onViewAction(ChannelInfoViewAction.UserInfoClick(user))
-
-        fixture.verifyCopiedUserHandleToClipboard(text = "@${user.name}")
     }
 
     @Test
@@ -452,12 +429,11 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = false),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.EditChannel(name = channel.name),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -473,12 +449,11 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = newName, isReadOnly = false),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.EditChannel(name = newName),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -577,13 +552,11 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -598,13 +571,11 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = true),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -626,13 +597,11 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -662,13 +631,11 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = true),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -683,13 +650,11 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -711,13 +676,11 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = true),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                     ),
                 ),
                 awaitItem(),
@@ -729,190 +692,6 @@ internal class ChannelInfoViewControllerTest {
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.UnmuteChannelError, awaitItem())
-            }
-        }
-    }
-
-    @Test
-    fun `hide channel click`() = runTest {
-        val fixture = Fixture().given(isHidden = false)
-        val sut = fixture.get(backgroundScope)
-
-        sut.state.test {
-            skipItems(2) // Skip initial states
-
-            sut.events.test {
-                sut.onViewAction(ChannelInfoViewAction.HideChannelClick)
-
-                assertEquals(ChannelInfoViewEvent.HideChannelModal, awaitItem())
-            }
-        }
-
-        launch { fixture.verifyNoMoreInteractions() }
-    }
-
-    @Test
-    fun `hide channel success`() = runTest {
-        val fixture = Fixture().given(isHidden = false)
-        val sut = fixture.get(backgroundScope)
-
-        sut.state.test {
-            skipItems(1) // Skip initial state
-
-            assertEquals(
-                ChannelInfoViewState.Content(
-                    members = emptyMembers(),
-                    options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
-                        ChannelInfoViewState.Content.Option.PinnedMessages,
-                        ChannelInfoViewState.Content.Option.MediaAttachments,
-                        ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
-                    ),
-                ),
-                awaitItem(),
-            )
-
-            val clearHistory = true
-            fixture.givenHideChannel(clearHistory)
-
-            sut.onViewAction(ChannelInfoViewAction.HideChannelConfirmationClick(clearHistory = clearHistory))
-
-            sut.events.test {
-                assertEquals(
-                    ChannelInfoViewEvent.NavigateUp(reason = Navigation.Reason.HideChannelSuccess),
-                    awaitItem(),
-                )
-            }
-
-            assertEquals(
-                ChannelInfoViewState.Content(
-                    members = emptyMembers(),
-                    options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = true),
-                        ChannelInfoViewState.Content.Option.PinnedMessages,
-                        ChannelInfoViewState.Content.Option.MediaAttachments,
-                        ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
-                    ),
-                ),
-                awaitItem(),
-            )
-        }
-    }
-
-    @Test
-    fun `hide channel error`() = runTest {
-        val fixture = Fixture().given(isHidden = false)
-        val sut = fixture.get(backgroundScope)
-
-        sut.state.test {
-            skipItems(1) // Skip initial state
-
-            assertEquals(
-                ChannelInfoViewState.Content(
-                    members = emptyMembers(),
-                    options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
-                        ChannelInfoViewState.Content.Option.PinnedMessages,
-                        ChannelInfoViewState.Content.Option.MediaAttachments,
-                        ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
-                    ),
-                ),
-                awaitItem(),
-            )
-
-            val clearHistory = true
-            fixture.givenHideChannel(
-                clearHistory = clearHistory,
-                error = randomGenericError(),
-            )
-
-            sut.onViewAction(ChannelInfoViewAction.HideChannelConfirmationClick(clearHistory = clearHistory))
-
-            sut.events.test {
-                assertEquals(ChannelInfoViewEvent.HideChannelError, awaitItem())
-            }
-        }
-    }
-
-    @Test
-    fun `unhide channel`() = runTest {
-        val fixture = Fixture().given(isHidden = true)
-        val sut = fixture.get(backgroundScope)
-
-        sut.state.test {
-            skipItems(1) // Skip initial state
-
-            assertEquals(
-                ChannelInfoViewState.Content(
-                    members = emptyMembers(),
-                    options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = true),
-                        ChannelInfoViewState.Content.Option.PinnedMessages,
-                        ChannelInfoViewState.Content.Option.MediaAttachments,
-                        ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
-                    ),
-                ),
-                awaitItem(),
-            )
-
-            fixture.givenUnhideChannel()
-
-            sut.onViewAction(ChannelInfoViewAction.UnhideChannelClick)
-
-            assertEquals(
-                ChannelInfoViewState.Content(
-                    members = emptyMembers(),
-                    options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
-                        ChannelInfoViewState.Content.Option.PinnedMessages,
-                        ChannelInfoViewState.Content.Option.MediaAttachments,
-                        ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
-                    ),
-                ),
-                awaitItem(),
-            )
-        }
-    }
-
-    @Test
-    fun `unhide channel error`() = runTest {
-        val fixture = Fixture().given(isHidden = true)
-        val sut = fixture.get(backgroundScope)
-
-        sut.state.test {
-            skipItems(1) // Skip initial state
-
-            assertEquals(
-                ChannelInfoViewState.Content(
-                    members = emptyMembers(),
-                    options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = true),
-                        ChannelInfoViewState.Content.Option.PinnedMessages,
-                        ChannelInfoViewState.Content.Option.MediaAttachments,
-                        ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
-                    ),
-                ),
-                awaitItem(),
-            )
-
-            fixture.givenUnhideChannel(error = randomGenericError())
-
-            sut.onViewAction(ChannelInfoViewAction.UnhideChannelClick)
-
-            sut.events.test {
-                assertEquals(ChannelInfoViewEvent.UnhideChannelError, awaitItem())
             }
         }
     }
@@ -972,12 +751,10 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                         ChannelInfoViewState.Content.Option.LeaveChannel,
                     ),
                 ),
@@ -1017,12 +794,10 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
                         ChannelInfoViewState.Content.Option.LeaveChannel,
                     ),
                 ),
@@ -1076,12 +851,11 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
+                        ChannelInfoViewState.Content.Option.DeleteChannel,
                     ),
                 ),
                 awaitItem(),
@@ -1114,12 +888,11 @@ internal class ChannelInfoViewControllerTest {
                     owner = channel.createdBy,
                     members = emptyMembers(),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
-                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-                        ChannelInfoViewState.Content.Option.Separator,
+
+                        ChannelInfoViewState.Content.Option.DeleteChannel,
                     ),
                 ),
                 awaitItem(),
@@ -1340,6 +1113,42 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
+    fun `add members with empty set does nothing`() = runTest {
+        val fixture = Fixture()
+        val sut = fixture.get(backgroundScope)
+
+        sut.addMembers(emptySet())
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
+    fun `add members success`() = runTest {
+        val userIds = setOf(randomString(), randomString())
+        val fixture = Fixture()
+            .givenAddMembers(userIds = userIds)
+        val sut = fixture.get(backgroundScope)
+
+        sut.addMembers(userIds)
+
+        launch { fixture.verifyAddMembers(userIds) }
+    }
+
+    @Test
+    fun `add members error`() = runTest {
+        val userIds = setOf(randomString())
+        val fixture = Fixture()
+            .givenAddMembers(userIds = userIds, error = randomGenericError())
+        val sut = fixture.get(backgroundScope)
+
+        sut.addMembers(userIds)
+
+        sut.events.test {
+            assertEquals(ChannelInfoViewEvent.AddMembersError, awaitItem())
+        }
+    }
+
+    @Test
     fun `remove member error`() = runTest {
         val member = randomMember()
         val fixture = Fixture()
@@ -1394,23 +1203,25 @@ private class Fixture {
     private val channelData = MutableStateFlow(ChannelData(type = "", id = ""))
     private val channelMembers = MutableStateFlow(emptyList<Member>())
     private val channelMuted = MutableStateFlow(false)
-    private val channelHidden = MutableStateFlow(false)
     private val channelState: ChannelState = mock {
         on { channelData } doReturn channelData
         on { members } doReturn channelMembers
         on { muted } doReturn channelMuted
-        on { hidden } doReturn channelHidden
+    }
+    private val mutedUsers = MutableStateFlow(emptyList<Mute>())
+    private val blockedUserIds = MutableStateFlow(emptyList<String>())
+    private val globalState: GlobalState = mock {
+        on { muted } doReturn mutedUsers
+        on { blockedUserIds } doReturn this@Fixture.blockedUserIds
     }
     private val channelClient: ChannelClient = mock()
     private val chatClient: ChatClient = mock()
-    private val copyToClipboardHandler: CopyToClipboardHandler = mock()
     private var optionFilter: (ChannelInfoViewState.Content.Option) -> Boolean = { true }
 
     fun given(
         currentUser: User? = null,
         channel: Channel? = null,
         isMuted: Boolean? = null,
-        isHidden: Boolean? = null,
     ) = apply {
         if (currentUser != null) {
             whenever(chatClient.getCurrentUser()) doReturn currentUser
@@ -1421,9 +1232,6 @@ private class Fixture {
         }
         if (isMuted != null) {
             channelMuted.value = isMuted
-        }
-        if (isHidden != null) {
-            channelHidden.value = isHidden
         }
     }
 
@@ -1454,29 +1262,24 @@ private class Fixture {
         }
     }
 
-    fun givenHideChannel(clearHistory: Boolean, error: Error? = null) = apply {
-        whenever(channelClient.hide(clearHistory)) doAnswer {
-            error?.asCall()
-                ?: Unit.asCall().also {
-                    channelHidden.value = true
-                }
-        }
-    }
-
-    fun givenUnhideChannel(error: Error? = null) = apply {
-        whenever(channelClient.show()) doAnswer {
-            error?.asCall()
-                ?: Unit.asCall().also {
-                    channelHidden.value = false
-                }
-        }
-    }
-
     fun givenRemoveMember(memberId: String, systemMessage: Message? = null, error: Error? = null) = apply {
         whenever(
             channelClient.removeMembers(
                 memberIds = listOf(memberId),
                 systemMessage = systemMessage,
+            ),
+        ) doAnswer {
+            error?.asCall() ?: mock<Channel>().asCall()
+        }
+    }
+
+    fun givenAddMembers(userIds: Set<String>, error: Error? = null) = apply {
+        whenever(
+            channelClient.addMembers(
+                AddMembersParams(
+                    members = userIds.map { MemberData(it) },
+                    systemMessage = null,
+                ),
             ),
         ) doAnswer {
             error?.asCall() ?: mock<Channel>().asCall()
@@ -1516,10 +1319,6 @@ private class Fixture {
         verifyNoMoreInteractions(channelClient)
     }
 
-    fun verifyCopiedUserHandleToClipboard(text: String) = apply {
-        verify(copyToClipboardHandler).copy(text = text)
-    }
-
     fun verifyMemberBanned(member: Member, timeout: Int?) = apply {
         verify(channelClient).banUser(
             targetId = member.getUserId(),
@@ -1530,6 +1329,15 @@ private class Fixture {
 
     fun verifyMemberNotBanned(member: Member) = apply {
         verify(channelClient).unbanUser(targetId = member.getUserId())
+    }
+
+    fun verifyAddMembers(userIds: Set<String>) = apply {
+        verify(channelClient).addMembers(
+            AddMembersParams(
+                members = userIds.map { MemberData(it) },
+                systemMessage = null,
+            ),
+        )
     }
 
     fun verifyMemberRemoved(member: Member) = apply {
@@ -1547,7 +1355,7 @@ private class Fixture {
         chatClient = chatClient,
         channelState = MutableStateFlow(channelState),
         channelClient = channelClient,
-        copyToClipboardHandler = copyToClipboardHandler,
+        globalState = flowOf(globalState),
     )
 }
 

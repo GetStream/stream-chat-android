@@ -38,9 +38,7 @@ import io.getstream.chat.android.client.notifications.handler.ChatNotification;
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig;
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler;
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory;
-import io.getstream.chat.android.models.Channel;
 import io.getstream.chat.android.models.Device;
-import io.getstream.chat.android.models.Message;
 import io.getstream.chat.android.models.PushMessage;
 import io.getstream.chat.android.models.PushProvider;
 
@@ -54,11 +52,9 @@ public class Push {
      */
     public void configureNotification(Context context, NotificationHandler notificationHandler) {
         boolean pushNotificationEnabled = true;
-        boolean ignorePushMessagesWhenUserOnline = true;
         List<PushDeviceGenerator> pushDeviceGeneratorList = new ArrayList<>();
         NotificationConfig notificationConfig = new NotificationConfig(
                 pushNotificationEnabled,
-                ignorePushMessagesWhenUserOnline,
                 type -> type.equals(ChatNotification.TYPE_MESSAGE_NEW),
                 pushDeviceGeneratorList
         );
@@ -73,11 +69,9 @@ public class Push {
      */
     public void customNotificationHandler(Context context) {
         boolean pushNotificationEnabled = true;
-        boolean ignorePushMessagesWhenUserOnline = true;
         List<PushDeviceGenerator> pushDeviceGeneratorList = new ArrayList<>();
         NotificationConfig notificationConfig = new NotificationConfig(
                 pushNotificationEnabled,
-                ignorePushMessagesWhenUserOnline,
                 type -> type.equals(ChatNotification.TYPE_MESSAGE_NEW),
                 pushDeviceGeneratorList
         );
@@ -132,13 +126,6 @@ public class Push {
                 Notification customNotification = new NotificationCompat.Builder(context, notificationChannelId)
                         .build();
                 notificationManager.notify(notificationId, customNotification);
-            }
-
-            @Override
-            public void showNotification(@NonNull Channel channel, @NonNull Message message) {
-                Notification notification = new NotificationCompat.Builder(context, notificationChannelId)
-                        .build();
-                notificationManager.notify(notificationId, notification);
             }
 
             @Override
@@ -202,7 +189,6 @@ public class Push {
          */
         public void configureFirebaseNotifications(Context context) {
             boolean pushNotificationEnabled = true;
-            boolean ignorePushMessagesWhenUserOnline = true;
             List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(
                     new FirebasePushDeviceGenerator(
                             FirebaseMessaging.getInstance(),
@@ -212,7 +198,6 @@ public class Push {
             );
             NotificationConfig notificationConfig = new NotificationConfig(
                     pushNotificationEnabled,
-                    ignorePushMessagesWhenUserOnline,
                     type -> type.equals(ChatNotification.TYPE_MESSAGE_NEW),
                     pushDeviceGeneratorList
             );
@@ -261,13 +246,11 @@ public class Push {
          */
         public void configureHuaweiNotifications(Context context) {
             boolean pushNotificationEnabled = true;
-            boolean ignorePushMessagesWhenUserOnline = true;
             List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(
                     new HuaweiPushDeviceGenerator(context, "YOUR HUAWEI APP ID", "providerName")
             );
             NotificationConfig notificationConfig = new NotificationConfig(
                     pushNotificationEnabled,
-                    ignorePushMessagesWhenUserOnline,
                     type -> type.equals(ChatNotification.TYPE_MESSAGE_NEW),
                     pushDeviceGeneratorList
             );
@@ -314,11 +297,9 @@ public class Push {
          */
         public void configureXiaomiNotifications(Context context) {
             boolean pushNotificationEnabled = true;
-            boolean ignorePushMessagesWhenUserOnline = true;
             List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(new XiaomiPushDeviceGenerator(context, "YOUR HUAWEI APP ID", "YOUR XIAOMI APP KEY", "providerName", Region.Global));
             NotificationConfig notificationConfig = new NotificationConfig(
                     pushNotificationEnabled,
-                    ignorePushMessagesWhenUserOnline,
                     type -> type.equals(ChatNotification.TYPE_MESSAGE_NEW),
                     pushDeviceGeneratorList
             );

@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.ui.common.R as UiCommonR
+import io.getstream.chat.android.compose.R as ComposeR
 
 /**
  * Renders the default app bottom bar for switching between chats/threads.
@@ -63,12 +63,12 @@ fun AppBottomBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.barsBackground),
+            .background(ChatTheme.colors.backgroundCoreElevation1),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
         AppBottomBarOptionTile(
-            icon = R.drawable.ic_chats,
+            icon = ComposeR.drawable.stream_design_ic_message_bubble_fill,
             text = R.string.app_bottom_bar_chats,
             isSelected = selectedOption == AppBottomBarOption.CHATS,
             onClick = { onOptionSelected(AppBottomBarOption.CHATS) },
@@ -79,13 +79,13 @@ fun AppBottomBar(
             },
         )
         AppBottomBarOptionTile(
-            icon = UiCommonR.drawable.stream_compose_ic_mentions,
+            icon = ComposeR.drawable.stream_design_ic_mention,
             text = R.string.app_bottom_bar_mentions,
             isSelected = selectedOption == AppBottomBarOption.MENTIONS,
             onClick = { onOptionSelected(AppBottomBarOption.MENTIONS) },
         )
         AppBottomBarOptionTile(
-            icon = R.drawable.ic_threads,
+            icon = ComposeR.drawable.stream_design_ic_thread,
             text = R.string.app_bottom_bar_threads,
             isSelected = selectedOption == AppBottomBarOption.THREADS,
             onClick = { onOptionSelected(AppBottomBarOption.THREADS) },
@@ -116,7 +116,7 @@ private fun AppBottomBarOptionTile(
     decorationBadge: (@Composable () -> Unit)? = null,
 ) {
     val contentColor by animateColorAsState(
-        targetValue = if (isSelected) ChatTheme.colors.textHighEmphasis else ChatTheme.colors.textLowEmphasis,
+        targetValue = if (isSelected) ChatTheme.colors.textPrimary else ChatTheme.colors.textSecondary,
     )
     Box(
         modifier = Modifier

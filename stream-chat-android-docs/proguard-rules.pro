@@ -1,3 +1,5 @@
+-dontoptimize
+
 -dontwarn android.telephony.HwTelephonyManager
 -dontwarn com.huawei.android.os.BuildEx$VERSION
 -dontwarn com.huawei.android.telephony.ServiceStateEx

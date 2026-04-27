@@ -208,6 +208,7 @@
         <attr name="streamUiMessageComposerAudioRecordingButtonEnabled" format="boolean" />
         <attr name="streamUiMessageComposerAudioRecordingButtonVisible" format="boolean" />
         <attr name="streamUiMessageComposerAudioRecordingButtonPreferred" format="boolean" />
+        <attr name="streamUiMessageComposerAudioRecordingSendOnComplete" format="boolean" />
         <attr name="streamUiMessageComposerAudioRecordingButtonIconDrawable" format="reference" />
         <attr name="streamUiMessageComposerAudioRecordingButtonIconTintList" format="reference" />
         <attr name="streamUiMessageComposerAudioRecordingButtonWidth" format="dimension|reference" />

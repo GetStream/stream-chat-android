@@ -17,13 +17,18 @@
 package io.getstream.chat.android.compose.ui.util
 
 import android.content.Context
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
+import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.client.utils.message.isRegular
+import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.model.UserPresence
-import io.getstream.chat.android.uiutils.extension.getMembersStatusText
-import io.getstream.chat.android.uiutils.extension.getPreviewMessage
+import io.getstream.chat.android.ui.common.utils.extensions.getMembersStatusText
+import io.getstream.chat.android.ui.common.utils.extensions.getPreviewMessage
 import java.util.Date
 
 /**
@@ -33,6 +38,27 @@ import java.util.Date
  * @return Last message from the channel or null if it doesn't exist.
  */
 public fun Channel.getLastMessage(currentUser: User?): Message? = getPreviewMessage(currentUser)
+
+/**
+ * Returns channel's last regular or system message, **including deleted messages**.
+ * Used by the channel list to show "Message deleted" when the last message was deleted.
+ */
+internal fun Channel.getLastMessageIncludingDeleted(currentUser: User?): Message? {
+    // Consider last pending message (if available)
+    val lastPendingMessage = pendingMessages.lastOrNull()?.let(PendingMessage::message)
+    // Consider the currently active set of messages
+    val activeMessages = if (isInsideSearch) {
+        cachedLatestMessages
+    } else {
+        messages
+    }
+    return (activeMessages + listOfNotNull(lastPendingMessage))
+        .asSequence()
+        .filter { it.createdAt != null || it.createdLocallyAt != null }
+        .filter { it.user.id == currentUser?.id || !it.shadowed }
+        .filter { it.isRegular() || it.isSystem() || it.isDeleted() }
+        .maxByOrNull { it.getCreatedAtOrDefault(NEVER) }
+}
 
 /**
  * Filters the read status of each person other than the target user.
@@ -78,18 +104,14 @@ public fun Channel.isOneToOne(currentUser: User?): Boolean {
  *
  * @param context The context to load string resources.
  * @param currentUser The currently logged in user.
- * @param userPresence The user presence display configuration.
  */
 public fun Channel.getMembersStatusText(
     context: Context,
     currentUser: User?,
-    userPresence: UserPresence = UserPresence(),
 ): String {
     return getMembersStatusText(
         context = context,
         currentUser = currentUser,
-        countCurrentUserAsOnlineMember = userPresence.currentUser.countAsOnlineMember,
-        countOtherUsersAsOnlineMembers = userPresence.otherUsers.countAsOnlineMember,
         userOnlineResId = R.string.stream_compose_user_status_online,
         userLastSeenJustNowResId = R.string.stream_compose_user_status_last_seen_just_now,
         userLastSeenResId = R.string.stream_compose_user_status_last_seen,

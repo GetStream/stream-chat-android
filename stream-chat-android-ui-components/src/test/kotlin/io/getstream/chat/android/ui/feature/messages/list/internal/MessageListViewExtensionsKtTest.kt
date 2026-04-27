@@ -25,6 +25,7 @@ import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomChannelCapabilities
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomSyncStatus
 import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
@@ -132,10 +133,12 @@ internal class MessageListViewExtensionsKtTest {
     @MethodSource("canMarkAsUnreadArguments")
     fun `Verify canMarkAsUnread() extension function return proper value`(
         messageListViewStyle: MessageListViewStyle,
+        currentUser: User?,
+        message: Message,
         ownCapabilities: Set<String>,
         expectedResult: Boolean,
     ) {
-        messageListViewStyle.canMarkAsUnread(ownCapabilities) `should be` expectedResult
+        messageListViewStyle.canMarkAsUnread(currentUser, message, ownCapabilities) `should be` expectedResult
     }
 
     @ParameterizedTest
@@ -198,18 +201,35 @@ internal class MessageListViewExtensionsKtTest {
 
         @JvmStatic
         fun canMarkAsUnreadArguments() = listOf(
+            // case: disabled
             Arguments.of(
                 randomMessageListViewStyle(markAsUnreadEnabled = false),
-                randomChannelCapabilities(),
+                currentUser,
+                randomMessage(),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.READ_EVENTS)),
                 false,
             ),
+            // case: no READ_EVENTS capability
             Arguments.of(
-                randomMessageListViewStyle(),
+                randomMessageListViewStyle(markAsUnreadEnabled = true),
+                currentUser,
+                randomMessage(),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.READ_EVENTS)),
                 false,
             ),
+            // case: own message
             Arguments.of(
                 randomMessageListViewStyle(markAsUnreadEnabled = true),
+                currentUser,
+                randomMessage(user = currentUser),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.READ_EVENTS)),
+                false,
+            ),
+            // case: all conditions met
+            Arguments.of(
+                randomMessageListViewStyle(markAsUnreadEnabled = true),
+                currentUser,
+                randomMessage(),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.READ_EVENTS)),
                 true,
             ),
@@ -257,6 +277,13 @@ internal class MessageListViewExtensionsKtTest {
                 currentUser.takeIf { randomBoolean() },
                 randomMessage(command = AttachmentType.GIPHY, sharedLocation = null),
                 randomChannelCapabilities(),
+                false,
+            ),
+            Arguments.of(
+                randomMessageListViewStyle(editMessageEnabled = true),
+                currentUser,
+                randomMessage(poll = randomPoll(), command = null, sharedLocation = null),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.UPDATE_ANY_MESSAGE)),
                 false,
             ),
             Arguments.of(

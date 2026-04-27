@@ -29,9 +29,8 @@ import io.getstream.chat.android.models.querysort.QuerySortByField;
 import io.getstream.chat.android.models.querysort.QuerySorter;
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.CompatUserLookupHandler;
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler;
-import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserQueryFilter;
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler;
-import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.DefaultQueryFilter;
+import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.DefaultUserQueryFilter;
 import io.getstream.chat.android.ui.common.feature.messages.composer.transliteration.DefaultStreamTransliterator;
 import io.getstream.chat.android.ui.common.feature.messages.composer.transliteration.StreamTransliterator;
 import io.getstream.chat.android.ui.common.state.messages.Edit;
@@ -51,12 +50,12 @@ import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMes
 import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContent;
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
 import io.getstream.chat.android.ui.helper.TransformStyle;
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelBinder;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelBinding;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelBinding;
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;
 import io.getstream.chat.docs.databinding.MessageComposerLeadingContentBinding;
 import io.getstream.result.call.Call;
 import io.getstream.result.call.CallKt;
@@ -78,7 +77,7 @@ public class MessageComposer extends Fragment {
 
         public void usage1() {
             // Create MessageComposerViewModel for a given channel
-            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+            ViewModelProvider.Factory factory = new ChannelViewModelFactory.Builder(requireContext())
                     .cid("messaging:123")
                     .build();
             ViewModelProvider provider = new ViewModelProvider(this, factory);
@@ -90,7 +89,7 @@ public class MessageComposer extends Fragment {
 
         public void usage2() {
             // Create MessageComposerViewModel for a given channel
-            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+            ViewModelProvider.Factory factory = new ChannelViewModelFactory.Builder(requireContext())
                     .cid("messaging:123")
                     .build();
             ViewModelProvider provider = new ViewModelProvider(this, factory);
@@ -186,7 +185,7 @@ public class MessageComposer extends Fragment {
 
         public void usage3() {
             // Create ViewModels for MessageComposerView and MessageListView
-            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+            ViewModelProvider.Factory factory = new ChannelViewModelFactory.Builder(requireContext())
                     .cid("messaging:123")
                     .build();
             ViewModelProvider provider = new ViewModelProvider(this, factory);
@@ -321,11 +320,11 @@ public class MessageComposer extends Fragment {
                 return Unit.INSTANCE;
             });
             messageComposerView.setAttachmentSelectionListener((attachments) -> {
-                messageComposerViewModel.addSelectedAttachments(attachments);
+                messageComposerViewModel.addAttachments(attachments);
                 return Unit.INSTANCE;
             });
             messageComposerView.setAttachmentRemovalListener((attachment) -> {
-                messageComposerViewModel.removeSelectedAttachment(attachment);
+                messageComposerViewModel.removeAttachment(attachment);
                 return Unit.INSTANCE;
             });
             messageComposerView.setMentionSelectionListener((user) -> {
@@ -429,7 +428,7 @@ public class MessageComposer extends Fragment {
                 return Unit.INSTANCE;
             });
             centerContent.setAttachmentRemovalListener((attachment -> {
-                messageComposerViewModel.removeSelectedAttachment(attachment);
+                messageComposerViewModel.removeAttachment(attachment);
                 return Unit.INSTANCE;
             }));
             messageComposerView.setCenterContent(centerContent);
@@ -567,7 +566,7 @@ public class MessageComposer extends Fragment {
             String cid = "messaging:123";
             ChatClient chatClient = ChatClient.instance();
             UserLookupHandler defaultUserLookupHandler = new DefaultUserLookupHandler(chatClient, cid);
-            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+            ViewModelProvider.Factory factory = new ChannelViewModelFactory.Builder(requireContext())
                     .cid(cid)
                     .userLookupHandler(defaultUserLookupHandler)
                     .build();
@@ -595,7 +594,7 @@ public class MessageComposer extends Fragment {
             };
 
             // Create MessageComposerViewModel for a given channel
-            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+            ViewModelProvider.Factory factory = new ChannelViewModelFactory.Builder(requireContext())
                     .cid(cid)
                     .userLookupHandlerCompat(customUserLookupHandler)
                     .build();

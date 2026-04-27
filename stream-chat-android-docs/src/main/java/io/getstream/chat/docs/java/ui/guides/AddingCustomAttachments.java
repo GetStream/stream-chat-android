@@ -192,7 +192,7 @@ public class AddingCustomAttachments extends Fragment {
                             .withType("date")
                             .withExtraData(extraData)
                             .build();
-                    messageComposerViewModel.addSelectedAttachments(Collections.singletonList(attachment));
+                    messageComposerViewModel.addAttachments(Collections.singletonList(attachment));
                 });
 
                 // Show the date picker dialog on a click on the calendar button

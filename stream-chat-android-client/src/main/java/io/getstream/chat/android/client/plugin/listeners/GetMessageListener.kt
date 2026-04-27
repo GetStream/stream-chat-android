@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.plugin.listeners
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -23,6 +24,7 @@ import io.getstream.result.Result
 /**
  * Listener used when fetching a single new message from the backend.
  */
+@InternalStreamChatApi
 public interface GetMessageListener {
 
     /**

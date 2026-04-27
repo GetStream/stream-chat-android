@@ -8,22 +8,13 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsPickerState
 
 /**
@@ -33,7 +24,7 @@ private object ReactionsPickerUsageSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = this,
                 channelId = "messaging:123",
             )
@@ -56,10 +47,6 @@ private object ReactionsPickerUsageSnippet {
                             val selectedMessage = selectedMessageState.message
                             if (selectedMessageState is SelectedMessageReactionsPickerState) {
                                 ReactionsPicker(
-                                    modifier = Modifier
-                                        .align(Alignment.BottomCenter)
-                                        .heightIn(max = 400.dp)
-                                        .wrapContentHeight(),
                                     message = selectedMessage,
                                     onMessageAction = { action ->
                                         // Handle message action
@@ -84,7 +71,7 @@ private object ReactionsPickerHandlingActionsSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = this,
                 channelId = "messaging:123",
             )
@@ -109,12 +96,7 @@ private object ReactionsPickerHandlingActionsSnippet {
                             val selectedMessage = selectedMessageState.message
                             if (selectedMessageState is SelectedMessageReactionsPickerState) {
                                 ReactionsPicker(
-                                    modifier = Modifier
-                                        .align(Alignment.BottomCenter)
-                                        .heightIn(max = 400.dp)
-                                        .wrapContentHeight(),
                                     message = selectedMessage,
-
                                     onMessageAction = { action ->
                                         composerViewModel.performMessageAction(action)
                                         listViewModel.performMessageAction(action)
@@ -137,7 +119,7 @@ private object ReactionsPickerCustomizationSnippet {
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
-            MessagesViewModelFactory(
+            ChannelViewModelFactory(
                 context = this,
                 channelId = "messaging:123",
             )
@@ -163,35 +145,18 @@ private object ReactionsPickerCustomizationSnippet {
                             if (selectedMessageState is SelectedMessageReactionsPickerState) {
 
                                 ReactionsPicker(
-                                    modifier = Modifier
-                                        .align(Alignment.Center)
-                                        .padding(horizontal = 20.dp)
-                                        .wrapContentSize(),
-                                    shape = ChatTheme.shapes.attachment,
                                     message = selectedMessage,
                                     onMessageAction = { action ->
                                         composerViewModel.performMessageAction(action)
                                         listViewModel.performMessageAction(action)
                                     },
                                     onDismiss = { listViewModel.removeOverlay() },
-                                    cells = GridCells.Fixed(4),
-                                    headerContent = { TextLabel() },
                                 )
                             }
                         }
                     }
                 }
             }
-        }
-
-        @Composable
-        fun TextLabel() {
-            Text(
-                modifier = Modifier.padding(start = 20.dp, top = 12.dp),
-                text = "Available reactions",
-                style = ChatTheme.typography.title3Bold,
-                color = ChatTheme.colors.textHighEmphasis
-            )
         }
     }
 }

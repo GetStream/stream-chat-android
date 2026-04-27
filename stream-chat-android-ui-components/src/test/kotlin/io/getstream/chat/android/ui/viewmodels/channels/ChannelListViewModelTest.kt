@@ -18,8 +18,14 @@ package io.getstream.chat.android.ui.viewmodels.channels
 
 import androidx.lifecycle.Observer
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.event.ChatEventHandlerFactory
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.state.ChannelsStateData
+import io.getstream.chat.android.client.api.state.GlobalState
+import io.getstream.chat.android.client.api.state.QueryChannelsState
+import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
@@ -28,12 +34,6 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
-import io.getstream.chat.android.state.plugin.internal.StatePlugin
-import io.getstream.chat.android.state.plugin.state.StateRegistry
-import io.getstream.chat.android.state.plugin.state.global.GlobalState
-import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
-import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
@@ -146,30 +146,6 @@ internal class ChannelListViewModelTest {
     }
 
     @Test
-    fun `Given channel list in content state When hiding a channel Should hide the channel`() = runTest {
-        val chatClient: ChatClient = mock()
-        val channelClient: ChannelClient = mock()
-
-        val viewModel = Fixture(chatClient, channelClient)
-            .givenCurrentUser()
-            .givenChannelsQuery()
-            .givenChannelsState(
-                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
-                loading = false,
-            )
-            .givenChannelMutes()
-            .givenHideChannel()
-            .get()
-
-        viewModel.hideChannel(channel1)
-
-        verify(chatClient).hideChannel(
-            channelType = channel1.type,
-            channelId = channel1.id,
-        )
-    }
-
-    @Test
     fun `Given channel list in content state and the current user is online When loading more channels Should load more channels`() =
         runTest {
             val nextPageRequest = QueryChannelsRequest(
@@ -275,10 +251,6 @@ internal class ChannelListViewModelTest {
 
         fun givenDeleteChannel() = apply {
             whenever(channelClient.delete()) doReturn Channel().asCall()
-        }
-
-        fun givenHideChannel() = apply {
-            whenever(chatClient.hideChannel(any(), any(), any())) doReturn Unit.asCall()
         }
 
         fun givenChannelsState(

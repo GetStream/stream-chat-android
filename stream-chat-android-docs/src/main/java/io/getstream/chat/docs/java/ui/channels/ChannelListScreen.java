@@ -7,17 +7,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import io.getstream.chat.android.models.FilterObject;
-import io.getstream.chat.android.models.querysort.QuerySorter;
 import io.getstream.chat.android.models.Channel;
+import io.getstream.chat.android.models.FilterObject;
 import io.getstream.chat.android.models.Message;
+import io.getstream.chat.android.models.querysort.QuerySorter;
 import io.getstream.chat.android.ui.feature.channels.ChannelListActivity;
 import io.getstream.chat.android.ui.feature.channels.ChannelListFragment;
 import io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView;
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView;
 import io.getstream.chat.android.ui.feature.search.SearchInputView;
 import io.getstream.chat.android.ui.feature.search.list.SearchResultListView;
-import io.getstream.chat.docs.R;
 import kotlin.Unit;
 
 /**
@@ -37,7 +36,7 @@ public class ChannelListScreen {
         public final class MyChannelListActivity extends AppCompatActivity {
 
             public MyChannelListActivity() {
-                super(R.layout.stream_ui_fragment_container);
+                super(io.getstream.chat.android.ui.R.layout.stream_ui_fragment_container);
             }
 
             @Override
@@ -45,7 +44,7 @@ public class ChannelListScreen {
                 super.onCreate(savedInstanceState);
                 if (savedInstanceState == null) {
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.container, ChannelListFragment.newInstance())
+                            .replace(io.getstream.chat.android.ui.R.id.container, ChannelListFragment.newInstance())
                             .commit();
                 }
             }
@@ -64,7 +63,7 @@ public class ChannelListScreen {
                 ChannelListFragment.SearchResultClickListener {
 
             public MyChannelListActivity() {
-                super(R.layout.stream_ui_fragment_container);
+                super(io.getstream.chat.android.ui.R.layout.stream_ui_fragment_container);
             }
 
             @Override
@@ -72,7 +71,7 @@ public class ChannelListScreen {
                 super.onCreate(savedInstanceState);
                 if (savedInstanceState == null) {
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.container, ChannelListFragment.newInstance())
+                            .replace(io.getstream.chat.android.ui.R.id.container, ChannelListFragment.newInstance())
                             .commit();
                 }
             }
@@ -157,7 +156,7 @@ public class ChannelListScreen {
             protected ChannelListFragment createChannelListFragment() {
                 return ChannelListFragment.newInstance(builder -> {
                     builder.setFragment(new CustomChannelListFragment());
-                    builder.customTheme(R.style.StreamUiTheme);
+                    builder.customTheme(io.getstream.chat.android.ui.R.style.StreamUiTheme);
                     builder.showSearch(true);
                     builder.showHeader(true);
                     builder.headerTitle("Title");

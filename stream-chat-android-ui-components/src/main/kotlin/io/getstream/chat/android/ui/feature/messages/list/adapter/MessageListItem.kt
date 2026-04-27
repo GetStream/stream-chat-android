@@ -70,7 +70,7 @@ public sealed class MessageListItem {
      * Represent a message item in a [MessageListView].
      *
      * @property message The message that should be displayed in the message item.
-     * @property positions The list of positions that should be displayed in the message item.
+     * @property position The positions of the message item in a group.
      * @property isMine True if the message is sent by the current user, otherwise false.
      * @property messageReadBy The list of users that already read the message.
      * @property isThreadMode True if the message is in a thread mode, otherwise false.
@@ -84,7 +84,7 @@ public sealed class MessageListItem {
      */
     public data class MessageItem(
         val message: Message,
-        val positions: List<MessagePosition> = listOf(),
+        val position: MessagePosition = MessagePosition.NONE,
         val isMine: Boolean = false,
         val messageReadBy: List<ChannelUserRead> = listOf(),
         val isThreadMode: Boolean = false,

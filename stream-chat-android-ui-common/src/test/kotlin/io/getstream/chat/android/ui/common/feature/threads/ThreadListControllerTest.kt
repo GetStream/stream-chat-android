@@ -19,10 +19,12 @@ package io.getstream.chat.android.ui.common.feature.threads
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
+import io.getstream.chat.android.client.api.state.QueryThreadsState
+import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomThread
-import io.getstream.chat.android.state.plugin.state.querythreads.QueryThreadsState
 import io.getstream.result.call.Call
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,6 +50,7 @@ internal class ThreadListControllerTest {
             assertTrue(state.isLoading)
             assertFalse(state.isLoadingMore)
             assertEquals(0, state.unseenThreadsCount)
+            assertFalse(state.loadingError)
         }
     }
 
@@ -61,6 +64,7 @@ internal class ThreadListControllerTest {
             on { loading } doReturn MutableStateFlow(false)
             on { loadingMore } doReturn MutableStateFlow(false)
             on { unseenThreadIds } doReturn MutableStateFlow(emptySet())
+            on { loadingError } doReturn MutableStateFlow(false)
         }
         val sut = Fixture()
             .givenQueryThreadsState(state)
@@ -112,6 +116,7 @@ internal class ThreadListControllerTest {
             on { loading } doReturn MutableStateFlow(false)
             on { loadingMore } doReturn MutableStateFlow(true)
             on { unseenThreadIds } doReturn MutableStateFlow(emptySet())
+            on { loadingError } doReturn MutableStateFlow(false)
         }
         val fixture = Fixture().givenQueryThreadsState(state)
         val sut = fixture.get(backgroundScope, query)
@@ -136,6 +141,7 @@ internal class ThreadListControllerTest {
             on { loadingMore } doReturn MutableStateFlow(false)
             on { unseenThreadIds } doReturn MutableStateFlow(emptySet())
             on { next } doReturn MutableStateFlow(null)
+            on { loadingError } doReturn MutableStateFlow(false)
         }
         val fixture = Fixture().givenQueryThreadsState(state)
         val sut = fixture.get(backgroundScope, query)
@@ -161,6 +167,7 @@ internal class ThreadListControllerTest {
             on { loadingMore } doReturn MutableStateFlow(false)
             on { unseenThreadIds } doReturn MutableStateFlow(emptySet())
             on { next } doReturn MutableStateFlow(nextPage)
+            on { loadingError } doReturn MutableStateFlow(false)
         }
         val fixture = Fixture()
             .givenQueryThreadsState(state)
@@ -178,27 +185,52 @@ internal class ThreadListControllerTest {
         }
     }
 
+    @Test
+    fun `loadingError is propagated from QueryThreadsState to ThreadListState`() = runTest {
+        val state = mock<QueryThreadsState> {
+            on { threads } doReturn MutableStateFlow(emptyList())
+            on { loading } doReturn MutableStateFlow(false)
+            on { loadingMore } doReturn MutableStateFlow(false)
+            on { unseenThreadIds } doReturn MutableStateFlow(emptySet())
+            on { loadingError } doReturn MutableStateFlow(true)
+        }
+        val sut = Fixture().givenQueryThreadsState(state).get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+            val actual = awaitItem()
+            assertTrue(actual.loadingError)
+        }
+    }
+
     private class Fixture {
 
         private val queryThreadsStateFlow = MutableStateFlow<QueryThreadsState?>(null)
 
-        private val mockChatClient: ChatClient = mock()
+        private val mockClientState: ClientState = mock {
+            on { connectionState } doReturn MutableStateFlow(ConnectionState.Connected)
+            on { user } doReturn MutableStateFlow(null)
+        }
+
+        private val mockChatClient: ChatClient = mock {
+            on { clientState } doReturn mockClientState
+        }
 
         fun givenQueryThreadsState(state: QueryThreadsState) = apply {
             queryThreadsStateFlow.value = state
         }
 
         fun givenQueryThreadsRequest(query: QueryThreadsRequest) = apply {
-            whenever(mockChatClient.queryThreadsResult(query)) doReturn
+            whenever(mockChatClient.queryThreads(query)) doReturn
                 mock<Call<QueryThreadsResult>>()
         }
 
         fun verifyQueryThreadsResult(query: QueryThreadsRequest) = apply {
-            verify(mockChatClient).queryThreadsResult(query)
+            verify(mockChatClient).queryThreads(query)
         }
 
         fun verifyNeverQueryThreadsResult(query: QueryThreadsRequest) = apply {
-            verify(mockChatClient, never()).queryThreadsResult(query)
+            verify(mockChatClient, never()).queryThreads(query)
         }
 
         fun get(

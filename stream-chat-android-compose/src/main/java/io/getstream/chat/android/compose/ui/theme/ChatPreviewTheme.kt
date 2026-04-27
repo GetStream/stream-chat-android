@@ -20,11 +20,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import io.getstream.android.push.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.notifications.handler.ChatNotification
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.core.internal.ExcludeFromCoverageGeneratedReport
-import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.Message
 
 @ExcludeFromCoverageGeneratedReport
 @Composable
@@ -42,7 +41,7 @@ internal fun ChatPreviewTheme(content: @Composable () -> Unit) {
 }
 
 private class NoOpNotificationHandler : NotificationHandler {
-    override fun showNotification(channel: Channel, message: Message) {
+    override fun showNotification(notification: ChatNotification) {
         // No-op
     }
 

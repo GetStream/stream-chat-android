@@ -18,12 +18,14 @@ package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.result.Result
 
 /**
  * Listener of [ChatClient.queryChannel] requests.
  */
+@InternalStreamChatApi
 public interface QueryChannelListener {
     /**
      * Run precondition for the request. If it returns [Result.Success] then the request is run otherwise it returns

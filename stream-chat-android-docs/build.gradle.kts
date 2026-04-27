@@ -77,14 +77,13 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":stream-chat-android-offline"))
-    implementation(project(":stream-chat-android-state"))
     implementation(project(":stream-chat-android-ui-components"))
     implementation(project(":stream-chat-android-compose"))
     implementation(project(":stream-chat-android-markdown-transformer"))
 
 
     // Compose
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.foundation)
@@ -111,6 +110,5 @@ dependencies {
     implementation(libs.huawei.push)
     compileOnly(files("../libraries/external/MiPush_SDK_Client_5_1_8-G_3rd.aar"))
     implementation(libs.coil)
-    implementation(libs.skydoves.landscapist.coil)
-    implementation(libs.skydoves.landscapist.placeholder)
+    implementation(libs.coil.compose)
 }

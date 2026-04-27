@@ -53,7 +53,8 @@ import java.util.Date
  * in the events.
  * @param membership Represents relationship of the current user to this channel.
  * @param extraData A map of custom fields for the channel.
- * @param cachedLatestMessages The list of cached messages if the regular list does not contain the newest messages.
+ * @param cachedLatestMessages The list of cached newest messages if the regular list does not contain the newest
+ * messages.
  * @param isInsideSearch When the channel is inside search, eg. searching from the channel list for a message or when
  * hopping to a quoted message a number pages away without retaining the newest messages in the list.
  * @param draftMessage The draft message for the channel.
@@ -304,14 +305,6 @@ public data class Channel(
         public fun withFilterTags(filterTags: List<String>): Builder = apply { this.filterTags = filterTags }
         public fun withLastMessageAt(lastMessageAt: Date?): Builder = apply { this.lastMessageAt = lastMessageAt }
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
-
-        @Deprecated(
-            message = "channelLastMessageAt is no longer supported.",
-            replaceWith = ReplaceWith(
-                expression = "",
-            ),
-        )
-        public fun withChannelLastMessageAt(channelLastMessageAt: Date?): Builder = this
 
         public fun build(): Channel = Channel(
             id = id,

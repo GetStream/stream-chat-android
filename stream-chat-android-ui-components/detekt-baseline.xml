@@ -17,13 +17,13 @@
     <ID>LongMethod:AvatarStyle.kt$AvatarStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): AvatarStyle</ID>
     <ID>LongMethod:ChannelActionsDialogViewStyle.kt$ChannelActionsDialogViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): ChannelActionsDialogViewStyle</ID>
     <ID>LongMethod:ChannelAvatarView.kt$ChannelAvatarView$private fun createImageViews(count: Int): List&lt;AvatarImageView></ID>
+    <ID>LongMethod:ChannelHeaderViewStyle.kt$ChannelHeaderViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): ChannelHeaderViewStyle</ID>
     <ID>LongMethod:ChannelListViewStyle.kt$ChannelListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): ChannelListViewStyle</ID>
     <ID>LongMethod:FileAttachmentViewStyle.kt$FileAttachmentViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): FileAttachmentViewStyle</ID>
     <ID>LongMethod:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): GiphyMediaAttachmentViewStyle</ID>
     <ID>LongMethod:GiphyViewHolderStyle.kt$GiphyViewHolderStyle.Companion$operator fun invoke(context: Context, attributes: TypedArray): GiphyViewHolderStyle</ID>
     <ID>LongMethod:MediaAttachmentGridViewStyle.kt$MediaAttachmentGridViewStyle.Companion$operator fun invoke(context: Context, it: TypedArray): MediaAttachmentGridViewStyle</ID>
     <ID>LongMethod:MentionListViewStyle.kt$MentionListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): MentionListViewStyle</ID>
-    <ID>LongMethod:MessageListHeaderViewStyle.kt$MessageListHeaderViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): MessageListHeaderViewStyle</ID>
     <ID>LongMethod:MessageListItemStyle.kt$MessageListItemStyle.Builder$fun build(): MessageListItemStyle</ID>
     <ID>LongMethod:MessageListViewModelBinding.kt$@JvmName("bind") public fun MessageListViewModel.bindView( view: MessageListView, lifecycleOwner: LifecycleOwner, )</ID>
     <ID>LongMethod:MessageListViewStyle.kt$MessageListViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageListViewStyle</ID>
@@ -33,7 +33,6 @@
     <ID>LongMethod:SearchInputViewStyle.kt$SearchInputViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): SearchInputViewStyle</ID>
     <ID>LongMethod:SearchResultListViewStyle.kt$SearchResultListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): SearchResultListViewStyle</ID>
     <ID>LongMethod:SwipeViewHolder.kt$SwipeViewHolder$@SuppressLint("ClickableViewAccessibility") public fun setSwipeListener(view: View, swipeListener: ChannelListView.SwipeListener?)</ID>
-    <ID>LongParameterList:DecoratorProviderFactory.kt$DecoratorProviderFactory$( channel: Channel, dateFormatter: DateFormatter, messageListViewStyle: MessageListViewStyle, showAvatarPredicate: MessageListView.ShowAvatarPredicate, messageBackgroundFactory: MessageBackgroundFactory, deletedMessageVisibility: () -> DeletedMessageVisibility, getLanguageDisplayName: (code: String) -> String, )</ID>
     <ID>LongParameterList:EditReactionsBubbleDrawer.kt$EditReactionsBubbleDrawer$( context: Context, canvas: Canvas, bubbleWidth: Int, bubbleHeight: Int, isMyMessage: Boolean, isSingleReaction: Boolean, messageAnchorPosition: Float, canvasBounds: IntRange, )</ID>
     <ID>LongParameterList:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle$( public val progressIcon: Drawable, public val giphyIcon: Drawable, public val placeholderIcon: Drawable, @ColorInt public val imageBackgroundColor: Int, public val giphyType: GiphyInfoType, public val scaleType: ImageView.ScaleType, public val sizingMode: GiphySizingMode, public val width: Int, public val height: Int, public val dimensionRatio: Float, )</ID>
     <ID>LoopWithTooManyJumpStatements:AudioRecordingAttachmentsGroupView.kt$AudioRecordingAttachmentsGroupView$for</ID>
@@ -95,6 +94,7 @@
     <ID>MaxLineLength:AutoLinkableTextTransformer.kt$AutoLinkableTextTransformer$*</ID>
     <ID>MaxLineLength:AvatarDecorator.kt$AvatarDecorator$setupAvatar(getAvatarView(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine), data)</ID>
     <ID>MaxLineLength:ChannelActionsDialogViewStyle.kt$ChannelActionsDialogViewStyle$*</ID>
+    <ID>MaxLineLength:ChannelHeaderViewStyle.kt$ChannelHeaderViewStyle$*</ID>
     <ID>MaxLineLength:ChannelListFragmentViewStyle.kt$ChannelListFragmentViewStyle$*</ID>
     <ID>MaxLineLength:ChannelListIconProviderContainerImpl.kt$ChannelListIconProviderContainerImpl$override</ID>
     <ID>MaxLineLength:ChannelListView.kt$ChannelListView$is ChannelListViewModel.ErrorEvent.DeleteChannelError -> R.string.stream_ui_channel_list_error_delete_channel</ID>
@@ -113,11 +113,8 @@
     <ID>MaxLineLength:GiphyViewHolderStyle.kt$GiphyViewHolderStyle$*</ID>
     <ID>MaxLineLength:MediaAttachmentDialogFragment.kt$MediaAttachmentDialogFragment$viewModel.attachmentGalleryItemsLiveData.observe(viewLifecycleOwner, mediaAttachmentGridView::setAttachments)</ID>
     <ID>MaxLineLength:MessageBackgroundFactoryImpl.kt$MessageBackgroundFactoryImpl$// however, if a user has specified a background color attribute, we use it for _all_ message backgrounds.</ID>
-    <ID>MaxLineLength:MessageComposerViewModel.kt$MessageComposerViewModel$*</ID>
     <ID>MaxLineLength:MessageComposerViewModelBinding.kt$MessageComposerViewModelDefaults$val MessageComposerViewModel.alsoSendToChannelSelectionListener: (Boolean) -> Unit get() = { setAlsoSendToChannel(it) }</ID>
-    <ID>MaxLineLength:MessageComposerViewModelBinding.kt$MessageComposerViewModelDefaults$val MessageComposerViewModel.attachmentRemovalListener: (Attachment) -> Unit get() = { removeSelectedAttachment(it) }</ID>
     <ID>MaxLineLength:MessageComposerViewModelBinding.kt$alsoSendToChannelSelectionListener = this.alsoSendToChannelSelectionListener and alsoSendToChannelSelectionListener</ID>
-    <ID>MaxLineLength:MessageListHeaderViewStyle.kt$MessageListHeaderViewStyle$*</ID>
     <ID>MaxLineLength:MessageListItemDecoratorProvider.kt$MessageListItemDecoratorProvider$*</ID>
     <ID>MaxLineLength:MessageListItemStyle.kt$MessageListItemStyle$*</ID>
     <ID>MaxLineLength:MessageListItemStyle.kt$MessageListItemStyle.Builder$require(messageMaxWidthFactorMine in 0.75..1.0) { "messageMaxWidthFactorMine cannot be lower than 0.75 and greater than 1! Current value: $messageMaxWidthFactorMine" }</ID>
@@ -125,7 +122,6 @@
     <ID>MaxLineLength:MessageListItemViewHolderFactory.kt$MessageListItemViewHolderFactory$*</ID>
     <ID>MaxLineLength:MessageListView.kt$MessageListView.MessagesStart.Companion$?:</ID>
     <ID>MaxLineLength:MessageListView.kt$MessageListView.NewMessagesBehaviour.Companion$?:</ID>
-    <ID>MaxLineLength:MessageListViewModelFactory.kt$MessageListViewModelFactory$?:</ID>
     <ID>MaxLineLength:MessageListViewStyle.kt$MessageListViewStyle$*</ID>
     <ID>MaxLineLength:MessageReplyStyle.kt$MessageReplyStyle$*</ID>
     <ID>MaxLineLength:ReactionsDecorator.kt$ReactionsDecorator$expectedReactionsAndOffsetWidth > rootConstraintLayout.measuredWidth -> expectedReactionsAndOffsetWidth - rootWidth</ID>
@@ -136,22 +132,20 @@
     <ID>MaxLineLength:SwipeViewHolder.kt$SwipeViewHolder$* If the swipe view is swiped of not. When true, swipe view is completely swiped, when false it is in the default state</ID>
     <ID>MaxLineLength:TypingIndicatorViewStyle.kt$TypingIndicatorViewStyle$*</ID>
     <ID>MaxLineLength:ViewReactionsBubbleDrawer.kt$ViewReactionsBubbleDrawer$"You need to specify either bubbleBorderColorTheirs and bubbleBorderWidthTheirs to draw a border for another user reaction bubble"</ID>
+    <ID>NestedBlockDepth:ChannelHeaderView.kt$ChannelHeaderView$private fun renderSubtitleState()</ID>
     <ID>NestedBlockDepth:DefaultMessageComposerTrailingContent.kt$DefaultMessageComposerTrailingContent$override fun renderState(state: MessageComposerState)</ID>
-    <ID>NestedBlockDepth:MessageListHeaderView.kt$MessageListHeaderView$private fun renderSubtitleState()</ID>
-    <ID>ParameterListWrapping:MessageComposerViewModelBinding.kt$MessageComposerViewModelDefaults$(Attachment)</ID>
     <ID>ParameterListWrapping:MessageComposerViewModelBinding.kt$MessageComposerViewModelDefaults$(Boolean)</ID>
     <ID>SerialVersionUIDInSerializableClass:TextStyle.kt$TextStyle : Serializable</ID>
-    <ID>SwallowedException:WebLinkDestination.kt$WebLinkDestination$e: ActivityNotFoundException</ID>
     <ID>ThrowingExceptionsWithoutMessageOrCause:MessageComposerView.kt$&lt;no name provided>.&lt;no name provided>$IndexOutOfBoundsException()</ID>
     <ID>TooGenericExceptionCaught:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$e: Exception</ID>
     <ID>TooGenericExceptionCaught:BaseMessageItemViewHolder.kt$BaseMessageItemViewHolder$e: Throwable</ID>
     <ID>TooGenericExceptionCaught:ChatFontsImpl.kt$ChatFontsImpl$t: Throwable</ID>
     <ID>TooGenericExceptionThrown:AttachmentGalleryPagerAdapter.kt$AttachmentGalleryPagerAdapter$throw Throwable("Unsupported attachment type")</ID>
     <ID>TooManyFunctions:AttachmentGalleryActivity.kt$AttachmentGalleryActivity : AppCompatActivity</ID>
+    <ID>TooManyFunctions:ChannelHeaderView.kt$ChannelHeaderView : FrameLayout</ID>
     <ID>TooManyFunctions:ChannelListView.kt$ChannelListView : FrameLayout</ID>
     <ID>TooManyFunctions:MessageComposerViewModel.kt$MessageComposerViewModel : ViewModel</ID>
     <ID>TooManyFunctions:MessageComposerViewModelBinder.kt$MessageComposerViewModelBinder</ID>
-    <ID>TooManyFunctions:MessageListHeaderView.kt$MessageListHeaderView : FrameLayout</ID>
     <ID>TooManyFunctions:MessageListItemViewHolderFactory.kt$MessageListItemViewHolderFactory</ID>
     <ID>TooManyFunctions:MessageListView.kt$MessageListView : ConstraintLayout</ID>
     <ID>TooManyFunctions:SimpleChannelListView.kt$SimpleChannelListView : RecyclerView</ID>

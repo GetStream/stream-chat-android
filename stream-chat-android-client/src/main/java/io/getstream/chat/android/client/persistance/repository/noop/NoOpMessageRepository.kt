@@ -57,4 +57,5 @@ internal object NoOpMessageRepository : MessageRepository {
     override suspend fun selectMessagesForThread(messageId: String, limit: Int): List<Message> = emptyList()
     override suspend fun selectAllUserMessages(userId: String): List<Message> = emptyList()
     override suspend fun selectAllChannelUserMessages(cid: String, userId: String): List<Message> = emptyList()
+    override suspend fun selectLocalOnlyMessagesForChannel(cid: String): List<Message> = emptyList()
 }

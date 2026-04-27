@@ -16,8 +16,14 @@
 
 package io.getstream.chat.android.compose.viewmodel.messages
 
+import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.state.GlobalState
+import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
+import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
@@ -33,17 +39,14 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.positiveRandomLong
 import io.getstream.chat.android.randomString
-import io.getstream.chat.android.state.plugin.config.StatePluginConfig
-import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
-import io.getstream.chat.android.state.plugin.internal.StatePlugin
-import io.getstream.chat.android.state.plugin.state.StateRegistry
-import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.MentionType
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
@@ -59,6 +62,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -81,7 +85,7 @@ internal class MessageComposerViewModelTest {
 
         val messageComposerState = viewModel.messageComposerState.value
         messageComposerState.inputValue `should be equal to` "Message text"
-        viewModel.input.value `should be equal to` "Message text"
+        viewModel.messageInput.value.text `should be equal to` "Message text"
     }
 
     @Test
@@ -112,7 +116,7 @@ internal class MessageComposerViewModelTest {
                 isRetrying = eq(false),
             )
             captor.firstValue.text `should be equal to` "Message text"
-            viewModel.input.value `should be equal to` ""
+            viewModel.messageInput.value.text `should be equal to` ""
         }
 
     @Test
@@ -126,10 +130,10 @@ internal class MessageComposerViewModelTest {
                 .givenSendMessage()
                 .get()
 
-            viewModel.addSelectedAttachments(
+            viewModel.addAttachments(
                 listOf(
-                    Attachment(imageUrl = "url1"),
-                    Attachment(imageUrl = "url2"),
+                    Attachment(imageUrl = "url1", extraData = mapOf(EXTRA_SOURCE_URI to "content://media/1")),
+                    Attachment(imageUrl = "url2", extraData = mapOf(EXTRA_SOURCE_URI to "content://media/2")),
                 ),
             )
             val state = viewModel.messageComposerState.value
@@ -148,7 +152,7 @@ internal class MessageComposerViewModelTest {
                 isRetrying = eq(false),
             )
             captor.firstValue.attachments.size `should be equal to` 2
-            viewModel.selectedAttachments.value.size `should be equal to` 0
+            viewModel.messageComposerState.value.attachments.size `should be equal to` 0
         }
 
     @Test
@@ -161,17 +165,58 @@ internal class MessageComposerViewModelTest {
                 .givenChannelState()
                 .get()
 
-            viewModel.addSelectedAttachments(
+            viewModel.addAttachments(
                 listOf(
-                    Attachment(imageUrl = "url1"),
-                    Attachment(imageUrl = "url2"),
+                    Attachment(imageUrl = "url1", extraData = mapOf(EXTRA_SOURCE_URI to "content://media/1")),
+                    Attachment(imageUrl = "url2", extraData = mapOf(EXTRA_SOURCE_URI to "content://media/2")),
                 ),
             )
-            viewModel.removeSelectedAttachment(
-                Attachment(imageUrl = "url1"),
+            viewModel.removeAttachment(
+                Attachment(imageUrl = "url1", extraData = mapOf(EXTRA_SOURCE_URI to "content://media/1")),
             )
 
-            viewModel.selectedAttachments.value.size `should be equal to` 1
+            viewModel.messageComposerState.value.attachments.size `should be equal to` 1
+        }
+
+    @Test
+    fun `Given staged attachments When removeAttachmentsByUris is called Then matching attachments are removed from state`() =
+        runTest {
+            val viewModel = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .get()
+
+            viewModel.addAttachments(
+                listOf(
+                    Attachment(extraData = mapOf(EXTRA_SOURCE_URI to "content://media/1")),
+                    Attachment(extraData = mapOf(EXTRA_SOURCE_URI to "content://media/2")),
+                    Attachment(extraData = mapOf(EXTRA_SOURCE_URI to "content://media/3")),
+                ),
+            )
+            viewModel.removeAttachmentsByUris(setOf("content://media/1", "content://media/3"))
+
+            viewModel.messageComposerState.value.attachments.size `should be equal to` 1
+        }
+
+    @Test
+    fun `Given staged attachments When clearAttachments is called Then all attachments are removed from state`() =
+        runTest {
+            val viewModel = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .get()
+
+            viewModel.addAttachments(
+                listOf(
+                    Attachment(extraData = mapOf(EXTRA_SOURCE_URI to "content://media/1")),
+                    Attachment(extraData = mapOf(EXTRA_SOURCE_URI to "content://media/2")),
+                ),
+            )
+            viewModel.clearAttachments()
+
+            viewModel.messageComposerState.value.attachments.size `should be equal to` 0
         }
 
     @Test
@@ -188,7 +233,6 @@ internal class MessageComposerViewModelTest {
 
             val messageComposerState = viewModel.messageComposerState.value
             messageComposerState.alsoSendToChannel `should be equal to` true
-            viewModel.alsoSendToChannel.value `should be equal to` true
         }
 
     @Test
@@ -203,7 +247,6 @@ internal class MessageComposerViewModelTest {
 
         val messageComposerState = viewModel.messageComposerState.value
         messageComposerState.messageMode `should be instance of` MessageMode.MessageThread::class
-        viewModel.messageMode.value `should be instance of` MessageMode.MessageThread::class
     }
 
     @Test
@@ -219,7 +262,6 @@ internal class MessageComposerViewModelTest {
 
         val messageComposerState = viewModel.messageComposerState.value
         messageComposerState.messageMode `should be instance of` MessageMode.Normal::class
-        viewModel.messageMode.value `should be instance of` MessageMode.Normal::class
     }
 
     @Test
@@ -267,7 +309,7 @@ internal class MessageComposerViewModelTest {
             .givenChannelState(channelData)
             .get()
 
-        val ownCapabilities = viewModel.ownCapabilities.value
+        val ownCapabilities = viewModel.messageComposerState.value.ownCapabilities
         ownCapabilities.size `should be equal to` 3
     }
 
@@ -282,7 +324,6 @@ internal class MessageComposerViewModelTest {
         viewModel.setMessageInput("/")
 
         viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 1
-        viewModel.commandSuggestions.value.size `should be equal to` 1
     }
 
     @Test
@@ -297,7 +338,6 @@ internal class MessageComposerViewModelTest {
         viewModel.setMessageInput("")
 
         viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 0
-        viewModel.commandSuggestions.value.size `should be equal to` 0
     }
 
     @Test
@@ -309,13 +349,16 @@ internal class MessageComposerViewModelTest {
                 .givenChannelState(config = Config(commands = listOf(giphyCommand)))
                 .get()
 
-            viewModel.toggleCommandsVisibility()
-            viewModel.selectCommand(viewModel.commandSuggestions.value.first())
+            viewModel.inputFocusEvents.test {
+                viewModel.toggleCommandsVisibility()
+                viewModel.selectCommand(viewModel.messageComposerState.value.commandSuggestions.first())
 
-            viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 0
-            viewModel.commandSuggestions.value.size `should be equal to` 0
-            viewModel.messageComposerState.value.inputValue `should be equal to` "/giphy "
-            viewModel.input.value `should be equal to` "/giphy "
+                viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 0
+                viewModel.messageComposerState.value.inputValue `should be equal to` "/giphy "
+                viewModel.messageInput.value.text `should be equal to` "/giphy "
+                awaitItem()
+                cancelAndIgnoreRemainingEvents()
+            }
         }
 
     @Test
@@ -333,7 +376,6 @@ internal class MessageComposerViewModelTest {
             advanceUntilIdle()
 
             viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 2
-            viewModel.mentionSuggestions.value.size `should be equal to` 2
         }
 
     @Test
@@ -350,12 +392,11 @@ internal class MessageComposerViewModelTest {
             viewModel.setMessageInput("@")
             advanceUntilIdle()
 
-            viewModel.selectMention(viewModel.mentionSuggestions.value.first())
+            viewModel.selectMention(viewModel.messageComposerState.value.mentionSuggestions.first())
             advanceUntilIdle()
 
             viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 0
-            viewModel.mentionSuggestions.value.size `should be equal to` 0
-            viewModel.input.value `should be equal to` "@Jc Miñarro "
+            viewModel.messageInput.value.text `should be equal to` "@Jc Miñarro "
         }
 
     @Test
@@ -381,20 +422,32 @@ internal class MessageComposerViewModelTest {
             advanceUntilIdle()
 
             viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 0
-            viewModel.mentionSuggestions.value.size `should be equal to` 0
-            viewModel.input.value `should be equal to` "@Custom Mention "
+            viewModel.messageInput.value.text `should be equal to` "@Custom Mention "
         }
+
+    @Test
+    fun `Given message composer When startRecording is called Then delegates to controller`() {
+        val controller: MessageComposerController = mock()
+        val viewModel = MessageComposerViewModel(controller, mock())
+
+        viewModel.startRecording()
+
+        verify(controller).startRecording()
+    }
 
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelId: String = "messaging:123",
         private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
-        statePluginConfig: StatePluginConfig = StatePluginConfig(),
+        chatClientConfig: ChatClientConfig = ChatClientConfig(),
     ) {
         private val stateRegistry: StateRegistry = mock()
         private val globalState: GlobalState = mock()
         private val clientState: ClientState = mock()
         private val channelState: ChannelState = mock()
+        private val storageHelper: AttachmentStorageHelper = mock {
+            onBlocking { resolveAttachmentFiles(any()) } doAnswer { it.getArgument(0) }
+        }
         private val appSettings: AppSettings = AppSettings(
             app = App(
                 name = randomString(),
@@ -420,7 +473,7 @@ internal class MessageComposerViewModelTest {
             val statePluginFactory: StreamStatePluginFactory = mock()
             whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
             whenever(statePlugin.resolveDependency(eq(GlobalState::class))) doReturn globalState
-            whenever(statePluginFactory.resolveDependency(eq(StatePluginConfig::class))) doReturn statePluginConfig
+            whenever(statePluginFactory.resolveDependency(eq(ChatClientConfig::class))) doReturn chatClientConfig
             whenever(globalState.channelDraftMessages) doReturn MutableStateFlow(emptyMap())
             whenever(globalState.threadDraftMessages) doReturn MutableStateFlow(emptyMap())
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
@@ -464,7 +517,7 @@ internal class MessageComposerViewModelTest {
 
         fun get(): MessageComposerViewModel {
             return MessageComposerViewModel(
-                MessageComposerController(
+                messageComposerController = MessageComposerController(
                     chatClient = chatClient,
                     channelCid = channelId,
                     mediaRecorder = mock(),
@@ -476,6 +529,7 @@ internal class MessageComposerViewModelTest {
                     channelState = MutableStateFlow(channelState),
                     globalState = MutableStateFlow(globalState),
                 ),
+                storageHelper = storageHelper,
             )
         }
     }

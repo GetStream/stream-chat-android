@@ -29,7 +29,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.utils.PollsConstants
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentCreatePollBinding
@@ -37,6 +37,7 @@ import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Represent the bottom sheet dialog that allows users to pick attachments.
@@ -113,7 +114,7 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
             }
         }
         lifecycleScope.launch {
-            createPollViewModel.pollConfig.collectLatest { pollConfig ->
+            createPollViewModel.createPollParams.collectLatest { pollConfig ->
                 pollConfig?.let {
                     createPollDialogListener?.onCreatePoll(it)
                     dismiss()
@@ -124,7 +125,7 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
             createPollViewModel.multipleAnswersError.collectLatest { error ->
                 binding.multipleAnswersCount.error = error?.let {
                     getString(
-                        R.string.stream_ui_poll_multiple_answers_error,
+                        UiCommonR.string.stream_ui_poll_multiple_answers_error,
                         PollsConstants.MIN_NUMBER_OF_MULTIPLE_ANSWERS.toString(),
                         PollsConstants.MAX_NUMBER_OF_MULTIPLE_ANSWERS.toString(),
                     )
@@ -178,9 +179,9 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
         /**
          * Called when the user creates a poll.
          *
-         * @param pollConfig The configuration of the poll.
+         * @param createPollParams The configuration of the poll.
          */
-        public fun onCreatePoll(pollConfig: PollConfig)
+        public fun onCreatePoll(createPollParams: CreatePollParams)
 
         /**
          * Called when the dialog is dismissed without creating a poll.

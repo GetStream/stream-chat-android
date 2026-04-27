@@ -28,34 +28,26 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.material.datepicker.MaterialDatePicker
-import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
-import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
-import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
+import io.getstream.chat.android.compose.ui.messages.header.ChannelHeader
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.MessageListOptions
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
-import io.getstream.chat.android.guides.R
-import io.getstream.chat.android.guides.catalog.compose.customattachments.factory.dateAttachmentFactory
-import io.getstream.chat.android.guides.catalog.compose.customattachments.factory.quotedDateAttachmentFactory
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import java.text.SimpleDateFormat
@@ -70,18 +62,9 @@ class MessagesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID))
 
-        val customFactories = listOf(dateAttachmentFactory)
-        val defaultFactories = StreamAttachmentFactories.defaults()
-
-        val customQuotedFactories = listOf(quotedDateAttachmentFactory)
-        val defaultQuotedFactories = StreamAttachmentFactories.defaultQuotedFactories()
-
         setContent {
-            ChatTheme(
-                attachmentFactories = customFactories + defaultFactories,
-                quotedAttachmentFactories = customQuotedFactories + defaultQuotedFactories,
-            ) {
-                CustomMessagesScreen(
+            ChatTheme(componentFactory = CustomChatComponentFactory) {
+                CustomChannelScreen(
                     channelId = channelId,
                     onBackPressed = { finish() },
                     threadLoadOlderToNewer = false,
@@ -91,22 +74,22 @@ class MessagesActivity : AppCompatActivity() {
     }
 
     /**
-     * A custom [MessagesScreen] with the support for date attachments.
+     * A custom [ChannelScreen] with the support for date attachments.
      *
      * @param channelId The ID of the opened channel.
      * @param threadLoadOlderToNewer Flag to load older messages to newer messages in the thread.
      * @param onBackPressed Handler for the back action.
      */
     @Composable
-    fun CustomMessagesScreen(
+    fun CustomChannelScreen(
         channelId: String,
         threadLoadOlderToNewer: Boolean,
         onBackPressed: () -> Unit = {},
     ) {
-        val factory = MessagesViewModelFactory(
+        val factory = ChannelViewModelFactory(
             context = LocalContext.current,
             channelId = channelId,
-            threadLoadOlderToNewer = threadLoadOlderToNewer,
+            messageListOptions = MessageListOptions(threadLoadOlderToNewer = threadLoadOlderToNewer),
         )
 
         val messageListViewModel = viewModel(MessageListViewModel::class.java, factory = factory)
@@ -122,7 +105,7 @@ class MessagesActivity : AppCompatActivity() {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
-                    MessageListHeader(
+                    ChannelHeader(
                         modifier = Modifier.height(56.dp),
                         channel = messageListViewModel.channel,
                         currentUser = currentUser,
@@ -140,11 +123,12 @@ class MessagesActivity : AppCompatActivity() {
                             val payload = SimpleDateFormat("MMMM dd, yyyy").format(Date(date))
                             val attachment = Attachment(
                                 type = "date",
+                                fallback = payload,
                                 extraData = mutableMapOf("payload" to payload),
                             )
 
                             // 3
-                            composerViewModel.addSelectedAttachments(listOf(attachment))
+                            composerViewModel.addAttachments(listOf(attachment))
                         },
                     )
                 },
@@ -152,17 +136,15 @@ class MessagesActivity : AppCompatActivity() {
                 MessageList(
                     modifier = Modifier
                         .padding(it)
-                        .background(ChatTheme.colors.appBackground)
+                        .background(ChatTheme.colors.backgroundCoreApp)
                         .fillMaxSize(),
                     viewModel = messageListViewModel,
-                    reactionSorting = ReactionSortingByFirstReactionAt,
                     onThreadClick = { message ->
                         composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                         messageListViewModel.openMessageThread(message)
                     },
-                    onLongItemClick = {
-                        composerViewModel.performMessageAction(Reply(it))
-                    },
+                    onLongItemClick = { composerViewModel.performMessageAction(Reply(it)) },
+                    onReply = { composerViewModel.performMessageAction(Reply(it)) },
                 )
             }
         }
@@ -187,30 +169,16 @@ class MessagesActivity : AppCompatActivity() {
                 .fillMaxWidth()
                 .wrapContentHeight(),
             viewModel = viewModel,
-            integrations = {
-                IconButton(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .padding(12.dp),
-                    content = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_calendar),
-                            contentDescription = null,
-                            tint = ChatTheme.colors.textLowEmphasis,
-                        )
-                    },
-                    onClick = {
-                        MaterialDatePicker.Builder
-                            .datePicker()
-                            .build()
-                            .apply {
-                                show(activity.supportFragmentManager, null)
-                                addOnPositiveButtonClickListener {
-                                    onDateSelected(it)
-                                }
-                            }
-                    },
-                )
+            onAttachmentsClick = {
+                MaterialDatePicker.Builder
+                    .datePicker()
+                    .build()
+                    .apply {
+                        show(activity.supportFragmentManager, null)
+                        addOnPositiveButtonClickListener {
+                            onDateSelected(it)
+                        }
+                    }
             },
         )
     }

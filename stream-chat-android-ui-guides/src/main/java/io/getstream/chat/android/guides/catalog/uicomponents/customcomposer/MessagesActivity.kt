@@ -25,8 +25,8 @@ import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.guides.databinding.ActivityCustomMessageComposerBinding
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import io.getstream.chat.android.ui.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
 
 /**
@@ -36,8 +36,8 @@ class MessagesActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCustomMessageComposerBinding
 
     private val cid: String by lazy { requireNotNull(intent.getStringExtra(EXTRA_CID)) }
-    private val factory: MessageListViewModelFactory by lazy {
-        MessageListViewModelFactory(
+    private val factory: ChannelViewModelFactory by lazy {
+        ChannelViewModelFactory(
             context = applicationContext,
             cid = cid,
             threadLoadOlderToNewer = false,

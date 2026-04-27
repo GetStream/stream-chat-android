@@ -16,12 +16,16 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.list
 
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
+import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.utils.message.isError
 import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.feature.messages.list.MessagePositionHandler.Companion.DEFAULT_MAX_GROUP_TIME_MILLIS
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
+import kotlin.math.abs
 
 /**
  * A handler to determine the position of a message inside a group.
@@ -46,45 +50,43 @@ public fun interface MessagePositionHandler {
         isAfterDateSeparator: Boolean,
         isBeforeDateSeparator: Boolean,
         isInThread: Boolean,
-    ): List<MessagePosition>
+    ): MessagePosition
 
     public companion object {
+        private const val DEFAULT_MAX_GROUP_TIME_MILLIS: Long = 60 * 1000L
+
         /**
          * The default implementation of the [MessagePositionHandler] interface which can be taken
          * as a reference when implementing a custom one.
          *
+         * @param maxGroupTimeMillis The maximum time difference (in milliseconds) between
+         * consecutive messages from the same user before they are split into separate groups.
+         * Defaults to [DEFAULT_MAX_GROUP_TIME_MILLIS] (60 seconds).
+         *
          * @return The default implementation of [MessagePositionHandler].
          */
         @InternalStreamChatApi
-        @Suppress("ComplexCondition")
-        public fun defaultHandler(): MessagePositionHandler {
+        public fun defaultHandler(maxGroupTimeMillis: Long = DEFAULT_MAX_GROUP_TIME_MILLIS): MessagePositionHandler {
             return MessagePositionHandler {
-                    prevMessage: Message?,
-                    curMessage: Message,
-                    nextMessage: Message?,
+                    previous: Message?,
+                    message: Message,
+                    next: Message?,
                     isAfterDateSeparator: Boolean,
                     isBeforeDateSeparator: Boolean,
                     _: Boolean,
                 ->
+                val isGroupedWithPrevious = !isAfterDateSeparator &&
+                    previous.isValidMessageFromUser(message.user) &&
+                    !message.exceedsMaxTimeDifference(previous, maxGroupTimeMillis)
+                val isGroupedWithNext = !isBeforeDateSeparator &&
+                    next.isValidMessageFromUser(message.user) &&
+                    !next.exceedsMaxTimeDifference(message, maxGroupTimeMillis)
 
-                val curUser = curMessage.user
-                mutableListOf<MessagePosition>().apply {
-                    val isTop = !isBeforeDateSeparator &&
-                        (isAfterDateSeparator || prevMessage.isInvalidMessageFromUser(curUser)) &&
-                        nextMessage.isValidMessageFromUser(curUser)
-
-                    val isMiddle = !isAfterDateSeparator && !isBeforeDateSeparator &&
-                        prevMessage.isValidMessageFromUser(curUser) &&
-                        nextMessage.isValidMessageFromUser(curUser)
-
-                    val isBottom = !isAfterDateSeparator &&
-                        (isBeforeDateSeparator || nextMessage.isInvalidMessageFromUser(curUser)) &&
-                        prevMessage.isValidMessageFromUser(curUser)
-
-                    if (isTop) add(MessagePosition.TOP)
-                    if (isMiddle) add(MessagePosition.MIDDLE)
-                    if (isBottom) add(MessagePosition.BOTTOM)
-                    if (isEmpty()) add(MessagePosition.NONE)
+                when {
+                    isGroupedWithNext && !isGroupedWithPrevious -> MessagePosition.TOP
+                    isGroupedWithNext && isGroupedWithPrevious -> MessagePosition.MIDDLE
+                    isGroupedWithPrevious -> MessagePosition.BOTTOM
+                    else -> MessagePosition.NONE
                 }
             }
         }
@@ -93,8 +95,11 @@ public fun interface MessagePositionHandler {
             return this != null && !this.isSystem() && !this.isError() && this.user.id == user.id
         }
 
-        private fun Message?.isInvalidMessageFromUser(user: User): Boolean {
-            return isValidMessageFromUser(user).not()
+        private fun Message?.exceedsMaxTimeDifference(other: Message?, maxMillis: Long): Boolean {
+            if (this == null || other == null) return false
+            val thisTime = this.getCreatedAtOrDefault(NEVER).time
+            val otherTime = other.getCreatedAtOrDefault(NEVER).time
+            return abs(thisTime - otherTime) > maxMillis
         }
     }
 }

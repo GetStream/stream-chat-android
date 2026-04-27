@@ -55,6 +55,7 @@ public object EventType {
     public const val HEALTH_CHECK: String = "health.check"
     public const val NOTIFICATION_MESSAGE_NEW: String = "notification.message_new"
     public const val NOTIFICATION_THREAD_MESSAGE_NEW: String = "notification.thread_message_new"
+    public const val THREAD_UPDATED: String = "thread.updated"
     public const val NOTIFICATION_CHANNEL_TRUNCATED: String = "notification.channel_truncated"
     public const val NOTIFICATION_CHANNEL_DELETED: String = "notification.channel_deleted"
     public const val NOTIFICATION_MARK_READ: String = "notification.mark_read"

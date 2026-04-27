@@ -32,7 +32,6 @@ import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
 import io.getstream.chat.android.client.api2.endpoint.RemindersApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
-import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
@@ -111,6 +110,7 @@ import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
+import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
@@ -2111,7 +2111,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#partialUpdateThreadInput")
-    fun testPartialUpdateThread(call: RetrofitCall<ThreadResponse>, expected: KClass<*>) = runTest {
+    fun testPartialUpdateThread(call: RetrofitCall<ThreadInfoResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ThreadsApi>()
         whenever(api.partialUpdateThread(any(), any())).doReturn(call)
@@ -2765,7 +2765,6 @@ internal class MoshiChatApiTest {
         private var moderationApi: ModerationApi = mock()
         private var generalApi: GeneralApi = mock()
         private var configApi: ConfigApi = mock()
-        private var callApi: VideoCallApi = mock()
         private var fileDownloadApi: FileDownloadApi = mock()
         private var ogApi: OpenGraphApi = mock()
         private var threadsApi: ThreadsApi = mock()
@@ -2865,7 +2864,6 @@ internal class MoshiChatApiTest {
                 moderationApi = moderationApi,
                 generalApi = generalApi,
                 configApi = configApi,
-                callApi = callApi,
                 fileDownloadApi = fileDownloadApi,
                 ogApi = ogApi,
                 threadsApi = threadsApi,

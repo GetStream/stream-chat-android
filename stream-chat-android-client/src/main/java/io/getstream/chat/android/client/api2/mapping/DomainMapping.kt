@@ -68,6 +68,8 @@ import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
+import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.models.Answer
@@ -273,11 +275,13 @@ internal class DomainMapping(
     /**
      * Transforms [DownstreamPendingMessageDto] to [PendingMessage].
      */
-    internal fun DownstreamPendingMessageDto.toDomain(): PendingMessage =
-        PendingMessage(
-            message = message.toDomain(),
-            metadata = metadata.orEmpty(),
-        )
+    internal fun DownstreamPendingMessageDto.toDomain(
+        cid: String,
+        fallbackChannelInfo: ChannelInfo? = null,
+    ): PendingMessage = PendingMessage(
+        message = message.toDomain(fallbackChannelInfo).enrichWithCid(cid),
+        metadata = metadata.orEmpty(),
+    )
 
     /**
      * Transforms [MessageResponse] to [PendingMessage].
@@ -456,7 +460,7 @@ internal class DomainMapping(
             options = options.map { it.toDomain() },
             votingVisibility = voting_visibility.toVotingVisibility(),
             enforceUniqueVote = enforce_unique_vote,
-            maxVotesAllowed = max_votes_allowed ?: 1,
+            maxVotesAllowed = max_votes_allowed,
             allowUserSuggestedOptions = allow_user_suggested_options,
             allowAnswers = allow_answers,
             voteCount = vote_count,
@@ -765,7 +769,7 @@ internal class DomainMapping(
             createdByUserId = created_by_user_id,
             createdBy = created_by?.toDomain(),
             participantCount = participant_count,
-            threadParticipants = thread_participants.orEmpty().map { it.toDomain() },
+            threadParticipants = thread_participants.orEmpty().map { it.toDomain() }.sortedByLastReply(),
             lastMessageAt = last_message_at,
             createdAt = created_at,
             updatedAt = updated_at,
@@ -793,12 +797,14 @@ internal class DomainMapping(
             createdByUserId = created_by_user_id,
             deletedAt = deleted_at,
             lastMessageAt = last_message_at,
-            parentMessage = parent_message?.toDomain(),
+            parentMessage = parent_message?.toDomain(channel?.toChannelInfo()),
             parentMessageId = parent_message_id,
             participantCount = participant_count ?: 0,
             replyCount = reply_count ?: 0,
             title = title,
             updatedAt = updated_at,
+            channel = channel?.toDomain(),
+            threadParticipants = thread_participants.orEmpty().map { it.toDomain() }.sortedByLastReply(),
             extraData = extraData,
         )
 
@@ -806,7 +812,8 @@ internal class DomainMapping(
      * Transforms [DownstreamThreadParticipantDto] into [ThreadParticipant]
      */
     internal fun DownstreamThreadParticipantDto.toDomain(): ThreadParticipant = ThreadParticipant(
-        user = user.toDomain(),
+        user = user?.toDomain() ?: User(id = user_id),
+        lastThreadMessageAt = last_thread_message_at,
     )
 
     /**
