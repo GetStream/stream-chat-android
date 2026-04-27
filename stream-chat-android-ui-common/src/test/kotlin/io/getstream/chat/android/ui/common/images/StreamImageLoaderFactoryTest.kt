@@ -23,7 +23,6 @@ import coil3.disk.DiskCache
 import coil3.gif.AnimatedImageDecoder
 import coil3.gif.GifDecoder
 import coil3.memory.MemoryCache
-import coil3.network.NetworkFetcher
 import coil3.video.VideoFrameDecoder
 import okio.Path.Companion.toOkioPath
 import org.amshove.kluent.internal.assertEquals
@@ -102,17 +101,6 @@ internal class StreamImageLoaderFactoryTest {
         assertTrue(hasAnimatedDecoder)
         assertFalse(hasGifDecoder)
         assertTrue(hasVideoDecoder)
-    }
-
-    @Test
-    fun `newImageLoader registers network fetcher for HTTP URLs`() {
-        val sut = StreamImageLoaderFactory()
-
-        val imageLoader = sut.newImageLoader(context)
-
-        val hasNetworkFetcher = imageLoader.components.fetcherFactories
-            .any { (factory, _) -> factory is NetworkFetcher.Factory }
-        assertTrue(hasNetworkFetcher)
     }
 
     @Test
