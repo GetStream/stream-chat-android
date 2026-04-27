@@ -28,8 +28,8 @@ Execute sections in order. Each section assumes the previous one is complete.
 
 ### Key facts
 
-- v6 latest release: `6.37.1`
-- v7 latest release: `7.0.0`
+- v6 latest: check Maven Central for the latest `6.x` release
+- v7 latest: check Maven Central for the latest `7.x` release
 - v6 branch: `v6` (maintenance only)
 - v7 branch: `develop` (default branch)
 - Module count: v6 had 10 modules, v7 has 6 (4 removed/merged)
@@ -210,15 +210,17 @@ ChatClient.Builder(apiKey, context)
 
 #### ChatClientConfig mapping
 
-| v6 (StatePluginConfig) | v7 (ChatClientConfig) | Default |
+| v6 (StatePluginConfig / OfflinePluginFactory) | v7 (ChatClientConfig) | Default |
 |---|---|---|
-| `userPresence` | `userPresence` | `false` |
-| `backgroundSyncEnabled` | `isAutomaticSyncOnReconnectEnabled` | `true` |
-| _(OfflineConfig.enabled)_ | `offlineEnabled` | `true` |
+| `StatePluginConfig.userPresence` | `userPresence` | `true` |
+| `StreamOfflinePluginFactory` present in `withPlugins()` | `offlineEnabled` | `true` |
+| `StreamOfflinePluginFactory.ignoredOfflineChannelTypes` | `ignoredOfflineChannelTypes` | `emptySet()` |
+| _(none)_ | `isAutomaticSyncOnReconnectEnabled` | `true` |
 | _(none)_ | `useLegacyChannelLogic` | `false` |
-| _(none)_ | `ignoredOfflineChannelTypes` | `emptySet()` |
-| _(none)_ | `syncMaxThreshold` | `TimeDuration.hours(12)` |
-| _(none)_ | `messageLimitConfig` | `MessageLimitConfig()` |
+| `StatePluginConfig.syncMaxThreshold` | `syncMaxThreshold` | `TimeDuration.hours(12)` |
+| `StatePluginConfig.messageLimitConfig` | `messageLimitConfig` | `MessageLimitConfig()` |
+
+> **Note:** v6's `backgroundSyncEnabled` (which triggered `/sync` after push notifications) was deprecated in v6 and **removed in v7**. It does NOT map to `isAutomaticSyncOnReconnectEnabled` — that controls `/sync` + channel re-watch after a WebSocket reconnect, which is a different mechanism.
 
 #### Removed classes
 
@@ -733,8 +735,38 @@ Both now take `(viewModelFactory, modifier, onNavigationIconClick)`. GroupChanne
 #### ChannelScreen (was MessagesScreen)
 | Removed Parameter | Notes |
 |---|---|
-| `reactionSorting` | Removed |
-| `onMessageLinkClick` | Removed |
+| `reactionSorting` | Moved to `ChatUiConfig.messageList.reactionSorting` |
+| `onMessageLinkClick` | Removed — override via `ChatComponentFactory` |
+| `onUserAvatarClick` | Removed — override via `ChatComponentFactory` |
+| `onUserMentionClick` | Removed — override via `ChatComponentFactory` |
+| `showDateSeparators` | Removed |
+| `showSystemMessages` | Removed |
+| Poll-related callbacks (`onPollUpdated`, etc.) | Removed — override via `ChatComponentFactory` |
+
+#### ChannelList
+| Removed Parameter | Notes |
+|---|---|
+| `itemContent` / `channelContent` | Override `ChatComponentFactory.ChannelListItemContent(params)` |
+| `loadingContent` | Override `ChatComponentFactory.ChannelListLoadingContent(params)` |
+| `emptyContent` | Override `ChatComponentFactory.ChannelListEmptyContent(params)` |
+| `divider` | Removed — no dividers in v7 |
+
+#### MessageList
+| Removed Parameter | Notes |
+|---|---|
+| `itemContent` | Override `ChatComponentFactory.MessageContent(params)` |
+| `messageContent` | Override `ChatComponentFactory.MessageContent(params)` |
+| `emptyContent` | Override `ChatComponentFactory.MessageListEmptyContent(params)` |
+| `loadingContent` | Override `ChatComponentFactory.MessageListLoadingContent(params)` |
+
+#### ChannelListHeader / ChannelHeader
+| Removed Parameter | Notes |
+|---|---|
+| `color` | Removed — uses theme colors |
+| `shape` | Removed — uses theme tokens |
+| `elevation` | Removed — v7 headers have no elevation |
+
+> **Lambda customization pattern in v7:** All composable slot parameters (`itemContent`, `loadingContent`, `emptyContent`, etc.) and forwarded callbacks (`onMessageLinkClick`, `onUserAvatarClick`, etc.) have been removed from public composables. Customization now goes through `ChatComponentFactory`. See the [Lambda Customization via ChatComponentFactory](https://getstream.io/chat/docs/sdk/android/migration-guides/migrating-from-v6-to-v7/#lambda-customization-via-chatcomponentfactory) documentation for the full migration pattern.
 
 #### ChatTheme (additional removed params)
 | Removed Parameter | Notes |
@@ -888,6 +920,8 @@ chatClient.sendMessage(channelType, channelId, message).enqueue()
 > If you use `ChannelScreen` / Stream UI components, no action needed — they handle this automatically.
 
 ### §7.2 — Default feature flags changed
+
+See also §3.4 for the `ChatUiConfig` migration. Summary of changed defaults:
 
 | Feature | v6 Default | v7 Default |
 |---|---|---|
