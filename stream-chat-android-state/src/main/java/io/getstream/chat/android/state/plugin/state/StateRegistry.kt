@@ -190,7 +190,7 @@ public class StateRegistry(
     /**
      * Tracks a channel that was watched via [io.getstream.chat.android.state.extensions.watchChannelAsState].
      * The record lives as long as the caller holds the returned [StateFlow].
-     * When the caller is GC'd, the tracker is GC'd and the weak reference goes null.
+     * When the caller is GC'd, the record is GC'd and the weak reference goes null.
      * Used during reconnect to re-watch only channels the user still has open.
      *
      * @param record The [WatchedChannelRecord] identifying the watched channel.
