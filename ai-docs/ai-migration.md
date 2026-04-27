@@ -36,6 +36,10 @@ Execute sections in order. Each section assumes the previous one is complete.
 - The compose module (`stream-chat-android-compose`) is the primary UI layer
 - **Kotlin 2.2.0 required** — v7 SDK is compiled with Kotlin 2.2.0; you must update your project's Kotlin version
 
+### Platform note
+
+Shell commands in this guide use Unix syntax (bash). On Windows, use `gradlew.bat` instead of `./gradlew`, and adapt `find`/`rg`/`perl` commands to PowerShell equivalents or run via WSL/Git Bash.
+
 ---
 
 ## §1 — Detection
