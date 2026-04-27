@@ -49,8 +49,8 @@ import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
-import io.getstream.chat.android.state.plugin.state.internal.WatchedChannelStateFlow
 import io.getstream.chat.android.state.plugin.state.internal.WatchedChannelRecord
+import io.getstream.chat.android.state.plugin.state.internal.WatchedChannelStateFlow
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.state.plugin.state.querythreads.QueryThreadsState
 import io.getstream.log.StreamLog
