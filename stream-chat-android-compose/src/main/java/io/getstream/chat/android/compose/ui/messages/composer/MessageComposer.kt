@@ -34,6 +34,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Modifier
@@ -170,31 +171,41 @@ public fun MessageComposer(
         }
     }
 
-    ChatTheme.componentFactory.MessageComposer(
-        params = MessageComposerParams(
-            modifier = modifier,
-            isAttachmentPickerVisible = isAttachmentPickerVisible,
-            onSendMessage = { text, attachments ->
-                val messageWithData = viewModel.buildNewMessage(text, attachments)
-                onSendMessage(messageWithData)
-            },
-            onUserSelected = onUserSelected,
-            onCommandSelected = onCommandSelected,
-            onAlsoSendToChannelSelected = onAlsoSendToChannelChange,
-            onActiveCommandDismiss = onActiveCommandDismiss,
-            snackbarHostState = snackbarHostState,
-            recordingActions = recordingActions,
-            input = input,
-            messageComposerState = messageComposerState,
-            onCancelAction = onCancelAction,
-            onAttachmentsClick = onAttachmentsClick,
-            onValueChange = onValueChange,
-            onAttachmentRemoved = onAttachmentRemoved,
-            onLinkPreviewClick = onLinkPreviewClick,
-            onCancelLinkPreviewClick = onCancelLinkPreviewClick,
-        ),
-    )
+    CompositionLocalProvider(LocalMessageComposerSnackbarHostState provides snackbarHostState) {
+        ChatTheme.componentFactory.MessageComposer(
+            params = MessageComposerParams(
+                modifier = modifier,
+                isAttachmentPickerVisible = isAttachmentPickerVisible,
+                onSendMessage = { text, attachments ->
+                    val messageWithData = viewModel.buildNewMessage(text, attachments)
+                    onSendMessage(messageWithData)
+                },
+                onUserSelected = onUserSelected,
+                onCommandSelected = onCommandSelected,
+                onAlsoSendToChannelSelected = onAlsoSendToChannelChange,
+                onActiveCommandDismiss = onActiveCommandDismiss,
+                recordingActions = recordingActions,
+                input = input,
+                messageComposerState = messageComposerState,
+                onCancelAction = onCancelAction,
+                onAttachmentsClick = onAttachmentsClick,
+                onValueChange = onValueChange,
+                onAttachmentRemoved = onAttachmentRemoved,
+                onLinkPreviewClick = onLinkPreviewClick,
+                onCancelLinkPreviewClick = onCancelLinkPreviewClick,
+            ),
+        )
+    }
 }
+
+/**
+ * Hands the [SnackbarHostState] from the VM-bound [MessageComposer] down to the factory's default
+ * `MessageComposer` impl so that command-related events emitted by [MessageComposerViewModel] can
+ * surface as snackbars rendered inside the composer's surface. Customer factory overrides may read
+ * `current` to render the same snackbar; otherwise they will not see event-driven snackbars.
+ */
+internal val LocalMessageComposerSnackbarHostState =
+    staticCompositionLocalOf<SnackbarHostState?> { null }
 
 /**
  * Clean version of the [MessageComposer] that doesn't rely on ViewModels, so the user can provide a
@@ -215,9 +226,6 @@ public fun MessageComposer(
  * on disabled items.
  * @param onAlsoSendToChannelChange Handler when the "Also send to channel" checkbox is changed.
  * @param onActiveCommandDismiss Called when the user taps the dismiss button on the active command chip.
- * @param snackbarHostState Host used to display transient snackbars (validation errors and any
- * notices pushed by the caller). The VM-bound overload passes a host that it also drives from
- * [MessageComposerViewModel.events].
  * @param recordingActions The actions that can be performed on an audio recording.
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
  */
@@ -238,7 +246,6 @@ public fun MessageComposer(
     onCommandSelected: (Command) -> Unit = {},
     onAlsoSendToChannelChange: (Boolean) -> Unit = {},
     onActiveCommandDismiss: () -> Unit = {},
-    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
     input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
         ChatTheme.componentFactory.MessageComposerInput(
@@ -261,6 +268,7 @@ public fun MessageComposer(
     val validationErrors = messageComposerState.validationErrors
     val userSuggestions = messageComposerState.mentionSuggestions
     val commandSuggestions = messageComposerState.commandSuggestions
+    val snackbarHostState = LocalMessageComposerSnackbarHostState.current ?: remember { SnackbarHostState() }
 
     MessageInputValidationError(
         validationErrors = validationErrors,
