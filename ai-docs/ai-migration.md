@@ -56,7 +56,7 @@ rg "StreamColors|StreamTypography|StreamDimens|StreamShapes|StreamRippleConfigur
 rg "reactionIconFactory|messageContentFactory|autoTranslationEnabled|isComposerLinkPreviewEnabled|attachmentsPickerTabFactories|attachmentPickerTheme|dimens\s*=|shapes\s*=" --type kotlin
 
 # §3.4 — ChatComponentFactory / MessageContentFactory
-rg "MessageContentFactory|MessageContentFactory\b" --type kotlin
+rg "ChatComponentFactory|MessageContentFactory\b" --type kotlin
 
 # §4 — Package relocations
 rg "io\.getstream\.chat\.android\.state\.|io\.getstream\.chat\.android\.offline\.|io\.getstream\.chat\.android\.uiutils\." --type kotlin
@@ -606,8 +606,8 @@ All `stream_compose_ic_*` drawables are renamed to `stream_design_ic_*` in v7. A
 # Find all references
 rg "stream_compose_ic_" --type kotlin --type xml
 
-# Bulk rename (sed example)
-find . -name "*.kt" -o -name "*.xml" | xargs sed -i '' 's/stream_compose_ic_/stream_design_ic_/g'
+# Bulk rename (portable — works on macOS and Linux)
+find . \( -name "*.kt" -o -name "*.xml" \) -print0 | xargs -0 perl -i -pe 's/stream_compose_ic_/stream_design_ic_/g'
 ```
 
 **Key renames (not 1:1 — name also changed):**
@@ -943,8 +943,8 @@ The typing indicator is now rendered as an inline item in the message list, not 
     "ImageAvatar": null,
     "InitialsAvatar": null,
     "UserAvatarRow": null,
-    "MentionSuggestionItem": null,
-    "MentionSuggestionList": null,
+    "MentionSuggestionItem": "UserSuggestionItem",
+    "MentionSuggestionList": "UserSuggestionList",
     "CancelIcon": "ComposerCancelIcon",
     "DefaultQueryFilter": "DefaultUserQueryFilter",
     "PollConfig": "CreatePollParams",
@@ -1032,7 +1032,12 @@ The typing indicator is now rendered as an inline item in the message list, not 
     "stream_compose_ic_clear": "stream_design_ic_xmark",
     "stream_compose_ic_error": "stream_design_ic_exclamation_circle",
     "stream_compose_ic_check_circle": "stream_design_ic_checkmark",
-    "stream_compose_ic_mute": "stream_design_ic_bell_slash"
+    "stream_compose_ic_mute": "stream_design_ic_bell_slash",
+    "stream_compose_ic_mentions": "stream_design_ic_mention",
+    "stream_compose_ic_mention": "stream_design_ic_at",
+    "stream_compose_ic_cancel": "stream_design_ic_xmark",
+    "stream_compose_ic_new_chat": null,
+    "stream_compose_ic_person": null
   },
   "removedEvents": {
     "ChannelInfoViewEvent.HideChannelError": null,
