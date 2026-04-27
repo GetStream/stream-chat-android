@@ -20,15 +20,20 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.ui.common.feature.messages.composer.internal.ComposerStateSaver
+import io.getstream.chat.android.ui.common.feature.messages.composer.internal.NoOpComposerStateSaver
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.MentionType
 import io.getstream.chat.android.ui.common.state.messages.MessageInput
@@ -39,11 +44,14 @@ import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain`
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import java.io.File
 import java.util.Date
 
 @ExperimentalCoroutinesApi
@@ -280,7 +288,10 @@ internal class MessageComposerControllerTests {
             whenever(globalState.threadDraftMessages) doReturn MutableStateFlow(threadDrafts)
         }
 
-        fun get(): MessageComposerController {
+        fun get(
+            stateSaver: ComposerStateSaver = NoOpComposerStateSaver,
+            config: MessageComposerController.Config = MessageComposerController.Config(),
+        ): MessageComposerController {
             return MessageComposerController(
                 channelCid = cid,
                 chatClient = chatClient,
@@ -289,7 +300,148 @@ internal class MessageComposerControllerTests {
                 userLookupHandler = mock(),
                 fileToUri = mock(),
                 globalState = MutableStateFlow(globalState),
+                stateSaver = stateSaver,
+                config = config,
             )
+        }
+    }
+
+    // region State Store integration tests
+
+    @Test
+    fun `restores attachments from state store`() = runTest {
+        val attachments = listOf(
+            Attachment(type = "file", name = "doc.pdf"),
+        )
+        val store = FakeComposerStateSaver(
+            attachments = attachments,
+        )
+        val controller = Fixture()
+            .givenAppSettings(
+                AppSettings(
+                    app = App(
+                        name = "test",
+                        fileUploadConfig = FileUploadConfig(
+                            allowedFileExtensions = emptyList(),
+                            allowedMimeTypes = emptyList(),
+                            blockedFileExtensions = emptyList(),
+                            blockedMimeTypes = emptyList(),
+                            sizeLimitInBytes = Long.MAX_VALUE,
+                        ),
+                        imageUploadConfig = FileUploadConfig(
+                            allowedFileExtensions = emptyList(),
+                            allowedMimeTypes = emptyList(),
+                            blockedFileExtensions = emptyList(),
+                            blockedMimeTypes = emptyList(),
+                            sizeLimitInBytes = Long.MAX_VALUE,
+                        ),
+                    ),
+                ),
+            )
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .get(stateSaver = store)
+
+        assertEquals(1, controller.selectedAttachments.value.size)
+        assertEquals("doc.pdf", controller.selectedAttachments.value[0].name)
+    }
+
+    @Test
+    fun `does not restore when state store has only empty attachments`() = runTest {
+        val store = FakeComposerStateSaver(
+            attachments = emptyList(),
+        )
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .get(stateSaver = store)
+
+        assertTrue(controller.selectedAttachments.value.isEmpty())
+    }
+
+    @Test
+    fun `restore drops attachments whose upload file no longer exists`() = runTest {
+        val existingFile = File.createTempFile("existing", ".jpg").apply { deleteOnExit() }
+        val missingFile = File("/tmp/non_existent_${System.nanoTime()}.jpg")
+        val store = FakeComposerStateSaver(
+            attachments = listOf(
+                Attachment(upload = existingFile, type = "image", name = "existing.jpg"),
+                Attachment(upload = missingFile, type = "image", name = "missing.jpg"),
+                Attachment(type = "image", name = "no-upload.jpg"),
+            ),
+        )
+        val controller = Fixture()
+            .givenAppSettings(
+                AppSettings(
+                    app = App(
+                        name = "test",
+                        fileUploadConfig = FileUploadConfig(
+                            allowedFileExtensions = emptyList(),
+                            allowedMimeTypes = emptyList(),
+                            blockedFileExtensions = emptyList(),
+                            blockedMimeTypes = emptyList(),
+                            sizeLimitInBytes = Long.MAX_VALUE,
+                        ),
+                        imageUploadConfig = FileUploadConfig(
+                            allowedFileExtensions = emptyList(),
+                            allowedMimeTypes = emptyList(),
+                            blockedFileExtensions = emptyList(),
+                            blockedMimeTypes = emptyList(),
+                            sizeLimitInBytes = Long.MAX_VALUE,
+                        ),
+                    ),
+                ),
+            )
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .get(stateSaver = store)
+
+        assertEquals(2, controller.selectedAttachments.value.size)
+        assertEquals("existing.jpg", controller.selectedAttachments.value[0].name)
+        assertEquals("no-upload.jpg", controller.selectedAttachments.value[1].name)
+    }
+
+    @Test
+    fun `clearData clears the state store`() = runTest {
+        val store = FakeComposerStateSaver()
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .get(stateSaver = store)
+
+        controller.setMessageInput("some text")
+        controller.clearData()
+
+        assertTrue(store.cleared)
+    }
+
+    // endregion
+
+    /**
+     * A simple in-memory [ComposerStateSaver] for testing.
+     * No Android dependencies required.
+     */
+    private class FakeComposerStateSaver(
+        private var attachments: List<Attachment>? = null,
+    ) : ComposerStateSaver {
+        var cleared = false
+            private set
+
+        override fun saveAttachments(attachments: List<Attachment>) { this.attachments = attachments }
+        override fun restoreAttachments(): List<Attachment>? = attachments
+        override fun clear() {
+            cleared = true
+            attachments = null
         }
     }
 

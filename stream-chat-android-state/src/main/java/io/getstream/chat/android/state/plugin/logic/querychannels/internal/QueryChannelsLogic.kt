@@ -306,11 +306,21 @@ internal class QueryChannelsLogic(
 
     internal suspend fun parseChatEventResults(chatEvents: List<ChatEvent>): List<EventHandlingResult> {
         val cids = chatEvents.filterIsInstance<CidEvent>().map { it.cid }.distinct()
-        val cachedChannels = queryChannelsDatabaseLogic
-            .selectChannels(cids).associateBy { it.cid }
+        // Prefer in-memory per-channel state which has already been updated by the channel
+        // event handlers. Fall back to DB for channels that are not currently active in memory.
+        val inMemoryChannels = cids.mapNotNull { cid ->
+            queryChannelsStateLogic.getActiveChannelState(cid)?.let { cid to it }
+        }.toMap()
+        val remainingCids = cids - inMemoryChannels.keys
+        val dbChannels = if (remainingCids.isEmpty()) {
+            emptyMap()
+        } else {
+            queryChannelsDatabaseLogic.selectChannels(remainingCids).associateBy { it.cid }
+        }
+        val resolvedChannels = inMemoryChannels + dbChannels
 
         return chatEvents.map { event ->
-            val channel = (event as? CidEvent)?.let { cachedChannels[it.cid] }
+            val channel = (event as? CidEvent)?.let { resolvedChannels[it.cid] }
             queryChannelsStateLogic.handleChatEvent(event, channel)
         }
     }
