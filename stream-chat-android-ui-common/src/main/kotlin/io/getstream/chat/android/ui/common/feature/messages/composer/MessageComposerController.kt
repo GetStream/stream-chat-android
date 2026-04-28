@@ -529,36 +529,66 @@ public class MessageComposerController(
     private suspend fun saveDraftMessage(messageMode: MessageMode) {
         if (!config.draftMessageEnabled) return
         currentDraftId = null
-        when (val messageText = _messageInput.value.text) {
-            "" -> clearDraftMessage(messageMode)
-            else -> {
-                getDraftMessageOrEmpty(messageMode).let {
-                    chatClient.createDraftMessage(
-                        channelType = channelType,
-                        channelId = channelId,
-                        message = it.copy(
-                            text = messageText,
-                            showInChannel = _state.value.alsoSendToChannel,
-                            replyMessage = (_messageActions.value.firstOrNull { it is Reply } as? Reply)?.message,
-                        ),
-                    ).await()
-                }
-            }
+        val inputText = _messageInput.value.text
+        // In legacy mode the slash + name + args is encoded inside `text`, so command/args fields
+        // would duplicate what's already there and confuse cross-SDK readers.
+        val activeCommand = _state.value.activeCommand.takeIf { config.activeCommandEnabled }
+        if (inputText.isEmpty() && activeCommand == null) {
+            clearDraftMessage(messageMode)
+            return
+        }
+        getDraftMessageOrEmpty(messageMode).let {
+            chatClient.createDraftMessage(
+                channelType = channelType,
+                channelId = channelId,
+                message = it.copy(
+                    text = inputText,
+                    command = activeCommand?.name,
+                    args = if (activeCommand != null) inputText else null,
+                    showInChannel = _state.value.alsoSendToChannel,
+                    replyMessage = (_messageActions.value.firstOrNull { it is Reply } as? Reply)?.message,
+                ),
+            ).await()
         }
     }
 
     private fun fetchDraftMessage(messageMode: MessageMode) {
         if (!config.draftMessageEnabled) return
+        // Drop any active command + stash carried over from the previous mode so leftover state
+        // doesn't block the new mode's reply-action restore or leak into a later cancel-restore.
+        _state.update { it.copy(activeCommand = null) }
+        discardCommandStash()
         getDraftMessageOrEmpty(messageMode).let { draftMessage ->
             currentDraftId = draftMessage.id
-            setMessageInputInternal(draftMessage.text, MessageInput.Source.DraftMessage)
-            setAlsoSendToChannel(draftMessage.showInChannel)
+            // Restore the reply action first so command-availability checks see the right action.
             draftMessage.replyMessage
                 ?.let { performMessageAction(Reply(it)) }
                 ?: run {
                     _messageActions.value = _messageActions.value.filterNot { it is Reply }.toSet()
                 }
+            val command = restoreDraftCommandIfAvailable(draftMessage.command)
+            val inputText = if (command != null) draftMessage.args ?: draftMessage.text else draftMessage.text
+            setMessageInputInternal(inputText, MessageInput.Source.DraftMessage)
+            setAlsoSendToChannel(draftMessage.showInChannel)
         }
+    }
+
+    /**
+     * Activates the command from a fetched draft when [Config.activeCommandEnabled] is `true`,
+     * the command is known to the channel, and it is available for the current composer action.
+     * Updates state directly rather than via [selectCommand] — draft restore must not emit
+     * [MessageComposerViewEvent.CommandUnavailable] or trigger the pre-command stash.
+     *
+     * @param commandName The command name from the draft, or `null` for plain-text drafts.
+     * @return The restored [Command], or `null` when no command was applied.
+     */
+    private fun restoreDraftCommandIfAvailable(commandName: String?): Command? {
+        if (!config.activeCommandEnabled) return null
+        val name = commandName ?: return null
+        val command = commands.firstOrNull { it.name == name } ?: return null
+        if (!command.isAvailableFor(activeAction)) return null
+        _state.update { it.copy(activeCommand = command) }
+        return command
     }
 
     /**
