@@ -17,10 +17,12 @@
 package io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.event.EventHandlingResult
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.state.QueryChannelsState
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
+import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
@@ -31,6 +33,7 @@ import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -280,6 +283,77 @@ internal class QueryChannelsLogicTest {
             memberLimit = 50,
         )
         verify(client).queryChannelsInternal(expectedRequest)
+    }
+
+    // endregion
+
+    // region parseChatEventResults
+
+    @Test
+    fun `parseChatEventResults should resolve channels from in-memory state and skip DB`() = runTest {
+        // Given
+        val channel = randomChannel(type = "messaging", id = "ch1")
+        val event = randomNewMessageEvent(cid = channel.cid, channelType = "messaging", channelId = "ch1")
+        val expectedResult = EventHandlingResult.Skip
+
+        whenever(queryChannelsStateLogic.getActiveChannelState(channel.cid)) doReturn channel
+        whenever(queryChannelsStateLogic.handleChatEvent(eq(event), eq(channel))) doReturn expectedResult
+
+        // When
+        val results = logic.parseChatEventResults(listOf(event))
+
+        // Then
+        verify(queryChannelsDatabaseLogic, never()).selectChannels(any())
+        assertEquals(listOf(expectedResult), results)
+    }
+
+    @Test
+    fun `parseChatEventResults should fall back to DB when channel is not active in memory`() = runTest {
+        // Given
+        val channel = randomChannel(type = "messaging", id = "ch1")
+        val event = randomNewMessageEvent(cid = channel.cid, channelType = "messaging", channelId = "ch1")
+        val expectedResult = EventHandlingResult.Skip
+
+        whenever(queryChannelsStateLogic.getActiveChannelState(channel.cid)) doReturn null
+        whenever(queryChannelsDatabaseLogic.selectChannels(listOf(channel.cid))) doReturn listOf(channel)
+        whenever(queryChannelsStateLogic.handleChatEvent(eq(event), eq(channel))) doReturn expectedResult
+
+        // When
+        val results = logic.parseChatEventResults(listOf(event))
+
+        // Then
+        verify(queryChannelsDatabaseLogic).selectChannels(listOf(channel.cid))
+        assertEquals(listOf(expectedResult), results)
+    }
+
+    @Test
+    fun `parseChatEventResults should use mixed resolution - memory for active, DB for inactive`() = runTest {
+        // Given
+        val inMemoryChannel = randomChannel(type = "messaging", id = "active")
+        val dbChannel = randomChannel(type = "messaging", id = "inactive")
+        val event1 = randomNewMessageEvent(
+            cid = inMemoryChannel.cid,
+            channelType = "messaging",
+            channelId = "active",
+        )
+        val event2 = randomNewMessageEvent(
+            cid = dbChannel.cid,
+            channelType = "messaging",
+            channelId = "inactive",
+        )
+
+        whenever(queryChannelsStateLogic.getActiveChannelState(inMemoryChannel.cid)) doReturn inMemoryChannel
+        whenever(queryChannelsStateLogic.getActiveChannelState(dbChannel.cid)) doReturn null
+        whenever(queryChannelsDatabaseLogic.selectChannels(listOf(dbChannel.cid))) doReturn listOf(dbChannel)
+        whenever(queryChannelsStateLogic.handleChatEvent(any(), any())) doReturn EventHandlingResult.Skip
+
+        // When
+        logic.parseChatEventResults(listOf(event1, event2))
+
+        // Then – only the inactive channel should be fetched from DB
+        verify(queryChannelsDatabaseLogic).selectChannels(listOf(dbChannel.cid))
+        verify(queryChannelsStateLogic).handleChatEvent(event1, inMemoryChannel)
+        verify(queryChannelsStateLogic).handleChatEvent(event2, dbChannel)
     }
 
     // endregion

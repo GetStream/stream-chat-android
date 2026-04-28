@@ -50,6 +50,7 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
 
     val mockViewModel: MessageComposerViewModel = mock {
         on { inputFocusEvents } doReturn MutableSharedFlow()
+        on { events } doReturn MutableSharedFlow()
     }
 
     @Test

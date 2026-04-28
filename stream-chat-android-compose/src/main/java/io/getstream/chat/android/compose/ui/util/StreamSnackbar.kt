@@ -20,7 +20,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -32,8 +35,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
@@ -42,9 +47,34 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
 /**
- * Stream-styled snackbar that renders a message and an optional action button.
+ * Visual styles a [StreamSnackbar] can render in. Selected via [StreamSnackbarVisuals.variant] when
+ * pushing a snackbar onto a [SnackbarHostState].
+ */
+internal enum class StreamSnackbarVariant {
+    Default,
+    Error,
+    Success,
+    Loading,
+}
+
+/**
+ * [SnackbarVisuals] carrying a [StreamSnackbarVariant]. Pass to
+ * [SnackbarHostState.showSnackbar] so [StreamSnackbar] can render the matching leading element
+ * (e.g. exclamation icon for [StreamSnackbarVariant.Error]).
+ */
+internal data class StreamSnackbarVisuals(
+    override val message: String,
+    override val actionLabel: String? = null,
+    override val withDismissAction: Boolean = false,
+    override val duration: SnackbarDuration = SnackbarDuration.Short,
+    val variant: StreamSnackbarVariant = StreamSnackbarVariant.Default,
+) : SnackbarVisuals
+
+/**
+ * Stream-styled snackbar that renders a message, an optional leading element (based on the
+ * snackbar's variant), and an optional action button.
  *
- * @param snackbarData The [SnackbarData] driving the message and optional action.
+ * @param snackbarData The [SnackbarData] driving the message, variant, and optional action.
  * @param modifier Modifier applied to the inner [Surface] (e.g. to control width or padding).
  */
 @Composable
@@ -53,6 +83,8 @@ internal fun StreamSnackbar(
     modifier: Modifier = Modifier,
 ) {
     val actionLabel = snackbarData.visuals.actionLabel
+    val variant = (snackbarData.visuals as? StreamSnackbarVisuals)?.variant
+        ?: StreamSnackbarVariant.Default
     Box(modifier = Modifier.padding(StreamTokens.spacingMd)) {
         Surface(
             modifier = modifier.shadow(4.dp, shape = SnackbarShape),
@@ -68,15 +100,10 @@ internal fun StreamSnackbar(
                 horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
-                    modifier = Modifier
-                        .weight(1f, fill = false)
-                        .padding(
-                            horizontal = StreamTokens.spacingXs,
-                            vertical = StreamTokens.spacingSm,
-                        ),
-                    text = snackbarData.visuals.message,
-                    style = ChatTheme.typography.bodyDefault,
+                SnackbarContent(
+                    modifier = Modifier.weight(1f, fill = false),
+                    variant = variant,
+                    message = snackbarData.visuals.message,
                 )
                 if (actionLabel != null) {
                     StreamTextButton(
@@ -90,6 +117,56 @@ internal fun StreamSnackbar(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun SnackbarContent(
+    modifier: Modifier,
+    variant: StreamSnackbarVariant,
+    message: String,
+) {
+    Row(
+        modifier = modifier.padding(
+            start = if (variant == StreamSnackbarVariant.Default) {
+                StreamTokens.spacingXs
+            } else {
+                StreamTokens.spacing2xs
+            },
+            end = StreamTokens.spacingXs,
+        ),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        SnackbarLeadingContent(variant = variant)
+        Text(
+            modifier = Modifier.padding(vertical = StreamTokens.spacingSm),
+            text = message,
+            style = ChatTheme.typography.bodyDefault,
+        )
+    }
+}
+
+@Composable
+private fun SnackbarLeadingContent(variant: StreamSnackbarVariant) {
+    when (variant) {
+        StreamSnackbarVariant.Default -> Unit
+        StreamSnackbarVariant.Error -> Icon(
+            painter = painterResource(id = R.drawable.stream_design_ic_exclamation_circle_fill),
+            contentDescription = null,
+            tint = ChatTheme.colors.textOnInverse,
+        )
+        StreamSnackbarVariant.Success -> Icon(
+            painter = painterResource(id = R.drawable.stream_design_ic_checkmark),
+            contentDescription = null,
+            tint = ChatTheme.colors.textOnInverse,
+        )
+        StreamSnackbarVariant.Loading -> CircularProgressIndicator(
+            modifier = Modifier.size(20.dp),
+            strokeWidth = 2.dp,
+            trackColor = ChatTheme.colors.textOnInverse.copy(alpha = .35f),
+            color = ChatTheme.colors.textOnInverse,
+        )
     }
 }
 
@@ -123,26 +200,19 @@ private class PreviewSnackbarData(
     override fun dismiss() = Unit
 }
 
-private class PreviewSnackbarVisuals(
-    override val message: String,
-    override val actionLabel: String? = null,
-    override val withDismissAction: Boolean = false,
-    override val duration: SnackbarDuration = SnackbarDuration.Short,
-) : SnackbarVisuals
-
 @Preview(showBackground = true)
 @Composable
-private fun StreamSnackbarMessageOnlyPreview() {
+private fun StreamSnackbarDefaultPreview() {
     ChatPreviewTheme {
-        StreamSnackbarMessageOnly()
+        StreamSnackbarDefault()
     }
 }
 
 @Composable
-internal fun StreamSnackbarMessageOnly() {
+internal fun StreamSnackbarDefault() {
     StreamSnackbar(
         snackbarData = PreviewSnackbarData(
-            visuals = PreviewSnackbarVisuals(message = "This is a snackbar message"),
+            visuals = StreamSnackbarVisuals(message = "This is a snackbar message"),
         ),
     )
 }
@@ -159,9 +229,70 @@ private fun StreamSnackbarWithActionPreview() {
 internal fun StreamSnackbarWithAction() {
     StreamSnackbar(
         snackbarData = PreviewSnackbarData(
-            visuals = PreviewSnackbarVisuals(
+            visuals = StreamSnackbarVisuals(
                 message = "Something went wrong",
                 actionLabel = "Retry",
+                variant = StreamSnackbarVariant.Error,
+            ),
+        ),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun StreamSnackbarErrorPreview() {
+    ChatPreviewTheme {
+        StreamSnackbarError()
+    }
+}
+
+@Composable
+internal fun StreamSnackbarError() {
+    StreamSnackbar(
+        snackbarData = PreviewSnackbarData(
+            visuals = StreamSnackbarVisuals(
+                message = "Not available while editing",
+                variant = StreamSnackbarVariant.Error,
+            ),
+        ),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun StreamSnackbarSuccessPreview() {
+    ChatPreviewTheme {
+        StreamSnackbarSuccess()
+    }
+}
+
+@Composable
+internal fun StreamSnackbarSuccess() {
+    StreamSnackbar(
+        snackbarData = PreviewSnackbarData(
+            visuals = StreamSnackbarVisuals(
+                message = "Message sent",
+                variant = StreamSnackbarVariant.Success,
+            ),
+        ),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun StreamSnackbarLoadingPreview() {
+    ChatPreviewTheme {
+        StreamSnackbarLoading()
+    }
+}
+
+@Composable
+internal fun StreamSnackbarLoading() {
+    StreamSnackbar(
+        snackbarData = PreviewSnackbarData(
+            visuals = StreamSnackbarVisuals(
+                message = "Uploading attachment",
+                variant = StreamSnackbarVariant.Loading,
             ),
         ),
     )

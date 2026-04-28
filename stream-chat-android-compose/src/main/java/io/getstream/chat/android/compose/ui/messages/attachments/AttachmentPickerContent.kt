@@ -32,6 +32,7 @@ import io.getstream.chat.android.compose.ui.theme.AttachmentMediaPickerParams
 import io.getstream.chat.android.compose.ui.theme.AttachmentPollPickerParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 @Suppress("LongParameterList")
@@ -40,6 +41,7 @@ internal fun AttachmentPickerContent(
     pickerMode: AttachmentPickerMode?,
     commands: List<Command>,
     attachments: List<AttachmentPickerItemState>,
+    messageAction: MessageAction?,
     onLoadAttachments: () -> Unit,
     onUrisSelected: (List<Uri>) -> Unit,
     actions: AttachmentPickerActions,
@@ -86,6 +88,7 @@ internal fun AttachmentPickerContent(
                 pickerMode = pickerMode,
                 commands = commands,
                 onCommandSelected = actions.onCommandSelected,
+                messageAction = messageAction,
             ),
         )
 

@@ -133,6 +133,7 @@ public fun AttachmentPickerMenu(
                 attachmentsPickerViewModel = attachmentsPickerViewModel,
                 messageMode = composerState.messageMode,
                 actions = actions,
+                messageAction = composerState.action,
             ),
         )
     }

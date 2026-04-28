@@ -37,4 +37,18 @@ internal class AttachmentCommandPickerTest : PaparazziComposeTest {
             AttachmentCommandPicker()
         }
     }
+
+    @Test
+    fun `command picker in edit mode`() {
+        snapshotWithDarkMode {
+            AttachmentCommandPickerInEditMode()
+        }
+    }
+
+    @Test
+    fun `command picker in reply mode`() {
+        snapshotWithDarkMode {
+            AttachmentCommandPickerInReplyMode()
+        }
+    }
 }

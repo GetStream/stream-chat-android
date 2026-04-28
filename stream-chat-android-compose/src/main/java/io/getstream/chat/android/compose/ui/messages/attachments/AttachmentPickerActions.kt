@@ -23,6 +23,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.CreatePollParams
+import io.getstream.chat.android.ui.common.state.messages.composer.isAvailableFor
 
 /**
  * Actions that can be performed in the attachment picker.
@@ -115,8 +116,16 @@ public data class AttachmentPickerActions(
             },
             onCreatePollDismissed = {},
             onCommandSelected = { command ->
-                consumePickerSession(attachmentsPickerViewModel, composerViewModel)
+                // Must run before consumePickerSession: selectCommand stashes the current composer
+                // attachments for restore-on-cancel, and consumePickerSession would otherwise clear
+                // them first.
+                val action = composerViewModel.messageComposerState.value.action
                 composerViewModel.selectCommand(command)
+                // Keep the picker open when the command was unavailable so the user can see the
+                // emitted notice in context and try another command.
+                if (command.isAvailableFor(action)) {
+                    consumePickerSession(attachmentsPickerViewModel, composerViewModel)
+                }
             },
             onDismiss = { attachmentsPickerViewModel.setPickerVisible(visible = false) },
         )

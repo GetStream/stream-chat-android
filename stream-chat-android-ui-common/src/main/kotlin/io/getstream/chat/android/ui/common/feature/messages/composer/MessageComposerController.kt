@@ -46,8 +46,11 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerViewEvent
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageValidator
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
+import io.getstream.chat.android.ui.common.state.messages.composer.isAvailableFor
+import io.getstream.chat.android.ui.common.state.messages.composer.sortedByAvailability
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.common.utils.extensions.addSchemeToUrlIfNeeded
 import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
@@ -252,6 +255,14 @@ public class MessageComposerController(
      */
     public val inputFocusEvents: SharedFlow<Unit> = _inputFocusEvents.asSharedFlow()
 
+    private val _events = MutableSharedFlow<MessageComposerViewEvent>(extraBufferCapacity = 1)
+
+    /**
+     * One-shot events emitted by the composer, such as feedback for unavailable commands. UI
+     * layers collect this flow and react with transient UI (e.g. a snackbar).
+     */
+    public val events: SharedFlow<MessageComposerViewEvent> = _events.asSharedFlow()
+
     // Insertion-ordered map keyed by attachment key (EXTRA_SOURCE_URI or fallback).
     // Tracks picker selections independently of edit-mode attachments, so selections
     // survive entering and exiting edit mode.
@@ -349,6 +360,13 @@ public class MessageComposerController(
      */
     private val selectedMentions: MutableSet<Mention> = mutableSetOf()
 
+    /**
+     * Snapshot of pre-command composer state captured when entering command mode under
+     * [Config.activeCommandEnabled]. Restored on [clearActiveCommand] and discarded on
+     * [clearData]. `null` when no command is active or when command mode is disabled.
+     */
+    private var commandStash: CommandStash? = null
+
     private val mentionSuggester = TypingSuggester(
         TypingSuggestionOptions(symbol = MENTION_START_SYMBOL),
     )
@@ -412,6 +430,9 @@ public class MessageComposerController(
         _messageActions.onEach { actions ->
             val activeAction = actions.lastOrNull { it is Edit || it is Reply }
             _state.update { it.copy(action = activeAction) }
+            // Re-derive command suggestions so the list re-sorts by availability for the new
+            // action and the edit-mode guard fires if a command is currently being typed.
+            handleCommandSuggestions()
         }.launchIn(scope)
 
         ownCapabilities.onEach { ownCapabilities ->
@@ -583,6 +604,14 @@ public class MessageComposerController(
      * @param messageAction The newly selected action.
      */
     public fun performMessageAction(messageAction: MessageAction) {
+        val activeCommand = _state.value.activeCommand
+        if (config.activeCommandEnabled &&
+            activeCommand != null &&
+            !activeCommand.isAvailableFor(messageAction)
+        ) {
+            _events.tryEmit(MessageComposerViewEvent.CancelCommandRequired(messageAction))
+            return
+        }
         when (messageAction) {
             is ThreadReply -> setMessageMode(MessageMode.MessageThread(messageAction.message))
             is Reply ->
@@ -705,6 +734,7 @@ public class MessageComposerController(
         scope.launch { clearDraftMessage(_state.value.messageMode) }
         _messageInput.value = MessageInput()
         clearAttachments()
+        discardCommandStash()
         clearActiveCommand()
         linkPreviewJob?.cancel()
         dismissedLinkPreviewUrl = null
@@ -740,6 +770,11 @@ public class MessageComposerController(
         resolveAttachments: (suspend (List<Attachment>) -> List<Attachment>)? = null,
     ) {
         logger.i { "[sendMessage] message.attachments.size: ${message.attachments.size}" }
+        val blocking = detectBlockingCommand(message.text, activeAction)
+        if (blocking != null) {
+            _events.tryEmit(blocking)
+            return
+        }
         val activeMessage = activeAction?.message ?: message
         val currentUserId = chatClient.getCurrentUser()?.id
 
@@ -955,9 +990,28 @@ public class MessageComposerController(
      * Sets [MessageComposerState.activeCommand] and clears the text input so the user can type
      * the command arguments. The full `/command args` string is assembled in [buildNewMessage].
      *
+     * When [Config.activeCommandEnabled] is `true`, any pre-command input value, picker-selected
+     * attachments, and mention selections are stashed so [clearActiveCommand] can restore them if
+     * the user dismisses the command. Re-selecting a command while one is already active does not
+     * overwrite an existing stash (in-command input is command-specific and not preserved across
+     * command switches).
+     *
+     * When [Config.activeCommandEnabled] is `true` and the command is not available for the
+     * current composer action (edit mode or a moderation command during reply), emits a
+     * [MessageComposerViewEvent.CommandUnavailable] on [events] and returns without changing the
+     * active command. Legacy mode skips this check and sets the command unconditionally.
+     *
      * @param command The command that was selected.
      */
     public fun selectCommand(command: Command) {
+        val action = activeAction
+        if (config.activeCommandEnabled && !command.isAvailableFor(action)) {
+            if (action != null) _events.tryEmit(MessageComposerViewEvent.CommandUnavailable(action))
+            return
+        }
+        if (config.activeCommandEnabled && commandStash == null) {
+            stashPreCommandState()
+        }
         _state.update { it.copy(activeCommand = command) }
         setMessageInputInternal(
             value = if (config.activeCommandEnabled) "" else "/${command.name} ",
@@ -967,22 +1021,85 @@ public class MessageComposerController(
     }
 
     /**
-     * Dismisses the active command, clearing [MessageComposerState.activeCommand] and resetting the text input.
+     * Dismisses the active command, clearing [MessageComposerState.activeCommand].
+     *
+     * When a pre-command stash exists (populated by [selectCommand] under
+     * [Config.activeCommandEnabled]), the stashed input, attachments, and mentions are restored
+     * and any text typed inside command mode is discarded.
+     * When no stash exists, the input is reset to empty.
      */
     public fun clearActiveCommand() {
         _state.update { it.copy(activeCommand = null) }
-        setMessageInputInternal("", MessageInput.Source.Default)
+        if (!restorePreCommandStateIfAny()) {
+            setMessageInputInternal("", MessageInput.Source.Default)
+        }
     }
+
+    private fun stashPreCommandState() {
+        val currentText = _messageInput.value.text
+        // Pure command triggers ("/", "/gi", "/mute ") must stash as empty — restoring them on
+        // cancel would re-fire the popup or auto-select and make the chip uncancelable.
+        val isPureTrigger = CommandText.isTrigger(currentText) || CommandText.isAutoSelectTrigger(currentText)
+        val stashedInput = if (isPureTrigger) "" else currentText
+        commandStash = CommandStash(
+            input = stashedInput,
+            attachments = LinkedHashMap(_selectedAttachments.value),
+            recordingAttachment = _recordingAttachment.value,
+            mentions = selectedMentions.toSet(),
+        )
+        _selectedAttachments.value = linkedMapOf()
+        _recordingAttachment.value = null
+        selectedMentions.clear()
+        _state.update { it.copy(selectedMentions = emptySet()) }
+        syncAttachments()
+    }
+
+    private fun restorePreCommandStateIfAny(): Boolean {
+        val stash = commandStash ?: return false
+        discardCommandStash()
+        setMessageInputInternal(stash.input, MessageInput.Source.Default)
+        _selectedAttachments.value = LinkedHashMap(stash.attachments)
+        _recordingAttachment.value = stash.recordingAttachment
+        selectedMentions.clear()
+        selectedMentions.addAll(stash.mentions)
+        _state.update { it.copy(selectedMentions = selectedMentions.toSet()) }
+        syncAttachments()
+        return true
+    }
+
+    private fun discardCommandStash() {
+        commandStash = null
+    }
+
+    private data class CommandStash(
+        val input: String,
+        val attachments: Map<String, Attachment>,
+        val recordingAttachment: Attachment?,
+        val mentions: Set<Mention>,
+    )
 
     /**
      * Toggles the visibility of the command suggestion list popup.
      */
     public fun toggleCommandsVisibility() {
-        _state.update { s ->
-            val showCommands = s.commandSuggestions.isEmpty()
-            s.copy(commandSuggestions = if (showCommands) commands else emptyList())
+        _state.update {
+            val showCommands = it.commandSuggestions.isEmpty()
+            it.copy(
+                commandSuggestions = if (showCommands) {
+                    commands.orderedForComposer()
+                } else {
+                    emptyList()
+                },
+            )
         }
     }
+
+    /**
+     * Sorts by availability when [Config.activeCommandEnabled] is `true`; returns the list
+     * unchanged in legacy mode.
+     */
+    private fun List<Command>.orderedForComposer(): List<Command> =
+        if (config.activeCommandEnabled) sortedByAvailability(activeAction) else this
 
     /**
      * Dismisses the suggestions popup above the message composer.
@@ -1110,16 +1227,75 @@ public class MessageComposerController(
 
     /**
      * Shows the command suggestion list popup if necessary.
+     *
+     * Under [Config.activeCommandEnabled], typing a command trigger while in edit mode suppresses
+     * the popup and emits a [MessageComposerViewEvent.CommandUnavailable]; suggestions are also
+     * sorted by availability. Legacy mode always shows the popup and preserves server ordering.
      */
     private fun handleCommandSuggestions() {
-        val containsCommand = CommandPattern.matcher(messageText).find()
-        val suggestions = if (containsCommand && _state.value.attachments.isEmpty()) {
-            val commandPattern = messageText.removePrefix("/")
-            commands.filter { it.name.startsWith(commandPattern) }
-        } else {
-            emptyList()
-        }
-        _state.update { it.copy(commandSuggestions = suggestions) }
+        if (tryAutoSelectCommand(messageText)) return
+        if (suppressSuggestionsInEditMode()) return
+        _state.update { it.copy(commandSuggestions = filteredSuggestionsFor(messageText)) }
+    }
+
+    /**
+     * When [Config.activeCommandEnabled] is `true` and the composer is in edit mode, suppresses
+     * the suggestions popup for a command trigger and emits a
+     * [MessageComposerViewEvent.CommandUnavailable].
+     *
+     * @return `true` when suppression fired; callers should skip the default suggestion handling.
+     */
+    private fun suppressSuggestionsInEditMode(): Boolean {
+        if (!config.activeCommandEnabled) return false
+        val action = activeAction as? Edit ?: return false
+        if (!CommandText.isTrigger(messageText)) return false
+        val prefix = messageText.removePrefix("/")
+        if (commands.none { it.name.startsWith(prefix) }) return false
+        _state.update { it.copy(commandSuggestions = emptyList()) }
+        _events.tryEmit(MessageComposerViewEvent.CommandUnavailable(action))
+        return true
+    }
+
+    private fun filteredSuggestionsFor(text: String): List<Command> {
+        if (!CommandText.isTrigger(text)) return emptyList()
+        val prefix = text.removePrefix("/")
+        return commands.filter { it.name.startsWith(prefix) }.orderedForComposer()
+    }
+
+    /**
+     * Detects a `/{name} ` pattern in [text] matching a channel command and enters command mode
+     * for it via [selectCommand]. Gated on [Config.activeCommandEnabled] — legacy mode keeps the
+     * text-based flow.
+     *
+     * @return `true` when a command was auto-selected; callers should skip their default suggestion
+     * handling to avoid redundant work.
+     */
+    private fun tryAutoSelectCommand(text: String): Boolean {
+        if (!config.activeCommandEnabled) return false
+        val name = CommandText.autoSelectName(text) ?: return false
+        val command = commands.firstOrNull { it.name == name } ?: return false
+        selectCommand(command)
+        return true
+    }
+
+    /**
+     * Returns a [MessageComposerViewEvent.CommandUnavailable] when [text] starts with a command
+     * name that is unavailable for [action], or `null` when the message is safe to send. Gated on
+     * [Config.activeCommandEnabled] — legacy mode sends raw text verbatim.
+     *
+     * The `activeCommand != null` / unavailable-for-action combination is prevented by
+     * [performMessageAction]'s guard, so only the typed-text path can reach this code.
+     */
+    private fun detectBlockingCommand(
+        text: String,
+        action: MessageAction?,
+    ): MessageComposerViewEvent? {
+        if (!config.activeCommandEnabled) return null
+        val currentAction = action ?: return null
+        val name = CommandText.inlineCommandName(text) ?: return null
+        val command = commands.firstOrNull { it.name == name } ?: return null
+        if (command.isAvailableFor(currentAction)) return null
+        return MessageComposerViewEvent.CommandUnavailable(currentAction)
     }
 
     /**
@@ -1203,9 +1379,28 @@ public class MessageComposerController(
         private const val MENTION_START_SYMBOL: String = "@"
 
         /**
-         * The regex pattern used to check if the message ends with incomplete command.
+         * Recognises the shapes of command text the composer cares about.
          */
-        private val CommandPattern = Pattern.compile("^/[a-z]*$")
+        private object CommandText {
+
+            private val Trigger = Pattern.compile("^/[a-z]*$")
+            private val AutoSelectTrigger = Pattern.compile("^/([a-z]+) $")
+            private val InlineCommand = Pattern.compile("^/([a-z]+)(?:\\s|$)")
+
+            /** `true` for a popup trigger in progress, e.g. `/`, `/gi`. */
+            fun isTrigger(text: String): Boolean = Trigger.matcher(text).find()
+
+            /** `true` for the exact auto-select form `/name ` (space-terminated). */
+            fun isAutoSelectTrigger(text: String): Boolean = AutoSelectTrigger.matcher(text).matches()
+
+            /** The command name from an auto-select trigger, or `null` when [text] isn't one. */
+            fun autoSelectName(text: String): String? =
+                AutoSelectTrigger.matcher(text).takeIf { it.matches() }?.group(1)
+
+            /** The leading command name from [text] (`/name` optionally followed by whitespace). */
+            fun inlineCommandName(text: String): String? =
+                InlineCommand.matcher(text).takeIf { it.find() }?.group(1)
+        }
 
         internal val LinkPattern = Regex(
             "(http://|https://)?([a-zA-Z0-9]+(\\.[a-zA-Z0-9-]+)*\\.([a-zA-Z]{2,}))(/[\\w-./?%&=]*)?",
@@ -1225,7 +1420,9 @@ public class MessageComposerController(
      * @param maxAttachmentCount The maximum number of attachments allowed in a message.
      * @param linkPreviewEnabled If link previews are enabled.
      * @param draftMessageEnabled If draft messages are enabled.
-     * @param activeCommandEnabled If active commands are enabled.
+     * @param activeCommandEnabled When `true`, the active command is state and the input holds
+     * only its arguments; a pre-command draft is stashed for [clearActiveCommand]. When `false`,
+     * the `/name ` prefix lives in the input and is sent verbatim.
      */
     @InternalStreamChatApi
     public data class Config(

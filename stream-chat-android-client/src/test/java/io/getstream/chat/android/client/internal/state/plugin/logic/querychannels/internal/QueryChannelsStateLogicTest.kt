@@ -32,6 +32,8 @@ import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should contain same`
 import org.junit.Rule
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
@@ -132,5 +134,29 @@ internal class QueryChannelsStateLogicTest {
 
         queryChannelsSpec.cids `should contain same` setOf(testCid, channel1.cid, channel2.cid)
         verify(mutableState).setChannels(channels.associateBy { it.cid })
+    }
+
+    @Test
+    fun `getActiveChannelState should return channel when it is active in state registry`() {
+        val channel = randomChannel(type = type, id = id)
+        val channelState: ChannelState = mock {
+            on(it.toChannel()) doReturn channel
+        }
+
+        whenever(stateRegistry.isActiveChannel(type, id)) doReturn true
+        whenever(stateRegistry.channel(type, id)) doReturn channelState
+
+        val result = queryChannelsStateLogic.getActiveChannelState(testCid)
+
+        assertEquals(channel, result)
+    }
+
+    @Test
+    fun `getActiveChannelState should return null when channel is not active in state registry`() {
+        whenever(stateRegistry.isActiveChannel(type, id)) doReturn false
+
+        val result = queryChannelsStateLogic.getActiveChannelState(testCid)
+
+        assertNull(result)
     }
 }

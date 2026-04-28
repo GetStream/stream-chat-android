@@ -97,6 +97,11 @@
   <string name="stream_compose_message_composer_error_message_length">"Longueur maximale du message (%1$d) dépassée."</string>
   <string name="stream_compose_message_composer_error_sending_links_not_allowed">"L\'envoi de liens n\'est pas autorisé dans cette conversation."</string>
   <string name="stream_compose_message_composer_file_not_supported">"Type de fichier non pris en charge"</string>
+  <string name="stream_compose_message_composer_cancel_command_to_edit">"Annulez la commande pour modifier"</string>
+  <string name="stream_compose_message_composer_cancel_command_to_reply">"Annulez la commande pour répondre"</string>
+  <string name="stream_compose_message_composer_command_unavailable_in_edit">"Indisponible lors de la modification"</string>
+  <string name="stream_compose_message_composer_command_unavailable_in_reply">"Indisponible lors d\'une réponse"</string>
+  <string name="stream_compose_message_composer_commands_unavailable_in_edit">"Les commandes sont indisponibles lors de la modification"</string>
   <string name="stream_compose_message_composer_instant_commands">"Commandes instantanées"</string>
   <string name="stream_compose_message_composer_save_button">"Enregistrer"</string>
   <string name="stream_compose_message_composer_send_button">"Envoyer"</string>

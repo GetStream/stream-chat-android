@@ -245,6 +245,16 @@ internal class QueryChannelsStateLogic(
     }
 
     /**
+     * Returns the current [Channel] snapshot from the in-memory per-channel state if the
+     * channel is active, or `null` otherwise.
+     */
+    internal fun getActiveChannelState(cid: String): Channel? {
+        val (type, id) = cid.cidToTypeAndId()
+        if (!stateRegistry.isActiveChannel(type, id)) return null
+        return stateRegistry.channel(type, id).toChannel()
+    }
+
+    /**
      * Refreshes member state in all channels from this query.
      *
      * @param newUser The user to refresh.
