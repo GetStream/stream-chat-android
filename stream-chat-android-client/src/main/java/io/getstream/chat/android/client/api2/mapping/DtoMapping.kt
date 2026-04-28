@@ -125,6 +125,7 @@ internal class DtoMapping(
                     attachments = attachments.map { it.toDto() },
                     cid = cid,
                     command = command,
+                    args = null,
                     html = html,
                     id = id,
                     type = type,
@@ -156,7 +157,8 @@ internal class DtoMapping(
     internal fun DraftMessage.toDto(): UpstreamMessageDto = UpstreamMessageDto(
         attachments = attachments.map { it.toDto() },
         cid = cid,
-        command = null,
+        command = command,
+        args = args,
         id = id,
         html = "",
         mentioned_users = mentionedUsersIds,

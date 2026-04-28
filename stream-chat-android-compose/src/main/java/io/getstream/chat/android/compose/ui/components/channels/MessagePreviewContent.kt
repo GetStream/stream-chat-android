@@ -96,7 +96,8 @@ internal fun DraftPreviewContent(
     modifier: Modifier = Modifier,
 ) {
     val draftLabel = stringResource(R.string.stream_compose_channel_list_draft)
-    val fullPreview = "$draftLabel ${draftMessage.text}"
+    val draftBody = draftMessage.previewBody()
+    val fullPreview = "$draftLabel $draftBody"
     Row(
         modifier = modifier
             .testTag("Stream_MessagePreview")
@@ -110,11 +111,22 @@ internal fun DraftPreviewContent(
             maxLines = 1,
         )
         Text(
-            text = draftMessage.text,
+            text = draftBody,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = ChatTheme.typography.captionDefault,
             color = ChatTheme.colors.textSecondary,
         )
     }
+}
+
+/**
+ * Renders the body of the draft preview. Active commands are surfaced with their `/name` prefix
+ * so the channel list reflects what the user actually composed (matches legacy mode, where the
+ * prefix was carried inside `text`).
+ */
+private fun DraftMessage.previewBody(): String {
+    val name = command ?: return text
+    val typed = args ?: text
+    return if (typed.isEmpty()) "/$name" else "/$name $typed"
 }

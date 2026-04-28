@@ -75,6 +75,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -1384,31 +1385,36 @@ internal class MessageComposerControllerTest {
         }
 
     @Test
-    fun `Given active command When performMessageAction with ThreadReply Then no block and thread mode applies`() = runTest {
-        // Given
-        val muteCommand = randomCommand(set = MODERATION_SET)
-        val parentMessage = randomMessage(cid = CID)
-        val controller = Fixture()
-            .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
-            .givenAppSettings()
-            .givenAudioPlayer(mock())
-            .givenClientState(randomUser())
-            .givenGlobalState()
-            .givenChannelState(
-                configState = MutableStateFlow(Config(commands = listOf(muteCommand))),
-            )
-            .get()
-        controller.selectCommand(muteCommand)
-        advanceUntilIdle()
+    fun `Given active command When performMessageAction with ThreadReply Then no event is emitted and thread mode applies`() =
+        runTest {
+            // Given
+            val muteCommand = randomCommand(set = MODERATION_SET)
+            val parentMessage = randomMessage(cid = CID)
+            val controller = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(muteCommand))),
+                )
+                .givenDraftMessageStubs()
+                .get()
+            controller.selectCommand(muteCommand)
+            advanceUntilIdle()
 
-        // When
-        controller.performMessageAction(ThreadReply(parentMessage))
-        advanceUntilIdle()
+            // When / Then — ThreadReply is compatible with the active command, so the conflict
+            // guard must not emit CancelCommandRequired and the thread mode must apply.
+            controller.events.test {
+                controller.performMessageAction(ThreadReply(parentMessage))
+                advanceUntilIdle()
 
-        // Then
-        assertEquals(muteCommand, controller.state.value.activeCommand)
-        assertEquals(MessageMode.MessageThread(parentMessage), controller.state.value.messageMode)
-    }
+                expectNoEvents()
+                cancelAndIgnoreRemainingEvents()
+            }
+            assertEquals(MessageMode.MessageThread(parentMessage), controller.state.value.messageMode)
+        }
 
     @Test
     fun `Given reply mode When selectCommand called with fun_set command Then activeCommand is set`() = runTest {
@@ -1589,6 +1595,264 @@ internal class MessageComposerControllerTest {
         // Then
         assertNull(controller.state.value.activeCommand)
     }
+
+    @Test
+    fun `Given draft with command and args When controller initializes Then activeCommand is restored and args populate the input`() =
+        runTest {
+            // Given
+            val giphyCommand = randomCommand(name = "giphy")
+            val draft = DraftMessage(
+                cid = CID,
+                text = "",
+                command = "giphy",
+                args = "cat",
+            )
+            val controller = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState(channelDrafts = mapOf(CID to draft))
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(giphyCommand))),
+                )
+                .givenDraftMessageStubs()
+                .get()
+            advanceUntilIdle()
+
+            // Then
+            assertEquals(giphyCommand, controller.state.value.activeCommand)
+            assertEquals("cat", controller.state.value.inputValue)
+        }
+
+    @Test
+    fun `Given draft with unknown command When controller initializes Then command is not restored and text is preserved`() =
+        runTest {
+            // Given
+            val draft = DraftMessage(
+                cid = CID,
+                text = "fallback",
+                command = "ban",
+                args = null,
+            )
+            val controller = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState(channelDrafts = mapOf(CID to draft))
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(randomCommand(name = "giphy")))),
+                )
+                .givenDraftMessageStubs()
+                .get()
+            advanceUntilIdle()
+
+            // Then
+            assertNull(controller.state.value.activeCommand)
+            assertEquals("fallback", controller.state.value.inputValue)
+        }
+
+    @Test
+    fun `Given draft with moderation command and reply When controller initializes Then command is silently skipped`() =
+        runTest {
+            // Given
+            val muteCommand = randomCommand(name = "mute", set = MODERATION_SET)
+            val repliedMessage = randomMessage(cid = CID)
+            val draft = DraftMessage(
+                cid = CID,
+                text = "",
+                command = "mute",
+                args = "@alice",
+                replyMessage = repliedMessage,
+            )
+            val controller = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState(channelDrafts = mapOf(CID to draft))
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(muteCommand))),
+                )
+                .givenDraftMessageStubs()
+                .get()
+
+            // When / Then — collect events, expect none for the draft restore
+            controller.events.test {
+                advanceUntilIdle()
+                expectNoEvents()
+                cancelAndIgnoreRemainingEvents()
+            }
+            assertNull(controller.state.value.activeCommand)
+            assertEquals(Reply(repliedMessage), controller.state.value.action)
+        }
+
+    @Test
+    fun `Given activeCommandEnabled false When controller initializes with command draft Then command is ignored`() =
+        runTest {
+            // Given
+            val draft = DraftMessage(
+                cid = CID,
+                text = "fallback text",
+                command = "giphy",
+                args = "cat",
+            )
+            val controller = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = false))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState(channelDrafts = mapOf(CID to draft))
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(randomCommand(name = "giphy")))),
+                )
+                .givenDraftMessageStubs()
+                .get()
+            advanceUntilIdle()
+
+            // Then — legacy mode reads `text`, ignores command/args
+            assertNull(controller.state.value.activeCommand)
+            assertEquals("fallback text", controller.state.value.inputValue)
+        }
+
+    @Test
+    fun `Given activeCommand and empty input When mode changes Then draft is saved with command and empty text`() =
+        runTest {
+            // Given
+            val giphyCommand = randomCommand(name = "giphy")
+            val parentMessage = randomMessage(cid = CID)
+            val fixture = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(giphyCommand))),
+                )
+                .givenDraftMessageStubs()
+            val controller = fixture.get()
+            controller.selectCommand(giphyCommand)
+            advanceUntilIdle()
+
+            // When — mode change triggers saveDraftMessage on the previous (Normal) mode
+            controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+            advanceUntilIdle()
+
+            // Then — chatClient.createDraftMessage was called with command set and text empty
+            val captor = argumentCaptor<DraftMessage>()
+            verify(fixture.chatClient).createDraftMessage(eq(CHANNEL_TYPE), eq(CHANNEL_ID), captor.capture())
+            val saved = captor.firstValue
+            assertEquals("giphy", saved.command)
+            assertEquals("", saved.text)
+            assertEquals("", saved.args)
+        }
+
+    @Test
+    fun `Given active command in normal mode When switching to thread Then leftover command does not block reply restore`() =
+        runTest {
+            // Given — Normal mode has a moderation command active. Thread draft has a reply pending.
+            val muteCommand = randomCommand(name = "mute", set = MODERATION_SET)
+            val parentMessage = randomMessage(cid = CID)
+            val repliedInThread = randomMessage(cid = CID)
+            val threadDraft = DraftMessage(
+                cid = CID,
+                parentId = parentMessage.id,
+                text = "thread draft",
+                replyMessage = repliedInThread,
+            )
+            val controller = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState(threadDrafts = mapOf(parentMessage.id to threadDraft))
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(muteCommand))),
+                )
+                .givenDraftMessageStubs()
+                .get()
+            controller.selectCommand(muteCommand)
+            advanceUntilIdle()
+            assertEquals(muteCommand, controller.state.value.activeCommand)
+
+            // When
+            controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+            advanceUntilIdle()
+
+            // Then — the new mode's reply action applies; the leftover mute command is gone.
+            assertNull(controller.state.value.activeCommand)
+            assertEquals(Reply(repliedInThread), controller.state.value.action)
+        }
+
+    @Test
+    fun `Given activeCommandEnabled false When draft is saved Then command and args are not persisted`() = runTest {
+        // Given — legacy mode with a command active in state (legacy keeps slash inside text).
+        val giphyCommand = randomCommand(name = "giphy")
+        val parentMessage = randomMessage(cid = CID)
+        val fixture = Fixture()
+            .givenConfig(MessageComposerController.Config(activeCommandEnabled = false))
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(giphyCommand))),
+            )
+            .givenDraftMessageStubs()
+        val controller = fixture.get()
+        controller.selectCommand(giphyCommand)
+        controller.setMessageInput("/giphy cat")
+        advanceUntilIdle()
+
+        // When
+        controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+        advanceUntilIdle()
+
+        // Then — wire format stays clean: text holds the legacy form, command/args stay null.
+        val captor = argumentCaptor<DraftMessage>()
+        verify(fixture.chatClient).createDraftMessage(eq(CHANNEL_TYPE), eq(CHANNEL_ID), captor.capture())
+        val saved = captor.firstValue
+        assertEquals("/giphy cat", saved.text)
+        assertNull(saved.command)
+        assertNull(saved.args)
+    }
+
+    @Test
+    fun `Given activeCommand and typed args When mode changes Then draft is saved with text and args populated`() =
+        runTest {
+            // Given
+            val giphyCommand = randomCommand(name = "giphy")
+            val parentMessage = randomMessage(cid = CID)
+            val fixture = Fixture()
+                .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState(
+                    configState = MutableStateFlow(Config(commands = listOf(giphyCommand))),
+                )
+                .givenDraftMessageStubs()
+            val controller = fixture.get()
+            controller.selectCommand(giphyCommand)
+            controller.setMessageInput("Test")
+            advanceUntilIdle()
+
+            // When
+            controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+            advanceUntilIdle()
+
+            // Then — text is populated (so channel-list previews render the user's input) and args
+            // mirrors it for cross-SDK readers that distinguish them.
+            val captor = argumentCaptor<DraftMessage>()
+            verify(fixture.chatClient).createDraftMessage(eq(CHANNEL_TYPE), eq(CHANNEL_ID), captor.capture())
+            val saved = captor.firstValue
+            assertEquals("giphy", saved.command)
+            assertEquals("Test", saved.text)
+            assertEquals("Test", saved.args)
+        }
 
     @Test
     fun `Given normal mode When sendMessage called Then chatClient sendMessage is invoked with correct message`() = runTest {
@@ -2425,6 +2689,13 @@ internal class MessageComposerControllerTest {
 
         fun givenDeleteMessage(message: Message) = apply {
             whenever(chatClient.deleteMessage(any(), any())) doReturn message.asCall()
+        }
+
+        fun givenDraftMessageStubs(): Fixture = apply {
+            whenever(chatClient.createDraftMessage(any(), any(), any())) doAnswer { invocation ->
+                (invocation.arguments[2] as DraftMessage).asCall()
+            }
+            whenever(chatClient.deleteDraftMessages(any(), any(), any())) doReturn Unit.asCall()
         }
 
         fun givenGlobalState(

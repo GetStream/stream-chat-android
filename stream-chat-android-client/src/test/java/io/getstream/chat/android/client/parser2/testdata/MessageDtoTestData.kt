@@ -415,6 +415,7 @@ internal object MessageDtoTestData {
         html = "html",
         parent_id = null,
         command = null,
+        args = null,
         silent = false,
         shadowed = false,
         extraData = mapOf(
@@ -471,6 +472,7 @@ internal object MessageDtoTestData {
         html = "",
         parent_id = null,
         command = null,
+        args = null,
         silent = false,
         shadowed = false,
         extraData = emptyMap(),
