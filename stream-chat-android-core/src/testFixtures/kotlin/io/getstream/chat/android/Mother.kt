@@ -278,6 +278,8 @@ public fun randomDraftMessage(
     silent: Boolean = randomBoolean(),
     showInChannel: Boolean = randomBoolean(),
     replyMessage: Message? = randomMessage(),
+    command: String? = null,
+    args: String? = null,
 ): DraftMessage = DraftMessage(
     id = id,
     cid = cid,
@@ -290,6 +292,8 @@ public fun randomDraftMessage(
     silent = silent,
     showInChannel = showInChannel,
     replyMessage = replyMessage,
+    command = command,
+    args = args,
 )
 
 public fun randomQueryDraftsResult(
