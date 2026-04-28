@@ -99,7 +99,7 @@ internal fun MessageComposerLeadingContent(
                             R.string.stream_compose_message_composer_attachments_close
                         } else {
                             R.string.stream_compose_message_composer_attachments_open
-                        }
+                        },
                     ),
                 )
             }
