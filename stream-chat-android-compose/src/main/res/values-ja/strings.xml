@@ -105,6 +105,11 @@
   <string name="stream_compose_message_composer_error_message_length">"メッセージの最大文字数（%1$d）を超えました。"</string>
   <string name="stream_compose_message_composer_error_sending_links_not_allowed">"この会話ではリンクの送信は許可されていません。"</string>
   <string name="stream_compose_message_composer_file_not_supported">"このファイル形式はサポートされていません"</string>
+  <string name="stream_compose_message_composer_cancel_command_to_edit">"編集するにはコマンドをキャンセルしてください"</string>
+  <string name="stream_compose_message_composer_cancel_command_to_reply">"返信するにはコマンドをキャンセルしてください"</string>
+  <string name="stream_compose_message_composer_command_unavailable_in_edit">"編集中は利用できません"</string>
+  <string name="stream_compose_message_composer_command_unavailable_in_reply">"返信中は利用できません"</string>
+  <string name="stream_compose_message_composer_commands_unavailable_in_edit">"編集中はコマンドを利用できません"</string>
   <string name="stream_compose_message_composer_instant_commands">"インスタントコマンド"</string>
   <string name="stream_compose_message_composer_save_button">"保存"</string>
   <string name="stream_compose_message_composer_send_button">"送信"</string>

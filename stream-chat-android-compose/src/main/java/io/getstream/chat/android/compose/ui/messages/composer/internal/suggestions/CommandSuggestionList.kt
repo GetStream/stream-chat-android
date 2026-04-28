@@ -33,10 +33,15 @@ import io.getstream.chat.android.compose.ui.theme.MessageComposerCommandSuggesti
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.previewdata.PreviewCommandData
+import io.getstream.chat.android.previewdata.PreviewMessageData
+import io.getstream.chat.android.ui.common.state.messages.Edit
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.Reply
 
 @Composable
 internal fun CommandSuggestionList(
     commands: List<Command>,
+    messageAction: MessageAction? = null,
     onCommandSelected: (Command) -> Unit = {},
 ) {
     LazyColumn(
@@ -69,6 +74,7 @@ internal fun CommandSuggestionList(
                 params = MessageComposerCommandSuggestionItemParams(
                     command = command,
                     onCommandSelected = onCommandSelected,
+                    messageAction = messageAction,
                 ),
             )
         }
@@ -85,6 +91,37 @@ private fun CommandSuggestionListPreview() {
 
 @Composable
 internal fun CommandSuggestionList() {
+    CommandSuggestionList(messageAction = null)
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun CommandSuggestionListInEditModePreview() {
+    ChatPreviewTheme {
+        CommandSuggestionListInEditMode()
+    }
+}
+
+@Composable
+internal fun CommandSuggestionListInEditMode() {
+    CommandSuggestionList(messageAction = Edit(PreviewMessageData.message1))
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun CommandSuggestionListInReplyModePreview() {
+    ChatPreviewTheme {
+        CommandSuggestionListInReplyMode()
+    }
+}
+
+@Composable
+internal fun CommandSuggestionListInReplyMode() {
+    CommandSuggestionList(messageAction = Reply(PreviewMessageData.message1))
+}
+
+@Composable
+private fun CommandSuggestionList(messageAction: MessageAction?) {
     CommandSuggestionList(
         commands = listOf(
             PreviewCommandData.command1,
@@ -93,5 +130,6 @@ internal fun CommandSuggestionList() {
             PreviewCommandData.command4,
             PreviewCommandData.command5,
         ),
+        messageAction = messageAction,
     )
 }

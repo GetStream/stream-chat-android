@@ -170,6 +170,7 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.React
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
+import io.getstream.chat.android.ui.common.state.messages.composer.isAvailableFor
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
 import io.getstream.chat.android.compose.ui.channel.attachments.ChannelFilesAttachmentsItem as DefaultChannelFilesAttachmentsItem
 import io.getstream.chat.android.compose.ui.channel.attachments.ChannelMediaAttachmentsItem as DefaultChannelMediaAttachmentsItem
@@ -1306,6 +1307,7 @@ public interface ChatComponentFactory {
         CommandSuggestionItem(
             command = params.command,
             onCommandSelected = params.onCommandSelected,
+            enabled = params.command.isAvailableFor(params.messageAction),
         )
     }
 
@@ -3008,6 +3010,7 @@ public interface ChatComponentFactory {
             attachmentsPickerViewModel = params.attachmentsPickerViewModel,
             messageMode = params.messageMode,
             actions = params.actions,
+            messageAction = params.messageAction,
         )
     }
 
@@ -3066,6 +3069,7 @@ public interface ChatComponentFactory {
             onUrisSelected = params.onUrisSelected,
             actions = params.actions,
             onAttachmentsSubmitted = params.onAttachmentsSubmitted,
+            messageAction = params.messageAction,
         )
     }
 
@@ -3154,6 +3158,7 @@ public interface ChatComponentFactory {
             pickerMode = params.pickerMode,
             commands = params.commands,
             onCommandSelected = params.onCommandSelected,
+            messageAction = params.messageAction,
         )
     }
 
@@ -3175,6 +3180,7 @@ public interface ChatComponentFactory {
             actions = params.actions,
             onUrisSelected = params.onUrisSelected,
             onAttachmentsSubmitted = params.onAttachmentsSubmitted,
+            messageAction = params.messageAction,
         )
     }
 }

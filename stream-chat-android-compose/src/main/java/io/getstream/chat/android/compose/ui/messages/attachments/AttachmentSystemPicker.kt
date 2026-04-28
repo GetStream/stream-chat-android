@@ -62,8 +62,10 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.previewdata.PreviewCommandData
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
+import io.getstream.chat.android.ui.common.state.messages.composer.isAvailableFor
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
 
 @Suppress("LongMethod")
@@ -73,6 +75,7 @@ internal fun AttachmentSystemPicker(
     channel: Channel,
     messageMode: MessageMode,
     attachments: List<AttachmentPickerItemState>,
+    messageAction: MessageAction? = null,
     actions: AttachmentPickerActions = AttachmentPickerActions.None,
     onUrisSelected: (List<Uri>) -> Unit = {},
     onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit = {},
@@ -194,9 +197,12 @@ internal fun AttachmentSystemPicker(
                     pickerMode = commandPickerMode,
                     commands = commands,
                     onCommandSelected = { command ->
-                        showCommandsPickerDialog = false
+                        if (command.isAvailableFor(messageAction)) {
+                            showCommandsPickerDialog = false
+                        }
                         actions.onCommandSelected(command)
                     },
+                    messageAction = messageAction,
                 ),
             )
         }

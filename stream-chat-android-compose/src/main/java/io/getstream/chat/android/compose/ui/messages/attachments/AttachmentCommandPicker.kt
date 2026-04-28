@@ -20,6 +20,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -28,8 +29,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -38,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.R.string.stream_compose_message_composer_instant_commands
 import io.getstream.chat.android.compose.state.messages.attachments.CommandPickerMode
+import io.getstream.chat.android.compose.ui.components.EmptyContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -45,54 +49,81 @@ import io.getstream.chat.android.compose.ui.util.extensions.internal.iconRes
 import io.getstream.chat.android.compose.ui.util.extensions.internal.isPolychromaticIcon
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.previewdata.PreviewCommandData
+import io.getstream.chat.android.previewdata.PreviewMessageData
+import io.getstream.chat.android.ui.common.state.messages.Edit
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.Reply
+import io.getstream.chat.android.ui.common.state.messages.composer.isAvailableFor
+import io.getstream.chat.android.ui.common.state.messages.composer.sortedByAvailability
 
 @Composable
 internal fun AttachmentCommandPicker(
     @Suppress("UNUSED_PARAMETER") pickerMode: CommandPickerMode, // Will be utilized in upcoming releases.
     commands: List<Command>,
+    messageAction: MessageAction? = null,
     onCommandSelected: (Command) -> Unit = {},
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth(),
-    ) {
-        Text(
-            modifier = Modifier
-                .padding(
-                    start = StreamTokens.spacingMd,
-                    end = StreamTokens.spacingMd,
-                    top = StreamTokens.spacingXs,
-                    bottom = StreamTokens.spacingMd,
-                )
-                .fillMaxWidth(),
-            text = stringResource(stream_compose_message_composer_instant_commands),
-            style = ChatTheme.typography.headingSmall,
-            color = ChatTheme.colors.textPrimary,
+    if (messageAction is Edit) {
+        EmptyContent(
+            modifier = Modifier.fillMaxSize(),
+            text = stringResource(R.string.stream_compose_message_composer_commands_unavailable_in_edit),
+            painter = painterResource(id = R.drawable.stream_design_ic_command),
         )
-        LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
-            items(
-                items = commands,
-                key = Command::name,
-            ) { command ->
-                CommandItem(
-                    command = command,
-                    onCommandSelected = onCommandSelected,
-                )
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(
+                        start = StreamTokens.spacingMd,
+                        end = StreamTokens.spacingMd,
+                        top = StreamTokens.spacingXs,
+                        bottom = StreamTokens.spacingMd,
+                    )
+                    .fillMaxWidth(),
+                text = stringResource(stream_compose_message_composer_instant_commands),
+                style = ChatTheme.typography.headingSmall,
+                color = ChatTheme.colors.textPrimary,
+            )
+            val sortedCommands = remember(commands, messageAction) {
+                commands.sortedByAvailability(messageAction)
+            }
+            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
+                items(
+                    items = sortedCommands,
+                    key = Command::name,
+                ) { command ->
+                    CommandItem(
+                        command = command,
+                        enabled = command.isAvailableFor(messageAction),
+                        onCommandSelected = onCommandSelected,
+                    )
+                }
             }
         }
     }
 }
 
+/**
+ * Command grid row.
+ *
+ * @param enabled Controls the item's visual state only (dimmed when `false`). Taps still invoke
+ * [onCommandSelected] regardless, so the caller can surface feedback for disabled commands.
+ */
 @Composable
 private fun CommandItem(
     command: Command,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     onCommandSelected: (Command) -> Unit = {},
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clickable { onCommandSelected(command) }
+            .alpha(if (enabled) FullAlpha else DisabledAlpha)
             .padding(StreamTokens.spacingSm),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -141,6 +172,9 @@ private fun CommandItem(
     }
 }
 
+private const val FullAlpha = 1f
+private const val DisabledAlpha = 0.5f
+
 @Preview(showBackground = true)
 @Composable
 private fun AttachmentCommandPickerPreview() {
@@ -151,12 +185,46 @@ private fun AttachmentCommandPickerPreview() {
 
 @Composable
 internal fun AttachmentCommandPicker() {
+    AttachmentCommandPicker(messageAction = null)
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentCommandPickerInEditModePreview() {
+    ChatTheme {
+        AttachmentCommandPickerInEditMode()
+    }
+}
+
+@Composable
+internal fun AttachmentCommandPickerInEditMode() {
+    AttachmentCommandPicker(messageAction = Edit(PreviewMessageData.message1))
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentCommandPickerInReplyModePreview() {
+    ChatTheme {
+        AttachmentCommandPickerInReplyMode()
+    }
+}
+
+@Composable
+internal fun AttachmentCommandPickerInReplyMode() {
+    AttachmentCommandPicker(messageAction = Reply(PreviewMessageData.message1))
+}
+
+@Composable
+private fun AttachmentCommandPicker(messageAction: MessageAction?) {
     AttachmentCommandPicker(
         pickerMode = CommandPickerMode,
         commands = listOf(
             PreviewCommandData.command1,
             PreviewCommandData.command2,
             PreviewCommandData.command3,
+            PreviewCommandData.command4,
+            PreviewCommandData.command5,
         ),
+        messageAction = messageAction,
     )
 }

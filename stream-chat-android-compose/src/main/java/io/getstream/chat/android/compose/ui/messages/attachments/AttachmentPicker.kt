@@ -33,6 +33,7 @@ import io.getstream.chat.android.compose.ui.theme.AttachmentSystemPickerParams
 import io.getstream.chat.android.compose.ui.theme.AttachmentTypePickerParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.R as UiCommonR
@@ -64,6 +65,8 @@ import io.getstream.chat.android.ui.common.R as UiCommonR
  * @param actions The [AttachmentPickerActions] that handle user interactions within the picker.
  * Use [AttachmentPickerActions.pickerDefaults] for standalone usage or
  * [AttachmentPickerActions.defaultActions] for full integration with the message composer.
+ * @param messageAction The composer action currently active; drives per-command enabled state in
+ * the picker's command section. `null` treats every command as enabled.
  */
 @Suppress("LongMethod")
 @Composable
@@ -74,6 +77,7 @@ public fun AttachmentPicker(
     actions: AttachmentPickerActions = remember(attachmentsPickerViewModel) {
         AttachmentPickerActions.pickerDefaults(attachmentsPickerViewModel)
     },
+    messageAction: MessageAction? = null,
 ) {
     BackHandler(onBack = actions.onDismiss)
 
@@ -118,6 +122,7 @@ public fun AttachmentPicker(
                     actions = actions,
                     onUrisSelected = attachmentsPickerViewModel::resolveAndSubmitUris,
                     onAttachmentsSubmitted = onAttachmentsSubmitted,
+                    messageAction = messageAction,
                 ),
             )
         } else {
@@ -142,6 +147,7 @@ public fun AttachmentPicker(
                             onUrisSelected = attachmentsPickerViewModel::resolveAndSubmitUris,
                             actions = actions,
                             onAttachmentsSubmitted = onAttachmentsSubmitted,
+                            messageAction = messageAction,
                         ),
                     )
                 }
