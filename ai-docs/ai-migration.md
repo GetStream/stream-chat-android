@@ -215,7 +215,7 @@ ChatClient.Builder(apiKey, context)
 | `StatePluginConfig.userPresence` | `userPresence` | `true` |
 | `StreamOfflinePluginFactory` present in `withPlugins()` | `offlineEnabled` | `true` |
 | `StreamOfflinePluginFactory.ignoredOfflineChannelTypes` | `ignoredOfflineChannelTypes` | `emptySet()` |
-| _(none)_ | `isAutomaticSyncOnReconnectEnabled` | `true` |
+| `StatePluginConfig.isAutomaticSyncOnReconnectEnabled` | `isAutomaticSyncOnReconnectEnabled` | `true` |
 | _(none)_ | `useLegacyChannelLogic` | `false` |
 | `StatePluginConfig.syncMaxThreshold` | `syncMaxThreshold` | `TimeDuration.hours(12)` |
 | `StatePluginConfig.messageLimitConfig` | `messageLimitConfig` | `MessageLimitConfig()` |
