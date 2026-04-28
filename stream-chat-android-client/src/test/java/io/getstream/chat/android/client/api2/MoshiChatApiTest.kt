@@ -1530,7 +1530,9 @@ internal class MoshiChatApiTest {
         val hideHistory = randomBoolean()
         val hideHistoryBefore = randomDate()
         val skipPush = randomBoolean()
-        val result = sut.addMembers(channelType, channelId, members, systemMessage, hideHistory, hideHistoryBefore, skipPush).await()
+        val result =
+            sut.addMembers(channelType, channelId, members, systemMessage, hideHistory, hideHistoryBefore, skipPush)
+                .await()
         // then
         result `should be instance of` expected
         verify(api, times(1)).addMembers(eq(channelType), eq(channelId), any())
@@ -1891,6 +1893,48 @@ internal class MoshiChatApiTest {
         result `should be instance of` expected
         verify(api, times(1)).queryChannels(connectionId, expectedPayload)
     }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryChannelsWithPredefinedFilterInput")
+    fun testQueryChannelsWithPredefinedFilter(call: RetrofitCall<QueryChannelsResponse>, expected: KClass<*>) =
+        runTest {
+            // given
+            val api = mock<ChannelApi>()
+            whenever(api.queryChannels(any(), any())).doReturn(call)
+            val sut = Fixture()
+                .withChannelApi(api)
+                .get()
+            // when
+            val userId = randomString()
+            val connectionId = randomString()
+            val predefinedFilter = randomString()
+            val filterValues = mapOf("user_id" to randomString(), "channel_type" to randomString())
+            val sortValues = mapOf("sort_field" to randomString())
+            val query = Mother.randomQueryChannelsRequest(
+                predefinedFilter = predefinedFilter,
+                filterValues = filterValues,
+                sortValues = sortValues,
+            )
+            sut.setConnection(userId = userId, connectionId = connectionId)
+            val result = sut.queryChannels(query).await()
+            // then
+            val expectedPayload = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
+                filter_conditions = null,
+                sort = null,
+                predefined_filter = predefinedFilter,
+                filter_values = filterValues,
+                sort_values = sortValues,
+                offset = query.offset,
+                limit = query.limit,
+                message_limit = query.messageLimit,
+                member_limit = query.memberLimit,
+                state = query.state,
+                watch = query.watch,
+                presence = query.presence,
+            )
+            result `should be instance of` expected
+            verify(api, times(1)).queryChannels(connectionId, expectedPayload)
+        }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryChannelInput")
