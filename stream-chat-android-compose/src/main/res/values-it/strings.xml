@@ -85,7 +85,6 @@
   <string name="stream_compose_attachment_poll_picker_content">"Crea un sondaggio e lascia votare tutti"</string>
   <string name="stream_compose_attachment_poll_picker_cta">"Crea sondaggio"</string>
   <string name="stream_compose_attachment_polls_picker">"Sondaggi"</string>
-  <string name="stream_compose_attachments">"Allegati"</string>
   <string name="stream_compose_audio_playback_pause">"Pausa"</string>
   <string name="stream_compose_audio_recording_delete">"Elimina registrazione"</string>
   <string name="stream_compose_audio_recording_hint_save">"Tieni premuto per registrare. Rilascia per salvare."</string>
@@ -163,6 +162,8 @@
   <string name="stream_compose_message_composer_send_button">"Invia"</string>
   <string name="stream_compose_message_composer_show_in_channel">"Invia anche nel canale"</string>
   <string name="stream_compose_message_composer_unsupported_attachment">"Allegato non supportato"</string>
+  <string name="stream_compose_message_composer_attachments_close">"Chiudi allegati"</string>
+  <string name="stream_compose_message_composer_attachments_open">"Apri allegati"</string>
   <string name="stream_compose_message_deleted">"Messaggio cancellato"</string>
   <string name="stream_compose_message_deleted_preview">"Messaggio cancellato"</string>
   <string name="stream_compose_message_list_auto_translated">"Tradotto"</string>

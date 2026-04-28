@@ -29,7 +29,6 @@
   <string name="stream_compose_attachment_poll_picker_content">"Créer un sondage et laisser tout le monde voter"</string>
   <string name="stream_compose_attachment_poll_picker_cta">"Créer un sondage"</string>
   <string name="stream_compose_attachment_polls_picker">"Sondages"</string>
-  <string name="stream_compose_attachments">"Pièces jointes"</string>
   <string name="stream_compose_audio_playback_pause">"Pause"</string>
   <string name="stream_compose_audio_recording_delete">"Supprimer l\'enregistrement"</string>
   <string name="stream_compose_audio_recording_hint_save">"Maintenez pour enregistrer. Relâchez pour sauvegarder."</string>
@@ -107,6 +106,8 @@
   <string name="stream_compose_message_composer_send_button">"Envoyer"</string>
   <string name="stream_compose_message_composer_show_in_channel">"Envoyer aussi dans le canal"</string>
   <string name="stream_compose_message_composer_unsupported_attachment">"Pièce jointe non prise en charge"</string>
+  <string name="stream_compose_message_composer_attachments_close">"Fermer les pièces jointes"</string>
+  <string name="stream_compose_message_composer_attachments_open">"Ouvrir les pièces jointes"</string>
   <string name="stream_compose_message_deleted">"Message supprimé"</string>
   <string name="stream_compose_message_deleted_preview">"Message supprimé"</string>
   <string name="stream_compose_message_list_auto_translated">"Traduit"</string>

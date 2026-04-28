@@ -29,7 +29,6 @@
   <string name="stream_compose_attachment_poll_picker_content">"투표를 만들어 모두가 참여하게 하세요"</string>
   <string name="stream_compose_attachment_poll_picker_cta">"투표 만들기"</string>
   <string name="stream_compose_attachment_polls_picker">"투표"</string>
-  <string name="stream_compose_attachments">"첨부파일"</string>
   <string name="stream_compose_audio_playback_pause">"일시정지"</string>
   <string name="stream_compose_audio_recording_delete">"녹음 삭제"</string>
   <string name="stream_compose_audio_recording_hint_save">"길게 눌러 녹음. 놓으면 저장."</string>
@@ -115,6 +114,8 @@
   <string name="stream_compose_message_composer_send_button">"보내기"</string>
   <string name="stream_compose_message_composer_show_in_channel">"채널에도 전송"</string>
   <string name="stream_compose_message_composer_unsupported_attachment">"지원되지 않는 첨부파일"</string>
+  <string name="stream_compose_message_composer_attachments_close">"첨부파일 닫기"</string>
+  <string name="stream_compose_message_composer_attachments_open">"첨부파일 열기"</string>
   <string name="stream_compose_message_deleted">"메시지가 삭제되었습니다"</string>
   <string name="stream_compose_message_deleted_preview">"메시지가 삭제되었습니다"</string>
   <string name="stream_compose_message_list_auto_translated">"번역됨"</string>

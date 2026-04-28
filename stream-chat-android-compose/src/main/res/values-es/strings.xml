@@ -29,7 +29,6 @@
   <string name="stream_compose_attachment_poll_picker_content">"Crear una encuesta y que todos voten"</string>
   <string name="stream_compose_attachment_poll_picker_cta">"Crear encuesta"</string>
   <string name="stream_compose_attachment_polls_picker">"Encuestas"</string>
-  <string name="stream_compose_attachments">"Archivos adjuntos"</string>
   <string name="stream_compose_audio_playback_pause">"Pausar"</string>
   <string name="stream_compose_audio_recording_delete">"Eliminar grabación"</string>
   <string name="stream_compose_audio_recording_hint_save">"Mantén pulsado para grabar. Suelta para guardar."</string>
@@ -107,6 +106,8 @@
   <string name="stream_compose_message_composer_send_button">"Enviar"</string>
   <string name="stream_compose_message_composer_show_in_channel">"También enviar en el canal"</string>
   <string name="stream_compose_message_composer_unsupported_attachment">"Archivo adjunto no compatible"</string>
+  <string name="stream_compose_message_composer_attachments_close">"Cerrar archivos adjuntos"</string>
+  <string name="stream_compose_message_composer_attachments_open">"Abrir archivos adjuntos"</string>
   <string name="stream_compose_message_deleted">"Mensaje eliminado"</string>
   <string name="stream_compose_message_deleted_preview">"Mensaje eliminado"</string>
   <string name="stream_compose_message_list_auto_translated">"Traducido"</string>

@@ -94,7 +94,13 @@ internal fun MessageComposerLeadingContent(
                 Icon(
                     modifier = Modifier.graphicsLayer { rotationZ = iconRotation },
                     painter = painterResource(id = R.drawable.stream_design_ic_plus),
-                    contentDescription = stringResource(id = R.string.stream_compose_attachments),
+                    contentDescription = stringResource(
+                        id = if (isAttachmentPickerVisible) {
+                            R.string.stream_compose_message_composer_attachments_close
+                        } else {
+                            R.string.stream_compose_message_composer_attachments_open
+                        }
+                    ),
                 )
             }
         }

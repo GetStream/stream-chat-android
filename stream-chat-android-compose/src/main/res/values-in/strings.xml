@@ -29,7 +29,6 @@
   <string name="stream_compose_attachment_poll_picker_content">"Buat polling dan biarkan semua orang memilih"</string>
   <string name="stream_compose_attachment_poll_picker_cta">"Buat Polling"</string>
   <string name="stream_compose_attachment_polls_picker">"Polling"</string>
-  <string name="stream_compose_attachments">"Lampiran"</string>
   <string name="stream_compose_audio_playback_pause">"Jeda"</string>
   <string name="stream_compose_audio_recording_delete">"Hapus rekaman"</string>
   <string name="stream_compose_audio_recording_hint_save">"Tahan untuk merekam. Lepas untuk menyimpan."</string>
@@ -107,6 +106,8 @@
   <string name="stream_compose_message_composer_send_button">"Kirim"</string>
   <string name="stream_compose_message_composer_show_in_channel">"Juga kirim di Saluran"</string>
   <string name="stream_compose_message_composer_unsupported_attachment">"Lampiran tidak didukung"</string>
+  <string name="stream_compose_message_composer_attachments_close">"Tutup lampiran"</string>
+  <string name="stream_compose_message_composer_attachments_open">"Buka lampiran"</string>
   <string name="stream_compose_message_deleted">"Pesan dihapus"</string>
   <string name="stream_compose_message_deleted_preview">"Pesan dihapus"</string>
   <string name="stream_compose_message_list_auto_translated">"Diterjemahkan"</string>

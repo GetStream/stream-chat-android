@@ -85,7 +85,6 @@
   <string name="stream_compose_attachment_poll_picker_content">"पोल बनाएँ और सबको वोट करने दें"</string>
   <string name="stream_compose_attachment_poll_picker_cta">"पोल बनाएँ"</string>
   <string name="stream_compose_attachment_polls_picker">"पोल"</string>
-  <string name="stream_compose_attachments">"अटैचमेंट्स"</string>
   <string name="stream_compose_audio_playback_pause">"रोकें"</string>
   <string name="stream_compose_audio_recording_delete">"रिकॉर्डिंग हटाएँ"</string>
   <string name="stream_compose_audio_recording_hint_save">"रिकॉर्ड करने के लिए दबाए रखें। सेव करने के लिए छोड़ें।"</string>
@@ -163,6 +162,8 @@
   <string name="stream_compose_message_composer_send_button">"भेजें"</string>
   <string name="stream_compose_message_composer_show_in_channel">"सीधे मैसेज के रूप में भी भेजें"</string>
   <string name="stream_compose_message_composer_unsupported_attachment">"असमर्थित अटैचमेंट"</string>
+  <string name="stream_compose_message_composer_attachments_close">"अटैचमेंट्स बंद करें"</string>
+  <string name="stream_compose_message_composer_attachments_open">"अटैचमेंट्स खोलें"</string>
   <string name="stream_compose_message_deleted">"मैसेज मिटाया गया"</string>
   <string name="stream_compose_message_deleted_preview">"मैसेज हटा दिया गया"</string>
   <string name="stream_compose_message_list_auto_translated">"अनुवादित"</string>
