@@ -77,6 +77,10 @@
   <string name="stream_compose_add_members_no_results">"कोई उपयोगकर्ता नहीं मिला"</string>
   <string name="stream_compose_add_members_title">"सदस्य जोड़ें"</string>
   <string name="stream_compose_also_sent_to_channel">"चैनल को भी भेजा गया"</string>
+  <string name="stream_compose_attachment_added_audio">"ऑडियो रिकॉर्डिंग संलग्न की गई"</string>
+  <string name="stream_compose_attachment_added_file">"फ़ाइल संलग्न की गई"</string>
+  <string name="stream_compose_attachment_added_photo">"फ़ोटो संलग्न की गई"</string>
+  <string name="stream_compose_attachment_added_video">"वीडियो संलग्न किया गया"</string>
   <string name="stream_compose_attachment_camera_picker">"कैमरा खोलें"</string>
   <string name="stream_compose_attachment_camera_picker_content">"फ़ोटो लें और साझा करें"</string>
   <string name="stream_compose_attachment_commands_picker">"कमांड्स"</string>
@@ -88,6 +92,7 @@
   <string name="stream_compose_attachment_poll_picker_content">"पोल बनाएँ और सबको वोट करने दें"</string>
   <string name="stream_compose_attachment_poll_picker_cta">"पोल बनाएँ"</string>
   <string name="stream_compose_attachment_polls_picker">"पोल"</string>
+  <string name="stream_compose_attachment_removed">"अटैचमेंट हटाया गया"</string>
   <string name="stream_compose_audio_playback_pause">"रोकें"</string>
   <string name="stream_compose_audio_recording_delete">"रिकॉर्डिंग हटाएँ"</string>
   <string name="stream_compose_audio_recording_hint_save">"रिकॉर्ड करने के लिए दबाए रखें। सेव करने के लिए छोड़ें।"</string>

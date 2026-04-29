@@ -21,6 +21,10 @@
   <string name="stream_compose_add_members_no_results">"ユーザーが見つかりません"</string>
   <string name="stream_compose_add_members_title">"メンバーを追加"</string>
   <string name="stream_compose_also_sent_to_channel">"チャンネルにも送信済み"</string>
+  <string name="stream_compose_attachment_added_audio">"音声録音を添付しました"</string>
+  <string name="stream_compose_attachment_added_file">"ファイルを添付しました"</string>
+  <string name="stream_compose_attachment_added_photo">"写真を添付しました"</string>
+  <string name="stream_compose_attachment_added_video">"動画を添付しました"</string>
   <string name="stream_compose_attachment_camera_picker">"カメラを開く"</string>
   <string name="stream_compose_attachment_camera_picker_content">"写真を撮って共有"</string>
   <string name="stream_compose_attachment_commands_picker">"コマンド"</string>
@@ -32,6 +36,7 @@
   <string name="stream_compose_attachment_poll_picker_content">"投票を作成してみんなに投票してもらう"</string>
   <string name="stream_compose_attachment_poll_picker_cta">"投票を作成"</string>
   <string name="stream_compose_attachment_polls_picker">"投票"</string>
+  <string name="stream_compose_attachment_removed">"添付ファイルを削除しました"</string>
   <string name="stream_compose_audio_playback_pause">"一時停止"</string>
   <string name="stream_compose_audio_recording_delete">"録音を削除"</string>
   <string name="stream_compose_audio_recording_hint_save">"長押しで録音。離すと保存。"</string>

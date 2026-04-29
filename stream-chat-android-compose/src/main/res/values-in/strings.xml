@@ -21,6 +21,10 @@
   <string name="stream_compose_add_members_no_results">"Pengguna tidak ditemukan"</string>
   <string name="stream_compose_add_members_title">"Tambahkan Anggota"</string>
   <string name="stream_compose_also_sent_to_channel">"Juga dikirim ke saluran"</string>
+  <string name="stream_compose_attachment_added_audio">"Rekaman audio dilampirkan"</string>
+  <string name="stream_compose_attachment_added_file">"File dilampirkan"</string>
+  <string name="stream_compose_attachment_added_photo">"Foto dilampirkan"</string>
+  <string name="stream_compose_attachment_added_video">"Video dilampirkan"</string>
   <string name="stream_compose_attachment_camera_picker">"Buka Kamera"</string>
   <string name="stream_compose_attachment_camera_picker_content">"Ambil foto dan bagikan"</string>
   <string name="stream_compose_attachment_commands_picker">"Perintah"</string>
@@ -32,6 +36,7 @@
   <string name="stream_compose_attachment_poll_picker_content">"Buat polling dan biarkan semua orang memilih"</string>
   <string name="stream_compose_attachment_poll_picker_cta">"Buat Polling"</string>
   <string name="stream_compose_attachment_polls_picker">"Polling"</string>
+  <string name="stream_compose_attachment_removed">"Lampiran dihapus"</string>
   <string name="stream_compose_audio_playback_pause">"Jeda"</string>
   <string name="stream_compose_audio_recording_delete">"Hapus rekaman"</string>
   <string name="stream_compose_audio_recording_hint_save">"Tahan untuk merekam. Lepas untuk menyimpan."</string>

@@ -224,6 +224,11 @@
     <string name="stream_compose_attachment_polls_picker">Polls</string>
     <string name="stream_compose_attachment_poll_picker_content">Create a poll and let everyone vote</string>
     <string name="stream_compose_attachment_poll_picker_cta">Create Poll</string>
+    <string name="stream_compose_attachment_added_audio">Audio recording attached</string>
+    <string name="stream_compose_attachment_added_file">File attached</string>
+    <string name="stream_compose_attachment_added_photo">Photo attached</string>
+    <string name="stream_compose_attachment_added_video">Video attached</string>
+    <string name="stream_compose_attachment_removed">Attachment removed</string>
     <string name="stream_compose_attachment_commands_picker">Commands</string>
     <string name="stream_compose_attachment_picker_photo">Photo</string>
     <string name="stream_compose_attachment_picker_select">select</string>

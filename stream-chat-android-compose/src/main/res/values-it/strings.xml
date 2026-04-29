@@ -77,6 +77,10 @@
   <string name="stream_compose_add_members_no_results">"Nessun utente trovato"</string>
   <string name="stream_compose_add_members_title">"Aggiungi membri"</string>
   <string name="stream_compose_also_sent_to_channel">"Inviato anche al canale"</string>
+  <string name="stream_compose_attachment_added_audio">"Registrazione audio allegata"</string>
+  <string name="stream_compose_attachment_added_file">"File allegato"</string>
+  <string name="stream_compose_attachment_added_photo">"Foto allegata"</string>
+  <string name="stream_compose_attachment_added_video">"Video allegato"</string>
   <string name="stream_compose_attachment_camera_picker">"Apri fotocamera"</string>
   <string name="stream_compose_attachment_camera_picker_content">"Scatta una foto e condividila"</string>
   <string name="stream_compose_attachment_commands_picker">"Comandi"</string>
@@ -88,6 +92,7 @@
   <string name="stream_compose_attachment_poll_picker_content">"Crea un sondaggio e lascia votare tutti"</string>
   <string name="stream_compose_attachment_poll_picker_cta">"Crea sondaggio"</string>
   <string name="stream_compose_attachment_polls_picker">"Sondaggi"</string>
+  <string name="stream_compose_attachment_removed">"Allegato rimosso"</string>
   <string name="stream_compose_audio_playback_pause">"Pausa"</string>
   <string name="stream_compose_audio_recording_delete">"Elimina registrazione"</string>
   <string name="stream_compose_audio_recording_hint_save">"Tieni premuto per registrare. Rilascia per salvare."</string>
