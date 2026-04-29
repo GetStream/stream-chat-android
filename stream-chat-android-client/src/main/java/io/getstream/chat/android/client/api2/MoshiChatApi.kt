@@ -20,8 +20,10 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
+import io.getstream.chat.android.client.api.models.PredefinedFilter
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
@@ -1274,7 +1276,7 @@ constructor(
             }
     }
 
-    override fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>> {
+    override fun queryChannels(query: QueryChannelsRequest): Call<QueryChannelsResult> {
         val request = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
             filter_conditions = if (query.predefinedFilter != null) null else query.filter.toMap(),
             sort = if (query.predefinedFilter != null) null else query.sort,
@@ -1294,7 +1296,19 @@ constructor(
             channelApi.queryChannels(
                 connectionId = connectionId,
                 request = request,
-            ).map { response -> response.channels.map(this::flattenChannel) }
+            ).map { response ->
+                with(domainMapping) {
+                    QueryChannelsResult(
+                        channels = response.channels.map(this@MoshiChatApi::flattenChannel),
+                        predefinedFilter = response.predefined_filter?.let {
+                            PredefinedFilter(
+                                name = it.name,
+                                sort = it.sort.toSortDomain(),
+                            )
+                        },
+                    )
+                }
+            }
         }
 
         val isConnectionRequired = query.watch || query.presence

@@ -2974,7 +2974,7 @@ internal constructor(
     @CheckResult
     @InternalStreamChatApi
     public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> {
-        return api.queryChannels(request)
+        return api.queryChannels(request).map { it.channels }
     }
 
     /**
@@ -3001,7 +3001,7 @@ internal constructor(
                 this.watch = false
                 this.state = state
             }
-            when (val result = api.queryChannels(request).await()) {
+            when (val result = api.queryChannels(request).map { it.channels }.await()) {
                 is Result.Success -> {
                     val channels = result.value
                     if (channels.isEmpty()) {

@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.api2.optimisation.hash.ChannelQueryKey
 import io.getstream.chat.android.client.api2.optimisation.hash.GetNewerRepliesHash
 import io.getstream.chat.android.client.api2.optimisation.hash.GetPinnedMessagesHash
@@ -133,7 +134,7 @@ internal class DistinctChatApi(
         }
     }
 
-    override fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>> {
+    override fun queryChannels(query: QueryChannelsRequest): Call<QueryChannelsResult> {
         val uniqueKey = query.hashCode()
         StreamLog.d(TAG) { "[queryChannels] query: $query, uniqueKey: $uniqueKey" }
         return getOrCreate(uniqueKey) {
