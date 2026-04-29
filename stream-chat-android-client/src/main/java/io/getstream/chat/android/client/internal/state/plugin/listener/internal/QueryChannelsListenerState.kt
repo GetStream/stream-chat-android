@@ -17,12 +17,12 @@
 package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.QueryChannelsPaginationRequest
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
-import io.getstream.chat.android.models.Channel
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -40,7 +40,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
  * @param logic [LogicRegistry] provided by the [StreamStatePluginFactory].
  */
 internal class QueryChannelsListenerState(
-    private val logicProvider: LogicRegistry,
+    private val logic: LogicRegistry,
     private val queryingChannelsFree: MutableStateFlow<Boolean>,
 ) : QueryChannelsListener {
 
@@ -50,14 +50,15 @@ internal class QueryChannelsListenerState(
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
         queryingChannelsFree.value = false
-        logicProvider.queryChannels(request).run {
+        logic.queryChannels(request).run {
             setCurrentRequest(request)
             queryOffline(request.toPagination())
         }
     }
 
-    override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
-        logicProvider.queryChannels(request).onQueryChannelsResult(result, request)
+    override suspend fun onQueryChannelsResult(result: Result<QueryChannelsResult>, request: QueryChannelsRequest) {
+        val channels = result.map(QueryChannelsResult::channels)
+        logic.queryChannels(request).onQueryChannelsResult(channels, request)
         queryingChannelsFree.value = true
     }
 

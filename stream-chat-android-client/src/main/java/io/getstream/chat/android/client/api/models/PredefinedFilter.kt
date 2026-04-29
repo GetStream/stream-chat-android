@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api.models
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.querysort.QuerySorter
 
@@ -25,7 +26,8 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  * @param name The name/identifier of the predefined filter.
  * @param sort The parsed sort specification, or null if no sort was provided.
  */
-internal data class PredefinedFilter(
+@InternalStreamChatApi
+public data class PredefinedFilter(
     val name: String,
     val sort: QuerySorter<Channel>?,
 )

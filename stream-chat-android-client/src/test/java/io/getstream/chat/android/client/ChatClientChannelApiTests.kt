@@ -1213,10 +1213,12 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val result = sut.queryChannels(request).await()
         // then
         verifySuccess(result, listOf(channel))
+        val expectedQueryChannelsResult: Result<QueryChannelsResult> =
+            Result.Success(QueryChannelsResult(listOf(channel), null))
         val inOrder = Mockito.inOrder(plugin)
         inOrder.verify(plugin).onQueryChannelsPrecondition(request)
         inOrder.verify(plugin).onQueryChannelsRequest(request)
-        inOrder.verify(plugin).onQueryChannelsResult(result, request)
+        inOrder.verify(plugin).onQueryChannelsResult(expectedQueryChannelsResult, request)
     }
 
     @Test
@@ -1233,10 +1235,12 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val result = sut.queryChannels(request).await()
         // then
         verifyNetworkError(result, errorCode)
+        val expectedQueryChannelsResult: Result<QueryChannelsResult> =
+            Result.Failure((result as Result.Failure).value)
         val inOrder = Mockito.inOrder(plugin)
         inOrder.verify(plugin).onQueryChannelsPrecondition(request)
         inOrder.verify(plugin).onQueryChannelsRequest(request)
-        inOrder.verify(plugin).onQueryChannelsResult(result, request)
+        inOrder.verify(plugin).onQueryChannelsResult(expectedQueryChannelsResult, request)
     }
 
     @Test

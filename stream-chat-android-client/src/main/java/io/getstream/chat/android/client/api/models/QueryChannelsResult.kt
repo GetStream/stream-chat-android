@@ -16,16 +16,18 @@
 
 package io.getstream.chat.android.client.api.models
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 
 /**
- * Internal result wrapper for [io.getstream.chat.android.client.api.ChatApi.queryChannels].
+ * Result wrapper for [io.getstream.chat.android.client.api.ChatApi.queryChannels].
  * Holds both the list of channels and the optional parsed predefined filter returned by the backend.
  *
  * @param channels The list of channels returned by the query.
  * @param predefinedFilter The parsed predefined filter metadata, or null if a regular filter was used.
  */
-internal data class QueryChannelsResult(
+@InternalStreamChatApi
+public data class QueryChannelsResult(
     val channels: List<Channel>,
     val predefinedFilter: PredefinedFilter?,
 )

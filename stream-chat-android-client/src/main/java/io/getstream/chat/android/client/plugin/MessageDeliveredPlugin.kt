@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.plugin
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.receipts.MessageReceiptManager
 import io.getstream.chat.android.models.Channel
@@ -34,9 +35,9 @@ internal class MessageDeliveredPlugin(
 ) : Plugin {
     private val messageReceiptManager: MessageReceiptManager by lazy { chatClient.messageReceiptManager }
 
-    override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
-        result.onSuccessSuspend { channels ->
-            messageReceiptManager.markChannelsAsDelivered(channels)
+    override suspend fun onQueryChannelsResult(result: Result<QueryChannelsResult>, request: QueryChannelsRequest) {
+        result.onSuccessSuspend {
+            messageReceiptManager.markChannelsAsDelivered(it.channels)
         }
     }
 

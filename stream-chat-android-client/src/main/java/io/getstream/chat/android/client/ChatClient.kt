@@ -3112,7 +3112,7 @@ internal constructor(
     @CheckResult
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
         logger.d { "[queryChannels] offset: ${request.offset}, limit: ${request.limit}" }
-        return queryChannelsInternal(request = request).doOnStart(userScope) {
+        return api.queryChannels(request).doOnStart(userScope) {
             plugins.forEach { listener ->
                 logger.v { "[queryChannels] #doOnStart; plugin: ${listener::class.qualifiedName}" }
                 listener.onQueryChannelsRequest(request)
@@ -3124,6 +3124,8 @@ internal constructor(
             }
         }.precondition(plugins) {
             onQueryChannelsPrecondition(request)
+        }.map {
+            it.channels
         }.share(userScope) {
             QueryChannelsIdentifier(request)
         }
