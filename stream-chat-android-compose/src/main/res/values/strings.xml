@@ -225,6 +225,8 @@
     <string name="stream_compose_attachment_poll_picker_content">Create a poll and let everyone vote</string>
     <string name="stream_compose_attachment_poll_picker_cta">Create Poll</string>
     <string name="stream_compose_attachment_commands_picker">Commands</string>
+    <string name="stream_compose_attachment_picker_photo">Photo</string>
+    <string name="stream_compose_attachment_picker_video">Video</string>
 
     <string name="stream_compose_recent_files">Recent Files</string>
     <string name="stream_compose_thread_title">Thread Reply</string>

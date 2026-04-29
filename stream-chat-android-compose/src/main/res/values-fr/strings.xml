@@ -26,6 +26,8 @@
   <string name="stream_compose_attachment_commands_picker">"Commandes"</string>
   <string name="stream_compose_attachment_file_picker">"Fichiers"</string>
   <string name="stream_compose_attachment_media_picker">"Médias"</string>
+  <string name="stream_compose_attachment_picker_photo">"Photo"</string>
+  <string name="stream_compose_attachment_picker_video">"Vidéo"</string>
   <string name="stream_compose_attachment_poll_picker_content">"Créer un sondage et laisser tout le monde voter"</string>
   <string name="stream_compose_attachment_poll_picker_cta">"Créer un sondage"</string>
   <string name="stream_compose_attachment_polls_picker">"Sondages"</string>

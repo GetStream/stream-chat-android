@@ -26,6 +26,8 @@
   <string name="stream_compose_attachment_commands_picker">"Perintah"</string>
   <string name="stream_compose_attachment_file_picker">"File"</string>
   <string name="stream_compose_attachment_media_picker">"Media"</string>
+  <string name="stream_compose_attachment_picker_photo">"Foto"</string>
+  <string name="stream_compose_attachment_picker_video">"Video"</string>
   <string name="stream_compose_attachment_poll_picker_content">"Buat polling dan biarkan semua orang memilih"</string>
   <string name="stream_compose_attachment_poll_picker_cta">"Buat Polling"</string>
   <string name="stream_compose_attachment_polls_picker">"Polling"</string>

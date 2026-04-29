@@ -26,6 +26,8 @@
   <string name="stream_compose_attachment_commands_picker">"명령어"</string>
   <string name="stream_compose_attachment_file_picker">"파일"</string>
   <string name="stream_compose_attachment_media_picker">"미디어"</string>
+  <string name="stream_compose_attachment_picker_photo">"사진"</string>
+  <string name="stream_compose_attachment_picker_video">"동영상"</string>
   <string name="stream_compose_attachment_poll_picker_content">"투표를 만들어 모두가 참여하게 하세요"</string>
   <string name="stream_compose_attachment_poll_picker_cta">"투표 만들기"</string>
   <string name="stream_compose_attachment_polls_picker">"투표"</string>
