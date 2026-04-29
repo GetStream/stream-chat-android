@@ -38,7 +38,7 @@ jobs:
           body-includes: DB Entities have been updated. Do we need to upgrade DB Version?
 
       - name: Create or update comment
-        uses: peter-evans/create-or-update-comment@v2
+        uses: peter-evans/create-or-update-comment@v5
         if: steps.touchedEntities.outcome == 'failure'
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
