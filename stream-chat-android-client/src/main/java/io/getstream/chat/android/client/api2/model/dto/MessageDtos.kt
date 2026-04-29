@@ -33,6 +33,7 @@ internal data class UpstreamMessageDto(
     val attachments: List<AttachmentDto>,
     val cid: String,
     val command: String?,
+    val args: String?,
     val html: String,
     val id: String,
     val type: String,
@@ -119,6 +120,8 @@ internal data class DownstreamDraftDto(
 internal data class DownstreamDraftMessageDto(
     val id: String,
     val text: String,
+    val command: String? = null,
+    val args: String? = null,
     val attachments: List<AttachmentDto>? = null,
     val mentioned_users: List<DownstreamUserDto>? = null,
     val silent: Boolean = false,

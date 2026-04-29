@@ -32,6 +32,8 @@ internal data class DraftMessageEntity(
     val silent: Boolean,
     val showInChannel: Boolean,
     val replyMessageId: String? = null,
+    val command: String? = null,
+    val args: String? = null,
     val extraData: Map<String, Any> = mapOf(),
 )
 

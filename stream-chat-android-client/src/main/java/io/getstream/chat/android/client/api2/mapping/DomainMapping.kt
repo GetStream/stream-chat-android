@@ -269,6 +269,8 @@ internal class DomainMapping(
             mentionedUsersIds = message.mentioned_users?.map { it.id } ?: emptyList(),
             silent = message.silent,
             text = message.text,
+            command = message.command,
+            args = message.args,
             extraData = message.extraData ?: emptyMap(),
         )
 

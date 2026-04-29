@@ -141,7 +141,8 @@ internal class DtoMappingTest {
         val expected = UpstreamMessageDto(
             attachments = message.attachments.map { with(mapping) { it.toDto() } },
             cid = message.cid,
-            command = null,
+            command = message.command,
+            args = message.args,
             html = "",
             id = message.id,
             type = "regular",
@@ -176,6 +177,7 @@ internal class DtoMappingTest {
             attachments = message.attachments.map { with(mapping) { it.toDto() } },
             cid = message.cid,
             command = message.command,
+            args = null,
             html = message.html,
             id = message.id,
             type = message.type,
