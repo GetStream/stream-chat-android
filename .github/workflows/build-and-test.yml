@@ -64,7 +64,7 @@ jobs:
       - name: build demo debug
         run: ./gradlew stream-chat-android-ui-components-sample:assembleDemoDebug
       - name: Upload artifact to Emerge
-        uses: EmergeTools/emerge-upload-action@v1.0.2
+        uses: EmergeTools/emerge-upload-action@v1.2.2
         with:
           artifact_path: ./stream-chat-android-ui-components-sample/build/outputs/apk/demo/debug/stream-chat-android-ui-components-sample-demo-debug.apk
           emerge_api_key: ${{ secrets.EMERGE_TOOLS_API_KEY }}
@@ -80,7 +80,7 @@ jobs:
       - name: build debug
         run: ./gradlew stream-chat-android-compose-sample:assembleDebug
       - name: Upload artifact to Emerge
-        uses: EmergeTools/emerge-upload-action@v1.0.2
+        uses: EmergeTools/emerge-upload-action@v1.2.2
         with:
           artifact_path: ./stream-chat-android-compose-sample/build/outputs/apk/demo/debug/stream-chat-android-compose-sample-demo-debug.apk
           emerge_api_key: ${{ secrets.EMERGE_TOOLS_API_KEY }}
