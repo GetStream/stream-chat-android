@@ -32,7 +32,7 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -camera-back none -camera-front none
           script: bundle exec fastlane build_and_run_e2e_test use_backend:true
       - name: Upload test results
-        uses: actions/upload-artifact@v4.4.3
+        uses: actions/upload-artifact@v7.0.1
         if: failure()
         with:
           name: logs_${{ env.ANDROID_API_LEVEL }}
