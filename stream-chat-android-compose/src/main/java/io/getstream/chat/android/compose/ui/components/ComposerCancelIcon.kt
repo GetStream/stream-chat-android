@@ -36,11 +36,13 @@ import io.getstream.chat.android.compose.ui.util.clickable
  * Represents a simple cancel icon that is used primarily for attachments.
  *
  * @param modifier Modifier for styling.
+ * @param contentDescription Text used by accessibility services to describe what this icon represents.
  * @param onClick Handler when the user clicks on the icon.
  */
 @Composable
 public fun ComposerCancelIcon(
     modifier: Modifier = Modifier,
+    contentDescription: String = stringResource(R.string.stream_compose_cancel),
     onClick: () -> Unit,
 ) {
     val colors = ChatTheme.colors
@@ -53,7 +55,7 @@ public fun ComposerCancelIcon(
             .size(20.dp)
             .clickable(bounded = false, onClick = onClick),
         painter = painterResource(R.drawable.stream_design_ic_xmark_small),
-        contentDescription = stringResource(R.string.stream_compose_cancel),
+        contentDescription = contentDescription,
         tint = colors.controlRemoveIcon,
     )
 }

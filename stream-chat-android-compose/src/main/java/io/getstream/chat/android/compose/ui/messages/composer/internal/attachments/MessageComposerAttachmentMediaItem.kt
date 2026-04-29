@@ -30,11 +30,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.ColorImage
 import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.client.extensions.duration
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.components.common.VideoBadge
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -86,6 +88,7 @@ internal fun MessageComposerAttachmentMediaItem(
                 .align(Alignment.TopEnd)
                 .testTag("Stream_MessageComposerAttachmentCancelIcon"),
             onClick = { onAttachmentRemoved(attachment) },
+            contentDescription = stringResource(R.string.stream_compose_remove_attachment),
         )
     }
 }

@@ -229,6 +229,7 @@
   <string name="stream_compose_reactions_you">"あなた"</string>
   <string name="stream_compose_recent_files">"最近のファイル"</string>
   <string name="stream_compose_remaining_media_attachments_count">"+%1$d"</string>
+  <string name="stream_compose_remove_attachment">"添付ファイルを削除"</string>
   <string name="stream_compose_replied_to_thread">"スレッドに返信しました"</string>
   <string name="stream_compose_reply">"返信"</string>
   <string name="stream_compose_resend_message">"再送信"</string>

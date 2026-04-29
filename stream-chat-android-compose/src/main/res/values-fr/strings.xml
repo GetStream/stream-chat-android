@@ -197,6 +197,7 @@
   <string name="stream_compose_reactions_you">"Vous"</string>
   <string name="stream_compose_recent_files">"Fichiers récents"</string>
   <string name="stream_compose_remaining_media_attachments_count">"+%1$d"</string>
+  <string name="stream_compose_remove_attachment">"Supprimer la pièce jointe"</string>
   <string name="stream_compose_replied_to_thread">"A répondu dans un fil"</string>
   <string name="stream_compose_reply">"Répondre"</string>
   <string name="stream_compose_resend_message">"Renvoyer"</string>
