@@ -83,6 +83,7 @@
   <string name="stream_compose_attachment_file_picker">"File"</string>
   <string name="stream_compose_attachment_media_picker">"Media"</string>
   <string name="stream_compose_attachment_picker_photo">"Foto"</string>
+  <string name="stream_compose_attachment_picker_select">"seleziona"</string>
   <string name="stream_compose_attachment_picker_video">"Video"</string>
   <string name="stream_compose_attachment_poll_picker_content">"Crea un sondaggio e lascia votare tutti"</string>
   <string name="stream_compose_attachment_poll_picker_cta">"Crea sondaggio"</string>
