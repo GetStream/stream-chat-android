@@ -6,25 +6,22 @@ on:
       - develop
   workflow_dispatch:
 
+concurrency:
+  group: snapshot-release
+  cancel-in-progress: false
+
 jobs:
-  publish:
-    name: Snapshot build and publish
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3.1.0
-      - uses: GetStream/android-ci-actions/actions/setup-java@main
-      - name: Publish to MavenCentral
-        run: ./gradlew publishToMavenCentral
-        env:
-          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.OSSRH_USERNAME }}
-          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.OSSRH_PASSWORD }}
-          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
-          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
-          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
-          ORG_GRADLE_PROJECT_RELEASE_SIGNING_ENABLED: true
-          SNAPSHOT: true
-      - name: Show snapshot version
-        run: ./scripts/show-last-snapshot-update.sh
-        env:
-          SNAPSHOT: true
+  release:
+    permissions:
+      contents: write
+    uses: GetStream/stream-build-conventions-android/.github/workflows/release.yml@v0.11.0
+    with:
+      bump: patch
+      snapshot: true
+    secrets:
+      github-token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
+      maven-central-username: ${{ secrets.OSSRH_USERNAME }}
+      maven-central-password: ${{ secrets.OSSRH_PASSWORD }}
+      signing-key: ${{ secrets.SIGNING_KEY }}
+      signing-key-id: ${{ secrets.SIGNING_KEY_ID }}
+      signing-key-password: ${{ secrets.SIGNING_PASSWORD }}

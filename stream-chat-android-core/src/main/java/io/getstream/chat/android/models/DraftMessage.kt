@@ -75,6 +75,18 @@ public data class DraftMessage(
      */
     val replyMessage: Message? = null,
 
+    /**
+     * The name of the slash command active on this draft (e.g. `"giphy"`), or `null` when the
+     * draft is plain text.
+     */
+    val command: String? = null,
+
+    /**
+     * The arguments typed for the active slash command (the text that follows the `/name `
+     * prefix), or `null` when [command] is `null`.
+     */
+    val args: String? = null,
+
 ) : CustomObject, ComparableFieldProvider {
 
     @Suppress("ComplexMethod")
@@ -116,6 +128,8 @@ public data class DraftMessage(
         append(", silent=").append(silent)
         append(", showInChannel=").append(showInChannel)
         if (replyMessage != null) append(", replyMessage=").append(replyMessage)
+        if (command != null) append(", command=\"").append(command).append("\"")
+        if (args != null) append(", args=\"").append(args).append("\"")
         if (extraData.isNotEmpty()) append(", extraData=").append(extraData)
         append(")")
     }.toString()
@@ -136,6 +150,8 @@ public data class DraftMessage(
         private var silent: Boolean = false
         private var showInChannel: Boolean = false
         private var replyMessage: Message? = null
+        private var command: String? = null
+        private var args: String? = null
 
         public constructor(message: DraftMessage) : this() {
             id = message.id
@@ -148,6 +164,8 @@ public data class DraftMessage(
             silent = message.silent
             showInChannel = message.showInChannel
             replyMessage = message.replyMessage
+            command = message.command
+            args = message.args
         }
 
         public fun withId(id: String): Builder = apply { this.id = id }
@@ -162,6 +180,8 @@ public data class DraftMessage(
         public fun withSilent(silent: Boolean): Builder = apply { this.silent = silent }
         public fun withShowInChannel(showInChannel: Boolean): Builder = apply { this.showInChannel = showInChannel }
         public fun withReplyMessage(replyMessage: Message?): Builder = apply { this.replyMessage = replyMessage }
+        public fun withCommand(command: String?): Builder = apply { this.command = command }
+        public fun withArgs(args: String?): Builder = apply { this.args = args }
 
         public fun build(): DraftMessage {
             return DraftMessage(
@@ -175,6 +195,8 @@ public data class DraftMessage(
                 silent = silent,
                 showInChannel = showInChannel,
                 replyMessage = replyMessage,
+                command = command,
+                args = args,
             )
         }
     }

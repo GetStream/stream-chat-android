@@ -166,7 +166,12 @@ internal class DomainMappingTest {
 
     @Test
     fun `DownstreamDraftDto is correctly mapped to DraftMessage`() {
-        val draftMessageResponse = randomDownstreamDraftDto()
+        val draftMessageResponse = randomDownstreamDraftDto(
+            message = randomDownstreamDraftMessageDto(
+                command = "giphy",
+                args = "cat",
+            ),
+        )
         val sut = Fixture()
             .get()
         val expectedMappedDraftMessage = with(sut) {
@@ -183,6 +188,8 @@ internal class DomainMappingTest {
                 extraData = draftMessageResponse.message.extraData ?: emptyMap(),
                 silent = draftMessageResponse.message.silent,
                 showInChannel = draftMessageResponse.message.show_in_channel,
+                command = draftMessageResponse.message.command,
+                args = draftMessageResponse.message.args,
             )
         }
 

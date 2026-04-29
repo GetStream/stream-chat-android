@@ -237,6 +237,8 @@ internal fun DraftMessage.toEntity(): DraftMessageEntity = DraftMessageEntity(
     showInChannel = showInChannel,
     replyMessageId = replyMessage?.id,
     text = text,
+    command = command,
+    args = args,
     extraData = extraData,
 )
 
@@ -251,6 +253,8 @@ internal suspend fun DraftMessageEntity.toModel(
     showInChannel = showInChannel,
     replyMessage = replyMessageId?.let { getMessage(it) },
     text = text,
+    command = command,
+    args = args,
     extraData = extraData,
 )
 
