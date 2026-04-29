@@ -1,0 +1,23 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+    labels:
+      - "pr:ci"
+
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: daily
+    labels:
+      - "pr:ci"
+    allow:
+      - dependency-name: "io.getstream.project"
+      - dependency-name: "io.getstream.android.library"
+      - dependency-name: "io.getstream.android.application"
+      - dependency-name: "io.getstream.android.test"
+      - dependency-name: "io.getstream.java.library"
+      - dependency-name: "io.getstream.java.platform"
+      - dependency-name: "io.getstream.publish"
