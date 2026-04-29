@@ -87,6 +87,7 @@
   <string name="stream_compose_attachment_file_picker">"फ़ाइलें"</string>
   <string name="stream_compose_attachment_media_picker">"मीडिया"</string>
   <string name="stream_compose_attachment_picker_photo">"फ़ोटो"</string>
+  <string name="stream_compose_attachment_picker_remove">"हटाएँ"</string>
   <string name="stream_compose_attachment_picker_select">"चुनें"</string>
   <string name="stream_compose_attachment_picker_video">"वीडियो"</string>
   <string name="stream_compose_attachment_poll_picker_content">"पोल बनाएँ और सबको वोट करने दें"</string>

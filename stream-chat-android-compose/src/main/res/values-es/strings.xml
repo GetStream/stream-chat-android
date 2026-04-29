@@ -31,6 +31,7 @@
   <string name="stream_compose_attachment_file_picker">"Archivos"</string>
   <string name="stream_compose_attachment_media_picker">"Multimedia"</string>
   <string name="stream_compose_attachment_picker_photo">"Foto"</string>
+  <string name="stream_compose_attachment_picker_remove">"quitar"</string>
   <string name="stream_compose_attachment_picker_select">"seleccionar"</string>
   <string name="stream_compose_attachment_picker_video">"Vídeo"</string>
   <string name="stream_compose_attachment_poll_picker_content">"Crear una encuesta y que todos voten"</string>

@@ -132,14 +132,20 @@ internal fun DefaultFilesPickerItem(
     onItemSelected: (AttachmentPickerItemState) -> Unit,
     allowMultipleSelection: Boolean = true,
 ) {
-    val selectActionLabel = stringResource(R.string.stream_compose_attachment_picker_select)
+    val onClickLabel = stringResource(
+        if (fileItem.isSelected) {
+            R.string.stream_compose_attachment_picker_remove
+        } else {
+            R.string.stream_compose_attachment_picker_select
+        },
+    )
     Row(
         Modifier
             .fillMaxWidth()
             .semantics(mergeDescendants = true) {
                 role = Role.Button
                 selected = fileItem.isSelected
-                onClick(label = selectActionLabel) {
+                onClick(label = onClickLabel) {
                     onItemSelected(fileItem)
                     true
                 }

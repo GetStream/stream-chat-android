@@ -41,6 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -114,6 +115,7 @@ public fun ImagesPicker(
  * @param imageItem The attachment item.
  * @param onImageSelected Handler when the user selects the image.
  */
+@Suppress("LongMethod")
 @Composable
 internal fun DefaultImagesPickerItem(
     imageItem: AttachmentPickerItemState,
@@ -139,6 +141,13 @@ internal fun DefaultImagesPickerItem(
             R.string.stream_compose_attachment_picker_photo
         },
     )
+    val onClickLabel = stringResource(
+        if (imageItem.isSelected) {
+            R.string.stream_compose_attachment_picker_remove
+        } else {
+            R.string.stream_compose_attachment_picker_select
+        },
+    )
 
     Box(
         modifier = Modifier
@@ -149,6 +158,10 @@ internal fun DefaultImagesPickerItem(
                 role = Role.Button
                 selected = imageItem.isSelected
                 testTag = "Stream_AttachmentPickerSampleImage"
+                onClick(label = onClickLabel) {
+                    onImageSelected(imageItem)
+                    true
+                }
             }
             .clickable { onImageSelected(imageItem) },
     ) {

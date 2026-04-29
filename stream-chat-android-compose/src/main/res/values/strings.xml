@@ -231,6 +231,7 @@
     <string name="stream_compose_attachment_removed">Attachment removed</string>
     <string name="stream_compose_attachment_commands_picker">Commands</string>
     <string name="stream_compose_attachment_picker_photo">Photo</string>
+    <string name="stream_compose_attachment_picker_remove">remove</string>
     <string name="stream_compose_attachment_picker_select">select</string>
     <string name="stream_compose_attachment_picker_video">Video</string>
 

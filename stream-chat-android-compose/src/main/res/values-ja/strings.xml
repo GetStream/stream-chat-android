@@ -31,6 +31,7 @@
   <string name="stream_compose_attachment_file_picker">"ファイル"</string>
   <string name="stream_compose_attachment_media_picker">"メディア"</string>
   <string name="stream_compose_attachment_picker_photo">"写真"</string>
+  <string name="stream_compose_attachment_picker_remove">"削除"</string>
   <string name="stream_compose_attachment_picker_select">"選択"</string>
   <string name="stream_compose_attachment_picker_video">"動画"</string>
   <string name="stream_compose_attachment_poll_picker_content">"投票を作成してみんなに投票してもらう"</string>

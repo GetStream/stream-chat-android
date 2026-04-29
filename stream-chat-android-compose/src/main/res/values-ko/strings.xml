@@ -31,6 +31,7 @@
   <string name="stream_compose_attachment_file_picker">"파일"</string>
   <string name="stream_compose_attachment_media_picker">"미디어"</string>
   <string name="stream_compose_attachment_picker_photo">"사진"</string>
+  <string name="stream_compose_attachment_picker_remove">"삭제"</string>
   <string name="stream_compose_attachment_picker_select">"선택"</string>
   <string name="stream_compose_attachment_picker_video">"동영상"</string>
   <string name="stream_compose_attachment_poll_picker_content">"투표를 만들어 모두가 참여하게 하세요"</string>
