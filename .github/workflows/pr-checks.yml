@@ -15,7 +15,7 @@ jobs:
     name: Detekt
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v6.0.2
       - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@v0.11.0
       - name: Detekt
         run: ./gradlew detekt
@@ -24,6 +24,6 @@ jobs:
     name: Rubocop
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v6.0.2
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - run: bundle exec fastlane rubocop
