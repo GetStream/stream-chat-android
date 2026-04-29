@@ -90,7 +90,7 @@ import io.getstream.chat.android.ui.common.utils.giphyInfo
 public fun GiphyAttachmentContent(
     state: AttachmentState,
     modifier: Modifier = Modifier,
-    giphyInfoType: GiphyInfoType = GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED,
+    giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
     giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
     contentScale: ContentScale = ContentScale.Crop,
     onItemClick: (GiphyAttachmentClickData) -> Unit = {},
