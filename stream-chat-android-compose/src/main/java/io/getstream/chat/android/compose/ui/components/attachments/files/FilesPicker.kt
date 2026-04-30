@@ -36,7 +36,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -145,12 +144,8 @@ internal fun DefaultFilesPickerItem(
             .semantics(mergeDescendants = true) {
                 role = Role.Button
                 selected = fileItem.isSelected
-                onClick(label = onClickLabel) {
-                    onItemSelected(fileItem)
-                    true
-                }
             }
-            .clickable { onItemSelected(fileItem) }
+            .clickable(onClickLabel = onClickLabel) { onItemSelected(fileItem) }
             .padding(StreamTokens.spacingSm),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),

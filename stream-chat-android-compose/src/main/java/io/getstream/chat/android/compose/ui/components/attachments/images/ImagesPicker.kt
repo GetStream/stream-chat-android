@@ -41,7 +41,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -158,12 +157,8 @@ internal fun DefaultImagesPickerItem(
                 role = Role.Button
                 selected = imageItem.isSelected
                 testTag = "Stream_AttachmentPickerSampleImage"
-                onClick(label = onClickLabel) {
-                    onImageSelected(imageItem)
-                    true
-                }
             }
-            .clickable { onImageSelected(imageItem) },
+            .clickable(onClickLabel = onClickLabel) { onImageSelected(imageItem) },
     ) {
         StreamAsyncImage(
             imageRequest = imageRequest,
