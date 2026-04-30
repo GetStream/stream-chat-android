@@ -86,6 +86,7 @@
   <string name="stream_compose_attachment_commands_picker">"Comandi"</string>
   <string name="stream_compose_attachment_file_picker">"File"</string>
   <string name="stream_compose_attachment_media_picker">"Media"</string>
+  <string name="stream_compose_attachment_picker">"Selettore allegati"</string>
   <string name="stream_compose_attachment_picker_photo">"Foto"</string>
   <string name="stream_compose_attachment_picker_remove">"rimuovi"</string>
   <string name="stream_compose_attachment_picker_select">"seleziona"</string>
@@ -171,8 +172,9 @@
   <string name="stream_compose_message_composer_send_button">"Invia"</string>
   <string name="stream_compose_message_composer_show_in_channel">"Invia anche nel canale"</string>
   <string name="stream_compose_message_composer_unsupported_attachment">"Allegato non supportato"</string>
-  <string name="stream_compose_message_composer_attachments_close">"Chiudi allegati"</string>
-  <string name="stream_compose_message_composer_attachments_open">"Apri allegati"</string>
+  <string name="stream_compose_message_composer_attachments">"Allegati"</string>
+  <string name="stream_compose_message_composer_attachments_collapsed">"compresso"</string>
+  <string name="stream_compose_message_composer_attachments_expanded">"espanso"</string>
   <string name="stream_compose_message_deleted">"Messaggio cancellato"</string>
   <string name="stream_compose_message_deleted_preview">"Messaggio cancellato"</string>
   <string name="stream_compose_message_list_auto_translated">"Tradotto"</string>

@@ -174,8 +174,9 @@
     <string name="stream_compose_message_composer_unsupported_attachment">Unsupported attachment</string>
     <string name="stream_compose_message_composer_send_button">Send</string>
     <string name="stream_compose_message_composer_save_button">Save</string>
-    <string name="stream_compose_message_composer_attachments_close">Close attachments</string>
-    <string name="stream_compose_message_composer_attachments_open">Open attachments</string>
+    <string name="stream_compose_message_composer_attachments">Attachments</string>
+    <string name="stream_compose_message_composer_attachments_collapsed">collapsed</string>
+    <string name="stream_compose_message_composer_attachments_expanded">expanded</string>
 
     <!-- Message Preview -->
     <string name="stream_compose_audio_recording_preview">Voice message</string>
@@ -230,6 +231,7 @@
     <string name="stream_compose_attachment_added_video">Video attached</string>
     <string name="stream_compose_attachment_removed">Attachment removed</string>
     <string name="stream_compose_attachment_commands_picker">Commands</string>
+    <string name="stream_compose_attachment_picker">Attachment picker</string>
     <string name="stream_compose_attachment_picker_photo">Photo</string>
     <string name="stream_compose_attachment_picker_remove">remove</string>
     <string name="stream_compose_attachment_picker_select">select</string>

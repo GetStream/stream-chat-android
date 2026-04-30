@@ -30,6 +30,7 @@
   <string name="stream_compose_attachment_commands_picker">"Perintah"</string>
   <string name="stream_compose_attachment_file_picker">"File"</string>
   <string name="stream_compose_attachment_media_picker">"Media"</string>
+  <string name="stream_compose_attachment_picker">"Pemilih lampiran"</string>
   <string name="stream_compose_attachment_picker_photo">"Foto"</string>
   <string name="stream_compose_attachment_picker_remove">"hapus"</string>
   <string name="stream_compose_attachment_picker_select">"pilih"</string>
@@ -115,8 +116,9 @@
   <string name="stream_compose_message_composer_send_button">"Kirim"</string>
   <string name="stream_compose_message_composer_show_in_channel">"Juga kirim di Saluran"</string>
   <string name="stream_compose_message_composer_unsupported_attachment">"Lampiran tidak didukung"</string>
-  <string name="stream_compose_message_composer_attachments_close">"Tutup lampiran"</string>
-  <string name="stream_compose_message_composer_attachments_open">"Buka lampiran"</string>
+  <string name="stream_compose_message_composer_attachments">"Lampiran"</string>
+  <string name="stream_compose_message_composer_attachments_collapsed">"diciutkan"</string>
+  <string name="stream_compose_message_composer_attachments_expanded">"diperluas"</string>
   <string name="stream_compose_message_deleted">"Pesan dihapus"</string>
   <string name="stream_compose_message_deleted_preview">"Pesan dihapus"</string>
   <string name="stream_compose_message_list_auto_translated">"Diterjemahkan"</string>

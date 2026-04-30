@@ -86,6 +86,7 @@
   <string name="stream_compose_attachment_commands_picker">"कमांड्स"</string>
   <string name="stream_compose_attachment_file_picker">"फ़ाइलें"</string>
   <string name="stream_compose_attachment_media_picker">"मीडिया"</string>
+  <string name="stream_compose_attachment_picker">"अटैचमेंट चयनकर्ता"</string>
   <string name="stream_compose_attachment_picker_photo">"फ़ोटो"</string>
   <string name="stream_compose_attachment_picker_remove">"हटाएँ"</string>
   <string name="stream_compose_attachment_picker_select">"चुनें"</string>
@@ -171,8 +172,9 @@
   <string name="stream_compose_message_composer_send_button">"भेजें"</string>
   <string name="stream_compose_message_composer_show_in_channel">"सीधे मैसेज के रूप में भी भेजें"</string>
   <string name="stream_compose_message_composer_unsupported_attachment">"असमर्थित अटैचमेंट"</string>
-  <string name="stream_compose_message_composer_attachments_close">"अटैचमेंट्स बंद करें"</string>
-  <string name="stream_compose_message_composer_attachments_open">"अटैचमेंट्स खोलें"</string>
+  <string name="stream_compose_message_composer_attachments">"अटैचमेंट्स"</string>
+  <string name="stream_compose_message_composer_attachments_collapsed">"संक्षिप्त"</string>
+  <string name="stream_compose_message_composer_attachments_expanded">"विस्तृत"</string>
   <string name="stream_compose_message_deleted">"मैसेज मिटाया गया"</string>
   <string name="stream_compose_message_deleted_preview">"मैसेज हटा दिया गया"</string>
   <string name="stream_compose_message_list_auto_translated">"अनुवादित"</string>

@@ -27,6 +27,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.AttachmentPickerContentParams
 import io.getstream.chat.android.compose.ui.theme.AttachmentSystemPickerParams
@@ -109,8 +112,11 @@ public fun AttachmentPicker(
         actions.onAttachmentsSelected(attachmentsPickerViewModel.getAttachmentsFromMetadata(metaData))
     }
 
+    val pickerTitle = stringResource(R.string.stream_compose_attachment_picker)
     Surface(
-        modifier = modifier.testTag("Stream_AttachmentsPicker"),
+        modifier = modifier
+            .testTag("Stream_AttachmentsPicker")
+            .semantics { paneTitle = pickerTitle },
         color = ChatTheme.colors.backgroundCoreElevation1,
     ) {
         if (ChatTheme.config.attachmentPicker.useSystemPicker) {

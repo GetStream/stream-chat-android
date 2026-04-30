@@ -36,9 +36,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
@@ -136,12 +139,19 @@ private fun AttachmentPickerToggleButton(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
+    val description = stringResource(pickerTypeInfo.contentDescription)
     FilledIconToggleButton(
         modifier = Modifier
             .size(48.dp)
-            .semantics(mergeDescendants = true) {
+            .clearAndSetSemantics {
                 role = Role.Tab
                 selected = isSelected
+                contentDescription = description
+                testTag = pickerTypeInfo.testTag
+                onClick {
+                    onClick()
+                    true
+                }
             },
         checked = isSelected,
         onCheckedChange = { onClick() },
@@ -153,9 +163,8 @@ private fun AttachmentPickerToggleButton(
         ),
     ) {
         Icon(
-            modifier = Modifier.testTag(pickerTypeInfo.testTag),
             painter = painterResource(pickerTypeInfo.icon),
-            contentDescription = stringResource(pickerTypeInfo.contentDescription),
+            contentDescription = null,
         )
     }
 }

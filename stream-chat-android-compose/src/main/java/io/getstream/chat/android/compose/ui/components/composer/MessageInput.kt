@@ -116,7 +116,7 @@ public fun MessageInput(
             .animateContentSize(alignment = Alignment.BottomStart),
         verticalArrangement = Arrangement.Bottom,
     ) {
-        MessageComposerLiveRegion(attachments = messageComposerState.attachments)
+        MessageComposerAttachmentAnnouncer(attachments = messageComposerState.attachments)
 
         MessageInputTop(
             messageComposerState = messageComposerState,

@@ -16,44 +16,41 @@
 
 package io.getstream.chat.android.compose.ui.components.composer
 
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.hideFromAccessibility
-import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.models.Attachment
 
+/**
+ * Announces composer attachment additions and removals to accessibility services. Must be mounted
+ * for the lifetime of the composer so size deltas are observed across attach and remove
+ * transitions.
+ *
+ * @param attachments Current composer attachments. Size deltas drive the announcement.
+ */
 @Composable
-internal fun MessageComposerLiveRegion(attachments: List<Attachment>) {
+internal fun MessageComposerAttachmentAnnouncer(attachments: List<Attachment>) {
+    val view = LocalView.current
     val photoAttached = stringResource(R.string.stream_compose_attachment_added_photo)
     val videoAttached = stringResource(R.string.stream_compose_attachment_added_video)
     val fileAttached = stringResource(R.string.stream_compose_attachment_added_file)
     val audioAttached = stringResource(R.string.stream_compose_attachment_added_audio)
     val attachmentRemoved = stringResource(R.string.stream_compose_attachment_removed)
 
-    var announcement by remember { mutableStateOf("") }
     var lastSize by remember { mutableIntStateOf(attachments.size) }
 
     LaunchedEffect(attachments.size) {
         val currentSize = attachments.size
-        announcement = when {
+        val message = when {
             currentSize > lastSize -> announceAddedAttachment(
                 added = attachments.lastOrNull(),
                 photoAttached = photoAttached,
@@ -62,22 +59,13 @@ internal fun MessageComposerLiveRegion(attachments: List<Attachment>) {
                 fileAttached = fileAttached,
             )
             currentSize < lastSize -> attachmentRemoved
-            else -> announcement
+            else -> null
+        }
+        if (message != null) {
+            view.announceForAccessibility(message)
         }
         lastSize = currentSize
     }
-
-    Text(
-        text = announcement,
-        color = Color.Transparent,
-        modifier = Modifier
-            .size(0.dp)
-            .alpha(0f)
-            .semantics {
-                liveRegion = LiveRegionMode.Polite
-                hideFromAccessibility()
-            },
-    )
 }
 
 private fun announceAddedAttachment(

@@ -30,6 +30,7 @@
   <string name="stream_compose_attachment_commands_picker">"Comandos"</string>
   <string name="stream_compose_attachment_file_picker">"Archivos"</string>
   <string name="stream_compose_attachment_media_picker">"Multimedia"</string>
+  <string name="stream_compose_attachment_picker">"Selector de archivos adjuntos"</string>
   <string name="stream_compose_attachment_picker_photo">"Foto"</string>
   <string name="stream_compose_attachment_picker_remove">"quitar"</string>
   <string name="stream_compose_attachment_picker_select">"seleccionar"</string>
@@ -115,8 +116,9 @@
   <string name="stream_compose_message_composer_send_button">"Enviar"</string>
   <string name="stream_compose_message_composer_show_in_channel">"También enviar en el canal"</string>
   <string name="stream_compose_message_composer_unsupported_attachment">"Archivo adjunto no compatible"</string>
-  <string name="stream_compose_message_composer_attachments_close">"Cerrar archivos adjuntos"</string>
-  <string name="stream_compose_message_composer_attachments_open">"Abrir archivos adjuntos"</string>
+  <string name="stream_compose_message_composer_attachments">"Archivos adjuntos"</string>
+  <string name="stream_compose_message_composer_attachments_collapsed">"contraído"</string>
+  <string name="stream_compose_message_composer_attachments_expanded">"expandido"</string>
   <string name="stream_compose_message_deleted">"Mensaje eliminado"</string>
   <string name="stream_compose_message_deleted_preview">"Mensaje eliminado"</string>
   <string name="stream_compose_message_list_auto_translated">"Traducido"</string>

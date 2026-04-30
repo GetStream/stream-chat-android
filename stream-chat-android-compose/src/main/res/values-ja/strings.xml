@@ -30,6 +30,7 @@
   <string name="stream_compose_attachment_commands_picker">"コマンド"</string>
   <string name="stream_compose_attachment_file_picker">"ファイル"</string>
   <string name="stream_compose_attachment_media_picker">"メディア"</string>
+  <string name="stream_compose_attachment_picker">"添付ファイル選択"</string>
   <string name="stream_compose_attachment_picker_photo">"写真"</string>
   <string name="stream_compose_attachment_picker_remove">"削除"</string>
   <string name="stream_compose_attachment_picker_select">"選択"</string>
@@ -123,8 +124,9 @@
   <string name="stream_compose_message_composer_send_button">"送信"</string>
   <string name="stream_compose_message_composer_show_in_channel">"チャンネルにも送信"</string>
   <string name="stream_compose_message_composer_unsupported_attachment">"サポートされていない添付ファイル"</string>
-  <string name="stream_compose_message_composer_attachments_close">"添付ファイルを閉じる"</string>
-  <string name="stream_compose_message_composer_attachments_open">"添付ファイルを開く"</string>
+  <string name="stream_compose_message_composer_attachments">"添付ファイル"</string>
+  <string name="stream_compose_message_composer_attachments_collapsed">"折りたたみ"</string>
+  <string name="stream_compose_message_composer_attachments_expanded">"展開"</string>
   <string name="stream_compose_message_deleted">"メッセージは削除されました"</string>
   <string name="stream_compose_message_deleted_preview">"メッセージは削除されました"</string>
   <string name="stream_compose_message_list_auto_translated">"翻訳済み"</string>
