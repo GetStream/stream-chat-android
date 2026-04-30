@@ -39,6 +39,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -176,7 +177,7 @@ public fun MessageContainer(
 
     val clickModifier = Modifier.combinedClickable(
         interactionSource = remember { MutableInteractionSource() },
-        indication = null,
+        indication = ripple(),
         onClick = { if (message.isThreadStart() && !messageItem.isInThread) onThreadClick(message) },
         onLongClick = {
             if (!message.isDeleted() && !message.isUploading()) {
@@ -224,13 +225,13 @@ public fun MessageContainer(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .background(color = color)
+                .then(clickModifier)
                 .semantics { contentDescription = description },
             contentAlignment = messageAlignment.itemAlignment,
         ) {
             Row(
                 Modifier
                     .wrapContentWidth()
-                    .then(clickModifier)
                     .testTag("Stream_MessageCell"),
             ) {
                 with(ChatTheme.componentFactory) {
