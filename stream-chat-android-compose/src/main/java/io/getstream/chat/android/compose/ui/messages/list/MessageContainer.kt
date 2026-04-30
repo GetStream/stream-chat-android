@@ -175,12 +175,15 @@ public fun MessageContainer(
     val focusState = messageItem.focusState
     val haptic = LocalHapticFeedback.current
 
+    val canOpenThread = message.isThreadStart() && !messageItem.isInThread
+    val canOpenActions = !message.isDeleted() && !message.isUploading()
+
     val clickModifier = Modifier.combinedClickable(
         interactionSource = remember { MutableInteractionSource() },
         indication = ripple(),
-        onClick = { if (message.isThreadStart() && !messageItem.isInThread) onThreadClick(message) },
+        onClick = { if (canOpenThread) onThreadClick(message) },
         onLongClick = {
-            if (!message.isDeleted() && !message.isUploading()) {
+            if (canOpenActions) {
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 onLongItemClick(message)
             }
