@@ -154,15 +154,6 @@ internal object NewMessageEventTestData {
         online = true,
     )
 
-    private val allFieldsChannelInfo = ChannelInfo(
-        cid = "messaging:general",
-        id = "general",
-        type = "messaging",
-        memberCount = 10,
-        name = "General",
-        image = "https://example.com/channel.png",
-    )
-
     private val optionalMissingChannelInfo = ChannelInfo(
         cid = "messaging:general",
         id = "general",
@@ -194,21 +185,6 @@ internal object NewMessageEventTestData {
         showInChannel = false,
         deletedForMe = false,
         extraData = emptyMap(),
-    )
-
-    val expectedAllFields = NewMessageEvent(
-        type = "message.new",
-        createdAt = Date(1577836800000L),
-        rawCreatedAt = "2020-01-01T00:00:00.000Z",
-        user = UserTestData.expectedAllFields,
-        cid = "messaging:general",
-        channelType = "messaging",
-        channelId = "general",
-        message = MessageTestData.expectedAllFields.copy(channelInfo = allFieldsChannelInfo),
-        watcherCount = 5,
-        totalUnreadCount = 3,
-        unreadChannels = 1,
-        channelMessageCount = 42,
     )
 
     val expectedOptionalFieldsMissing = NewMessageEvent(

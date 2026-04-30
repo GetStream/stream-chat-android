@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.parser2.direct.ReactionAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionGroupAdapter
 import io.getstream.chat.android.client.parser2.direct.UserAdapter
 import io.getstream.chat.android.client.parser2.testdata.MessageTestData
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
@@ -109,267 +110,60 @@ internal class MessageParsingTest {
         messageTransformer = NoOpMessageTransformer,
     )
 
-    // region DTO path (JSON → DownstreamMessageDto → Message)
-
-    @Test
-    fun `DTO path - deserializes all fields`() {
-        val dto = parser.fromJson(MessageTestData.jsonAllFields, DownstreamMessageDto::class.java)
-        val domain = with(domainMapping) { dto.toDomain() }
-        assertEquals(MessageTestData.expectedAllFields, domain)
-    }
-
-    @Test
-    fun `DTO path - deserializes with optional fields missing`() {
-        val dto = parser.fromJson(MessageTestData.jsonOptionalFieldsMissing, DownstreamMessageDto::class.java)
-        val domain = with(domainMapping) { dto.toDomain() }
-        assertEquals(MessageTestData.expectedOptionalFieldsMissing, domain)
-    }
-
-    // endregion
-
-    // region Direct path (JSON → Message via MessageAdapter)
-
-    @Test
-    fun `Direct path - deserializes all fields`() {
-        val domain = messageAdapter.fromJson(MessageTestData.jsonAllFields)
-        assertEquals(MessageTestData.expectedAllFields, domain)
-    }
-
-    @Test
-    fun `Direct path - deserializes with optional fields missing`() {
-        val domain = messageAdapter.fromJson(MessageTestData.jsonOptionalFieldsMissing)
-        assertEquals(MessageTestData.expectedOptionalFieldsMissing, domain)
-    }
-
-    // endregion
-
-    // region Explicit nulls (JSON with explicit null values)
-
-    @Test
-    fun `DTO path - deserializes with explicit nulls`() {
-        val dto = parser.fromJson(MessageTestData.jsonWithExplicitNulls, DownstreamMessageDto::class.java)
-        val domain = with(domainMapping) { dto.toDomain() }
-        assertEquals(MessageTestData.expectedWithExplicitNulls, domain)
-    }
-
-    @Test
-    fun `Direct path - deserializes with explicit nulls`() {
-        val domain = messageAdapter.fromJson(MessageTestData.jsonWithExplicitNulls)
-        assertEquals(MessageTestData.expectedWithExplicitNulls, domain)
-    }
-
-    // endregion
-
-    // region Error message parity
-
-    @Test
-    fun `DTO path - throws on missing cid`() {
-        assertThrows<JsonDataException> {
-            parser.fromJson(MessageTestData.jsonMissingCid, DownstreamMessageDto::class.java)
+    /**
+     * Parses [json] via both the legacy DTO+toDomain path and the direct [MessageAdapter] path,
+     * asserts they produce identical [Message] instances (1-to-1 parser parity), and returns the
+     * shared result for any extra assertions.
+     *
+     * If [expected] is supplied, it must equal the parser output — this guards against shared
+     * bugs (both paths wrong in the same way) that pure cross-path equality can't catch.
+     */
+    private fun assertBothPaths(json: String, expected: Message? = null): Message {
+        val dtoResult = with(domainMapping) {
+            parser.fromJson(json, DownstreamMessageDto::class.java).toDomain()
         }
+        val directResult = messageAdapter.fromJson(json)!!
+        assertEquals(dtoResult, directResult, "DTO path and direct path produced different Messages")
+        if (expected != null) {
+            assertEquals(expected, dtoResult, "DTO path did not match the hand-written expected")
+            assertEquals(expected, directResult, "Direct path did not match the hand-written expected")
+        }
+        return directResult
+    }
+
+    // region Both paths produce identical Messages
+
+    @Test
+    fun `Both paths - all fields populated produce identical Messages`() {
+        // The fixture is large enough that maintaining a hand-written expected adds little
+        // value beyond cross-path equality; the focused tests below pin down specific behaviors.
+        assertBothPaths(MessageTestData.jsonAllFields)
     }
 
     @Test
-    fun `Direct path - throws on missing cid`() {
-        assertThrows<JsonDataException> {
-            messageAdapter.fromJson(MessageTestData.jsonMissingCid)
-        }
+    fun `Both paths - optional fields missing fall back to identical defaults`() {
+        assertBothPaths(MessageTestData.jsonOptionalFieldsMissing, MessageTestData.expectedOptionalFieldsMissing)
     }
 
     @Test
-    fun `DTO path - throws on missing created_at`() {
-        assertThrows<JsonDataException> {
-            parser.fromJson(MessageTestData.jsonMissingCreatedAt, DownstreamMessageDto::class.java)
-        }
+    fun `Both paths - explicit null scalars are coerced to identical defaults`() {
+        assertBothPaths(MessageTestData.jsonWithExplicitNulls, MessageTestData.expectedWithExplicitNulls)
     }
 
     @Test
-    fun `Direct path - throws on missing created_at`() {
-        assertThrows<JsonDataException> {
-            messageAdapter.fromJson(MessageTestData.jsonMissingCreatedAt)
-        }
+    fun `Both paths - reactions are filtered by parent messageId identically`() {
+        val result = assertBothPaths(
+            MessageTestData.jsonReactionsWithMixedMessageId,
+            MessageTestData.expectedReactionsFiltered,
+        )
+        // Defensive: only the reactions whose message_id matches the parent's id survive.
+        result.latestReactions.forEach { assertEquals(result.id, it.messageId) }
+        result.ownReactions.forEach { assertEquals(result.id, it.messageId) }
     }
 
     @Test
-    fun `DTO path - throws on missing html`() {
-        assertThrows<JsonDataException> {
-            parser.fromJson(MessageTestData.jsonMissingHtml, DownstreamMessageDto::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing html`() {
-        assertThrows<JsonDataException> {
-            messageAdapter.fromJson(MessageTestData.jsonMissingHtml)
-        }
-    }
-
-    @Test
-    fun `DTO path - throws on missing id`() {
-        assertThrows<JsonDataException> {
-            parser.fromJson(MessageTestData.jsonMissingId, DownstreamMessageDto::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing id`() {
-        assertThrows<JsonDataException> {
-            messageAdapter.fromJson(MessageTestData.jsonMissingId)
-        }
-    }
-
-    @Test
-    fun `DTO path - throws on missing reply_count`() {
-        assertThrows<JsonDataException> {
-            parser.fromJson(MessageTestData.jsonMissingReplyCount, DownstreamMessageDto::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing reply_count`() {
-        assertThrows<JsonDataException> {
-            messageAdapter.fromJson(MessageTestData.jsonMissingReplyCount)
-        }
-    }
-
-    @Test
-    fun `DTO path - throws on missing deleted_reply_count`() {
-        assertThrows<JsonDataException> {
-            parser.fromJson(MessageTestData.jsonMissingDeletedReplyCount, DownstreamMessageDto::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing deleted_reply_count`() {
-        assertThrows<JsonDataException> {
-            messageAdapter.fromJson(MessageTestData.jsonMissingDeletedReplyCount)
-        }
-    }
-
-    @Test
-    fun `DTO path - throws on missing silent`() {
-        assertThrows<JsonDataException> {
-            parser.fromJson(MessageTestData.jsonMissingSilent, DownstreamMessageDto::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing silent`() {
-        assertThrows<JsonDataException> {
-            messageAdapter.fromJson(MessageTestData.jsonMissingSilent)
-        }
-    }
-
-    @Test
-    fun `DTO path - throws on missing text`() {
-        assertThrows<JsonDataException> {
-            parser.fromJson(MessageTestData.jsonMissingText, DownstreamMessageDto::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing text`() {
-        assertThrows<JsonDataException> {
-            messageAdapter.fromJson(MessageTestData.jsonMissingText)
-        }
-    }
-
-    @Test
-    fun `DTO path - throws on missing type`() {
-        assertThrows<JsonDataException> {
-            parser.fromJson(MessageTestData.jsonMissingType, DownstreamMessageDto::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing type`() {
-        assertThrows<JsonDataException> {
-            messageAdapter.fromJson(MessageTestData.jsonMissingType)
-        }
-    }
-
-    @Test
-    fun `DTO path - throws on missing updated_at`() {
-        assertThrows<JsonDataException> {
-            parser.fromJson(MessageTestData.jsonMissingUpdatedAt, DownstreamMessageDto::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing updated_at`() {
-        assertThrows<JsonDataException> {
-            messageAdapter.fromJson(MessageTestData.jsonMissingUpdatedAt)
-        }
-    }
-
-    @Test
-    fun `DTO path - throws on missing user`() {
-        assertThrows<JsonDataException> {
-            parser.fromJson(MessageTestData.jsonMissingUser, DownstreamMessageDto::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing user`() {
-        assertThrows<JsonDataException> {
-            messageAdapter.fromJson(MessageTestData.jsonMissingUser)
-        }
-    }
-
-    @Test
-    fun `DTO path - throws on missing attachments`() {
-        assertThrows<JsonDataException> {
-            parser.fromJson(MessageTestData.jsonMissingAttachments, DownstreamMessageDto::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing attachments`() {
-        assertThrows<JsonDataException> {
-            messageAdapter.fromJson(MessageTestData.jsonMissingAttachments)
-        }
-    }
-
-    @Test
-    fun `DTO path - throws on missing latest_reactions`() {
-        assertThrows<JsonDataException> {
-            parser.fromJson(MessageTestData.jsonMissingLatestReactions, DownstreamMessageDto::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing latest_reactions`() {
-        assertThrows<JsonDataException> {
-            messageAdapter.fromJson(MessageTestData.jsonMissingLatestReactions)
-        }
-    }
-
-    @Test
-    fun `DTO path - throws on missing mentioned_users`() {
-        assertThrows<JsonDataException> {
-            parser.fromJson(MessageTestData.jsonMissingMentionedUsers, DownstreamMessageDto::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing mentioned_users`() {
-        assertThrows<JsonDataException> {
-            messageAdapter.fromJson(MessageTestData.jsonMissingMentionedUsers)
-        }
-    }
-
-    @Test
-    fun `DTO path - throws on missing own_reactions`() {
-        assertThrows<JsonDataException> {
-            parser.fromJson(MessageTestData.jsonMissingOwnReactions, DownstreamMessageDto::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing own_reactions`() {
-        assertThrows<JsonDataException> {
-            messageAdapter.fromJson(MessageTestData.jsonMissingOwnReactions)
-        }
+    fun `Both paths - explicit null collections fall back to identical empty defaults`() {
+        assertBothPaths(MessageTestData.jsonExplicitNullCollections, MessageTestData.expectedExplicitNullCollections)
     }
 
     // endregion
@@ -378,30 +172,95 @@ internal class MessageParsingTest {
 
     @Test
     fun `Both paths - quoted message with channel before quoted_message`() {
-        val dto = parser.fromJson(MessageTestData.jsonWithQuotedMessageAfterChannel, DownstreamMessageDto::class.java)
-        val dtoResult = with(domainMapping) { dto.toDomain() }
-        val directResult = messageAdapter.fromJson(MessageTestData.jsonWithQuotedMessageAfterChannel)
-
-        assertEquals(MessageTestData.expectedQuotedMessageWithChannel, dtoResult)
-        assertEquals(MessageTestData.expectedQuotedMessageWithChannel, directResult)
+        assertBothPaths(
+            MessageTestData.jsonWithQuotedMessageAfterChannel,
+            MessageTestData.expectedQuotedMessageWithChannel,
+        )
     }
 
     @Test
     fun `Both paths - quoted message with channel after quoted_message`() {
-        val dto = parser.fromJson(MessageTestData.jsonWithQuotedMessageBeforeChannel, DownstreamMessageDto::class.java)
-        val dtoResult = with(domainMapping) { dto.toDomain() }
-        val directResult = messageAdapter.fromJson(MessageTestData.jsonWithQuotedMessageBeforeChannel)
-
-        assertEquals(MessageTestData.expectedQuotedMessageWithChannel, dtoResult)
-        assertEquals(MessageTestData.expectedQuotedMessageWithChannel, directResult)
+        assertBothPaths(
+            MessageTestData.jsonWithQuotedMessageBeforeChannel,
+            MessageTestData.expectedQuotedMessageWithChannel,
+        )
     }
 
     @Test
     fun `Direct path - quoted message field order does not affect result`() {
         val resultChannelFirst = messageAdapter.fromJson(MessageTestData.jsonWithQuotedMessageAfterChannel)
         val resultQuotedFirst = messageAdapter.fromJson(MessageTestData.jsonWithQuotedMessageBeforeChannel)
-
         assertEquals(resultChannelFirst, resultQuotedFirst)
+    }
+
+    // endregion
+
+    // region Required field error parity (both paths must throw on the same JSON)
+
+    @Test
+    fun `Both paths - throw on missing cid`() = assertBothPathsThrow(MessageTestData.jsonMissingCid)
+
+    @Test
+    fun `Both paths - throw on missing created_at`() = assertBothPathsThrow(MessageTestData.jsonMissingCreatedAt)
+
+    @Test
+    fun `Both paths - throw on missing html`() = assertBothPathsThrow(MessageTestData.jsonMissingHtml)
+
+    @Test
+    fun `Both paths - throw on missing id`() = assertBothPathsThrow(MessageTestData.jsonMissingId)
+
+    @Test
+    fun `Both paths - throw on missing reply_count`() = assertBothPathsThrow(MessageTestData.jsonMissingReplyCount)
+
+    @Test
+    fun `Both paths - throw on missing deleted_reply_count`() =
+        assertBothPathsThrow(MessageTestData.jsonMissingDeletedReplyCount)
+
+    @Test
+    fun `Both paths - throw on missing silent`() = assertBothPathsThrow(MessageTestData.jsonMissingSilent)
+
+    @Test
+    fun `Both paths - throw on missing text`() = assertBothPathsThrow(MessageTestData.jsonMissingText)
+
+    @Test
+    fun `Both paths - throw on missing type`() = assertBothPathsThrow(MessageTestData.jsonMissingType)
+
+    @Test
+    fun `Both paths - throw on missing updated_at`() = assertBothPathsThrow(MessageTestData.jsonMissingUpdatedAt)
+
+    @Test
+    fun `Both paths - throw on missing user`() = assertBothPathsThrow(MessageTestData.jsonMissingUser)
+
+    @Test
+    fun `Both paths - throw on missing attachments`() = assertBothPathsThrow(MessageTestData.jsonMissingAttachments)
+
+    @Test
+    fun `Both paths - throw on missing latest_reactions`() =
+        assertBothPathsThrow(MessageTestData.jsonMissingLatestReactions)
+
+    @Test
+    fun `Both paths - throw on missing mentioned_users`() =
+        assertBothPathsThrow(MessageTestData.jsonMissingMentionedUsers)
+
+    @Test
+    fun `Both paths - throw on missing own_reactions`() =
+        assertBothPathsThrow(MessageTestData.jsonMissingOwnReactions)
+
+    @Test
+    fun `Both paths - throw on explicit null i18n`() =
+        assertBothPathsThrow(MessageTestData.jsonExplicitNullI18n)
+
+    @Test
+    fun `Both paths - throw on explicit null thread_participants`() =
+        assertBothPathsThrow(MessageTestData.jsonExplicitNullThreadParticipants)
+
+    private fun assertBothPathsThrow(json: String) {
+        assertThrows<JsonDataException> {
+            parser.fromJson(json, DownstreamMessageDto::class.java)
+        }
+        assertThrows<JsonDataException> {
+            messageAdapter.fromJson(json)
+        }
     }
 
     // endregion

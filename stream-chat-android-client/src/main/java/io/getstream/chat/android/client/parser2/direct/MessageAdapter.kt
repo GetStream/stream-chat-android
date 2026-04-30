@@ -111,7 +111,12 @@ internal class MessageAdapter(
                 "created_at" -> createdAt = dateAdapter.fromJson(reader)
                 "deleted_at" -> deletedAt = dateAdapter.fromJson(reader)
                 "html" -> html = reader.nextString()
-                "i18n" -> i18n = JsonParsingUtils.parseStringMap(reader)
+                // i18n is non-nullable in DownstreamMessageDto (with default), so the DTO path
+                // throws on explicit JSON null even though missing is fine. Match that here.
+                "i18n" -> {
+                    JsonParsingUtils.rejectExplicitNull(reader, "i18n")
+                    i18n = JsonParsingUtils.parseStringMap(reader)
+                }
                 "id" -> id = reader.nextString()
                 "latest_reactions" -> latestReactions = JsonParsingUtils.parseList(reader, reactionAdapter)
                 "mentioned_users" -> mentionedUsers = JsonParsingUtils.parseList(reader, userAdapter)
@@ -138,7 +143,12 @@ internal class MessageAdapter(
                 "show_in_channel" -> showInChannel = reader.nextBoolean()
                 "silent" -> silent = reader.nextBoolean()
                 "text" -> text = reader.nextString()
-                "thread_participants" -> threadParticipants = JsonParsingUtils.parseList(reader, userAdapter)
+                // thread_participants is non-nullable in DownstreamMessageDto (with default),
+                // so the DTO path throws on explicit JSON null. Match that here.
+                "thread_participants" -> {
+                    JsonParsingUtils.rejectExplicitNull(reader, "thread_participants")
+                    threadParticipants = JsonParsingUtils.parseList(reader, userAdapter)
+                }
                 "type" -> type = reader.nextString()
                 "updated_at" -> updatedAt = dateAdapter.fromJson(reader)
                 "user" -> user = userAdapter.fromJson(reader)

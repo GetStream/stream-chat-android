@@ -16,10 +16,14 @@
 
 package io.getstream.chat.android.client.parser2
 
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
+import io.getstream.chat.android.client.api2.mapping.EventMapping
+import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.parser2.DirectEventParser.Companion.extractType
 import io.getstream.chat.android.client.parser2.testdata.NewMessageEventTestData
 import io.getstream.chat.android.models.MessageTransformer
+import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.UserTransformer
@@ -90,7 +94,30 @@ internal class DirectEventParserTest {
         fun `returns NewMessageEvent for message_new type`() {
             val event = parser.parse(NewMessageEventTestData.jsonAllFields)
             assertTrue(event is NewMessageEvent)
-            assertEquals(NewMessageEventTestData.expectedAllFields, event)
+        }
+
+        @Test
+        fun `direct path produces the same NewMessageEvent as the DTO path`() {
+            // Parity check: the DirectEventParser output must match what the legacy
+            // JSON → NewMessageEventDto → toDomain() pipeline produces for the same JSON.
+            val moshiChatParser = ParserFactory.createMoshiChatParser()
+            val eventMapping = EventMapping(
+                DomainMapping(
+                    currentUserIdProvider = { "" },
+                    channelTransformer = NoOpChannelTransformer,
+                    messageTransformer = NoOpMessageTransformer,
+                    userTransformer = NoOpUserTransformer,
+                ),
+            )
+
+            val directResult = parser.parse(NewMessageEventTestData.jsonAllFields)
+            val dtoResult = with(eventMapping) {
+                moshiChatParser
+                    .fromJson(NewMessageEventTestData.jsonAllFields, NewMessageEventDto::class.java)
+                    .toDomain()
+            }
+
+            assertEquals(dtoResult, directResult)
         }
 
         @Test

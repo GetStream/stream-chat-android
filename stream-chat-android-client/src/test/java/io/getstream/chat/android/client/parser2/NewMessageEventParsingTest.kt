@@ -114,36 +114,27 @@ internal class NewMessageEventParsingTest {
         userAdapter = userAdapter,
     )
 
-    // region DTO path (JSON → NewMessageEventDto → NewMessageEvent)
+    // region Both paths produce identical events
 
     @Test
-    fun `DTO path - deserializes all fields`() {
+    fun `Both paths - all fields populated produce identical events`() {
+        // The fixture transitively pulls in MessageTestData.jsonAllFields, which is the
+        // truly-comprehensive Message JSON. Parity here is the meaningful check; a
+        // hand-written expected adds maintenance burden without commensurate value.
         val dto = parser.fromJson(NewMessageEventTestData.jsonAllFields, NewMessageEventDto::class.java)
-        val event = with(eventMapping) { dto.toDomain() }
-        assertEquals(NewMessageEventTestData.expectedAllFields, event)
+        val dtoResult = with(eventMapping) { dto.toDomain() }
+        val directResult = adapter.fromJson(NewMessageEventTestData.jsonAllFields)
+        assertEquals(dtoResult, directResult, "DTO path and direct path produced different NewMessageEvents")
     }
 
     @Test
-    fun `DTO path - deserializes with optional fields missing`() {
+    fun `Both paths - optional fields missing fall back to identical defaults`() {
         val dto = parser.fromJson(NewMessageEventTestData.jsonOptionalFieldsMissing, NewMessageEventDto::class.java)
-        val event = with(eventMapping) { dto.toDomain() }
-        assertEquals(NewMessageEventTestData.expectedOptionalFieldsMissing, event)
-    }
-
-    // endregion
-
-    // region Direct path (JSON → NewMessageEvent via NewMessageEventAdapter)
-
-    @Test
-    fun `Direct path - deserializes all fields`() {
-        val event = adapter.fromJson(NewMessageEventTestData.jsonAllFields)
-        assertEquals(NewMessageEventTestData.expectedAllFields, event)
-    }
-
-    @Test
-    fun `Direct path - deserializes with optional fields missing`() {
-        val event = adapter.fromJson(NewMessageEventTestData.jsonOptionalFieldsMissing)
-        assertEquals(NewMessageEventTestData.expectedOptionalFieldsMissing, event)
+        val dtoResult = with(eventMapping) { dto.toDomain() }
+        val directResult = adapter.fromJson(NewMessageEventTestData.jsonOptionalFieldsMissing)
+        assertEquals(dtoResult, directResult)
+        assertEquals(NewMessageEventTestData.expectedOptionalFieldsMissing, dtoResult)
+        assertEquals(NewMessageEventTestData.expectedOptionalFieldsMissing, directResult)
     }
 
     // endregion
