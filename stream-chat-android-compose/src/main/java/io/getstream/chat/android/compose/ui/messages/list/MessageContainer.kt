@@ -24,6 +24,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -38,7 +39,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -222,89 +222,87 @@ public fun MessageContainer(
         onReply = { onReply(replyMessage) },
         isSwipeable = isSwipeable,
     ) {
-        Box(
+        Row(
             modifier = Modifier
-                .testTag("Stream_MessageItem")
+                .testTag("Stream_MessageCell")
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .background(color = color)
                 .then(clickModifier)
                 .semantics { contentDescription = description },
-            contentAlignment = messageAlignment.itemAlignment,
+            horizontalArrangement = if (messageAlignment == MessageAlignment.Start) {
+                Arrangement.Start
+            } else {
+                Arrangement.End
+            },
         ) {
-            Row(
-                Modifier
-                    .wrapContentWidth()
-                    .testTag("Stream_MessageCell"),
-            ) {
-                with(ChatTheme.componentFactory) {
-                    when (messageAlignment) {
-                        MessageAlignment.Start -> MessageAuthor(
-                            params = MessageAuthorParams(
-                                messageItem = messageItem,
-                                onUserAvatarClick = onUserAvatarClick,
-                            ),
-                        )
+            with(ChatTheme.componentFactory) {
+                when (messageAlignment) {
+                    MessageAlignment.Start -> MessageAuthor(
+                        params = MessageAuthorParams(
+                            messageItem = messageItem,
+                            onUserAvatarClick = onUserAvatarClick,
+                        ),
+                    )
 
-                        MessageAlignment.End -> MessageSpacer(params = MessageSpacerParams(messageItem))
-                    }
+                    MessageAlignment.End -> MessageSpacer(params = MessageSpacerParams(messageItem))
+                }
 
-                    Column(
-                        modifier = Modifier.weight(1f, fill = false),
-                        horizontalAlignment = messageAlignment.contentAlignment,
-                    ) {
-                        MessageTop(
-                            params = MessageTopParams(
-                                messageItem = messageItem,
-                                onThreadClick = onThreadClick,
-                            ),
-                        )
-                        MessageContentWithReactions(
-                            messageAlignment = messageAlignment,
-                            reactions = rememberMessageReactions(message)?.let { reactions ->
-                                {
-                                    MessageReactions(
-                                        params = MessageReactionsParams(
-                                            message = message,
-                                            reactions = reactions,
-                                            onClick = onReactionsClick,
-                                        ),
-                                    )
-                                }
-                            },
-                            content = {
-                                MessageContent(
-                                    params = MessageContentParams(
-                                        messageItem = messageItem,
-                                        onLongItemClick = onLongItemClick,
-                                        onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                                        onGiphyActionClick = onGiphyActionClick,
-                                        onQuotedMessageClick = onQuotedMessageClick,
-                                        onLinkClick = onLinkClick,
-                                        onUserMentionClick = onUserMentionClick,
-                                        onPollUpdated = onPollUpdated,
-                                        onCastVote = onCastVote,
-                                        onRemoveVote = onRemoveVote,
-                                        selectPoll = selectPoll,
-                                        onAddAnswer = onAddAnswer,
-                                        onClosePoll = onClosePoll,
-                                        onAddPollOption = onAddPollOption,
+                Column(
+                    modifier = Modifier.weight(1f, fill = false),
+                    horizontalAlignment = messageAlignment.contentAlignment,
+                ) {
+                    MessageTop(
+                        params = MessageTopParams(
+                            messageItem = messageItem,
+                            onThreadClick = onThreadClick,
+                        ),
+                    )
+                    MessageContentWithReactions(
+                        messageAlignment = messageAlignment,
+                        reactions = rememberMessageReactions(message)?.let { reactions ->
+                            {
+                                MessageReactions(
+                                    params = MessageReactionsParams(
+                                        message = message,
+                                        reactions = reactions,
+                                        onClick = onReactionsClick,
                                     ),
                                 )
-                            },
-                        )
-                        MessageBottom(params = MessageBottomParams(messageItem = messageItem))
-                    }
+                            }
+                        },
+                        content = {
+                            MessageContent(
+                                params = MessageContentParams(
+                                    messageItem = messageItem,
+                                    onLongItemClick = onLongItemClick,
+                                    onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                                    onGiphyActionClick = onGiphyActionClick,
+                                    onQuotedMessageClick = onQuotedMessageClick,
+                                    onLinkClick = onLinkClick,
+                                    onUserMentionClick = onUserMentionClick,
+                                    onPollUpdated = onPollUpdated,
+                                    onCastVote = onCastVote,
+                                    onRemoveVote = onRemoveVote,
+                                    selectPoll = selectPoll,
+                                    onAddAnswer = onAddAnswer,
+                                    onClosePoll = onClosePoll,
+                                    onAddPollOption = onAddPollOption,
+                                ),
+                            )
+                        },
+                    )
+                    MessageBottom(params = MessageBottomParams(messageItem = messageItem))
+                }
 
-                    when (messageAlignment) {
-                        MessageAlignment.Start -> MessageSpacer(params = MessageSpacerParams(messageItem))
-                        MessageAlignment.End -> MessageAuthor(
-                            params = MessageAuthorParams(
-                                messageItem = messageItem,
-                                onUserAvatarClick = onUserAvatarClick,
-                            ),
-                        )
-                    }
+                when (messageAlignment) {
+                    MessageAlignment.Start -> MessageSpacer(params = MessageSpacerParams(messageItem))
+                    MessageAlignment.End -> MessageAuthor(
+                        params = MessageAuthorParams(
+                            messageItem = messageItem,
+                            onUserAvatarClick = onUserAvatarClick,
+                        ),
+                    )
                 }
             }
         }
