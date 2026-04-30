@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.components.composer
 
+import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -68,7 +69,8 @@ internal fun MessageComposerAttachmentAnnouncer(attachments: List<Attachment>) {
     }
 }
 
-private fun announceAddedAttachment(
+@VisibleForTesting
+internal fun announceAddedAttachment(
     added: Attachment?,
     photoAttached: String,
     videoAttached: String,
