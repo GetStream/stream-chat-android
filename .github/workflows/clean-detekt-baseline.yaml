@@ -15,7 +15,7 @@ jobs:
         with:
           token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
       - uses: GetStream/android-ci-actions/actions/setup-java@main
-      - uses: tibdex/github-app-token@v1.7.0
+      - uses: tibdex/github-app-token@v2.1.0
         id: generate-token
         with:
           app_id: ${{ secrets.APP_ID_OBTAIN_TOKEN }}
