@@ -29,9 +29,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.audio.audioHash
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.attachments.content.AudioRecordAttachmentContentItemBase
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.components.common.PlaybackSpeedToggle
@@ -85,6 +87,7 @@ internal fun MessageComposerAttachmentAudioRecordItem(
                 .align(Alignment.TopEnd)
                 .testTag("Stream_MessageComposerAttachmentCancelIcon"),
             onClick = { onAttachmentRemoved(attachment) },
+            contentDescription = stringResource(R.string.stream_compose_remove_attachment),
         )
     }
 }
