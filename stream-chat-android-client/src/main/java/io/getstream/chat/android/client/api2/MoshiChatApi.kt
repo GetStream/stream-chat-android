@@ -44,6 +44,7 @@ import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
+import io.getstream.chat.android.client.api2.mapping.toFilterDomain
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
@@ -1301,8 +1302,10 @@ constructor(
                     QueryChannelsResult(
                         channels = response.channels.map(this@MoshiChatApi::flattenChannel),
                         predefinedFilter = response.predefined_filter?.let {
+                            val filter = it.filter.toFilterDomain() ?: return@let null
                             PredefinedFilter(
                                 name = it.name,
+                                filter = filter,
                                 sort = it.sort.toSortDomain(),
                             )
                         },
