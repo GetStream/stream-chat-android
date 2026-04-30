@@ -29,6 +29,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.errorhandler.StateErrorHandlerFactory
 import io.getstream.chat.android.state.event.handler.internal.EventHandler
 import io.getstream.chat.android.state.event.handler.internal.EventHandlerSequential
+import io.getstream.chat.android.state.plugin.config.MessageBufferConfig
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
@@ -151,6 +152,7 @@ public class StreamStatePluginFactory(
             repos = repositoryFacade,
             syncedEvents = syncManager.syncedEvents,
             sideEffect = syncManager::awaitSyncing,
+            bufferConfig = config.messageLimitConfig.messageBufferConfig,
         )
 
         if (config.backgroundSyncEnabled) {
@@ -192,6 +194,7 @@ public class StreamStatePluginFactory(
         repos: RepositoryFacade,
         sideEffect: suspend () -> Unit,
         syncedEvents: Flow<List<ChatEvent>>,
+        bufferConfig: MessageBufferConfig,
     ): EventHandler {
         return EventHandlerSequential(
             scope = scope,
@@ -204,6 +207,7 @@ public class StreamStatePluginFactory(
             repos = repos,
             syncedEvents = syncedEvents,
             sideEffect = sideEffect,
+            bufferConfig = bufferConfig,
         )
     }
 }

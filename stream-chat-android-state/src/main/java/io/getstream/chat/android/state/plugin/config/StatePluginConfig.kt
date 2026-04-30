@@ -22,6 +22,7 @@ import io.getstream.chat.android.models.TimeDuration
 import io.getstream.chat.android.state.extensions.queryChannelsAsState
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
+import kotlinx.coroutines.channels.BufferOverflow
 
 /**
  * Provides a configuration for [io.getstream.chat.android.state.plugin.internal.StatePlugin].
@@ -128,9 +129,14 @@ public data class StatePluginConfig @JvmOverloads constructor(
  * @param channelMessageLimits A set of [ChannelMessageLimit] defining the maximum number of messages to keep in
  * memory for different channel types. By default, this is an empty set, meaning no limits are applied and all
  * messages are kept in memory. Each channel type can have its own limit configured independently.
+ *
+ * @param messageBufferConfig Configuration for bounding the inbound `NewMessageEvent` buffer on selected channel
+ * types. By default, no buffering is applied — events flow through the unbuffered path. See [MessageBufferConfig]
+ * for details and trade-offs.
  */
 public data class MessageLimitConfig(
     public val channelMessageLimits: Set<ChannelMessageLimit> = setOf(),
+    public val messageBufferConfig: MessageBufferConfig = MessageBufferConfig(),
 )
 
 /**
@@ -160,4 +166,55 @@ public data class MessageLimitConfig(
 public data class ChannelMessageLimit(
     public val channelType: String,
     public val baseLimit: Int,
+)
+
+/**
+ * Configuration for buffering inbound `NewMessageEvent`s for specific channel types before they
+ * are dispatched to the sequential event-handling pipeline.
+ *
+ * High-traffic channel types (e.g. livestreams) can produce a flood of new-message events that
+ * arrive faster than they can be processed sequentially. This configuration applies a bounded
+ * buffer with a configurable overflow strategy (e.g. drop oldest) for `NewMessageEvent`s on the
+ * configured channel types only. Events for other channel types — and all non-`NewMessageEvent`
+ * events — continue to flow through the default unbuffered path with `Int.MAX_VALUE` capacity,
+ * so signal-critical events such as reads, bans or member updates are never dropped.
+ *
+ * By default this is a no-op: no channel types are configured, so the buffered code path is not
+ * active and the SDK behaves exactly as if this configuration did not exist.
+ *
+ * Example — drop the oldest pending `NewMessageEvent` for `messaging` channels when more than
+ * 100 are queued:
+ * ```kotlin
+ * StatePluginConfig(
+ *     messageLimitConfig = MessageLimitConfig(
+ *         messageBufferConfig = MessageBufferConfig(
+ *             channelTypes = setOf("messaging"),
+ *             capacity = 100,
+ *             overflow = BufferOverflow.DROP_OLDEST,
+ *         ),
+ *     ),
+ * )
+ * ```
+ *
+ * @param channelTypes The set of channel types whose `NewMessageEvent`s should be routed through
+ * the bounded buffer. Channel types not in this set continue to use the unbuffered path. When
+ * this set is empty (the default), buffering is disabled entirely and the per-event channel-type
+ * check is skipped.
+ *
+ * @param capacity The maximum number of `NewMessageEvent`s that can be queued in the buffer
+ * while the consumer is busy. Once exceeded, [overflow] decides which event to drop or whether
+ * to suspend. Defaults to `Int.MAX_VALUE`, which effectively disables overflow.
+ *
+ * @param overflow The strategy applied when the buffer is full:
+ * - [BufferOverflow.SUSPEND] (default): the producer suspends until space is available. Note
+ *   that the underlying socket listener uses non-suspending `tryEmit`, so with `SUSPEND` an
+ *   overflowing emission is simply reported as a failed emit rather than blocking the socket.
+ * - [BufferOverflow.DROP_OLDEST]: the oldest queued event is evicted to make room for the new
+ *   one. Useful for live channels where freshness matters more than completeness.
+ * - [BufferOverflow.DROP_LATEST]: the newest event is discarded and the queued events are kept.
+ */
+public data class MessageBufferConfig(
+    public val channelTypes: Set<String> = emptySet(),
+    public val capacity: Int = Int.MAX_VALUE,
+    public val overflow: BufferOverflow = BufferOverflow.SUSPEND,
 )

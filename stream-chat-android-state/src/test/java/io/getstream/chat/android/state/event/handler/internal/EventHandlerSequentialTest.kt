@@ -53,27 +53,38 @@ import io.getstream.chat.android.randomMute
 import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.state.event.handler.internal.batch.BatchEvent
+import io.getstream.chat.android.state.plugin.config.MessageBufferConfig
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.atLeast
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.stub
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.util.concurrent.atomic.AtomicReference
 
+@kotlinx.coroutines.ExperimentalCoroutinesApi
 internal class EventHandlerSequentialTest {
 
     @ParameterizedTest
@@ -171,24 +182,201 @@ internal class EventHandlerSequentialTest {
         }
     }
 
+    @Test
+    fun `When buffer overflows with DROP_OLDEST, the oldest queued NewMessageEvent is dropped`() = runTest {
+        val fixture = Fixture()
+            .withBufferConfig(
+                MessageBufferConfig(
+                    channelTypes = setOf(BUFFERED_CHANNEL_TYPE),
+                    capacity = 1,
+                    overflow = BufferOverflow.DROP_OLDEST,
+                ),
+            )
+            .withReadEventsCapabilityForAny()
+            .pauseSideEffect()
+        val handler = fixture.get(this)
+        val first = newMessageEventOnBufferedType()
+        val second = newMessageEventOnBufferedType()
+        val third = newMessageEventOnBufferedType()
+        val fourth = newMessageEventOnBufferedType()
+
+        handler.startListening()
+        advanceUntilIdle()
+        val listener = fixture.listener()
+
+        listener.onEvent(first)
+        advanceUntilIdle() // collector picks up first, suspends on sideEffect
+        listener.onEvent(second)
+        listener.onEvent(third)
+        listener.onEvent(fourth)
+        advanceUntilIdle() // give the buffer a chance to apply DROP_OLDEST
+
+        fixture.releaseSideEffect()
+        advanceUntilIdle()
+
+        val processedEvents = capturedBatchEvents(fixture).flatMap { it.sortedEvents }
+        // The first event was already in the collector when overflow happened, and the latest
+        // emitted event survives in the buffer. The events in between are dropped.
+        assertTrue(first in processedEvents) { "Expected the first emitted event to survive" }
+        assertTrue(fourth in processedEvents) { "Expected the latest emitted event to survive" }
+        assertFalse(second in processedEvents) { "Expected the second event to be dropped (oldest queued)" }
+        assertFalse(third in processedEvents) { "Expected the third event to be dropped (oldest queued)" }
+    }
+
+    @Test
+    fun `When buffer would overflow with DROP_LATEST, the latest NewMessageEvent is dropped`() = runTest {
+        val fixture = Fixture()
+            .withBufferConfig(
+                MessageBufferConfig(
+                    channelTypes = setOf(BUFFERED_CHANNEL_TYPE),
+                    capacity = 1,
+                    overflow = BufferOverflow.DROP_LATEST,
+                ),
+            )
+            .withReadEventsCapabilityForAny()
+            .pauseSideEffect()
+        val handler = fixture.get(this)
+        val first = newMessageEventOnBufferedType()
+        val second = newMessageEventOnBufferedType()
+        val third = newMessageEventOnBufferedType()
+        val fourth = newMessageEventOnBufferedType()
+
+        handler.startListening()
+        advanceUntilIdle()
+        val listener = fixture.listener()
+
+        listener.onEvent(first)
+        advanceUntilIdle()
+        listener.onEvent(second)
+        listener.onEvent(third)
+        listener.onEvent(fourth)
+        advanceUntilIdle()
+
+        fixture.releaseSideEffect()
+        advanceUntilIdle()
+
+        val processedEvents = capturedBatchEvents(fixture).flatMap { it.sortedEvents }
+        // With DROP_LATEST the in-flight first event survives, the second event takes the buffer
+        // slot and is processed once the gate releases; later emissions are dropped.
+        assertTrue(first in processedEvents) { "Expected the first emitted event to survive" }
+        assertTrue(second in processedEvents) { "Expected the second event to fit the buffer slot" }
+        assertFalse(third in processedEvents) { "Expected the third event to be dropped (latest)" }
+        assertFalse(fourth in processedEvents) { "Expected the fourth event to be dropped (latest)" }
+    }
+
+    @Test
+    fun `When NewMessageEvent channelType is not buffered, no event is dropped`() = runTest {
+        val fixture = Fixture()
+            .withBufferConfig(
+                MessageBufferConfig(
+                    channelTypes = setOf("livestream"),
+                    capacity = 1,
+                    overflow = BufferOverflow.DROP_OLDEST,
+                ),
+            )
+            .withReadEventsCapabilityForAny()
+            .pauseSideEffect()
+        val handler = fixture.get(this)
+        val events = List(4) { newMessageEventOnBufferedType() }
+
+        handler.startListening()
+        advanceUntilIdle()
+        val listener = fixture.listener()
+
+        events.forEach { listener.onEvent(it) }
+        advanceUntilIdle()
+
+        fixture.releaseSideEffect()
+        advanceUntilIdle()
+
+        val processedEvents = capturedBatchEvents(fixture).flatMap { it.sortedEvents }
+        events.forEach { event ->
+            assertTrue(event in processedEvents) {
+                "Expected non-buffered channelType event to be processed (no drop)"
+            }
+        }
+    }
+
+    @Test
+    fun `When listener is bombarded with thousands of NewMessageEvents, the buffer drops old ones`() = runTest {
+        val capacity = 100
+        val totalEmissions = 5_000
+        val fixture = Fixture()
+            .withBufferConfig(
+                MessageBufferConfig(
+                    channelTypes = setOf(BUFFERED_CHANNEL_TYPE),
+                    capacity = capacity,
+                    overflow = BufferOverflow.DROP_OLDEST,
+                ),
+            )
+            .withReadEventsCapabilityForAny()
+        val handler = fixture.get(this)
+
+        handler.startListening()
+        advanceUntilIdle()
+        val listener = fixture.listener()
+
+        // Bombard the listener synchronously. Because the test dispatcher won't run the
+        // collector between tryEmit calls, the buffer fills past `capacity` and DROP_OLDEST
+        // evicts the oldest events.
+        val emitted = List(totalEmissions) { newMessageEventOnBufferedType() }
+        emitted.forEach { listener.onEvent(it) }
+        advanceUntilIdle()
+
+        val processed = capturedBatchEvents(fixture).flatMap { it.sortedEvents }.toSet()
+        assertTrue(processed.size < totalEmissions) {
+            "Expected drops under load: processed=${processed.size}, emitted=$totalEmissions"
+        }
+        assertTrue(emitted.last() in processed) {
+            "Expected the latest emitted event to survive DROP_OLDEST overflow"
+        }
+        assertFalse(emitted.first() in processed) {
+            "Expected the oldest emitted event to be dropped under load"
+        }
+    }
+
+    private fun capturedBatchEvents(fixture: Fixture): List<BatchEvent> {
+        val captor = argumentCaptor<BatchEvent>()
+        verify(fixture.stateRegistry, atLeast(0)).handleBatchEvent(captor.capture())
+        return captor.allValues
+    }
+
+    private fun newMessageEventOnBufferedType() = randomNewMessageEvent(
+        cid = "$BUFFERED_CHANNEL_TYPE:${randomString()}",
+        channelType = BUFFERED_CHANNEL_TYPE,
+    )
+
     internal class Fixture {
         private var currentUser = randomUser()
-        private val subscribeForEvents: (ChatEventListener<ChatEvent>) -> Disposable =
-            { _ -> EventHandlerSequential.EMPTY_DISPOSABLE }
+        private val capturedListener = AtomicReference<ChatEventListener<ChatEvent>>()
+        private val subscribeForEvents: (ChatEventListener<ChatEvent>) -> Disposable = { listener ->
+            capturedListener.set(listener)
+            EventHandlerSequential.EMPTY_DISPOSABLE
+        }
         private val logicRegistry: LogicRegistry = mock()
-        private val stateRegistry: StateRegistry = mock()
+        val stateRegistry: StateRegistry = mock()
         private val clientState: ClientState = mock {
             on(it.user) doReturn MutableStateFlow(currentUser)
         }
         private var mutableGlobalState: MutableGlobalState? = null
         private var repos: RepositoryFacade = mock()
-        private val sideEffect: suspend () -> Unit = {}
+        private var sideEffectGate: CompletableDeferred<Unit> = CompletableDeferred(Unit)
+        private val sideEffect: suspend () -> Unit = { sideEffectGate.await() }
         private val syncedEvents: Flow<List<ChatEvent>> = emptyFlow()
+        private var bufferConfig: MessageBufferConfig = MessageBufferConfig()
 
         fun withReadEventsCapability(cid: String) = apply {
             repos.stub {
                 onBlocking {
                     selectChannel(cid)
+                } doReturn randomChannel(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
+            }
+        }
+
+        fun withReadEventsCapabilityForAny() = apply {
+            repos.stub {
+                onBlocking {
+                    selectChannel(any())
                 } doReturn randomChannel(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
             }
         }
@@ -205,6 +393,20 @@ internal class EventHandlerSequentialTest {
             this.repos = repos
         }
 
+        fun withBufferConfig(config: MessageBufferConfig) = apply {
+            this.bufferConfig = config
+        }
+
+        fun pauseSideEffect() = apply {
+            sideEffectGate = CompletableDeferred()
+        }
+
+        fun releaseSideEffect() {
+            sideEffectGate.complete(Unit)
+        }
+
+        fun listener(): ChatEventListener<ChatEvent> = capturedListener.get()
+
         fun get(scope: CoroutineScope) = EventHandlerSequential(
             currentUserId = currentUser.id,
             subscribeForEvents = subscribeForEvents,
@@ -215,11 +417,13 @@ internal class EventHandlerSequentialTest {
             repos = repos,
             sideEffect = sideEffect,
             syncedEvents = syncedEvents,
+            bufferConfig = bufferConfig,
             scope = scope,
         )
     }
 
     companion object {
+        private const val BUFFERED_CHANNEL_TYPE = "messaging"
         private val initialTotalunreadCount: Int = positiveRandomInt()
         private val initialChannelUnreadCount: Int = positiveRandomInt()
         private val totalUnreadCount = positiveRandomInt()
