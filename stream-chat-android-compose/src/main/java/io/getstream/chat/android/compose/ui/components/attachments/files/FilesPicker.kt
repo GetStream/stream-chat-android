@@ -35,7 +35,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -174,13 +174,13 @@ internal fun DefaultFilesPickerItem(
 
         if (allowMultipleSelection) {
             RadioCheck(
-                modifier = Modifier.clearAndSetSemantics {},
+                modifier = Modifier.semantics { hideFromAccessibility() },
                 checked = fileItem.isSelected,
                 onCheckedChange = null,
             )
         } else {
             RadioButton(
-                modifier = Modifier.clearAndSetSemantics {},
+                modifier = Modifier.semantics { hideFromAccessibility() },
                 checked = fileItem.isSelected,
                 onCheckedChange = null,
             )

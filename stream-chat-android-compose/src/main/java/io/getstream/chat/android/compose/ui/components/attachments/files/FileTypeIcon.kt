@@ -31,7 +31,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.hideFromAccessibility
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -59,7 +60,7 @@ internal fun FileTypeIcon(data: FileIconData, modifier: Modifier = Modifier) {
                 color = StreamPrimitiveColors.baseWhite,
                 modifier = Modifier
                     .padding(bottom = 4.dp)
-                    .clearAndSetSemantics {},
+                    .semantics { hideFromAccessibility() },
             )
         }
     }

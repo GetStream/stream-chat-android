@@ -39,8 +39,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -171,7 +171,7 @@ internal fun DefaultImagesPickerItem(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(StreamTokens.spacingXs)
-                .clearAndSetSemantics {},
+                .semantics { hideFromAccessibility() },
             borderColor = ChatTheme.colors.borderCoreOnAccent,
             checked = imageItem.isSelected,
             onCheckedChange = null,
@@ -182,7 +182,7 @@ internal fun DefaultImagesPickerItem(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(StreamTokens.spacingXs)
-                    .clearAndSetSemantics {},
+                    .semantics { hideFromAccessibility() },
                 durationInSeconds = attachmentMetaData.videoLength,
             )
         }
