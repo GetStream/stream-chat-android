@@ -114,6 +114,7 @@ import io.getstream.chat.android.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.state.event.handler.internal.batch.SocketEventCollector
 import io.getstream.chat.android.state.event.handler.internal.utils.realType
 import io.getstream.chat.android.state.event.handler.internal.utils.toChannelUserRead
+import io.getstream.chat.android.state.plugin.config.MessageBufferConfig
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
@@ -157,6 +158,7 @@ internal class EventHandlerSequential(
     private val repos: RepositoryFacade,
     private val sideEffect: suspend () -> Unit,
     private val syncedEvents: Flow<List<ChatEvent>>,
+    private val bufferConfig: MessageBufferConfig,
     scope: CoroutineScope,
 ) : EventHandler {
 
@@ -167,11 +169,57 @@ internal class EventHandlerSequential(
 
     private val mutex = Mutex()
     private val socketEvents = MutableSharedFlow<ChatEvent>(extraBufferCapacity = Int.MAX_VALUE)
+
+    /**
+     * Secondary flow used only when [bufferConfig] opts specific channel types into a bounded buffer.
+     * Allocated lazily so the default configuration pays no cost for it.
+     */
+    private val bufferedNewMessageEvents: MutableSharedFlow<ChatEvent> by lazy {
+        MutableSharedFlow(
+            extraBufferCapacity = bufferConfig.capacity,
+            onBufferOverflow = bufferConfig.overflow,
+        )
+    }
     private val socketEventCollector = SocketEventCollector(scope) { batchEvent ->
         handleBatchEvent(batchEvent)
     }
 
     private var eventsDisposable: Disposable = EMPTY_DISPOSABLE
+
+    /**
+     * Default listener — emits every event into the unbuffered [socketEvents] flow without
+     * inspecting [bufferConfig]. Used whenever no channel types are opted in for buffering.
+     */
+    private val defaultSocketEventListener: ChatEventListener<ChatEvent> = ChatEventListener { event ->
+        logEmitOutcome(event, socketEvents.tryEmit(event))
+    }
+
+    /**
+     * Listener used only when [bufferConfig] opts specific channel types into a bounded buffer.
+     * Routes matching [NewMessageEvent]s to [bufferedNewMessageEvents] and everything else to
+     * [socketEvents].
+     */
+    private val bufferedSocketEventListener: ChatEventListener<ChatEvent> = ChatEventListener { event ->
+        val target = if (event is NewMessageEvent && event.channelType in bufferConfig.channelTypes) {
+            bufferedNewMessageEvents
+        } else {
+            socketEvents
+        }
+        logEmitOutcome(event, target.tryEmit(event))
+    }
+
+    private fun logEmitOutcome(event: ChatEvent, emitted: Boolean) {
+        if (emitted) {
+            val cCount = collectedCount.get()
+            val eCount = emittedCount.incrementAndGet()
+            val ratio = eCount.toDouble() / cCount.toDouble()
+            StreamLog.v(TAG_SOCKET) {
+                "[onSocketEventReceived] event.type: ${event.realType}; $eCount => $cCount ($ratio)"
+            }
+        } else {
+            StreamLog.e(TAG_SOCKET) { "[onSocketEventReceived] failed to emit socket event: $event" }
+        }
+    }
 
     init {
         logger.d { "<init> no args" }
@@ -199,26 +247,23 @@ internal class EventHandlerSequential(
                     )
                 }
             }
-            scope.launch {
-                socketEvents.collect { event ->
-                    collectedCount.incrementAndGet()
-                    initJob.join()
-                    sideEffect()
-                    socketEventCollector.collect(event)
-                }
+            val collectSocketEvent: suspend (ChatEvent) -> Unit = { event ->
+                collectedCount.incrementAndGet()
+                initJob.join()
+                sideEffect()
+                socketEventCollector.collect(event)
             }
-            eventsDisposable = subscribeForEvents { event ->
-                if (socketEvents.tryEmit(event)) {
-                    val cCount = collectedCount.get()
-                    val eCount = emittedCount.incrementAndGet()
-                    val ratio = eCount.toDouble() / cCount.toDouble()
-                    StreamLog.v(TAG_SOCKET) {
-                        "[onSocketEventReceived] event.type: ${event.realType}; $eCount => $cCount ($ratio)"
-                    }
-                } else {
-                    StreamLog.e(TAG_SOCKET) { "[onSocketEventReceived] failed to emit socket event: $event" }
-                }
+            scope.launch { socketEvents.collect(collectSocketEvent) }
+            val isBufferingEnabled = bufferConfig.channelTypes.isNotEmpty()
+            if (isBufferingEnabled) {
+                scope.launch { bufferedNewMessageEvents.collect(collectSocketEvent) }
             }
+            val activeListener = if (isBufferingEnabled) {
+                bufferedSocketEventListener
+            } else {
+                defaultSocketEventListener
+            }
+            eventsDisposable = subscribeForEvents(activeListener)
         }
     }
 
