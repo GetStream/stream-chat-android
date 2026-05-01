@@ -46,6 +46,7 @@ import io.getstream.chat.android.compose.ui.components.common.CountBadge
 import io.getstream.chat.android.compose.ui.components.common.CountBadgeSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
@@ -85,11 +86,13 @@ public fun ChannelAvatar(
         val directMessageRecipient = directMessageRecipient(channel, currentUser)
 
         if (directMessageRecipient != null) {
-            UserAvatar(
-                modifier = testTagModifier,
-                user = directMessageRecipient,
-                showIndicator = showIndicator,
-                showBorder = showBorder,
+            ChatTheme.componentFactory.UserAvatar(
+                params = UserAvatarParams(
+                    modifier = testTagModifier,
+                    user = directMessageRecipient,
+                    showIndicator = showIndicator,
+                    showBorder = showBorder,
+                ),
             )
         } else {
             StackedGroupAvatar(
@@ -209,10 +212,12 @@ private fun StackedGroupAvatar(
             1 -> {
                 val colors = ChatTheme.colors
 
-                UserAvatar(
-                    user = channel.members.first().user,
-                    showBorder = showBorder,
-                    modifier = baseModifier.align(alignments[0]),
+                ChatTheme.componentFactory.UserAvatar(
+                    params = UserAvatarParams(
+                        user = channel.members.first().user,
+                        showBorder = showBorder,
+                        modifier = baseModifier.align(alignments[0]),
+                    ),
                 )
 
                 UserAvatarIconPlaceholder(
@@ -234,10 +239,12 @@ private fun StackedGroupAvatar(
                     }
                 }
                 for (i in alignments.indices) {
-                    UserAvatar(
-                        user = displayMembers[i].user,
-                        showBorder = showBorder,
-                        modifier = baseModifier.align(alignments[i]),
+                    ChatTheme.componentFactory.UserAvatar(
+                        params = UserAvatarParams(
+                            user = displayMembers[i].user,
+                            showBorder = showBorder,
+                            modifier = baseModifier.align(alignments[i]),
+                        ),
                     )
                 }
                 if (membersCount > 4) {
