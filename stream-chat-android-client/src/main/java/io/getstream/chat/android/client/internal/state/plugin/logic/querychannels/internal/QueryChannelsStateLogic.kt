@@ -29,7 +29,9 @@ import io.getstream.chat.android.client.internal.state.plugin.logic.internal.Log
 import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
@@ -95,6 +97,15 @@ internal class QueryChannelsStateLogic(
     internal fun setCurrentRequest(request: QueryChannelsRequest) {
         logger.d { "[onQueryChannelsRequest] request: $request" }
         mutableState.setCurrentRequest(request)
+    }
+
+    /**
+     * Forwards the resolved [filter] and [sort] to the mutable state. Relevant for predefined
+     * queries (server-resolved values or DB rehydration); a no-op for standard queries since the
+     * values already match the constructor arguments.
+     */
+    internal fun applyResolvedSpec(filter: FilterObject, sort: QuerySorter<Channel>) {
+        mutableState.applyResolvedSpec(filter, sort)
     }
 
     /**

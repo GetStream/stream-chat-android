@@ -21,8 +21,8 @@ import io.getstream.chat.android.client.api.event.EventHandlingResult
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
-import io.getstream.chat.android.client.query.request.ChannelFilterRequest.filterWithOffset
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.FilterObject
@@ -37,8 +37,7 @@ private const val CHANNEL_LIMIT = 30
 
 @Suppress("TooManyFunctions")
 internal class QueryChannelsLogic(
-    private val filter: FilterObject,
-    private val sort: QuerySorter<Channel>,
+    internal val identifier: QueryChannelsIdentifier,
     private val client: ChatClient,
     private val queryChannelsStateLogic: QueryChannelsStateLogic,
     private val queryChannelsDatabaseLogic: QueryChannelsDatabaseLogic,
@@ -55,15 +54,19 @@ internal class QueryChannelsLogic(
         val hasOffset = pagination.channelOffset > 0
         loadingPerPage(true, hasOffset)
 
-        val offlineChannels = fetchChannelsFromCache(pagination, queryChannelsDatabaseLogic)
-        when {
-            offlineChannels == null -> {
+        when (val cached = queryChannelsDatabaseLogic.fetchChannelsFromCache(pagination, identifier)) {
+            null -> {
                 // No cached spec found, rely on online data. Don't reset loading state here, and await online data.
             }
 
             else -> {
-                // Channels for the spec found (0 or more). Optimistic update and reset loading state.
-                addChannels(offlineChannels)
+                // For predefined queries this restores the last persisted resolved filter/sort so
+                // cached channels are sorted correctly before any network response. Not invoked for
+                // standard queries, as we already know the spec beforehand.
+                if (cached.spec.predefinedFilterName != null) {
+                    applyResolvedSpec(cached.spec.filter, cached.spec.querySort)
+                }
+                addChannels(cached.channels)
                 loadingPerPage(false, hasOffset)
             }
         }
@@ -81,28 +84,16 @@ internal class QueryChannelsLogic(
         queryChannelsStateLogic.setCurrentRequest(request)
     }
 
-    internal fun filter(): FilterObject = filter
-
     internal fun recoveryNeeded(): StateFlow<Boolean> {
         return queryChannelsStateLogic.getState().recoveryNeeded
     }
 
-    private suspend fun fetchChannelsFromCache(
-        pagination: AnyChannelPaginationRequest,
-        queryChannelsDatabaseLogic: QueryChannelsDatabaseLogic,
-    ): List<Channel>? {
-        val queryChannelsSpec = queryChannelsStateLogic.getQuerySpecs()
-
-        return queryChannelsDatabaseLogic.fetchChannelsFromCache(pagination, queryChannelsSpec).also {
-            logger.i {
-                val message = if (it == null) {
-                    "no channels found in the local storage"
-                } else {
-                    "${it.size} channels found in the local storage"
-                }
-                "[fetchChannelsFromCache] $message"
-            }
-        }
+    /**
+     * Forwards the resolved filter/sort to the state logic. Called by the listener with values
+     * from `QueryChannelsResult.predefinedFilter`. A no-op for standard queries.
+     */
+    internal fun applyResolvedSpec(filter: FilterObject, sort: QuerySorter<Channel>) {
+        queryChannelsStateLogic.applyResolvedSpec(filter, sort)
     }
 
     /**
@@ -150,20 +141,35 @@ internal class QueryChannelsLogic(
 
     /**
      * Runs [QueryChannelsRequest] which is querying the first page.
+     *
+     * Rebuilds the request from the [identifier] so the request stays consistent with how this
+     * logic was registered: standard queries rebuild from filter/sort, predefined queries from
+     * the predefined name + value maps (filter/querySort default; backend ignores them).
      */
     internal suspend fun queryFirstPage(): Result<List<Channel>> {
         logger.d { "[queryFirstPage] no args" }
         val currentRequest = queryChannelsStateLogic.getState().currentRequest.value
         val messageLimit = currentRequest?.messageLimit
         val memberLimit = currentRequest?.memberLimit
-        val request = QueryChannelsRequest(
-            filter = filter,
-            offset = INITIAL_CHANNEL_OFFSET,
-            limit = CHANNEL_LIMIT,
-            querySort = sort,
-            messageLimit = messageLimit,
-            memberLimit = memberLimit,
-        )
+        val request = when (identifier) {
+            is QueryChannelsIdentifier.Standard -> QueryChannelsRequest(
+                filter = identifier.filter,
+                offset = INITIAL_CHANNEL_OFFSET,
+                limit = CHANNEL_LIMIT,
+                querySort = identifier.sort,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
+            )
+            is QueryChannelsIdentifier.Predefined -> QueryChannelsRequest(
+                offset = INITIAL_CHANNEL_OFFSET,
+                limit = CHANNEL_LIMIT,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
+                predefinedFilter = identifier.name,
+                filterValues = identifier.filterValues,
+                sortValues = identifier.sortValues,
+            )
+        }
 
         queryChannelsStateLogic.setCurrentRequest(request)
 
@@ -221,7 +227,7 @@ internal class QueryChannelsLogic(
                 logger.v { "[updateOnlineChannels] notUpdatedChannels.size: ${notUpdatedChannels.size}" }
                 if (notUpdatedChannels.isNotEmpty()) {
                     val localCids = notUpdatedChannels.values.map { it.cid }
-                    val remoteCids = getRemoteCids(request.filter, request.limit, request.limit, existingChannels.size)
+                    val remoteCids = getRemoteCids(request.limit, request.limit, existingChannels.size)
                     val cidsToRemove = localCids - remoteCids.toSet()
                     logger.v { "[updateOnlineChannels] cidsToRemove.size: ${cidsToRemove.size}" }
                     removeChannels(cidsToRemove)
@@ -238,27 +244,27 @@ internal class QueryChannelsLogic(
     }
 
     /**
-     * Returns the channel cids using specified filter.
-     * Might produce a several requests until it reaches [thresholdCount].
+     * Returns the channel cids by re-issuing the same query (matching this logic's [identifier])
+     * at advancing offsets, until [thresholdCount] is reached or the server returns a short page.
+     * Might produce several requests.
      *
-     * @param filter Filter to be used in [QueryChannelsRequest].
-     * @param initialOffset An initial offset to be used in [QueryChannelsRequest].
-     * @param step The offset change on each iteration of [QueryChannelsRequest] being fired.
-     * @param thresholdCount The threshold channels number where no more requests will be fired.
+     * For [QueryChannelsIdentifier.Predefined] we issue another predefined-filter request — we
+     * never substitute the server-resolved filter, since the server owns the actual filter
+     * definition and our cached resolved value may be stale (e.g. if the template changed).
      */
     private suspend fun getRemoteCids(
-        filter: FilterObject,
         initialOffset: Int,
         step: Int,
         thresholdCount: Int,
     ): HashSet<String> {
+        // TODO: Revisit this logic: Might produce several requests
         logger.d { "[getRemoteCids] initialOffset: $initialOffset, step: $step, thresholdCount: $thresholdCount" }
         val remoteCids = hashSetOf<String>()
         var offset = initialOffset
 
         while (offset < thresholdCount) {
             logger.v { "[getRemoteCids] offset: $offset, limit: $step, thresholdCount: $thresholdCount" }
-            val channels = client.filterWithOffset(filter, offset, step)
+            val channels = fetchPage(offset = offset, limit = step)
             remoteCids.addAll(channels.map { it.cid })
             logger.v { "[getRemoteCids] remoteCids.size: ${remoteCids.size}" }
             offset += step
@@ -267,6 +273,32 @@ internal class QueryChannelsLogic(
             }
         }
         return remoteCids
+    }
+
+    private suspend fun fetchPage(offset: Int, limit: Int): List<Channel> {
+        val request = when (identifier) {
+            is QueryChannelsIdentifier.Standard -> QueryChannelsRequest(
+                filter = identifier.filter,
+                offset = offset,
+                limit = limit,
+                querySort = identifier.sort,
+                messageLimit = 0,
+                memberLimit = 0,
+            )
+            is QueryChannelsIdentifier.Predefined -> QueryChannelsRequest(
+                offset = offset,
+                limit = limit,
+                messageLimit = 0,
+                memberLimit = 0,
+                predefinedFilter = identifier.name,
+                filterValues = identifier.filterValues,
+                sortValues = identifier.sortValues,
+            )
+        }
+        return when (val result = client.queryChannelsInternal(request).await()) {
+            is Result.Success -> result.value
+            is Result.Failure -> emptyList()
+        }
     }
 
     internal suspend fun removeChannel(cid: String) = removeChannels(listOf(cid))

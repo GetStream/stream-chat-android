@@ -38,7 +38,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  * @property filterValues Values to interpolate into the predefined filter template.
  * @property sortValues Values to interpolate into the predefined sort template.
  */
-public data class QueryChannelsRequest(
+public data class QueryChannelsRequest @JvmOverloads constructor(
     public val filter: FilterObject = Filters.neutral(),
     public var offset: Int = 0,
     public var limit: Int,

@@ -26,9 +26,19 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 internal data class QueryChannelsEntity(
     @PrimaryKey
     var id: String,
+    /** Resolved filter. For predefined queries this is the latest server-resolved value. */
     val filter: FilterObject,
+    /** Resolved sort. For predefined queries this is the latest server-resolved value. */
     val querySort: QuerySorter<Channel>,
     val cids: List<String>,
+    /**
+     * Set only for predefined-filter queries; null for standard ones. Together with the value maps
+     * below, the predefined name forms the row's stable identity (the resolved filter/sort can
+     * change between runs if the server-side template changes).
+     */
+    val predefinedFilterName: String? = null,
+    val predefinedFilterValues: Map<String, Any>? = null,
+    val predefinedSortValues: Map<String, Any>? = null,
 )
 
 internal const val QUERY_CHANNELS_ENTITY_TABLE_NAME = "stream_channel_query"

@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.api.state.QueryChannelsState
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.internal.updateLiveLocations
 import io.getstream.chat.android.client.extensions.internal.updateUsers
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
@@ -36,16 +37,37 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
+/**
+ * Mutable backing state for a query channels operation. Each instance corresponds to a unique
+ * [QueryChannelsIdentifier] (Standard or Predefined).
+ *
+ * For [QueryChannelsIdentifier.Standard], `initialFilter`/`initialSort` come from the client and
+ * are immutable across the lifetime of this state — [applyResolvedSpec] is effectively a no-op.
+ *
+ * For [QueryChannelsIdentifier.Predefined], `initialFilter`/`initialSort` are placeholders
+ * (defaults supplied by the registry) until [applyResolvedSpec] is called either with the
+ * server-resolved values from `QueryChannelsResult.predefinedFilter` or with values rehydrated
+ * from the offline DB. The internal `_sort` flow drives the sorted channel list, so re-sorting
+ * happens automatically once the resolved sort is applied.
+ */
 internal class QueryChannelsMutableState(
-    override val filter: FilterObject,
-    override val sort: QuerySorter<Channel>,
+    val identifier: QueryChannelsIdentifier,
+    initialFilter: FilterObject,
+    initialSort: QuerySorter<Channel>,
     scope: CoroutineScope,
     latestUsers: StateFlow<Map<String, User>>,
     activeLiveLocations: StateFlow<List<Location>>,
 ) : QueryChannelsState {
+
+    private val _filter: MutableStateFlow<FilterObject> = MutableStateFlow(initialFilter)
+    private val _sort: MutableStateFlow<QuerySorter<Channel>> = MutableStateFlow(initialSort)
+
+    override val filter: FilterObject
+        get() = _filter.value
+    override val sort: QuerySorter<Channel>
+        get() = _sort.value
 
     internal var rawChannels: Map<String, Channel>?
         get() = _channels?.value
@@ -53,8 +75,35 @@ internal class QueryChannelsMutableState(
             _channels?.value = value
         }
 
-    // This is needed for queries
-    internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
+    /**
+     * In-memory cache spec for the active query.
+     *
+     * Backed by a private `var` ([_querySpec]) so [applyResolvedSpec] can swap it (the public
+     * [QueryChannelsSpec] keeps `filter` and `querySort` as `val` for binary compatibility — see
+     * the type's KDoc). External readers see a stable read-only `val` accessor; the property is
+     * `internal`, so it never leaks to public API.
+     *
+     * Stale-read safety: every reader (`QueryChannelsLogic.addChannels` / `removeChannels` /
+     * `refreshAllChannelsState`, `QueryChannelsStateLogic.{addChannelsState, removeChannels,
+     * refreshChannels}`) reads the property fresh and uses the value immediately. There is no
+     * stash-and-reuse, and per-query mutations are single-threaded on the SDK coroutine chain, so
+     * `cids += …` style updates always read and write on the same held instance.
+     */
+    private var _querySpec: QueryChannelsSpec = when (identifier) {
+        is QueryChannelsIdentifier.Standard -> QueryChannelsSpec.create(
+            filter = initialFilter,
+            querySort = initialSort,
+        )
+        is QueryChannelsIdentifier.Predefined -> QueryChannelsSpec.create(
+            filter = initialFilter,
+            querySort = initialSort,
+            predefinedFilterName = identifier.name,
+            predefinedFilterValues = identifier.filterValues,
+            predefinedSortValues = identifier.sortValues,
+        )
+    }
+    internal val queryChannelsSpec: QueryChannelsSpec
+        get() = _querySpec
 
     /**
      * Property that exposes a map of raw channels.
@@ -75,12 +124,11 @@ internal class QueryChannelsMutableState(
 
     private var _endOfChannels: MutableStateFlow<Boolean>? = MutableStateFlow(false)
     private val sortedChannels: StateFlow<List<Channel>?> =
-        combine(mapChannels, latestUsers, activeLiveLocations) { channelMap, userMap, activeLocations ->
+        combine(mapChannels, latestUsers, activeLiveLocations, _sort) { channelMap, userMap, activeLocations, sort ->
             channelMap?.values
                 ?.updateUsers(userMap)
                 ?.updateLiveLocations(activeLocations)
-        }.map { channels ->
-            channels?.sortedWith(sort.comparator)
+                ?.sortedWith(sort.comparator)
         }.stateIn(scope, SharingStarted.Eagerly, null)
     private var _currentRequest: MutableStateFlow<QueryChannelsRequest?>? = MutableStateFlow(null)
     private var _recoveryNeeded: MutableStateFlow<Boolean>? = MutableStateFlow(false)
@@ -100,6 +148,7 @@ internal class QueryChannelsMutableState(
     }
 
     fun handleChatEvent(event: ChatEvent, cachedChannel: Channel?): EventHandlingResult {
+        // TODO: Think about this part: Are filters enough, or should we sent the spec as well?
         return eventHandler.handleChatEvent(event, filter, cachedChannel)
     }
 
@@ -172,8 +221,38 @@ internal class QueryChannelsMutableState(
         _channelsOffset?.value = offset
     }
 
+    /**
+     * Replaces the current channel map with a new one.
+     *
+     * @param channelsMap The new map holding pairs of CID -> Channel.
+     */
     fun setChannels(channelsMap: Map<String, Channel>) {
         rawChannels = channelsMap
+    }
+
+    /**
+     * Applies the resolved filter/sort to the state. Called for predefined-filter queries when:
+     *  - The server response arrives carrying `QueryChannelsResult.predefinedFilter`, or
+     *  - The offline DB rehydrates a previously persisted resolved spec for the same identifier.
+     *
+     * Not relevant for standard (non-predefined) queries.
+     *
+     * Because [QueryChannelsSpec] keeps `filter` and `querySort` as `val` for binary
+     * compatibility, we replace the held [_querySpec] instance instead of mutating it in place.
+     * `cids` and the predefined identity fields are carried over from the previous instance.
+     */
+    fun applyResolvedSpec(filter: FilterObject, sort: QuerySorter<Channel>) {
+        _filter.value = filter
+        _sort.value = sort
+        val previous = _querySpec
+        _querySpec = QueryChannelsSpec.create(
+            filter = filter,
+            querySort = sort,
+            cids = previous.cids,
+            predefinedFilterName = previous.predefinedFilterName,
+            predefinedFilterValues = previous.predefinedFilterValues,
+            predefinedSortValues = previous.predefinedSortValues,
+        )
     }
 
     fun destroy() {

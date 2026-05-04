@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.event.EventHandlingResult
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.state.QueryChannelsState
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.test.randomNewMessageEvent
@@ -51,6 +52,7 @@ internal class QueryChannelsLogicTest {
 
     private lateinit var filter: FilterObject
     private lateinit var sort: QuerySortByField<Channel>
+    private lateinit var identifier: QueryChannelsIdentifier.Standard
     private lateinit var client: ChatClient
     private lateinit var queryChannelsStateLogic: QueryChannelsStateLogic
     private lateinit var queryChannelsDatabaseLogic: QueryChannelsDatabaseLogic
@@ -62,6 +64,7 @@ internal class QueryChannelsLogicTest {
     fun setUp() {
         filter = Filters.eq("type", "messaging")
         sort = QuerySortByField.descByName("last_message_at")
+        identifier = QueryChannelsIdentifier.Standard(filter, sort)
         client = mock()
         queryChannelsStateLogic = mock()
         queryChannelsDatabaseLogic = mock()
@@ -74,8 +77,7 @@ internal class QueryChannelsLogicTest {
         whenever(queryChannelsStateLogic.getQuerySpecs()) doReturn queryChannelsSpec
 
         logic = QueryChannelsLogic(
-            filter = filter,
-            sort = sort,
+            identifier = identifier,
             client = client,
             queryChannelsStateLogic = queryChannelsStateLogic,
             queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
@@ -133,7 +135,7 @@ internal class QueryChannelsLogicTest {
     }
 
     @Test
-    fun `queryOffline should fetch channels from cache with correct parameters`() = runTest {
+    fun `queryOffline should fetch channels from cache with the identifier`() = runTest {
         // Given
         val pagination = AnyChannelPaginationRequest().apply {
             channelOffset = 0
@@ -148,7 +150,7 @@ internal class QueryChannelsLogicTest {
         // Then
         verify(queryChannelsDatabaseLogic).fetchChannelsFromCache(
             eq(pagination),
-            eq(queryChannelsSpec),
+            eq<QueryChannelsIdentifier>(identifier),
         )
     }
 
@@ -171,8 +173,8 @@ internal class QueryChannelsLogicTest {
     }
 
     @Test
-    fun `queryOffline should add channels and reset loading first page state when cached channels found`() = runTest {
-        // Given
+    fun `queryOffline should add channels and reset loading on Standard cache hit without applying spec`() = runTest {
+        // Given – Standard cache hit; the spec is already known so applyResolvedSpec is skipped.
         val pagination = AnyChannelPaginationRequest().apply {
             channelOffset = 0
         }
@@ -181,28 +183,66 @@ internal class QueryChannelsLogicTest {
             randomChannel(id = "channel2", type = "messaging"),
             randomChannel(id = "channel3", type = "messaging"),
         )
+        val cached = CachedQueryChannels(spec = queryChannelsSpec, channels = cachedChannels)
         whenever(queryChannelsStateLogic.isLoading()) doReturn false
-        whenever(queryChannelsDatabaseLogic.fetchChannelsFromCache(any(), any())) doReturn cachedChannels
+        whenever(queryChannelsDatabaseLogic.fetchChannelsFromCache(any(), any())) doReturn cached
 
         // When
         logic.queryOffline(pagination)
 
         // Then
         verify(queryChannelsStateLogic).setLoadingFirstPage(true)
+        verify(queryChannelsStateLogic, never()).applyResolvedSpec(any(), any())
         verify(queryChannelsStateLogic).addChannelsState(cachedChannels)
         verify(queryChannelsStateLogic).setLoadingFirstPage(false)
         verify(queryChannelsStateLogic, never()).setLoadingMore(any())
     }
 
     @Test
-    fun `queryOffline should add empty list and reset loading when cached empty list is found`() = runTest {
+    fun `queryOffline should apply resolved spec from cached predefined spec before adding channels`() = runTest {
+        // Given – a Predefined-identifier logic with a predefined cached spec
+        val predefinedIdentifier = QueryChannelsIdentifier.Predefined(
+            name = "my-filter",
+            filterValues = mapOf("a" to 1),
+            sortValues = null,
+        )
+        val predefinedLogic = QueryChannelsLogic(
+            identifier = predefinedIdentifier,
+            client = client,
+            queryChannelsStateLogic = queryChannelsStateLogic,
+            queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
+        )
+        val resolvedFilter = Filters.eq("type", "messaging")
+        val resolvedSort = QuerySortByField.descByName<Channel>("last_message_at")
+        val predefinedSpec = QueryChannelsSpec.create(
+            filter = resolvedFilter,
+            querySort = resolvedSort,
+            predefinedFilterName = "my-filter",
+            predefinedFilterValues = mapOf("a" to 1),
+            predefinedSortValues = null,
+        )
+        val cached = CachedQueryChannels(spec = predefinedSpec, channels = listOf(randomChannel()))
+        val pagination = AnyChannelPaginationRequest().apply { channelOffset = 0 }
+        whenever(queryChannelsStateLogic.isLoading()) doReturn false
+        whenever(queryChannelsDatabaseLogic.fetchChannelsFromCache(any(), any())) doReturn cached
+
+        // When
+        predefinedLogic.queryOffline(pagination)
+
+        // Then
+        verify(queryChannelsStateLogic).applyResolvedSpec(eq(resolvedFilter), eq(resolvedSort))
+        verify(queryChannelsStateLogic).addChannelsState(cached.channels)
+    }
+
+    @Test
+    fun `queryOffline should add empty list and reset loading when cache hit returns no channels`() = runTest {
         // Given
         val pagination = AnyChannelPaginationRequest().apply {
             channelOffset = 0
         }
-        val cachedChannels = emptyList<Channel>()
+        val cached = CachedQueryChannels(spec = queryChannelsSpec, channels = emptyList())
         whenever(queryChannelsStateLogic.isLoading()) doReturn false
-        whenever(queryChannelsDatabaseLogic.fetchChannelsFromCache(any(), any())) doReturn cachedChannels
+        whenever(queryChannelsDatabaseLogic.fetchChannelsFromCache(any(), any())) doReturn cached
 
         // When
         logic.queryOffline(pagination)
@@ -220,8 +260,9 @@ internal class QueryChannelsLogicTest {
             channelOffset = 0
         }
         val cachedChannels = listOf(randomChannel())
+        val cached = CachedQueryChannels(spec = queryChannelsSpec, channels = cachedChannels)
         whenever(queryChannelsStateLogic.isLoading()) doReturn false
-        whenever(queryChannelsDatabaseLogic.fetchChannelsFromCache(any(), any())) doReturn cachedChannels
+        whenever(queryChannelsDatabaseLogic.fetchChannelsFromCache(any(), any())) doReturn cached
         whenever(queryChannelsStateLogic.getQuerySpecs()) doReturn queryChannelsSpec
 
         // When
@@ -281,6 +322,39 @@ internal class QueryChannelsLogicTest {
             querySort = sort,
             messageLimit = 5,
             memberLimit = 50,
+        )
+        verify(client).queryChannelsInternal(expectedRequest)
+    }
+
+    @Test
+    fun `queryFirstPage rebuilds a predefined-filter request from a Predefined identifier`() = runTest {
+        // Given
+        val predefinedIdentifier = QueryChannelsIdentifier.Predefined(
+            name = "my-predefined",
+            filterValues = mapOf("a" to 1),
+            sortValues = mapOf("b" to 2),
+        )
+        val predefinedLogic = QueryChannelsLogic(
+            identifier = predefinedIdentifier,
+            client = client,
+            queryChannelsStateLogic = queryChannelsStateLogic,
+            queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
+        )
+        whenever(client.queryChannelsInternal(any()))
+            .thenReturn(emptyList<Channel>().asCall())
+
+        // When
+        predefinedLogic.queryFirstPage()
+
+        // Then
+        val expectedRequest = QueryChannelsRequest(
+            offset = 0,
+            limit = 30,
+            messageLimit = null,
+            memberLimit = null,
+            predefinedFilter = "my-predefined",
+            filterValues = mapOf("a" to 1),
+            sortValues = mapOf("b" to 2),
         )
         verify(client).queryChannelsInternal(expectedRequest)
     }
