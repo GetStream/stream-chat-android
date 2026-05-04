@@ -481,12 +481,18 @@ public data class MessageListEmptyContentParams(
  * @param messagesLazyListState The lazy list state for scrolling.
  * @param contentPadding The content padding of the message list.
  * @param onScrollToBottomClick Action invoked when the scroll to bottom button is clicked.
+ * @param onScrollToFirstUnreadClick Action invoked when the scroll-to-first-unread pill body is
+ * clicked. Implementations should scroll the list to the unread boundary.
+ * @param onDismissUnreadLabel Action invoked when the close affordance on the
+ * scroll-to-first-unread pill is clicked. Implementations should hide the pill without scrolling.
  */
 public data class MessageListHelperContentParams(
     val messageListState: MessageListState,
     val messagesLazyListState: MessagesLazyListState,
     val contentPadding: PaddingValues,
     val onScrollToBottomClick: (() -> Unit) -> Unit,
+    val onScrollToFirstUnreadClick: () -> Unit = {},
+    val onDismissUnreadLabel: () -> Unit = {},
 )
 
 /**

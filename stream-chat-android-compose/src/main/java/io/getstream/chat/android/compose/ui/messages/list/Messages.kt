@@ -55,6 +55,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageListHelperContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageListItemModifierParams
 import io.getstream.chat.android.compose.ui.theme.MessageListLoadingMoreItemContentParams
 import io.getstream.chat.android.compose.ui.theme.ScrollToBottomButtonParams
+import io.getstream.chat.android.compose.ui.theme.ScrollToFirstUnreadButtonParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.util.isAppInForegroundAsState
 import io.getstream.chat.android.models.Message
@@ -67,6 +68,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MyOwn
 import io.getstream.chat.android.ui.common.state.messages.list.NewMessageState
 import io.getstream.chat.android.ui.common.state.messages.list.Other
 import io.getstream.chat.android.ui.common.state.messages.list.Typing
+import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.launch
@@ -93,6 +95,9 @@ import kotlin.math.abs
  * @param onScrolledToBottom Handler when the user reaches the bottom of the list.
  * @param onMessagesEndReached Handler for pagination, when the user reaches chronologically the end of messages.
  * @param onScrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
+ * @param onScrollToFirstUnread Handler when the user taps the scroll-to-first-unread pill.
+ * @param onDismissUnreadLabel Handler when the user dismisses the scroll-to-first-unread pill via
+ * its close affordance.
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
@@ -115,6 +120,8 @@ internal fun Messages(
     onScrolledToBottom: () -> Unit,
     onMessagesEndReached: (String) -> Unit,
     onScrollToBottom: (() -> Unit) -> Unit,
+    onScrollToFirstUnread: () -> Unit = {},
+    onDismissUnreadLabel: () -> Unit = {},
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     helperContent: @Composable BoxScope.() -> Unit = {
@@ -125,6 +132,8 @@ internal fun Messages(
                     messagesLazyListState = messagesLazyListState,
                     contentPadding = contentPadding,
                     onScrollToBottomClick = onScrollToBottom,
+                    onScrollToFirstUnreadClick = onScrollToFirstUnread,
+                    onDismissUnreadLabel = onDismissUnreadLabel,
                 ),
             )
         }
@@ -301,7 +310,11 @@ private fun MessageListState.getVerticalArrangement(
  *
  * @param messagesState The state of messages, current message list, thread, user and more.
  * @param messagesLazyListState The scrolling state of the list, used to manipulate and trigger scroll events.
+ * @param contentPadding Padding values applied around the message list content.
  * @param scrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
+ * @param scrollToFirstUnread Handler when the user taps the scroll-to-first-unread pill.
+ * @param dismissUnreadLabel Handler when the user dismisses the scroll-to-first-unread pill via
+ * its close affordance.
  */
 @Suppress("LongMethod")
 @Composable
@@ -310,6 +323,8 @@ internal fun BoxScope.DefaultMessagesHelperContent(
     messagesLazyListState: MessagesLazyListState,
     contentPadding: PaddingValues,
     scrollToBottom: (() -> Unit) -> Unit,
+    scrollToFirstUnread: () -> Unit = {},
+    dismissUnreadLabel: () -> Unit = {},
 ) {
     val lazyListState = messagesLazyListState.lazyListState
 
@@ -370,7 +385,35 @@ internal fun BoxScope.DefaultMessagesHelperContent(
         areNewestMessagesLoaded,
     )
 
+    val unreadLabel = messagesState.unreadLabel
+    val unreadSeparatorIndex = remember(messages) {
+        messages.indexOfFirst { it is UnreadSeparatorItemState }
+    }
+    val isUnreadSeparatorVisible by remember(unreadSeparatorIndex) {
+        derivedStateOf {
+            unreadSeparatorIndex >= 0 &&
+                lazyListState.layoutInfo.visibleItemsInfo.any { it.index == unreadSeparatorIndex }
+        }
+    }
+    val scrollToFirstUnreadVisible = isScrollToFirstUnreadVisible(
+        buttonVisibility = unreadLabel?.buttonVisibility == true,
+        isUnreadSeparatorVisible = isUnreadSeparatorVisible,
+    )
+
     with(ChatTheme.componentFactory) {
+        ScrollToFirstUnreadButton(
+            params = ScrollToFirstUnreadButtonParams(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(contentPadding)
+                    .padding(top = StreamTokens.spacingMd),
+                visible = scrollToFirstUnreadVisible,
+                unreadCount = unreadLabel?.unreadCount ?: 0,
+                onClick = scrollToFirstUnread,
+                onDismiss = dismissUnreadLabel,
+            ),
+        )
+
         ScrollToBottomButton(
             params = ScrollToBottomButtonParams(
                 modifier = Modifier
@@ -513,6 +556,24 @@ private fun isScrollToBottomButtonVisibleInMessageList(
 private fun shouldScrollToBottomButtonBeVisibleAtIndex(firstVisibleItemIndex: Int): Boolean {
     return abs(firstVisibleItemIndex) >= 3
 }
+
+/**
+ * Determines whether the scroll-to-first-unread pill should be visible.
+ *
+ * The pill shows when the controller has produced an unread label with [buttonVisibility] enabled
+ * and the inline unread separator is not present in the visible viewport — either because the
+ * boundary lies above the loaded window, or because it has not been loaded into the list yet.
+ *
+ * @param buttonVisibility Whether the controller currently allows the button to be shown.
+ * @param isUnreadSeparatorVisible Whether the inline unread separator is currently within the
+ * visible viewport.
+ *
+ * @return Whether the scroll-to-first-unread pill should be shown.
+ */
+private fun isScrollToFirstUnreadVisible(
+    buttonVisibility: Boolean,
+    isUnreadSeparatorVisible: Boolean,
+): Boolean = buttonVisibility && !isUnreadSeparatorVisible
 
 /**
  * The default loading more indicator.

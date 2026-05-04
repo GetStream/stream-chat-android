@@ -733,6 +733,8 @@ public interface ChatComponentFactory {
             messagesLazyListState = params.messagesLazyListState,
             contentPadding = params.contentPadding,
             scrollToBottom = params.onScrollToBottomClick,
+            scrollToFirstUnread = params.onScrollToFirstUnreadClick,
+            dismissUnreadLabel = params.onDismissUnreadLabel,
         )
     }
 
