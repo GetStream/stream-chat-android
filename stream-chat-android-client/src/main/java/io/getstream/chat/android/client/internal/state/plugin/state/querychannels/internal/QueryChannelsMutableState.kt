@@ -77,17 +77,6 @@ internal class QueryChannelsMutableState(
 
     /**
      * In-memory cache spec for the active query.
-     *
-     * Backed by a private `var` ([_querySpec]) so [applyResolvedSpec] can swap it (the public
-     * [QueryChannelsSpec] keeps `filter` and `querySort` as `val` for binary compatibility — see
-     * the type's KDoc). External readers see a stable read-only `val` accessor; the property is
-     * `internal`, so it never leaks to public API.
-     *
-     * Stale-read safety: every reader (`QueryChannelsLogic.addChannels` / `removeChannels` /
-     * `refreshAllChannelsState`, `QueryChannelsStateLogic.{addChannelsState, removeChannels,
-     * refreshChannels}`) reads the property fresh and uses the value immediately. There is no
-     * stash-and-reuse, and per-query mutations are single-threaded on the SDK coroutine chain, so
-     * `cids += …` style updates always read and write on the same held instance.
      */
     private var _querySpec: QueryChannelsSpec = when (identifier) {
         is QueryChannelsIdentifier.Standard -> QueryChannelsSpec.create(
