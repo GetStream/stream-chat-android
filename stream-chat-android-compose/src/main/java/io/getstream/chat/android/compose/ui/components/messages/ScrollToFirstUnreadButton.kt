@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,16 +52,16 @@ private val IconSize = 16.dp
  * and tapping the trailing close (X) icon dismisses the pill without scrolling.
  *
  * @param unreadCount The number of unread messages to display in the label.
+ * @param modifier The modifier used for styling.
  * @param onClick The handler triggered when the user taps the label area.
  * @param onDismiss The handler triggered when the user taps the close (X) icon.
- * @param modifier The modifier used for styling.
  */
 @Composable
 internal fun ScrollToFirstUnreadButton(
     unreadCount: Int,
-    onClick: () -> Unit,
-    onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+    onDismiss: () -> Unit = {},
 ) {
     Surface(
         modifier = modifier
@@ -96,6 +97,10 @@ internal fun ScrollToFirstUnreadButton(
                     style = ChatTheme.typography.metadataEmphasis,
                 )
             }
+            VerticalDivider(
+                thickness = StreamTokens.borderStrokeSubtle,
+                color = ChatTheme.colors.borderCoreSubtle,
+            )
             Icon(
                 modifier = Modifier
                     .clickable(role = Role.Button, onClick = onDismiss)
@@ -116,8 +121,6 @@ private fun Preview() {
     ChatTheme {
         ScrollToFirstUnreadButton(
             unreadCount = 9,
-            onClick = { },
-            onDismiss = { },
         )
     }
 }
