@@ -6776,6 +6776,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun deleteMessage (Lio/getstream/chat/android/models/Message;)V
 	public final fun deleteMessage (Lio/getstream/chat/android/models/Message;Z)V
 	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/models/Message;ZILjava/lang/Object;)V
+	public final fun disableUnreadLabelButton ()V
 	public final fun dismissAllMessageActions ()V
 	public final fun dismissMessageAction (Lio/getstream/chat/android/ui/common/state/messages/MessageAction;)V
 	public final fun displayPollMoreOptions (Lio/getstream/chat/android/ui/common/state/messages/poll/SelectedPoll;)V
