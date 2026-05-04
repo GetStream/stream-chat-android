@@ -204,6 +204,16 @@ internal class DtoMappingTest {
     }
 
     @Test
+    fun `Message toDto uses messageType parameter when provided`() {
+        val message = randomMessage(type = "reply")
+        val mapping = Fixture().get()
+
+        val dto = with(mapping) { message.toDto(messageType = "") }
+
+        dto.type shouldBeEqualTo ""
+    }
+
+    @Test
     fun `Mute is correctly mapped to Dto`() {
         val mute = randomMute()
         val mapping = Fixture().get()
