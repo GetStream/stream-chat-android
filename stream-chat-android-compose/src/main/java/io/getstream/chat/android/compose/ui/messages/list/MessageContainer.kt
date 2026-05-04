@@ -181,6 +181,7 @@ public fun MessageContainer(
     val clickModifier = Modifier.combinedClickable(
         interactionSource = remember { MutableInteractionSource() },
         indication = ripple(),
+        enabled = canOpenThread || canOpenActions,
         onClick = { if (canOpenThread) onThreadClick(message) },
         onLongClick = {
             if (canOpenActions) {
