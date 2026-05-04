@@ -147,6 +147,22 @@ internal class MessageListViewModelTest {
         verify(audioPlayer).pause()
     }
 
+    @Test
+    fun `When disableUnreadLabelButton is called without active unread label, state stays empty`() = runTest {
+        val viewModel = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState()
+            .get()
+
+        // No lastReadMessageId is configured by the fixture, so the calculator never produces an
+        // unread label. Calling disableUnreadLabelButton must early-return on the controller side
+        // and leave the unread state untouched.
+        viewModel.disableUnreadLabelButton()
+
+        viewModel.currentMessagesState.value.unreadLabel `should be equal to` null
+    }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelId: String = CID,
