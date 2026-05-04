@@ -32,23 +32,9 @@ internal class ScrollToFirstUnreadButtonTest : PaparazziComposeTest {
     )
 
     @Test
-    fun `pill with single unread`() {
-        snapshotWithDarkMode {
-            ScrollToFirstUnreadButton(unreadCount = 1)
-        }
-    }
-
-    @Test
-    fun `pill with default unread count`() {
-        snapshotWithDarkMode {
-            ScrollToFirstUnreadButton(unreadCount = 9)
-        }
-    }
-
-    @Test
-    fun `pill with large unread count`() {
-        snapshotWithDarkMode {
-            ScrollToFirstUnreadButton(unreadCount = 999)
+    fun `pill with unread count`() {
+        snapshotWithDarkModeRow {
+            ScrollToFirstUnreadButton()
         }
     }
 }

@@ -18,7 +18,11 @@ package io.getstream.chat.android.compose.ui.components.messages
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -65,20 +69,23 @@ internal fun ScrollToFirstUnreadButton(
 ) {
     Surface(
         modifier = modifier
-            .shadow(StreamTokens.spacing2xs, shape = CircleShape)
-            .testTag("Stream_ScrollToFirstUnreadButton"),
+            .shadow(StreamTokens.spacing2xs, shape = CircleShape),
         shape = CircleShape,
         color = ChatTheme.colors.backgroundCoreElevation1,
         contentColor = ChatTheme.colors.textPrimary,
-        border = BorderStroke(StreamTokens.borderStrokeSubtle, ChatTheme.colors.borderCoreSubtle),
+        border = BorderStroke(1.dp, ChatTheme.colors.borderCoreSubtle),
     ) {
         Row(
+            modifier = Modifier
+                .height(IntrinsicSize.Min)
+                .heightIn(min = 40.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Row(
                 modifier = Modifier
+                    .testTag("Stream_ScrollToFirstUnreadButton")
                     .clickable(role = Role.Button, onClick = onClick)
-                    .padding(vertical = StreamTokens.spacingXs)
+                    .fillMaxHeight()
                     .padding(start = StreamTokens.spacingSm, end = StreamTokens.spacingXs),
                 horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
                 verticalAlignment = Alignment.CenterVertically,
@@ -98,14 +105,15 @@ internal fun ScrollToFirstUnreadButton(
                 )
             }
             VerticalDivider(
+                modifier = Modifier.padding(vertical = StreamTokens.spacing2xs),
                 thickness = StreamTokens.borderStrokeSubtle,
                 color = ChatTheme.colors.borderCoreSubtle,
             )
             Icon(
                 modifier = Modifier
-                    .clickable(role = Role.Button, onClick = onDismiss)
                     .testTag("Stream_ScrollToFirstUnreadButton_Dismiss")
-                    .padding(vertical = StreamTokens.spacingXs)
+                    .clickable(role = Role.Button, onClick = onDismiss)
+                    .fillMaxHeight()
                     .padding(start = StreamTokens.spacingXs, end = StreamTokens.spacingSm)
                     .size(IconSize),
                 painter = painterResource(R.drawable.stream_design_ic_xmark),
@@ -117,10 +125,15 @@ internal fun ScrollToFirstUnreadButton(
 
 @Composable
 @Preview(showBackground = true)
-private fun Preview() {
+private fun ScrollToFirstUnreadButtonPreview() {
     ChatTheme {
-        ScrollToFirstUnreadButton(
-            unreadCount = 9,
-        )
+        ScrollToFirstUnreadButton()
     }
+}
+
+@Composable
+internal fun ScrollToFirstUnreadButton() {
+    ScrollToFirstUnreadButton(
+        unreadCount = 9,
+    )
 }
