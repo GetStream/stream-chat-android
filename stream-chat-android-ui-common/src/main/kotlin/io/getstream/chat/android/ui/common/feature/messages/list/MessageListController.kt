@@ -636,8 +636,9 @@ public class MessageListController(
      * i.e. when the user leaves and re-enters the channel.
      */
     public fun disableUnreadLabelButton() {
+        val currentLabel = unreadLabelState.value ?: return
         showUnreadButtonState.tryEmit(false)
-        unreadLabelState.value = unreadLabelState.value?.copy(buttonVisibility = false)
+        unreadLabelState.value = currentLabel.copy(buttonVisibility = false)
     }
 
     /**

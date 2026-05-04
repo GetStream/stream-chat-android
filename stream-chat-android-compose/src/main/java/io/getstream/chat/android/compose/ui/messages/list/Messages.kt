@@ -386,13 +386,13 @@ internal fun BoxScope.DefaultMessagesHelperContent(
     )
 
     val unreadLabel = messagesState.unreadLabel
-    val unreadSeparatorIndex = remember(messages) {
-        messages.indexOfFirst { it is UnreadSeparatorItemState }
+    val unreadSeparatorId = remember(messages) {
+        messages.firstOrNull { it is UnreadSeparatorItemState }?.id
     }
-    val isUnreadSeparatorVisible by remember(unreadSeparatorIndex) {
+    val isUnreadSeparatorVisible by remember(unreadSeparatorId, lazyListState) {
         derivedStateOf {
-            unreadSeparatorIndex >= 0 &&
-                lazyListState.layoutInfo.visibleItemsInfo.any { it.index == unreadSeparatorIndex }
+            unreadSeparatorId != null &&
+                lazyListState.layoutInfo.visibleItemsInfo.any { it.key == unreadSeparatorId }
         }
     }
     val scrollToFirstUnreadVisible = isScrollToFirstUnreadVisible(

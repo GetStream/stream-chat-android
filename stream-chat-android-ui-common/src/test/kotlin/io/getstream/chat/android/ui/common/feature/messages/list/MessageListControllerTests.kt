@@ -1047,7 +1047,9 @@ internal class MessageListControllerTests {
 
         // The recomputed label must keep buttonVisibility false; otherwise the pill returns
         // immediately after the user dismisses or scrolls.
-        controller.unreadLabelState.value?.buttonVisibility?.`should be false`()
+        val unreadLabelAfterRead = controller.unreadLabelState.value
+        unreadLabelAfterRead.shouldNotBeNull()
+        unreadLabelAfterRead.buttonVisibility.`should be false`()
     }
 
     @Test
