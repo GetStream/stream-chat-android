@@ -66,6 +66,7 @@ import io.getstream.chat.android.client.api2.model.response.UsersResponse
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.models.EventType
+import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.UnreadChannel
 import io.getstream.chat.android.models.UnreadChannelByType
@@ -110,6 +111,15 @@ internal object MoshiChatApiTestArguments {
 
     @JvmStatic
     fun updateMessageInput() = messageResponseArguments()
+
+    @JvmStatic
+    fun uploadMessageTypeInput() = listOf(
+        Arguments.of(MessageType.REGULAR, MessageType.REGULAR),
+        Arguments.of(MessageType.SYSTEM, MessageType.SYSTEM),
+        Arguments.of(MessageType.REPLY, ""),
+        Arguments.of(MessageType.ERROR, ""),
+        Arguments.of(MessageType.EPHEMERAL, ""),
+    )
 
     @JvmStatic
     fun partialUpdateMessageInput() = messageResponseArguments()

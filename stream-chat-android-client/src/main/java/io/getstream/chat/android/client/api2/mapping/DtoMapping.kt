@@ -43,6 +43,7 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageTransformer
+import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
@@ -117,8 +118,13 @@ internal class DtoMapping(
 
     /**
      * Transforms [Message] to [UpstreamMessageDto].
+     *
+     * @param messageType Value to use for [UpstreamMessageDto.type]. When `null` (the default),
+     * the message's own type is used. Callers in the network layer may pass an explicit value to
+     * satisfy server-side validation — for example, the UpdateMessage endpoint only accepts the
+     * empty string, [MessageType.REGULAR], or [MessageType.SYSTEM].
      */
-    internal fun Message.toDto(): UpstreamMessageDto =
+    internal fun Message.toDto(messageType: String? = null): UpstreamMessageDto =
         messageTransformer.transform(this)
             .run {
                 UpstreamMessageDto(
@@ -127,7 +133,7 @@ internal class DtoMapping(
                     command = command,
                     html = html,
                     id = id,
-                    type = type,
+                    type = messageType ?: type,
                     mentioned_users = mentionedUsersIds,
                     parent_id = parentId,
                     pin_expires = pinExpires,
