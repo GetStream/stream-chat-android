@@ -35,8 +35,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
@@ -71,21 +69,16 @@ internal fun ScrollToFirstUnreadButton(
         shape = CircleShape,
         color = ChatTheme.colors.backgroundCoreElevation1,
         contentColor = ChatTheme.colors.textPrimary,
-        border = BorderStroke(1.dp, ChatTheme.colors.borderCoreSubtle),
+        border = BorderStroke(StreamTokens.borderStrokeSubtle, ChatTheme.colors.borderCoreSubtle),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Row(
                 modifier = Modifier
-                    .clickable(onClick = onClick)
-                    .semantics { role = Role.Button }
-                    .padding(
-                        start = StreamTokens.spacingSm,
-                        end = StreamTokens.spacingXs,
-                        top = StreamTokens.spacingXs,
-                        bottom = StreamTokens.spacingXs,
-                    ),
+                    .clickable(role = Role.Button, onClick = onClick)
+                    .padding(vertical = StreamTokens.spacingXs)
+                    .padding(start = StreamTokens.spacingSm, end = StreamTokens.spacingXs),
                 horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -105,15 +98,10 @@ internal fun ScrollToFirstUnreadButton(
             }
             Icon(
                 modifier = Modifier
-                    .clickable(onClick = onDismiss)
-                    .semantics { role = Role.Button }
+                    .clickable(role = Role.Button, onClick = onDismiss)
                     .testTag("Stream_ScrollToFirstUnreadButton_Dismiss")
-                    .padding(
-                        start = StreamTokens.spacingXs,
-                        end = StreamTokens.spacingSm,
-                        top = StreamTokens.spacingXs,
-                        bottom = StreamTokens.spacingXs,
-                    )
+                    .padding(vertical = StreamTokens.spacingXs)
+                    .padding(start = StreamTokens.spacingXs, end = StreamTokens.spacingSm)
                     .size(IconSize),
                 painter = painterResource(R.drawable.stream_design_ic_xmark),
                 contentDescription = stringResource(R.string.stream_compose_scroll_to_first_unread_dismiss),
