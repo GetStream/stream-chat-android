@@ -2,6 +2,10 @@ name: Check DB Entities
 
 on: [pull_request]
 
+permissions:
+  contents: read
+  pull-requests: write
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -12,7 +16,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v3.1.0
+        uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 0
       - uses: GetStream/android-ci-actions/actions/setup-java@main
@@ -29,7 +33,7 @@ jobs:
           echo "touchedEntities=$output" >> "$GITHUB_OUTPUT"
           exit "$status"
       - name: Find Comment
-        uses: peter-evans/find-comment@v2
+        uses: peter-evans/find-comment@v4
         id: fc
         if: steps.touchedEntities.outcome == 'failure'
         with:
@@ -38,7 +42,7 @@ jobs:
           body-includes: DB Entities have been updated. Do we need to upgrade DB Version?
 
       - name: Create or update comment
-        uses: peter-evans/create-or-update-comment@v2
+        uses: peter-evans/create-or-update-comment@v5
         if: steps.touchedEntities.outcome == 'failure'
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}

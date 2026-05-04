@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v3.1.0
+        uses: actions/checkout@v6.0.2
         with:
           token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
       - uses: GetStream/android-ci-actions/actions/setup-java@main
-      - uses: tibdex/github-app-token@v1.7.0
+      - uses: tibdex/github-app-token@v2.1.0
         id: generate-token
         with:
           app_id: ${{ secrets.APP_ID_OBTAIN_TOKEN }}
@@ -23,7 +23,7 @@ jobs:
       - name: Run Detekt Baseline
         run: ./gradlew detektBaseline
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: "AUTOMATION: Clean Detekt Baseline Files"
           title: "AUTOMATION: Clean Detekt Baseline Files"

@@ -34,6 +34,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.hideFromAccessibility
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
@@ -126,10 +131,21 @@ internal fun DefaultFilesPickerItem(
     onItemSelected: (AttachmentPickerItemState) -> Unit,
     allowMultipleSelection: Boolean = true,
 ) {
+    val onClickLabel = stringResource(
+        if (fileItem.isSelected) {
+            R.string.stream_compose_attachment_picker_remove
+        } else {
+            R.string.stream_compose_attachment_picker_select
+        },
+    )
     Row(
         Modifier
             .fillMaxWidth()
-            .clickable { onItemSelected(fileItem) }
+            .semantics(mergeDescendants = true) {
+                role = Role.Button
+                selected = fileItem.isSelected
+            }
+            .clickable(onClickLabel = onClickLabel) { onItemSelected(fileItem) }
             .padding(StreamTokens.spacingSm),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
@@ -158,11 +174,13 @@ internal fun DefaultFilesPickerItem(
 
         if (allowMultipleSelection) {
             RadioCheck(
+                modifier = Modifier.semantics { hideFromAccessibility() },
                 checked = fileItem.isSelected,
                 onCheckedChange = null,
             )
         } else {
             RadioButton(
+                modifier = Modifier.semantics { hideFromAccessibility() },
                 checked = fileItem.isSelected,
                 onCheckedChange = null,
             )

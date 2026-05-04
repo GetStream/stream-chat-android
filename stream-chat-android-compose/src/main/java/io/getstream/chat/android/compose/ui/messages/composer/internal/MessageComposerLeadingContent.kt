@@ -34,6 +34,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -66,6 +68,13 @@ internal fun MessageComposerLeadingContent(
             val iconRotation by animateFloatAsState(
                 targetValue = if (isAttachmentPickerVisible) OpenAttachmentPickerButtonRotation else 0f,
             )
+            val pickerStateDescription = stringResource(
+                if (isAttachmentPickerVisible) {
+                    R.string.stream_compose_message_composer_attachments_expanded
+                } else {
+                    R.string.stream_compose_message_composer_attachments_collapsed
+                },
+            )
             FilledIconButton(
                 modifier = Modifier
                     .padding(end = 8.dp)
@@ -82,7 +91,8 @@ internal fun MessageComposerLeadingContent(
                         },
                     )
                     .size(48.dp)
-                    .testTag("Stream_ComposerAttachmentsButton"),
+                    .testTag("Stream_ComposerAttachmentsButton")
+                    .semantics { stateDescription = pickerStateDescription },
                 colors = IconButtonDefaults.filledIconButtonColors(
                     containerColor = ChatTheme.colors.backgroundCoreElevation1,
                     disabledContainerColor = ChatTheme.colors.backgroundCoreElevation1,
@@ -94,7 +104,7 @@ internal fun MessageComposerLeadingContent(
                 Icon(
                     modifier = Modifier.graphicsLayer { rotationZ = iconRotation },
                     painter = painterResource(id = R.drawable.stream_design_ic_plus),
-                    contentDescription = stringResource(id = R.string.stream_compose_attachments),
+                    contentDescription = stringResource(R.string.stream_compose_message_composer_attachments),
                 )
             }
         }

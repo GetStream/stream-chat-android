@@ -14,7 +14,7 @@ jobs:
     name: Build and Distribute Compose Sample App
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.2
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - name: Prepare environment
         run: |
@@ -26,7 +26,7 @@ jobs:
       - name: Assemble
         run: ./gradlew :stream-chat-android-compose-sample:assembleRelease --stacktrace
       - name: Upload artifact to Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.0
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.1
         with:
           appId: "1:17048947178:android:07dc1e8e56b65c1f40ca93" # V7 demo app id
           serviceCredentialsFileContent: ${{ secrets.STREAM_ANDROID_FIREBASE_CREDENTIALS_APP_CONTENT }}

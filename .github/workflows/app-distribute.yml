@@ -11,7 +11,7 @@ jobs:
     name: Build and Distribute UI Components Sample App
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v6.0.2
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - name: Prepare environment
         run: |
@@ -23,12 +23,12 @@ jobs:
       - name: Assemble
         run: bash ./gradlew :stream-chat-android-ui-components-sample:assembleDemoRelease --stacktrace
       - name: Upload APK
-        uses: actions/upload-artifact@v4.4.3
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: stream-chat-android-ui-components-sample-release
           path: stream-chat-android-ui-components-sample/build/outputs/apk/demo/release/
       - name: Upload artifact to Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.0
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.1
         with:
           appId: ${{secrets.FIREBASE_UI_SAMPLE_APP_ID}}
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
@@ -39,7 +39,7 @@ jobs:
     name: Build and Distribute Compose Sample App
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v6.0.2
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - name: Prepare environment
         run: |
@@ -51,12 +51,12 @@ jobs:
       - name: Assemble
         run: bash ./gradlew :stream-chat-android-compose-sample:assembleRelease --stacktrace
       - name: Upload APK
-        uses: actions/upload-artifact@v4.4.3
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: stream-chat-android-compose-sample-release
           path: stream-chat-android-compose-sample/build/outputs/apk/release/
       - name: Upload artifact to Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.0
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.1
         with:
           appId: ${{secrets.FIREBASE_COMPOSE_SAMPLE_APP_ID}}
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}

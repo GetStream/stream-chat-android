@@ -174,6 +174,9 @@
     <string name="stream_compose_message_composer_unsupported_attachment">Unsupported attachment</string>
     <string name="stream_compose_message_composer_send_button">Send</string>
     <string name="stream_compose_message_composer_save_button">Save</string>
+    <string name="stream_compose_message_composer_attachments">Attachments</string>
+    <string name="stream_compose_message_composer_attachments_collapsed">collapsed</string>
+    <string name="stream_compose_message_composer_attachments_expanded">expanded</string>
 
     <!-- Message Preview -->
     <string name="stream_compose_audio_recording_preview">Voice message</string>
@@ -222,9 +225,18 @@
     <string name="stream_compose_attachment_polls_picker">Polls</string>
     <string name="stream_compose_attachment_poll_picker_content">Create a poll and let everyone vote</string>
     <string name="stream_compose_attachment_poll_picker_cta">Create Poll</string>
+    <string name="stream_compose_attachment_added_audio">Audio recording attached</string>
+    <string name="stream_compose_attachment_added_file">File attached</string>
+    <string name="stream_compose_attachment_added_photo">Photo attached</string>
+    <string name="stream_compose_attachment_added_video">Video attached</string>
+    <string name="stream_compose_attachment_removed">Attachment removed</string>
     <string name="stream_compose_attachment_commands_picker">Commands</string>
+    <string name="stream_compose_attachment_picker">Attachment picker</string>
+    <string name="stream_compose_attachment_picker_photo">Photo</string>
+    <string name="stream_compose_attachment_picker_remove">remove</string>
+    <string name="stream_compose_attachment_picker_select">select</string>
+    <string name="stream_compose_attachment_picker_video">Video</string>
 
-    <string name="stream_compose_attachments">Attachments</string>
     <string name="stream_compose_recent_files">Recent Files</string>
     <string name="stream_compose_thread_title">Thread Reply</string>
     <string name="stream_compose_thread_subtitle">with %1$s</string>
@@ -234,6 +246,7 @@
     <string name="stream_compose_image_order">%1$d of %2$d</string>
     <string name="stream_compose_scroll_to_bottom">Scroll to bottom</string>
     <string name="stream_compose_remaining_media_attachments_count">+%1$d</string>
+    <string name="stream_compose_remove_attachment">Remove attachment</string>
     <string name="stream_compose_giphy_label">GIPHY</string>
     <string name="stream_compose_pinned_to_channel">Pinned</string>
     <string name="stream_compose_pinned_to_channel_by">Pinned by %1$s</string>

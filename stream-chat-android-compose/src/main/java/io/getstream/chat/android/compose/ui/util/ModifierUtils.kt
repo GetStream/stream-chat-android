@@ -69,17 +69,21 @@ internal fun Modifier.dragPointerInput(
  * Unbounded ripples always animate from the target layout center, bounded ripples animate from the touch position.
  * @param enabled Controls the enabled state.
  * When `false`, [onClick], and this modifier will appear disabled for accessibility service.
+ * @param onClickLabel Semantic / accessibility label for the click action. Announced by screen readers
+ * (e.g. "double tap to <label>").
  * @param onClick The callback to be invoked when the click gesture is detected.
  */
 internal fun Modifier.clickable(
     bounded: Boolean = true,
     enabled: Boolean = true,
+    onClickLabel: String? = null,
     onClick: () -> Unit,
 ): Modifier =
     clickable(
         interactionSource = null,
         indication = ripple(bounded),
         enabled = enabled,
+        onClickLabel = onClickLabel,
         onClick = onClick,
     )
 
