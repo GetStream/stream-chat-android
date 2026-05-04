@@ -567,6 +567,8 @@ public class MessageListController(
         }.launchIn(scope)
 
         observeUnreadLabelState()
+
+        unreadLabelState.onEach(::updateUnreadLabel).launchIn(scope)
     }
 
     /**
@@ -720,6 +722,11 @@ public class MessageListController(
     private fun updateUnreadCount(unreadCount: Int) {
         logger.d { "[updateUnreadCount] #messageList; unreadCount: $unreadCount" }
         setMessageListState(_messageListState.value.copy(unreadCount = unreadCount))
+    }
+
+    private fun updateUnreadLabel(unreadLabel: UnreadLabel?) {
+        logger.d { "[updateUnreadLabel] #messageList; unreadLabel: $unreadLabel" }
+        setMessageListState(_messageListState.value.copy(unreadLabel = unreadLabel))
     }
 
     private fun updateIsLoadingOlderMessages(isLoadingOlderMessages: Boolean) {

@@ -2737,11 +2737,12 @@ public abstract class io/getstream/chat/android/ui/common/state/messages/list/Me
 public final class io/getstream/chat/android/ui/common/state/messages/list/MessageListState {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (Ljava/util/List;ZZZZZLio/getstream/chat/android/models/User;Ljava/lang/String;ILio/getstream/chat/android/ui/common/state/messages/list/NewMessageState;Lio/getstream/chat/android/ui/common/state/messages/list/SelectedMessageState;)V
-	public synthetic fun <init> (Ljava/util/List;ZZZZZLio/getstream/chat/android/models/User;Ljava/lang/String;ILio/getstream/chat/android/ui/common/state/messages/list/NewMessageState;Lio/getstream/chat/android/ui/common/state/messages/list/SelectedMessageState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/util/List;ZZZZZLio/getstream/chat/android/models/User;Ljava/lang/String;ILio/getstream/chat/android/ui/common/state/messages/list/NewMessageState;Lio/getstream/chat/android/ui/common/state/messages/list/SelectedMessageState;Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController$UnreadLabel;)V
+	public synthetic fun <init> (Ljava/util/List;ZZZZZLio/getstream/chat/android/models/User;Ljava/lang/String;ILio/getstream/chat/android/ui/common/state/messages/list/NewMessageState;Lio/getstream/chat/android/ui/common/state/messages/list/SelectedMessageState;Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController$UnreadLabel;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/List;
 	public final fun component10 ()Lio/getstream/chat/android/ui/common/state/messages/list/NewMessageState;
 	public final fun component11 ()Lio/getstream/chat/android/ui/common/state/messages/list/SelectedMessageState;
+	public final fun component12 ()Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController$UnreadLabel;
 	public final fun component2 ()Z
 	public final fun component3 ()Z
 	public final fun component4 ()Z
@@ -2750,8 +2751,8 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Messa
 	public final fun component7 ()Lio/getstream/chat/android/models/User;
 	public final fun component8 ()Ljava/lang/String;
 	public final fun component9 ()I
-	public final fun copy (Ljava/util/List;ZZZZZLio/getstream/chat/android/models/User;Ljava/lang/String;ILio/getstream/chat/android/ui/common/state/messages/list/NewMessageState;Lio/getstream/chat/android/ui/common/state/messages/list/SelectedMessageState;)Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;Ljava/util/List;ZZZZZLio/getstream/chat/android/models/User;Ljava/lang/String;ILio/getstream/chat/android/ui/common/state/messages/list/NewMessageState;Lio/getstream/chat/android/ui/common/state/messages/list/SelectedMessageState;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;
+	public final fun copy (Ljava/util/List;ZZZZZLio/getstream/chat/android/models/User;Ljava/lang/String;ILio/getstream/chat/android/ui/common/state/messages/list/NewMessageState;Lio/getstream/chat/android/ui/common/state/messages/list/SelectedMessageState;Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController$UnreadLabel;)Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;Ljava/util/List;ZZZZZLio/getstream/chat/android/models/User;Ljava/lang/String;ILio/getstream/chat/android/ui/common/state/messages/list/NewMessageState;Lio/getstream/chat/android/ui/common/state/messages/list/SelectedMessageState;Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController$UnreadLabel;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCurrentUser ()Lio/getstream/chat/android/models/User;
 	public final fun getEndOfNewMessagesReached ()Z
@@ -2761,6 +2762,7 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Messa
 	public final fun getParentMessageId ()Ljava/lang/String;
 	public final fun getSelectedMessageState ()Lio/getstream/chat/android/ui/common/state/messages/list/SelectedMessageState;
 	public final fun getUnreadCount ()I
+	public final fun getUnreadLabel ()Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController$UnreadLabel;
 	public fun hashCode ()I
 	public final fun isLoading ()Z
 	public final fun isLoadingNewerMessages ()Z
