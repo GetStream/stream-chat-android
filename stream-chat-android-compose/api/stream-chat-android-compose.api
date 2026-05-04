@@ -1516,6 +1516,12 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Comp
 	public final fun getLambda$-388063089$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
+public final class io/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$ScrollToFirstUnreadButtonKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$ScrollToFirstUnreadButtonKt;
+	public fun <init> ()V
+	public final fun getLambda$-1749808746$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class io/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$SwipeToReplyIconKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$SwipeToReplyIconKt;
 	public fun <init> ()V
@@ -3456,6 +3462,7 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 	public fun ReactionsMenu (Lio/getstream/chat/android/compose/ui/theme/ReactionsMenuParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ReactionsMenuContent (Lio/getstream/chat/android/compose/ui/theme/ReactionsMenuContentParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ScrollToBottomButton (Lio/getstream/chat/android/compose/ui/theme/ScrollToBottomButtonParams;Landroidx/compose/runtime/Composer;I)V
+	public fun ScrollToFirstUnreadButton (Lio/getstream/chat/android/compose/ui/theme/ScrollToFirstUnreadButtonParams;Landroidx/compose/runtime/Composer;I)V
 	public fun SearchInputClearButton (Lio/getstream/chat/android/compose/ui/theme/SearchInputClearButtonParams;Landroidx/compose/runtime/Composer;I)V
 	public fun SearchInputLabel (Lio/getstream/chat/android/compose/ui/theme/SearchInputLabelParams;Landroidx/compose/runtime/Composer;I)V
 	public fun SearchInputLeadingIcon (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/ui/theme/SearchInputLeadingIconParams;Landroidx/compose/runtime/Composer;I)V
@@ -3645,6 +3652,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFacto
 	public static fun ReactionsMenu (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ReactionsMenuParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ReactionsMenuContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ReactionsMenuContentParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ScrollToBottomButton (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ScrollToBottomButtonParams;Landroidx/compose/runtime/Composer;I)V
+	public static fun ScrollToFirstUnreadButton (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ScrollToFirstUnreadButtonParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun SearchInputClearButton (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/SearchInputClearButtonParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun SearchInputLabel (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/SearchInputLabelParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun SearchInputLeadingIcon (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/ui/theme/SearchInputLeadingIconParams;Landroidx/compose/runtime/Composer;I)V
@@ -5678,6 +5686,27 @@ public final class io/getstream/chat/android/compose/ui/theme/ScrollToBottomButt
 	public final fun getCount ()I
 	public final fun getModifier ()Landroidx/compose/ui/Modifier;
 	public final fun getOnClick ()Lkotlin/jvm/functions/Function0;
+	public final fun getVisible ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/ui/theme/ScrollToFirstUnreadButtonParams {
+	public static final field $stable I
+	public fun <init> (ZILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;)V
+	public synthetic fun <init> (ZILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun component2 ()I
+	public final fun component3 ()Lkotlin/jvm/functions/Function0;
+	public final fun component4 ()Lkotlin/jvm/functions/Function0;
+	public final fun component5 ()Landroidx/compose/ui/Modifier;
+	public final fun copy (ZILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;)Lio/getstream/chat/android/compose/ui/theme/ScrollToFirstUnreadButtonParams;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/ScrollToFirstUnreadButtonParams;ZILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ScrollToFirstUnreadButtonParams;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getModifier ()Landroidx/compose/ui/Modifier;
+	public final fun getOnClick ()Lkotlin/jvm/functions/Function0;
+	public final fun getOnDismiss ()Lkotlin/jvm/functions/Function0;
+	public final fun getUnreadCount ()I
 	public final fun getVisible ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;

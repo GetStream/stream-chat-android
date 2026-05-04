@@ -505,6 +505,25 @@ public data class ScrollToBottomButtonParams(
 )
 
 /**
+ * Parameters for [ChatComponentFactory.ScrollToFirstUnreadButton].
+ *
+ * @param visible Whether the pill is visible.
+ * @param unreadCount The number of unread messages to display in the pill label.
+ * @param onClick Action invoked when the pill body is clicked. Implementations should scroll the
+ * list to the first unread message.
+ * @param onDismiss Action invoked when the close (X) affordance is clicked. Implementations
+ * should hide the pill without scrolling.
+ * @param modifier Modifier for styling.
+ */
+public data class ScrollToFirstUnreadButtonParams(
+    val visible: Boolean,
+    val unreadCount: Int,
+    val onClick: () -> Unit,
+    val onDismiss: () -> Unit,
+    val modifier: Modifier = Modifier,
+)
+
+/**
  * Parameters for [ChatComponentFactory.MessageItem].
  *
  * @param messageListItem The message list item state.
