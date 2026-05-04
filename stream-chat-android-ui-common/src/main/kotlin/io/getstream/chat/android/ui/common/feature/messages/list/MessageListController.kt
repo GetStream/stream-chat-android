@@ -618,9 +618,16 @@ public class MessageListController(
     }
 
     /**
-     * Disable the unread label button.
+     * Disables the unread-label button.
+     *
+     * Suppresses the button on the current label and on any label produced by future
+     * recomputations of [observeUnreadLabelState], so the dismissal survives subsequent
+     * read-state changes (for example, the auto-mark-read that follows
+     * [scrollToFirstUnreadMessage]). The suppression is reset when the controller is recreated,
+     * i.e. when the user leaves and re-enters the channel.
      */
     public fun disableUnreadLabelButton() {
+        showUnreadButtonState.tryEmit(false)
         unreadLabelState.value = unreadLabelState.value?.copy(buttonVisibility = false)
     }
 
