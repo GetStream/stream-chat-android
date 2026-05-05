@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -374,10 +375,13 @@ private fun MessageComposerSurface(
     } else {
         Surface(
             modifier = modifier,
-            shadowElevation = 24.dp,
             color = ChatTheme.colors.backgroundCoreElevation1,
         ) {
             Column(modifier = Modifier.animateContentSize(alignment = Alignment.BottomCenter)) {
+                HorizontalDivider(
+                    thickness = 1.dp,
+                    color = ChatTheme.colors.borderCoreSubtle,
+                )
                 content()
             }
         }

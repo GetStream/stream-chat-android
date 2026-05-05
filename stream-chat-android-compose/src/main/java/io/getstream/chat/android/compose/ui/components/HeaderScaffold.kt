@@ -34,12 +34,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
@@ -51,36 +47,28 @@ import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.User
 
 /**
- * Common header layout.
+ * Three-slot header layout with leading, center, and trailing slots laid out horizontally and a
+ * bottom divider.
  *
  * @param modifier Modifier for styling.
- * @param color The background color of the header.
- * @param shape The shape of the header.
- * @param elevation The elevation of the header.
- * @param leadingContent Composable for the leading slot (e.g. user avatar).
- * @param centerContent Composable for the center slot (e.g. title or loading indicator).
- * @param trailingContent Composable for the trailing slot (e.g. action button or spacer).
+ * @param leadingContent Slot rendered at the start of the row (e.g. avatar, back button).
+ * @param centerContent Slot rendered in the center of the row (e.g. title, loading indicator).
+ * @param trailingContent Slot rendered at the end of the row (e.g. action button, channel avatar).
  */
 @Composable
-internal fun ListHeader(
+internal fun HeaderScaffold(
     modifier: Modifier = Modifier,
-    color: Color = ChatTheme.colors.backgroundCoreElevation1,
-    shape: Shape = RectangleShape,
-    elevation: Dp = 0.dp,
     leadingContent: @Composable RowScope.() -> Unit,
     centerContent: @Composable RowScope.() -> Unit,
     trailingContent: @Composable RowScope.() -> Unit,
 ) {
     Surface(
-        modifier = modifier
-            .fillMaxWidth(),
-        shadowElevation = elevation,
-        color = color,
-        shape = shape,
+        modifier = modifier.fillMaxWidth(),
+        color = ChatTheme.colors.backgroundCoreElevation1,
     ) {
         Column {
             Row(
-                Modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(StreamTokens.spacingSm),
                 verticalAlignment = Alignment.CenterVertically,
@@ -94,15 +82,15 @@ internal fun ListHeader(
             }
             HorizontalDivider(
                 thickness = 1.dp,
-                color = ChatTheme.colors.borderCoreDefault,
+                color = ChatTheme.colors.borderCoreSubtle,
             )
         }
     }
 }
 
 /**
- * Default leading content for a [ListHeader].
- * Shows the user avatar if available, otherwise a spacer to preserve alignment.
+ * Default list-header leading content. Shows the user avatar if available, otherwise a spacer to
+ * preserve alignment.
  *
  * @param currentUser The currently logged in user.
  * @param onAvatarClick Action invoked when the avatar is clicked.
@@ -135,8 +123,8 @@ internal fun DefaultListHeaderLeadingContent(
 }
 
 /**
- * Default center content for a [ListHeader].
- * Shows a title when connected, a loading indicator when connecting, or "Disconnected" when offline.
+ * Default list-header center content. Shows a title when connected, a loading indicator when
+ * connecting, or "Disconnected" when offline.
  *
  * @param connectionState The state of WebSocket connection.
  * @param title The title to show.

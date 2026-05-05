@@ -114,6 +114,7 @@ import io.getstream.chat.android.compose.ui.components.messages.MessageText
 import io.getstream.chat.android.compose.ui.components.messages.MessageThreadFooter
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.ScrollToBottomButton
+import io.getstream.chat.android.compose.ui.components.messages.ScrollToFirstUnreadButton
 import io.getstream.chat.android.compose.ui.components.messages.SegmentedMessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.SwipeToReplyIcon
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
@@ -732,6 +733,8 @@ public interface ChatComponentFactory {
             messagesLazyListState = params.messagesLazyListState,
             contentPadding = params.contentPadding,
             scrollToBottom = params.onScrollToBottomClick,
+            scrollToFirstUnread = params.onScrollToFirstUnreadClick,
+            dismissUnreadLabel = params.onDismissUnreadLabel,
         )
     }
 
@@ -760,6 +763,37 @@ public interface ChatComponentFactory {
                 ScrollToBottomButton(
                     count = params.count,
                     onClick = params.onClick,
+                )
+            }
+        }
+    }
+
+    /**
+     * The default scroll-to-first-unread pill shown at the top of the message list when there are
+     * unread messages and the first unread is outside the viewport.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ScrollToFirstUnreadButton(params: ScrollToFirstUnreadButtonParams) {
+        if (LocalInspectionMode.current) {
+            if (params.visible) {
+                ScrollToFirstUnreadButton(
+                    modifier = params.modifier,
+                    unreadCount = params.unreadCount,
+                    onClick = params.onClick,
+                    onDismiss = params.onDismiss,
+                )
+            }
+        } else {
+            FadingVisibility(
+                modifier = params.modifier,
+                visible = params.visible,
+            ) {
+                ScrollToFirstUnreadButton(
+                    unreadCount = params.unreadCount,
+                    onClick = params.onClick,
+                    onDismiss = params.onDismiss,
                 )
             }
         }

@@ -551,6 +551,15 @@ public class MessageListViewModel(
     }
 
     /**
+     * Hides the floating unread-label button without scrolling. The inline unread separator
+     * remains visible. Use this for explicit dismiss affordances (e.g. a close icon on the
+     * scroll-to-first-unread pill).
+     */
+    public fun disableUnreadLabelButton() {
+        messageListController.disableUnreadLabelButton()
+    }
+
+    /**
      * Hides the unread label in the messages list (if already visible).
      */
     public fun hideUnreadSeparator() {

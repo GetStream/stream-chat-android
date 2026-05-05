@@ -223,7 +223,16 @@ public class MessageListController(
     public val user: StateFlow<User?> = clientState.user
 
     /**
-     * Holds information about the unread label state.
+     * The active unread boundary for this channel, or `null` when none is shown.
+     *
+     * Sticky once non-null: the value persists across auto-read events until the user leaves the
+     * channel (the controller is recreated), marks messages unread, or [hideUnreadSeparator] is
+     * invoked. The button visibility stays consistent across recompositions of
+     * [observeUnreadLabelState] — see [disableUnreadLabelButton] for the dismissal contract.
+     *
+     * Use this flow when only the unread boundary is relevant. UI layers consuming the aggregated
+     * channel state should prefer [io.getstream.chat.android.ui.common.state.messages.list.MessageListState.unreadLabel]
+     * via [messageListState], which mirrors this value.
      */
     public val unreadLabelState: MutableStateFlow<UnreadLabel?> = MutableStateFlow(null)
     private val showUnreadButtonState = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
@@ -567,6 +576,8 @@ public class MessageListController(
         }.launchIn(scope)
 
         observeUnreadLabelState()
+
+        unreadLabelState.onEach(::updateUnreadLabel).launchIn(scope)
     }
 
     /**
@@ -616,10 +627,18 @@ public class MessageListController(
     }
 
     /**
-     * Disable the unread label button.
+     * Disables the unread-label button.
+     *
+     * Suppresses the button on the current label and on any label produced by future
+     * recomputations of [observeUnreadLabelState], so the dismissal survives subsequent
+     * read-state changes (for example, the auto-mark-read that follows
+     * [scrollToFirstUnreadMessage]). The suppression is reset when the controller is recreated,
+     * i.e. when the user leaves and re-enters the channel.
      */
     public fun disableUnreadLabelButton() {
-        unreadLabelState.value = unreadLabelState.value?.copy(buttonVisibility = false)
+        val currentLabel = unreadLabelState.value ?: return
+        showUnreadButtonState.tryEmit(false)
+        unreadLabelState.value = currentLabel.copy(buttonVisibility = false)
     }
 
     /**
@@ -720,6 +739,11 @@ public class MessageListController(
     private fun updateUnreadCount(unreadCount: Int) {
         logger.d { "[updateUnreadCount] #messageList; unreadCount: $unreadCount" }
         setMessageListState(_messageListState.value.copy(unreadCount = unreadCount))
+    }
+
+    private fun updateUnreadLabel(unreadLabel: UnreadLabel?) {
+        logger.d { "[updateUnreadLabel] #messageList; unreadLabel: $unreadLabel" }
+        setMessageListState(_messageListState.value.copy(unreadLabel = unreadLabel))
     }
 
     private fun updateIsLoadingOlderMessages(isLoadingOlderMessages: Boolean) {

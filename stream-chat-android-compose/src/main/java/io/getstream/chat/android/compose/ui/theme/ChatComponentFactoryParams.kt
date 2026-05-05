@@ -481,12 +481,18 @@ public data class MessageListEmptyContentParams(
  * @param messagesLazyListState The lazy list state for scrolling.
  * @param contentPadding The content padding of the message list.
  * @param onScrollToBottomClick Action invoked when the scroll to bottom button is clicked.
+ * @param onScrollToFirstUnreadClick Action invoked when the scroll-to-first-unread pill body is
+ * clicked. Implementations should scroll the list to the unread boundary.
+ * @param onDismissUnreadLabel Action invoked when the close affordance on the
+ * scroll-to-first-unread pill is clicked. Implementations should hide the pill without scrolling.
  */
 public data class MessageListHelperContentParams(
     val messageListState: MessageListState,
     val messagesLazyListState: MessagesLazyListState,
     val contentPadding: PaddingValues,
     val onScrollToBottomClick: (() -> Unit) -> Unit,
+    val onScrollToFirstUnreadClick: () -> Unit = {},
+    val onDismissUnreadLabel: () -> Unit = {},
 )
 
 /**
@@ -501,6 +507,25 @@ public data class ScrollToBottomButtonParams(
     val visible: Boolean,
     val count: Int,
     val onClick: () -> Unit,
+    val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.ScrollToFirstUnreadButton].
+ *
+ * @param visible Whether the pill is visible.
+ * @param unreadCount The number of unread messages to display in the pill label.
+ * @param onClick Action invoked when the pill body is clicked. Implementations should scroll the
+ * list to the first unread message.
+ * @param onDismiss Action invoked when the close (X) affordance is clicked. Implementations
+ * should hide the pill without scrolling.
+ * @param modifier Modifier for styling.
+ */
+public data class ScrollToFirstUnreadButtonParams(
+    val visible: Boolean,
+    val unreadCount: Int,
+    val onClick: () -> Unit,
+    val onDismiss: () -> Unit,
     val modifier: Modifier = Modifier,
 )
 

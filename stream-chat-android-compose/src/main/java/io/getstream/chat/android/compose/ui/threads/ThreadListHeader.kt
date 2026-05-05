@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.DefaultListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.components.DefaultListHeaderLeadingContent
-import io.getstream.chat.android.compose.ui.components.ListHeader
+import io.getstream.chat.android.compose.ui.components.HeaderScaffold
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.ConnectionState
@@ -50,7 +50,7 @@ public fun ThreadListHeader(
     connectionState: ConnectionState = ConnectionState.Connected,
     onAvatarClick: (User?) -> Unit = {},
 ) {
-    ListHeader(
+    HeaderScaffold(
         modifier = modifier,
         leadingContent = {
             DefaultListHeaderLeadingContent(
