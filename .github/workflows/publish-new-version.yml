@@ -47,3 +47,4 @@ jobs:
       signing-key: ${{ secrets.SIGNING_KEY }}
       signing-key-id: ${{ secrets.SIGNING_KEY_ID }}
       signing-key-password: ${{ secrets.SIGNING_PASSWORD }}
+      slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_ANDROID_CICD }}
