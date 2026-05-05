@@ -35,6 +35,7 @@ import io.getstream.chat.android.client.api2.model.dto.UpstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.test.randomConnectedEvent
 import io.getstream.chat.android.models.MessageTransformer
+import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.UserTransformer
@@ -49,6 +50,9 @@ import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomUser
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.spy
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -167,7 +171,7 @@ internal class DtoMappingTest {
     @Test
     fun `Message is correctly mapped to Dto`() {
         val messageTransformer = spy(NoOpMessageTransformer)
-        val message = randomMessage()
+        val message = randomMessage(type = MessageType.REGULAR)
         val mapping = Fixture()
             .withMessageTransformer(messageTransformer)
             .get()
@@ -201,14 +205,15 @@ internal class DtoMappingTest {
         verify(messageTransformer, times(1)).transform(message)
     }
 
-    @Test
-    fun `Message toDto uses messageType parameter when provided`() {
-        val message = randomMessage(type = "reply")
+    @ParameterizedTest
+    @MethodSource("messageTypeCoercionInput")
+    fun `Message toDto coerces type to allowed upstream values`(inputType: String, expectedType: String) {
+        val message = randomMessage(type = inputType)
         val mapping = Fixture().get()
 
-        val dto = with(mapping) { message.toDto(messageType = "") }
+        val dto = with(mapping) { message.toDto() }
 
-        dto.type shouldBeEqualTo ""
+        dto.type shouldBeEqualTo expectedType
     }
 
     @Test
@@ -319,6 +324,20 @@ internal class DtoMappingTest {
             connection_id = connectedEvent.connectionId,
         )
         dto shouldBeEqualTo expected
+    }
+
+    companion object {
+        @JvmStatic
+        fun messageTypeCoercionInput(): List<Arguments> = listOf(
+            Arguments.of(MessageType.REGULAR, MessageType.REGULAR),
+            Arguments.of(MessageType.SYSTEM, MessageType.SYSTEM),
+            Arguments.of(MessageType.REPLY, ""),
+            Arguments.of(MessageType.EPHEMERAL, ""),
+            Arguments.of(MessageType.ERROR, ""),
+            Arguments.of(MessageType.FAILED, ""),
+            Arguments.of("some-unknown-type", ""),
+            Arguments.of("", ""),
+        )
     }
 
     internal class Fixture {

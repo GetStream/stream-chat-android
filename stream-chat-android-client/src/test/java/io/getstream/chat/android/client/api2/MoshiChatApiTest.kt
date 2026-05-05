@@ -72,14 +72,12 @@ import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
-import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UnblockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
-import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.requests.UpstreamVoteDto
@@ -182,7 +180,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
-import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -315,38 +312,6 @@ internal class MoshiChatApiTest {
         // then
         result `should be instance of` expected
         verify(api, times(1)).updateMessage(eq(message.id), any())
-    }
-
-    @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#uploadMessageTypeInput")
-    fun testSendMessageCoercesType(inputType: String, expectedWireType: String) = runTest {
-        val api = mock<MessageApi>()
-        val call = RetroSuccess(MessageResponse(message = Mother.randomDownstreamMessageDto())).toRetrofitCall()
-        whenever(api.sendMessage(any(), any(), any())).doReturn(call)
-        val sut = Fixture().withMessageApi(api).get()
-        val message = randomMessage(type = inputType)
-
-        sut.sendMessage(randomString(), randomString(), message).await()
-
-        val captor = argumentCaptor<SendMessageRequest>()
-        verify(api).sendMessage(any(), any(), captor.capture())
-        assertEquals(expectedWireType, captor.firstValue.message.type)
-    }
-
-    @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#uploadMessageTypeInput")
-    fun testUpdateMessageCoercesType(inputType: String, expectedWireType: String) = runTest {
-        val api = mock<MessageApi>()
-        val call = RetroSuccess(MessageResponse(message = Mother.randomDownstreamMessageDto())).toRetrofitCall()
-        whenever(api.updateMessage(any(), any())).doReturn(call)
-        val sut = Fixture().withMessageApi(api).get()
-        val message = randomMessage(type = inputType)
-
-        sut.updateMessage(message).await()
-
-        val captor = argumentCaptor<UpdateMessageRequest>()
-        verify(api).updateMessage(eq(message.id), captor.capture())
-        assertEquals(expectedWireType, captor.firstValue.message.type)
     }
 
     @ParameterizedTest
