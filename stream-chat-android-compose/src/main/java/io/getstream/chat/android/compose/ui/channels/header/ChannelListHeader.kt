@@ -25,7 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.ListHeader
+import io.getstream.chat.android.compose.ui.components.HeaderScaffold
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.theme.ChannelListHeaderCenterContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListHeaderLeadingContentParams
@@ -91,7 +91,7 @@ public fun ChannelListHeader(
         }
     },
 ) {
-    ListHeader(
+    HeaderScaffold(
         modifier = modifier,
         leadingContent = leadingContent,
         centerContent = centerContent,
