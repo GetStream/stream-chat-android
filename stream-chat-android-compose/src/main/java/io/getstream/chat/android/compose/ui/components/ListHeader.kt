@@ -94,7 +94,7 @@ internal fun ListHeader(
             }
             HorizontalDivider(
                 thickness = 1.dp,
-                color = ChatTheme.colors.borderCoreDefault,
+                color = ChatTheme.colors.borderCoreSubtle,
             )
         }
     }

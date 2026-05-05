@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,7 +47,6 @@ import io.getstream.chat.android.compose.ui.theme.ChannelHeaderCenterContentPara
 import io.getstream.chat.android.compose.ui.theme.ChannelHeaderLeadingContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelHeaderTrailingContentParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.compose.ui.util.ifNotNull
@@ -125,20 +125,25 @@ public fun ChannelHeader(
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        shadowElevation = StreamTokens.elevation3,
         color = ChatTheme.colors.backgroundCoreElevation1,
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            leadingContent()
+        Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                leadingContent()
 
-            centerContent()
+                centerContent()
 
-            trailingContent()
+                trailingContent()
+            }
+            HorizontalDivider(
+                thickness = 1.dp,
+                color = ChatTheme.colors.borderCoreSubtle,
+            )
         }
     }
 }
