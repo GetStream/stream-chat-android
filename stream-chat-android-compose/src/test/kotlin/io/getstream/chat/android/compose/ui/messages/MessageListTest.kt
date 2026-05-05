@@ -260,7 +260,7 @@ private val TwoMessagesListState = MessageListState(
 )
 
 private val UnreadLabelMessageListState = LoadedMessageListState.copy(
-    messageItems = listOf(UnreadSeparatorItemState(unreadCount = 9)) + LoadedMessageListState.messageItems,
+    messageItems = LoadedMessageListState.messageItems + UnreadSeparatorItemState(unreadCount = 9),
     unreadLabel = MessageListController.UnreadLabel(
         unreadCount = 9,
         lastReadMessageId = PreviewMessageData.message1.id,
