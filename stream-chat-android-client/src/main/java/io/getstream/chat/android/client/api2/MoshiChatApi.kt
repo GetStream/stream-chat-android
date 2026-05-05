@@ -126,7 +126,6 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminder
-import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
@@ -244,7 +243,7 @@ constructor(
         channelType = channelType,
         channelId = channelId,
         message = SendMessageRequest(
-            message = with(dtoMapping) { message.toDto(messageType = message.uploadMessageType) },
+            message = with(dtoMapping) { message.toDto() },
             skip_push = message.skipPushNotification,
             skip_enrich_url = message.skipEnrichUrl,
         ),
@@ -315,7 +314,7 @@ constructor(
         return messageApi.updateMessage(
             messageId = message.id,
             message = UpdateMessageRequest(
-                message = with(dtoMapping) { message.toDto(messageType = message.uploadMessageType) },
+                message = with(dtoMapping) { message.toDto() },
                 skip_enrich_url = message.skipEnrichUrl,
                 skip_push = message.skipPushNotification,
             ),
@@ -1775,19 +1774,4 @@ constructor(
 
     private fun <T : Any, R : Any> RetrofitCall<T>.flatMapDomain(transform: DomainMapping.(T) -> Call<R>): Call<R> =
         flatMap { domainMapping.transform(it) }
-
-    /**
-     * Value to send for `message.type` on outbound send/update requests.
-     *
-     * The backend's UpdateMessage endpoint validates `type` against `oneof='' regular system`,
-     * so server-assigned types like `reply`, `error`, or `ephemeral` would be rejected with a 400
-     * if echoed back. Coerce anything outside the accepted set to the empty string — the field is
-     * ignored by the backend on update anyway, and on send only `regular` and `system` are
-     * meaningful for clients to declare.
-     */
-    private val Message.uploadMessageType: String
-        get() = when (type) {
-            MessageType.REGULAR, MessageType.SYSTEM -> type
-            else -> ""
-        }
 }

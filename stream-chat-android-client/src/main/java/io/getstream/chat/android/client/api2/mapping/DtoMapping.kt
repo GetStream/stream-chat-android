@@ -54,6 +54,8 @@ internal class DtoMapping(
     private val userTransformer: UserTransformer,
 ) {
 
+    private val supportedUpstreamMessageTypes = setOf(MessageType.REGULAR, MessageType.SYSTEM)
+
     /**
      * Converts [Attachment] to [AttachmentDto].
      */
@@ -118,15 +120,11 @@ internal class DtoMapping(
 
     /**
      * Transforms [Message] to [UpstreamMessageDto].
-     *
-     * @param messageType Value to use for [UpstreamMessageDto.type]. When `null` (the default),
-     * the message's own type is used. Callers in the network layer may pass an explicit value to
-     * satisfy server-side validation — for example, the UpdateMessage endpoint only accepts the
-     * empty string, [MessageType.REGULAR], or [MessageType.SYSTEM].
      */
-    internal fun Message.toDto(messageType: String? = null): UpstreamMessageDto =
+    internal fun Message.toDto(): UpstreamMessageDto =
         messageTransformer.transform(this)
             .run {
+                val upstreamType = if (type in supportedUpstreamMessageTypes) type else ""
                 UpstreamMessageDto(
                     attachments = attachments.map { it.toDto() },
                     cid = cid,
@@ -134,7 +132,7 @@ internal class DtoMapping(
                     args = null,
                     html = html,
                     id = id,
-                    type = messageType ?: type,
+                    type = upstreamType,
                     mentioned_users = mentionedUsersIds,
                     parent_id = parentId,
                     pin_expires = pinExpires,
