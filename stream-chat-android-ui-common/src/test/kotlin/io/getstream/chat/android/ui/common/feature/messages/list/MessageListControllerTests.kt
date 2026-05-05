@@ -1009,6 +1009,50 @@ internal class MessageListControllerTests {
     }
 
     @Test
+    fun `When disableUnreadLabelButton is called, buttonVisibility stays false across read updates`() = runTest {
+        val user = randomUser()
+        val firstMessage = randomMessage(id = "last_read_message_id", deletedAt = null, deletedForMe = false)
+        val secondMessage = randomMessage(id = "first_unread_message_id", deletedAt = null, deletedForMe = false)
+        val messages = listOf(firstMessage, secondMessage)
+        val channelRead = MutableStateFlow(
+            randomChannelUserRead(
+                user = user,
+                lastReadMessageId = firstMessage.id,
+                unreadMessages = 1,
+            ),
+        )
+        val messagesState = MutableStateFlow(messages)
+        val controller = Fixture()
+            .givenCurrentUser(user)
+            .givenChannelState(
+                messagesState = messagesState,
+                read = channelRead,
+            )
+            .get()
+
+        // Sanity: the unread label is published with the button visible.
+        controller.unreadLabelState.value.shouldNotBeNull()
+        controller.unreadLabelState.value?.buttonVisibility?.`should be true`()
+
+        controller.disableUnreadLabelButton()
+
+        // The simulated auto-read after a scroll: lastReadMessageId moves forward.
+        channelRead.emit(
+            randomChannelUserRead(
+                user = user,
+                lastReadMessageId = secondMessage.id,
+                unreadMessages = 0,
+            ),
+        )
+
+        // The recomputed label must keep buttonVisibility false; otherwise the pill returns
+        // immediately after the user dismisses or scrolls.
+        val unreadLabelAfterRead = controller.unreadLabelState.value
+        unreadLabelAfterRead.shouldNotBeNull()
+        unreadLabelAfterRead.buttonVisibility.`should be false`()
+    }
+
+    @Test
     fun `When reactToMessage is called with skipPush set to true, sendReaction is invoked with skipPush true`() =
         runTest {
             val messageId = randomString()

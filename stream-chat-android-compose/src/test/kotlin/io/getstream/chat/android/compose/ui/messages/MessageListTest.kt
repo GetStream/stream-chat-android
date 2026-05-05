@@ -32,11 +32,13 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.previewdata.PreviewChannelUserRead
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
+import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
+import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 import org.junit.Rule
 import org.junit.Test
 import java.util.Calendar
@@ -150,6 +152,13 @@ internal class MessageListTest : PaparazziComposeTest {
             )
         }
     }
+
+    @Test
+    fun `scroll to first unread pill`() {
+        snapshotWithDarkMode {
+            MessageList(messageListState = UnreadLabelMessageListState)
+        }
+    }
 }
 
 private val Date1 = Calendar.getInstance().apply { set(2022, 1, 1, 1, 1) }.time
@@ -247,6 +256,15 @@ private val TwoMessagesListState = MessageListState(
             showMessageFooter = true,
             ownCapabilities = ChannelCapabilities.toSet(),
         ),
+    ),
+)
+
+private val UnreadLabelMessageListState = LoadedMessageListState.copy(
+    messageItems = LoadedMessageListState.messageItems + UnreadSeparatorItemState(unreadCount = 9),
+    unreadLabel = MessageListController.UnreadLabel(
+        unreadCount = 9,
+        lastReadMessageId = PreviewMessageData.message1.id,
+        buttonVisibility = true,
     ),
 )
 

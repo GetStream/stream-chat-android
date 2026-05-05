@@ -33,6 +33,9 @@ import io.getstream.chat.android.models.User
  * @param unreadCount Count of unread messages in channel or thread.
  * @param newMessageState The [NewMessageState] of the newly received message.
  * @param selectedMessageState The current [SelectedMessageState].
+ * @param unreadLabel Snapshot of the active unread label, or `null` when there is no unread
+ * boundary to display. Sticky once set: it persists across auto-read events until the user leaves
+ * the channel, marks messages unread, or explicitly hides it.
  */
 public data class MessageListState(
     public val messageItems: List<MessageListItemState> = emptyList(),
@@ -46,6 +49,7 @@ public data class MessageListState(
     public val unreadCount: Int = 0,
     public val newMessageState: NewMessageState? = null,
     public val selectedMessageState: SelectedMessageState? = null,
+    public val unreadLabel: UnreadLabel? = null,
 )
 
 internal fun MessageListState.stringify(): String {
@@ -60,6 +64,7 @@ internal fun MessageListState.stringify(): String {
         "currentUser.id: ${currentUser?.id}, " +
         "parentMessageId: $parentMessageId, " +
         "unreadCount: $unreadCount, " +
+        "unreadLabel: $unreadLabel, " +
         "selectedMessageState: $selectedMessageState)"
 }
 

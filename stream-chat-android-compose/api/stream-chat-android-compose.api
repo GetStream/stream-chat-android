@@ -1516,6 +1516,12 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Comp
 	public final fun getLambda$-388063089$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
+public final class io/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$ScrollToFirstUnreadButtonKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$ScrollToFirstUnreadButtonKt;
+	public fun <init> ()V
+	public final fun getLambda$-1405339857$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class io/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$SwipeToReplyIconKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$SwipeToReplyIconKt;
 	public fun <init> ()V
@@ -2091,7 +2097,7 @@ public final class io/getstream/chat/android/compose/ui/messages/list/Composable
 public final class io/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessagesKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessagesKt;
 	public fun <init> ()V
-	public final fun getLambda$1954099387$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$203042131$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/list/MessageContainerKt {
@@ -2107,8 +2113,8 @@ public final class io/getstream/chat/android/compose/ui/messages/list/MessageIte
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/list/MessageListKt {
-	public static final fun MessageList (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/PaddingValues;Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState;Landroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/foundation/layout/Arrangement$Vertical;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;III)V
-	public static final fun MessageList (Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;Landroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/PaddingValues;Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
+	public static final fun MessageList (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/PaddingValues;Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState;Landroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/foundation/layout/Arrangement$Vertical;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;III)V
+	public static final fun MessageList (Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;Landroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/PaddingValues;Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState {
@@ -3456,6 +3462,7 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 	public fun ReactionsMenu (Lio/getstream/chat/android/compose/ui/theme/ReactionsMenuParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ReactionsMenuContent (Lio/getstream/chat/android/compose/ui/theme/ReactionsMenuContentParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ScrollToBottomButton (Lio/getstream/chat/android/compose/ui/theme/ScrollToBottomButtonParams;Landroidx/compose/runtime/Composer;I)V
+	public fun ScrollToFirstUnreadButton (Lio/getstream/chat/android/compose/ui/theme/ScrollToFirstUnreadButtonParams;Landroidx/compose/runtime/Composer;I)V
 	public fun SearchInputClearButton (Lio/getstream/chat/android/compose/ui/theme/SearchInputClearButtonParams;Landroidx/compose/runtime/Composer;I)V
 	public fun SearchInputLabel (Lio/getstream/chat/android/compose/ui/theme/SearchInputLabelParams;Landroidx/compose/runtime/Composer;I)V
 	public fun SearchInputLeadingIcon (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/ui/theme/SearchInputLeadingIconParams;Landroidx/compose/runtime/Composer;I)V
@@ -3645,6 +3652,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFacto
 	public static fun ReactionsMenu (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ReactionsMenuParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ReactionsMenuContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ReactionsMenuContentParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ScrollToBottomButton (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ScrollToBottomButtonParams;Landroidx/compose/runtime/Composer;I)V
+	public static fun ScrollToFirstUnreadButton (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ScrollToFirstUnreadButtonParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun SearchInputClearButton (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/SearchInputClearButtonParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun SearchInputLabel (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/SearchInputLabelParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun SearchInputLeadingIcon (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/ui/theme/SearchInputLeadingIconParams;Landroidx/compose/runtime/Composer;I)V
@@ -5155,18 +5163,23 @@ public final class io/getstream/chat/android/compose/ui/theme/MessageListEmptyTh
 
 public final class io/getstream/chat/android/compose/ui/theme/MessageListHelperContentParams {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function1;)V
+	public fun <init> (Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;
 	public final fun component2 ()Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState;
 	public final fun component3 ()Landroidx/compose/foundation/layout/PaddingValues;
 	public final fun component4 ()Lkotlin/jvm/functions/Function1;
-	public final fun copy (Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/compose/ui/theme/MessageListHelperContentParams;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/MessageListHelperContentParams;Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageListHelperContentParams;
+	public final fun component5 ()Lkotlin/jvm/functions/Function0;
+	public final fun component6 ()Lkotlin/jvm/functions/Function0;
+	public final fun copy (Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/compose/ui/theme/MessageListHelperContentParams;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/MessageListHelperContentParams;Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageListHelperContentParams;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getContentPadding ()Landroidx/compose/foundation/layout/PaddingValues;
 	public final fun getMessageListState ()Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;
 	public final fun getMessagesLazyListState ()Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState;
+	public final fun getOnDismissUnreadLabel ()Lkotlin/jvm/functions/Function0;
 	public final fun getOnScrollToBottomClick ()Lkotlin/jvm/functions/Function1;
+	public final fun getOnScrollToFirstUnreadClick ()Lkotlin/jvm/functions/Function0;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -5678,6 +5691,27 @@ public final class io/getstream/chat/android/compose/ui/theme/ScrollToBottomButt
 	public final fun getCount ()I
 	public final fun getModifier ()Landroidx/compose/ui/Modifier;
 	public final fun getOnClick ()Lkotlin/jvm/functions/Function0;
+	public final fun getVisible ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/ui/theme/ScrollToFirstUnreadButtonParams {
+	public static final field $stable I
+	public fun <init> (ZILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;)V
+	public synthetic fun <init> (ZILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun component2 ()I
+	public final fun component3 ()Lkotlin/jvm/functions/Function0;
+	public final fun component4 ()Lkotlin/jvm/functions/Function0;
+	public final fun component5 ()Landroidx/compose/ui/Modifier;
+	public final fun copy (ZILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;)Lio/getstream/chat/android/compose/ui/theme/ScrollToFirstUnreadButtonParams;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/ScrollToFirstUnreadButtonParams;ZILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ScrollToFirstUnreadButtonParams;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getModifier ()Landroidx/compose/ui/Modifier;
+	public final fun getOnClick ()Lkotlin/jvm/functions/Function0;
+	public final fun getOnDismiss ()Lkotlin/jvm/functions/Function0;
+	public final fun getUnreadCount ()I
 	public final fun getVisible ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -6776,6 +6810,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun deleteMessage (Lio/getstream/chat/android/models/Message;)V
 	public final fun deleteMessage (Lio/getstream/chat/android/models/Message;Z)V
 	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/models/Message;ZILjava/lang/Object;)V
+	public final fun disableUnreadLabelButton ()V
 	public final fun dismissAllMessageActions ()V
 	public final fun dismissMessageAction (Lio/getstream/chat/android/ui/common/state/messages/MessageAction;)V
 	public final fun displayPollMoreOptions (Lio/getstream/chat/android/ui/common/state/messages/poll/SelectedPoll;)V

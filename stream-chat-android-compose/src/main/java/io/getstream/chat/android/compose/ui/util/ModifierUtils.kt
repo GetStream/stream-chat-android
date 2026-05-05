@@ -26,6 +26,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -71,12 +72,15 @@ internal fun Modifier.dragPointerInput(
  * When `false`, [onClick], and this modifier will appear disabled for accessibility service.
  * @param onClickLabel Semantic / accessibility label for the click action. Announced by screen readers
  * (e.g. "double tap to <label>").
+ * @param role The accessibility role for this element, applied to the same semantics node as
+ * [onClickLabel]. `null` keeps the underlying view's default role.
  * @param onClick The callback to be invoked when the click gesture is detected.
  */
 internal fun Modifier.clickable(
     bounded: Boolean = true,
     enabled: Boolean = true,
     onClickLabel: String? = null,
+    role: Role? = null,
     onClick: () -> Unit,
 ): Modifier =
     clickable(
@@ -84,6 +88,7 @@ internal fun Modifier.clickable(
         indication = ripple(bounded),
         enabled = enabled,
         onClickLabel = onClickLabel,
+        role = role,
         onClick = onClick,
     )
 
