@@ -71,8 +71,6 @@ import kotlinx.coroutines.launch
  * Responsible for keeping the channels list up to date.
  * Can be bound to the view using [ChannelListViewModel.bindView] function.
  *
- * @param filter Filter for querying channels, should never be empty.
- * @param sort Defines the ordering of the channels.
  * @param limit The maximum number of channels to fetch.
  * @param messageLimit The number of messages to fetch for each channel.
  * When `null`, the server-side default is used.
@@ -83,18 +81,83 @@ import kotlinx.coroutines.launch
  * @param chatClient Entry point for all low-level operations.
  * @param globalState A flow emitting the current [GlobalState].
  */
+@Suppress("LongParameterList")
 @OptIn(ExperimentalCoroutinesApi::class)
-public class ChannelListViewModel(
-    private val filter: FilterObject? = null,
-    private val sort: QuerySorter<Channel> = DEFAULT_SORT,
-    private val limit: Int = DEFAULT_CHANNEL_LIMIT,
-    private val messageLimit: Int? = null,
-    private val memberLimit: Int? = null,
+public class ChannelListViewModel internal constructor(
+    private val mode: QueryMode,
+    private val limit: Int,
+    private val messageLimit: Int?,
+    private val memberLimit: Int?,
     private val isDraftMessagesEnabled: Boolean,
-    private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
-    private val chatClient: ChatClient = ChatClient.instance(),
-    private val globalState: Flow<GlobalState> = chatClient.globalStateFlow,
+    private val chatEventHandlerFactory: ChatEventHandlerFactory,
+    private val chatClient: ChatClient,
+    private val globalState: Flow<GlobalState>,
 ) : ViewModel() {
+
+    /**
+     * Creates a view model that queries channels by an explicit filter and sort.
+     *
+     * @param filter Filter for querying channels. When `null`, a default filter scoped to messaging
+     * channels the current user is a member of is used. Can be changed at runtime via [setFilters].
+     * @param sort Defines the ordering of the channels.
+     */
+    public constructor(
+        filter: FilterObject? = null,
+        sort: QuerySorter<Channel> = DEFAULT_SORT,
+        limit: Int = DEFAULT_CHANNEL_LIMIT,
+        messageLimit: Int? = null,
+        memberLimit: Int? = null,
+        isDraftMessagesEnabled: Boolean,
+        chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
+        chatClient: ChatClient = ChatClient.instance(),
+        globalState: Flow<GlobalState> = chatClient.globalStateFlow,
+    ) : this(
+        mode = QueryMode.Standard(initialFilter = filter, initialSort = sort),
+        limit = limit,
+        messageLimit = messageLimit,
+        memberLimit = memberLimit,
+        isDraftMessagesEnabled = isDraftMessagesEnabled,
+        chatEventHandlerFactory = chatEventHandlerFactory,
+        chatClient = chatClient,
+        globalState = globalState,
+    )
+
+    /**
+     * Creates a view model that queries channels using a predefined filter resolved by the server.
+     *
+     * The filter and sort are identified by [predefinedFilterName] and resolved server-side;
+     * [filterValues] and [sortValues] interpolate into the predefined template. [setFilters] does not
+     * affect a view model created this way.
+     *
+     * @param predefinedFilterName The name of the predefined filter registered on the backend.
+     * @param filterValues Optional values interpolated into the predefined filter template.
+     * @param sortValues Optional values interpolated into the predefined sort template.
+     */
+    public constructor(
+        predefinedFilterName: String,
+        filterValues: Map<String, Any>? = null,
+        sortValues: Map<String, Any>? = null,
+        limit: Int = DEFAULT_CHANNEL_LIMIT,
+        messageLimit: Int? = null,
+        memberLimit: Int? = null,
+        isDraftMessagesEnabled: Boolean,
+        chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
+        chatClient: ChatClient = ChatClient.instance(),
+        globalState: Flow<GlobalState> = chatClient.globalStateFlow,
+    ) : this(
+        mode = QueryMode.Predefined(
+            name = predefinedFilterName,
+            filterValues = filterValues,
+            sortValues = sortValues,
+        ),
+        limit = limit,
+        messageLimit = messageLimit,
+        memberLimit = memberLimit,
+        isDraftMessagesEnabled = isDraftMessagesEnabled,
+        chatEventHandlerFactory = chatEventHandlerFactory,
+        chatClient = chatClient,
+        globalState = globalState,
+    )
 
     private var queryJob: Job? = null
 
@@ -164,9 +227,15 @@ public class ChannelListViewModel(
     private val logger: TaggedLogger by taggedLogger("Chat:ChannelList-VM")
 
     /**
-     * Filters the requested channels.
+     * Filters the requested channels. Only meaningful in [QueryMode.Standard]; remains `null` in
+     * [QueryMode.Predefined] (the server owns the filter).
      */
-    private val filterLiveData: MutableLiveData<FilterObject?> = MutableLiveData(filter)
+    private val filterLiveData: MutableLiveData<FilterObject?> = MutableLiveData(
+        when (mode) {
+            is QueryMode.Standard -> mode.initialFilter
+            is QueryMode.Predefined -> null
+        },
+    )
 
     /**
      * Represents the current state of the channels query.
@@ -174,18 +243,21 @@ public class ChannelListViewModel(
     private var queryChannelsState: StateFlow<QueryChannelsState?> = MutableStateFlow(null)
 
     init {
-        if (filter == null) {
-            viewModelScope.launch {
-                val filter = buildDefaultFilter().first()
-
-                this@ChannelListViewModel.filterLiveData.value = filter
+        when (mode) {
+            is QueryMode.Standard -> {
+                if (mode.initialFilter == null) {
+                    viewModelScope.launch {
+                        val resolvedFilter = buildDefaultFilter().first()
+                        this@ChannelListViewModel.filterLiveData.value = resolvedFilter
+                    }
+                }
+                stateMerger.addSource(filterLiveData) { filter ->
+                    if (filter != null) {
+                        initData()
+                    }
+                }
             }
-        }
-
-        stateMerger.addSource(filterLiveData) { filter ->
-            if (filter != null) {
-                initData(filter)
-            }
+            is QueryMode.Predefined -> initData()
         }
     }
 
@@ -199,24 +271,20 @@ public class ChannelListViewModel(
     /**
      * Initializes the data necessary for the screen.
      */
-    private fun initData(filterObject: FilterObject) {
+    private fun initData() {
         stateMerger.value = INITIAL_STATE
-        init(filterObject)
+        init()
     }
 
     /**
      * Initializes this ViewModel with OfflinePlugin implementation. It makes the initial query to request channels
      * and starts to observe state changes.
      */
-    private fun init(filterObject: FilterObject) {
-        val queryChannelsRequest =
-            QueryChannelsRequest(
-                filter = filterObject,
-                querySort = sort,
-                limit = limit,
-                messageLimit = messageLimit,
-                memberLimit = memberLimit,
-            )
+    private fun init() {
+        val queryChannelsRequest = buildQueryChannelsRequest() ?: run {
+            logger.v { "[init] rejected (filter not yet initialized)" }
+            return
+        }
         queryChannelsState =
             chatClient.queryChannelsAsState(queryChannelsRequest, chatEventHandlerFactory, viewModelScope)
 
@@ -350,32 +418,64 @@ public class ChannelListViewModel(
      * Called when scrolling to the end of the list.
      */
     private fun requestMoreChannels() {
-        filterLiveData.value?.let {
-            val queryChannelsState = queryChannelsState.value ?: return
-
-            queryChannelsState.nextPageRequest.value?.let {
-                viewModelScope.launch {
-                    chatClient.queryChannels(it).enqueue(
-                        onError = { streamError ->
-                            logger.e {
-                                "Could not load more channels. Error: ${streamError.message}. " +
-                                    "Cause: ${streamError.extractCause()}"
-                            }
-                        },
-                    )
-                }
-            }
+        if (mode is QueryMode.Standard && filterLiveData.value == null) {
+            return
+        }
+        val queryChannelsState = queryChannelsState.value ?: return
+        val nextPageRequest = queryChannelsState.nextPageRequest.value ?: return
+        viewModelScope.launch {
+            chatClient.queryChannels(nextPageRequest).enqueue(
+                onError = { streamError ->
+                    logger.e {
+                        "Could not load more channels. Error: ${streamError.message}. " +
+                            "Cause: ${streamError.extractCause()}"
+                    }
+                },
+            )
         }
     }
 
     /**
      * Allows us to change the filter based on our requirements.
      *
+     * Has no effect on view models constructed for a predefined-filter query — the predefined identity
+     * is fixed at construction. A warning is logged in that case.
+     *
      * @param filterObject The new filter to be applied to the query which lets us fetch different data.
      */
     public fun setFilters(filterObject: FilterObject) {
+        if (mode is QueryMode.Predefined) {
+            logger.w { "[setFilters] ignored — view model uses predefined filter '${mode.name}'" }
+            return
+        }
         logger.d { "[setFilters] filterObject: $filterObject" }
         this.filterLiveData.value = filterObject
+    }
+
+    /**
+     * Builds a [QueryChannelsRequest] for the current [mode]. Returns `null` in Standard mode when the
+     * filter has not yet been resolved (e.g. before [buildDefaultFilter] completes).
+     */
+    private fun buildQueryChannelsRequest(): QueryChannelsRequest? = when (mode) {
+        is QueryMode.Standard -> {
+            val baseFilter = filterLiveData.value ?: return null
+            QueryChannelsRequest(
+                filter = baseFilter,
+                querySort = mode.initialSort,
+                limit = limit,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
+            )
+        }
+        is QueryMode.Predefined -> QueryChannelsRequest(
+            filter = Filters.neutral(),
+            limit = limit,
+            messageLimit = messageLimit,
+            memberLimit = memberLimit,
+            predefinedFilter = mode.name,
+            filterValues = mode.filterValues,
+            sortValues = mode.sortValues,
+        )
     }
 
     /**
@@ -467,6 +567,19 @@ public class ChannelListViewModel(
          * @param streamError Contains error data such as a [Throwable] and a message.
          */
         public data class DeleteChannelError(override val streamError: Error) : ErrorEvent(streamError)
+    }
+
+    internal sealed interface QueryMode {
+        data class Standard(
+            val initialFilter: FilterObject?,
+            val initialSort: QuerySorter<Channel>,
+        ) : QueryMode
+
+        data class Predefined(
+            val name: String,
+            val filterValues: Map<String, Any>?,
+            val sortValues: Map<String, Any>?,
+        ) : QueryMode
     }
 
     public companion object {

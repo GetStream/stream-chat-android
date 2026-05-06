@@ -78,9 +78,6 @@ import kotlin.coroutines.cancellation.CancellationException
  * [Channel] items in a list.
  *
  * @param chatClient Used to connect to the API.
- * @param initialSort The initial sort used for [Channel]s.
- * @param initialFilters The current data filter. Users can change this state using [setFilters] to
- * impact which data is shown on the UI.
  * @param channelLimit How many channels we fetch per page.
  * @param memberLimit How many members are fetched for each channel item when loading channels.
  * When `null`, the server-side default is used.
@@ -93,20 +90,93 @@ import kotlin.coroutines.cancellation.CancellationException
  * @param globalState A flow emitting the current [GlobalState].
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-@Suppress("TooManyFunctions")
-public class ChannelListViewModel(
+@Suppress("TooManyFunctions", "LongParameterList")
+public class ChannelListViewModel internal constructor(
     public val chatClient: ChatClient,
-    initialSort: QuerySorter<Channel> = QuerySortByField.descByName("last_updated"),
-    initialFilters: FilterObject? = null,
-    private val channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
-    private val memberLimit: Int? = null,
-    private val messageLimit: Int? = null,
-    private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
-    searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
-    private val draftMessagesEnabled: Boolean = true,
-    private val messageSearchSort: QuerySorter<Message>? = null,
-    private val globalState: Flow<GlobalState> = chatClient.globalStateFlow,
+    private val mode: QueryMode,
+    private val channelLimit: Int,
+    private val memberLimit: Int?,
+    private val messageLimit: Int?,
+    private val chatEventHandlerFactory: ChatEventHandlerFactory,
+    searchDebounceMs: Long,
+    private val draftMessagesEnabled: Boolean,
+    private val messageSearchSort: QuerySorter<Message>?,
+    private val globalState: Flow<GlobalState>,
 ) : ViewModel() {
+
+    /**
+     * Creates a view model that queries channels by an explicit filter and sort.
+     *
+     * @param initialSort The initial sort used for [Channel]s. Can be changed at runtime via [setQuerySort].
+     * @param initialFilters The data filter. Can be changed at runtime via [setFilters]. When `null`,
+     * a default filter scoped to messaging channels the current user is a member of is used.
+     */
+    public constructor(
+        chatClient: ChatClient,
+        initialSort: QuerySorter<Channel> = QuerySortByField.descByName("last_updated"),
+        initialFilters: FilterObject? = null,
+        channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
+        memberLimit: Int? = null,
+        messageLimit: Int? = null,
+        chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
+        searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
+        draftMessagesEnabled: Boolean = true,
+        messageSearchSort: QuerySorter<Message>? = null,
+        globalState: Flow<GlobalState> = chatClient.globalStateFlow,
+    ) : this(
+        chatClient = chatClient,
+        mode = QueryMode.Standard(initialFilter = initialFilters, initialSort = initialSort),
+        channelLimit = channelLimit,
+        memberLimit = memberLimit,
+        messageLimit = messageLimit,
+        chatEventHandlerFactory = chatEventHandlerFactory,
+        searchDebounceMs = searchDebounceMs,
+        draftMessagesEnabled = draftMessagesEnabled,
+        messageSearchSort = messageSearchSort,
+        globalState = globalState,
+    )
+
+    /**
+     * Creates a view model that queries channels using a predefined filter resolved by the server.
+     *
+     * The filter and sort are identified by [predefinedFilterName] and resolved server-side;
+     * [filterValues] and [sortValues] interpolate into the predefined template. [setFilters] and
+     * [setQuerySort] do not affect a view model created this way. Channel search still narrows the
+     * displayed list to the search predicate.
+     *
+     * @param predefinedFilterName The name of the predefined filter registered on the backend.
+     * @param filterValues Optional values interpolated into the predefined filter template.
+     * @param sortValues Optional values interpolated into the predefined sort template.
+     */
+    public constructor(
+        chatClient: ChatClient,
+        predefinedFilterName: String,
+        filterValues: Map<String, Any>? = null,
+        sortValues: Map<String, Any>? = null,
+        channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
+        memberLimit: Int? = null,
+        messageLimit: Int? = null,
+        chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
+        searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
+        draftMessagesEnabled: Boolean = true,
+        messageSearchSort: QuerySorter<Message>? = null,
+        globalState: Flow<GlobalState> = chatClient.globalStateFlow,
+    ) : this(
+        chatClient = chatClient,
+        mode = QueryMode.Predefined(
+            name = predefinedFilterName,
+            filterValues = filterValues,
+            sortValues = sortValues,
+        ),
+        channelLimit = channelLimit,
+        memberLimit = memberLimit,
+        messageLimit = messageLimit,
+        chatEventHandlerFactory = chatEventHandlerFactory,
+        searchDebounceMs = searchDebounceMs,
+        draftMessagesEnabled = draftMessagesEnabled,
+        messageSearchSort = messageSearchSort,
+        globalState = globalState,
+    )
 
     private val logger by taggedLogger("Chat:ChannelListVM")
 
@@ -131,14 +201,26 @@ public class ChannelListViewModel(
     private val queryChannelDebouncer = Debouncer(searchDebounceMs, chListScope)
 
     /**
-     * State flow that keeps the value of the current [FilterObject] for channels.
+     * State flow that keeps the value of the current [FilterObject] for channels. Only meaningful in
+     * [QueryMode.Standard]; remains `null` in [QueryMode.Predefined] (the server owns the filter).
      */
-    private val filterFlow: MutableStateFlow<FilterObject?> = MutableStateFlow(initialFilters)
+    private val filterFlow: MutableStateFlow<FilterObject?> = MutableStateFlow(
+        when (mode) {
+            is QueryMode.Standard -> mode.initialFilter
+            is QueryMode.Predefined -> null
+        },
+    )
 
     /**
-     * State flow that keeps the value of the current [QuerySorter] for channels.
+     * State flow that keeps the value of the current [QuerySorter] for channels. Only meaningful in
+     * [QueryMode.Standard]; in [QueryMode.Predefined] it carries an inert default (the server owns the sort).
      */
-    private val querySortFlow: MutableStateFlow<QuerySorter<Channel>> = MutableStateFlow(initialSort)
+    private val querySortFlow: MutableStateFlow<QuerySorter<Channel>> = MutableStateFlow(
+        when (mode) {
+            is QueryMode.Standard -> mode.initialSort
+            is QueryMode.Predefined -> QuerySortByField()
+        },
+    )
 
     /**
      * The currently active query configuration, stored in a [MutableStateFlow]. It's created using
@@ -251,7 +333,7 @@ public class ChannelListViewModel(
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
      */
     init {
-        if (initialFilters == null) {
+        if (mode is QueryMode.Standard && mode.initialFilter == null) {
             viewModelScope.launch {
                 val filter = buildDefaultFilter().first()
 
@@ -269,27 +351,26 @@ public class ChannelListViewModel(
      */
     private suspend fun init() {
         logger.d { "[init] no args" }
-        combine(_searchQuery, queryConfigFlow, refreshFlow) { query, config, ts -> Triple(query, config, ts) }
-            .collectLatest { (query, config, ts) ->
-                logger.i { "[observeInit] ts: $ts, query: $query, config: $config" }
-                when (query) {
-                    is SearchQuery.Empty,
-                    is SearchQuery.Channels,
-                    -> {
-                        searchScope.coroutineContext.cancelChildren()
-                        observeQueryChannels(
-                            config.copy(
-                                filters = createQueryChannelsFilter(config.filters, query.query),
-                            ),
-                        )
-                    }
-                    is SearchQuery.Messages -> {
-                        chListScope.coroutineContext.cancelChildren()
-                        handleSearchQuery(query.query)
-                        observeSearchMessages(query.query)
-                    }
+        val activeQuery: Flow<SearchQuery> = when (mode) {
+            is QueryMode.Standard -> combine(_searchQuery, queryConfigFlow, refreshFlow) { query, _, _ -> query }
+            is QueryMode.Predefined -> combine(_searchQuery, refreshFlow) { query, _ -> query }
+        }
+        activeQuery.collectLatest { query ->
+            logger.i { "[observeInit] query: $query" }
+            when (query) {
+                is SearchQuery.Empty,
+                is SearchQuery.Channels,
+                -> {
+                    searchScope.coroutineContext.cancelChildren()
+                    observeQueryChannels(query.query)
+                }
+                is SearchQuery.Messages -> {
+                    chListScope.coroutineContext.cancelChildren()
+                    handleSearchQuery(query.query)
+                    observeSearchMessages(query.query)
                 }
             }
+        }
     }
 
     private suspend fun observeSearchMessages(query: String) = runCatching {
@@ -412,15 +493,12 @@ public class ChannelListViewModel(
     }
 
     @Suppress("LongMethod")
-    private fun observeQueryChannels(config: QueryConfig<Channel>) = runCatching {
+    private fun observeQueryChannels(searchQuery: String) = runCatching {
         queryChannelDebouncer.submitSuspendable {
-            val queryChannelsRequest = QueryChannelsRequest(
-                filter = config.filters,
-                querySort = config.querySort,
-                limit = channelLimit,
-                messageLimit = messageLimit,
-                memberLimit = memberLimit,
-            )
+            val queryChannelsRequest = buildQueryChannelsRequest(searchQuery) ?: run {
+                logger.v { "[observeQueryChannels] rejected (filter not yet initialized)" }
+                return@submitSuspendable
+            }
             logger.d { "[observeQueryChannels] request: $queryChannelsRequest" }
             queryChannelsState = chatClient.queryChannelsAsState(
                 request = queryChannelsRequest,
@@ -478,6 +556,45 @@ public class ChannelListViewModel(
     }
 
     /**
+     * Builds a [QueryChannelsRequest] for the current [mode] and [searchQuery]. Returns `null` in Standard
+     * mode when the filter has not yet been resolved (e.g. before [buildDefaultFilter] completes); in that
+     * case the caller should skip the request — the next emission of [filterFlow] will re-trigger.
+     *
+     * In Predefined mode with an active channel search, falls back to a Standard request whose filter is
+     * just [searchChannelFilter] (the predefined filter is server-owned and cannot be combined locally).
+     */
+    private fun buildQueryChannelsRequest(searchQuery: String): QueryChannelsRequest? = when (val mode = mode) {
+        is QueryMode.Standard -> {
+            val baseFilter = filterFlow.value ?: return null
+            QueryChannelsRequest(
+                filter = createQueryChannelsFilter(baseFilter, searchQuery),
+                querySort = querySortFlow.value,
+                limit = channelLimit,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
+            )
+        }
+        is QueryMode.Predefined -> if (searchQuery.length >= MIN_CHANNEL_SEARCH_QUERY_LENGTH) {
+            QueryChannelsRequest(
+                filter = optimizedChannelSearchFilter(searchQuery),
+                limit = channelLimit,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
+            )
+        } else {
+            QueryChannelsRequest(
+                filter = Filters.neutral(),
+                limit = channelLimit,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
+                predefinedFilter = mode.name,
+                filterValues = mode.filterValues,
+                sortValues = mode.sortValues,
+            )
+        }
+    }
+
+    /**
      * Creates a filter that is used to query channels.
      *
      * If the [searchQuery] is shorter than 3 characters, then returns the original [filter] provided by the user.
@@ -506,12 +623,23 @@ public class ChannelListViewModel(
         }
     }
 
+    @Deprecated(
+        message = "Avoid using this search query as `member.user.name` is an expensive operation. " +
+            "In the future, we should migrate to use optimizedChannelSearchFilter.",
+        replaceWith = ReplaceWith("optimizedChannelSearchFilter(searchQuery)"),
+    )
     private fun searchChannelFilter(searchQuery: String): FilterObject {
         return Filters.or(
             Filters.autocomplete("member.user.name", searchQuery),
             Filters.autocomplete("name", searchQuery),
         )
     }
+
+    private fun optimizedChannelSearchFilter(text: String) =
+        Filters.and(
+            Filters.autocomplete("name", text),
+            Filters.`in`("members", user.value?.id.orEmpty()),
+        )
 
     /**
      * Refreshes either channels or search results.
@@ -542,13 +670,19 @@ public class ChannelListViewModel(
     /**
      * Allows for the change of filters used for channel queries.
      *
-     * Use this if you need to support runtime filter changes, through custom filters UI.
+     * Use this if you need to support runtime filter changes, through custom filters UI. The applied
+     * filter overrides the `initialFilters` set through the constructor.
      *
-     * Warning: The filter that's applied will override the `initialFilters` set through the constructor.
+     * Has no effect on view models constructed for a predefined-filter query — the predefined identity
+     * is fixed at construction. A warning is logged in that case.
      *
      * @param newFilters The new filters to be used as a baseline for filtering channels.
      */
     public fun setFilters(newFilters: FilterObject) {
+        if (mode is QueryMode.Predefined) {
+            logger.w { "[setFilters] ignored — view model uses predefined filter '${mode.name}'" }
+            return
+        }
         this.filterFlow.tryEmit(value = newFilters)
     }
 
@@ -556,8 +690,15 @@ public class ChannelListViewModel(
      * Allows for the change of the query sort used for channel queries.
      *
      * Use this if you need to support runtime sort changes, through custom sort UI.
+     *
+     * Has no effect on view models constructed for a predefined-filter query — the sort is resolved by
+     * the server. A warning is logged in that case.
      */
     public fun setQuerySort(querySort: QuerySorter<Channel>) {
+        if (mode is QueryMode.Predefined) {
+            logger.w { "[setQuerySort] ignored — view model uses predefined filter '${mode.name}'" }
+            return
+        }
         this.querySortFlow.tryEmit(value = querySort)
     }
 
@@ -582,11 +723,6 @@ public class ChannelListViewModel(
 
     private suspend fun loadMoreQueryChannels() {
         logger.d { "[loadMoreQueryChannels] no args" }
-        val currentFilter = filterFlow.value
-        if (currentFilter == null) {
-            logger.v { "[loadMoreQueryChannels] rejected (no current filter)" }
-            return
-        }
         val currentQuery = queryChannelsState.value?.nextPageRequest?.value
         if (currentQuery == null) {
             logger.v { "[loadMoreQueryChannels] rejected (no current query)" }
@@ -600,10 +736,19 @@ public class ChannelListViewModel(
             logger.v { "[loadMoreQueryChannels] rejected (already loading more)" }
             return
         }
-        val nextQuery = currentQuery.copy(
-            filter = createQueryChannelsFilter(currentFilter, _searchQuery.value.query),
-            querySort = querySortFlow.value,
-        )
+        val nextQuery = when (mode) {
+            is QueryMode.Standard -> {
+                val currentFilter = filterFlow.value ?: run {
+                    logger.v { "[loadMoreQueryChannels] rejected (no current filter)" }
+                    return
+                }
+                currentQuery.copy(
+                    filter = createQueryChannelsFilter(currentFilter, _searchQuery.value.query),
+                    querySort = querySortFlow.value,
+                )
+            }
+            is QueryMode.Predefined -> currentQuery
+        }
         if (lastNextQuery == nextQuery) {
             logger.v { "[loadMoreQueryChannels] rejected (same query)" }
             return
@@ -829,12 +974,25 @@ public class ChannelListViewModel(
         /**
          * Debounce time for search queries.
          */
-        private const val SEARCH_DEBOUNCE_MS = 300L
+        internal const val SEARCH_DEBOUNCE_MS = 300L
 
         /**
          * Minimum length of the search query to start searching for channels.
          */
         private const val MIN_CHANNEL_SEARCH_QUERY_LENGTH = 3
+    }
+
+    internal sealed interface QueryMode {
+        data class Standard(
+            val initialFilter: FilterObject?,
+            val initialSort: QuerySorter<Channel>,
+        ) : QueryMode
+
+        data class Predefined(
+            val name: String,
+            val filterValues: Map<String, Any>?,
+            val sortValues: Map<String, Any>?,
+        ) : QueryMode
     }
 
     private data class SearchMessageState(
