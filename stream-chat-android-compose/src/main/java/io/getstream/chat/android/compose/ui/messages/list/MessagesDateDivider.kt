@@ -17,9 +17,7 @@
 package io.getstream.chat.android.compose.ui.messages.list
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
@@ -31,7 +29,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
 @Composable
-internal fun MessageDivider(text: String, modifier: Modifier = Modifier) {
+internal fun MessagesDateDivider(text: String, modifier: Modifier = Modifier) {
     val colors = ChatTheme.colors
 
     Box(modifier, contentAlignment = Alignment.Center) {
@@ -48,15 +46,26 @@ internal fun MessageDivider(text: String, modifier: Modifier = Modifier) {
 
 @Preview
 @Composable
-private fun MessageDividerPreview() {
+private fun MessagesDateDividerTodayPreview() {
     ChatTheme {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
-        ) {
-            MessageDivider("Unread messages")
-            MessageDivider("Today")
-            MessageDivider("Tue, 25 Dec")
-        }
+        MessagesDateDividerToday()
     }
+}
+
+@Composable
+internal fun MessagesDateDividerToday() {
+    MessagesDateDivider(text = "Today")
+}
+
+@Preview
+@Composable
+private fun MessagesDateDividerAbsoluteDatePreview() {
+    ChatTheme {
+        MessagesDateDividerAbsoluteDate()
+    }
+}
+
+@Composable
+internal fun MessagesDateDividerAbsoluteDate() {
+    MessagesDateDivider(text = "Tue, 25 Dec")
 }

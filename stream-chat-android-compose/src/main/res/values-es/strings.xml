@@ -133,7 +133,7 @@
   <string name="stream_compose_message_list_show_translation">"Mostrar traducción"</string>
   <string name="stream_compose_message_list_thread_footnote_thread_replies">"%d respuestas"</string>
   <string name="stream_compose_message_list_thread_footnote_thread_reply">"%d respuesta"</string>
-  <string name="stream_compose_message_list_unread_separator">"Mensajes no leídos"</string>
+  <string name="stream_compose_message_list_unread_separator">"%d mensajes no leídos"</string>
   <string name="stream_compose_message_list_unsupported_attachment">"Archivo adjunto no compatible"</string>
   <string name="stream_compose_message_list_view">"Ver"</string>
   <string name="stream_compose_message_list_view_original">"Ver original"</string>

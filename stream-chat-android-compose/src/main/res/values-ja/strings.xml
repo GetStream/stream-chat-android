@@ -144,7 +144,7 @@
   <plurals name="stream_compose_message_list_thread_separator">
     <item quantity="other">"%d件の返信"</item>
   </plurals>
-  <string name="stream_compose_message_list_unread_separator">"未読メッセージ"</string>
+  <string name="stream_compose_message_list_unread_separator">"%d件の未読メッセージ"</string>
   <string name="stream_compose_message_list_unsupported_attachment">"サポートされていない添付ファイル"</string>
   <string name="stream_compose_message_list_view">"表示"</string>
   <string name="stream_compose_message_list_view_original">"原文を表示"</string>
