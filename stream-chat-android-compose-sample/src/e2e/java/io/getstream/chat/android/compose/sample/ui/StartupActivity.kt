@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.data.PredefinedUserCredentials
 import io.getstream.chat.android.compose.sample.data.customSettings
@@ -27,6 +28,7 @@ import io.getstream.chat.android.compose.sample.data.customSettings
 class StartupActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         ChatHelper.initializeSdk(applicationContext, PredefinedUserCredentials.API_KEY, intent.getStringExtra("BASE_URL"))
         customSettings().isComposerLinkPreviewEnabled = true
