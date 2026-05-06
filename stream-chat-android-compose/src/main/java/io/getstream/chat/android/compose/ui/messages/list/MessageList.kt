@@ -75,6 +75,9 @@ import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param onMessagesPageEndReached Handler for pagination when the end of newest messages have been reached.
  * @param onScrollToBottomClicked Handler when the user requests to scroll to the bottom of the messages list.
+ * @param onScrollToFirstUnreadClicked Handler when the user taps the scroll-to-first-unread pill.
+ * @param onDismissUnreadLabel Handler when the user dismisses the scroll-to-first-unread pill via
+ * its close affordance.
  * @param onPauseAudioRecordingAttachments Handler for lifecycle events.
  */
 @Composable
@@ -108,6 +111,8 @@ public fun MessageList(
     },
     onMessagesPageEndReached: (String) -> Unit = { viewModel.onBottomEndRegionReached(it) },
     onScrollToBottomClicked: (() -> Unit) -> Unit = { viewModel.scrollToBottom(scrollToBottom = it) },
+    onScrollToFirstUnreadClicked: () -> Unit = { viewModel.scrollToFirstUnreadMessage() },
+    onDismissUnreadLabel: () -> Unit = { viewModel.disableUnreadLabelButton() },
     onPauseAudioRecordingAttachments: () -> Unit = { viewModel.pauseAudioRecordingAttachments() },
 ) {
     MessageList(
@@ -122,6 +127,8 @@ public fun MessageList(
         onScrolledToBottom = onScrollToBottom,
         onMessagesPageEndReached = onMessagesPageEndReached,
         onScrollToBottom = onScrollToBottomClicked,
+        onScrollToFirstUnread = onScrollToFirstUnreadClicked,
+        onDismissUnreadLabel = onDismissUnreadLabel,
         onPauseAudioRecordingAttachments = onPauseAudioRecordingAttachments,
         messageItemParams = { messageListItem ->
             MessageItemParams(
@@ -270,6 +277,9 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param onScrolledToBottom Handler when the user scrolls to the bottom.
  * @param onMessagesPageEndReached Handler for pagination when the end of newest messages have been reached.
  * @param onScrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
+ * @param onScrollToFirstUnread Handler when the user taps the scroll-to-first-unread pill.
+ * @param onDismissUnreadLabel Handler when the user dismisses the scroll-to-first-unread pill via
+ * its close affordance.
  * @param onPauseAudioRecordingAttachments Handler for lifecycle events.
  * @param messageItemParams Factory that builds [MessageItemParams] for each message list item.
  */
@@ -287,6 +297,8 @@ public fun MessageList(
     onScrolledToBottom: () -> Unit = {},
     onMessagesPageEndReached: (String) -> Unit = {},
     onScrollToBottom: (() -> Unit) -> Unit = {},
+    onScrollToFirstUnread: () -> Unit = {},
+    onDismissUnreadLabel: () -> Unit = {},
     onPauseAudioRecordingAttachments: () -> Unit = {},
     messageItemParams: (MessageListItemState) -> MessageItemParams = ::MessageItemParams,
 ) {
@@ -313,6 +325,8 @@ public fun MessageList(
                     onScrolledToBottom = onScrolledToBottom,
                     onMessagesEndReached = onMessagesPageEndReached,
                     onScrollToBottom = onScrollToBottom,
+                    onScrollToFirstUnread = onScrollToFirstUnread,
+                    onDismissUnreadLabel = onDismissUnreadLabel,
                     itemContent = { messageListItem ->
                         with(ChatTheme.componentFactory) {
                             MessageItem(params = messageItemParams(messageListItem))

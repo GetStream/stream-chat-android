@@ -6,6 +6,10 @@ updates:
       interval: daily
     labels:
       - "pr:ci"
+    groups:
+      stream-conventions:
+        patterns:
+          - "GetStream/stream-build-conventions-android"
 
   - package-ecosystem: gradle
     directory: /
@@ -21,3 +25,7 @@ updates:
       - dependency-name: "io.getstream.java.library"
       - dependency-name: "io.getstream.java.platform"
       - dependency-name: "io.getstream.publish"
+    groups:
+      stream-conventions:
+        patterns:
+          - "io.getstream.*"

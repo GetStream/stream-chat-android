@@ -25,9 +25,9 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
@@ -349,7 +349,7 @@ internal fun DefaultTopBarContent(
             onBackPressed = backAction,
             onHeaderTitleClick = onHeaderTitleClick,
             onChannelAvatarClick = onChannelAvatarClick,
-            modifier = Modifier.height(56.dp),
+            modifier = Modifier.defaultMinSize(minHeight = 72.dp),
         ),
     )
 }

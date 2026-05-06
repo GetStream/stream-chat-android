@@ -340,7 +340,7 @@ internal fun MediaGalleryVideoPage(
             MediaThumbnail(
                 modifier = Modifier
                     .matchParentSize()
-                    .clickable {
+                    .clickable(bounded = true) {
                         showThumbnail = false
                         player.play()
                     },

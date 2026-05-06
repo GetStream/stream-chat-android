@@ -245,6 +245,12 @@
     <string name="stream_compose_only_visible_to_you">Only visible to you</string>
     <string name="stream_compose_image_order">%1$d of %2$d</string>
     <string name="stream_compose_scroll_to_bottom">Scroll to bottom</string>
+    <string name="stream_compose_scroll_to_first_unread">Scroll to first unread message</string>
+    <string name="stream_compose_scroll_to_first_unread_dismiss">Dismiss unread indicator</string>
+    <plurals name="stream_compose_scroll_to_first_unread_count">
+        <item quantity="one">%d unread</item>
+        <item quantity="other">%d unread</item>
+    </plurals>
     <string name="stream_compose_remaining_media_attachments_count">+%1$d</string>
     <string name="stream_compose_remove_attachment">Remove attachment</string>
     <string name="stream_compose_giphy_label">GIPHY</string>

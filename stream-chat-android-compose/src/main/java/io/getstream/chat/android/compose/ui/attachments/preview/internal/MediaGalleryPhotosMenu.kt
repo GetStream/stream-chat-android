@@ -188,7 +188,7 @@ private fun MediaGalleryPhotosMenuItem(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f)
-            .clickable { onClick() },
+            .clickable(bounded = true) { onClick() },
         contentAlignment = Alignment.Center,
     ) {
         val data = attachment.imagePreviewData
