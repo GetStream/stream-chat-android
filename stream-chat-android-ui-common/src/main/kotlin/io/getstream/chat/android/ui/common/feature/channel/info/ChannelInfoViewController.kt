@@ -545,10 +545,11 @@ private fun buildChannelOptionList(
         add(ChannelInfoViewState.Content.Option.PinnedMessages)
         add(ChannelInfoViewState.Content.Option.MediaAttachments)
         add(ChannelInfoViewState.Content.Option.FilesAttachments)
+        if (channelData.ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL)) {
+            add(ChannelInfoViewState.Content.Option.LeaveChannel)
+        }
         if (channelData.ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)) {
             add(ChannelInfoViewState.Content.Option.DeleteChannel)
-        } else if (channelData.ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL)) {
-            add(ChannelInfoViewState.Content.Option.LeaveChannel)
         }
     }
 }

@@ -326,9 +326,7 @@ private fun buildGroupChannelActions(
             selectedChannel = selectedChannel,
             viewModel = viewModel,
         ),
-        // Owner pattern: if user can delete, show Delete Group (not Leave)
-        // Member pattern: if user can leave but not delete, show Leave Group
-        if (optionVisibility.isLeaveChannelVisible && canLeaveChannel && !canDeleteChannel) {
+        if (optionVisibility.isLeaveChannelVisible && canLeaveChannel) {
             LeaveGroup(
                 channel = selectedChannel,
                 label = stringResource(id = R.string.stream_compose_selected_channel_menu_leave_group),

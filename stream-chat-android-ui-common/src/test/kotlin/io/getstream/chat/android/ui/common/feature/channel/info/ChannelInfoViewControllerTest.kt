@@ -406,6 +406,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
 
+                        ChannelInfoViewState.Content.Option.LeaveChannel,
                         ChannelInfoViewState.Content.Option.DeleteChannel,
                     ),
                 ),
