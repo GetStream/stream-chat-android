@@ -35,6 +35,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.InFilterObject
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.OrFilterObject
@@ -579,10 +580,13 @@ internal class ChannelListViewModelTest {
         assertNull(searchRequest.predefinedFilter)
         assertNull(searchRequest.filterValues)
         assertNull(searchRequest.sortValues)
-        val orFilterObject = searchRequest.filter as OrFilterObject
-        val autocompleteByName = orFilterObject.filterObjects.last() as AutocompleteFilterObject
+        val andFilterObject = searchRequest.filter as AndFilterObject
+        val autocompleteByName = andFilterObject.filterObjects.first() as AutocompleteFilterObject
+        val membersIn = andFilterObject.filterObjects.last() as InFilterObject
         assertEquals("name", autocompleteByName.fieldName)
         assertEquals("Search query", autocompleteByName.value)
+        assertEquals("members", membersIn.fieldName)
+        assertTrue("Jc" in membersIn.values)
     }
 
     @Test
