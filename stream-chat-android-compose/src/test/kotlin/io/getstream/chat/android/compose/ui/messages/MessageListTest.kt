@@ -38,6 +38,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
+import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 import org.junit.Rule
 import org.junit.Test
@@ -159,6 +160,20 @@ internal class MessageListTest : PaparazziComposeTest {
             MessageList(messageListState = UnreadLabelMessageListState)
         }
     }
+
+    @Test
+    fun `unread separator visible`() {
+        snapshotWithDarkMode {
+            MessageList(messageListState = UnreadSeparatorMessageListState)
+        }
+    }
+
+    @Test
+    fun `thread separator`() {
+        snapshotWithDarkMode {
+            MessageList(messageListState = ThreadSeparatorMessageListState)
+        }
+    }
 }
 
 private val Date1 = Calendar.getInstance().apply { set(2022, 1, 1, 1, 1) }.time
@@ -265,6 +280,36 @@ private val UnreadLabelMessageListState = LoadedMessageListState.copy(
         unreadCount = 9,
         lastReadMessageId = PreviewMessageData.message1.id,
         buttonVisibility = true,
+    ),
+)
+
+private val UnreadSeparatorMessageListState = LoadedMessageListState.copy(
+    messageItems = LoadedMessageListState.messageItems.take(3) +
+        UnreadSeparatorItemState(unreadCount = 3) +
+        LoadedMessageListState.messageItems.drop(3),
+)
+
+private val ThreadSeparatorMessageListState = MessageListState(
+    messageItems = listOf(
+        MessageItemState(
+            message = PreviewMessageData.message3,
+            isMine = false,
+            showMessageFooter = true,
+            ownCapabilities = ChannelCapabilities.toSet(),
+        ),
+        MessageItemState(
+            message = PreviewMessageData.message2,
+            isMine = true,
+            showMessageFooter = true,
+            ownCapabilities = ChannelCapabilities.toSet(),
+        ),
+        ThreadDateSeparatorItemState(date = Date1, replyCount = 2),
+        MessageItemState(
+            message = PreviewMessageData.message1,
+            isMine = false,
+            showMessageFooter = true,
+            ownCapabilities = ChannelCapabilities.toSet(),
+        ),
     ),
 )
 

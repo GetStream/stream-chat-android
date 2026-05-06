@@ -68,8 +68,6 @@ import io.getstream.chat.android.compose.ui.theme.MessageListTypingIndicatorItem
 import io.getstream.chat.android.compose.ui.theme.MessageListUnreadSeparatorItemContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.compose.ui.util.bottomBorder
-import io.getstream.chat.android.compose.ui.util.topBorder
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -217,7 +215,7 @@ public fun LazyItemScope.MessageItem(
  */
 @Composable
 internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItemState) {
-    MessageDivider(
+    MessagesDateDivider(
         text = ChatTheme.dateFormatter.formatRelativeDate(dateSeparator.date),
         modifier = Modifier
             .semantics(mergeDescendants = true) {
@@ -235,14 +233,14 @@ internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItem
  */
 @Composable
 internal fun DefaultMessageUnreadSeparatorContent(unreadSeparatorItemState: UnreadSeparatorItemState) {
-    MessageDivider(
-        text = stringResource(R.string.stream_compose_message_list_unread_separator),
-        modifier = Modifier
-            .semantics(mergeDescendants = true) {
-                testTag = "Stream_UnreadMessagesBadge"
-            }
-            .padding(vertical = StreamTokens.spacingXs)
-            .fillMaxWidth(),
+    MessagesStripDivider(
+        modifier = Modifier.semantics(mergeDescendants = true) {
+            testTag = "Stream_UnreadMessagesBadge"
+        },
+        text = stringResource(
+            R.string.stream_compose_message_list_unread_separator,
+            unreadSeparatorItemState.unreadCount,
+        ),
     )
 }
 
@@ -255,25 +253,15 @@ internal fun DefaultMessageUnreadSeparatorContent(unreadSeparatorItemState: Unre
 @Composable
 internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadDateSeparatorItemState) {
     val replyCount = threadSeparator.replyCount
-    val colors = ChatTheme.colors
-
-    Text(
-        modifier = Modifier
-            .padding(vertical = StreamTokens.spacingXs)
-            .topBorder(colors.borderCoreSubtle)
-            .bottomBorder(colors.borderCoreSubtle)
-            .fillMaxWidth()
-            .background(colors.backgroundCoreSurfaceSubtle)
-            .padding(horizontal = StreamTokens.spacingMd, vertical = StreamTokens.spacingXs)
-            .testTag("Stream_RepliesCount"),
+    MessagesStripDivider(
+        modifier = Modifier.semantics(mergeDescendants = true) {
+            testTag = "Stream_RepliesCount"
+        },
         text = pluralStringResource(
             R.plurals.stream_compose_message_list_thread_separator,
             replyCount,
             replyCount,
         ),
-        color = colors.chatTextSystem,
-        style = ChatTheme.typography.metadataEmphasis,
-        textAlign = TextAlign.Center,
     )
 }
 
