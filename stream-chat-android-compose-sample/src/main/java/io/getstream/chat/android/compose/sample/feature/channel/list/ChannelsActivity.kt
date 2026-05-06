@@ -106,24 +106,32 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalCoroutinesApi::class)
 class ChannelsActivity : ComponentActivity() {
 
+    /**
+     * The provided predefined filter has the following specs:
+     *
+     * **Filter:**
+     * ```
+     * Filters.and(
+     *     Filters.eq("type", "messaging"),
+     *     Filters.`in`("members", listOf(currentUserId)),
+     *     Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
+     * )
+     * ```
+     *
+     * **Sort:**
+     * ```
+     * QuerySortByField.descByName("last_updated")
+     * ```
+     */
     private val channelsViewModelFactory by lazy {
         val chatClient = ChatClient.instance()
         val currentUserId = chatClient.getCurrentUser()?.id ?: ""
         ChannelListViewModelFactory(
-            // chatClient = chatClient,
-            // querySort = QuerySortByField.descByName("last_updated"),
-            // filters = Filters.and(
-            //     Filters.eq("type", "messaging"),
-            //     Filters.`in`("members", listOf(currentUserId)),
-            //     // Filters.or(Filters.notExists(CHANNEL_ARG_DRAFT), Filters.eq(CHANNEL_ARG_DRAFT, false)),
-            // ),
-            predefinedFilterName = "basic_filter",
+            chatClient = chatClient,
+            predefinedFilterName = "android_sample_filter",
             filterValues = mapOf(
                 "channel_type" to "messaging",
                 "user_id" to currentUserId,
-            ),
-            sortValues = mapOf(
-                "sort_field" to "last_updated",
             ),
             chatEventHandlerFactory = CustomChatEventHandlerFactory(),
         )
