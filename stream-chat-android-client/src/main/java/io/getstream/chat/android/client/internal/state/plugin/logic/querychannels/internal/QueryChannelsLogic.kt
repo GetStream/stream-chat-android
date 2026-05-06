@@ -257,7 +257,6 @@ internal class QueryChannelsLogic(
         step: Int,
         thresholdCount: Int,
     ): HashSet<String> {
-        // TODO: Revisit this logic: Might produce several requests
         logger.d { "[getRemoteCids] initialOffset: $initialOffset, step: $step, thresholdCount: $thresholdCount" }
         val remoteCids = hashSetOf<String>()
         var offset = initialOffset

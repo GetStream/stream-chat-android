@@ -137,7 +137,6 @@ internal class QueryChannelsMutableState(
     }
 
     fun handleChatEvent(event: ChatEvent, cachedChannel: Channel?): EventHandlingResult {
-        // TODO: Think about this part: Are filters enough, or should we sent the spec as well?
         return eventHandler.handleChatEvent(event, filter, cachedChannel)
     }
 
