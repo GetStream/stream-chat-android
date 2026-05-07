@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.poll
 
 import android.os.Bundle
+import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -48,7 +49,10 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
     private var createPollDialogListener: CreatePollDialogListener? = null
     private val createPollViewModel: CreatePollViewModel by viewModels()
     private val optionsAdapter: OptionsAdapter by lazy {
-        OptionsAdapter { id, text -> createPollViewModel.onOptionTextChanged(id, text) }
+        OptionsAdapter(
+            answerCharLimit = arguments?.getInt(ARG_ANSWER_CHAR_LIMIT)?.takeIf { it > 0 },
+            onOptionChange = { id, text -> createPollViewModel.onOptionTextChanged(id, text) },
+        )
     }
     private lateinit var sendMenuItem: MenuItem
 
@@ -81,6 +85,9 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
      */
     private fun setupDialog() {
         setupToolbar(binding.toolbar)
+        arguments?.getInt(ARG_TITLE_CHAR_LIMIT)?.takeIf { it > 0 }?.let { limit ->
+            binding.question.filters = arrayOf(InputFilter.LengthFilter(limit))
+        }
         binding.multipleAnswersSwitch.setOnCheckedChangeListener { _, isChecked ->
             binding.multipleAnswersCount.isVisible = isChecked
             createPollViewModel.setAllowMultipleVotes(isChecked)
@@ -158,15 +165,28 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
 
     public companion object {
         public const val TAG: String = "create_poll_dialog_fragment"
+        private const val ARG_TITLE_CHAR_LIMIT: String = "arg_title_char_limit"
+        private const val ARG_ANSWER_CHAR_LIMIT: String = "arg_answer_char_limit"
 
         /**
          * Creates a new instance of [CreatePollDialogFragment].
          *
+         * @param createPollDialogListener The listener for poll creation events.
+         * @param titleCharLimit Optional character limit for the poll title. Null means no limit.
+         * @param answerCharLimit Optional character limit for poll answer options. Null means no limit.
          * @return A new instance of [CreatePollDialogFragment].
          */
-        public fun newInstance(createPollDialogListener: CreatePollDialogListener): CreatePollDialogFragment {
-            return CreatePollDialogFragment()
-                .setCreatePollDialogListener(createPollDialogListener)
+        public fun newInstance(
+            createPollDialogListener: CreatePollDialogListener,
+            titleCharLimit: Int? = null,
+            answerCharLimit: Int? = null,
+        ): CreatePollDialogFragment {
+            return CreatePollDialogFragment().apply {
+                arguments = Bundle().apply {
+                    titleCharLimit?.let { putInt(ARG_TITLE_CHAR_LIMIT, it) }
+                    answerCharLimit?.let { putInt(ARG_ANSWER_CHAR_LIMIT, it) }
+                }
+            }.setCreatePollDialogListener(createPollDialogListener)
         }
     }
 

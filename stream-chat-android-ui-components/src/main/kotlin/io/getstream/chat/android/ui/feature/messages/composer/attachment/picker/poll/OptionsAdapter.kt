@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.poll
 
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -27,6 +28,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiPollOptionBinding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 public class OptionsAdapter(
+    private val answerCharLimit: Int?,
     private val onOptionChange: (id: Int, text: String) -> Unit,
 ) : ListAdapter<PollAnswer, OptionsAdapter.OptionViewHolder>(OptionDiffCallback) {
 
@@ -39,6 +41,7 @@ public class OptionsAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OptionViewHolder =
         OptionViewHolder(
             parent = parent,
+            answerCharLimit = answerCharLimit,
             onOptionChange = onOptionChange,
         )
 
@@ -53,10 +56,17 @@ public class OptionsAdapter(
             parent,
             false,
         ),
+        private val answerCharLimit: Int?,
         private val onOptionChange: (id: Int, text: String) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private lateinit var pollAnswer: PollAnswer
+
+        init {
+            answerCharLimit?.let { limit ->
+                binding.option.filters = arrayOf(InputFilter.LengthFilter(limit))
+            }
+        }
 
         private val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { /* no-op */ }
