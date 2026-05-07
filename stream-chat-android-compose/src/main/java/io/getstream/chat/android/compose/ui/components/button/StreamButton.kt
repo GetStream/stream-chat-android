@@ -114,39 +114,77 @@ internal fun StreamButton(
 
 @Preview(showBackground = true)
 @Composable
-private fun StreamButtonPreview() {
+private fun StreamButtonEnabledPreview() {
     ChatTheme {
-        val styles = listOf(
-            StreamButtonStyleDefaults.primarySolid,
-            StreamButtonStyleDefaults.primaryOutline,
-            StreamButtonStyleDefaults.primaryGhost,
-            StreamButtonStyleDefaults.secondarySolid,
-            StreamButtonStyleDefaults.secondaryOutline,
-            StreamButtonStyleDefaults.secondaryGhost,
-            StreamButtonStyleDefaults.destructiveSolid,
-            StreamButtonStyleDefaults.destructiveOutline,
-            StreamButtonStyleDefaults.destructiveGhost,
-        )
+        StreamButtonStyles(enabled = true)
+    }
+}
 
-        Column(
-            modifier = Modifier.padding(StreamTokens.spacingMd),
-            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
-        ) {
-            styles.forEach { style ->
-                Row(horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs)) {
-                    val painter = painterResource(R.drawable.stream_design_ic_checkmark)
-                    StreamButton(onClick = {}, style = style) {
-                        Icon(painter, null)
-                    }
-                    StreamTextButton(
-                        onClick = {},
-                        style = style,
-                        leadingIcon = painter,
-                        text = "{{ label }}",
-                        trailingIcon = painter,
-                    )
+@Preview(showBackground = true)
+@Composable
+private fun StreamButtonDisabledPreview() {
+    ChatTheme {
+        StreamButtonStyles(enabled = false)
+    }
+}
+
+@Composable
+internal fun StreamButtonStyles(enabled: Boolean) {
+    val styles = listOf(
+        StreamButtonStyleDefaults.primarySolid,
+        StreamButtonStyleDefaults.primaryOutline,
+        StreamButtonStyleDefaults.primaryGhost,
+        StreamButtonStyleDefaults.secondarySolid,
+        StreamButtonStyleDefaults.secondaryOutline,
+        StreamButtonStyleDefaults.secondaryGhost,
+        StreamButtonStyleDefaults.destructiveSolid,
+        StreamButtonStyleDefaults.destructiveOutline,
+        StreamButtonStyleDefaults.destructiveGhost,
+    )
+
+    Column(
+        modifier = Modifier.padding(StreamTokens.spacingMd),
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+    ) {
+        styles.forEach { style ->
+            Row(horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs)) {
+                val painter = painterResource(R.drawable.stream_design_ic_checkmark)
+                StreamButton(onClick = {}, style = style, enabled = enabled) {
+                    Icon(painter, null)
                 }
+                StreamTextButton(
+                    onClick = {},
+                    style = style,
+                    enabled = enabled,
+                    leadingIcon = painter,
+                    text = "{{ label }}",
+                    trailingIcon = painter,
+                )
             }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun StreamButtonSizesPreview() {
+    ChatTheme {
+        StreamButtonSizes()
+    }
+}
+
+@Composable
+internal fun StreamButtonSizes() {
+    Column(
+        modifier = Modifier.padding(StreamTokens.spacingMd),
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+    ) {
+        StreamButtonSize.entries.forEach { size ->
+            StreamTextButton(
+                onClick = {},
+                text = "Button $size",
+                size = size,
+            )
         }
     }
 }

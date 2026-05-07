@@ -191,32 +191,38 @@ private fun ReactionChip(
 
 @Preview
 @Composable
-private fun SingleClusteredMessageReactionsPreview() {
-    ChatTheme {
-        ClusteredMessageReactions(reactions = PreviewReactionData.oneReaction())
-    }
+private fun ManyClusteredMessageReactionsPreview() {
+    ChatTheme { ManyClusteredMessageReactions() }
 }
 
 @Preview
 @Composable
-private fun MultipleClusteredMessageReactionsPreview() {
-    ChatTheme {
-        ClusteredMessageReactions(reactions = PreviewReactionData.manyReactions())
-    }
+private fun ManySegmentedMessageReactionsPreview() {
+    ChatTheme { ManySegmentedMessageReactions() }
 }
 
 @Preview
 @Composable
-private fun SingleSegmentedMessageReactionsPreview() {
-    ChatTheme {
-        SegmentedMessageReactions(reactions = PreviewReactionData.oneReaction())
-    }
+private fun OverflowSegmentedMessageReactionsPreview() {
+    ChatTheme { OverflowSegmentedMessageReactions() }
 }
 
-@Preview
 @Composable
-private fun MultipleSegmentedMessageReactionsPreview() {
-    ChatTheme {
-        SegmentedMessageReactions(reactions = PreviewReactionData.manyReactions())
-    }
+internal fun ManyClusteredMessageReactions() {
+    ClusteredMessageReactions(reactions = PreviewReactionData.manyReactions())
+}
+
+@Composable
+internal fun ManySegmentedMessageReactions() {
+    SegmentedMessageReactions(reactions = PreviewReactionData.manyReactions())
+}
+
+@Composable
+internal fun OverflowSegmentedMessageReactions() {
+    SegmentedMessageReactions(
+        reactions = PreviewReactionData.manyReactions() + listOf(
+            MessageReactionItemState(type = "haha", emoji = "😂", count = 3),
+            MessageReactionItemState(type = "fire", emoji = "🔥", count = 7),
+        ),
+    )
 }
