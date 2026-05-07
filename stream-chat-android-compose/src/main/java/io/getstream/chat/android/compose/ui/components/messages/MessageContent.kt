@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -189,7 +190,7 @@ internal fun DefaultMessageRegularContent(
                     replyMessage = message,
                     modifier = Modifier.combinedClickable(
                         interactionSource = remember(::MutableInteractionSource),
-                        indication = null,
+                        indication = ripple(),
                         onLongClick = { onLongItemClick(message) },
                         onClick = { onQuotedMessageClick(quotedMessage) },
                     ),
