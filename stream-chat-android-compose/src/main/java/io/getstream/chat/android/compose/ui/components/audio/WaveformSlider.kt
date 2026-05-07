@@ -21,17 +21,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.progressSemantics
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -41,9 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,7 +57,6 @@ import kotlin.random.Random
  *
  * @param modifier Modifier for styling.
  * @param waveformData The waveform data to display.
- * @param style The style for the waveform slider.
  * @param visibleBarLimit The number of bars to display at once.
  * @param adjustBarWidthToLimit Whether to adjust the bar width to fit the visible bar limit.
  * @param progress The current progress of the waveform.
@@ -84,43 +80,45 @@ public fun StaticWaveformSlider(
 ) {
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val currentProgress by rememberUpdatedState(progress)
-    var widthPx by remember { mutableFloatStateOf(0f) }
-    Box(
+    BoxWithConstraints(
         modifier = modifier
             .fillMaxSize()
-            .progressSemantics(value = progress)
-            .onSizeChanged { size ->
-                widthPx = size.width.toFloat()
-            }
-            .dragPointerInput(
-                enabled = isThumbVisible,
-                onDragStart = {
-                    onDragStart(it.toHorizontalProgress(widthPx, isRtl))
-                },
-                onDrag = {
-                    onDrag(it.toHorizontalProgress(widthPx, isRtl))
-                },
-                onDragStop = {
-                    onDragStop(it?.toHorizontalProgress(widthPx, isRtl) ?: currentProgress)
-                },
-            ),
+            .progressSemantics(value = progress),
     ) {
-        // Draw the waveform
-        WaveformTrack(
-            modifier = Modifier.fillMaxSize(),
-            waveformData = waveformData,
-            visibleBarLimit = visibleBarLimit,
-            adjustBarWidthToLimit = adjustBarWidthToLimit,
-            progress = progress,
-        )
-
-        // Draw the thumb
-        if (isThumbVisible) {
-            WaveformHandle(
-                isPlaying = isPlaying,
+        val widthPx = constraints.maxWidth.toFloat()
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .dragPointerInput(
+                    enabled = isThumbVisible,
+                    onDragStart = {
+                        onDragStart(it.toHorizontalProgress(widthPx, isRtl))
+                    },
+                    onDrag = {
+                        onDrag(it.toHorizontalProgress(widthPx, isRtl))
+                    },
+                    onDragStop = {
+                        onDragStop(it?.toHorizontalProgress(widthPx, isRtl) ?: currentProgress)
+                    },
+                ),
+        ) {
+            // Draw the waveform
+            WaveformTrack(
+                modifier = Modifier.fillMaxSize(),
+                waveformData = waveformData,
+                visibleBarLimit = visibleBarLimit,
+                adjustBarWidthToLimit = adjustBarWidthToLimit,
                 progress = progress,
-                parentWidthPx = widthPx,
             )
+
+            // Draw the thumb
+            if (isThumbVisible) {
+                WaveformHandle(
+                    isPlaying = isPlaying,
+                    progress = progress,
+                    parentWidthPx = widthPx,
+                )
+            }
         }
     }
 }
@@ -175,25 +173,24 @@ internal fun WaveformTrack(
 
     val totalBars = when (adjustBarWidthToLimit) {
         true -> visibleBarLimit
-        else -> when (waveformData.size > visibleBarLimit) {
-            true -> visibleBarLimit
-            else -> waveformData.size
-        }
+        else -> minOf(waveformData.size, visibleBarLimit)
     }
     val visibleBars = minOf(visibleBarLimit, waveformData.size)
     var barCornerRadius by remember(totalBars) { mutableStateOf(CornerRadius.Zero) }
     Canvas(
         modifier = modifier.graphicsLayer { scaleX = if (isRtl) -1f else 1f },
     ) {
+        if (totalBars <= 0) return@Canvas
+
         val canvasW = size.width
         val canvasH = size.height
         val spaceWidth = canvasW * BarSpacingRatio
         val barsWidth = canvasW - spaceWidth
         val totalSpaces = totalBars - 1
         val barWidth = barsWidth / totalBars
-        val barSpacing = spaceWidth / totalSpaces
+        val barSpacing = if (totalSpaces > 0) spaceWidth / totalSpaces else 0f
 
-        val thresholdX = canvasW * finalProgress * visibleBars / visibleBarLimit
+        val thresholdX = canvasW * finalProgress * visibleBars / totalBars
         val halfHeight = canvasH / 2
         if (barCornerRadius.x != barWidth || barCornerRadius.y != barWidth) {
             barCornerRadius = CornerRadius(barWidth, barWidth)
@@ -227,60 +224,62 @@ internal fun WaveformTrack(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 250)
 @Composable
-internal fun WaveformSeekBarPreview() {
-    val rand = Random(50)
-    val waveform = List(50) { rand.nextFloat() }
-
-    ChatPreviewTheme {
-        Box(
-            modifier = Modifier
-                .width(250.dp)
-                .height(60.dp)
-                .background(Color.Cyan),
-            contentAlignment = Alignment.Center,
-        ) {
-            StaticWaveformSlider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(36.dp),
-                waveformData = waveform,
-                progress = 0.0f,
-                isPlaying = true,
-            )
-        }
-    }
+private fun StaticWaveformSliderAtStartPreview() {
+    ChatPreviewTheme { StaticWaveformSliderSample(progress = 0f, isPlaying = true) }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 250)
 @Composable
-internal fun WaveformTrackPreview() {
-    val waveform = mutableListOf<Float>()
-    val barCount = 100
-    for (i in 0 until barCount) {
-        waveform.add((i + 1) / barCount.toFloat())
+private fun StaticWaveformSliderMidwayPreview() {
+    ChatPreviewTheme { StaticWaveformSliderSample(progress = 0.5f, isPlaying = true) }
+}
+
+@Preview(showBackground = true, widthDp = 250)
+@Composable
+private fun StaticWaveformSliderPausedPreview() {
+    ChatPreviewTheme { StaticWaveformSliderSample(progress = 0.3f, isPlaying = false) }
+}
+
+@Preview(showBackground = true, widthDp = 250)
+@Composable
+private fun StaticWaveformSliderWithoutThumbPreview() {
+    ChatPreviewTheme { StaticWaveformSliderSample(progress = 0.7f, isPlaying = true, isThumbVisible = false) }
+}
+
+@Composable
+private fun StaticWaveformSliderSample(progress: Float, isPlaying: Boolean, isThumbVisible: Boolean = true) {
+    val previewWaveform = remember {
+        val rand = Random(50)
+        List(50) { rand.nextFloat() }
     }
 
+    StaticWaveformSlider(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(36.dp),
+        waveformData = previewWaveform,
+        progress = progress,
+        isPlaying = isPlaying,
+        isThumbVisible = isThumbVisible,
+    )
+}
+
+@Preview(showBackground = true, widthDp = 250)
+@Composable
+private fun FullWaveformTrackPreview() {
     ChatPreviewTheme {
-        Box(
+        val waveform = List(100) { (it + 1) / 100f }
+        WaveformTrack(
             modifier = Modifier
-                .width(250.dp)
-                .height(80.dp)
-                .background(Color.Black),
-            contentAlignment = Alignment.Center,
-        ) {
-            WaveformTrack(
-                modifier = Modifier
-                    .background(Color.Red)
-                    .fillMaxWidth()
-                    .height(60.dp),
-                waveformData = waveform,
-                progress = 0f,
-                adjustBarWidthToLimit = true,
-                visibleBarLimit = 100,
-            )
-        }
+                .fillMaxWidth()
+                .height(60.dp),
+            waveformData = waveform,
+            progress = 1f,
+            adjustBarWidthToLimit = true,
+            visibleBarLimit = 100,
+        )
     }
 }
 
