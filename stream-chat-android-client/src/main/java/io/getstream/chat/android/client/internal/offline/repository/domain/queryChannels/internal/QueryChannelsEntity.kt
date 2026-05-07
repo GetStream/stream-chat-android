@@ -18,11 +18,20 @@ package io.getstream.chat.android.client.internal.offline.repository.domain.quer
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.NullableMapConverter
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.querysort.QuerySorter
 
+/**
+ * The entity-level [TypeConverters] annotation overrides the database-level `ExtraDataConverter`
+ * for `Map<String, Any>?` columns, so [predefinedFilterValues]/[predefinedSortValues] use
+ * [NullableMapConverter] and `null` round-trips faithfully (rather than being collapsed to an
+ * empty map). Safe at entity scope because this entity has no other `Map<String, Any>?` fields.
+ */
 @Entity(tableName = QUERY_CHANNELS_ENTITY_TABLE_NAME)
+@TypeConverters(NullableMapConverter::class)
 internal data class QueryChannelsEntity(
     @PrimaryKey
     var id: String,

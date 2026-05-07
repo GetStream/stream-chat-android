@@ -79,11 +79,11 @@ internal class QueryChannelsMutableState(
      * In-memory cache spec for the active query.
      */
     private var _querySpec: QueryChannelsSpec = when (identifier) {
-        is QueryChannelsIdentifier.Standard -> QueryChannelsSpec.create(
+        is QueryChannelsIdentifier.Standard -> QueryChannelsSpec(
             filter = initialFilter,
             querySort = initialSort,
         )
-        is QueryChannelsIdentifier.Predefined -> QueryChannelsSpec.create(
+        is QueryChannelsIdentifier.Predefined -> QueryChannelsSpec(
             filter = initialFilter,
             querySort = initialSort,
             predefinedFilterName = identifier.name,
@@ -219,27 +219,37 @@ internal class QueryChannelsMutableState(
     }
 
     /**
-     * Applies the resolved filter/sort to the state. Called for predefined-filter queries when:
+     * Applies the resolved filter/sort to the state. Only relevant for predefined-filter queries,
+     * where the actual filter/sort are not known until either:
      *  - The server response arrives carrying `QueryChannelsResult.predefinedFilter`, or
      *  - The offline DB rehydrates a previously persisted resolved spec for the same identifier.
      *
-     * Not relevant for standard (non-predefined) queries.
+     * No-op for [QueryChannelsIdentifier.Standard] queries — their filter/sort are fixed at
+     * construction time and must not be replaced.
      *
      * Because [QueryChannelsSpec] keeps `filter` and `querySort` as `val` for binary
      * compatibility, we replace the held [_querySpec] instance instead of mutating it in place.
      * `cids` and the predefined identity fields are carried over from the previous instance.
      */
     fun applyResolvedSpec(filter: FilterObject, sort: QuerySorter<Channel>) {
+        if (identifier !is QueryChannelsIdentifier.Predefined) return
         _filter.value = filter
         _sort.value = sort
-        val previous = _querySpec
-        _querySpec = QueryChannelsSpec.create(
-            filter = filter,
-            querySort = sort,
-            cids = previous.cids,
-            predefinedFilterName = previous.predefinedFilterName,
-            predefinedFilterValues = previous.predefinedFilterValues,
-            predefinedSortValues = previous.predefinedSortValues,
+        _querySpec = _querySpec.copy(filter = filter, querySort = sort)
+    }
+
+    /**
+     * Replaces the held [_querySpec] with a copy whose [QueryChannelsSpec.cids] are updated to
+     * [cids]. Required because [QueryChannelsSpec] is now fully immutable.
+     */
+    fun setCids(cids: Set<String>) {
+        _querySpec = QueryChannelsSpec(
+            filter = _querySpec.filter,
+            querySort = _querySpec.querySort,
+            cids = cids,
+            predefinedFilterName = _querySpec.predefinedFilterName,
+            predefinedFilterValues = _querySpec.predefinedFilterValues,
+            predefinedSortValues = _querySpec.predefinedSortValues,
         )
     }
 

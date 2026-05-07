@@ -62,6 +62,7 @@ public class ChannelListViewModelFactory internal constructor(
      * @param filters The base filters used to filter out channels. When `null`, a default filter scoped
      * to messaging channels the current user is a member of is used.
      */
+    @JvmOverloads
     public constructor(
         chatClient: ChatClient = ChatClient.instance(),
         querySort: QuerySorter<Channel> = QuerySortByField.descByName("last_updated"),

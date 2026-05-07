@@ -153,7 +153,7 @@ internal class QueryChannelsStateLogic(
      * @param channels List<Channel>.
      */
     internal suspend fun addChannelsState(channels: List<Channel>) {
-        mutableState.queryChannelsSpec.cids += channels.map { it.cid }
+        mutableState.setCids(mutableState.queryChannelsSpec.cids + channels.map { it.cid })
         val existingChannels = mutableState.rawChannels ?: emptyMap()
         mutableState.setChannels(
             existingChannels +
@@ -208,7 +208,7 @@ internal class QueryChannelsStateLogic(
             logger.w { "[removeChannels] rejected (existingChannels is null)" }
             return
         }
-        mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidSet
+        mutableState.setCids(mutableState.queryChannelsSpec.cids - cidSet)
         mutableState.setChannels(existingChannels - cidSet)
     }
 

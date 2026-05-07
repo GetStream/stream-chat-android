@@ -665,7 +665,7 @@ public fun randomQueryChannelsSpec(
     predefinedFilterName: String? = null,
     predefinedFilterValues: Map<String, Any>? = null,
     predefinedSortValues: Map<String, Any>? = null,
-): QueryChannelsSpec = QueryChannelsSpec.create(
+): QueryChannelsSpec = QueryChannelsSpec(
     filter = filter,
     querySort = sort,
     cids = cids,

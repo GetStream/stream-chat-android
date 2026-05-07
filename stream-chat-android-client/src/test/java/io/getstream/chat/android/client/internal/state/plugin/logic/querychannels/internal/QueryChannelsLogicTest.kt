@@ -214,7 +214,7 @@ internal class QueryChannelsLogicTest {
         )
         val resolvedFilter = Filters.eq("type", "messaging")
         val resolvedSort = QuerySortByField.descByName<Channel>("last_message_at")
-        val predefinedSpec = QueryChannelsSpec.create(
+        val predefinedSpec = QueryChannelsSpec(
             filter = resolvedFilter,
             querySort = resolvedSort,
             predefinedFilterName = "my-filter",

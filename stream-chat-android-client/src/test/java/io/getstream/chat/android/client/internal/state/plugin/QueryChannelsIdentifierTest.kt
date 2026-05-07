@@ -103,7 +103,7 @@ internal class QueryChannelsIdentifierTest {
 
     @Test
     fun `QueryChannelsSpec identifier returns Predefined when predefinedFilterName is set`() {
-        val spec = QueryChannelsSpec.create(
+        val spec = QueryChannelsSpec(
             filter = standardFilter,
             querySort = standardSort,
             predefinedFilterName = "p",
