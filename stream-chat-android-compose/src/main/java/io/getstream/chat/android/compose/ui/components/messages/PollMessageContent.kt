@@ -19,6 +19,8 @@ package io.getstream.chat.android.compose.ui.components.messages
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +37,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -143,6 +146,7 @@ public fun PollMessageContent(
                         },
                         onClosePoll = onClosePoll,
                         onAddPollOption = onAddPollOption,
+                        onLongItemClick = onLongItemClick,
                     )
                 },
             ),
@@ -194,6 +198,7 @@ private fun PollMessageContent(
     onRemoveVote: (Vote) -> Unit,
     onAddPollOption: (poll: Poll, option: String) -> Unit,
     selectPoll: (Message, Poll, PollSelectionType) -> Unit,
+    onLongItemClick: (Message) -> Unit = {},
 ) {
     val context = LocalContext.current
     val showDialog = remember { mutableStateOf(false) }
@@ -227,7 +232,16 @@ private fun PollMessageContent(
         )
     }
 
-    Column(modifier = Modifier.padding(StreamTokens.spacingMd)) {
+    Column(
+        modifier = Modifier
+            .combinedClickable(
+                interactionSource = remember(::MutableInteractionSource),
+                indication = ripple(),
+                onClick = {},
+                onLongClick = { onLongItemClick(message) },
+            )
+            .padding(StreamTokens.spacingMd),
+    ) {
         Text(
             text = poll.name,
             style = typography.bodyEmphasis,

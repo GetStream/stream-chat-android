@@ -180,7 +180,15 @@ internal fun DefaultMessageRegularContent(
 ) {
     val componentFactory = ChatTheme.componentFactory
 
-    Column(horizontalAlignment = messageAlignment.contentAlignment) {
+    Column(
+        modifier = Modifier.combinedClickable(
+            interactionSource = remember(::MutableInteractionSource),
+            indication = ripple(),
+            onClick = {},
+            onLongClick = { onLongItemClick(message) },
+        ),
+        horizontalAlignment = messageAlignment.contentAlignment,
+    ) {
         val quotedMessage = message.replyTo
         if (quotedMessage != null) {
             componentFactory.MessageQuotedContent(
