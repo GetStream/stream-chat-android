@@ -330,7 +330,12 @@ public fun MessageComposer(
             )
 
             if (snackbarHostState.currentSnackbarData != null) {
-                SnackbarPopup(hostState = snackbarHostState)
+                SnackbarPopup(hostState = snackbarHostState) { snackbarData ->
+                    StreamSnackbar(
+                        modifier = Modifier.padding(bottom = StreamTokens.spacingMd),
+                        snackbarData = snackbarData,
+                    )
+                }
             }
         }
     }
