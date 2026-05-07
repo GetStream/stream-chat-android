@@ -243,14 +243,7 @@ internal class QueryChannelsMutableState(
      * [cids]. Required because [QueryChannelsSpec] is now fully immutable.
      */
     fun setCids(cids: Set<String>) {
-        _querySpec = QueryChannelsSpec(
-            filter = _querySpec.filter,
-            querySort = _querySpec.querySort,
-            cids = cids,
-            predefinedFilterName = _querySpec.predefinedFilterName,
-            predefinedFilterValues = _querySpec.predefinedFilterValues,
-            predefinedSortValues = _querySpec.predefinedSortValues,
-        )
+        _querySpec = _querySpec.copy(cids = cids)
     }
 
     fun destroy() {
