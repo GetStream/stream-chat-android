@@ -16,11 +16,13 @@
 
 package io.getstream.chat.android.ui.widgets.typing.internal
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.ColorFilter
 import android.graphics.Paint
 import android.graphics.PixelFormat
+import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
@@ -53,8 +55,10 @@ internal class TypingIndicatorAnimationView : AppCompatImageView {
 
 /**
  * A Drawable that renders an animation with 3 dots.
+ *
+ * Driven by a [ValueAnimator] so that test infrastructure can freeze it deterministically.
  */
-private class TypingDrawable(context: Context) : Drawable() {
+private class TypingDrawable(context: Context) : Drawable(), Animatable {
     private val paint: Paint = Paint()
 
     private val intrinsicHeight: Int
@@ -63,6 +67,13 @@ private class TypingDrawable(context: Context) : Drawable() {
     private val dotSpacingPx: Float
     private val dotDiameterPx: Float
     private val dotRadiusPx: Float
+
+    private val animator = ValueAnimator.ofFloat(0f, FULL_ANIMATION_DURATION.toFloat()).apply {
+        duration = FULL_ANIMATION_DURATION.toLong()
+        repeatCount = ValueAnimator.INFINITE
+        repeatMode = ValueAnimator.RESTART
+        addUpdateListener { invalidateSelf() }
+    }
 
     init {
         paint.color = context.getColorCompat(R.color.stream_ui_grey)
@@ -77,6 +88,22 @@ private class TypingDrawable(context: Context) : Drawable() {
         intrinsicHeight = DOT_SIZE_DP.dpToPx()
     }
 
+    override fun start() {
+        if (!animator.isStarted) animator.start()
+    }
+
+    override fun stop() {
+        animator.cancel()
+    }
+
+    override fun isRunning(): Boolean = animator.isRunning
+
+    override fun setVisible(visible: Boolean, restart: Boolean): Boolean {
+        val changed = super.setVisible(visible, restart)
+        if (visible) start() else stop()
+        return changed
+    }
+
     /**
      * Returns the intrinsic or minimum width of the Drawable.
      */
@@ -88,13 +115,15 @@ private class TypingDrawable(context: Context) : Drawable() {
     override fun getIntrinsicHeight(): Int = intrinsicHeight
 
     /**
-     * Draws the current frame of the animation and schedules the next frame.
+     * Draws the current frame of the animation. The animator schedules the next frame via
+     * [invalidateSelf] from its update listener.
      *
      * @param canvas The canvas to draw into.
      */
     override fun draw(canvas: Canvas) {
+        val phase = (animator.animatedValue as? Float) ?: 0f
         for (dotIndex in 0 until DOT_COUNT) {
-            paint.alpha = calculateAlpha(dotIndex)
+            paint.alpha = calculateAlpha(dotIndex, phase)
             canvas.drawCircle(
                 calculateCx(dotIndex),
                 dotRadiusPx,
@@ -102,18 +131,18 @@ private class TypingDrawable(context: Context) : Drawable() {
                 paint,
             )
         }
-        invalidateSelf()
     }
 
     /**
-     * Calculates the alpha of the dot to be drawn according to the current timestamp.
+     * Calculates the alpha of the dot to be drawn at the given animation [phase].
      *
      * @param dotIndex The index of the current dot to be drawn.
+     * @param phase The current animation phase, in millis within a cycle, supplied by the animator.
      * @return The alpha component of the paint's color from 0 to 255.
      */
-    private fun calculateAlpha(dotIndex: Int): Int {
+    private fun calculateAlpha(dotIndex: Int, phase: Float): Int {
         val animationOffset = (DOT_COUNT - dotIndex) * ANIMATION_OFFSET_MILLIS
-        val timeInCycle = (System.currentTimeMillis() + animationOffset) % FULL_ANIMATION_DURATION
+        val timeInCycle = (phase + animationOffset) % FULL_ANIMATION_DURATION
 
         val coefficient: Float = if (timeInCycle > DOTS_ANIMATION_DURATION_MILLIS) {
             0f
