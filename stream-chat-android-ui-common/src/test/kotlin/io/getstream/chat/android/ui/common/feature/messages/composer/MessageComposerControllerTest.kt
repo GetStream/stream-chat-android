@@ -1081,10 +1081,15 @@ internal class MessageComposerControllerTest {
     }
 
     @Test
-    fun `Given slash typed When action becomes Reply Then suggestions re-sort by availability`() = runTest {
-        // Given
-        val muteCommand = randomCommand(set = MODERATION_SET)
-        val funCommand = randomCommand()
+    fun `Given slash typed Then suggestions are universal-first preserving backend order regardless of action`() = runTest {
+        // Given the backend hands out commands in an order where a moderation command precedes a
+        // universal one — the SDK's sort must move universal commands to the front while
+        // preserving the backend's relative order within each tier.
+        val banCommand = randomCommand(name = "ban", set = MODERATION_SET)
+        val giphyCommand = randomCommand(name = "giphy", set = "")
+        val muteCommand = randomCommand(name = "mute", set = MODERATION_SET)
+        val unbanCommand = randomCommand(name = "unban", set = MODERATION_SET)
+        val unmuteCommand = randomCommand(name = "unmute", set = MODERATION_SET)
         val repliedMessage = randomMessage(cid = CID)
         val controller = Fixture()
             .givenConfig(MessageComposerController.Config(activeCommandEnabled = true))
@@ -1093,19 +1098,26 @@ internal class MessageComposerControllerTest {
             .givenClientState(randomUser())
             .givenGlobalState()
             .givenChannelState(
-                configState = MutableStateFlow(Config(commands = listOf(muteCommand, funCommand))),
+                configState = MutableStateFlow(
+                    Config(
+                        commands = listOf(banCommand, giphyCommand, muteCommand, unbanCommand, unmuteCommand),
+                    ),
+                ),
             )
             .get()
+        val expectedOrder = listOf(giphyCommand, banCommand, muteCommand, unbanCommand, unmuteCommand)
+
+        // When typing slash with the composer in its default state
         controller.setMessageInput("/")
         advanceUntilIdle()
-        assertEquals(listOf(muteCommand, funCommand), controller.state.value.commandSuggestions)
 
-        // When
+        // Then suggestions surface universal commands first, with backend order preserved within each tier.
+        assertEquals(expectedOrder, controller.state.value.commandSuggestions)
+
+        // And switching to Reply mode preserves the same order — no re-shuffle.
         controller.performMessageAction(Reply(repliedMessage))
         advanceUntilIdle()
-
-        // Then
-        assertEquals(listOf(funCommand, muteCommand), controller.state.value.commandSuggestions)
+        assertEquals(expectedOrder, controller.state.value.commandSuggestions)
     }
 
     @Test
