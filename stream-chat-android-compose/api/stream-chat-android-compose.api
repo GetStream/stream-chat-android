@@ -1611,9 +1611,11 @@ public final class io/getstream/chat/android/compose/ui/components/poll/Composab
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/poll/ComposableSingletons$PollAnswersKt;
 	public fun <init> ()V
 	public final fun getLambda$-1411166830$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1780669891$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-1980307438$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$-232122758$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-49181804$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
-	public final fun getLambda$-608288022$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$705192511$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/components/poll/ComposableSingletons$PollDialogHeaderKt {

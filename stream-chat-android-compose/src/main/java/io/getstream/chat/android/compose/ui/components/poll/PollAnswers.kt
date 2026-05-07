@@ -341,37 +341,79 @@ private fun AddAnswerDialogInput(newOption: MutableState<String>, modifier: Modi
 
 @Preview
 @Composable
-private fun PollAnswersDialogPreview() {
+private fun PollAnswersContentPreview() {
     ChatTheme {
-        val now = Date()
-        val pollWithAnswers = PreviewPollData.poll1.copy(
-            answers = listOf(
-                Answer(
-                    id = "preview1",
-                    pollId = "",
-                    text = "I think we should go with option A, it makes the most sense.",
-                    createdAt = now,
-                    updatedAt = now,
-                    user = PreviewUserData.user1,
-                ),
-                Answer(
-                    id = "preview2",
-                    pollId = "",
-                    text = "This is my own comment on the poll.",
-                    createdAt = now,
-                    updatedAt = now,
-                    user = PreviewUserData.user2,
-                ),
-                Answer(
-                    id = "preview3",
-                    pollId = "",
-                    text = "Option B is clearly better!",
-                    createdAt = now,
-                    updatedAt = now,
-                    user = PreviewUserData.user3,
-                ),
-            ),
-        )
-        Content(poll = pollWithAnswers)
+        PollAnswersContent()
     }
+}
+
+@Composable
+internal fun PollAnswersContent() {
+    Content(poll = previewPollWithAnswers())
+}
+
+@Preview
+@Composable
+private fun PollAnswersWithCurrentUserContentPreview() {
+    ChatTheme {
+        PollAnswersWithCurrentUserContent()
+    }
+}
+
+@Composable
+internal fun PollAnswersWithCurrentUserContent() {
+    val poll = previewPollWithAnswers()
+    val currentUserAnswer = poll.answers.first { it.user?.id == PreviewUserData.user1.id }
+    Content(poll = poll, currentUserAnswer = currentUserAnswer)
+}
+
+@Preview
+@Composable
+private fun PollAnswersClosedAnonymousContentPreview() {
+    ChatTheme {
+        PollAnswersClosedAnonymousContent()
+    }
+}
+
+@Composable
+internal fun PollAnswersClosedAnonymousContent() {
+    Content(
+        poll = previewPollWithAnswers().copy(
+            closed = true,
+            votingVisibility = VotingVisibility.ANONYMOUS,
+        ),
+    )
+}
+
+private fun previewPollWithAnswers(): Poll {
+    val previewDate = Date(0)
+
+    return PreviewPollData.poll1.copy(
+        answers = listOf(
+            Answer(
+                id = "preview1",
+                pollId = "",
+                text = "I think we should go with option A, it makes the most sense.",
+                createdAt = previewDate,
+                updatedAt = previewDate,
+                user = PreviewUserData.user1,
+            ),
+            Answer(
+                id = "preview2",
+                pollId = "",
+                text = "This is my own comment on the poll.",
+                createdAt = previewDate,
+                updatedAt = previewDate,
+                user = PreviewUserData.user2,
+            ),
+            Answer(
+                id = "preview3",
+                pollId = "",
+                text = "Option B is clearly better!",
+                createdAt = previewDate,
+                updatedAt = previewDate,
+                user = PreviewUserData.user3,
+            ),
+        ),
+    )
 }
