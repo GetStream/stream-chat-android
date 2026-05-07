@@ -20,8 +20,10 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
+import io.getstream.chat.android.client.api.models.PredefinedFilter
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
@@ -44,6 +46,7 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.mapping.toDomain
+import io.getstream.chat.android.client.api2.mapping.toFilterDomain
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
@@ -1286,12 +1289,15 @@ constructor(
             }
     }
 
-    override fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>> {
+    override fun queryChannels(query: QueryChannelsRequest): Call<QueryChannelsResult> {
         val request = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
-            filter_conditions = query.filter.toMap(),
+            filter_conditions = if (query.predefinedFilter != null) null else query.filter.toMap(),
+            sort = if (query.predefinedFilter != null) null else query.sort,
+            predefined_filter = query.predefinedFilter,
+            filter_values = query.filterValues,
+            sort_values = query.sortValues,
             offset = query.offset,
             limit = query.limit,
-            sort = query.sort,
             message_limit = query.messageLimit,
             member_limit = query.memberLimit,
             state = query.state,
@@ -1303,7 +1309,21 @@ constructor(
             channelApi.queryChannels(
                 connectionId = connectionId,
                 request = request,
-            ).map { response -> response.channels.map(this::flattenChannel) }
+            ).map { response ->
+                with(domainMapping) {
+                    QueryChannelsResult(
+                        channels = response.channels.map(this@MoshiChatApi::flattenChannel),
+                        predefinedFilter = response.predefined_filter?.let {
+                            val filter = it.filter.toFilterDomain() ?: return@let null
+                            PredefinedFilter(
+                                name = it.name,
+                                filter = filter,
+                                sort = it.sort.toSortDomain(),
+                            )
+                        },
+                    )
+                }
+            }
         }
 
         val isConnectionRequired = query.watch || query.presence

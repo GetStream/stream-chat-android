@@ -19,6 +19,7 @@ package io.getstream.chat.android.client
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.chatclient.BaseChatClientTest
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.errors.cause.StreamChannelNotFoundException
@@ -81,7 +82,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val request = Mother.randomQueryChannelsRequest()
         val channels = listOf(randomChannel())
         val sut = Fixture()
-            .givenQueryChannelsResult(RetroSuccess(channels).toRetrofitCall())
+            .givenQueryChannelsResult(RetroSuccess(QueryChannelsResult(channels, null)).toRetrofitCall())
             .get()
         // when
         val result = sut.queryChannelsInternal(request).await()
@@ -95,7 +96,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val request = Mother.randomQueryChannelsRequest()
         val errorCode = positiveRandomInt()
         val sut = Fixture()
-            .givenQueryChannelsResult(RetroError<List<Channel>>(errorCode).toRetrofitCall())
+            .givenQueryChannelsResult(RetroError<QueryChannelsResult>(errorCode).toRetrofitCall())
             .get()
         // when
         val result = sut.queryChannelsInternal(request).await()
@@ -112,7 +113,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val state = randomBoolean()
         val response = randomChannel()
         val sut = Fixture()
-            .givenQueryChannelsResult(RetroSuccess(listOf(response)).toRetrofitCall())
+            .givenQueryChannelsResult(RetroSuccess(QueryChannelsResult(listOf(response), null)).toRetrofitCall())
             .get()
         // when
         val result = sut.getChannel(cid, messageLimit, memberLimit, state).await()
@@ -128,7 +129,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val memberLimit = randomInt()
         val state = randomBoolean()
         val sut = Fixture()
-            .givenQueryChannelsResult(RetroSuccess(emptyList<Channel>()).toRetrofitCall())
+            .givenQueryChannelsResult(RetroSuccess(QueryChannelsResult(emptyList(), null)).toRetrofitCall())
             .get()
         // when
         val result = sut.getChannel(cid, messageLimit, memberLimit, state).await()
@@ -146,7 +147,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val state = randomBoolean()
         val errorCode = positiveRandomInt()
         val sut = Fixture()
-            .givenQueryChannelsResult(RetroError<List<Channel>>(errorCode).toRetrofitCall())
+            .givenQueryChannelsResult(RetroError<QueryChannelsResult>(errorCode).toRetrofitCall())
             .get()
         // when
         val result = sut.getChannel(cid, messageLimit, memberLimit, state).await()
@@ -164,7 +165,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val state = randomBoolean()
         val response = randomChannel()
         val sut = Fixture()
-            .givenQueryChannelsResult(RetroSuccess(listOf(response)).toRetrofitCall())
+            .givenQueryChannelsResult(RetroSuccess(QueryChannelsResult(listOf(response), null)).toRetrofitCall())
             .get()
         // when
         val result = sut.getChannel(channelType, channelId, messageLimit, memberLimit, state).await()
@@ -182,7 +183,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val state = randomBoolean()
         val errorCode = positiveRandomInt()
         val sut = Fixture()
-            .givenQueryChannelsResult(RetroError<List<Channel>>(errorCode).toRetrofitCall())
+            .givenQueryChannelsResult(RetroError<QueryChannelsResult>(errorCode).toRetrofitCall())
             .get()
         // when
         val result = sut.getChannel(channelType, channelId, messageLimit, memberLimit, state).await()
@@ -1239,16 +1240,18 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val plugin = mock<Plugin>()
         val sut = Fixture()
             .givenPlugin(plugin)
-            .givenQueryChannelsResult(RetroSuccess(listOf(channel)).toRetrofitCall())
+            .givenQueryChannelsResult(RetroSuccess(QueryChannelsResult(listOf(channel), null)).toRetrofitCall())
             .get()
         // when
         val result = sut.queryChannels(request).await()
         // then
         verifySuccess(result, listOf(channel))
+        val expectedQueryChannelsResult: Result<QueryChannelsResult> =
+            Result.Success(QueryChannelsResult(listOf(channel), null))
         val inOrder = Mockito.inOrder(plugin)
         inOrder.verify(plugin).onQueryChannelsPrecondition(request)
         inOrder.verify(plugin).onQueryChannelsRequest(request)
-        inOrder.verify(plugin).onQueryChannelsResult(result, request)
+        inOrder.verify(plugin).onQueryChannelsResultWithPredefinedFilter(expectedQueryChannelsResult, request)
     }
 
     @Test
@@ -1259,16 +1262,18 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val errorCode = positiveRandomInt()
         val sut = Fixture()
             .givenPlugin(plugin)
-            .givenQueryChannelsResult(RetroError<List<Channel>>(errorCode).toRetrofitCall())
+            .givenQueryChannelsResult(RetroError<QueryChannelsResult>(errorCode).toRetrofitCall())
             .get()
         // when
         val result = sut.queryChannels(request).await()
         // then
         verifyNetworkError(result, errorCode)
+        val expectedQueryChannelsResult: Result<QueryChannelsResult> =
+            Result.Failure((result as Result.Failure).value)
         val inOrder = Mockito.inOrder(plugin)
         inOrder.verify(plugin).onQueryChannelsPrecondition(request)
         inOrder.verify(plugin).onQueryChannelsRequest(request)
-        inOrder.verify(plugin).onQueryChannelsResult(result, request)
+        inOrder.verify(plugin).onQueryChannelsResultWithPredefinedFilter(expectedQueryChannelsResult, request)
     }
 
     @Test
@@ -1633,7 +1638,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
 
     internal inner class Fixture {
 
-        fun givenQueryChannelsResult(result: Call<List<Channel>>) = apply {
+        fun givenQueryChannelsResult(result: Call<QueryChannelsResult>) = apply {
             whenever(api.queryChannels(any())).thenReturn(result)
         }
 

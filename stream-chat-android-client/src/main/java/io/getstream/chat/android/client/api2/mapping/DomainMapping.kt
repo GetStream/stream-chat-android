@@ -123,6 +123,9 @@ import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.models.querysort.SortDirection
 import java.util.Date
 
 @Suppress("TooManyFunctions")
@@ -894,4 +897,17 @@ internal class DomainMapping(
         level = PushPreferenceLevel.fromValue(chat_level),
         disabledUntil = disabled_until,
     )
+
+    internal fun List<Map<String, Any>>?.toSortDomain(): QuerySorter<Channel>? {
+        if (isNullOrEmpty()) return null
+        return fold(QuerySortByField()) { sort, sortSpecMap ->
+            val fieldName = sortSpecMap[QuerySorter.KEY_FIELD_NAME] as? String ?: return null
+            val direction = (sortSpecMap[QuerySorter.KEY_DIRECTION] as? Number)?.toInt() ?: return null
+            when (direction) {
+                SortDirection.ASC.value -> sort.asc(fieldName)
+                SortDirection.DESC.value -> sort.desc(fieldName)
+                else -> return null
+            }
+        }
+    }
 }

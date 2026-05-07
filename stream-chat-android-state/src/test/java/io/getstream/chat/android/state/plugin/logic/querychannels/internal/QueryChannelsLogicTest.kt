@@ -18,6 +18,7 @@ package io.getstream.chat.android.state.plugin.logic.querychannels.internal
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.test.randomNewMessageEvent
@@ -51,6 +52,7 @@ internal class QueryChannelsLogicTest {
 
     private lateinit var filter: FilterObject
     private lateinit var sort: QuerySortByField<Channel>
+    private lateinit var identifier: QueryChannelsIdentifier
     private lateinit var client: ChatClient
     private lateinit var queryChannelsStateLogic: QueryChannelsStateLogic
     private lateinit var queryChannelsDatabaseLogic: QueryChannelsDatabaseLogic
@@ -62,6 +64,7 @@ internal class QueryChannelsLogicTest {
     fun setUp() {
         filter = Filters.eq("type", "messaging")
         sort = QuerySortByField.descByName("last_message_at")
+        identifier = QueryChannelsIdentifier.Standard(filter, sort)
         client = mock()
         queryChannelsStateLogic = mock()
         queryChannelsDatabaseLogic = mock()
@@ -74,8 +77,7 @@ internal class QueryChannelsLogicTest {
         whenever(queryChannelsStateLogic.getQuerySpecs()) doReturn queryChannelsSpec
 
         logic = QueryChannelsLogic(
-            filter = filter,
-            sort = sort,
+            identifier = identifier,
             client = client,
             queryChannelsStateLogic = queryChannelsStateLogic,
             queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
@@ -148,7 +150,7 @@ internal class QueryChannelsLogicTest {
         // Then
         verify(queryChannelsDatabaseLogic).fetchChannelsFromCache(
             eq(pagination),
-            eq(queryChannelsSpec),
+            eq(identifier),
         )
     }
 
@@ -181,8 +183,9 @@ internal class QueryChannelsLogicTest {
             randomChannel(id = "channel2", type = "messaging"),
             randomChannel(id = "channel3", type = "messaging"),
         )
+        val cached = CachedQueryChannels(spec = queryChannelsSpec, channels = cachedChannels)
         whenever(queryChannelsStateLogic.isLoading()) doReturn false
-        whenever(queryChannelsDatabaseLogic.fetchChannelsFromCache(any(), any())) doReturn cachedChannels
+        whenever(queryChannelsDatabaseLogic.fetchChannelsFromCache(any(), any())) doReturn cached
 
         // When
         logic.queryOffline(pagination)
@@ -200,9 +203,9 @@ internal class QueryChannelsLogicTest {
         val pagination = AnyChannelPaginationRequest().apply {
             channelOffset = 0
         }
-        val cachedChannels = emptyList<Channel>()
+        val cached = CachedQueryChannels(spec = queryChannelsSpec, channels = emptyList())
         whenever(queryChannelsStateLogic.isLoading()) doReturn false
-        whenever(queryChannelsDatabaseLogic.fetchChannelsFromCache(any(), any())) doReturn cachedChannels
+        whenever(queryChannelsDatabaseLogic.fetchChannelsFromCache(any(), any())) doReturn cached
 
         // When
         logic.queryOffline(pagination)
@@ -220,8 +223,9 @@ internal class QueryChannelsLogicTest {
             channelOffset = 0
         }
         val cachedChannels = listOf(randomChannel())
+        val cached = CachedQueryChannels(spec = queryChannelsSpec, channels = cachedChannels)
         whenever(queryChannelsStateLogic.isLoading()) doReturn false
-        whenever(queryChannelsDatabaseLogic.fetchChannelsFromCache(any(), any())) doReturn cachedChannels
+        whenever(queryChannelsDatabaseLogic.fetchChannelsFromCache(any(), any())) doReturn cached
         whenever(queryChannelsStateLogic.getQuerySpecs()) doReturn queryChannelsSpec
 
         // When

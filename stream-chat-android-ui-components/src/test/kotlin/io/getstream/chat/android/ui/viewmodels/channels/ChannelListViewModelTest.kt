@@ -20,6 +20,7 @@ import androidx.lifecycle.Observer
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
@@ -297,7 +298,7 @@ internal class ChannelListViewModelTest {
                 whenever(it.endOfChannels) doReturn MutableStateFlow(endOfChannels)
                 whenever(it.nextPageRequest) doReturn MutableStateFlow(nextPageRequest)
             }
-            whenever(stateRegistry.queryChannels(any(), any())) doReturn queryChannelsState
+            whenever(stateRegistry.queryChannels(any<QueryChannelsIdentifier>())) doReturn queryChannelsState
         }
 
         fun get(): ChannelListViewModel {

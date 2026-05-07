@@ -2990,7 +2990,7 @@ internal constructor(
     @CheckResult
     @InternalStreamChatApi
     public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> {
-        return api.queryChannels(request)
+        return api.queryChannels(request).map { it.channels }
     }
 
     /**
@@ -3017,7 +3017,7 @@ internal constructor(
                 this.watch = false
                 this.state = state
             }
-            when (val result = api.queryChannels(request).await()) {
+            when (val result = api.queryChannels(request).map { it.channels }.await()) {
                 is Result.Success -> {
                     val channels = result.value
                     if (channels.isEmpty()) {
@@ -3128,7 +3128,7 @@ internal constructor(
     @CheckResult
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
         logger.d { "[queryChannels] offset: ${request.offset}, limit: ${request.limit}" }
-        return queryChannelsInternal(request = request).doOnStart(userScope) {
+        return api.queryChannels(request).doOnStart(userScope) {
             plugins.forEach { listener ->
                 logger.v { "[queryChannels] #doOnStart; plugin: ${listener::class.qualifiedName}" }
                 listener.onQueryChannelsRequest(request)
@@ -3136,10 +3136,12 @@ internal constructor(
         }.doOnResult(userScope) { result ->
             plugins.forEach { listener ->
                 logger.v { "[queryChannels] #doOnResult; plugin: ${listener::class.qualifiedName}" }
-                listener.onQueryChannelsResult(result, request)
+                listener.onQueryChannelsResultWithPredefinedFilter(result, request)
             }
         }.precondition(plugins) {
             onQueryChannelsPrecondition(request)
+        }.map {
+            it.channels
         }.share(userScope) {
             QueryChannelsIdentifier(request)
         }

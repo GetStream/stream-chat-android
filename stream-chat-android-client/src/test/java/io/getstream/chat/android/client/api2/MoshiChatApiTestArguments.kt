@@ -439,6 +439,27 @@ internal object MoshiChatApiTestArguments {
     )
 
     @JvmStatic
+    fun queryChannelsWithPredefinedFilterInput() = listOf(
+        Arguments.of(
+            RetroSuccess(
+                QueryChannelsResponse(
+                    listOf(
+                        ChannelResponse(
+                            channel = Mother.randomDownstreamChannelDto(),
+                            hidden = randomBoolean(),
+                            membership = Mother.randomDownstreamMemberDto(),
+                            hide_messages_before = randomDateOrNull(),
+                            draft = randomDownstreamDraftDto(),
+                        ),
+                    ),
+                ),
+            ).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(RetroError<QueryChannelsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    @JvmStatic
     fun queryChannelInput() = channelResponseArguments()
 
     @JvmStatic

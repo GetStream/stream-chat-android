@@ -21,4 +21,12 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 internal data class QueryChannelsResponse(
     val channels: List<ChannelResponse>,
+    val predefined_filter: ParsedPredefinedFilterResponse? = null,
+)
+
+@JsonClass(generateAdapter = true)
+internal data class ParsedPredefinedFilterResponse(
+    val name: String,
+    val filter: Map<String, Any>,
+    val sort: List<Map<String, Any>>? = null,
 )
