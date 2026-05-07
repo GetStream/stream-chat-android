@@ -1149,6 +1149,16 @@ public final class io/getstream/chat/android/compose/ui/components/audio/Composa
 	public final fun getLambda$655444177$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
+public final class io/getstream/chat/android/compose/ui/components/audio/ComposableSingletons$WaveformSliderKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/audio/ComposableSingletons$WaveformSliderKt;
+	public fun <init> ()V
+	public final fun getLambda$-1036173266$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1516446859$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-570083019$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$53626762$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$709997198$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class io/getstream/chat/android/compose/ui/components/audio/WaveformSliderKt {
 	public static final fun StaticWaveformSlider (Ljava/util/List;FZLandroidx/compose/ui/Modifier;IZZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }

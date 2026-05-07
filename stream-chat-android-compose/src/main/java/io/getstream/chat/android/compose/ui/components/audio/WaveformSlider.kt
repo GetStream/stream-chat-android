@@ -227,26 +227,39 @@ internal fun WaveformTrack(
 @Preview(showBackground = true, widthDp = 250)
 @Composable
 private fun StaticWaveformSliderAtStartPreview() {
-    ChatPreviewTheme { StaticWaveformSliderSample(progress = 0f, isPlaying = true) }
+    ChatPreviewTheme { StaticWaveformSliderAtStart() }
 }
 
 @Preview(showBackground = true, widthDp = 250)
 @Composable
 private fun StaticWaveformSliderMidwayPreview() {
-    ChatPreviewTheme { StaticWaveformSliderSample(progress = 0.5f, isPlaying = true) }
+    ChatPreviewTheme { StaticWaveformSliderMidway() }
 }
 
 @Preview(showBackground = true, widthDp = 250)
 @Composable
 private fun StaticWaveformSliderPausedPreview() {
-    ChatPreviewTheme { StaticWaveformSliderSample(progress = 0.3f, isPlaying = false) }
+    ChatPreviewTheme { StaticWaveformSliderPaused() }
 }
 
 @Preview(showBackground = true, widthDp = 250)
 @Composable
 private fun StaticWaveformSliderWithoutThumbPreview() {
-    ChatPreviewTheme { StaticWaveformSliderSample(progress = 0.7f, isPlaying = true, isThumbVisible = false) }
+    ChatPreviewTheme { StaticWaveformSliderWithoutThumb() }
 }
+
+@Composable
+internal fun StaticWaveformSliderAtStart() = StaticWaveformSliderSample(progress = 0f, isPlaying = true)
+
+@Composable
+internal fun StaticWaveformSliderMidway() = StaticWaveformSliderSample(progress = 0.5f, isPlaying = true)
+
+@Composable
+internal fun StaticWaveformSliderPaused() = StaticWaveformSliderSample(progress = 0.3f, isPlaying = false)
+
+@Composable
+internal fun StaticWaveformSliderWithoutThumb() =
+    StaticWaveformSliderSample(progress = 0.7f, isPlaying = true, isThumbVisible = false)
 
 @Composable
 private fun StaticWaveformSliderSample(progress: Float, isPlaying: Boolean, isThumbVisible: Boolean = true) {
@@ -269,18 +282,22 @@ private fun StaticWaveformSliderSample(progress: Float, isPlaying: Boolean, isTh
 @Preview(showBackground = true, widthDp = 250)
 @Composable
 private fun FullWaveformTrackPreview() {
-    ChatPreviewTheme {
-        val waveform = List(100) { (it + 1) / 100f }
-        WaveformTrack(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp),
-            waveformData = waveform,
-            progress = 1f,
-            adjustBarWidthToLimit = true,
-            visibleBarLimit = 100,
-        )
-    }
+    ChatPreviewTheme { FullWaveformTrack() }
+}
+
+@Suppress("MagicNumber")
+@Composable
+internal fun FullWaveformTrack() {
+    val waveform = List(100) { (it + 1) / 100f }
+    WaveformTrack(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(36.dp),
+        waveformData = waveform,
+        progress = 1f,
+        adjustBarWidthToLimit = true,
+        visibleBarLimit = 100,
+    )
 }
 
 private fun Offset.toHorizontalProgress(base: Float, isRtl: Boolean): Float {
