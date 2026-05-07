@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.indication
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -41,10 +42,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -979,8 +982,16 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun MessageBubble(params: MessageBubbleParams) {
+        val source = params.interactionSource
+        val indicationModifier = if (source != null) {
+            Modifier
+                .clip(params.shape)
+                .indication(source, ripple(bounded = false))
+        } else {
+            Modifier
+        }
         io.getstream.chat.android.compose.ui.components.messages.MessageBubble(
-            modifier = params.modifier,
+            modifier = params.modifier.then(indicationModifier),
             color = params.color,
             shape = params.shape,
             border = params.border,
@@ -1065,6 +1076,7 @@ public interface ChatComponentFactory {
             onAddAnswer = params.onAddAnswer,
             onClosePoll = params.onClosePoll,
             onAddPollOption = params.onAddPollOption,
+            interactionSource = params.interactionSource,
         )
     }
 

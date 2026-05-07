@@ -23,6 +23,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,7 +40,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -178,9 +178,10 @@ public fun MessageContainer(
     val canOpenThread = message.isThreadStart() && !messageItem.isInThread
     val canOpenActions = !message.isDeleted() && !message.isUploading()
 
+    val interactionSource = remember { MutableInteractionSource() }
     val clickModifier = Modifier.combinedClickable(
-        interactionSource = remember { MutableInteractionSource() },
-        indication = ripple(),
+        interactionSource = interactionSource,
+        indication = null,
         enabled = canOpenThread || canOpenActions,
         onClick = { if (canOpenThread) onThreadClick(message) },
         onLongClick = {
@@ -289,6 +290,7 @@ public fun MessageContainer(
                                     onAddAnswer = onAddAnswer,
                                     onClosePoll = onClosePoll,
                                     onAddPollOption = onAddPollOption,
+                                    interactionSource = interactionSource,
                                 ),
                             )
                         },
@@ -603,6 +605,9 @@ internal fun ColumnScope.DefaultMessageBottom(
  * @param onRemoveVote Handler when a user cast a remove on an option.
  * @param onClosePoll Handler when a user close a poll.
  * @param onAddPollOption Handler when a user add a poll option.
+ * @param interactionSource The interaction source from the surrounding message cell, threaded
+ * through to the bubble so it can render a ripple synchronised with the cell's press state.
+ * `null` outside a cell context (e.g. previews).
  */
 @Suppress("LongParameterList")
 @Composable
@@ -622,6 +627,7 @@ public fun DefaultMessageContent(
     onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit,
     onClosePoll: (String) -> Unit,
     onAddPollOption: (poll: Poll, option: String) -> Unit,
+    interactionSource: InteractionSource? = null,
 ) {
     val finalModifier = modifier.widthIn(max = 264.dp)
     if (messageItem.message.isPoll() && !messageItem.message.isDeleted()) {
@@ -642,6 +648,7 @@ public fun DefaultMessageContent(
             onAddPollOption = onAddPollOption,
             onLongItemClick = onLongItemClick,
             onAddAnswer = onAddAnswer,
+            interactionSource = interactionSource,
         )
     } else if (messageItem.message.isEmojiOnlyWithoutBubble()) {
         EmojiMessageContent(
@@ -662,6 +669,7 @@ public fun DefaultMessageContent(
             onQuotedMessageClick = onQuotedMessageClick,
             onLinkClick = onLinkClick,
             onUserMentionClick = onUserMentionClick,
+            interactionSource = interactionSource,
         )
     }
 }
@@ -730,6 +738,9 @@ public fun EmojiMessageContent(
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onLinkClick Handler for clicking on a link in the message.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
+ * @param interactionSource The interaction source from the surrounding message cell, forwarded to
+ * the bubble so it can render a ripple synchronised with the cell's press state. `null` outside
+ * a cell context (e.g. previews).
  */
 @Composable
 public fun RegularMessageContent(
@@ -741,6 +752,7 @@ public fun RegularMessageContent(
     onLinkClick: ((Message, String) -> Unit)? = null,
     onUserMentionClick: (User) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
+    interactionSource: InteractionSource? = null,
 ) {
     val message = messageItem.message
     val ownsMessage = messageItem.isMine
@@ -770,6 +782,7 @@ public fun RegularMessageContent(
                 shape = messageBubbleShape,
                 color = messageBubbleColor,
                 content = content,
+                interactionSource = interactionSource,
             ),
         )
     } else {
@@ -781,6 +794,7 @@ public fun RegularMessageContent(
                     shape = messageBubbleShape,
                     color = messageBubbleColor,
                     content = content,
+                    interactionSource = interactionSource,
                 ),
             )
 

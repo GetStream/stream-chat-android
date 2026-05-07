@@ -20,6 +20,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -100,6 +101,9 @@ import io.getstream.chat.android.ui.common.R as UiCommonR
  * @param onClosePoll Callback when a user closes a poll.
  * @param onAddPollOption Callback when a user adds a new option to the poll.
  * @param onLongItemClick Handler when the user selects a message, on long tap.
+ * @param interactionSource The interaction source from the surrounding message cell, forwarded to
+ * the bubble so it can render a ripple synchronised with the cell's press state. `null` outside
+ * a cell context (e.g. previews).
  */
 @Suppress("LongParameterList", "LongMethod")
 @Composable
@@ -113,6 +117,7 @@ public fun PollMessageContent(
     onClosePoll: (String) -> Unit,
     onAddPollOption: (poll: Poll, option: String) -> Unit,
     onLongItemClick: (Message) -> Unit = {},
+    interactionSource: InteractionSource? = null,
 ) {
     val message = messageItem.message
     val ownsMessage = messageItem.isMine
@@ -129,6 +134,7 @@ public fun PollMessageContent(
                 message = message,
                 shape = messageBubbleShape,
                 color = messageBubbleColor,
+                interactionSource = interactionSource,
                 content = {
                     PollMessageContent(
                         message = message,
@@ -160,6 +166,7 @@ public fun PollMessageContent(
                     shape = messageBubbleShape,
                     color = messageBubbleColor,
                     border = BorderStroke(1.dp, ChatTheme.colors.borderCoreDefault),
+                    interactionSource = interactionSource,
                     content = {
                         MessageContent(
                             message = message,

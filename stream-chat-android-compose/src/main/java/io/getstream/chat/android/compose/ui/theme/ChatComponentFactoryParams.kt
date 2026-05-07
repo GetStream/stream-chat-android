@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.theme
 
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
@@ -708,6 +709,10 @@ public data class MessageContainerParams(
  * @param content The content shown inside the message bubble.
  * @param modifier Modifier for styling.
  * @param border The border of the message bubble.
+ * @param interactionSource The interaction source from the surrounding message cell. The default
+ * factory implementation renders an unbounded ripple inside the bubble shape when this is non-null,
+ * synchronised with the cell's press state. `null` outside a cell context (e.g. quoted-message
+ * previews), in which case no indication is rendered.
  */
 public data class MessageBubbleParams(
     val message: Message,
@@ -716,6 +721,7 @@ public data class MessageBubbleParams(
     val content: @Composable () -> Unit,
     val modifier: Modifier = Modifier,
     val border: BorderStroke? = null,
+    val interactionSource: InteractionSource? = null,
 )
 
 /**
@@ -777,6 +783,9 @@ public data class MessageAuthorParams(
  * @param onUserMentionClick Action invoked when a user mention is clicked.
  * @param onMediaGalleryPreviewResult Action invoked with the media gallery preview result.
  * @param onLinkClick Action invoked when a link in a message is clicked.
+ * @param interactionSource The interaction source from the surrounding message cell, threaded
+ * through to [MessageBubbleParams.interactionSource] so the bubble can render an unbounded
+ * ripple synchronised with the cell's press state. `null` outside a cell context.
  */
 public data class MessageContentParams(
     val messageItem: MessageItemState,
@@ -793,6 +802,7 @@ public data class MessageContentParams(
     val onUserMentionClick: (User) -> Unit = {},
     val onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     val onLinkClick: ((Message, String) -> Unit)? = null,
+    val interactionSource: InteractionSource? = null,
 )
 
 /**
