@@ -60,6 +60,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageComposerParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerTrailingContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.SnackbarPopup
+import io.getstream.chat.android.compose.ui.util.StreamSnackbar
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarVariant
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarVisuals
 import io.getstream.chat.android.compose.util.extensions.toSet
@@ -299,7 +300,6 @@ public fun MessageComposer(
 
         Row(
             modifier = Modifier
-                .padding(vertical = StreamTokens.spacing2xs)
                 .fillMaxWidth()
                 .padding(
                     start = StreamTokens.spacingMd,
