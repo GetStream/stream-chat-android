@@ -18,7 +18,6 @@ package io.getstream.chat.android.compose.ui.theme
 
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
@@ -709,10 +708,6 @@ public data class MessageContainerParams(
  * @param content The content shown inside the message bubble.
  * @param modifier Modifier for styling.
  * @param border The border of the message bubble.
- * @param interactionSource The interaction source from the surrounding message cell. The default
- * factory implementation renders an unbounded ripple inside the bubble shape when this is non-null,
- * synchronised with the cell's press state. `null` outside a cell context (e.g. quoted-message
- * previews), in which case no indication is rendered.
  */
 public data class MessageBubbleParams(
     val message: Message,
@@ -721,7 +716,6 @@ public data class MessageBubbleParams(
     val content: @Composable () -> Unit,
     val modifier: Modifier = Modifier,
     val border: BorderStroke? = null,
-    val interactionSource: InteractionSource? = null,
 )
 
 /**
@@ -770,13 +764,6 @@ public data class MessageAuthorParams(
  * Parameters for [ChatComponentFactory.MessageContent].
  *
  * @param messageItem The message item state.
- * @param onBubbleClick Action invoked when the bubble is tapped. Mirrors the surrounding cell's
- * click intent (e.g. opening a thread for thread-start messages) so taps inside the bubble
- * Column behave identically to taps in the avatar gap.
- * @param onBubbleLongClick Action invoked when the bubble is long-pressed. Mirrors the surrounding
- * cell's long-click intent (haptic feedback + action menu, gated on whether actions are
- * available) so long-presses inside the bubble Column behave identically to those in the
- * avatar gap.
  * @param onLongItemClick Action invoked when a message is long-clicked.
  * @param onPollUpdated Action invoked when a poll is updated.
  * @param onCastVote Action invoked when a vote is cast.
@@ -790,14 +777,9 @@ public data class MessageAuthorParams(
  * @param onUserMentionClick Action invoked when a user mention is clicked.
  * @param onMediaGalleryPreviewResult Action invoked with the media gallery preview result.
  * @param onLinkClick Action invoked when a link in a message is clicked.
- * @param interactionSource The interaction source from the surrounding message cell, threaded
- * through to [MessageBubbleParams.interactionSource] so the bubble can render an unbounded
- * ripple synchronised with the cell's press state. `null` outside a cell context.
  */
 public data class MessageContentParams(
     val messageItem: MessageItemState,
-    val onBubbleClick: () -> Unit = {},
-    val onBubbleLongClick: () -> Unit = {},
     val onLongItemClick: (Message) -> Unit = {},
     val onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
     val onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
@@ -811,7 +793,6 @@ public data class MessageContentParams(
     val onUserMentionClick: (User) -> Unit = {},
     val onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     val onLinkClick: ((Message, String) -> Unit)? = null,
-    val interactionSource: InteractionSource? = null,
 )
 
 /**
@@ -860,12 +841,6 @@ public data class MessageDeletedContentParams(
  * @param onQuotedMessageClick Action invoked when a quoted message is clicked.
  * @param onUserMentionClick Action invoked when a user mention is clicked.
  * @param onLinkClick Action invoked when a link in a message is clicked.
- * @param onBubbleClick Action invoked when the bubble is tapped. Mirrors the surrounding cell's
- * click intent so taps inside the bubble Column behave identically to taps in the avatar gap.
- * @param onBubbleLongClick Action invoked when the bubble is long-pressed. Mirrors the surrounding
- * cell's long-click intent (haptic feedback + action menu, gated on whether actions are
- * available) so long-presses inside the bubble Column behave identically to those in the
- * avatar gap.
  */
 public data class MessageRegularContentParams(
     val message: Message,
@@ -876,8 +851,6 @@ public data class MessageRegularContentParams(
     val onQuotedMessageClick: (Message) -> Unit,
     val onUserMentionClick: (User) -> Unit,
     val onLinkClick: ((Message, String) -> Unit)? = null,
-    val onBubbleClick: () -> Unit = {},
-    val onBubbleLongClick: () -> Unit = {},
 )
 
 /**

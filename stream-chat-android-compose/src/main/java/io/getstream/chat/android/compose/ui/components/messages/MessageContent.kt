@@ -62,6 +62,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageRegularContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.MessageTextContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.passiveRipple
 import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -79,13 +80,6 @@ import io.getstream.chat.android.ui.common.utils.extensions.hasLink
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onLinkClick Handler for clicking on a link in the message.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
- * @param onBubbleClick Handler invoked when the bubble is tapped. Mirrors the surrounding cell's
- * click intent so taps inside the bubble Column behave identically to taps in the avatar gap
- * (e.g. opening a thread for thread-start messages).
- * @param onBubbleLongClick Handler invoked when the bubble is long-pressed. Mirrors the surrounding
- * cell's long-click intent (haptic feedback + action menu, gated on whether actions are
- * available) so long-presses inside the bubble Column behave identically to those in the
- * avatar gap.
  */
 @Composable
 public fun MessageContent(
@@ -99,8 +93,6 @@ public fun MessageContent(
     messageAlignment: MessageAlignment = MessageAlignment.Start,
     onLinkClick: ((Message, String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
-    onBubbleClick: () -> Unit = {},
-    onBubbleLongClick: () -> Unit = {},
 ) {
     when {
         message.isGiphyEphemeral() -> ChatTheme.componentFactory.MessageGiphyContent(
@@ -129,8 +121,6 @@ public fun MessageContent(
                 onQuotedMessageClick = onQuotedMessageClick,
                 onLinkClick = onLinkClick,
                 onUserMentionClick = onUserMentionClick,
-                onBubbleClick = onBubbleClick,
-                onBubbleLongClick = onBubbleLongClick,
             ),
         )
     }
@@ -176,8 +166,6 @@ internal fun DefaultMessageDeletedContent(
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onLinkClick Handler for clicking on a link in the message.
- * @param onBubbleClick Handler invoked when the bubble is tapped.
- * @param onBubbleLongClick Handler invoked when the bubble is long-pressed.
  */
 @Composable
 @Suppress("LongMethod")
@@ -190,18 +178,11 @@ internal fun DefaultMessageRegularContent(
     onQuotedMessageClick: (Message) -> Unit,
     onUserMentionClick: (User) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
-    onBubbleClick: () -> Unit = {},
-    onBubbleLongClick: () -> Unit = {},
 ) {
     val componentFactory = ChatTheme.componentFactory
 
     Column(
-        modifier = Modifier.combinedClickable(
-            interactionSource = remember(::MutableInteractionSource),
-            indication = ripple(),
-            onClick = onBubbleClick,
-            onLongClick = onBubbleLongClick,
-        ),
+        modifier = Modifier.passiveRipple(),
         horizontalAlignment = messageAlignment.contentAlignment,
     ) {
         val quotedMessage = message.replyTo

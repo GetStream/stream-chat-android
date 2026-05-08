@@ -19,9 +19,6 @@ package io.getstream.chat.android.compose.ui.components.messages
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.interaction.InteractionSource
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,7 +35,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -74,6 +70,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.MessageStyling.PollStyle
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
+import io.getstream.chat.android.compose.ui.util.passiveRipple
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
@@ -101,16 +98,6 @@ import io.getstream.chat.android.ui.common.R as UiCommonR
  * @param onClosePoll Callback when a user closes a poll.
  * @param onAddPollOption Callback when a user adds a new option to the poll.
  * @param onLongItemClick Handler when the user selects a message, on long tap.
- * @param interactionSource The interaction source from the surrounding message cell, forwarded to
- * the bubble so it can render a ripple synchronised with the cell's press state. `null` outside
- * a cell context (e.g. previews).
- * @param onBubbleClick Handler invoked when the bubble is tapped. Mirrors the surrounding cell's
- * click intent so taps inside the bubble Column behave identically to taps in the avatar gap
- * (e.g. opening a thread for thread-start messages).
- * @param onBubbleLongClick Handler invoked when the bubble is long-pressed. Mirrors the surrounding
- * cell's long-click intent (haptic feedback + action menu, gated on whether actions are
- * available) so long-presses inside the bubble Column behave identically to those in the
- * avatar gap.
  */
 @Suppress("LongParameterList", "LongMethod")
 @Composable
@@ -124,9 +111,6 @@ public fun PollMessageContent(
     onClosePoll: (String) -> Unit,
     onAddPollOption: (poll: Poll, option: String) -> Unit,
     onLongItemClick: (Message) -> Unit = {},
-    interactionSource: InteractionSource? = null,
-    onBubbleClick: () -> Unit = {},
-    onBubbleLongClick: () -> Unit = {},
 ) {
     val message = messageItem.message
     val ownsMessage = messageItem.isMine
@@ -143,7 +127,6 @@ public fun PollMessageContent(
                 message = message,
                 shape = messageBubbleShape,
                 color = messageBubbleColor,
-                interactionSource = interactionSource,
                 content = {
                     PollMessageContent(
                         message = message,
@@ -161,8 +144,6 @@ public fun PollMessageContent(
                         },
                         onClosePoll = onClosePoll,
                         onAddPollOption = onAddPollOption,
-                        onBubbleClick = onBubbleClick,
-                        onBubbleLongClick = onBubbleLongClick,
                     )
                 },
             ),
@@ -176,7 +157,6 @@ public fun PollMessageContent(
                     shape = messageBubbleShape,
                     color = messageBubbleColor,
                     border = BorderStroke(1.dp, ChatTheme.colors.borderCoreDefault),
-                    interactionSource = interactionSource,
                     content = {
                         MessageContent(
                             message = message,
@@ -215,8 +195,6 @@ private fun PollMessageContent(
     onRemoveVote: (Vote) -> Unit,
     onAddPollOption: (poll: Poll, option: String) -> Unit,
     selectPoll: (Message, Poll, PollSelectionType) -> Unit,
-    onBubbleClick: () -> Unit = {},
-    onBubbleLongClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val showDialog = remember { mutableStateOf(false) }
@@ -252,12 +230,7 @@ private fun PollMessageContent(
 
     Column(
         modifier = Modifier
-            .combinedClickable(
-                interactionSource = remember(::MutableInteractionSource),
-                indication = ripple(),
-                onClick = onBubbleClick,
-                onLongClick = onBubbleLongClick,
-            )
+            .passiveRipple()
             .padding(StreamTokens.spacingMd),
     ) {
         Text(

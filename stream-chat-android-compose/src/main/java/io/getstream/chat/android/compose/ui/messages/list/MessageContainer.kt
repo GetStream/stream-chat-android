@@ -23,7 +23,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -178,22 +177,17 @@ public fun MessageContainer(
     val canOpenThread = message.isThreadStart() && !messageItem.isInThread
     val canOpenActions = !message.isDeleted() && !message.isUploading()
 
-    val interactionSource = remember { MutableInteractionSource() }
-    // Shared with the bubble Column via MessageContentParams so in-bubble taps and long-presses
-    // behave identically to those landing in the avatar gap.
-    val onBubbleClick: () -> Unit = { if (canOpenThread) onThreadClick(message) }
-    val onBubbleLongClick: () -> Unit = {
-        if (canOpenActions) {
-            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-            onLongItemClick(message)
-        }
-    }
     val clickModifier = Modifier.combinedClickable(
-        interactionSource = interactionSource,
+        interactionSource = remember(::MutableInteractionSource),
         indication = null,
         enabled = canOpenThread || canOpenActions,
-        onClick = onBubbleClick,
-        onLongClick = onBubbleLongClick,
+        onClick = { if (canOpenThread) onThreadClick(message) },
+        onLongClick = {
+            if (canOpenActions) {
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                onLongItemClick(message)
+            }
+        },
     )
 
     val highlightColor = ChatTheme.colors.backgroundCoreHighlight
@@ -281,8 +275,6 @@ public fun MessageContainer(
                             MessageContent(
                                 params = MessageContentParams(
                                     messageItem = messageItem,
-                                    onBubbleClick = onBubbleClick,
-                                    onBubbleLongClick = onBubbleLongClick,
                                     onLongItemClick = onLongItemClick,
                                     onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                                     onGiphyActionClick = onGiphyActionClick,
@@ -296,7 +288,6 @@ public fun MessageContainer(
                                     onAddAnswer = onAddAnswer,
                                     onClosePoll = onClosePoll,
                                     onAddPollOption = onAddPollOption,
-                                    interactionSource = interactionSource,
                                 ),
                             )
                         },
@@ -611,16 +602,6 @@ internal fun ColumnScope.DefaultMessageBottom(
  * @param onRemoveVote Handler when a user cast a remove on an option.
  * @param onClosePoll Handler when a user close a poll.
  * @param onAddPollOption Handler when a user add a poll option.
- * @param interactionSource The interaction source from the surrounding message cell, threaded
- * through to the bubble so it can render a ripple synchronised with the cell's press state.
- * `null` outside a cell context (e.g. previews).
- * @param onBubbleClick Handler invoked when the bubble is tapped. Mirrors the surrounding cell's
- * click intent so taps inside the bubble Column behave identically to taps in the avatar gap
- * (e.g. opening a thread for thread-start messages).
- * @param onBubbleLongClick Handler invoked when the bubble is long-pressed. Mirrors the surrounding
- * cell's long-click intent (haptic feedback + action menu, gated on whether actions are
- * available) so long-presses inside the bubble Column behave identically to those in the
- * avatar gap.
  */
 @Suppress("LongParameterList")
 @Composable
@@ -640,9 +621,6 @@ public fun DefaultMessageContent(
     onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit,
     onClosePoll: (String) -> Unit,
     onAddPollOption: (poll: Poll, option: String) -> Unit,
-    interactionSource: InteractionSource? = null,
-    onBubbleClick: () -> Unit = {},
-    onBubbleLongClick: () -> Unit = {},
 ) {
     val finalModifier = modifier.widthIn(max = 264.dp)
     if (messageItem.message.isPoll() && !messageItem.message.isDeleted()) {
@@ -663,9 +641,6 @@ public fun DefaultMessageContent(
             onAddPollOption = onAddPollOption,
             onLongItemClick = onLongItemClick,
             onAddAnswer = onAddAnswer,
-            interactionSource = interactionSource,
-            onBubbleClick = onBubbleClick,
-            onBubbleLongClick = onBubbleLongClick,
         )
     } else if (messageItem.message.isEmojiOnlyWithoutBubble()) {
         EmojiMessageContent(
@@ -686,9 +661,6 @@ public fun DefaultMessageContent(
             onQuotedMessageClick = onQuotedMessageClick,
             onLinkClick = onLinkClick,
             onUserMentionClick = onUserMentionClick,
-            interactionSource = interactionSource,
-            onBubbleClick = onBubbleClick,
-            onBubbleLongClick = onBubbleLongClick,
         )
     }
 }
@@ -757,16 +729,6 @@ public fun EmojiMessageContent(
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onLinkClick Handler for clicking on a link in the message.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
- * @param interactionSource The interaction source from the surrounding message cell, forwarded to
- * the bubble so it can render a ripple synchronised with the cell's press state. `null` outside
- * a cell context (e.g. previews).
- * @param onBubbleClick Handler invoked when the bubble is tapped. Mirrors the surrounding cell's
- * click intent so taps inside the bubble Column behave identically to taps in the avatar gap
- * (e.g. opening a thread for thread-start messages).
- * @param onBubbleLongClick Handler invoked when the bubble is long-pressed. Mirrors the surrounding
- * cell's long-click intent (haptic feedback + action menu, gated on whether actions are
- * available) so long-presses inside the bubble Column behave identically to those in the
- * avatar gap.
  */
 @Composable
 public fun RegularMessageContent(
@@ -778,9 +740,6 @@ public fun RegularMessageContent(
     onLinkClick: ((Message, String) -> Unit)? = null,
     onUserMentionClick: (User) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
-    interactionSource: InteractionSource? = null,
-    onBubbleClick: () -> Unit = {},
-    onBubbleLongClick: () -> Unit = {},
 ) {
     val message = messageItem.message
     val ownsMessage = messageItem.isMine
@@ -800,8 +759,6 @@ public fun RegularMessageContent(
             onQuotedMessageClick = onQuotedMessageClick,
             onLinkClick = onLinkClick,
             onUserMentionClick = onUserMentionClick,
-            onBubbleClick = onBubbleClick,
-            onBubbleLongClick = onBubbleLongClick,
         )
     }
     if (!messageItem.isErrorOrFailed()) {
@@ -812,7 +769,6 @@ public fun RegularMessageContent(
                 shape = messageBubbleShape,
                 color = messageBubbleColor,
                 content = content,
-                interactionSource = interactionSource,
             ),
         )
     } else {
@@ -824,7 +780,6 @@ public fun RegularMessageContent(
                     shape = messageBubbleShape,
                     color = messageBubbleColor,
                     content = content,
-                    interactionSource = interactionSource,
                 ),
             )
 
