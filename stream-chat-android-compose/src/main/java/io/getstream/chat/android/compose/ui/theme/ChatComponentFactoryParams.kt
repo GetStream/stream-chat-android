@@ -770,10 +770,10 @@ public data class MessageAuthorParams(
  * Parameters for [ChatComponentFactory.MessageContent].
  *
  * @param messageItem The message item state.
- * @param onItemClick Action invoked when the bubble is tapped. Mirrors the surrounding cell's
+ * @param onBubbleClick Action invoked when the bubble is tapped. Mirrors the surrounding cell's
  * click intent (e.g. opening a thread for thread-start messages) so taps inside the bubble
  * Column behave identically to taps in the avatar gap.
- * @param onItemLongClick Action invoked when the bubble is long-pressed. Mirrors the surrounding
+ * @param onBubbleLongClick Action invoked when the bubble is long-pressed. Mirrors the surrounding
  * cell's long-click intent (haptic feedback + action menu, gated on whether actions are
  * available) so long-presses inside the bubble Column behave identically to those in the
  * avatar gap.
@@ -796,8 +796,8 @@ public data class MessageAuthorParams(
  */
 public data class MessageContentParams(
     val messageItem: MessageItemState,
-    val onItemClick: () -> Unit = {},
-    val onItemLongClick: () -> Unit = {},
+    val onBubbleClick: () -> Unit = {},
+    val onBubbleLongClick: () -> Unit = {},
     val onLongItemClick: (Message) -> Unit = {},
     val onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
     val onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
@@ -860,9 +860,9 @@ public data class MessageDeletedContentParams(
  * @param onQuotedMessageClick Action invoked when a quoted message is clicked.
  * @param onUserMentionClick Action invoked when a user mention is clicked.
  * @param onLinkClick Action invoked when a link in a message is clicked.
- * @param onItemClick Action invoked when the bubble is tapped. Mirrors the surrounding cell's
+ * @param onBubbleClick Action invoked when the bubble is tapped. Mirrors the surrounding cell's
  * click intent so taps inside the bubble Column behave identically to taps in the avatar gap.
- * @param onItemLongClick Action invoked when the bubble is long-pressed. Mirrors the surrounding
+ * @param onBubbleLongClick Action invoked when the bubble is long-pressed. Mirrors the surrounding
  * cell's long-click intent (haptic feedback + action menu, gated on whether actions are
  * available) so long-presses inside the bubble Column behave identically to those in the
  * avatar gap.
@@ -876,8 +876,8 @@ public data class MessageRegularContentParams(
     val onQuotedMessageClick: (Message) -> Unit,
     val onUserMentionClick: (User) -> Unit,
     val onLinkClick: ((Message, String) -> Unit)? = null,
-    val onItemClick: () -> Unit = {},
-    val onItemLongClick: () -> Unit = {},
+    val onBubbleClick: () -> Unit = {},
+    val onBubbleLongClick: () -> Unit = {},
 )
 
 /**

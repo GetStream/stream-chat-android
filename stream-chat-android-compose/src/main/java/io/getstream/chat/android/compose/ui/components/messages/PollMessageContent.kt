@@ -104,10 +104,10 @@ import io.getstream.chat.android.ui.common.R as UiCommonR
  * @param interactionSource The interaction source from the surrounding message cell, forwarded to
  * the bubble so it can render a ripple synchronised with the cell's press state. `null` outside
  * a cell context (e.g. previews).
- * @param onItemClick Handler invoked when the bubble is tapped. Mirrors the surrounding cell's
+ * @param onBubbleClick Handler invoked when the bubble is tapped. Mirrors the surrounding cell's
  * click intent so taps inside the bubble Column behave identically to taps in the avatar gap
  * (e.g. opening a thread for thread-start messages).
- * @param onItemLongClick Handler invoked when the bubble is long-pressed. Mirrors the surrounding
+ * @param onBubbleLongClick Handler invoked when the bubble is long-pressed. Mirrors the surrounding
  * cell's long-click intent (haptic feedback + action menu, gated on whether actions are
  * available) so long-presses inside the bubble Column behave identically to those in the
  * avatar gap.
@@ -125,8 +125,8 @@ public fun PollMessageContent(
     onAddPollOption: (poll: Poll, option: String) -> Unit,
     onLongItemClick: (Message) -> Unit = {},
     interactionSource: InteractionSource? = null,
-    onItemClick: () -> Unit = {},
-    onItemLongClick: () -> Unit = {},
+    onBubbleClick: () -> Unit = {},
+    onBubbleLongClick: () -> Unit = {},
 ) {
     val message = messageItem.message
     val ownsMessage = messageItem.isMine
@@ -161,8 +161,8 @@ public fun PollMessageContent(
                         },
                         onClosePoll = onClosePoll,
                         onAddPollOption = onAddPollOption,
-                        onItemClick = onItemClick,
-                        onItemLongClick = onItemLongClick,
+                        onBubbleClick = onBubbleClick,
+                        onBubbleLongClick = onBubbleLongClick,
                     )
                 },
             ),
@@ -215,8 +215,8 @@ private fun PollMessageContent(
     onRemoveVote: (Vote) -> Unit,
     onAddPollOption: (poll: Poll, option: String) -> Unit,
     selectPoll: (Message, Poll, PollSelectionType) -> Unit,
-    onItemClick: () -> Unit = {},
-    onItemLongClick: () -> Unit = {},
+    onBubbleClick: () -> Unit = {},
+    onBubbleLongClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val showDialog = remember { mutableStateOf(false) }
@@ -255,8 +255,8 @@ private fun PollMessageContent(
             .combinedClickable(
                 interactionSource = remember(::MutableInteractionSource),
                 indication = ripple(),
-                onClick = onItemClick,
-                onLongClick = onItemLongClick,
+                onClick = onBubbleClick,
+                onLongClick = onBubbleLongClick,
             )
             .padding(StreamTokens.spacingMd),
     ) {

@@ -5004,11 +5004,11 @@ public final class io/getstream/chat/android/compose/ui/theme/MessageContentPara
 	public final fun getMessageItem ()Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;
 	public final fun getOnAddAnswer ()Lkotlin/jvm/functions/Function3;
 	public final fun getOnAddPollOption ()Lkotlin/jvm/functions/Function2;
+	public final fun getOnBubbleClick ()Lkotlin/jvm/functions/Function0;
+	public final fun getOnBubbleLongClick ()Lkotlin/jvm/functions/Function0;
 	public final fun getOnCastVote ()Lkotlin/jvm/functions/Function3;
 	public final fun getOnClosePoll ()Lkotlin/jvm/functions/Function1;
 	public final fun getOnGiphyActionClick ()Lkotlin/jvm/functions/Function1;
-	public final fun getOnItemClick ()Lkotlin/jvm/functions/Function0;
-	public final fun getOnItemLongClick ()Lkotlin/jvm/functions/Function0;
 	public final fun getOnLinkClick ()Lkotlin/jvm/functions/Function2;
 	public final fun getOnLongItemClick ()Lkotlin/jvm/functions/Function1;
 	public final fun getOnMediaGalleryPreviewResult ()Lkotlin/jvm/functions/Function1;
@@ -5430,8 +5430,8 @@ public final class io/getstream/chat/android/compose/ui/theme/MessageRegularCont
 	public final fun getCurrentUser ()Lio/getstream/chat/android/models/User;
 	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
 	public final fun getMessageAlignment ()Lio/getstream/chat/android/compose/state/messages/MessageAlignment;
-	public final fun getOnItemClick ()Lkotlin/jvm/functions/Function0;
-	public final fun getOnItemLongClick ()Lkotlin/jvm/functions/Function0;
+	public final fun getOnBubbleClick ()Lkotlin/jvm/functions/Function0;
+	public final fun getOnBubbleLongClick ()Lkotlin/jvm/functions/Function0;
 	public final fun getOnLinkClick ()Lkotlin/jvm/functions/Function2;
 	public final fun getOnLongItemClick ()Lkotlin/jvm/functions/Function1;
 	public final fun getOnMediaGalleryPreviewResult ()Lkotlin/jvm/functions/Function1;
