@@ -17,7 +17,9 @@
 package io.getstream.chat.android.compose.ui.components.messages
 
 import android.content.Intent
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Text
@@ -27,6 +29,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.input.pointer.AwaitPointerEventScope
+import androidx.compose.ui.input.pointer.PointerEventTimeoutCancellationException
+import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -37,6 +42,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastAny
+import androidx.compose.ui.util.fastForEach
 import androidx.core.net.toUri
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
@@ -50,6 +56,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.getUserByNameOrId
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
+import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * Default text element for messages, with extra styling and padding for the chat bubble.
@@ -109,6 +116,12 @@ public fun MessageText(
             text = styledText,
             style = style,
             onLongPress = { onLongItemClick(message) },
+            isInteractiveAt = { offset ->
+                annotations.fastAny { ann ->
+                    (ann.tag == AnnotationTagUrl || ann.tag == AnnotationTagEmail || ann.tag == AnnotationTagMention) &&
+                        offset in ann.start..ann.end
+                }
+            },
         ) { position ->
             val annotation = annotations.firstOrNull { position in it.start..it.end }
             if (annotation?.tag == AnnotationTagMention) {
@@ -135,10 +148,22 @@ public fun MessageText(
 }
 
 /**
- * A spin-off of a Foundation component that allows calling long press handlers.
- * Contains only one additional parameter.
+ * A spin-off of a Foundation component that allows calling long press handlers and only claims
+ * the gesture when the press lands on an interactive character (link, mention, email).
+ * Non-interactive presses are left untouched so the surrounding bubble can render its passive
+ * ripple and the cell can still fire its click / long-press handler.
  *
- * @param onLongPress Handler called on long press.
+ * Follow-up: migrate to Compose Foundation's `LinkAnnotation` API (`AnnotatedString.Builder.addLink`
+ * with `LinkAnnotation.Url` / `LinkAnnotation.Clickable`). Native handling propagates non-link
+ * taps to the parent for free, removing the need for this custom gesture detector and the
+ * `isInteractiveAt` plumbing. Requires reworking `TextUtils.linkify` / `tagUser` to emit link
+ * annotations instead of legacy string annotations and updating `MessageTextFormatter` to expose
+ * a `LinkInteractionListener` hook for click routing.
+ *
+ * @param onLongPress Handler called on long press of an interactive character.
+ * @param isInteractiveAt Returns whether the given character offset has an interactive annotation
+ * (link, mention, email). When `false`, the gesture is not consumed and propagates to ancestors.
+ * @param onClick Handler called on tap-up of an interactive character; receives the character offset.
  *
  * @see androidx.compose.foundation.text.ClickableText
  */
@@ -152,18 +177,33 @@ private fun ClickableText(
     maxLines: Int = Int.MAX_VALUE,
     onTextLayout: (TextLayoutResult) -> Unit = {},
     onLongPress: () -> Unit,
+    isInteractiveAt: (Int) -> Boolean,
     onClick: (Int) -> Unit,
 ) {
     val layoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
-    val pressIndicator = Modifier.pointerInput(onClick, onLongPress) {
-        detectTapGestures(
-            onLongPress = { onLongPress() },
-            onTap = { pos ->
-                layoutResult.value?.let { layoutResult ->
-                    onClick(layoutResult.getOffsetForPosition(pos))
+    val pressIndicator = Modifier.pointerInput(onClick, onLongPress, isInteractiveAt) {
+        awaitEachGesture {
+            val down = awaitFirstDown(requireUnconsumed = true)
+            val layout = layoutResult.value ?: return@awaitEachGesture
+            val charAt = layout.getOffsetForPosition(down.position)
+            if (!isInteractiveAt(charAt)) {
+                return@awaitEachGesture
+            }
+            down.consume()
+            val up: PointerInputChange? = try {
+                withTimeoutOrNull(viewConfiguration.longPressTimeoutMillis) {
+                    waitForUpOrCancellation()
                 }
-            },
-        )
+            } catch (_: PointerEventTimeoutCancellationException) {
+                onLongPress()
+                consumeUntilUp()
+                return@awaitEachGesture
+            }
+            if (up != null) {
+                up.consume()
+                onClick(charAt)
+            }
+        }
     }
 
     BasicText(
@@ -178,6 +218,13 @@ private fun ClickableText(
             onTextLayout(it)
         },
     )
+}
+
+private suspend fun AwaitPointerEventScope.consumeUntilUp() {
+    do {
+        val event = awaitPointerEvent()
+        event.changes.fastForEach { it.consume() }
+    } while (event.changes.fastAny { it.pressed })
 }
 
 @Preview
