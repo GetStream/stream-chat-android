@@ -104,10 +104,7 @@ public fun MessageText(
     }
 
     val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
-    if (annotations.fastAny {
-            it.tag == AnnotationTagUrl || it.tag == AnnotationTagEmail || it.tag == AnnotationTagMention
-        }
-    ) {
+    if (annotations.fastAny(AnnotatedString.Range<String>::isInteractiveTag)) {
         ClickableText(
             modifier = modifier
                 .padding(MessageStyling.textPadding)
@@ -115,12 +112,7 @@ public fun MessageText(
             text = styledText,
             style = style,
             onLongPress = { onLongItemClick(message) },
-            isInteractiveAt = { offset ->
-                annotations.fastAny { ann ->
-                    (ann.tag == AnnotationTagUrl || ann.tag == AnnotationTagEmail || ann.tag == AnnotationTagMention) &&
-                        offset in ann.start until ann.end
-                }
-            },
+            isInteractiveAt = annotations::hasInteractiveAt,
         ) { position ->
             val annotation = annotations.firstOrNull { position in it.start until it.end }
             if (annotation?.tag == AnnotationTagMention) {
@@ -225,6 +217,20 @@ private suspend fun AwaitPointerEventScope.consumeUntilUp() {
         event.changes.fastForEach { it.consume() }
     } while (event.changes.fastAny { it.pressed })
 }
+
+/**
+ * Whether this annotation range carries one of the interactive tags handled by [MessageText]:
+ * URL, email, or mention.
+ */
+internal fun AnnotatedString.Range<String>.isInteractiveTag(): Boolean =
+    tag == AnnotationTagUrl || tag == AnnotationTagEmail || tag == AnnotationTagMention
+
+/**
+ * Whether any annotation in the list both has an interactive tag and covers [offset]. Uses
+ * exclusive-end semantics ([AnnotatedString.Range.end] is exclusive per Compose spec).
+ */
+internal fun List<AnnotatedString.Range<String>>.hasInteractiveAt(offset: Int): Boolean =
+    fastAny { it.isInteractiveTag() && offset in it.start until it.end }
 
 @Preview
 @Composable
