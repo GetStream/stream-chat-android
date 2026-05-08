@@ -1063,6 +1063,8 @@ public interface ChatComponentFactory {
     public fun MessageContent(params: MessageContentParams) {
         DefaultMessageContent(
             messageItem = params.messageItem,
+            onItemClick = params.onItemClick,
+            onItemLongClick = params.onItemLongClick,
             onLongItemClick = params.onLongItemClick,
             onGiphyActionClick = params.onGiphyActionClick,
             onQuotedMessageClick = params.onQuotedMessageClick,
@@ -1152,6 +1154,8 @@ public interface ChatComponentFactory {
             onQuotedMessageClick = params.onQuotedMessageClick,
             onUserMentionClick = params.onUserMentionClick,
             onLinkClick = params.onLinkClick,
+            onItemClick = params.onItemClick,
+            onItemLongClick = params.onItemLongClick,
         )
     }
 
