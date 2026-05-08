@@ -56,7 +56,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.getUserByNameOrId
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
-import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * Default text element for messages, with extra styling and padding for the chat bubble.
@@ -119,11 +118,11 @@ public fun MessageText(
             isInteractiveAt = { offset ->
                 annotations.fastAny { ann ->
                     (ann.tag == AnnotationTagUrl || ann.tag == AnnotationTagEmail || ann.tag == AnnotationTagMention) &&
-                        offset in ann.start..ann.end
+                        offset in ann.start until ann.end
                 }
             },
         ) { position ->
-            val annotation = annotations.firstOrNull { position in it.start..it.end }
+            val annotation = annotations.firstOrNull { position in it.start until it.end }
             if (annotation?.tag == AnnotationTagMention) {
                 message.mentionedUsers.getUserByNameOrId(annotation.item)?.let { onUserMentionClick.invoke(it) }
             } else {
@@ -191,7 +190,7 @@ private fun ClickableText(
             }
             down.consume()
             val up: PointerInputChange? = try {
-                withTimeoutOrNull(viewConfiguration.longPressTimeoutMillis) {
+                withTimeout(viewConfiguration.longPressTimeoutMillis) {
                     waitForUpOrCancellation()
                 }
             } catch (_: PointerEventTimeoutCancellationException) {
