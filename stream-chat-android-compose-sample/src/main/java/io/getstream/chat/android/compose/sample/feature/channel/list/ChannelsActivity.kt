@@ -239,7 +239,7 @@ class ChannelsActivity : ComponentActivity() {
         ChannelsScreen(
             viewModelFactory = channelsViewModelFactory,
             isShowingHeader = true,
-            searchMode = SearchMode.Channels,
+            searchMode = SearchMode.Messages,
             onChannelClick = ::openMessages,
             onSearchMessageItemClick = ::openMessages,
             onBackPressed = ::finish,
