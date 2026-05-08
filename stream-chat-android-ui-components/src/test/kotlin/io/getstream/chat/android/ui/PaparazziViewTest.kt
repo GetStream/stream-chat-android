@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui
 import android.content.Context
 import android.view.View
 import android.widget.LinearLayout
+import app.cash.paparazzi.InstantAnimationsRule
 import app.cash.paparazzi.Paparazzi
 import coil3.ComponentRegistry
 import coil3.ImageLoader
@@ -54,6 +55,9 @@ internal abstract class PaparazziViewTest : MockedChatClientTest {
     /*.createConfigurationContext(Configuration().apply {
         uiMode = Configuration.UI_MODE_NIGHT_YES
     })*/
+
+    @get:Rule
+    val instantAnimations = InstantAnimationsRule()
 
     @Before
     fun prepare() {
