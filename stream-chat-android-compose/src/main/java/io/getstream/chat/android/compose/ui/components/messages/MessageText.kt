@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
@@ -103,7 +104,9 @@ public fun MessageText(
         else -> MessageStyling.textStyle(outgoing = message.isMine(currentUser))
     }
 
-    val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
+    val annotations = remember(styledText) {
+        styledText.getStringAnnotations(0, styledText.lastIndex)
+    }
     if (annotations.fastAny(AnnotatedString.Range<String>::isInteractiveTag)) {
         ClickableText(
             modifier = modifier
@@ -143,13 +146,6 @@ public fun MessageText(
  * Non-interactive presses are left untouched so the surrounding bubble can render its passive
  * ripple and the cell can still fire its click / long-press handler.
  *
- * Follow-up: migrate to Compose Foundation's `LinkAnnotation` API (`AnnotatedString.Builder.addLink`
- * with `LinkAnnotation.Url` / `LinkAnnotation.Clickable`). Native handling propagates non-link
- * taps to the parent for free, removing the need for this custom gesture detector and the
- * `isInteractiveAt` plumbing. Requires reworking `TextUtils.linkify` / `tagUser` to emit link
- * annotations instead of legacy string annotations and updating `MessageTextFormatter` to expose
- * a `LinkInteractionListener` hook for click routing.
- *
  * @param onLongPress Handler called on long press of an interactive character.
  * @param isInteractiveAt Returns whether the given character offset has an interactive annotation
  * (link, mention, email). When `false`, the gesture is not consumed and propagates to ancestors.
@@ -171,12 +167,20 @@ private fun ClickableText(
     onClick: (Int) -> Unit,
 ) {
     val layoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
-    val pressIndicator = Modifier.pointerInput(onClick, onLongPress, isInteractiveAt) {
+    // Capture callbacks behind stable references so the pointerInput block does not restart on
+    // recomposition — the lambdas allocated by the caller change identity each composition.
+    val currentOnClick by rememberUpdatedState(onClick)
+    val currentOnLongPress by rememberUpdatedState(onLongPress)
+    val currentIsInteractiveAt by rememberUpdatedState(isInteractiveAt)
+    val pressIndicator = Modifier.pointerInput(Unit) {
         awaitEachGesture {
             val down = awaitFirstDown()
             val layout = layoutResult.value ?: return@awaitEachGesture
             val charAt = layout.getOffsetForPosition(down.position)
-            if (!isInteractiveAt(charAt)) {
+            if (!currentIsInteractiveAt(charAt)) {
+                // Non-interactive character: do not consume the down. Outer modifiers (the
+                // bubble Column's passiveRipple and the surrounding cell's combinedClickable)
+                // pick up the gesture instead.
                 return@awaitEachGesture
             }
             down.consume()
@@ -185,13 +189,16 @@ private fun ClickableText(
                     waitForUpOrCancellation()
                 }
             } catch (_: PointerEventTimeoutCancellationException) {
-                onLongPress()
+                // Long-press fired. Consume the rest of the gesture so the inner click that would
+                // normally ride the up event after onLongPress (matching detectTapGestures'
+                // semantics) cannot reach this scope's onClick.
+                currentOnLongPress()
                 consumeUntilUp()
                 return@awaitEachGesture
             }
             if (up != null) {
                 up.consume()
-                onClick(charAt)
+                currentOnClick(charAt)
             }
         }
     }
@@ -247,7 +254,9 @@ internal fun handleAnnotationClick(
     onUserMentionClick: (User) -> Unit,
     fallback: (String) -> Unit,
 ) {
-    val annotation = annotations.firstOrNull { position in it.start until it.end } ?: return
+    val annotation = annotations.firstOrNull {
+        it.isInteractiveTag() && position in it.start until it.end
+    } ?: return
     when (annotation.tag) {
         AnnotationTagMention -> {
             message.mentionedUsers.getUserByNameOrId(annotation.item)?.let(onUserMentionClick)
@@ -261,14 +270,83 @@ internal fun handleAnnotationClick(
     }
 }
 
-@Preview
 @Composable
-private fun MessageTextPreview() {
-    ChatTheme {
-        MessageText(
-            message = Message(text = "Hello World!"),
-            currentUser = null,
-            onLongItemClick = {},
-        )
-    }
+internal fun MessageTextPlain() {
+    MessageText(
+        message = Message(text = "Hello, this is a plain message."),
+        currentUser = null,
+        onLongItemClick = {},
+    )
+}
+
+@Composable
+internal fun MessageTextWithUrl() {
+    MessageText(
+        message = Message(text = "Check out https://getstream.io for more details."),
+        currentUser = null,
+        onLongItemClick = {},
+    )
+}
+
+@Composable
+internal fun MessageTextWithEmail() {
+    MessageText(
+        message = Message(text = "Contact us at support@getstream.io anytime."),
+        currentUser = null,
+        onLongItemClick = {},
+    )
+}
+
+@Composable
+internal fun MessageTextWithMention() {
+    MessageText(
+        message = Message(
+            text = "Welcome @alice to the channel!",
+            mentionedUsers = listOf(User(id = "alice", name = "alice")),
+        ),
+        currentUser = null,
+        onLongItemClick = {},
+    )
+}
+
+@Composable
+internal fun MessageTextWithUrlAndMention() {
+    MessageText(
+        message = Message(
+            text = "Hey @alice, the docs are at https://getstream.io/docs",
+            mentionedUsers = listOf(User(id = "alice", name = "alice")),
+        ),
+        currentUser = null,
+        onLongItemClick = {},
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MessageTextPlainPreview() {
+    ChatTheme { MessageTextPlain() }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MessageTextWithUrlPreview() {
+    ChatTheme { MessageTextWithUrl() }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MessageTextWithEmailPreview() {
+    ChatTheme { MessageTextWithEmail() }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MessageTextWithMentionPreview() {
+    ChatTheme { MessageTextWithMention() }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MessageTextWithUrlAndMentionPreview() {
+    ChatTheme { MessageTextWithUrlAndMention() }
 }
