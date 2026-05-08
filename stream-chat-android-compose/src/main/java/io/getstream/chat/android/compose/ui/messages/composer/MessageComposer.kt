@@ -57,6 +57,7 @@ import io.getstream.chat.android.compose.ui.theme.LocalChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.MessageComposerInputParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerLeadingContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerSnackbarParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerTrailingContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.SnackbarPopup
@@ -299,7 +300,6 @@ public fun MessageComposer(
 
         Row(
             modifier = Modifier
-                .padding(vertical = StreamTokens.spacing2xs)
                 .fillMaxWidth()
                 .padding(
                     start = StreamTokens.spacingMd,
@@ -330,7 +330,11 @@ public fun MessageComposer(
             )
 
             if (snackbarHostState.currentSnackbarData != null) {
-                SnackbarPopup(hostState = snackbarHostState)
+                SnackbarPopup(hostState = snackbarHostState) { snackbarData ->
+                    ChatTheme.componentFactory.MessageComposerSnackbar(
+                        params = MessageComposerSnackbarParams(data = snackbarData),
+                    )
+                }
             }
         }
     }

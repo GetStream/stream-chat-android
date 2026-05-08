@@ -1957,6 +1957,7 @@ public final class io/getstream/chat/android/compose/ui/messages/composer/Compos
 	public final fun getLambda$-1206314464$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-1267828661$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-1344661276$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1407581416$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$-173232017$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1180759242$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1309976052$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
@@ -3446,6 +3447,7 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 	public fun MessageComposerQuotedMessage (Lio/getstream/chat/android/compose/ui/theme/MessageComposerQuotedMessageParams;Landroidx/compose/runtime/Composer;I)V
 	public fun MessageComposerSaveButton (Lio/getstream/chat/android/compose/ui/theme/MessageComposerSaveButtonParams;Landroidx/compose/runtime/Composer;I)V
 	public fun MessageComposerSendButton (Lio/getstream/chat/android/compose/ui/theme/MessageComposerSendButtonParams;Landroidx/compose/runtime/Composer;I)V
+	public fun MessageComposerSnackbar (Lio/getstream/chat/android/compose/ui/theme/MessageComposerSnackbarParams;Landroidx/compose/runtime/Composer;I)V
 	public fun MessageComposerTrailingContent (Lio/getstream/chat/android/compose/ui/theme/MessageComposerTrailingContentParams;Landroidx/compose/runtime/Composer;I)V
 	public fun MessageComposerUserSuggestionItem (Lio/getstream/chat/android/compose/ui/theme/MessageComposerUserSuggestionItemParams;Landroidx/compose/runtime/Composer;I)V
 	public fun MessageComposerUserSuggestionItemCenterContent (Lio/getstream/chat/android/compose/ui/theme/MessageComposerUserSuggestionItemCenterContentParams;Landroidx/compose/runtime/Composer;I)V
@@ -3636,6 +3638,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFacto
 	public static fun MessageComposerQuotedMessage (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MessageComposerQuotedMessageParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun MessageComposerSaveButton (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MessageComposerSaveButtonParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun MessageComposerSendButton (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MessageComposerSendButtonParams;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageComposerSnackbar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MessageComposerSnackbarParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun MessageComposerTrailingContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MessageComposerTrailingContentParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun MessageComposerUserSuggestionItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MessageComposerUserSuggestionItemParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun MessageComposerUserSuggestionItemCenterContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MessageComposerUserSuggestionItemCenterContentParams;Landroidx/compose/runtime/Composer;I)V
@@ -4831,6 +4834,18 @@ public final class io/getstream/chat/android/compose/ui/theme/MessageComposerSen
 	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/MessageComposerSendButtonParams;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerSendButtonParams;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getOnClick ()Lkotlin/jvm/functions/Function0;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/ui/theme/MessageComposerSnackbarParams {
+	public static final field $stable I
+	public fun <init> (Landroidx/compose/material3/SnackbarData;)V
+	public final fun component1 ()Landroidx/compose/material3/SnackbarData;
+	public final fun copy (Landroidx/compose/material3/SnackbarData;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerSnackbarParams;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/MessageComposerSnackbarParams;Landroidx/compose/material3/SnackbarData;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerSnackbarParams;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getData ()Landroidx/compose/material3/SnackbarData;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
