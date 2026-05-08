@@ -181,6 +181,27 @@ internal class MessageFooterTest : PaparazziComposeTest {
             )
         }
     }
+
+    @Test
+    fun `outgoing thread start with replies`() {
+        snapshotWithDarkModeRow {
+            MessageFooter(
+                messageItem = MessageItemState(
+                    message = Message(
+                        id = "msg-8",
+                        text = "Outgoing thread with replies",
+                        createdAt = FixedDate,
+                        replyCount = 5,
+                        threadParticipants = listOf(PreviewUserData.user1, PreviewUserData.user2),
+                    ),
+                    isMine = true,
+                    isInThread = false,
+                    showMessageFooter = false,
+                    ownCapabilities = ChannelCapabilities.toSet(),
+                ),
+            )
+        }
+    }
 }
 
 private val FixedDate: Date = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {

@@ -1125,8 +1125,8 @@ public class MessageComposerController(
     }
 
     /**
-     * Sorts by availability when [Config.activeCommandEnabled] is `true`; returns the list
-     * unchanged in legacy mode.
+     * Applies [sortedByAvailability] when [Config.activeCommandEnabled] is `true`; returns the
+     * list unchanged in legacy mode.
      */
     private fun List<Command>.orderedForComposer(): List<Command> =
         if (config.activeCommandEnabled) sortedByAvailability(activeAction) else this

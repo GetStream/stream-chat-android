@@ -44,6 +44,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
@@ -55,8 +56,11 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
 
 /**
@@ -229,3 +233,127 @@ internal data class QuotedMessageBody(
     val videoPreviewData: Any? = null,
     val previewIcon: FileIconData? = null,
 )
+
+@Preview
+@Composable
+private fun QuotedMessageFromOtherUserPreview() {
+    ChatTheme { QuotedMessageFromOtherUser() }
+}
+
+@Preview
+@Composable
+private fun QuotedMessageFromSelfPreview() {
+    ChatTheme { QuotedMessageFromSelf() }
+}
+
+@Preview
+@Composable
+private fun QuotedMessageWithLongTextPreview() {
+    ChatTheme { QuotedMessageWithLongText() }
+}
+
+@Preview
+@Composable
+private fun QuotedMessageWithImageAttachmentPreview() {
+    ChatTheme { QuotedMessageWithImageAttachment() }
+}
+
+@Preview
+@Composable
+private fun QuotedMessageWithFileAttachmentPreview() {
+    ChatTheme { QuotedMessageWithFileAttachment() }
+}
+
+@Preview
+@Composable
+private fun QuotedMessageInComposerPreview() {
+    ChatTheme { QuotedMessageInComposer() }
+}
+
+@Composable
+internal fun QuotedMessageFromOtherUser() {
+    QuotedMessage(
+        message = Message(
+            id = "msg-1",
+            text = "Hey, did you see the new design?",
+            user = PreviewUserData.user2,
+        ),
+        currentUser = PreviewUserData.user1,
+    )
+}
+
+@Composable
+internal fun QuotedMessageFromSelf() {
+    QuotedMessage(
+        message = Message(
+            id = "msg-2",
+            text = "Yes, looks great!",
+            user = PreviewUserData.user1,
+        ),
+        currentUser = PreviewUserData.user1,
+    )
+}
+
+@Composable
+internal fun QuotedMessageWithLongText() {
+    QuotedMessage(
+        message = Message(
+            id = "msg-3",
+            text = "This is a very long quoted message that should overflow with ellipsis " +
+                "because it does not fit on a single line in the quoted preview",
+            user = PreviewUserData.user2,
+        ),
+        currentUser = PreviewUserData.user1,
+    )
+}
+
+@Composable
+internal fun QuotedMessageWithImageAttachment() {
+    QuotedMessage(
+        message = Message(
+            id = "msg-4",
+            text = "Check this out",
+            user = PreviewUserData.user2,
+            attachments = mutableListOf(
+                Attachment(
+                    type = AttachmentType.IMAGE,
+                    imageUrl = "https://example.com/image.jpg",
+                ),
+            ),
+        ),
+        currentUser = PreviewUserData.user1,
+    )
+}
+
+@Composable
+internal fun QuotedMessageWithFileAttachment() {
+    QuotedMessage(
+        message = Message(
+            id = "msg-5",
+            text = "",
+            user = PreviewUserData.user2,
+            attachments = mutableListOf(
+                Attachment(
+                    type = AttachmentType.FILE,
+                    title = "Q1-report.pdf",
+                    mimeType = "application/pdf",
+                    fileSize = 1024 * 256,
+                ),
+            ),
+        ),
+        currentUser = PreviewUserData.user1,
+    )
+}
+
+@Composable
+internal fun QuotedMessageInComposer() {
+    MessageComposerQuotedMessage(
+        message = Message(
+            id = "msg-6",
+            text = "Reply target",
+            user = PreviewUserData.user2,
+        ),
+        currentUser = PreviewUserData.user1,
+        onCancelClick = {},
+    )
+}
