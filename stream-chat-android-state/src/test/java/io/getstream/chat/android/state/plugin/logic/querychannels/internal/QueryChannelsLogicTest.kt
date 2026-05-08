@@ -173,8 +173,8 @@ internal class QueryChannelsLogicTest {
     }
 
     @Test
-    fun `queryOffline should add channels and reset loading first page state when cached channels found`() = runTest {
-        // Given
+    fun `queryOffline should add channels and reset loading on Standard cache hit without applying spec`() = runTest {
+        // Given – Standard cache hit; the spec is already known so applyResolvedSpec is skipped.
         val pagination = AnyChannelPaginationRequest().apply {
             channelOffset = 0
         }
@@ -195,6 +195,43 @@ internal class QueryChannelsLogicTest {
         verify(queryChannelsStateLogic).addChannelsState(cachedChannels)
         verify(queryChannelsStateLogic).setLoadingFirstPage(false)
         verify(queryChannelsStateLogic, never()).setLoadingMore(any())
+        verify(queryChannelsStateLogic, never()).applyResolvedSpec(any(), any())
+    }
+
+    @Test
+    fun `queryOffline should apply resolved spec from cached predefined spec before adding channels`() = runTest {
+        // Given – a Predefined-identifier logic with a predefined cached spec
+        val predefinedIdentifier = QueryChannelsIdentifier.Predefined(
+            name = "my-filter",
+            filterValues = mapOf("a" to 1),
+            sortValues = null,
+        )
+        val predefinedLogic = QueryChannelsLogic(
+            identifier = predefinedIdentifier,
+            client = client,
+            queryChannelsStateLogic = queryChannelsStateLogic,
+            queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
+        )
+        val resolvedFilter = Filters.eq("type", "messaging")
+        val resolvedSort = QuerySortByField.descByName<Channel>("last_message_at")
+        val predefinedSpec = QueryChannelsSpec(
+            filter = resolvedFilter,
+            querySort = resolvedSort,
+            predefinedFilterName = "my-filter",
+            predefinedFilterValues = mapOf("a" to 1),
+            predefinedSortValues = null,
+        )
+        val cached = CachedQueryChannels(spec = predefinedSpec, channels = listOf(randomChannel()))
+        val pagination = AnyChannelPaginationRequest().apply { channelOffset = 0 }
+        whenever(queryChannelsStateLogic.isLoading()) doReturn false
+        whenever(queryChannelsDatabaseLogic.fetchChannelsFromCache(any(), any())) doReturn cached
+
+        // When
+        predefinedLogic.queryOffline(pagination)
+
+        // Then
+        verify(queryChannelsStateLogic).applyResolvedSpec(eq(resolvedFilter), eq(resolvedSort))
+        verify(queryChannelsStateLogic).addChannelsState(cached.channels)
     }
 
     @Test
@@ -358,6 +395,39 @@ internal class QueryChannelsLogicTest {
         verify(queryChannelsDatabaseLogic).selectChannels(listOf(dbChannel.cid))
         verify(queryChannelsStateLogic).handleChatEvent(event1, inMemoryChannel)
         verify(queryChannelsStateLogic).handleChatEvent(event2, dbChannel)
+    }
+
+    @Test
+    fun `queryFirstPage rebuilds a predefined-filter request from a Predefined identifier`() = runTest {
+        // Given
+        val predefinedIdentifier = QueryChannelsIdentifier.Predefined(
+            name = "my-predefined",
+            filterValues = mapOf("a" to 1),
+            sortValues = mapOf("b" to 2),
+        )
+        val predefinedLogic = QueryChannelsLogic(
+            identifier = predefinedIdentifier,
+            client = client,
+            queryChannelsStateLogic = queryChannelsStateLogic,
+            queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
+        )
+        whenever(client.queryChannelsInternal(any()))
+            .thenReturn(emptyList<Channel>().asCall())
+
+        // When
+        predefinedLogic.queryFirstPage()
+
+        // Then
+        val expectedRequest = QueryChannelsRequest(
+            offset = 0,
+            limit = 30,
+            messageLimit = null,
+            memberLimit = null,
+            predefinedFilter = "my-predefined",
+            filterValues = mapOf("a" to 1),
+            sortValues = mapOf("b" to 2),
+        )
+        verify(client).queryChannelsInternal(expectedRequest)
     }
 
     // endregion

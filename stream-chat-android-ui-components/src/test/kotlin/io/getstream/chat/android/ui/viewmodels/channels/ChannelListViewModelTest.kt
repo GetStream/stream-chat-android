@@ -234,6 +234,49 @@ internal class ChannelListViewModelTest {
             viewModel.state.removeObserver(mockObserver)
         }
 
+    @Test
+    fun `Given predefined filter When initializing Should issue predefined-shaped query`() = runTest {
+        val chatClient: ChatClient = mock()
+        Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(channelsStateData = ChannelsStateData.Loading, loading = true)
+            .givenChannelMutes()
+            .givenPredefined(
+                name = "vip_filter",
+                filterValues = mapOf("foo" to "bar"),
+                sortValues = mapOf("baz" to 1),
+            )
+            .get()
+
+        val captor = argumentCaptor<QueryChannelsRequest>()
+        verify(chatClient).queryChannels(captor.capture())
+        val request = captor.firstValue
+        request.predefinedFilter shouldBeEqualTo "vip_filter"
+        request.filterValues shouldBeEqualTo mapOf("foo" to "bar")
+        request.sortValues shouldBeEqualTo mapOf("baz" to 1)
+        request.filter shouldBeEqualTo Filters.neutral()
+    }
+
+    @Test
+    fun `Given predefined filter When calling setFilters Should not re-issue the query`() = runTest {
+        val chatClient: ChatClient = mock()
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1)),
+                loading = false,
+            )
+            .givenChannelMutes()
+            .givenPredefined(name = "vip_filter")
+            .get()
+
+        viewModel.setFilters(Filters.eq("type", "messaging"))
+
+        verify(chatClient, times(1)).queryChannels(any())
+    }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelClient: ChannelClient = mock(),
@@ -244,6 +287,9 @@ internal class ChannelListViewModelTest {
         private val stateRegistry: StateRegistry = mock()
         private val clientState: ClientState = mock()
         private val globalState: GlobalState = mock()
+        private var predefinedFilterName: String? = null
+        private var predefinedFilterValues: Map<String, Any>? = null
+        private var predefinedSortValues: Map<String, Any>? = null
 
         init {
             whenever(chatClient.channel(any())) doReturn channelClient
@@ -282,6 +328,16 @@ internal class ChannelListViewModelTest {
             whenever(chatClient.hideChannel(any(), any(), any())) doReturn Unit.asCall()
         }
 
+        fun givenPredefined(
+            name: String,
+            filterValues: Map<String, Any>? = null,
+            sortValues: Map<String, Any>? = null,
+        ) = apply {
+            predefinedFilterName = name
+            predefinedFilterValues = filterValues
+            predefinedSortValues = sortValues
+        }
+
         fun givenChannelsState(
             channelsStateData: ChannelsStateData = ChannelsStateData.Loading,
             channels: List<Channel>? = null,
@@ -302,16 +358,31 @@ internal class ChannelListViewModelTest {
         }
 
         fun get(): ChannelListViewModel {
-            return ChannelListViewModel(
-                chatClient = chatClient,
-                sort = initialSort,
-                filter = initialFilters,
-                isDraftMessagesEnabled = false,
-                chatEventHandlerFactory = ChatEventHandlerFactory(
-                    clientState = clientState,
-                ),
-                globalState = MutableStateFlow(globalState),
-            )
+            val name = predefinedFilterName
+            return if (name != null) {
+                ChannelListViewModel(
+                    chatClient = chatClient,
+                    predefinedFilterName = name,
+                    filterValues = predefinedFilterValues,
+                    sortValues = predefinedSortValues,
+                    isDraftMessagesEnabled = false,
+                    chatEventHandlerFactory = ChatEventHandlerFactory(
+                        clientState = clientState,
+                    ),
+                    globalState = MutableStateFlow(globalState),
+                )
+            } else {
+                ChannelListViewModel(
+                    chatClient = chatClient,
+                    sort = initialSort,
+                    filter = initialFilters,
+                    isDraftMessagesEnabled = false,
+                    chatEventHandlerFactory = ChatEventHandlerFactory(
+                        clientState = clientState,
+                    ),
+                    globalState = MutableStateFlow(globalState),
+                )
+            }
         }
     }
 
