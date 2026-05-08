@@ -251,7 +251,7 @@ class ChannelsActivity : ComponentActivity() {
             viewModelFactory = channelsViewModelFactory,
             title = stringResource(id = R.string.app_name),
             isShowingHeader = true,
-            searchMode = SearchMode.Channels,
+            searchMode = SearchMode.Messages,
             onChannelClick = ::openMessages,
             onSearchMessageItemClick = ::openMessages,
             onBackPressed = ::finish,
