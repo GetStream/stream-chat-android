@@ -114,17 +114,16 @@ public fun MessageText(
             onLongPress = { onLongItemClick(message) },
             isInteractiveAt = annotations::hasInteractiveAt,
         ) { position ->
-            val annotation = annotations.firstOrNull { position in it.start until it.end }
-            if (annotation?.tag == AnnotationTagMention) {
-                message.mentionedUsers.getUserByNameOrId(annotation.item)?.let { onUserMentionClick.invoke(it) }
-            } else {
-                val targetUrl = annotation?.item
-                if (!targetUrl.isNullOrEmpty()) {
-                    onLinkClick?.invoke(message, targetUrl) ?: context.startActivity(
-                        Intent(Intent.ACTION_VIEW, targetUrl.toUri()),
-                    )
-                }
-            }
+            handleAnnotationClick(
+                annotations = annotations,
+                position = position,
+                message = message,
+                onLinkClick = onLinkClick,
+                onUserMentionClick = onUserMentionClick,
+                fallback = { url ->
+                    context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
+                },
+            )
         }
     } else {
         Text(
@@ -174,7 +173,7 @@ private fun ClickableText(
     val layoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
     val pressIndicator = Modifier.pointerInput(onClick, onLongPress, isInteractiveAt) {
         awaitEachGesture {
-            val down = awaitFirstDown(requireUnconsumed = true)
+            val down = awaitFirstDown()
             val layout = layoutResult.value ?: return@awaitEachGesture
             val charAt = layout.getOffsetForPosition(down.position)
             if (!isInteractiveAt(charAt)) {
@@ -231,6 +230,36 @@ internal fun AnnotatedString.Range<String>.isInteractiveTag(): Boolean =
  */
 internal fun List<AnnotatedString.Range<String>>.hasInteractiveAt(offset: Int): Boolean =
     fastAny { it.isInteractiveTag() && offset in it.start until it.end }
+
+/**
+ * Resolves the interactive annotation at the given character [position] and dispatches the right
+ * handler. Mention annotations route to [onUserMentionClick] after resolving the username against
+ * [Message.mentionedUsers]; URL/email annotations route to [onLinkClick] when set, otherwise to
+ * [fallback]. Annotations with empty items, non-interactive tags, or no match at [position] are
+ * ignored.
+ */
+@Suppress("LongParameterList")
+internal fun handleAnnotationClick(
+    annotations: List<AnnotatedString.Range<String>>,
+    position: Int,
+    message: Message,
+    onLinkClick: ((Message, String) -> Unit)?,
+    onUserMentionClick: (User) -> Unit,
+    fallback: (String) -> Unit,
+) {
+    val annotation = annotations.firstOrNull { position in it.start until it.end } ?: return
+    when (annotation.tag) {
+        AnnotationTagMention -> {
+            message.mentionedUsers.getUserByNameOrId(annotation.item)?.let(onUserMentionClick)
+        }
+        AnnotationTagUrl, AnnotationTagEmail -> {
+            val url = annotation.item
+            if (url.isNotEmpty()) {
+                if (onLinkClick != null) onLinkClick(message, url) else fallback(url)
+            }
+        }
+    }
+}
 
 @Preview
 @Composable

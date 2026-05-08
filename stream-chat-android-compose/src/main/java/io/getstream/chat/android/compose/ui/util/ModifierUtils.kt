@@ -123,7 +123,7 @@ internal fun Modifier.passiveRipple(): Modifier = composed {
     val scope = rememberCoroutineScope()
     pointerInput(Unit) {
         awaitEachGesture {
-            val down = awaitFirstDown(requireUnconsumed = true)
+            val down = awaitFirstDown()
             val press = PressInteraction.Press(down.position)
             scope.launch { source.emit(press) }
             val up = waitForUpOrCancellation()
