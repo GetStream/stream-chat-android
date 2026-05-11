@@ -114,10 +114,10 @@ tasks.withType<Delete> {
 }
 
 apiValidation {
-    ignoredPackages.add("com/getstream/sdk/chat/databinding")
     ignoredPackages.add("io/getstream/chat/android/ui/databinding")
 
     ignoredProjects += listOf(
+        "stream-chat-android-benchmark",
         "stream-chat-android-client-test",
         "stream-chat-android-compose-sample",
         "stream-chat-android-docs",
