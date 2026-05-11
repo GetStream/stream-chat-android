@@ -75,7 +75,7 @@ internal data class StreamSnackbarVisuals(
  * snackbar's variant), and an optional action button.
  *
  * @param snackbarData The [SnackbarData] driving the message, variant, and optional action.
- * @param modifier Modifier applied to the inner [Surface] (e.g. to control width or padding).
+ * @param modifier Modifier for styling.
  */
 @Composable
 internal fun StreamSnackbar(
@@ -85,9 +85,9 @@ internal fun StreamSnackbar(
     val actionLabel = snackbarData.visuals.actionLabel
     val variant = (snackbarData.visuals as? StreamSnackbarVisuals)?.variant
         ?: StreamSnackbarVariant.Default
-    Box(modifier = Modifier.padding(StreamTokens.spacingMd)) {
+    Box(modifier = modifier.padding(StreamTokens.spacingMd)) {
         Surface(
-            modifier = modifier.shadow(4.dp, shape = SnackbarShape),
+            modifier = Modifier.shadow(elevation = StreamTokens.elevation3, shape = SnackbarShape),
             shape = SnackbarShape,
             color = ChatTheme.colors.backgroundCoreInverse,
             contentColor = ChatTheme.colors.textOnInverse,

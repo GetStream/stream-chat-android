@@ -1706,6 +1706,22 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * The snackbar shown above the message composer for validation errors and command-related
+     * events.
+     *
+     * Override this method to provide a custom snackbar appearance for the composer.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun MessageComposerSnackbar(params: MessageComposerSnackbarParams) {
+        StreamSnackbar(
+            modifier = Modifier.padding(bottom = StreamTokens.spacingMd),
+            snackbarData = params.data,
+        )
+    }
+
+    /**
      * The default avatar component that displays an image from a URL or falls back to a placeholder.
      * This component serves as the foundational UI for all avatar types.
      *

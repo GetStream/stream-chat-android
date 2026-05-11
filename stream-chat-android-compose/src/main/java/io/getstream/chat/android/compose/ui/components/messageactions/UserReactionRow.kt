@@ -100,24 +100,35 @@ internal fun UserReactionRow(
     }
 }
 
-/**
- * Preview of the [UserReactionRow] component with a reaction left by the current user.
- */
 @Preview(showBackground = true)
 @Composable
-private fun CurrentUserReactionItemPreview() {
-    ChatPreviewTheme {
-        UserReactionRow(item = PreviewUserReactionData.user1Reaction())
-    }
+private fun OwnRemovableUserReactionRowPreview() {
+    ChatPreviewTheme { OwnRemovableUserReactionRow() }
 }
 
-/**
- * Preview of the [UserReactionRow] component with a reaction left by another user.
- */
 @Preview(showBackground = true)
 @Composable
-private fun OtherUserReactionItemPreview() {
-    ChatPreviewTheme {
-        UserReactionRow(item = PreviewUserReactionData.user2Reaction())
-    }
+private fun OwnUserReactionRowPreview() {
+    ChatPreviewTheme { OwnUserReactionRow() }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun OtherUserReactionRowPreview() {
+    ChatPreviewTheme { OtherUserReactionRow() }
+}
+
+@Composable
+internal fun OwnRemovableUserReactionRow() {
+    UserReactionRow(item = PreviewUserReactionData.user1Reaction(), onClick = {})
+}
+
+@Composable
+internal fun OwnUserReactionRow() {
+    UserReactionRow(item = PreviewUserReactionData.user1Reaction())
+}
+
+@Composable
+internal fun OtherUserReactionRow() {
+    UserReactionRow(item = PreviewUserReactionData.user2Reaction())
 }
