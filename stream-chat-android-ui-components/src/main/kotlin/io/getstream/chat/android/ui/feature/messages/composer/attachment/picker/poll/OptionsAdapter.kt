@@ -28,9 +28,16 @@ import io.getstream.chat.android.ui.databinding.StreamUiPollOptionBinding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 public class OptionsAdapter(
-    private val answerCharLimit: Int?,
+    private val optionTextLimit: Int?,
     private val onOptionChange: (id: Int, text: String) -> Unit,
 ) : ListAdapter<PollAnswer, OptionsAdapter.OptionViewHolder>(OptionDiffCallback) {
+
+    /**
+     * Builds an [OptionsAdapter] instance without providing option text limit.
+     *
+     * @param onOptionChange Callback invoked when the option text changes.
+     */
+    public constructor(onOptionChange: (id: Int, text: String) -> Unit) : this(null, onOptionChange)
 
     init {
         setHasStableIds(true)
@@ -41,7 +48,7 @@ public class OptionsAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OptionViewHolder =
         OptionViewHolder(
             parent = parent,
-            answerCharLimit = answerCharLimit,
+            optionTextLimit = optionTextLimit,
             onOptionChange = onOptionChange,
         )
 
@@ -56,14 +63,14 @@ public class OptionsAdapter(
             parent,
             false,
         ),
-        private val answerCharLimit: Int?,
+        private val optionTextLimit: Int?,
         private val onOptionChange: (id: Int, text: String) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private lateinit var pollAnswer: PollAnswer
 
         init {
-            answerCharLimit?.let { limit ->
+            optionTextLimit?.let { limit ->
                 binding.option.filters = arrayOf(InputFilter.LengthFilter(limit))
             }
         }

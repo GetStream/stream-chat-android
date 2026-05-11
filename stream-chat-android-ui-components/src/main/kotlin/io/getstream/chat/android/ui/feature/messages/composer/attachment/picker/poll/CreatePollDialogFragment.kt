@@ -40,7 +40,16 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 /**
- * Represent the bottom sheet dialog that allows users to pick attachments.
+ * A dialog fragment that allows users to create polls with configurable character limits.
+ *
+ * This dialog provides a UI for creating polls with customizable settings including:
+ * - Poll question with optional character limit
+ * - Multiple answer options with optional character limit
+ * - Multiple vote configuration
+ * - Anonymous poll option
+ * - Option suggestion capability
+ *
+ * Use [newInstance] to create an instance with optional character limits.
  */
 public class CreatePollDialogFragment : AppCompatDialogFragment() {
 
@@ -50,7 +59,7 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
     private val createPollViewModel: CreatePollViewModel by viewModels()
     private val optionsAdapter: OptionsAdapter by lazy {
         OptionsAdapter(
-            answerCharLimit = arguments?.getInt(ARG_ANSWER_CHAR_LIMIT)?.takeIf { it > 0 },
+            optionTextLimit = arguments?.getInt(ARG_OPTION_TEXT_LIMIT)?.takeIf { it > 0 },
             onOptionChange = { id, text -> createPollViewModel.onOptionTextChanged(id, text) },
         )
     }
@@ -85,7 +94,7 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
      */
     private fun setupDialog() {
         setupToolbar(binding.toolbar)
-        arguments?.getInt(ARG_TITLE_CHAR_LIMIT)?.takeIf { it > 0 }?.let { limit ->
+        arguments?.getInt(ARG_QUESTION_TEXT_LIMIT)?.takeIf { it > 0 }?.let { limit ->
             binding.question.filters = arrayOf(InputFilter.LengthFilter(limit))
         }
         binding.multipleAnswersSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -165,26 +174,27 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
 
     public companion object {
         public const val TAG: String = "create_poll_dialog_fragment"
-        private const val ARG_TITLE_CHAR_LIMIT: String = "arg_title_char_limit"
-        private const val ARG_ANSWER_CHAR_LIMIT: String = "arg_answer_char_limit"
+        private const val ARG_QUESTION_TEXT_LIMIT: String = "arg_question_text_limit"
+        private const val ARG_OPTION_TEXT_LIMIT: String = "arg_option_text_limit"
 
         /**
          * Creates a new instance of [CreatePollDialogFragment].
          *
          * @param createPollDialogListener The listener for poll creation events.
-         * @param titleCharLimit Optional character limit for the poll title. Null means no limit.
-         * @param answerCharLimit Optional character limit for poll answer options. Null means no limit.
+         * @param questionTextLimit Optional character limit for the poll question. Null means no limit.
+         * @param optionTextLimit Optional character limit for poll answer options. Null means no limit.
          * @return A new instance of [CreatePollDialogFragment].
          */
+        @JvmOverloads
         public fun newInstance(
             createPollDialogListener: CreatePollDialogListener,
-            titleCharLimit: Int? = null,
-            answerCharLimit: Int? = null,
+            questionTextLimit: Int? = null,
+            optionTextLimit: Int? = null,
         ): CreatePollDialogFragment {
             return CreatePollDialogFragment().apply {
                 arguments = Bundle().apply {
-                    titleCharLimit?.let { putInt(ARG_TITLE_CHAR_LIMIT, it) }
-                    answerCharLimit?.let { putInt(ARG_ANSWER_CHAR_LIMIT, it) }
+                    questionTextLimit?.let { putInt(ARG_QUESTION_TEXT_LIMIT, it) }
+                    optionTextLimit?.let { putInt(ARG_OPTION_TEXT_LIMIT, it) }
                 }
             }.setCreatePollDialogListener(createPollDialogListener)
         }
