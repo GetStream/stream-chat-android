@@ -18,10 +18,10 @@ package io.getstream.chat.android.client.query.request
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.query.request.ChannelFilterRequest.filterWithOffset
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
-import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomChannel
@@ -45,7 +45,8 @@ internal class ChannelFilterRequestTest {
         val limit = positiveRandomInt()
         val channels = listOf(randomChannel())
         val chatClient = mock<ChatClient>()
-        whenever(chatClient.queryChannelsInternal(any())).thenReturn(RetroSuccess(channels).toRetrofitCall())
+        whenever(chatClient.queryChannelsInternal(any()))
+            .thenReturn(RetroSuccess(QueryChannelsResult(channels = channels, predefinedFilter = null)).toRetrofitCall())
         // when
         val result = chatClient.filterWithOffset(filter, offset, limit)
         // then
@@ -68,7 +69,8 @@ internal class ChannelFilterRequestTest {
         val limit = positiveRandomInt()
         val errorCode = positiveRandomInt()
         val chatClient = mock<ChatClient>()
-        whenever(chatClient.queryChannelsInternal(any())).thenReturn(RetroError<List<Channel>>(errorCode).toRetrofitCall())
+        whenever(chatClient.queryChannelsInternal(any()))
+            .thenReturn(RetroError<QueryChannelsResult>(errorCode).toRetrofitCall())
         // when
         val result = chatClient.filterWithOffset(filter, offset, limit)
         // then

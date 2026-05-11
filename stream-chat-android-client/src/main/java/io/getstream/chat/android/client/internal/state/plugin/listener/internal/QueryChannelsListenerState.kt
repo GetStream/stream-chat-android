@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.internal.state.model.querychannels.pagin
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
-import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -63,10 +62,7 @@ internal class QueryChannelsListenerState(
             // Push server-resolved filter/sort into state before forwarding channels, so
             // sortedChannels re-emits with the right comparator. No-op for standard queries.
             result.value.predefinedFilter?.let { resolved ->
-                queryChannelsLogic.applyResolvedSpec(
-                    filter = resolved.filter,
-                    sort = resolved.sort ?: QuerySortByField(),
-                )
+                queryChannelsLogic.applyResolvedSpec(resolved.filter, resolved.sort)
             }
         }
         val channels = result.map(QueryChannelsResult::channels)

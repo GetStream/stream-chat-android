@@ -47,7 +47,7 @@ public object ChannelFilterRequest {
         )
         return queryChannelsInternal(request).await().let { result ->
             when (result) {
-                is Result.Success -> result.value
+                is Result.Success -> result.value.channels
                 is Result.Failure -> emptyList()
             }
         }

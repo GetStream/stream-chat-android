@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.state.plugin.logic.querychanne
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.event.EventHandlingResult
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.api.state.QueryChannelsState
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.query.QueryChannelsSpec
@@ -279,7 +280,7 @@ internal class QueryChannelsLogicTest {
     fun `queryFirstPage uses null messageLimit and memberLimit when no prior request exists`() = runTest {
         // Given - currentRequest is null (default from setUp)
         whenever(client.queryChannelsInternal(any()))
-            .thenReturn(emptyList<Channel>().asCall())
+            .thenReturn(QueryChannelsResult(channels = emptyList(), predefinedFilter = null).asCall())
 
         // When
         logic.queryFirstPage()
@@ -309,7 +310,7 @@ internal class QueryChannelsLogicTest {
         )
         whenever(queryChannelsState.currentRequest) doReturn MutableStateFlow(priorRequest)
         whenever(client.queryChannelsInternal(any()))
-            .thenReturn(emptyList<Channel>().asCall())
+            .thenReturn(QueryChannelsResult(channels = emptyList(), predefinedFilter = null).asCall())
 
         // When
         logic.queryFirstPage()
@@ -341,7 +342,7 @@ internal class QueryChannelsLogicTest {
             queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
         )
         whenever(client.queryChannelsInternal(any()))
-            .thenReturn(emptyList<Channel>().asCall())
+            .thenReturn(QueryChannelsResult(channels = emptyList(), predefinedFilter = null).asCall())
 
         // When
         predefinedLogic.queryFirstPage()

@@ -1306,11 +1306,7 @@ constructor(
                                 ?: return@let null
                             val sort = it.sort.toSortDomain()
                                 ?: defaultPredefinedFilterSort(filterFields)
-                            PredefinedFilter(
-                                name = it.name,
-                                filter = filter,
-                                sort = sort,
-                            )
+                            PredefinedFilter(filter, sort)
                         },
                     )
                 }

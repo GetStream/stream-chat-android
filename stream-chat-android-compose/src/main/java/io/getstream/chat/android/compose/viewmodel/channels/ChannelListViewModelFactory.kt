@@ -92,6 +92,7 @@ public class ChannelListViewModelFactory internal constructor(
      * @param filterValues Optional values interpolated into the predefined filter template.
      * @param sortValues Optional values interpolated into the predefined sort template.
      */
+    @JvmOverloads
     public constructor(
         chatClient: ChatClient = ChatClient.instance(),
         predefinedFilterName: String,

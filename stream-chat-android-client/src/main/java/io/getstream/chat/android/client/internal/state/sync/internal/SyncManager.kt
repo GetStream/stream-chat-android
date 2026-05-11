@@ -488,7 +488,8 @@ internal class SyncManager(
             .onError {
                 logger.e { "[updateActiveChannels] request failed: $it" }
             }
-            .onSuccessSuspend { foundChannels ->
+            .onSuccessSuspend { queryResult ->
+                val foundChannels = queryResult.channels
                 logger.v { "[updateActiveChannels] request completed; foundChannels.size: ${foundChannels.size}" }
 
                 foundChannels.forEach { channel ->
