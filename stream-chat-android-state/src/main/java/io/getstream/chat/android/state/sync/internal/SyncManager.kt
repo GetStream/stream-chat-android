@@ -78,6 +78,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 
 private const val QUERIES_TO_RETRY = 3
+private const val SYNC_MAX_CIDS = 100
 
 /**
  * This class is responsible to sync messages, reactions and channel data. It tries to sync then, if necessary,
@@ -303,10 +304,11 @@ internal class SyncManager(
         val lastSyncAt = syncState?.lastSyncedAt ?: Date(now())
         val rawLastSyncAt = syncState?.rawLastSyncedAt
         logger.v { "[performSync] lastSyncAt: $lastSyncAt, rawLastSyncAt: $rawLastSyncAt" }
+        val cappedCids = cids.take(SYNC_MAX_CIDS)
         val result = if (rawLastSyncAt != null) {
-            chatClient.getSyncHistory(cids, rawLastSyncAt).await()
+            chatClient.getSyncHistory(cappedCids, rawLastSyncAt).await()
         } else {
-            chatClient.getSyncHistory(cids, lastSyncAt).await()
+            chatClient.getSyncHistory(cappedCids, lastSyncAt).await()
         }
         if (result.isTooManyEventsToSyncError()) {
             logger.e { "[performSync] failed (too many events to sync): $result" }
