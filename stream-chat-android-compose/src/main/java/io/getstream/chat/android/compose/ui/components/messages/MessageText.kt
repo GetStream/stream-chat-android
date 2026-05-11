@@ -30,11 +30,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
 import androidx.compose.ui.input.pointer.PointerEventTimeoutCancellationException
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
@@ -108,13 +110,20 @@ public fun MessageText(
         styledText.getStringAnnotations(0, styledText.lastIndex)
     }
     if (annotations.fastAny(AnnotatedString.Range<String>::isInteractiveTag)) {
+        val haptic = LocalHapticFeedback.current
         ClickableText(
             modifier = modifier
                 .padding(MessageStyling.textPadding)
                 .testTag("Stream_MessageClickableText"),
             text = styledText,
             style = style,
-            onLongPress = { onLongItemClick(message) },
+            onLongPress = {
+                // Match the haptic the cell fires for long-press on non-link characters. The cell
+                // is shielded here because ClickableText consumes the down when the press is on
+                // an interactive character.
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                onLongItemClick(message)
+            },
             isInteractiveAt = annotations::hasInteractiveAt,
         ) { position ->
             handleAnnotationClick(
