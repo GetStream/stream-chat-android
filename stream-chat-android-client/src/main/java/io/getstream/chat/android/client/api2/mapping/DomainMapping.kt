@@ -919,4 +919,19 @@ internal class DomainMapping(
             }
         }
     }
+
+    /**
+     * Computes the default `predefined_filter.sort` the server would apply when no sort was sent.
+     * Mirrors the backend's behaviour: `{ last_updated: -1 }` by default, swapping to
+     * `{ last_message_at: -1 }` when `last_message_at` is referenced as a filter condition.
+     */
+    internal fun defaultPredefinedFilterSort(filterFields: Set<String>): QuerySorter<Channel> {
+        val field = if (FIELD_LAST_MESSAGE_AT in filterFields) FIELD_LAST_MESSAGE_AT else FIELD_LAST_UPDATED
+        return QuerySortByField<Channel>().desc(field)
+    }
+
+    private companion object {
+        private const val FIELD_LAST_MESSAGE_AT = "last_message_at"
+        private const val FIELD_LAST_UPDATED = "last_updated"
+    }
 }
