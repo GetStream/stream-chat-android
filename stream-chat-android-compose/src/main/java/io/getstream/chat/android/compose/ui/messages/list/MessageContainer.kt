@@ -910,7 +910,8 @@ private fun rememberHapticLongClick(
 ): (Message) -> Unit {
     val haptic = LocalHapticFeedback.current
     return remember(haptic, onLongItemClick) {
-        { message ->
+        {
+                message ->
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             onLongItemClick(message)
         }
