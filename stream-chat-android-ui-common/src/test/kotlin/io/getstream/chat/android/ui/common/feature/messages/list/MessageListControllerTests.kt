@@ -36,6 +36,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
@@ -348,9 +349,9 @@ internal class MessageListControllerTests {
     fun `When repetitive markLastMessageRead calls appear only single API call should be sent`() = runTest {
         val chatClient: ChatClient = mock()
         val messages = arrayListOf(
-            randomMessage(id = "1"),
-            randomMessage(id = "2"),
-            randomMessage(id = "3"),
+            randomMessage(id = "1", syncStatus = SyncStatus.COMPLETED),
+            randomMessage(id = "2", syncStatus = SyncStatus.COMPLETED),
+            randomMessage(id = "3", syncStatus = SyncStatus.COMPLETED),
         )
         val messagesState = MutableStateFlow(messages)
         val controller = Fixture(chatClient = chatClient)
@@ -372,6 +373,68 @@ internal class MessageListControllerTests {
         delay(1000)
 
         verify(chatClient, times(1)).markRead(any(), any())
+    }
+
+    @Test
+    fun `When current user's last message is COMPLETED markLastMessageRead should invoke markRead`() = runTest {
+        val chatClient: ChatClient = mock()
+        val messagesState = MutableStateFlow(
+            listOf(randomMessage(id = "1", user = user1, syncStatus = SyncStatus.COMPLETED)),
+        )
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenMarkRead()
+            .givenChannelState(messagesState = messagesState)
+            .get()
+
+        controller.markLastMessageRead()
+        delay(1000)
+
+        verify(chatClient, times(1)).markRead(eq(CHANNEL_TYPE), eq(CHANNEL_ID))
+        controller.lastSeenMessageId `should be equal to` "1"
+    }
+
+    @Test
+    fun `When current user's last message is not COMPLETED markLastMessageRead should not invoke markRead`() = runTest {
+        val chatClient: ChatClient = mock()
+        val messagesState = MutableStateFlow(
+            listOf(randomMessage(id = "1", user = user1, syncStatus = SyncStatus.IN_PROGRESS)),
+        )
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenMarkRead()
+            .givenChannelState(messagesState = messagesState)
+            .get()
+
+        controller.markLastMessageRead()
+        delay(1000)
+
+        verify(chatClient, times(0)).markRead(any(), any())
+        controller.lastSeenMessageId.shouldBeNull()
+    }
+
+    @Test
+    fun `When peer's last message is not COMPLETED markLastMessageRead should still invoke markRead`() = runTest {
+        // syncStatus is local-only and not on the wire. Peer messages inherit the data
+        // class default — the gate must not block them on that.
+        val chatClient: ChatClient = mock()
+        val messagesState = MutableStateFlow(
+            listOf(randomMessage(id = "1", user = user2, syncStatus = SyncStatus.IN_PROGRESS)),
+        )
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenMarkRead()
+            .givenChannelState(messagesState = messagesState)
+            .get()
+
+        controller.markLastMessageRead()
+        delay(1000)
+
+        verify(chatClient, times(1)).markRead(eq(CHANNEL_TYPE), eq(CHANNEL_ID))
+        controller.lastSeenMessageId `should be equal to` "1"
     }
 
     @Test
@@ -1268,12 +1331,18 @@ internal class MessageListControllerTests {
 
         private fun nowDate() = Date(testCoroutines.dispatcher.scheduler.currentTime)
 
-        private fun nowMessage(author: User, type: String, text: String = randomString()): Message {
+        private fun nowMessage(
+            author: User,
+            type: String,
+            text: String = randomString(),
+            syncStatus: SyncStatus = SyncStatus.COMPLETED,
+        ): Message {
             val nowDate = nowDate()
             return randomMessage(
                 user = author,
                 type = type,
                 text = text,
+                syncStatus = syncStatus,
                 createdAt = nowDate,
                 updatedAt = nowDate,
                 deletedAt = null,
