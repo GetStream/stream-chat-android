@@ -88,8 +88,24 @@ internal fun MessageComposerAttachmentMediaItem(
                 .align(Alignment.TopEnd)
                 .testTag("Stream_MessageComposerAttachmentCancelIcon"),
             onClick = { onAttachmentRemoved(attachment) },
-            contentDescription = stringResource(R.string.stream_compose_remove_attachment),
+            contentDescription = mediaAttachmentRemoveDescription(attachment),
         )
+    }
+}
+
+@Composable
+private fun mediaAttachmentRemoveDescription(attachment: Attachment): String {
+    val displayName = attachment.title ?: attachment.name
+    val isVideo = attachment.type == AttachmentType.VIDEO
+    return when {
+        isVideo && !displayName.isNullOrBlank() ->
+            stringResource(R.string.stream_compose_remove_attachment_video_named, displayName)
+        isVideo ->
+            stringResource(R.string.stream_compose_remove_attachment_video)
+        !displayName.isNullOrBlank() ->
+            stringResource(R.string.stream_compose_remove_attachment_photo_named, displayName)
+        else ->
+            stringResource(R.string.stream_compose_remove_attachment_photo)
     }
 }
 

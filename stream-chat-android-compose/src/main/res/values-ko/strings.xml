@@ -237,7 +237,13 @@
   <string name="stream_compose_reactions_you">"나"</string>
   <string name="stream_compose_recent_files">"최근 파일"</string>
   <string name="stream_compose_remaining_media_attachments_count">"+%1$d"</string>
-  <string name="stream_compose_remove_attachment">"첨부파일 삭제"</string>
+  <string name="stream_compose_remove_attachment_photo">"사진 삭제"</string>
+  <string name="stream_compose_remove_attachment_photo_named">"사진 %1$s 삭제"</string>
+  <string name="stream_compose_remove_attachment_video">"동영상 삭제"</string>
+  <string name="stream_compose_remove_attachment_video_named">"동영상 %1$s 삭제"</string>
+  <string name="stream_compose_remove_attachment_file">"파일 삭제"</string>
+  <string name="stream_compose_remove_attachment_file_named">"파일 %1$s 삭제"</string>
+  <string name="stream_compose_remove_attachment_voice_message">"음성 메시지 삭제"</string>
   <string name="stream_compose_replied_to_thread">"스레드에 답장했습니다"</string>
   <string name="stream_compose_reply">"답장"</string>
   <string name="stream_compose_resend_message">"재전송"</string>
