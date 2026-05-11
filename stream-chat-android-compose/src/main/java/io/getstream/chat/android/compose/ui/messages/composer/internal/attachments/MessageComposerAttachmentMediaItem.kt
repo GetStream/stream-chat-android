@@ -100,10 +100,13 @@ private fun mediaAttachmentRemoveDescription(attachment: Attachment): String {
     return when {
         isVideo && !displayName.isNullOrBlank() ->
             stringResource(R.string.stream_compose_remove_attachment_video_named, displayName)
+
         isVideo ->
             stringResource(R.string.stream_compose_remove_attachment_video)
+
         !displayName.isNullOrBlank() ->
             stringResource(R.string.stream_compose_remove_attachment_photo_named, displayName)
+
         else ->
             stringResource(R.string.stream_compose_remove_attachment_photo)
     }
@@ -121,14 +124,22 @@ private fun MessageComposerAttachmentImageItemPreview() {
 
 @Composable
 internal fun MessageComposerAttachmentImageItem() {
-    val previewHandler = AsyncImagePreviewHandler {
-        ColorImage(color = Color.Green.toArgb(), width = 200, height = 150)
+    MessageComposerAttachmentItem(attachment = PreviewAttachmentData.attachmentImage1)
+}
+
+@Preview
+@Composable
+private fun MessageComposerAttachmentImageItemUnnamedPreview() {
+    ChatTheme {
+        MessageComposerAttachmentImageItemUnnamed()
     }
-    CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
-        MessageComposerAttachmentMediaItem(
-            attachment = PreviewAttachmentData.attachmentImage1,
-        )
-    }
+}
+
+@Composable
+internal fun MessageComposerAttachmentImageItemUnnamed() {
+    MessageComposerAttachmentItem(
+        attachment = PreviewAttachmentData.attachmentImage1.copy(name = null),
+    )
 }
 
 @Preview
@@ -141,12 +152,32 @@ private fun MessageComposerAttachmentVideoItemPreview() {
 
 @Composable
 internal fun MessageComposerAttachmentVideoItem() {
+    MessageComposerAttachmentItem(attachment = PreviewAttachmentData.attachmentVideo1)
+}
+
+@Preview
+@Composable
+private fun MessageComposerAttachmentVideoItemUnnamedPreview() {
+    ChatTheme {
+        MessageComposerAttachmentVideoItemUnnamed()
+    }
+}
+
+@Composable
+internal fun MessageComposerAttachmentVideoItemUnnamed() {
+    MessageComposerAttachmentItem(
+        attachment = PreviewAttachmentData.attachmentVideo1.copy(name = null),
+    )
+}
+
+@Composable
+private fun MessageComposerAttachmentItem(attachment: Attachment) {
     val previewHandler = AsyncImagePreviewHandler {
         ColorImage(color = Color.Green.toArgb(), width = 200, height = 150)
     }
     CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
         MessageComposerAttachmentMediaItem(
-            attachment = PreviewAttachmentData.attachmentVideo1,
+            attachment = attachment,
         )
     }
 }

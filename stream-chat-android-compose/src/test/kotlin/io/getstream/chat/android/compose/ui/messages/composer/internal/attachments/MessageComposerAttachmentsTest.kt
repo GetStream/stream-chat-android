@@ -66,4 +66,25 @@ internal class MessageComposerAttachmentsTest : PaparazziComposeTest {
             MessageComposerAttachmentFileItem()
         }
     }
+
+    @Test
+    fun `image attachment item without title or name`() {
+        snapshotWithDarkModeRow {
+            MessageComposerAttachmentImageItemUnnamed()
+        }
+    }
+
+    @Test
+    fun `video attachment item without title or name`() {
+        snapshotWithDarkModeRow {
+            MessageComposerAttachmentVideoItemUnnamed()
+        }
+    }
+
+    @Test
+    fun `file attachment item without title or name`() {
+        snapshotWithDarkModeRow {
+            MessageComposerAttachmentFileItemUnnamed()
+        }
+    }
 }

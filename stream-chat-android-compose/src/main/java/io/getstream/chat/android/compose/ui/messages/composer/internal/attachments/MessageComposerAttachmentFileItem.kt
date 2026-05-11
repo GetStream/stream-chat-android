@@ -139,3 +139,18 @@ internal fun MessageComposerAttachmentFileItem() {
         attachment = PreviewAttachmentData.attachmentFile1,
     )
 }
+
+@Preview
+@Composable
+private fun MessageComposerAttachmentFileItemUnnamedPreview() {
+    ChatTheme {
+        MessageComposerAttachmentFileItemUnnamed()
+    }
+}
+
+@Composable
+internal fun MessageComposerAttachmentFileItemUnnamed() {
+    MessageComposerAttachmentFileItem(
+        attachment = PreviewAttachmentData.attachmentFile1.copy(name = null),
+    )
+}
