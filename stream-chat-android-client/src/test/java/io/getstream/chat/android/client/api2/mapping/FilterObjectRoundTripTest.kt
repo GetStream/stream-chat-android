@@ -30,22 +30,22 @@ import org.junit.jupiter.params.provider.MethodSource
 internal class FilterObjectRoundTripTest {
 
     /**
-     * In-memory round-trip: FilterObject -> toMap() -> toFilterDomain()
+     * In-memory round-trip: FilterObject -> toMap() -> toFilterDomainWithFields()
      *
      * [roundTripArguments]
      */
     @ParameterizedTest
     @MethodSource("roundTripArguments")
-    fun `FilterObject survives in-memory round-trip through toMap and toFilterDomain`(
+    fun `FilterObject survives in-memory round-trip through toMap and toFilterDomainWithFields`(
         original: FilterObject,
     ) {
         val map = original.toMap()
-        val restored = map.toFilterDomain()
+        val restored = map.toFilterDomainWithFields()?.first
         assertEquals(original, restored)
     }
 
     /**
-     * JSON round-trip: FilterObject -> toMap() -> JSON string -> Map -> toFilterDomain()
+     * JSON round-trip: FilterObject -> toMap() -> JSON string -> Map -> toFilterDomainWithFields()
      * This verifies that Moshi's Double-for-Int quirk is properly handled by normalizeValue.
      *
      * [roundTripArguments]
@@ -62,7 +62,7 @@ internal class FilterObjectRoundTripTest {
         val map = original.toMap()
         val json = adapter.toJson(map)
         val deserializedMap = adapter.fromJson(json)
-        val restored = deserializedMap.toFilterDomain()
+        val restored = deserializedMap.toFilterDomainWithFields()?.first
         assertEquals(original, restored)
     }
 

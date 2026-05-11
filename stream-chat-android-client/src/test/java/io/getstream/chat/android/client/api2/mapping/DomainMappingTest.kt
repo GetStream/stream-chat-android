@@ -1001,6 +1001,27 @@ internal class DomainMappingTest {
         assertEquals(expected, result)
     }
 
+    @Test
+    fun `defaultPredefinedFilterSort falls back to last_updated DESC when last_message_at is not filtered`() {
+        val sut = Fixture().get()
+        val result = with(sut) { defaultPredefinedFilterSort(setOf("type", "member_count")) }
+        assertEquals(descByName<Channel>("last_updated"), result)
+    }
+
+    @Test
+    fun `defaultPredefinedFilterSort falls back to last_updated DESC for an empty filter field set`() {
+        val sut = Fixture().get()
+        val result = with(sut) { defaultPredefinedFilterSort(emptySet()) }
+        assertEquals(descByName<Channel>("last_updated"), result)
+    }
+
+    @Test
+    fun `defaultPredefinedFilterSort uses last_message_at DESC when last_message_at is filtered`() {
+        val sut = Fixture().get()
+        val result = with(sut) { defaultPredefinedFilterSort(setOf("type", "last_message_at")) }
+        assertEquals(descByName<Channel>("last_message_at"), result)
+    }
+
     companion object {
         @JvmStatic
         fun toSortDomainArguments() = listOf(

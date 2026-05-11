@@ -21,18 +21,27 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.NeutralFilterObject
 
 /**
- * Parses a [Map] (as deserialized by Moshi from server JSON) into a [FilterObject].
+ * Parses a [Map] (as deserialized by Moshi from server JSON) into a [FilterObject], and also
+ * returns the set of field names referenced by the filter (e.g. `last_message_at`,
+ * `member_count`). Field names are collected during the same recursive walk that builds the
+ * [FilterObject], so callers don't need a second pass over the parsed tree.
+ *
+ * Logical operators (`$and`/`$or`/`$nor`) and the `distinct`/`members` pair do not contribute to
+ * the field set — only actual filter-field keys do.
+ *
  * This is the reverse of [io.getstream.chat.android.client.parser.FilterObject.toMap].
  *
  * Returns `null` if the map is `null` or cannot be parsed.
  */
-internal fun Map<String, Any>?.toFilterDomain(): FilterObject? {
+internal fun Map<String, Any>?.toFilterDomainWithFields(): Pair<FilterObject, Set<String>>? {
     if (this == null) return null
-    return parseFilterMap(this)
+    val fields = mutableSetOf<String>()
+    val filter = parseFilterMap(this, fields) ?: return null
+    return filter to fields
 }
 
 @Suppress("ComplexMethod", "SpreadOperator")
-private fun parseFilterMap(map: Map<String, Any>): FilterObject? {
+private fun parseFilterMap(map: Map<String, Any>, fields: MutableSet<String>): FilterObject? {
     if (map.isEmpty()) return NeutralFilterObject
 
     if (map.size == 2 && map.containsKey(KEY_DISTINCT) && map.containsKey(KEY_MEMBERS)) {
@@ -42,39 +51,41 @@ private fun parseFilterMap(map: Map<String, Any>): FilterObject? {
 
     if (map.size == 1) {
         val (key, value) = map.entries.first()
-        return parseSingleEntry(key, value)
+        return parseSingleEntry(key, value, fields)
     }
 
     // Multi-key map: implicit AND
-    val filters = map.entries.mapNotNull { (key, value) -> parseSingleEntry(key, value) }
+    val filters = map.entries.mapNotNull { (key, value) -> parseSingleEntry(key, value, fields) }
     if (filters.isEmpty()) return null
     if (filters.size == 1) return filters.first()
     return Filters.and(*filters.toTypedArray())
 }
 
 @Suppress("SpreadOperator")
-private fun parseSingleEntry(key: String, value: Any): FilterObject? = when (key) {
-    KEY_AND -> parseLogicalOperator(value) { Filters.and(*it) }
-    KEY_OR -> parseLogicalOperator(value) { Filters.or(*it) }
-    KEY_NOR -> parseLogicalOperator(value) { Filters.nor(*it) }
-    else -> parseFieldFilter(key, value)
+private fun parseSingleEntry(key: String, value: Any, fields: MutableSet<String>): FilterObject? = when (key) {
+    KEY_AND -> parseLogicalOperator(value, fields) { Filters.and(*it) }
+    KEY_OR -> parseLogicalOperator(value, fields) { Filters.or(*it) }
+    KEY_NOR -> parseLogicalOperator(value, fields) { Filters.nor(*it) }
+    else -> parseFieldFilter(key, value, fields)
 }
 
 @Suppress("UNCHECKED_CAST")
 private fun parseLogicalOperator(
     value: Any,
+    fields: MutableSet<String>,
     factory: (Array<FilterObject>) -> FilterObject,
 ): FilterObject? {
     val list = value as? List<*> ?: return null
     val filters = list.mapNotNull { item ->
-        (item as? Map<String, Any>)?.let(::parseFilterMap)
+        (item as? Map<String, Any>)?.let { parseFilterMap(it, fields) }
     }
     if (filters.isEmpty()) return null
     return factory(filters.toTypedArray())
 }
 
 @Suppress("ComplexMethod", "DEPRECATION")
-private fun parseFieldFilter(fieldName: String, value: Any): FilterObject? {
+private fun parseFieldFilter(fieldName: String, value: Any, fields: MutableSet<String>): FilterObject? {
+    fields.add(fieldName)
     if (value !is Map<*, *>) {
         return Filters.eq(fieldName, normalizeValue(value))
     }
