@@ -261,7 +261,13 @@
   <string name="stream_compose_reactions_you">"आप"</string>
   <string name="stream_compose_recent_files">"हाल ही की फाइलें"</string>
   <string name="stream_compose_remaining_media_attachments_count">"+%1$d"</string>
-  <string name="stream_compose_remove_attachment">"अटैचमेंट हटाएँ"</string>
+  <string name="stream_compose_remove_attachment_photo">"फ़ोटो हटाएँ"</string>
+  <string name="stream_compose_remove_attachment_photo_named">"फ़ोटो %1$s हटाएँ"</string>
+  <string name="stream_compose_remove_attachment_video">"वीडियो हटाएँ"</string>
+  <string name="stream_compose_remove_attachment_video_named">"वीडियो %1$s हटाएँ"</string>
+  <string name="stream_compose_remove_attachment_file">"फ़ाइल हटाएँ"</string>
+  <string name="stream_compose_remove_attachment_file_named">"फ़ाइल %1$s हटाएँ"</string>
+  <string name="stream_compose_remove_attachment_voice_message">"वॉइस मैसेज हटाएँ"</string>
   <string name="stream_compose_replied_to_thread">"एक थ्रेड को जवाब दिया"</string>
   <string name="stream_compose_reply">"जवाब दें"</string>
   <string name="stream_compose_resend_message">"पुनः भेजें"</string>

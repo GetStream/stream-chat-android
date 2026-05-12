@@ -70,6 +70,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.MessageStyling.PollStyle
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
+import io.getstream.chat.android.compose.ui.util.passiveRipple
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
@@ -227,7 +228,11 @@ private fun PollMessageContent(
         )
     }
 
-    Column(modifier = Modifier.padding(StreamTokens.spacingMd)) {
+    Column(
+        modifier = Modifier
+            .passiveRipple()
+            .padding(StreamTokens.spacingMd),
+    ) {
         Text(
             text = poll.name,
             style = typography.bodyEmphasis,

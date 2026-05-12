@@ -205,7 +205,13 @@
   <string name="stream_compose_reactions_you">"Anda"</string>
   <string name="stream_compose_recent_files">"File Terbaru"</string>
   <string name="stream_compose_remaining_media_attachments_count">"+%1$d"</string>
-  <string name="stream_compose_remove_attachment">"Hapus lampiran"</string>
+  <string name="stream_compose_remove_attachment_photo">"Hapus foto"</string>
+  <string name="stream_compose_remove_attachment_photo_named">"Hapus foto %1$s"</string>
+  <string name="stream_compose_remove_attachment_video">"Hapus video"</string>
+  <string name="stream_compose_remove_attachment_video_named">"Hapus video %1$s"</string>
+  <string name="stream_compose_remove_attachment_file">"Hapus file"</string>
+  <string name="stream_compose_remove_attachment_file_named">"Hapus file %1$s"</string>
+  <string name="stream_compose_remove_attachment_voice_message">"Hapus pesan suara"</string>
   <string name="stream_compose_replied_to_thread">"Membalas di utas"</string>
   <string name="stream_compose_reply">"Balas"</string>
   <string name="stream_compose_resend_message">"Kirim ulang"</string>

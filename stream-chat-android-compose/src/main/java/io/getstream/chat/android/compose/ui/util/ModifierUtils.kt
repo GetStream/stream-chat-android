@@ -17,10 +17,19 @@
 package io.getstream.chat.android.compose.ui.util
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.material3.ripple
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -29,6 +38,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 
 /**
  * Adds drag pointer input to the modifier.
@@ -97,6 +107,31 @@ internal inline fun Modifier.applyIf(condition: Boolean, block: Modifier.() -> M
 
 internal inline fun <T : Any> Modifier.ifNotNull(value: T?, block: Modifier.(T) -> Modifier) =
     if (value != null) this.block(value) else this
+
+/**
+ * Renders a bounded position-aware ripple on the decorated layout in response to touch without
+ * claiming the gesture. Unlike `Modifier.combinedClickable`, this modifier observes presses but
+ * does not consume them, so an outer clickable ancestor still receives the tap and remains the
+ * single owner of the click logic. Presses already consumed by an inner clickable descendant are
+ * ignored, so the inner region's own ripple is the only one that animates in that area.
+ *
+ * Useful when you need pure visual press feedback on a layout that delegates click handling to a
+ * surrounding (or inner) clickable.
+ */
+internal fun Modifier.passiveRipple(): Modifier = composed {
+    val source = remember(::MutableInteractionSource)
+    val scope = rememberCoroutineScope()
+    pointerInput(Unit) {
+        awaitEachGesture {
+            val down = awaitFirstDown()
+            val press = PressInteraction.Press(down.position)
+            scope.launch { source.emit(press) }
+            val up = waitForUpOrCancellation()
+            val finish = if (up != null) PressInteraction.Release(press) else PressInteraction.Cancel(press)
+            scope.launch { source.emit(finish) }
+        }
+    }.indication(source, ripple())
+}
 
 internal fun Modifier.bottomBorder(color: Color, width: Dp = 1.dp): Modifier =
     verticalBorder(color, width, yPosition = { size.height - it / 2 })
