@@ -71,6 +71,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
 
+@Suppress("LargeClass")
 @ExperimentalCoroutinesApi
 @ExtendWith(TestCoroutineExtension::class)
 internal class ChannelListViewModelTest {
@@ -164,7 +165,7 @@ internal class ChannelListViewModelTest {
     fun `Given channel list in content state with a muted channel When unmuting the channel Should unmute the channel`() =
         runTest {
             val channelMute = ChannelMute(
-                user = User(id = "Jc"),
+                user = User(id = currentUserId),
                 channel = channel1,
                 createdAt = Date(),
                 updatedAt = Date(),
@@ -586,7 +587,7 @@ internal class ChannelListViewModelTest {
         assertEquals("name", autocompleteByName.fieldName)
         assertEquals("Search query", autocompleteByName.value)
         assertEquals("members", membersIn.fieldName)
-        assertTrue("Jc" in membersIn.values)
+        assertTrue(currentUserId in membersIn.values)
     }
 
     @Test
@@ -655,6 +656,119 @@ internal class ChannelListViewModelTest {
         verify(chatClient, times(1)).queryChannels(any())
     }
 
+    @Test
+    fun `Given predefined filter When searching messages Should scope channelFilter to current user membership only`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1)),
+                    loading = false,
+                )
+                .givenChannelMutes()
+                .givenPredefined(name = "vip_filter")
+                .givenSearchMessagesResult(SearchMessagesResult())
+                .givenRepositorySelectChannels()
+                .get(this)
+
+            viewModel.setSearchQuery(SearchQuery.Messages("hello"))
+            advanceUntilIdle()
+
+            val channelFilterCaptor = argumentCaptor<FilterObject>()
+            verify(chatClient).searchMessages(
+                channelFilter = channelFilterCaptor.capture(),
+                messageFilter = any(),
+                offset = anyOrNull(),
+                limit = anyOrNull(),
+                next = anyOrNull(),
+                sort = anyOrNull(),
+            )
+            val captured = channelFilterCaptor.firstValue as InFilterObject
+            assertEquals("members", captured.fieldName)
+            assertEquals(setOf(currentUserId), captured.values)
+        }
+
+    @Test
+    fun `Given predefined filter and active message search When loading more Should reuse member-only channelFilter`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val firstPage = SearchMessagesResult(
+                messages = listOf(randomMessage(cid = "messaging:channel1")),
+                next = "cursor_page2",
+            )
+            val secondPage = SearchMessagesResult(
+                messages = listOf(randomMessage(cid = "messaging:channel1")),
+                next = null,
+            )
+            whenever(
+                chatClient.searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()),
+            ).doReturn(firstPage.asCall(), secondPage.asCall())
+
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1)),
+                    loading = false,
+                )
+                .givenChannelMutes()
+                .givenPredefined(name = "vip_filter")
+                .givenRepositorySelectChannels(listOf(channel1))
+                .get(this)
+
+            viewModel.setSearchQuery(SearchQuery.Messages("hello"))
+            advanceUntilIdle()
+            viewModel.loadMore()
+            advanceUntilIdle()
+
+            val channelFilterCaptor = argumentCaptor<FilterObject>()
+            verify(chatClient, times(2)).searchMessages(
+                channelFilter = channelFilterCaptor.capture(),
+                messageFilter = any(),
+                offset = anyOrNull(),
+                limit = anyOrNull(),
+                next = anyOrNull(),
+                sort = anyOrNull(),
+            )
+            channelFilterCaptor.allValues.forEach { filter ->
+                val asIn = filter as InFilterObject
+                assertEquals("members", asIn.fieldName)
+                assertEquals(setOf(currentUserId), asIn.values)
+            }
+        }
+
+    @Test
+    fun `Given standard filter When searching messages Should pass the standard filter as channelFilter`() = runTest {
+        val chatClient: ChatClient = mock()
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1)),
+                loading = false,
+            )
+            .givenChannelMutes()
+            .givenSearchMessagesResult(SearchMessagesResult())
+            .givenRepositorySelectChannels()
+            .get(this)
+
+        viewModel.setSearchQuery(SearchQuery.Messages("hello"))
+        advanceUntilIdle()
+
+        val channelFilterCaptor = argumentCaptor<FilterObject>()
+        verify(chatClient).searchMessages(
+            channelFilter = channelFilterCaptor.capture(),
+            messageFilter = any(),
+            offset = anyOrNull(),
+            limit = anyOrNull(),
+            next = anyOrNull(),
+            sort = anyOrNull(),
+        )
+        assertEquals(queryFilter, channelFilterCaptor.firstValue)
+    }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelClient: ChannelClient = mock(),
@@ -685,7 +799,7 @@ internal class ChannelListViewModelTest {
             whenever(globalState.channelDraftMessages) doReturn MutableStateFlow(emptyMap())
         }
 
-        fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
+        fun givenCurrentUser(currentUser: User = User(id = currentUserId)) = apply {
             whenever(clientState.user) doReturn MutableStateFlow(currentUser)
             whenever(clientState.initializationState) doReturn MutableStateFlow(InitializationState.COMPLETE)
             whenever(chatClient.awaitInitializationState(any())) doReturn InitializationState.COMPLETE
@@ -793,9 +907,11 @@ internal class ChannelListViewModelTest {
 
     companion object {
 
+        private const val currentUserId = "user-id"
+
         private val queryFilter = Filters.and(
             Filters.eq("type", "messaging"),
-            Filters.`in`("members", "jc"),
+            Filters.`in`("members", currentUserId),
         )
         private val querySort = QuerySortByField.descByName<Channel>("lastUpdated")
 
