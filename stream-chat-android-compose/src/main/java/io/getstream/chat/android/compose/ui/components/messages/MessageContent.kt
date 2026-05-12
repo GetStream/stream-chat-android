@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -32,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -192,12 +194,14 @@ internal fun DefaultMessageRegularContent(
                     message = quotedMessage,
                     currentUser = currentUser,
                     replyMessage = message,
-                    modifier = Modifier.combinedClickable(
-                        interactionSource = remember(::MutableInteractionSource),
-                        indication = ripple(),
-                        onLongClick = { onLongItemClick(message) },
-                        onClick = { onQuotedMessageClick(quotedMessage) },
-                    ),
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(StreamTokens.radiusLg))
+                        .combinedClickable(
+                            interactionSource = remember(::MutableInteractionSource),
+                            indication = ripple(),
+                            onLongClick = { onLongItemClick(message) },
+                            onClick = { onQuotedMessageClick(quotedMessage) },
+                        ),
                 ),
             )
         }
