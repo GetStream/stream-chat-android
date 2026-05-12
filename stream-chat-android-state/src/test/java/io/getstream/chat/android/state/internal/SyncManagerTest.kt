@@ -73,6 +73,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.times
@@ -224,6 +225,27 @@ internal class SyncManagerTest {
             /* Then */
             assertEquals(listOf(mockedChatEvent), awaitItem())
         }
+    }
+
+    @Test
+    fun `performSync caps channel_cids at 100`() = runTest(testDispatcher) {
+        /* Given */
+        _syncState.value = null
+        whenever(repositoryFacade.selectSyncState(any())) doReturn null
+        val cids = (1..150).map { "messaging:channel-$it" }
+        val expectedCids = cids.take(100)
+
+        whenever(chatClient.getSyncHistory(any(), any<Date>())) doReturn TestCall(
+            Result.Success(emptyList()),
+        )
+
+        val syncManager = buildSyncManager()
+
+        /* When */
+        syncManager.performSync(cids = cids)
+
+        /* Then */
+        verify(chatClient).getSyncHistory(eq(expectedCids), any<Date>())
     }
 
     @Test
