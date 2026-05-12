@@ -261,7 +261,13 @@
   <string name="stream_compose_reactions_you">"Tu"</string>
   <string name="stream_compose_recent_files">"File recenti"</string>
   <string name="stream_compose_remaining_media_attachments_count">"+%1$d"</string>
-  <string name="stream_compose_remove_attachment">"Rimuovi allegato"</string>
+  <string name="stream_compose_remove_attachment_photo">"Rimuovi foto"</string>
+  <string name="stream_compose_remove_attachment_photo_named">"Rimuovi foto %1$s"</string>
+  <string name="stream_compose_remove_attachment_video">"Rimuovi video"</string>
+  <string name="stream_compose_remove_attachment_video_named">"Rimuovi video %1$s"</string>
+  <string name="stream_compose_remove_attachment_file">"Rimuovi file"</string>
+  <string name="stream_compose_remove_attachment_file_named">"Rimuovi file %1$s"</string>
+  <string name="stream_compose_remove_attachment_voice_message">"Rimuovi messaggio vocale"</string>
   <string name="stream_compose_replied_to_thread">"Ha risposto in un thread"</string>
   <string name="stream_compose_reply">"Rispondi"</string>
   <string name="stream_compose_resend_message">"Reinvia"</string>
