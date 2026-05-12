@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -111,7 +112,7 @@ public fun FileAttachmentContent(
                                     .background(color, fileAttachmentShape)
                             }
                             .combinedClickable(
-                                indication = null,
+                                indication = ripple(),
                                 interactionSource = remember { MutableInteractionSource() },
                                 onClick = { onItemClick(previewHandlers, attachment) },
                                 onLongClick = { attachmentState.onLongItemClick(message) },
