@@ -189,8 +189,8 @@
   <string name="stream_compose_message_list_show_translation">"Mostra traduzione"</string>
   <string name="stream_compose_message_list_thread_footnote_thread_replies">"%d risposte"</string>
   <string name="stream_compose_message_list_thread_footnote_thread_reply">"%d risposta"</string>
+  <string name="stream_compose_message_list_unread_separator">"%d messaggi non letti"</string>
   <string name="stream_compose_message_list_unsupported_attachment">"Allegato non supportato"</string>
-  <string name="stream_compose_message_list_unread_separator">"Messaggi non letti"</string>
   <string name="stream_compose_message_list_view">"Visualizza"</string>
   <string name="stream_compose_message_list_view_original">"Vedi originale"</string>
   <string name="stream_compose_message_list_you">"Tu"</string>

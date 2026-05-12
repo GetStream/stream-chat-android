@@ -133,23 +133,22 @@ internal fun ContextualMenuDivider(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 private fun ContextualMenuPreview() {
-    ChatTheme {
-        ContextualMenu(
-            Modifier
-                .padding(32.dp)
-                .width(IntrinsicSize.Min),
-        ) {
-            MenuItemPreview(enabled = true, destructive = false)
-            MenuItemPreview(enabled = false, destructive = false)
-            MenuItemPreview(enabled = false, destructive = true)
-            ContextualMenuDivider()
-            MenuItemPreview(enabled = true, destructive = true)
-        }
+    ChatTheme { PopulatedContextualMenu() }
+}
+
+@Composable
+internal fun PopulatedContextualMenu() {
+    ContextualMenu(Modifier.width(IntrinsicSize.Min)) {
+        MenuItem(enabled = true, destructive = false)
+        MenuItem(enabled = false, destructive = false)
+        MenuItem(enabled = false, destructive = true)
+        ContextualMenuDivider()
+        MenuItem(enabled = true, destructive = true)
     }
 }
 
 @Composable
-private fun MenuItemPreview(enabled: Boolean, destructive: Boolean) {
+private fun MenuItem(enabled: Boolean, destructive: Boolean) {
     ContextualMenuItem(
         label = "{{ label }}",
         destructive = destructive,

@@ -1283,6 +1283,15 @@ public data class MessageComposerAudioRecordingHintParams(
 )
 
 /**
+ * Parameters for [ChatComponentFactory.MessageComposerSnackbar].
+ *
+ * @param data The snackbar data containing the message, variant, and optional action.
+ */
+public data class MessageComposerSnackbarParams(
+    val data: SnackbarData,
+)
+
+/**
  * Parameters for [ChatComponentFactory.Avatar].
  *
  * @param imageUrl The URL of the image to display.

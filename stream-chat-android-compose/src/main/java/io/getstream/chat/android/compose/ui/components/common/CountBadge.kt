@@ -99,12 +99,18 @@ internal data class CountBadgeSize(
 
 @Preview
 @Composable
-private fun CountBadgePreview() {
-    ChatTheme {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            CountBadgeSize.entries.forEach { size ->
-                CountBadge(text = "+99", size = size)
-            }
+private fun CountBadgeSizesPreview() {
+    ChatTheme { CountBadgeSizes() }
+}
+
+@Composable
+internal fun CountBadgeSizes() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        CountBadgeSize.entries.forEach { size ->
+            CountBadge(text = "+99", size = size)
         }
     }
 }

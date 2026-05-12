@@ -31,7 +31,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -367,9 +366,7 @@ internal fun DefaultBottomBarContent(
 
     Column {
         MessageComposer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
+            modifier = Modifier.fillMaxWidth(),
             viewModel = composerViewModel,
             isAttachmentPickerVisible = attachmentsPickerViewModel.isPickerVisible,
             onAttachmentsClick = attachmentsPickerViewModel::togglePickerVisibility,
