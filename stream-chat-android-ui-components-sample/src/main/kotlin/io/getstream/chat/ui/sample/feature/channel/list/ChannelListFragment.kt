@@ -63,7 +63,7 @@ class ChannelListFragment : Fragment() {
      * QuerySortByField
      *     .descByName<Channel>("pinned_at")
      *     .descByName("last_updated")
-     * ```     * ```
+     * ```
      */
     private val viewModel: ChannelListViewModel by viewModels {
         val user = App.instance.userRepository.getUser()
