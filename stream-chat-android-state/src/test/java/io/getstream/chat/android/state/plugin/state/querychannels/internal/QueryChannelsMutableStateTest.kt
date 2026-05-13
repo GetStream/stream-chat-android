@@ -47,6 +47,8 @@ internal class QueryChannelsMutableStateTest {
 
     private val filter = Filters.eq("type", "messaging")
     private val sort = QuerySortByField.descByName<Channel>("last_message_at")
+    private val identifier = io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
+        .Standard(filter, sort)
     private val latestUsers = MutableStateFlow<Map<String, User>>(emptyMap())
     private val activeLiveLocations = MutableStateFlow<List<Location>>(emptyList())
 
@@ -55,8 +57,7 @@ internal class QueryChannelsMutableStateTest {
     @BeforeEach
     fun setUp() {
         state = QueryChannelsMutableState(
-            filter = filter,
-            sort = sort,
+            identifier = identifier,
             scope = testCoroutines.scope,
             latestUsers = latestUsers,
             activeLiveLocations = activeLiveLocations,

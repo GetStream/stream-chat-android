@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.persistance.repository
 
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
@@ -34,17 +35,22 @@ public interface QueryChannelsRepository {
     public suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec)
 
     /**
+     * Selects the spec stored under [identifier].
+     */
+    public suspend fun selectBy(identifier: QueryChannelsIdentifier): QueryChannelsSpec?
+
+    /**
      * Selects by a filter and query sort.
      *
      * @param filter [FilterObject]
      * @param querySort [QuerySorter]
-     * @param groupKey Optional stable key that overrides the filter+sort hash for lookup.
      */
-    public suspend fun selectBy(
-        filter: FilterObject,
-        querySort: QuerySorter<Channel>,
-        groupKey: String? = null,
-    ): QueryChannelsSpec?
+    @Deprecated(
+        message = "Use selectBy(identifier) instead.",
+        replaceWith = ReplaceWith("selectBy(QueryChannelsIdentifier.Standard(filter, querySort))"),
+    )
+    public suspend fun selectBy(filter: FilterObject, querySort: QuerySorter<Channel>): QueryChannelsSpec? =
+        selectBy(QueryChannelsIdentifier.Standard(filter, querySort))
 
     /**
      * Clear QueryChannels of this repository.

@@ -56,6 +56,7 @@ import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.GroupedChannels
+import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
@@ -429,6 +430,7 @@ public interface Plugin :
     override suspend fun onQueryGroupedChannelsResult(
         result: Result<GroupedChannels>,
         limit: Int?,
+        groups: Map<String, GroupedChannelsGroupQuery>?,
         watch: Boolean,
         presence: Boolean,
     ) {

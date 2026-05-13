@@ -16,67 +16,192 @@
 
 package io.getstream.chat.android.state.plugin.listener.internal
 
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GroupedChannelsGroup
+import io.getstream.chat.android.models.GroupedChannelsGroupQuery
+import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.result.Error
 import io.getstream.result.Result
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doNothing
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 internal class QueryGroupedChannelsListenerStateTest {
 
+    private val queryChannelsLogic: QueryChannelsLogic = mock()
+    private val logic: LogicRegistry = mock {
+        on(it.queryChannels(any<QueryChannelsIdentifier>())) doReturn queryChannelsLogic
+    }
     private val globalState: MutableGlobalState = mock()
-    private val listener = QueryGroupedChannelsListenerState(globalState)
+    private val listener = QueryGroupedChannelsListenerState(logic, globalState)
 
     @Test
-    fun `when result is successful, grouped unread channels should be set on global state`() = runTest {
+    fun `successful result merges returned unread counts into existing global state`() = runTest {
         // given
+        whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(
+            mapOf("direct" to 4, "support" to 1),
+        )
         doNothing().`when`(globalState).setGroupedUnreadChannels(any())
         val result = Result.Success(
             value = GroupedChannels(
                 groups = mapOf(
-                    "direct" to GroupedChannelsGroup(groupKey = "direct", channels = emptyList(), unreadChannels = 3),
-                    "support" to GroupedChannelsGroup(groupKey = "support", channels = emptyList(), unreadChannels = 1),
+                    "support" to GroupedChannelsGroup(
+                        groupKey = "support",
+                        channels = emptyList(),
+                        unreadChannels = 7,
+                        next = null,
+                        prev = null,
+                    ),
                 ),
             ),
         )
         // when
-        listener.onQueryGroupedChannelsResult(result, limit = null, watch = false, presence = false)
-        // then
-        verify(globalState, times(1)).setGroupedUnreadChannels(mapOf("direct" to 3, "support" to 1))
+        listener.onQueryGroupedChannelsResult(
+            result = result,
+            limit = null,
+            groups = mapOf("support" to GroupedChannelsGroupQuery(next = "cursor")),
+            watch = false,
+            presence = false,
+        )
+        // then - merged: direct stays at 4, support updated to 7
+        verify(globalState, times(1)).setGroupedUnreadChannels(
+            mapOf("direct" to 4, "support" to 7),
+        )
     }
 
     @Test
-    fun `when result is successful with null unread channels, defaults to zero`() = runTest {
+    fun `successful result with groups null merges into existing state`() = runTest {
         // given
+        whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(
+            mapOf("direct" to 4),
+        )
         doNothing().`when`(globalState).setGroupedUnreadChannels(any())
         val result = Result.Success(
             value = GroupedChannels(
                 groups = mapOf(
-                    "expired" to GroupedChannelsGroup(groupKey = "expired", channels = emptyList(), unreadChannels = 0),
+                    "direct" to GroupedChannelsGroup(
+                        groupKey = "direct",
+                        channels = emptyList(),
+                        unreadChannels = 2,
+                        next = null,
+                        prev = null,
+                    ),
+                    "support" to GroupedChannelsGroup(
+                        groupKey = "support",
+                        channels = emptyList(),
+                        unreadChannels = 0,
+                        next = null,
+                        prev = null,
+                    ),
                 ),
             ),
         )
-        // when
-        listener.onQueryGroupedChannelsResult(result, limit = 10, watch = true, presence = false)
-        // then
-        verify(globalState, times(1)).setGroupedUnreadChannels(mapOf("expired" to 0))
+        // when - groups param is null (default set requested)
+        listener.onQueryGroupedChannelsResult(
+            result = result,
+            limit = null,
+            groups = null,
+            watch = false,
+            presence = false,
+        )
+        // then - direct updated to 2, support added with 0; merging preserves any pre-existing keys
+        verify(globalState, times(1)).setGroupedUnreadChannels(
+            mapOf("direct" to 2, "support" to 0),
+        )
     }
 
     @Test
-    fun `when result is failure, global state should not be updated`() = runTest {
+    fun `failure result does not touch global state`() = runTest {
         // given
-        val result = Result.Failure(Error.GenericError("Network error"))
+        val result = Result.Failure(Error.GenericError("network"))
         // when
-        listener.onQueryGroupedChannelsResult(result, limit = null, watch = false, presence = false)
+        listener.onQueryGroupedChannelsResult(
+            result = result,
+            limit = null,
+            groups = null,
+            watch = false,
+            presence = false,
+        )
         // then
         verify(globalState, never()).setGroupedUnreadChannels(any())
+    }
+
+    @Test
+    fun `success routes each returned group to the matching Grouped identifier as first page when no next cursor was requested`() =
+        runTest {
+            // given
+            whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(emptyMap())
+            doNothing().`when`(globalState).setGroupedUnreadChannels(any())
+            val groupDirect = GroupedChannelsGroup(
+                groupKey = "direct",
+                channels = emptyList(),
+                unreadChannels = 0,
+                next = null,
+                prev = null,
+            )
+            val groupSupport = GroupedChannelsGroup(
+                groupKey = "support",
+                channels = emptyList(),
+                unreadChannels = 0,
+                next = "cursor-support",
+                prev = null,
+            )
+            val result = Result.Success(
+                value = GroupedChannels(
+                    groups = mapOf("direct" to groupDirect, "support" to groupSupport),
+                ),
+            )
+            // when - groups param is null (default set requested → both treated as first page)
+            listener.onQueryGroupedChannelsResult(
+                result = result,
+                limit = null,
+                groups = null,
+                watch = false,
+                presence = false,
+            )
+            // then
+            verify(logic).queryChannels(eq(QueryChannelsIdentifier.Grouped("direct")))
+            verify(logic).queryChannels(eq(QueryChannelsIdentifier.Grouped("support")))
+            verify(queryChannelsLogic).applyGroupedResult(groupDirect, isFirstPage = true)
+            verify(queryChannelsLogic).applyGroupedResult(groupSupport, isFirstPage = true)
+        }
+
+    @Test
+    fun `success treats keys with requested next cursor as paginated`() = runTest {
+        // given
+        whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(emptyMap())
+        doNothing().`when`(globalState).setGroupedUnreadChannels(any())
+        val groupSupport = GroupedChannelsGroup(
+            groupKey = "support",
+            channels = emptyList(),
+            unreadChannels = 0,
+            next = null,
+            prev = null,
+        )
+        val result = Result.Success(
+            value = GroupedChannels(groups = mapOf("support" to groupSupport)),
+        )
+        // when - the request passed a next cursor for "support"
+        listener.onQueryGroupedChannelsResult(
+            result = result,
+            limit = null,
+            groups = mapOf("support" to GroupedChannelsGroupQuery(next = "cursor")),
+            watch = false,
+            presence = false,
+        )
+        // then
+        verify(queryChannelsLogic).applyGroupedResult(groupSupport, isFirstPage = false)
     }
 }

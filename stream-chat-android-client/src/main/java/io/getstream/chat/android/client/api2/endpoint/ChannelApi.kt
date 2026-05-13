@@ -65,10 +65,13 @@ internal interface ChannelApi {
     ): RetrofitCall<QueryChannelsResponse>
 
     /**
-     * Queries channels grouped into server-defined buckets within a family.
+     * Queries channels grouped into server-defined groups.
+     *
+     * Supports per-group request options (limit, next/prev cursors) and returns per-group
+     * pagination cursors. Pagination is only allowed when exactly one group is requested.
      *
      * @param connectionId The current connection ID.
-     * @param body The request body containing limit, watch, and presence parameters.
+     * @param body The request body containing the optional per-group configuration map.
      */
     @POST("/channels/grouped")
     fun queryGroupedChannels(

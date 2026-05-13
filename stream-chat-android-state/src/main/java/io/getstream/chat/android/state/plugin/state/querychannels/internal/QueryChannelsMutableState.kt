@@ -20,11 +20,14 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.internal.updateLiveLocations
 import io.getstream.chat.android.client.extensions.internal.updateUsers
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
@@ -40,12 +43,21 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 internal class QueryChannelsMutableState(
-    override val filter: FilterObject,
-    override val sort: QuerySorter<Channel>,
+    internal val identifier: QueryChannelsIdentifier,
     scope: CoroutineScope,
     latestUsers: StateFlow<Map<String, User>>,
     activeLiveLocations: StateFlow<List<Location>>,
 ) : QueryChannelsState {
+
+    override val filter: FilterObject = when (identifier) {
+        is QueryChannelsIdentifier.Standard -> identifier.filter
+        is QueryChannelsIdentifier.Grouped -> Filters.neutral()
+    }
+
+    override val sort: QuerySorter<Channel> = when (identifier) {
+        is QueryChannelsIdentifier.Standard -> identifier.sort
+        is QueryChannelsIdentifier.Grouped -> QuerySortByField.descByName("last_message_at")
+    }
 
     internal var rawChannels: Map<String, Channel>?
         get() = _channels?.value
@@ -53,8 +65,33 @@ internal class QueryChannelsMutableState(
             _channels?.value = value
         }
 
-    // This is needed for queries
-    internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
+    // Mutable backing field — replaced (immutably) by setCids().
+    private var _querySpec: QueryChannelsSpec = QueryChannelsSpec(
+        filter = filter,
+        querySort = sort,
+        cids = emptySet(),
+        groupKey = (identifier as? QueryChannelsIdentifier.Grouped)?.group,
+    )
+
+    /**
+     * Snapshot of the spec backing this state. Returned reference is immutable; use [setCids] to
+     * update.
+     */
+    internal val queryChannelsSpec: QueryChannelsSpec
+        get() = _querySpec
+
+    /**
+     * Replaces the held spec with a copy whose [QueryChannelsSpec.cids] is [cids].
+     * [QueryChannelsSpec.filter], [QueryChannelsSpec.querySort], and [QueryChannelsSpec.groupKey] are preserved.
+     */
+    internal fun setCids(cids: Set<String>) {
+        _querySpec = QueryChannelsSpec(
+            filter = _querySpec.filter,
+            querySort = _querySpec.querySort,
+            cids = cids,
+            groupKey = _querySpec.groupKey,
+        )
+    }
 
     /**
      * Property that exposes a map of raw channels.
@@ -87,12 +124,7 @@ internal class QueryChannelsMutableState(
     private var _channelsOffset: MutableStateFlow<Int>? = MutableStateFlow(0)
     internal val channelsOffset: StateFlow<Int> = _channelsOffset!!
 
-    /**
-     * The group key from [io.getstream.chat.android.models.GroupedChannels] that this query
-     * was populated from. Non-null means this query uses grouped channels for sync instead
-     * of individual queryChannels.
-     */
-    internal var groupKey: String? = null
+    private var _nextCursor: MutableStateFlow<String?>? = MutableStateFlow(null)
 
     override var chatEventHandlerFactory: ChatEventHandlerFactory? = null
         set(value) {
@@ -119,6 +151,7 @@ internal class QueryChannelsMutableState(
     override val loading: StateFlow<Boolean> = _loading!!
     override val loadingMore: StateFlow<Boolean> = _loadingMore!!
     override val endOfChannels: StateFlow<Boolean> = _endOfChannels!!
+    override val nextCursor: StateFlow<String?> = _nextCursor!!
     override val channels: StateFlow<List<Channel>?> = sortedChannels
     override val channelsStateData: StateFlow<ChannelsStateData> =
         loading.combine(sortedChannels) { loading: Boolean, channels: List<Channel>? ->
@@ -188,6 +221,14 @@ internal class QueryChannelsMutableState(
         rawChannels = channelsMap
     }
 
+    /**
+     * Set the next-page cursor. Used by the grouped-channels path; the standard path doesn't
+     * publish a cursor here.
+     */
+    fun setNextCursor(cursor: String?) {
+        _nextCursor?.value = cursor
+    }
+
     fun destroy() {
         _channels = null
         _loading = null
@@ -196,7 +237,7 @@ internal class QueryChannelsMutableState(
         _currentRequest = null
         _recoveryNeeded = null
         _channelsOffset = null
-        groupKey = null
+        _nextCursor = null
     }
 }
 

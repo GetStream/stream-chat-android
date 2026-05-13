@@ -21,13 +21,32 @@ import com.squareup.moshi.JsonClass
 /**
  * Request body for the grouped query channels endpoint (`POST /channels/grouped`).
  *
- * @param limit The maximum number of channels to return per bucket. `null` uses the server default.
+ * @param limit Default max channels per group when a group does not specify its own limit.
+ * `null` uses the server default.
+ * @param groups Optional per-group configuration keyed by group name. Omitting `groups` returns
+ * the server-defined default set. Pagination (`next` or `prev` on any group) requires that
+ * exactly one group is requested.
  * @param watch Whether to start watching the returned channels for real-time events.
  * @param presence Whether to receive presence events for the members of the returned channels.
  */
 @JsonClass(generateAdapter = true)
 internal data class QueryGroupedChannelsRequest(
     val limit: Int?,
+    val groups: Map<String, QueryGroupedChannelsGroupRequest>?,
     val watch: Boolean,
     val presence: Boolean,
+)
+
+/**
+ * Per-group request options inside a [QueryGroupedChannelsRequest].
+ *
+ * @param limit Max channels for this group. `null` (or `0`) falls back to the request-level limit.
+ * @param next Cursor for the next page of this group. Mutually exclusive with [prev].
+ * @param prev Cursor for the previous page of this group. Mutually exclusive with [next].
+ */
+@JsonClass(generateAdapter = true)
+internal data class QueryGroupedChannelsGroupRequest(
+    val limit: Int?,
+    val next: String?,
+    val prev: String?,
 )

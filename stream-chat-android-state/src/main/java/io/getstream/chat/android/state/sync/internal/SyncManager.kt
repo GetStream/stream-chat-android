@@ -49,7 +49,6 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TimeDuration
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.log.taggedLogger
@@ -439,47 +438,25 @@ internal class SyncManager(
     }
 
     /**
-     * For [QueryChannelsLogic] instances populated via grouped channels ([prefill][QueryChannelsLogic.prefillChannels]),
-     * calls [ChatClient.queryGroupedChannels] once and re-prefills each with fresh data.
+     * Drives the recovery flow for grouped channel queries: when at least one active grouped
+     * logic needs recovery, calls [ChatClient.queryGroupedChannels] once. The
+     * [io.getstream.chat.android.state.plugin.listener.internal.QueryGroupedChannelsListenerState]
+     * routes the response into the corresponding per-group state and persists it.
      */
     private suspend fun updateGroupedQueryChannels(recoverAll: Boolean) {
-        val groupedLogics = logicRegistry.getActiveQueryChannelsLogic()
-            .filter { it.groupKey() != null }
-            .filter { it.recoveryNeeded().value || recoverAll }
+        val hasGroupedRecovery = logicRegistry.getActiveQueryChannelsLogic()
+            .any { it.groupKey() != null && (it.recoveryNeeded().value || recoverAll) }
 
-        if (groupedLogics.isEmpty()) {
+        if (!hasGroupedRecovery) {
             logger.v { "[updateGroupedQueryChannels] no grouped queries to restore" }
             return
         }
-        logger.d { "[updateGroupedQueryChannels] groupedLogics.size: ${groupedLogics.size}" }
-
-        val groupKeyToLogic = mutableMapOf<String, QueryChannelsLogic>()
-        groupedLogics.forEach { logic ->
-            val key = logic.groupKey() ?: return@forEach
-            groupKeyToLogic[key] = logic
-        }
 
         when (val result = chatClient.queryGroupedChannels().await()) {
-            is Result.Success -> {
-                val grouped = result.value
-
-                groupKeyToLogic.forEach { (key, logic) ->
-                    val group = grouped.groups[key] ?: return@forEach
-
-                    val currentRequest = logic.currentRequest()
-                    if (currentRequest != null) {
-                        logic.prefillChannels(group, currentRequest)
-                    } else {
-                        logger.w {
-                            "[updateGroupedQueryChannels] no current request for group '$key', skipping prefill"
-                        }
-                    }
-                }
-                logger.v { "[updateGroupedQueryChannels] succeeded" }
-            }
-            is Result.Failure -> {
+            is Result.Success ->
+                logger.v { "[updateGroupedQueryChannels] succeeded (listener applied)" }
+            is Result.Failure ->
                 logger.e { "[updateGroupedQueryChannels] queryGroupedChannels failed: ${result.value}" }
-            }
         }
     }
 

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.state.plugin.logic.querychannels.internal
 
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
@@ -89,14 +90,14 @@ internal class QueryChannelsDatabaseLogicTest {
         val pagination = AnyChannelPaginationRequest()
         val queryChannelsSpec = randomQueryChannelsSpec(filter = filter, sort = sort)
 
-        whenever(queryChannelsRepository.selectBy(filter, sort, null)) doReturn null
+        whenever(queryChannelsRepository.selectBy(QueryChannelsIdentifier.Standard(filter, sort))) doReturn null
 
         // When
         val result = logic.fetchChannelsFromCache(pagination, queryChannelsSpec)
 
         // Then
         assertNull(result)
-        verify(queryChannelsRepository).selectBy(filter, sort, null)
+        verify(queryChannelsRepository).selectBy(QueryChannelsIdentifier.Standard(filter, sort))
     }
 
     @Test
@@ -125,7 +126,7 @@ internal class QueryChannelsDatabaseLogicTest {
         val channel3 = randomChannel(id = "channel3", type = "messaging")
         val expectedChannels = listOf(channel1, channel2, channel3)
 
-        whenever(queryChannelsRepository.selectBy(filter, sort, null)) doReturn cachedSpec
+        whenever(queryChannelsRepository.selectBy(QueryChannelsIdentifier.Standard(filter, sort))) doReturn cachedSpec
         whenever(repositoryFacade.selectChannels(listOf(cid1, cid2, cid3), pagination)) doReturn expectedChannels
 
         // When
@@ -133,7 +134,7 @@ internal class QueryChannelsDatabaseLogicTest {
 
         // Then
         assertEquals(expectedChannels, result)
-        verify(queryChannelsRepository).selectBy(filter, sort, null)
+        verify(queryChannelsRepository).selectBy(QueryChannelsIdentifier.Standard(filter, sort))
         verify(repositoryFacade).selectChannels(listOf(cid1, cid2, cid3), pagination)
     }
 
@@ -151,7 +152,7 @@ internal class QueryChannelsDatabaseLogicTest {
         )
         val queryChannelsSpec = randomQueryChannelsSpec(filter = filter, sort = sort)
 
-        whenever(queryChannelsRepository.selectBy(filter, sort, null)) doReturn cachedSpec
+        whenever(queryChannelsRepository.selectBy(QueryChannelsIdentifier.Standard(filter, sort))) doReturn cachedSpec
         whenever(repositoryFacade.selectChannels(emptyList(), pagination)) doReturn emptyList()
 
         // When
@@ -159,7 +160,7 @@ internal class QueryChannelsDatabaseLogicTest {
 
         // Then
         assertEquals(emptyList<Channel>(), result)
-        verify(queryChannelsRepository).selectBy(filter, sort, null)
+        verify(queryChannelsRepository).selectBy(QueryChannelsIdentifier.Standard(filter, sort))
         verify(repositoryFacade).selectChannels(emptyList(), pagination)
     }
 

@@ -17,13 +17,10 @@
 package io.getstream.chat.android.state.plugin.state.internal
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
@@ -63,9 +60,7 @@ internal class ChatClientStateCallsTest {
     private lateinit var chatClientStateCalls: ChatClientStateCalls
 
     private val userFlow = MutableStateFlow<User?>(null)
-    private val filter = Filters.eq("type", "messaging")
-    private val sort = QuerySortByField.descByName<Channel>("last_message_at")
-    private val request = QueryChannelsRequest(filter = filter, limit = 30, querySort = sort)
+    private val identifier = QueryChannelsIdentifier.Grouped("test-group")
 
     @BeforeEach
     fun setUp() {
@@ -75,10 +70,11 @@ internal class ChatClientStateCallsTest {
         queryChannelsState = mock()
         stateRegistry = mock {
             on(it.queryChannels(any(), any())) doReturn queryChannelsState
+            on(it.queryChannels(any<QueryChannelsIdentifier>())) doReturn queryChannelsState
         }
         queryChannelsLogic = mock()
         logicRegistry = mock {
-            on(it.queryChannels(any<QueryChannelsRequest>())) doReturn queryChannelsLogic
+            on(it.queryChannels(any<QueryChannelsIdentifier>())) doReturn queryChannelsLogic
         }
 
         val statePlugin: StatePlugin = mock {
@@ -102,9 +98,9 @@ internal class ChatClientStateCallsTest {
         val factory = ChatEventHandlerFactory(clientState)
 
         // When
-        val result = chatClientStateCalls.initQueryChannelsState(request, factory)
+        val result = chatClientStateCalls.initQueryChannelsState(identifier, factory)
 
-        // Then — no API call, no offline load (offline read happens later in prefillChannels)
+        // Then — no remote queryChannels API call; the offline grouped load runs locally.
         verify(chatClient, never()).queryChannels(any())
         assertNotNull(result)
     }
@@ -117,7 +113,7 @@ internal class ChatClientStateCallsTest {
 
         // When - launch initQueryChannelsState (it should suspend waiting for user)
         val job = launch {
-            chatClientStateCalls.initQueryChannelsState(request, factory)
+            chatClientStateCalls.initQueryChannelsState(identifier, factory)
             completed = true
         }
         advanceUntilIdle()
@@ -135,15 +131,15 @@ internal class ChatClientStateCallsTest {
     }
 
     @Test
-    fun `initQueryChannelsState returns state matching request filter and sort`() = runTest {
+    fun `initQueryChannelsState returns state matching the identifier`() = runTest {
         // Given
         userFlow.value = User(id = "test-user")
         val factory = ChatEventHandlerFactory(clientState)
 
         // When
-        chatClientStateCalls.initQueryChannelsState(request, factory)
+        chatClientStateCalls.initQueryChannelsState(identifier, factory)
 
-        // Then - stateRegistry.queryChannels should be called with the request's filter and sort
-        verify(stateRegistry).queryChannels(filter, sort)
+        // Then - stateRegistry.queryChannels should be called with the identifier
+        verify(stateRegistry).queryChannels(identifier)
     }
 }

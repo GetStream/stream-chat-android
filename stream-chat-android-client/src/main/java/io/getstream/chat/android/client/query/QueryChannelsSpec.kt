@@ -20,10 +20,40 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.querysort.QuerySorter
 
+/**
+ * Immutable identity of a channels query.
+ *
+ * @property filter Filter conditions for the query.
+ * @property querySort Sort specification for the query.
+ * @property cids CIDs of channels currently associated with this query.
+ * @property groupKey Non-null for grouped queries; identifies the group across reconnects.
+ */
 public data class QueryChannelsSpec(
     val filter: FilterObject,
     val querySort: QuerySorter<Channel>,
+    val cids: Set<String> = emptySet(),
+    val groupKey: String? = null,
 ) {
-    var groupKey: String? = null
-    var cids: Set<String> = emptySet()
+
+    /**
+     * Two-argument constructor preserved for source and binary compatibility with prior versions
+     * of this class (when [cids] and [groupKey] were mutable body fields).
+     */
+    public constructor(
+        filter: FilterObject,
+        querySort: QuerySorter<Channel>,
+    ) : this(filter, querySort, emptySet(), null)
+
+    /**
+     * Two-argument [copy] preserved for binary compatibility. Existing bytecode that referenced the
+     * pre-refactor 2-arg `copy(filter, querySort)` continues to resolve through this method.
+     * [cids] and [groupKey] are carried over from the receiver.
+     *
+     * Source callers using `spec.copy(filter = x)` resolve here (more applicable overload than the
+     * auto-generated 4-arg copy), so cids/groupKey are preserved automatically.
+     */
+    public fun copy(
+        filter: FilterObject = this.filter,
+        querySort: QuerySorter<Channel> = this.querySort,
+    ): QueryChannelsSpec = QueryChannelsSpec(filter, querySort, cids, groupKey)
 }

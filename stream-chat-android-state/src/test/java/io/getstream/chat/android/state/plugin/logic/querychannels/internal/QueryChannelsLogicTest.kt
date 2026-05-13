@@ -18,6 +18,7 @@ package io.getstream.chat.android.state.plugin.logic.querychannels.internal
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.test.randomNewMessageEvent
@@ -75,8 +76,7 @@ internal class QueryChannelsLogicTest {
         whenever(queryChannelsStateLogic.getQuerySpecs()) doReturn queryChannelsSpec
 
         logic = QueryChannelsLogic(
-            filter = filter,
-            sort = sort,
+            identifier = QueryChannelsIdentifier.Standard(filter, sort),
             client = client,
             queryChannelsStateLogic = queryChannelsStateLogic,
             queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
@@ -417,79 +417,20 @@ internal class QueryChannelsLogicTest {
 
     // endregion
 
-    // region prefillChannels
+    // region applyGroupedResult
 
     @Test
-    fun `prefillChannels replaces existing channels and updates all state`() = runTest {
-        // Given
-        val request = QueryChannelsRequest(filter = filter, limit = 30, querySort = sort)
-        val oldChannel = randomChannel(id = "old")
-        val existingChannels = mapOf(oldChannel.cid to oldChannel)
-        val newChannels = listOf(randomChannel(id = "new1"), randomChannel(id = "new2"), randomChannel(id = "new3"))
-        val group = GroupedChannelsGroup(groupKey = "key", channels = newChannels)
-        whenever(queryChannelsStateLogic.getChannels()) doReturn existingChannels
-
-        // When
-        logic.prefillChannels(group, request)
-
-        // Then
-        verify(queryChannelsStateLogic).setGroupKey("key")
-        verify(queryChannelsStateLogic).setCurrentRequest(request)
-        verify(queryChannelsStateLogic).removeChannels(existingChannels.keys)
-        verify(queryChannelsStateLogic).addChannelsState(newChannels)
-        verify(queryChannelsStateLogic).setChannelsOffset(3)
-        verify(queryChannelsStateLogic).setEndOfChannels(false)
-        verify(queryChannelsStateLogic).setLoadingFirstPage(false)
-        verify(queryChannelsStateLogic).setLoadingMore(false)
-        verify(queryChannelsStateLogic).setRecoveryNeeded(false)
-    }
-
-    @Test
-    fun `prefillChannels with empty list marks end of channels`() = runTest {
-        // Given
-        val request = QueryChannelsRequest(filter = filter, limit = 30, querySort = sort)
-        val group = GroupedChannelsGroup(groupKey = "key", channels = emptyList())
-        whenever(queryChannelsStateLogic.getChannels()) doReturn null
-
-        // When
-        logic.prefillChannels(group, request)
-
-        // Then
-        verify(queryChannelsStateLogic).setChannelsOffset(0)
-        verify(queryChannelsStateLogic).setEndOfChannels(true)
-    }
-
-    @Test
-    fun `prefillChannels skips remove when no existing channels`() = runTest {
-        // Given
-        val request = QueryChannelsRequest(filter = filter, limit = 30, querySort = sort)
-        val newChannels = listOf(randomChannel())
-        val group = GroupedChannelsGroup(groupKey = "key", channels = newChannels)
-        whenever(queryChannelsStateLogic.getChannels()) doReturn null
-
-        // When
-        logic.prefillChannels(group, request)
-
-        // Then
-        verify(queryChannelsStateLogic, never()).removeChannels(any())
-        verify(queryChannelsStateLogic).addChannelsState(newChannels)
-    }
-
-    @Test
-    fun `prefillChannels persists to database`() = runTest {
-        // Given
-        val request = QueryChannelsRequest(filter = filter, limit = 30, querySort = sort)
-        val channels = listOf(randomChannel(), randomChannel())
+    fun `applyGroupedResult is a no-op on non-Grouped identifiers`() = runTest {
+        // Given — logic is constructed with a Standard identifier in setUp.
+        val channels = listOf(randomChannel(id = "new1"))
         val group = GroupedChannelsGroup(groupKey = "key", channels = channels)
-        whenever(queryChannelsStateLogic.getChannels()) doReturn null
 
         // When
-        logic.prefillChannels(group, request)
+        logic.applyGroupedResult(group, isFirstPage = true)
 
-        // Then
-        verify(queryChannelsDatabaseLogic).insertQueryChannels(queryChannelsSpec)
-        verify(queryChannelsDatabaseLogic).insertChannelConfigs(any())
-        verify(queryChannelsDatabaseLogic).storeStateForChannels(channels.toSet())
+        // Then — no state mutations on a non-Grouped logic.
+        verify(queryChannelsStateLogic, never()).addChannelsState(any())
+        verify(queryChannelsStateLogic, never()).setNextCursor(any())
     }
 
     // endregion

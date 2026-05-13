@@ -17,12 +17,14 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.chatclient.BaseChatClientTest
+import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GroupedChannelsGroup
+import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomInt
@@ -31,6 +33,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 /**
@@ -48,6 +53,8 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
                         groupKey = key,
                         channels = listOf(randomChannel()),
                         unreadChannels = randomInt(),
+                        next = randomString(),
+                        prev = randomString(),
                     )
                 },
             ),
@@ -74,12 +81,49 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
         verifyNetworkError(result, errorCode)
     }
 
+    @Test
+    fun `queryGroupedChannels dispatches result to plugin listeners`() = runTest {
+        // given
+        val plugin: Plugin = mock()
+        plugins.add(plugin)
+        val groupedChannels = GroupedChannels(
+            groups = mapOf(
+                "direct" to GroupedChannelsGroup(
+                    groupKey = "direct",
+                    channels = listOf(randomChannel()),
+                    unreadChannels = randomInt(),
+                    next = randomString(),
+                    prev = null,
+                ),
+            ),
+        )
+        val sut = Fixture()
+            .givenQueryGroupedChannelsResult(RetroSuccess(groupedChannels).toRetrofitCall())
+            .get()
+        val groupsParam = mapOf("direct" to GroupedChannelsGroupQuery(limit = 25, next = "cursor"))
+        // when
+        sut.queryGroupedChannels(
+            limit = 30,
+            groups = groupsParam,
+            watch = true,
+            presence = false,
+        ).await()
+        // then
+        verify(plugin).onQueryGroupedChannelsResult(
+            result = any(),
+            limit = eq(30),
+            groups = eq(groupsParam),
+            watch = eq(true),
+            presence = eq(false),
+        )
+    }
+
     internal inner class Fixture {
 
         fun givenQueryGroupedChannelsResult(
             result: io.getstream.result.call.Call<GroupedChannels>,
         ) = apply {
-            whenever(api.queryGroupedChannels(anyOrNull(), any(), any())).thenReturn(result)
+            whenever(api.queryGroupedChannels(anyOrNull(), anyOrNull(), any(), any())).thenReturn(result)
         }
 
         fun get(): ChatClient = chatClient

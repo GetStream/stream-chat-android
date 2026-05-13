@@ -116,7 +116,7 @@ public class StatePlugin internal constructor(
 ) : Plugin,
     QueryMembersListener by QueryMembersListenerState(logic),
     QueryChannelsListener by QueryChannelsListenerState(logic, queryingChannelsFree),
-    QueryGroupedChannelsListener by QueryGroupedChannelsListenerState(mutableGlobalState),
+    QueryGroupedChannelsListener by QueryGroupedChannelsListenerState(logic, mutableGlobalState),
     QueryChannelListener by QueryChannelListenerState(logic),
     ThreadQueryListener by ThreadQueryListenerState(logic, repositoryFacade),
     ChannelMarkReadListener by ChannelMarkReadListenerState(stateRegistry),

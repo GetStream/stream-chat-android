@@ -21,7 +21,8 @@ import com.squareup.moshi.JsonClass
 /**
  * Raw API response for the grouped query channels endpoint (`POST /channels/grouped`).
  *
- * @param groups The list of channel groups.
+ * @param groups The channel groups keyed by group name. Each group carries its channels,
+ * unread count, and optional pagination cursors.
  * @param duration The server-reported request duration.
  */
 @JsonClass(generateAdapter = true)
@@ -35,9 +36,13 @@ internal data class QueryGroupedChannelsResponse(
  *
  * @param channels The channel responses that belong to this group.
  * @param unread_channels The number of channels with unread messages in this group.
+ * @param next Cursor for the next page of this group, or `null` if there is no further page.
+ * @param prev Cursor for the previous page of this group, or `null` if there is none.
  */
 @JsonClass(generateAdapter = true)
 internal data class QueryGroupedChannelsGroup(
     val channels: List<ChannelResponse>,
     val unread_channels: Int?,
+    val next: String?,
+    val prev: String?,
 )

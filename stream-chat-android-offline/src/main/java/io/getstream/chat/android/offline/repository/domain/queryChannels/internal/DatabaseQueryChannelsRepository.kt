@@ -16,11 +16,10 @@
 
 package io.getstream.chat.android.offline.repository.domain.queryChannels.internal
 
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
+import io.getstream.chat.android.client.internal.state.plugin.identifier
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.query.QueryChannelsSpec
-import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.FilterObject
-import io.getstream.chat.android.models.querysort.QuerySorter
 
 /**
  * Repository for queries of channels. This implementation uses the database.
@@ -38,19 +37,8 @@ internal class DatabaseQueryChannelsRepository(
         queryChannelsDao.insert(toEntity(queryChannelsSpec))
     }
 
-    /**
-     * Selects by a filter and query sort.
-     *
-     * @param filter [FilterObject]
-     * @param querySort [QuerySorter]
-     */
-    override suspend fun selectBy(
-        filter: FilterObject,
-        querySort: QuerySorter<Channel>,
-        groupKey: String?,
-    ): QueryChannelsSpec? {
-        val id = groupKey ?: generateId(filter, querySort)
-        return queryChannelsDao.select(id)?.let(Companion::toModel)
+    override suspend fun selectBy(identifier: QueryChannelsIdentifier): QueryChannelsSpec? {
+        return queryChannelsDao.select(generateId(identifier))?.let(Companion::toModel)
     }
 
     override suspend fun clear() {
@@ -58,22 +46,26 @@ internal class DatabaseQueryChannelsRepository(
     }
 
     private companion object {
-        private fun generateId(filter: FilterObject, querySort: QuerySorter<Channel>): String {
-            return "${filter.hashCode()}-${querySort.toDto().hashCode()}"
+        private fun generateId(identifier: QueryChannelsIdentifier): String = when (identifier) {
+            is QueryChannelsIdentifier.Standard ->
+                "${identifier.filter.hashCode()}-${identifier.sort.toDto().hashCode()}"
+            is QueryChannelsIdentifier.Grouped ->
+                "grp:${identifier.group}"
         }
 
-        private fun toEntity(queryChannelsSpec: QueryChannelsSpec): QueryChannelsEntity =
-            QueryChannelsEntity(
-                queryChannelsSpec.groupKey ?: generateId(queryChannelsSpec.filter, queryChannelsSpec.querySort),
-                queryChannelsSpec.filter,
-                queryChannelsSpec.querySort,
-                queryChannelsSpec.cids.toList(),
-            )
+        private fun toEntity(spec: QueryChannelsSpec): QueryChannelsEntity = QueryChannelsEntity(
+            id = generateId(spec.identifier),
+            filter = spec.filter,
+            querySort = spec.querySort,
+            cids = spec.cids.toList(),
+            groupKey = spec.groupKey,
+        )
 
-        private fun toModel(queryChannelsEntity: QueryChannelsEntity): QueryChannelsSpec =
-            QueryChannelsSpec(
-                queryChannelsEntity.filter,
-                queryChannelsEntity.querySort,
-            ).apply { cids = queryChannelsEntity.cids.toSet() }
+        private fun toModel(entity: QueryChannelsEntity): QueryChannelsSpec = QueryChannelsSpec(
+            filter = entity.filter,
+            querySort = entity.querySort,
+            cids = entity.cids.toSet(),
+            groupKey = entity.groupKey,
+        )
     }
 }

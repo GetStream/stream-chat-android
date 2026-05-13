@@ -124,11 +124,12 @@ internal class QueryChannelsStateLogic(
         mutableState.setChannelsOffset(offset)
     }
 
-    internal fun getGroupKey(): String? = mutableState.groupKey
+    internal fun setNextCursor(cursor: String?) {
+        mutableState.setNextCursor(cursor)
+    }
 
-    internal fun setGroupKey(key: String?) {
-        mutableState.groupKey = key
-        mutableState.queryChannelsSpec.groupKey = key
+    internal fun setCids(cids: Set<String>) {
+        mutableState.setCids(cids)
     }
 
     /**
@@ -149,7 +150,7 @@ internal class QueryChannelsStateLogic(
      * @param channels List<Channel>.
      */
     internal suspend fun addChannelsState(channels: List<Channel>) {
-        mutableState.queryChannelsSpec.cids += channels.map { it.cid }
+        mutableState.setCids(mutableState.queryChannelsSpec.cids + channels.map { it.cid })
         val existingChannels = mutableState.rawChannels ?: emptyMap()
         mutableState.setChannels(
             existingChannels +
@@ -204,7 +205,7 @@ internal class QueryChannelsStateLogic(
             logger.w { "[removeChannels] rejected (existingChannels is null)" }
             return
         }
-        mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidSet
+        mutableState.setCids(mutableState.queryChannelsSpec.cids - cidSet)
         mutableState.setChannels(existingChannels - cidSet)
     }
 
@@ -231,7 +232,7 @@ internal class QueryChannelsStateLogic(
      * into the query map.
      */
     internal fun trackChannel(channel: Channel) {
-        mutableState.queryChannelsSpec.cids += channel.cid
+        mutableState.setCids(mutableState.queryChannelsSpec.cids + channel.cid)
         val existingChannels = mutableState.rawChannels ?: emptyMap()
         mutableState.setChannels(existingChannels + (channel.cid to channel))
     }

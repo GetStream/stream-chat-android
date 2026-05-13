@@ -19,18 +19,37 @@ package io.getstream.chat.android.models
 /**
  * A grouped channels response returned by [ChatClient.queryGroupedChannels].
  *
- * @param groups The channel groups returned by the backend in response order.
+ * @param groups The channel groups returned by the backend, keyed by group name.
  */
 public data class GroupedChannels(public val groups: Map<String, GroupedChannelsGroup>)
 
 /**
  * A channel group returned by [ChatClient.queryGroupedChannels].
  *
+ * @param groupKey The name of the group.
  * @param channels The channels that belong to this group.
  * @param unreadChannels The total unread channel count in the group.
+ * @param next Cursor for the next page of this group, or `null` if there is no further page.
+ * @param prev Cursor for the previous page of this group, or `null` if there is none.
  */
 public data class GroupedChannelsGroup(
     public val groupKey: String,
     public val channels: List<Channel>,
     public val unreadChannels: Int = 0,
+    public val next: String? = null,
+    public val prev: String? = null,
+)
+
+/**
+ * Per-group request options for [ChatClient.queryGroupedChannels].
+ *
+ * @param limit Max channels for this group. `null` falls back to the request-level limit
+ * (which, in turn, falls back to the server default when also `null`).
+ * @param next Cursor for the next page of this group. Mutually exclusive with [prev].
+ * @param prev Cursor for the previous page of this group. Mutually exclusive with [next].
+ */
+public data class GroupedChannelsGroupQuery(
+    public val limit: Int? = null,
+    public val next: String? = null,
+    public val prev: String? = null,
 )

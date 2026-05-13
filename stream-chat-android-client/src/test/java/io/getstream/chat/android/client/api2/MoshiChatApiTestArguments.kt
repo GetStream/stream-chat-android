@@ -457,6 +457,8 @@ internal object MoshiChatApiTestArguments {
                                 ),
                             ),
                             unread_channels = randomInt(),
+                            next = null,
+                            prev = null,
                         ),
                     ),
                     duration = "12ms",

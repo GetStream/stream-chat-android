@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.models.GroupedChannels
+import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.result.Result
 
 /**
@@ -28,13 +29,16 @@ public interface QueryGroupedChannelsListener {
      * Called when the query grouped channels request completes.
      *
      * @param result The result of the query grouped channels request.
-     * @param limit The maximum number of channels per group that was requested.
+     * @param limit The request-level default per-group limit, or `null` for the server default.
+     * @param groups The per-group request options that were sent, or `null` when the request
+     * asked for the server-defined default set of groups.
      * @param watch Whether watching was requested.
      * @param presence Whether presence was requested.
      */
     public suspend fun onQueryGroupedChannelsResult(
         result: Result<GroupedChannels>,
         limit: Int?,
+        groups: Map<String, GroupedChannelsGroupQuery>?,
         watch: Boolean,
         presence: Boolean,
     )

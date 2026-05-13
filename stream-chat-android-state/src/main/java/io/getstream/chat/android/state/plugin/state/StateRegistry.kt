@@ -20,6 +20,8 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Location
@@ -67,7 +69,7 @@ public class StateRegistry(
 
     private val logger by taggedLogger("Chat:StateRegistry")
 
-    private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsMutableState> =
+    private val queryChannels: ConcurrentHashMap<QueryChannelsIdentifier, QueryChannelsMutableState> =
         ConcurrentHashMap()
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelMutableState> = ConcurrentHashMap()
     private val queryThreads: ConcurrentHashMap<Pair<FilterObject?, QuerySorter<Thread>>, QueryThreadsMutableState> =
@@ -84,9 +86,17 @@ public class StateRegistry(
      *
      * @return [QueryChannelsState] object.
      */
-    public fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsState {
-        return queryChannels.getOrPut(filter to sort) {
-            QueryChannelsMutableState(filter, sort, scope, latestUsers, activeLiveLocations)
+    public fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsState =
+        queryChannels(QueryChannelsIdentifier.Standard(filter, sort))
+
+    /**
+     * Returns [QueryChannelsState] associated with the given [identifier].
+     * Creates a fresh state if no entry exists for the identifier yet.
+     */
+    @InternalStreamChatApi
+    public fun queryChannels(identifier: QueryChannelsIdentifier): QueryChannelsState {
+        return queryChannels.getOrPut(identifier) {
+            QueryChannelsMutableState(identifier, scope, latestUsers, activeLiveLocations)
         }
     }
 

@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
 import io.getstream.chat.android.client.utils.message.isEphemeral
@@ -35,7 +36,6 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
@@ -149,50 +149,31 @@ public fun ChatClient.queryChannelsAsState(
 }
 
 /**
- * Creates a [QueryChannelsState] for the given [request] without triggering a remote queryChannels
- * API call or loading from the local cache. The returned state starts in a loading state and can be
- * populated later via [prefillQueryChannels].
+ * Creates a [QueryChannelsState] for the given grouped [identifier] without triggering a remote
+ * queryChannels API call. Channels cached under the identifier's DB key are loaded optimistically
+ * so the UI can render immediately while the next `queryGroupedChannels` response populates the
+ * state via the listener.
  *
- * Use this together with [prefillQueryChannels] when channel data is obtained from an external source
- * (e.g., a grouped channels endpoint) and the default queryChannels call should be skipped.
+ * Only [QueryChannelsIdentifier.Grouped] is accepted — the standard offset-paginated path is
+ * served by [queryChannelsAsState] instead.
  *
- * @param request The request's parameters combined into [QueryChannelsRequest] class.
+ * @param identifier The grouped query's identifier whose state should be initialized.
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] that will be used to create [ChatEventHandler].
  * @param coroutineScope The [CoroutineScope] used for executing the request.
  *
- * @return A StateFlow object that emits a null when the user has not been connected yet and the new [QueryChannelsState] when the user changes.
+ * @return A StateFlow that emits null until the user is connected, then emits the [QueryChannelsState] for the identifier.
  */
 @InternalStreamChatApi
 @JvmOverloads
 public fun ChatClient.initQueryChannelsAsState(
-    request: QueryChannelsRequest,
+    identifier: QueryChannelsIdentifier.Grouped,
     chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(clientState),
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): StateFlow<QueryChannelsState?> {
-    StreamLog.d(TAG) { "[initQueryChannelsAsState] request: $request" }
+    StreamLog.d(TAG) { "[initQueryChannelsAsState] identifier: $identifier" }
     return getStateOrNull(coroutineScope) {
-        requestsAsState(coroutineScope).initQueryChannelsState(request, chatEventHandlerFactory)
+        requestsAsState(coroutineScope).initQueryChannelsState(identifier, chatEventHandlerFactory)
     }
-}
-
-/**
- * Injects [channels] into the [QueryChannelsState] identified by the [request]'s filter and sort.
- * The channels replace any existing data and are persisted to the local database.
- * No remote API call is made.
- *
- * The state must have been previously created via [initQueryChannelsAsState] or [queryChannelsAsState].
- *
- * @param request The [QueryChannelsRequest] identifying the query to populate.
- * @param group The [GroupedChannelsGroup] containing the channels and group key.
- */
-@InternalStreamChatApi
-public suspend fun ChatClient.prefillQueryChannels(
-    request: QueryChannelsRequest,
-    group: GroupedChannelsGroup,
-) {
-    StreamLog.d(TAG) { "[prefillQueryChannels] channels.size: ${group.channels.size}, groupKey: ${group.groupKey}" }
-    clientState.user.first { it != null }
-    logic.queryChannels(request).prefillChannels(group, request)
 }
 
 /**

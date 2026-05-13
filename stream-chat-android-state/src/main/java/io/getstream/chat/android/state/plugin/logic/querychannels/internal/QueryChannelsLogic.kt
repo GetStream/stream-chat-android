@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.query.request.ChannelFilterRequest.filterWithOffset
 import io.getstream.chat.android.models.Channel
@@ -27,7 +28,6 @@ import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toOfflinePaginationRequest
 import io.getstream.log.taggedLogger
@@ -39,8 +39,7 @@ private const val CHANNEL_LIMIT = 30
 
 @Suppress("TooManyFunctions")
 internal class QueryChannelsLogic(
-    private val filter: FilterObject,
-    private val sort: QuerySorter<Channel>,
+    private val identifier: QueryChannelsIdentifier,
     private val client: ChatClient,
     private val queryChannelsStateLogic: QueryChannelsStateLogic,
     private val queryChannelsDatabaseLogic: QueryChannelsDatabaseLogic,
@@ -51,16 +50,14 @@ internal class QueryChannelsLogic(
     /**
      * Sets the current request and optimistically loads any cached channels for the given
      * [request] from the local database. The cached channels are added to the in-memory state.
-     * Does NOT update the channels offset — callers that use this to seed state before a
-     * [prefillChannels] call can rely on prefill to set the correct offset.
      * No remote API call is made.
      */
     internal suspend fun loadOfflineChannels(request: QueryChannelsRequest) {
         setCurrentRequest(request)
         val offlineChannels = fetchChannelsFromCache(request.toOfflinePaginationRequest(), queryChannelsDatabaseLogic)
-        // fetchChannelsFromCache suspends for DB I/O. During that suspension, a concurrent
-        // prefillChannels call may have already populated the state. Check after the DB read
-        // to avoid appending stale offline data on top of fresh prefilled channels.
+        // fetchChannelsFromCache suspends for DB I/O. During that suspension, fresh data may have
+        // landed via another path. Check after the DB read to avoid appending stale offline data on
+        // top of fresh channels.
         val existing = queryChannelsStateLogic.getChannels()
         if (!existing.isNullOrEmpty()) {
             logger.d { "[loadOfflineChannels] skipped (channels already populated: ${existing.size})" }
@@ -71,6 +68,33 @@ internal class QueryChannelsLogic(
         }
         // Ensure channels map is non-null (empty if no cache) and loading is reset, so
         // channelsStateData transitions to OfflineNoResults instead of staying in Loading.
+        queryChannelsStateLogic.initializeChannelsIfNeeded()
+        queryChannelsStateLogic.setLoadingFirstPage(false)
+    }
+
+    /**
+     * Grouped-only offline cache read. Called from the Grouped init flow. Standard's
+     * [loadOfflineChannels] is untouched.
+     *
+     * Reads channels stored under the stable identifier-derived id and seeds in-memory state,
+     * guarding against the case where a concurrent [applyGroupedResult] call has already populated
+     * the state with fresh data.
+     */
+    internal suspend fun loadOfflineGroupedChannels() {
+        if (identifier !is QueryChannelsIdentifier.Grouped) {
+            logger.w { "[loadOfflineGroupedChannels] rejected (non-Grouped identifier: $identifier)" }
+            return
+        }
+        val pagination = AnyChannelPaginationRequest().apply {
+            channelOffset = 0
+            channelLimit = CHANNEL_LIMIT
+        }
+        val cachedChannels = fetchChannelsFromCache(pagination, queryChannelsDatabaseLogic)
+        val existing = queryChannelsStateLogic.getChannels()
+        if (existing.isNullOrEmpty() && !cachedChannels.isNullOrEmpty()) {
+            logger.d { "[loadOfflineGroupedChannels] showing ${cachedChannels.size} cached channels" }
+            queryChannelsStateLogic.addChannelsState(cachedChannels)
+        }
         queryChannelsStateLogic.initializeChannelsIfNeeded()
         queryChannelsStateLogic.setLoadingFirstPage(false)
     }
@@ -109,9 +133,12 @@ internal class QueryChannelsLogic(
         queryChannelsStateLogic.setCurrentRequest(request)
     }
 
-    internal fun filter(): FilterObject = filter
+    internal fun filter(): FilterObject = when (identifier) {
+        is QueryChannelsIdentifier.Standard -> identifier.filter
+        is QueryChannelsIdentifier.Grouped -> queryChannelsStateLogic.getState().filter
+    }
 
-    internal fun groupKey(): String? = queryChannelsStateLogic.getGroupKey()
+    internal fun groupKey(): String? = (identifier as? QueryChannelsIdentifier.Grouped)?.group
 
     internal fun currentRequest(): QueryChannelsRequest? = queryChannelsStateLogic.getState().currentRequest.value
 
@@ -177,54 +204,37 @@ internal class QueryChannelsLogic(
     }
 
     /**
-     * Replaces the current query's channels with the provided [group]'s channels and persists
-     * the result to the local database. No remote API call is made.
-     *
-     * Before writing fresh data, an optimistic offline load is performed: cached channels from
-     * a prior session are read from the DB using the stable [GroupedChannelsGroup.groupKey] and
-     * shown immediately. This mirrors iOS where the CoreData observer re-evaluates its predicate
-     * as soon as `query.groupKey` is set.
+     * Applies a [GroupedChannelsGroup] response payload to this query's state.
+     * Replaces channels on the first page, appends on subsequent pages.
+     * Updates the next-page cursor and persists fresh data to the local database.
      */
-    internal suspend fun prefillChannels(
-        group: GroupedChannelsGroup,
-        request: QueryChannelsRequest,
-    ) {
-        val groupKey = group.groupKey
+    internal suspend fun applyGroupedResult(group: GroupedChannelsGroup, isFirstPage: Boolean) {
+        if (identifier !is QueryChannelsIdentifier.Grouped) {
+            logger.w { "[applyGroupedResult] rejected (non-Grouped identifier: $identifier)" }
+            return
+        }
         val channels = group.channels
-        logger.d { "[prefillChannels] channels.size: ${channels.size}, groupKey: $groupKey" }
-
-        // 1. Set groupKey so all DB operations use the stable key.
-        //    Also signals SyncManager to route reconnect through queryGroupedChannels.
-        queryChannelsStateLogic.setGroupKey(groupKey)
-
-        // 2. Set current request (needed for nextPageRequest derivation used by loadMore)
-        queryChannelsStateLogic.setCurrentRequest(request)
-
-        // 3. Optimistic offline load: read cached channels from DB using the stable groupKey.
-        val cachedChannels = fetchChannelsFromCache(
-            request.toOfflinePaginationRequest(),
-            queryChannelsDatabaseLogic,
-        )
-        if (!cachedChannels.isNullOrEmpty()) {
-            logger.d { "[prefillChannels] showing ${cachedChannels.size} cached channels" }
-            queryChannelsStateLogic.addChannelsState(cachedChannels)
-            queryChannelsStateLogic.setLoadingFirstPage(false)
+        logger.d {
+            "[applyGroupedResult] channels.size: ${channels.size}, isFirstPage: $isFirstPage, " +
+                "next: ${group.next}"
         }
 
-        // 4. Replace with fresh channels from the API
-        val existingChannels = queryChannelsStateLogic.getChannels()
-        if (!existingChannels.isNullOrEmpty()) {
-            queryChannelsStateLogic.removeChannels(existingChannels.keys)
+        if (isFirstPage) {
+            val existing = queryChannelsStateLogic.getChannels()
+            if (!existing.isNullOrEmpty()) {
+                queryChannelsStateLogic.removeChannels(existing.keys)
+            }
+            queryChannelsStateLogic.setCids(emptySet())
         }
-        queryChannelsStateLogic.getQuerySpecs().cids = emptySet()
+
         queryChannelsStateLogic.addChannelsState(channels)
-        queryChannelsStateLogic.setChannelsOffset(channels.size)
-        queryChannelsStateLogic.setEndOfChannels(channels.isEmpty())
+        queryChannelsStateLogic.setNextCursor(group.next)
+        queryChannelsStateLogic.setEndOfChannels(group.next == null)
         queryChannelsStateLogic.setLoadingFirstPage(false)
         queryChannelsStateLogic.setLoadingMore(false)
         queryChannelsStateLogic.setRecoveryNeeded(false)
 
-        // 5. Persist fresh data to DB under the stable groupKey
+        // Persist
         queryChannelsDatabaseLogic.insertQueryChannels(queryChannelsStateLogic.getQuerySpecs())
         val channelConfigs = channels.map { ChannelConfig(it.type, it.config) }
         queryChannelsDatabaseLogic.insertChannelConfigs(channelConfigs)
@@ -246,27 +256,36 @@ internal class QueryChannelsLogic(
     }
 
     /**
-     * Runs [QueryChannelsRequest] which is querying the first page.
+     * Runs [QueryChannelsRequest] which is querying the first page. No-op for grouped identifiers —
+     * the grouped path uses `queryGroupedChannels` instead.
      */
     internal suspend fun queryFirstPage(): Result<List<Channel>> {
         logger.d { "[queryFirstPage] no args" }
-        val currentRequest = queryChannelsStateLogic.getState().currentRequest.value
-        val messageLimit = currentRequest?.messageLimit
-        val memberLimit = currentRequest?.memberLimit
-        val request = QueryChannelsRequest(
-            filter = filter,
-            offset = INITIAL_CHANNEL_OFFSET,
-            limit = CHANNEL_LIMIT,
-            querySort = sort,
-            messageLimit = messageLimit,
-            memberLimit = memberLimit,
-        )
+        return when (identifier) {
+            is QueryChannelsIdentifier.Standard -> {
+                val currentRequest = queryChannelsStateLogic.getState().currentRequest.value
+                val messageLimit = currentRequest?.messageLimit
+                val memberLimit = currentRequest?.memberLimit
+                val request = QueryChannelsRequest(
+                    filter = identifier.filter,
+                    offset = INITIAL_CHANNEL_OFFSET,
+                    limit = CHANNEL_LIMIT,
+                    querySort = identifier.sort,
+                    messageLimit = messageLimit,
+                    memberLimit = memberLimit,
+                )
 
-        queryChannelsStateLogic.setCurrentRequest(request)
+                queryChannelsStateLogic.setCurrentRequest(request)
 
-        return client.queryChannelsInternal(request)
-            .await()
-            .also { onQueryChannelsResult(it, request) }
+                client.queryChannelsInternal(request)
+                    .await()
+                    .also { onQueryChannelsResult(it, request) }
+            }
+            is QueryChannelsIdentifier.Grouped -> {
+                logger.v { "[queryFirstPage] no-op for Grouped identifier" }
+                Result.Success(emptyList())
+            }
+        }
     }
 
     private suspend fun onOnlineQueryResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {

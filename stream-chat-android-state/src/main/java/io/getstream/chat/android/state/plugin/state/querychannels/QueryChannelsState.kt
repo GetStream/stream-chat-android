@@ -53,6 +53,12 @@ public interface QueryChannelsState {
     public val endOfChannels: StateFlow<Boolean>
 
     /**
+     * Cursor for the next page when this state belongs to a grouped query.
+     * `null` means there is no further page (or that this is a standard query that doesn't use cursors).
+     */
+    public val nextCursor: StateFlow<String?>
+
+    /**
      *  The collection of channels loaded by the query channels request.
      *  The StateFlow is initialized with null which means that channels are not loaded yet.
      */

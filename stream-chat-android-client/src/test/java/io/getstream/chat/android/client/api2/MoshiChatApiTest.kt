@@ -1911,10 +1911,11 @@ internal class MoshiChatApiTest {
         val connectionId = randomString()
         val limit = randomInt()
         sut.setConnection(userId = userId, connectionId = connectionId)
-        val result = sut.queryGroupedChannels(limit = limit, watch = false, presence = false).await()
+        val result = sut.queryGroupedChannels(limit = limit, groups = null, watch = false, presence = false).await()
         // then
         val expectedPayload = QueryGroupedChannelsRequest(
             limit = limit,
+            groups = null,
             watch = false,
             presence = false,
         )

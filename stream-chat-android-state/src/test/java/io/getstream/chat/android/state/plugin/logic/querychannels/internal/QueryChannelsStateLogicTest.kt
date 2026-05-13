@@ -36,7 +36,6 @@ import io.getstream.chat.android.state.plugin.state.querychannels.internal.Query
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import org.amshove.kluent.`should contain same`
 import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -60,10 +59,7 @@ internal class QueryChannelsStateLogicTest {
     private val testCid = (type to id).toCid()
 
     private val queryChannelsSpec =
-        QueryChannelsSpec(Filters.neutral(), QuerySortByField.descByName(""))
-            .apply {
-                cids = setOf(testCid)
-            }
+        QueryChannelsSpec(Filters.neutral(), QuerySortByField.descByName(""), setOf(testCid))
 
     private val mutableState: QueryChannelsMutableState = mock {
         on(it.rawChannels) doReturn emptyMap()
@@ -140,7 +136,7 @@ internal class QueryChannelsStateLogicTest {
 
         queryChannelsStateLogic.addChannelsState(channels)
 
-        queryChannelsSpec.cids `should contain same` setOf(testCid, channel1.cid, channel2.cid)
+        verify(mutableState).setCids(setOf(testCid, channel1.cid, channel2.cid))
         verify(mutableState).setChannels(channels.associateBy { it.cid })
     }
 
@@ -211,8 +207,11 @@ internal class QueryChannelsStateLogicTest {
         val chB = randomChannel(type = "messaging", id = "b")
         val chC = randomChannel(type = "messaging", id = "c")
         val channels = mapOf(chA.cid to chA, chB.cid to chB, chC.cid to chC)
-        val spec = QueryChannelsSpec(Filters.neutral(), QuerySortByField.descByName(""))
-            .apply { cids = setOf(chA.cid, chB.cid, chC.cid) }
+        val spec = QueryChannelsSpec(
+            filter = Filters.neutral(),
+            querySort = QuerySortByField.descByName(""),
+            cids = setOf(chA.cid, chB.cid, chC.cid),
+        )
 
         whenever(mutableState.rawChannels) doReturn channels
         whenever(mutableState.queryChannelsSpec) doReturn spec
@@ -220,7 +219,7 @@ internal class QueryChannelsStateLogicTest {
         val logic = QueryChannelsStateLogic(mutableState, stateRegistry, logicRegistry, testCoroutines.scope)
         logic.removeChannels(setOf(chA.cid, chC.cid))
 
-        assertEquals(setOf(chB.cid), spec.cids)
+        verify(mutableState).setCids(setOf(chB.cid))
         verify(mutableState).setChannels(mapOf(chB.cid to chB))
     }
 

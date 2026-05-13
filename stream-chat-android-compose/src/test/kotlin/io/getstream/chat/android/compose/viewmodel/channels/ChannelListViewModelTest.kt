@@ -495,108 +495,16 @@ internal class ChannelListViewModelTest {
         }
 
     @Test
-    fun `Given skipInitialQuery is true When ViewModel initializes Should not call queryChannels`() =
+    fun `Given groupKey ViewModel When initializing Should not call queryChannels`() =
         runTest {
             val chatClient: ChatClient = mock()
             Fixture(chatClient)
                 .givenCurrentUser()
                 .givenChannelsState(channelsStateData = ChannelsStateData.Loading, loading = true)
                 .givenChannelMutes()
-                .get(this, skipInitialQuery = true)
+                .get(this, groupKey = "team-a")
 
             verify(chatClient, times(0)).queryChannels(any())
-        }
-
-    @Test
-    fun `Given skipInitialQuery is true When prefill is called Should show prefilled channels`() =
-        runTest {
-            val chatClient: ChatClient = mock()
-            val channelsStateData = MutableStateFlow<ChannelsStateData>(ChannelsStateData.Loading)
-            val loadingFlow = MutableStateFlow(true)
-            val endOfChannelsFlow = MutableStateFlow(false)
-            val nextPageRequestFlow = MutableStateFlow<QueryChannelsRequest?>(null)
-            val queryChannelsState: QueryChannelsState = mock {
-                whenever(it.channelsStateData) doReturn channelsStateData
-                whenever(it.channels) doReturn MutableStateFlow(null)
-                whenever(it.loading) doReturn loadingFlow
-                whenever(it.loadingMore) doReturn MutableStateFlow(false)
-                whenever(it.endOfChannels) doReturn endOfChannelsFlow
-                whenever(it.nextPageRequest) doReturn nextPageRequestFlow
-            }
-            val viewModel = Fixture(chatClient)
-                .givenCurrentUser()
-                .givenChannelsState(queryChannelsState)
-                .givenChannelMutes()
-                .get(this, skipInitialQuery = true)
-
-            assertTrue(viewModel.channelsState.isLoading)
-
-            // Simulate what prefillQueryChannels does to the state
-            channelsStateData.value = ChannelsStateData.Result(listOf(channel1, channel2))
-            loadingFlow.value = false
-            advanceUntilIdle()
-
-            assertFalse(viewModel.channelsState.isLoading)
-            assertEquals(2, viewModel.channelsState.channelItems.size)
-            verify(chatClient, times(0)).queryChannels(any())
-        }
-
-    @Test
-    fun `Given skipInitialQuery is false When ViewModel initializes Should call queryChannels normally`() =
-        runTest {
-            val chatClient: ChatClient = mock()
-            Fixture(chatClient)
-                .givenCurrentUser()
-                .givenChannelsQuery()
-                .givenChannelsState(
-                    channelsStateData = ChannelsStateData.Result(listOf(channel1)),
-                    loading = false,
-                )
-                .givenChannelMutes()
-                .get(this)
-
-            verify(chatClient, times(1)).queryChannels(any())
-        }
-
-    @Test
-    fun `Given skipInitialQuery is true and prefill not called When showing channels Should show loading state`() =
-        runTest {
-            val chatClient: ChatClient = mock()
-            val viewModel = Fixture(chatClient)
-                .givenCurrentUser()
-                .givenChannelsState(channelsStateData = ChannelsStateData.Loading, loading = true)
-                .givenChannelMutes()
-                .get(this, skipInitialQuery = true)
-
-            assertTrue(viewModel.channelsState.isLoading)
-            assertEquals(0, viewModel.channelsState.channelItems.size)
-        }
-
-    @Test
-    fun `Given skipInitialQuery is true When loadMore after prefill Should use nextPageRequest offset`() =
-        runTest {
-            val chatClient: ChatClient = mock()
-            val nextPageRequest = QueryChannelsRequest(
-                filter = queryFilter,
-                offset = 20,
-                limit = 30,
-                querySort = querySort,
-            )
-            val viewModel = Fixture(chatClient)
-                .givenCurrentUser()
-                .givenChannelsQuery()
-                .givenChannelsState(
-                    channelsStateData = ChannelsStateData.Result(listOf(channel1)),
-                    loading = false,
-                    nextPageRequest = nextPageRequest,
-                )
-                .givenChannelMutes()
-                .get(this, skipInitialQuery = true)
-
-            viewModel.loadMore()
-            advanceUntilIdle()
-
-            verify(chatClient).queryChannels(nextPageRequest)
         }
 
     private class Fixture(
@@ -684,6 +592,7 @@ internal class ChannelListViewModelTest {
             loadingMore: Boolean = false,
             endOfChannels: Boolean = false,
             nextPageRequest: QueryChannelsRequest? = null,
+            nextCursor: String? = null,
         ) = apply {
             val queryChannelsState: QueryChannelsState = mock {
                 whenever(it.channelsStateData) doReturn MutableStateFlow(channelsStateData)
@@ -692,25 +601,46 @@ internal class ChannelListViewModelTest {
                 whenever(it.loadingMore) doReturn MutableStateFlow(loadingMore)
                 whenever(it.endOfChannels) doReturn MutableStateFlow(endOfChannels)
                 whenever(it.nextPageRequest) doReturn MutableStateFlow(nextPageRequest)
+                whenever(it.nextCursor) doReturn MutableStateFlow(nextCursor)
             }
             whenever(stateRegistry.queryChannels(any(), any())) doReturn queryChannelsState
+            whenever(
+                stateRegistry.queryChannels(
+                    any<io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier>(),
+                ),
+            ) doReturn queryChannelsState
         }
 
         fun givenChannelsState(queryChannelsState: QueryChannelsState) = apply {
             whenever(stateRegistry.queryChannels(any(), any())) doReturn queryChannelsState
+            whenever(
+                stateRegistry.queryChannels(
+                    any<io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier>(),
+                ),
+            ) doReturn queryChannelsState
         }
 
-        fun get(testScope: TestScope, skipInitialQuery: Boolean = false): ChannelListViewModel {
-            val channelListViewModel = ChannelListViewModel(
-                chatClient = chatClient,
-                initialSort = initialSort,
-                initialFilters = initialFilters,
-                isDraftMessageEnabled = false,
-                chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
-                messageSearchSort = messageSearchSort,
-                globalState = MutableStateFlow(globalState),
-                skipInitialQuery = skipInitialQuery,
-            )
+        fun get(testScope: TestScope, groupKey: String? = null): ChannelListViewModel {
+            val channelListViewModel = if (groupKey != null) {
+                ChannelListViewModel(
+                    chatClient = chatClient,
+                    groupKey = groupKey,
+                    isDraftMessageEnabled = false,
+                    chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
+                    messageSearchSort = messageSearchSort,
+                    globalState = MutableStateFlow(globalState),
+                )
+            } else {
+                ChannelListViewModel(
+                    chatClient = chatClient,
+                    initialSort = initialSort,
+                    initialFilters = initialFilters,
+                    isDraftMessageEnabled = false,
+                    chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
+                    messageSearchSort = messageSearchSort,
+                    globalState = MutableStateFlow(globalState),
+                )
+            }
             testScope.advanceUntilIdle()
             return channelListViewModel
         }
