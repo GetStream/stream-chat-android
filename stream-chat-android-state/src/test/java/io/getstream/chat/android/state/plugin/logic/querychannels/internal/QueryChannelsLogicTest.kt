@@ -17,6 +17,7 @@
 package io.getstream.chat.android.state.plugin.logic.querychannels.internal
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.PredefinedFilter
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
@@ -358,6 +359,53 @@ internal class QueryChannelsLogicTest {
             memberLimit = null,
         )
         verify(client).queryChannelsInternal(expectedRequest)
+    }
+
+    @Test
+    fun `queryFirstPage applies resolved spec from response predefinedFilter`() = runTest {
+        // Given – a Predefined-identifier logic; the server responds with a resolved filter/sort.
+        // This is the sync-recovery path: SyncManager.updateActiveQueryChannels invokes
+        // queryFirstPage(), and the plugin-listener path that normally calls applyResolvedSpec
+        // doesn't fire here — so queryFirstPage must apply it itself.
+        val predefinedIdentifier = QueryChannelsIdentifier.Predefined(
+            name = "my-predefined",
+            filterValues = mapOf("a" to 1),
+            sortValues = null,
+        )
+        val predefinedLogic = QueryChannelsLogic(
+            identifier = predefinedIdentifier,
+            client = client,
+            queryChannelsStateLogic = queryChannelsStateLogic,
+            queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
+        )
+        val resolvedFilter = Filters.eq("type", "messaging")
+        val resolvedSort = QuerySortByField.descByName<Channel>("last_message_at")
+        whenever(client.queryChannelsInternal(any()))
+            .thenReturn(
+                QueryChannelsResult(
+                    channels = emptyList(),
+                    predefinedFilter = PredefinedFilter(resolvedFilter, resolvedSort),
+                ).asCall(),
+            )
+
+        // When
+        predefinedLogic.queryFirstPage()
+
+        // Then
+        verify(queryChannelsStateLogic).applyResolvedSpec(eq(resolvedFilter), eq(resolvedSort))
+    }
+
+    @Test
+    fun `queryFirstPage does not apply resolved spec when response predefinedFilter is null`() = runTest {
+        // Given – a standard query whose response carries no predefinedFilter
+        whenever(client.queryChannelsInternal(any()))
+            .thenReturn(QueryChannelsResult(channels = emptyList(), predefinedFilter = null).asCall())
+
+        // When
+        logic.queryFirstPage()
+
+        // Then
+        verify(queryChannelsStateLogic, never()).applyResolvedSpec(any(), any())
     }
 
     // endregion
