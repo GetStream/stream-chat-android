@@ -87,7 +87,7 @@ internal fun MessageComposerAttachmentAudioRecordItem(
                 .align(Alignment.TopEnd)
                 .testTag("Stream_MessageComposerAttachmentCancelIcon"),
             onClick = { onAttachmentRemoved(attachment) },
-            contentDescription = stringResource(R.string.stream_compose_remove_attachment),
+            contentDescription = stringResource(R.string.stream_compose_remove_attachment_voice_message),
         )
     }
 }

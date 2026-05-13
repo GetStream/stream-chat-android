@@ -1170,7 +1170,9 @@ public interface ChatComponentFactory {
     @Composable
     public fun MessageQuotedContent(params: MessageQuotedContentParams) {
         QuotedMessage(
-            modifier = params.modifier.padding(MessageStyling.messageSectionPadding),
+            modifier = Modifier
+                .padding(MessageStyling.messageSectionPadding)
+                .then(params.modifier),
             message = params.message,
             currentUser = params.currentUser,
             replyMessage = params.replyMessage,

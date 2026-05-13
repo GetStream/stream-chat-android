@@ -25,12 +25,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -61,6 +64,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageRegularContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.MessageTextContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.passiveRipple
 import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -179,7 +183,10 @@ internal fun DefaultMessageRegularContent(
 ) {
     val componentFactory = ChatTheme.componentFactory
 
-    Column(horizontalAlignment = messageAlignment.contentAlignment) {
+    Column(
+        modifier = Modifier.passiveRipple(),
+        horizontalAlignment = messageAlignment.contentAlignment,
+    ) {
         val quotedMessage = message.replyTo
         if (quotedMessage != null) {
             componentFactory.MessageQuotedContent(
@@ -187,12 +194,14 @@ internal fun DefaultMessageRegularContent(
                     message = quotedMessage,
                     currentUser = currentUser,
                     replyMessage = message,
-                    modifier = Modifier.combinedClickable(
-                        interactionSource = remember(::MutableInteractionSource),
-                        indication = null,
-                        onLongClick = { onLongItemClick(message) },
-                        onClick = { onQuotedMessageClick(quotedMessage) },
-                    ),
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(StreamTokens.radiusLg))
+                        .combinedClickable(
+                            interactionSource = remember(::MutableInteractionSource),
+                            indication = ripple(),
+                            onLongClick = { onLongItemClick(message) },
+                            onClick = { onQuotedMessageClick(quotedMessage) },
+                        ),
                 ),
             )
         }

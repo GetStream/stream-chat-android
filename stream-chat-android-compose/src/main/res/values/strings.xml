@@ -252,7 +252,13 @@
         <item quantity="other">%d unread</item>
     </plurals>
     <string name="stream_compose_remaining_media_attachments_count">+%1$d</string>
-    <string name="stream_compose_remove_attachment">Remove attachment</string>
+    <string name="stream_compose_remove_attachment_photo">Remove photo</string>
+    <string name="stream_compose_remove_attachment_photo_named">Remove photo %1$s</string>
+    <string name="stream_compose_remove_attachment_video">Remove video</string>
+    <string name="stream_compose_remove_attachment_video_named">Remove video %1$s</string>
+    <string name="stream_compose_remove_attachment_file">Remove file</string>
+    <string name="stream_compose_remove_attachment_file_named">Remove file %1$s</string>
+    <string name="stream_compose_remove_attachment_voice_message">Remove voice message</string>
     <string name="stream_compose_giphy_label">GIPHY</string>
     <string name="stream_compose_pinned_to_channel">Pinned</string>
     <string name="stream_compose_pinned_to_channel_by">Pinned by %1$s</string>

@@ -39,7 +39,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -173,22 +172,17 @@ public fun MessageContainer(
 ) {
     val message = messageItem.message
     val focusState = messageItem.focusState
-    val haptic = LocalHapticFeedback.current
 
     val canOpenThread = message.isThreadStart() && !messageItem.isInThread
     val canOpenActions = !message.isDeleted() && !message.isUploading()
+    val onLongItemClick = rememberHapticLongClick(onLongItemClick)
 
     val clickModifier = Modifier.combinedClickable(
-        interactionSource = remember { MutableInteractionSource() },
-        indication = ripple(),
+        interactionSource = remember(::MutableInteractionSource),
+        indication = null,
         enabled = canOpenThread || canOpenActions,
         onClick = { if (canOpenThread) onThreadClick(message) },
-        onLongClick = {
-            if (canOpenActions) {
-                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                onLongItemClick(message)
-            }
-        },
+        onLongClick = { if (canOpenActions) onLongItemClick(message) },
     )
 
     val highlightColor = ChatTheme.colors.backgroundCoreHighlight
@@ -904,3 +898,22 @@ private fun Modifier.verticalPaddingIfNotEmpty(padding: Dp) = layout { measurabl
  * Represents the time the highlight fade out transition will take.
  */
 public const val HighlightFadeOutDurationMillis: Int = 2000
+
+/**
+ * Returns a long-click handler that fires [HapticFeedbackType.LongPress] before delegating to
+ * [onLongItemClick]. Applied once at the cell entrance so every leaf clickable (text, link
+ * characters, attachments, quoted-reply preview) gets the haptic without restating the policy.
+ */
+@Composable
+private fun rememberHapticLongClick(
+    onLongItemClick: (Message) -> Unit,
+): (Message) -> Unit {
+    val haptic = LocalHapticFeedback.current
+    return remember(haptic, onLongItemClick) {
+        {
+                message ->
+            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            onLongItemClick(message)
+        }
+    }
+}
