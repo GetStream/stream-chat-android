@@ -56,7 +56,9 @@
   <string name="stream_compose_avatar_overflow_count">"+%1$d"</string>
   <string name="stream_compose_block_user">"사용자 차단"</string>
   <string name="stream_compose_cancel">"취소"</string>
-  <string name="stream_compose_cd_channel_item">"채널 항목"</string>
+  <string name="stream_compose_channel_item_muted">"음소거됨"</string>
+  <string name="stream_compose_channel_item_open">"대화 열기"</string>
+  <string name="stream_compose_channel_item_options">"대화 옵션 열기"</string>
   <string name="stream_compose_cd_message_item">"메시지 항목"</string>
   <string name="stream_compose_cd_play_button">"재생 버튼"</string>
   <string name="stream_compose_channel_list_draft">"임시 저장: "</string>
@@ -64,6 +66,10 @@
   <string name="stream_compose_channel_list_empty_search_results">"\"%1$s\"에 대한 검색결과가 없습니다"</string>
   <string name="stream_compose_channel_list_header_new_chat">"새 채팅"</string>
   <string name="stream_compose_channel_list_start_chat">"채팅 시작하기"</string>
+  <plurals name="stream_compose_channel_item_unread">
+    <item quantity="one">"%d개의 안 읽은 메시지"</item>
+    <item quantity="other">"%d개의 안 읽은 메시지"</item>
+  </plurals>
   <plurals name="stream_compose_channel_list_typing_many">
     <item quantity="other">"%d명이 입력 중"</item>
   </plurals>

@@ -27,9 +27,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
@@ -47,12 +51,18 @@ public fun UnreadCountIndicator(
     color: Color = ChatTheme.colors.accentPrimary,
 ) {
     val displayText = if (unreadCount > LimitTooManyUnreadCount) UnreadCountMany else unreadCount.toString()
+    val description = pluralStringResource(
+        R.plurals.stream_compose_channel_item_unread,
+        unreadCount,
+        unreadCount,
+    )
 
     Box(
         modifier = modifier
             .defaultMinSize(minWidth = 20.dp, minHeight = 20.dp)
             .background(shape = CircleShape, color = color)
-            .padding(horizontal = StreamTokens.spacing2xs), // 4dp horizontal content padding
+            .padding(horizontal = StreamTokens.spacing2xs)
+            .clearAndSetSemantics { contentDescription = description },
         contentAlignment = Alignment.Center,
     ) {
         Text(

@@ -15,6 +15,10 @@
     limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <plurals name="stream_compose_channel_item_unread">
+    <item quantity="one">"%d messaggio non letto"</item>
+    <item quantity="other">"%d messaggi non letti"</item>
+  </plurals>
   <plurals name="stream_compose_channel_list_typing_many">
     <item quantity="one">"%d persona sta scrivendo"</item>
     <item quantity="other">"%d persone stanno scrivendo"</item>
@@ -112,7 +116,9 @@
   <string name="stream_compose_avatar_overflow_count">"+%1$d"</string>
   <string name="stream_compose_block_user">"Blocca utente"</string>
   <string name="stream_compose_cancel">"Annulla"</string>
-  <string name="stream_compose_cd_channel_item">"Elemento canale"</string>
+  <string name="stream_compose_channel_item_muted">"silenziato"</string>
+  <string name="stream_compose_channel_item_open">"Apri conversazione"</string>
+  <string name="stream_compose_channel_item_options">"Apri opzioni conversazione"</string>
   <string name="stream_compose_cd_message_item">"Elemento messaggio"</string>
   <string name="stream_compose_cd_play_button">"Pulsante riproduci"</string>
   <string name="stream_compose_channel_list_draft">"Bozza: "</string>

@@ -36,6 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
@@ -140,7 +142,8 @@ internal fun RowScope.DefaultListHeaderCenterContent(
                 modifier = Modifier
                     .weight(1f)
                     .wrapContentWidth()
-                    .padding(horizontal = StreamTokens.spacingMd),
+                    .padding(horizontal = StreamTokens.spacingMd)
+                    .semantics { heading() },
                 text = title,
                 style = ChatTheme.typography.headingSmall,
                 maxLines = 1,
@@ -154,7 +157,8 @@ internal fun RowScope.DefaultListHeaderCenterContent(
                 modifier = Modifier
                     .weight(1f)
                     .wrapContentWidth()
-                    .padding(horizontal = StreamTokens.spacingMd),
+                    .padding(horizontal = StreamTokens.spacingMd)
+                    .semantics { heading() },
                 text = stringResource(R.string.stream_compose_disconnected),
                 style = ChatTheme.typography.headingSmall,
                 maxLines = 1,
