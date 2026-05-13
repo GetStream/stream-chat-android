@@ -56,7 +56,9 @@
   <string name="stream_compose_avatar_overflow_count">"+%1$d"</string>
   <string name="stream_compose_block_user">"Bloquear usuario"</string>
   <string name="stream_compose_cancel">"Cancelar"</string>
-  <string name="stream_compose_cd_channel_item">"Elemento de canal"</string>
+  <string name="stream_compose_channel_item_muted">"silenciado"</string>
+  <string name="stream_compose_channel_item_open">"Abrir conversación"</string>
+  <string name="stream_compose_channel_item_options">"Opciones de conversación"</string>
   <string name="stream_compose_cd_message_item">"Elemento de mensaje"</string>
   <string name="stream_compose_cd_play_button">"Botón de reproducción"</string>
   <string name="stream_compose_channel_list_draft">"Borrador: "</string>
@@ -259,6 +261,10 @@
   <string name="stream_compose_user_status_online">"Conectado"</string>
   <string name="stream_compose_video_preview">"Vídeo"</string>
   <string name="stream_compose_waiting_for_network">"Esperando conexión de red"</string>
+  <plurals name="stream_compose_channel_item_unread">
+    <item quantity="one">"%d mensaje sin leer"</item>
+    <item quantity="other">"%d mensajes sin leer"</item>
+  </plurals>
   <plurals name="stream_compose_channel_list_typing_many">
     <item quantity="one">"%d persona está escribiendo"</item>
     <item quantity="other">"%d personas están escribiendo"</item>

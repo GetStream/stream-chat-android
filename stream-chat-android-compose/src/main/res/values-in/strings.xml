@@ -56,7 +56,9 @@
   <string name="stream_compose_avatar_overflow_count">"+%1$d"</string>
   <string name="stream_compose_block_user">"Blokir pengguna"</string>
   <string name="stream_compose_cancel">"Batal"</string>
-  <string name="stream_compose_cd_channel_item">"Item saluran"</string>
+  <string name="stream_compose_channel_item_muted">"dibisukan"</string>
+  <string name="stream_compose_channel_item_open">"Buka percakapan"</string>
+  <string name="stream_compose_channel_item_options">"Opsi percakapan"</string>
   <string name="stream_compose_cd_message_item">"Item pesan"</string>
   <string name="stream_compose_cd_play_button">"Tombol putar"</string>
   <string name="stream_compose_channel_list_draft">"Draf: "</string>
@@ -259,6 +261,10 @@
   <string name="stream_compose_user_status_online">"Online"</string>
   <string name="stream_compose_video_preview">"Video"</string>
   <string name="stream_compose_waiting_for_network">"Menunggu jaringan"</string>
+  <plurals name="stream_compose_channel_item_unread">
+    <item quantity="one">"%d pesan belum dibaca"</item>
+    <item quantity="other">"%d pesan belum dibaca"</item>
+  </plurals>
   <plurals name="stream_compose_channel_list_typing_many">
     <item quantity="other">"%d orang sedang mengetik"</item>
   </plurals>

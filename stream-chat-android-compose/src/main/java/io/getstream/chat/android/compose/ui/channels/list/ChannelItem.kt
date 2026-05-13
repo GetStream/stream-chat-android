@@ -47,8 +47,6 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -142,7 +140,8 @@ public fun ChannelItem(
     },
 ) {
     val channel = channelItem.channel
-    val description = stringResource(id = R.string.stream_compose_cd_channel_item)
+    val openLabel = stringResource(R.string.stream_compose_channel_item_open)
+    val optionsLabel = stringResource(R.string.stream_compose_channel_item_options)
 
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -154,13 +153,14 @@ public fun ChannelItem(
             .testTag("Stream_ChannelItem")
             .fillMaxWidth()
             .wrapContentHeight()
-            .semantics { contentDescription = description }
             .applyIf(isFocused) { border(2.dp, ChatTheme.colors.borderUtilityFocused, shape) }
             .clip(shape)
             .applyIf(channelItem.isSelected) { background(ChatTheme.colors.backgroundUtilitySelected, shape) }
             .combinedClickable(
                 onClick = { onChannelClick(channel) },
+                onClickLabel = openLabel,
                 onLongClick = { onChannelLongClick(channel) },
+                onLongClickLabel = optionsLabel,
                 indication = ripple(),
                 interactionSource = interactionSource,
             ),
@@ -283,7 +283,7 @@ private fun TitleRow(
                         .testTag("Stream_ChannelMutedIcon")
                         .size(16.dp),
                     painter = painterResource(id = R.drawable.stream_design_ic_mute),
-                    contentDescription = null,
+                    contentDescription = stringResource(R.string.stream_compose_channel_item_muted),
                     tint = ChatTheme.colors.textTertiary,
                 )
             }
@@ -350,7 +350,7 @@ private fun MessageRow(
                     .testTag("Stream_ChannelMutedIcon")
                     .size(16.dp),
                 painter = painterResource(id = R.drawable.stream_design_ic_mute),
-                contentDescription = null,
+                contentDescription = stringResource(R.string.stream_compose_channel_item_muted),
                 tint = ChatTheme.colors.textTertiary,
             )
         }

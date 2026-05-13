@@ -15,6 +15,10 @@
     limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <plurals name="stream_compose_channel_item_unread">
+    <item quantity="one">"%d अपठित संदेश"</item>
+    <item quantity="other">"%d अपठित संदेश"</item>
+  </plurals>
   <plurals name="stream_compose_channel_list_typing_many">
     <item quantity="one">"%d व्यक्ति टाइप कर रहा है"</item>
     <item quantity="other">"%d लोग टाइप कर रहे हैं"</item>
@@ -112,7 +116,9 @@
   <string name="stream_compose_avatar_overflow_count">"+%1$d"</string>
   <string name="stream_compose_block_user">"उपयोगकर्ता को ब्लॉक करें"</string>
   <string name="stream_compose_cancel">"रद्द करें"</string>
-  <string name="stream_compose_cd_channel_item">"चैनल आइटम"</string>
+  <string name="stream_compose_channel_item_muted">"म्यूट किया गया"</string>
+  <string name="stream_compose_channel_item_open">"बातचीत खोलें"</string>
+  <string name="stream_compose_channel_item_options">"बातचीत के विकल्प"</string>
   <string name="stream_compose_cd_message_item">"मैसेज आइटम"</string>
   <string name="stream_compose_cd_play_button">"चलाएँ बटन"</string>
   <string name="stream_compose_channel_list_draft">"ड्राफ़्ट: "</string>
