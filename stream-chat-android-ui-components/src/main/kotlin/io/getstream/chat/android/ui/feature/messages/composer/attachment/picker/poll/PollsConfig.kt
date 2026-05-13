@@ -20,51 +20,21 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 /**
- * Configuration for individual poll entry feature.
- *
- * @param configurable Indicates whether the poll entry is configurable. When false, the UI element is hidden.
- * @param defaultValue Indicates the default value of the poll entry.
- */
-@Parcelize
-public data class PollsEntryConfig(
-    val configurable: Boolean,
-    val defaultValue: Boolean,
-) : Parcelable {
-    public companion object {
-        /**
-         * The default configuration for a poll entry. It will make it configurable and disabled by default.
-         */
-        public val Default: PollsEntryConfig = PollsEntryConfig(
-            configurable = true,
-            defaultValue = false,
-        )
-
-        /**
-         * The feature should not be supported, so it is not configurable by the user and hidden from the UI.
-         */
-        public val NotConfigurable: PollsEntryConfig = PollsEntryConfig(
-            configurable = false,
-            defaultValue = false,
-        )
-    }
-}
-
-/**
  * The configuration for the various poll features. It determines if the user can or cannot enable certain poll features.
  *
  * @param multipleVotes Configuration for allowing multiple votes in a poll.
  * @param anonymousPoll Configuration for enabling anonymous polls.
  * @param suggestAnOption Configuration for allowing users to suggest options in a poll.
- * @param addComments Configuration for adding comments to a poll.
+ * @param allowComments Configuration for adding comments to a poll.
  * @param questionTextLimit Optional character limit for the poll question. Null means no limit.
  * @param optionTextLimit Optional character limit for poll answer options. Null means no limit.
  */
 @Parcelize
 public data class PollsConfig(
-    val multipleVotes: PollsEntryConfig = PollsEntryConfig.Default,
-    val anonymousPoll: PollsEntryConfig = PollsEntryConfig.Default,
-    val suggestAnOption: PollsEntryConfig = PollsEntryConfig.Default,
-    val addComments: PollsEntryConfig = PollsEntryConfig.Default,
+    val multipleVotes: PollFeatureConfig = PollFeatureConfig.Default,
+    val anonymousPoll: PollFeatureConfig = PollFeatureConfig.Default,
+    val suggestAnOption: PollFeatureConfig = PollFeatureConfig.Default,
+    val allowComments: PollFeatureConfig = PollFeatureConfig.Default,
     val questionTextLimit: Int? = null,
     val optionTextLimit: Int? = null,
 ) : Parcelable {

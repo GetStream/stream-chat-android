@@ -25,6 +25,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.os.BundleCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
@@ -39,6 +40,7 @@ import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.jvm.java
 
 /**
  * Represent the bottom sheet dialog that allows users to pick attachments.
@@ -52,11 +54,8 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
     private var createPollDialogListener: CreatePollDialogListener? = null
     private val createPollViewModel: CreatePollViewModel by viewModels()
     private val pollsConfig: PollsConfig by lazy {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            arguments?.getParcelable(ARG_POLLS_CONFIG, PollsConfig::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            arguments?.getParcelable(ARG_POLLS_CONFIG)
+        arguments?.let {
+            BundleCompat.getParcelable(it, ARG_POLLS_CONFIG, PollsConfig::class.java)
         } ?: ChatUI.pollsConfig
     }
     private val optionsAdapter: OptionsAdapter by lazy {
@@ -89,6 +88,11 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.root.applyEdgeToEdgePadding(typeMask = WindowInsetsCompat.Type.systemBars())
         setupDialog()
+
+        if (savedInstanceState == null) {
+            // Configure poll feature visibility and default values based on pollsConfig
+            configurePollFeatures()
+        }
     }
 
     /**
@@ -121,11 +125,11 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
         }
 
         // Configure add a comment feature
-        createPollViewModel.setAllowAnswers(pollsConfig.addComments.defaultValue)
-        binding.addACommentLabel.isVisible = pollsConfig.addComments.configurable
-        binding.addACommentLabelSwitch.isVisible = pollsConfig.addComments.configurable
-        if (pollsConfig.addComments.configurable) {
-            binding.addACommentLabelSwitch.isChecked = pollsConfig.addComments.defaultValue
+        createPollViewModel.setAllowAnswers(pollsConfig.allowComments.defaultValue)
+        binding.addACommentLabel.isVisible = pollsConfig.allowComments.configurable
+        binding.addACommentLabelSwitch.isVisible = pollsConfig.allowComments.configurable
+        if (pollsConfig.allowComments.configurable) {
+            binding.addACommentLabelSwitch.isChecked = pollsConfig.allowComments.defaultValue
         }
     }
 
@@ -137,9 +141,6 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
         pollsConfig.questionTextLimit?.takeIf { it > 0 }?.let { limit ->
             binding.question.filters = arrayOf(InputFilter.LengthFilter(limit))
         }
-
-        // Configure poll feature visibility and default values based on pollsConfig
-        configurePollFeatures()
 
         binding.multipleAnswersSwitch.setOnCheckedChangeListener { _, isChecked ->
             binding.multipleAnswersCount.isVisible = isChecked
@@ -237,7 +238,7 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
         ): CreatePollDialogFragment {
             return CreatePollDialogFragment().apply {
                 arguments = Bundle().apply {
-                    pollsConfig?.let { config -> putParcelable(ARG_POLLS_CONFIG, config as android.os.Parcelable) }
+                    pollsConfig?.let { config -> putParcelable(ARG_POLLS_CONFIG, config) }
                 }
             }.setCreatePollDialogListener(createPollDialogListener)
         }
