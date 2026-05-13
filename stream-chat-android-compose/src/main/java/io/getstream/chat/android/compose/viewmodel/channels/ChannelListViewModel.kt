@@ -400,7 +400,7 @@ public class ChannelListViewModel internal constructor(
 
     private suspend fun searchMessagesForQuery(query: String) {
         logger.d { "[searchMessagesForQuery] query: '$query'" }
-        val channelFilter = filterFlow.value ?: Filters.defaultChannelListFilter(user.value) ?: run {
+        val channelFilter = messageSearchChannelFilter() ?: run {
             logger.v { "[searchMessagesForQuery] rejected (no channel filter)" }
             return
         }
@@ -413,7 +413,7 @@ public class ChannelListViewModel internal constructor(
 
     private suspend fun loadMoreQueryMessages() {
         logger.d { "[loadMoreQueryMessages] no args" }
-        val channelFilter = filterFlow.value ?: Filters.defaultChannelListFilter(user.value) ?: run {
+        val channelFilter = messageSearchChannelFilter() ?: run {
             logger.v { "[loadMoreQueryMessages] rejected (no channel filter)" }
             return
         }
@@ -631,6 +631,16 @@ public class ChannelListViewModel internal constructor(
             Filters.autocomplete("name", text),
             Filters.`in`("members", user.value?.id.orEmpty()),
         )
+
+    private fun messageSearchChannelFilter() = when (mode) {
+        // Standard mode: Use the initial filters (backwards compatible)
+        is QueryMode.Standard -> filterFlow.value ?: Filters.defaultChannelListFilter(user.value)
+        // Predefined mode: Use simple membership filter (aligned with other platforms)
+        is QueryMode.Predefined -> when (val userId = user.value?.id) {
+            null -> null
+            else -> Filters.`in`("members", listOf(userId))
+        }
+    }
 
     /**
      * Refreshes either channels or search results.
