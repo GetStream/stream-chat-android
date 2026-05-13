@@ -18,6 +18,7 @@ package io.getstream.chat.android.state.plugin.logic.querychannels.internal
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
@@ -161,21 +162,30 @@ internal class QueryChannelsLogic(
                 memberLimit = memberLimit,
             )
             is QueryChannelsIdentifier.Predefined -> QueryChannelsRequest(
-                offset = INITIAL_CHANNEL_OFFSET,
-                limit = CHANNEL_LIMIT,
-                messageLimit = messageLimit,
-                memberLimit = memberLimit,
                 predefinedFilter = identifier.name,
+                limit = CHANNEL_LIMIT,
                 filterValues = identifier.filterValues,
                 sortValues = identifier.sortValues,
+                offset = INITIAL_CHANNEL_OFFSET,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
             )
         }
 
         queryChannelsStateLogic.setCurrentRequest(request)
 
-        return client.queryChannelsInternal(request)
-            .await()
-            .also { onQueryChannelsResult(it, request) }
+        val result = client.queryChannelsInternal(request).await()
+        // Apply the server-resolved predefined filter/sort before processing channels, so the
+        // cached state reflects the latest backend template (e.g. after sync recovery, where the
+        // plugin listener path doesn't fire).
+        if (result is Result.Success) {
+            result.value.predefinedFilter?.let { predefined ->
+                applyResolvedSpec(predefined.filter, predefined.sort)
+            }
+        }
+        val channelsResult = result.map(QueryChannelsResult::channels)
+        onQueryChannelsResult(channelsResult, request)
+        return channelsResult
     }
 
     private suspend fun onOnlineQueryResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
@@ -284,17 +294,17 @@ internal class QueryChannelsLogic(
                 memberLimit = 0,
             )
             is QueryChannelsIdentifier.Predefined -> QueryChannelsRequest(
-                offset = offset,
-                limit = limit,
-                messageLimit = 0,
-                memberLimit = 0,
                 predefinedFilter = identifier.name,
+                limit = limit,
                 filterValues = identifier.filterValues,
                 sortValues = identifier.sortValues,
+                offset = offset,
+                messageLimit = 0,
+                memberLimit = 0,
             )
         }
         return when (val result = client.queryChannelsInternal(request).await()) {
-            is Result.Success -> result.value
+            is Result.Success -> result.value.channels
             is Result.Failure -> emptyList()
         }
     }

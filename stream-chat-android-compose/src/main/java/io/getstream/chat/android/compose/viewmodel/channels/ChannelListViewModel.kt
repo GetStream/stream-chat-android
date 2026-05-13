@@ -575,13 +575,12 @@ public class ChannelListViewModel internal constructor(
             )
         } else {
             QueryChannelsRequest(
-                filter = Filters.neutral(),
-                limit = channelLimit,
-                messageLimit = messageLimit,
-                memberLimit = memberLimit,
                 predefinedFilter = mode.name,
                 filterValues = mode.filterValues,
                 sortValues = mode.sortValues,
+                limit = channelLimit,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
             )
         }
     }

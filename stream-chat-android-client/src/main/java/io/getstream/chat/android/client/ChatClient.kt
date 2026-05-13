@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
@@ -2989,8 +2990,8 @@ internal constructor(
      */
     @CheckResult
     @InternalStreamChatApi
-    public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> {
-        return api.queryChannels(request).map { it.channels }
+    public fun queryChannelsInternal(request: QueryChannelsRequest): Call<QueryChannelsResult> {
+        return api.queryChannels(request)
     }
 
     /**

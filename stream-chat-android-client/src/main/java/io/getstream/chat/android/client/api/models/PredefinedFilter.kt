@@ -24,13 +24,11 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 /**
  * Represents a predefined filter parsed by the backend.
  *
- * @param name The name/identifier of the predefined filter.
  * @param filter The parsed filter specification.
- * @param sort The parsed sort specification, or null if no sort was provided.
+ * @param sort The parsed sort specification, or locally calculated fallback if null.
  */
 @InternalStreamChatApi
 public data class PredefinedFilter(
-    val name: String,
     val filter: FilterObject,
-    val sort: QuerySorter<Channel>?,
+    val sort: QuerySorter<Channel>,
 )

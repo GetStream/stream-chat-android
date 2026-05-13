@@ -4939,8 +4939,17 @@ public final class io/getstream/chat/android/compose/viewmodel/channels/ChannelV
 	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/models/FilterObject;ILjava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;Z)V
 	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/models/FilterObject;ILjava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;ZLio/getstream/chat/android/models/querysort/QuerySorter;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/models/FilterObject;ILjava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;ZLio/getstream/chat/android/models/querysort/QuerySorter;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/util/Map;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;I)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;ILjava/lang/Integer;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;ILjava/lang/Integer;Ljava/lang/Integer;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;ILjava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;ILjava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;Z)V
 	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;ILjava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;ZLio/getstream/chat/android/models/querysort/QuerySorter;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;ILjava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;ZLio/getstream/chat/android/models/querysort/QuerySorter;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 

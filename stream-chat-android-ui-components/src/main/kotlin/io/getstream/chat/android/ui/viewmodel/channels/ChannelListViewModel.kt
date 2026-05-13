@@ -324,13 +324,12 @@ public class ChannelListViewModel internal constructor(
             )
         }
         is QueryMode.Predefined -> QueryChannelsRequest(
-            filter = Filters.neutral(),
-            limit = limit,
-            messageLimit = messageLimit,
-            memberLimit = memberLimit,
             predefinedFilter = mode.name,
             filterValues = mode.filterValues,
             sortValues = mode.sortValues,
+            limit = limit,
+            messageLimit = messageLimit,
+            memberLimit = memberLimit,
         )
     }
 

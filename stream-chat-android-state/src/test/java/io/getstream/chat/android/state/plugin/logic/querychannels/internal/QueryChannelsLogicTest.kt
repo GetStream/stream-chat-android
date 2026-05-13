@@ -18,6 +18,7 @@ package io.getstream.chat.android.state.plugin.logic.querychannels.internal
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
@@ -279,7 +280,7 @@ internal class QueryChannelsLogicTest {
     fun `queryFirstPage uses null messageLimit and memberLimit when no prior request exists`() = runTest {
         // Given - currentRequest is null (default from setUp)
         whenever(client.queryChannelsInternal(any()))
-            .thenReturn(emptyList<Channel>().asCall())
+            .thenReturn(QueryChannelsResult(channels = emptyList(), predefinedFilter = null).asCall())
 
         // When
         logic.queryFirstPage()
@@ -309,7 +310,7 @@ internal class QueryChannelsLogicTest {
         )
         whenever(queryChannelsState.currentRequest) doReturn MutableStateFlow(priorRequest)
         whenever(client.queryChannelsInternal(any()))
-            .thenReturn(emptyList<Channel>().asCall())
+            .thenReturn(QueryChannelsResult(channels = emptyList(), predefinedFilter = null).asCall())
 
         // When
         logic.queryFirstPage()
@@ -322,6 +323,39 @@ internal class QueryChannelsLogicTest {
             querySort = sort,
             messageLimit = 5,
             memberLimit = 50,
+        )
+        verify(client).queryChannelsInternal(expectedRequest)
+    }
+
+    @Test
+    fun `queryFirstPage rebuilds a predefined-filter request from a Predefined identifier`() = runTest {
+        // Given
+        val predefinedIdentifier = QueryChannelsIdentifier.Predefined(
+            name = "my-predefined",
+            filterValues = mapOf("a" to 1),
+            sortValues = mapOf("b" to 2),
+        )
+        val predefinedLogic = QueryChannelsLogic(
+            identifier = predefinedIdentifier,
+            client = client,
+            queryChannelsStateLogic = queryChannelsStateLogic,
+            queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
+        )
+        whenever(client.queryChannelsInternal(any()))
+            .thenReturn(QueryChannelsResult(channels = emptyList(), predefinedFilter = null).asCall())
+
+        // When
+        predefinedLogic.queryFirstPage()
+
+        // Then
+        val expectedRequest = QueryChannelsRequest(
+            predefinedFilter = "my-predefined",
+            limit = 30,
+            filterValues = mapOf("a" to 1),
+            sortValues = mapOf("b" to 2),
+            offset = 0,
+            messageLimit = null,
+            memberLimit = null,
         )
         verify(client).queryChannelsInternal(expectedRequest)
     }

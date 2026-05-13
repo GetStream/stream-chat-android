@@ -81,13 +81,14 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         // given
         val request = Mother.randomQueryChannelsRequest()
         val channels = listOf(randomChannel())
+        val expectedResult = QueryChannelsResult(channels, null)
         val sut = Fixture()
-            .givenQueryChannelsResult(RetroSuccess(QueryChannelsResult(channels, null)).toRetrofitCall())
+            .givenQueryChannelsResult(RetroSuccess(expectedResult).toRetrofitCall())
             .get()
         // when
         val result = sut.queryChannelsInternal(request).await()
         // then
-        verifySuccess(result, channels)
+        verifySuccess(result, expectedResult)
     }
 
     @Test

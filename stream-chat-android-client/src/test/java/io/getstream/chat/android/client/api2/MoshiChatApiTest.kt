@@ -1952,7 +1952,6 @@ internal class MoshiChatApiTest {
             )
             assertEquals(
                 PredefinedFilter(
-                    name = "my-filter",
                     filter = Filters.eq("type", "messaging"),
                     sort = descByName<Channel>("last_updated"),
                 ),
@@ -1975,7 +1974,6 @@ internal class MoshiChatApiTest {
             )
             assertEquals(
                 PredefinedFilter(
-                    name = "my-filter",
                     filter = Filters.greaterThan("last_message_at", "2024-01-15T10:30:00Z"),
                     sort = descByName<Channel>("last_message_at"),
                 ),
@@ -2000,7 +1998,6 @@ internal class MoshiChatApiTest {
         )
         assertEquals(
             PredefinedFilter(
-                name = "my-filter",
                 filter = Filters.and(
                     Filters.eq("type", "messaging"),
                     Filters.greaterThan("last_message_at", "2024-01-15T10:30:00Z"),
@@ -2022,7 +2019,6 @@ internal class MoshiChatApiTest {
         )
         assertEquals(
             PredefinedFilter(
-                name = "my-filter",
                 filter = Filters.eq("type", "messaging"),
                 sort = descByName<Channel>("last_updated"),
             ),
@@ -2041,7 +2037,6 @@ internal class MoshiChatApiTest {
         )
         assertEquals(
             PredefinedFilter(
-                name = "my-filter",
                 filter = Filters.eq("type", "messaging"),
                 sort = ascByName<Channel>("created_at"),
             ),

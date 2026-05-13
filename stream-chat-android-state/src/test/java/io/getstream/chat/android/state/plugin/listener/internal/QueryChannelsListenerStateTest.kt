@@ -69,7 +69,7 @@ internal class QueryChannelsListenerStateTest {
         val result = Result.Success(
             QueryChannelsResult(
                 channels = listOf(randomChannel()),
-                predefinedFilter = PredefinedFilter("my-filter", resolvedFilter, resolvedSort),
+                predefinedFilter = PredefinedFilter(resolvedFilter, resolvedSort),
             ),
         )
 
@@ -79,29 +79,6 @@ internal class QueryChannelsListenerStateTest {
         // Then
         verify(queryChannelsLogic).applyResolvedSpec(eq(resolvedFilter), eq(resolvedSort))
     }
-
-    @Test
-    fun `onQueryChannelsResultWithPredefinedFilter applies default sort when predefinedFilter has null sort`() =
-        runTest {
-            // Given
-            val request = QueryChannelsRequest(
-                limit = 30,
-                predefinedFilter = "my-filter",
-            )
-            val resolvedFilter = Filters.eq("type", "messaging")
-            val result = Result.Success(
-                QueryChannelsResult(
-                    channels = emptyList(),
-                    predefinedFilter = PredefinedFilter("my-filter", resolvedFilter, sort = null),
-                ),
-            )
-
-            // When
-            listener.onQueryChannelsResultWithPredefinedFilter(result, request)
-
-            // Then – falls back to QuerySortByField default
-            verify(queryChannelsLogic).applyResolvedSpec(eq(resolvedFilter), any())
-        }
 
     @Test
     fun `onQueryChannelsResultWithPredefinedFilter does not apply resolved spec for plain success without predefinedFilter`() =
