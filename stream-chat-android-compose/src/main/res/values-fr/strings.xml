@@ -58,7 +58,7 @@
   <string name="stream_compose_cancel">"Annuler"</string>
   <string name="stream_compose_channel_item_muted">"en sourdine"</string>
   <string name="stream_compose_channel_item_open">"Ouvrir la conversation"</string>
-  <string name="stream_compose_channel_item_options">"Options de la conversation"</string>
+  <string name="stream_compose_channel_item_options">"Ouvrir les options de conversation"</string>
   <string name="stream_compose_cd_message_item">"Élément de message"</string>
   <string name="stream_compose_cd_play_button">"Bouton de lecture"</string>
   <string name="stream_compose_channel_list_draft">"Brouillon : "</string>

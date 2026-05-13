@@ -118,7 +118,7 @@
   <string name="stream_compose_cancel">"Annulla"</string>
   <string name="stream_compose_channel_item_muted">"silenziato"</string>
   <string name="stream_compose_channel_item_open">"Apri conversazione"</string>
-  <string name="stream_compose_channel_item_options">"Opzioni conversazione"</string>
+  <string name="stream_compose_channel_item_options">"Apri opzioni conversazione"</string>
   <string name="stream_compose_cd_message_item">"Elemento messaggio"</string>
   <string name="stream_compose_cd_play_button">"Pulsante riproduci"</string>
   <string name="stream_compose_channel_list_draft">"Bozza: "</string>

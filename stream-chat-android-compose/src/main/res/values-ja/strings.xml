@@ -58,7 +58,7 @@
   <string name="stream_compose_cancel">"キャンセル"</string>
   <string name="stream_compose_channel_item_muted">"ミュート中"</string>
   <string name="stream_compose_channel_item_open">"会話を開く"</string>
-  <string name="stream_compose_channel_item_options">"会話のオプション"</string>
+  <string name="stream_compose_channel_item_options">"会話のオプションを開く"</string>
   <string name="stream_compose_cd_message_item">"メッセージ項目"</string>
   <string name="stream_compose_cd_play_button">"再生ボタン"</string>
   <string name="stream_compose_channel_list_draft">"下書き: "</string>

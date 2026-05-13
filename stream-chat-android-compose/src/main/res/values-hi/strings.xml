@@ -118,7 +118,7 @@
   <string name="stream_compose_cancel">"रद्द करें"</string>
   <string name="stream_compose_channel_item_muted">"म्यूट किया गया"</string>
   <string name="stream_compose_channel_item_open">"बातचीत खोलें"</string>
-  <string name="stream_compose_channel_item_options">"बातचीत के विकल्प"</string>
+  <string name="stream_compose_channel_item_options">"बातचीत के विकल्प खोलें"</string>
   <string name="stream_compose_cd_message_item">"मैसेज आइटम"</string>
   <string name="stream_compose_cd_play_button">"चलाएँ बटन"</string>
   <string name="stream_compose_channel_list_draft">"ड्राफ़्ट: "</string>
