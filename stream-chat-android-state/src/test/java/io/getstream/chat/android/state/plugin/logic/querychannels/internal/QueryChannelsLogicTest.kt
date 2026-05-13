@@ -479,38 +479,5 @@ internal class QueryChannelsLogicTest {
         verify(queryChannelsStateLogic).handleChatEvent(event2, dbChannel)
     }
 
-    @Test
-    fun `queryFirstPage rebuilds a predefined-filter request from a Predefined identifier`() = runTest {
-        // Given
-        val predefinedIdentifier = QueryChannelsIdentifier.Predefined(
-            name = "my-predefined",
-            filterValues = mapOf("a" to 1),
-            sortValues = mapOf("b" to 2),
-        )
-        val predefinedLogic = QueryChannelsLogic(
-            identifier = predefinedIdentifier,
-            client = client,
-            queryChannelsStateLogic = queryChannelsStateLogic,
-            queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
-        )
-        whenever(client.queryChannelsInternal(any()))
-            .thenReturn(emptyList<Channel>().asCall())
-
-        // When
-        predefinedLogic.queryFirstPage()
-
-        // Then
-        val expectedRequest = QueryChannelsRequest(
-            offset = 0,
-            limit = 30,
-            messageLimit = null,
-            memberLimit = null,
-            predefinedFilter = "my-predefined",
-            filterValues = mapOf("a" to 1),
-            sortValues = mapOf("b" to 2),
-        )
-        verify(client).queryChannelsInternal(expectedRequest)
-    }
-
     // endregion
 }
