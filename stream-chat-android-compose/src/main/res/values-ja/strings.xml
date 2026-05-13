@@ -59,7 +59,6 @@
   <string name="stream_compose_channel_item_muted">"ミュート中"</string>
   <string name="stream_compose_channel_item_open">"会話を開く"</string>
   <string name="stream_compose_channel_item_options">"会話のオプションを開く"</string>
-  <string name="stream_compose_cd_message_item">"メッセージ項目"</string>
   <string name="stream_compose_cd_play_button">"再生ボタン"</string>
   <string name="stream_compose_channel_list_draft">"下書き: "</string>
   <string name="stream_compose_channel_list_empty_channels">"会話はまだありません"</string>
@@ -135,6 +134,8 @@
   <string name="stream_compose_message_composer_attachments_expanded">"展開"</string>
   <string name="stream_compose_message_deleted">"メッセージは削除されました"</string>
   <string name="stream_compose_message_deleted_preview">"メッセージは削除されました"</string>
+  <string name="stream_compose_message_item_open_thread">"スレッドを開く"</string>
+  <string name="stream_compose_message_item_options">"メッセージのオプションを表示"</string>
   <string name="stream_compose_message_list_auto_translated">"翻訳済み"</string>
   <string name="stream_compose_message_list_empty_messages">"メッセージはありません"</string>
   <string name="stream_compose_message_list_error_cannot_open_link">"このURLを開くアプリがありません:\n%s"</string>

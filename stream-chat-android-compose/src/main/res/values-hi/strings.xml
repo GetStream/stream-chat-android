@@ -119,7 +119,6 @@
   <string name="stream_compose_channel_item_muted">"म्यूट किया गया"</string>
   <string name="stream_compose_channel_item_open">"बातचीत खोलें"</string>
   <string name="stream_compose_channel_item_options">"बातचीत के विकल्प खोलें"</string>
-  <string name="stream_compose_cd_message_item">"मैसेज आइटम"</string>
   <string name="stream_compose_cd_play_button">"चलाएँ बटन"</string>
   <string name="stream_compose_channel_list_draft">"ड्राफ़्ट: "</string>
   <string name="stream_compose_channel_list_empty_channels">"कोई चैनल उपलब्ध नहीं है"</string>
@@ -183,6 +182,8 @@
   <string name="stream_compose_message_composer_attachments_expanded">"विस्तृत"</string>
   <string name="stream_compose_message_deleted">"मैसेज मिटाया गया"</string>
   <string name="stream_compose_message_deleted_preview">"मैसेज हटा दिया गया"</string>
+  <string name="stream_compose_message_item_open_thread">"थ्रेड खोलें"</string>
+  <string name="stream_compose_message_item_options">"संदेश के विकल्प दिखाएँ"</string>
   <string name="stream_compose_message_list_auto_translated">"अनुवादित"</string>
   <string name="stream_compose_message_list_empty_messages">"कोई मैसेज नहीं"</string>
   <string name="stream_compose_message_list_error_cannot_open_link">"इस url को देखने के लिए कोई ऐप नहीं है:\n%s"</string>

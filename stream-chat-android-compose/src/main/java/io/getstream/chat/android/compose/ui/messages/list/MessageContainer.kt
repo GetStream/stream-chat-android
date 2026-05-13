@@ -62,8 +62,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
@@ -177,12 +175,16 @@ public fun MessageContainer(
     val canOpenActions = !message.isDeleted() && !message.isUploading()
     val onLongItemClick = rememberHapticLongClick(onLongItemClick)
 
+    val openThreadLabel = stringResource(R.string.stream_compose_message_item_open_thread)
+    val messageOptionsLabel = stringResource(R.string.stream_compose_message_item_options)
     val clickModifier = Modifier.combinedClickable(
         interactionSource = remember(::MutableInteractionSource),
         indication = null,
         enabled = canOpenThread || canOpenActions,
         onClick = { if (canOpenThread) onThreadClick(message) },
         onLongClick = { if (canOpenActions) onLongItemClick(message) },
+        onClickLabel = openThreadLabel.takeIf { canOpenThread },
+        onLongClickLabel = messageOptionsLabel.takeIf { canOpenActions },
     )
 
     val highlightColor = ChatTheme.colors.backgroundCoreHighlight
@@ -198,7 +200,6 @@ public fun MessageContainer(
     )
 
     val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
-    val description = stringResource(id = R.string.stream_compose_cd_message_item)
     val optionsVisibility = ChatTheme.config.messageActions.optionsVisibility
     val isSwipeable = remember(message, messageItem.ownCapabilities, optionsVisibility) {
         optionsVisibility.canReplyToMessage(message, messageItem.ownCapabilities)
@@ -223,8 +224,7 @@ public fun MessageContainer(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .background(color = color)
-                .then(clickModifier)
-                .semantics { contentDescription = description },
+                .then(clickModifier),
             horizontalArrangement = if (messageAlignment == MessageAlignment.Start) {
                 Arrangement.Start
             } else {
