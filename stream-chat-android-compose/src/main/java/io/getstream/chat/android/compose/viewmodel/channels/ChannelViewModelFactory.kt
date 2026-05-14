@@ -101,9 +101,6 @@ public class ChannelViewModelFactory internal constructor(
      *
      * @param chatClient The client used to fetch data.
      * @param groupKey Identifies the group whose state this ViewModel observes.
-     * @param channelLimit How many channels we fetch per page.
-     * @param memberLimit Members fetched per channel. When `null`, server-side default is used.
-     * @param messageLimit Messages fetched per channel. When `null`, server-side default is used.
      * @param isDraftMessageEnabled If the draft message feature is enabled.
      * @param messageSearchSort Optional sorting for message search results.
      */
@@ -111,17 +108,14 @@ public class ChannelViewModelFactory internal constructor(
     public constructor(
         chatClient: ChatClient = ChatClient.instance(),
         groupKey: String,
-        channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
-        memberLimit: Int? = null,
-        messageLimit: Int? = null,
         isDraftMessageEnabled: Boolean = false,
         messageSearchSort: QuerySorter<Message>? = null,
     ) : this(
         chatClient = chatClient,
         mode = QueryMode.Grouped(groupKey),
-        channelLimit = channelLimit,
-        memberLimit = memberLimit,
-        messageLimit = messageLimit,
+        channelLimit = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
+        memberLimit = null,
+        messageLimit = null,
         chatEventHandlerFactory = groupAwareChatEventHandlerFactory(
             groupKey = groupKey,
             clientState = chatClient.clientState,

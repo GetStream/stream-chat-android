@@ -154,9 +154,6 @@ public class ChannelListViewModel internal constructor(
     public constructor(
         chatClient: ChatClient,
         groupKey: String,
-        channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
-        memberLimit: Int? = null,
-        messageLimit: Int? = null,
         searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
         isDraftMessageEnabled: Boolean = false,
         messageSearchSort: QuerySorter<Message>? = null,
@@ -164,9 +161,9 @@ public class ChannelListViewModel internal constructor(
     ) : this(
         chatClient = chatClient,
         mode = QueryMode.Grouped(groupKey),
-        channelLimit = channelLimit,
-        memberLimit = memberLimit,
-        messageLimit = messageLimit,
+        channelLimit = DEFAULT_CHANNEL_LIMIT,
+        memberLimit = null,
+        messageLimit = null,
         chatEventHandlerFactory = groupAwareChatEventHandlerFactory(
             groupKey = groupKey,
             clientState = chatClient.clientState,
