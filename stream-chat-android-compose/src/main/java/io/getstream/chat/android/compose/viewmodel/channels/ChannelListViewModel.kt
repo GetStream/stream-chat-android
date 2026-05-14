@@ -46,6 +46,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.state.event.handler.chat.factory.GroupAwareChatEventHandlerFactory
 import io.getstream.chat.android.state.extensions.globalStateFlow
 import io.getstream.chat.android.state.extensions.initQueryChannelsAsState
 import io.getstream.chat.android.state.extensions.queryChannelsAsState
@@ -144,6 +145,11 @@ public class ChannelListViewModel internal constructor(
     /**
      * Grouped channel list constructor. Subscribes to the state identified by [groupKey] without
      * issuing a remote call; the state is populated externally by `queryGroupedChannels` responses.
+     *
+     * Defaults [chatEventHandlerFactory] to a [GroupAwareChatEventHandlerFactory] keyed on
+     * [groupKey] so that `channel.updated` and channel-add events route channels into the
+     * correct group out of the box. Pass a custom factory (e.g. with a custom
+     * [io.getstream.chat.android.state.event.handler.chat.ChannelGroupResolver]) to override.
      */
     public constructor(
         chatClient: ChatClient,
@@ -151,7 +157,10 @@ public class ChannelListViewModel internal constructor(
         channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
         memberLimit: Int? = null,
         messageLimit: Int? = null,
-        chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
+        chatEventHandlerFactory: ChatEventHandlerFactory = GroupAwareChatEventHandlerFactory(
+            groupKey = groupKey,
+            clientState = chatClient.clientState,
+        ),
         searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
         isDraftMessageEnabled: Boolean = false,
         messageSearchSort: QuerySorter<Message>? = null,

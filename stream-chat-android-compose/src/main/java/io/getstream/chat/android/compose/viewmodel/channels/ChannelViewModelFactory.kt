@@ -27,6 +27,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.state.event.handler.chat.factory.GroupAwareChatEventHandlerFactory
 import io.getstream.chat.android.state.extensions.globalStateFlow
 
 /**
@@ -110,7 +111,10 @@ public class ChannelViewModelFactory internal constructor(
         channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
         memberLimit: Int? = null,
         messageLimit: Int? = null,
-        chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
+        chatEventHandlerFactory: ChatEventHandlerFactory = GroupAwareChatEventHandlerFactory(
+            groupKey = groupKey,
+            clientState = chatClient.clientState,
+        ),
         isDraftMessageEnabled: Boolean = false,
         messageSearchSort: QuerySorter<Message>? = null,
     ) : this(
