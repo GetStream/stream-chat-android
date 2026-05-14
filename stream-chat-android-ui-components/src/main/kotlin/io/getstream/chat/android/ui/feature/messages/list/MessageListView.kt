@@ -662,9 +662,9 @@ public class MessageListView : ConstraintLayout {
         binding = StreamUiMessageListViewBinding.inflate(streamThemeInflater, this)
 
         messageListViewStyle = MessageListViewStyle(context, attr)
-        messageListViewStyle?.messagesStart?.let(::chatMessageStart)
 
         initRecyclerView()
+        messageListViewStyle?.messagesStart?.let(::chatMessageStart)
         initScrollHelper()
         initSwipeToReply()
         initLoadingView()
@@ -710,9 +710,7 @@ public class MessageListView : ConstraintLayout {
 
     private fun initRecyclerView() {
         binding.chatMessagesRV.apply {
-            layoutManager = LinearLayoutManager(context).apply {
-                stackFromEnd = true
-            }
+            layoutManager = LinearLayoutManager(context)
             setHasFixedSize(false)
             setItemViewCacheSize(20)
         }
@@ -1332,15 +1330,16 @@ public class MessageListView : ConstraintLayout {
 
     private fun changeLayoutForMessageStart(messagesStart: MessagesStart) {
         val messagesRV = binding.chatMessagesRV
+        val layoutManager = messagesRV.layoutManager as? LinearLayoutManager ?: return
 
         when (messagesStart) {
             MessagesStart.BOTTOM -> {
-                messagesRV.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+                layoutManager.stackFromEnd = true
                 messagesRV.overScrollMode = View.OVER_SCROLL_NEVER
             }
 
             MessagesStart.TOP -> {
-                messagesRV.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+                layoutManager.stackFromEnd = false
                 messagesRV.overScrollMode = View.OVER_SCROLL_ALWAYS
             }
         }
