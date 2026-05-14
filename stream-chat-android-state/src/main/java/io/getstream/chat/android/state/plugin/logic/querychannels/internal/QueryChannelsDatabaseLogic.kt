@@ -17,7 +17,6 @@
 package io.getstream.chat.android.state.plugin.logic.querychannels.internal
 
 import io.getstream.chat.android.client.extensions.internal.applyPagination
-import io.getstream.chat.android.client.internal.state.plugin.identifier
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
@@ -52,7 +51,12 @@ internal class QueryChannelsDatabaseLogic(
         queryChannelsSpec: QueryChannelsSpec?,
     ): List<Channel>? {
         val cachedSpec = queryChannelsSpec?.let {
-            queryChannelsRepository.selectBy(it.identifier)
+            val groupKey = it.groupKey
+            if (groupKey != null) {
+                queryChannelsRepository.selectBy(groupKey)
+            } else {
+                queryChannelsRepository.selectBy(it.filter, it.querySort)
+            }
         }
         return if (cachedSpec != null) {
             // Spec is present in DB, fetch channels according to it

@@ -16,17 +16,18 @@
 
 package io.getstream.chat.android.client.persistance.repository.noop
 
-import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.query.QueryChannelsSpec
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.querysort.QuerySorter
 
 /**
  * No-Op QueryChannelsRepository.
  */
 internal object NoOpQueryChannelsRepository : QueryChannelsRepository {
     override suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec) { /* No-Op */ }
-
-    override suspend fun selectBy(identifier: QueryChannelsIdentifier): QueryChannelsSpec? = null
-
+    override suspend fun selectBy(groupKey: String): QueryChannelsSpec? = null
+    override suspend fun selectBy(filter: FilterObject, querySort: QuerySorter<Channel>): QueryChannelsSpec? = null
     override suspend fun clear() { /* No-Op */ }
 }
