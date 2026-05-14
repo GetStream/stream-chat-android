@@ -288,7 +288,13 @@
     <string name="stream_compose_media_gallery_share_large_file_prompt_message">%.2f MB needs to be downloaded before sharing.</string>
 
     <!-- Content Description -->
-    <string name="stream_compose_cd_channel_item">Channel item</string>
+    <string name="stream_compose_channel_item_open">Open conversation</string>
+    <string name="stream_compose_channel_item_options">Open conversation options</string>
+    <string name="stream_compose_channel_item_muted">muted</string>
+    <plurals name="stream_compose_channel_item_unread">
+        <item quantity="one">%d unread message</item>
+        <item quantity="other">%d unread messages</item>
+    </plurals>
     <string name="stream_compose_cd_message_item">Message item</string>
     <string name="stream_compose_cd_play_button">Play button</string>
 

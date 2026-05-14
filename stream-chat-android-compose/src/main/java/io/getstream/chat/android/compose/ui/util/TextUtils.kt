@@ -226,16 +226,21 @@ private fun AnnotatedString.Builder.tagUser(
 
         if (start < 0) return@forEach
 
+        // Backtrack one position to include the leading `@`. Clamp to 0 when the mention is at the
+        // start of the text and no `@` precedes it — otherwise the resulting -1 span start crashes
+        // TalkBack's spannable conversion with `setSpan (-1 ...) starts before 0`.
+        val styledStart = (start - 1).coerceAtLeast(0)
+
         addStyle(
             style = SpanStyle(color = mentionsColor),
-            start = start - 1, // -1 to include the @ symbol
+            start = styledStart,
             end = end,
         )
 
         addStringAnnotation(
             tag = AnnotationTagMention,
             annotation = userName,
-            start = start - 1, // -1 to include the @ symbol
+            start = styledStart,
             end = end,
         )
     }

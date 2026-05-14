@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -64,7 +64,7 @@ internal fun MessagePreviewContent(
     Row(
         modifier = modifier
             .testTag("Stream_MessagePreview")
-            .semantics { text = AnnotatedString(fullPreview) },
+            .clearAndSetSemantics { text = AnnotatedString(fullPreview) },
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing3xs),
     ) {
         if (senderName != null) {
@@ -101,7 +101,7 @@ internal fun DraftPreviewContent(
     Row(
         modifier = modifier
             .testTag("Stream_MessagePreview")
-            .semantics { text = AnnotatedString(fullPreview) },
+            .clearAndSetSemantics { text = AnnotatedString(fullPreview) },
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing3xs),
     ) {
         Text(

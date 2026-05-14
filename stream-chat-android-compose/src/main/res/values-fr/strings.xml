@@ -56,7 +56,9 @@
   <string name="stream_compose_avatar_overflow_count">"+%1$d"</string>
   <string name="stream_compose_block_user">"Bloquer l\'utilisateur"</string>
   <string name="stream_compose_cancel">"Annuler"</string>
-  <string name="stream_compose_cd_channel_item">"Élément de canal"</string>
+  <string name="stream_compose_channel_item_muted">"en sourdine"</string>
+  <string name="stream_compose_channel_item_open">"Ouvrir la conversation"</string>
+  <string name="stream_compose_channel_item_options">"Ouvrir les options de conversation"</string>
   <string name="stream_compose_cd_message_item">"Élément de message"</string>
   <string name="stream_compose_cd_play_button">"Bouton de lecture"</string>
   <string name="stream_compose_channel_list_draft">"Brouillon : "</string>
@@ -259,6 +261,10 @@
   <string name="stream_compose_user_status_online">"En ligne"</string>
   <string name="stream_compose_video_preview">"Vidéo"</string>
   <string name="stream_compose_waiting_for_network">"En attente de réseau"</string>
+  <plurals name="stream_compose_channel_item_unread">
+    <item quantity="one">"%d message non lu"</item>
+    <item quantity="other">"%d messages non lus"</item>
+  </plurals>
   <plurals name="stream_compose_channel_list_typing_many">
     <item quantity="one">"%d personne écrit"</item>
     <item quantity="other">"%d personnes écrivent"</item>
