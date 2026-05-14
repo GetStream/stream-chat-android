@@ -68,7 +68,11 @@ public sealed interface QueryChannelsIdentifier {
 public val QueryChannelsRequest.identifier: QueryChannelsIdentifier
     get() = when (val name = predefinedFilter) {
         null -> QueryChannelsIdentifier.Standard(filter, querySort)
-        else -> QueryChannelsIdentifier.Predefined(name, filterValues, sortValues)
+        else -> QueryChannelsIdentifier.Predefined(
+            name = name,
+            filterValues = filterValues.normalizedIdentifierValues(),
+            sortValues = sortValues.normalizedIdentifierValues(),
+        )
     }
 
 /**
@@ -81,5 +85,12 @@ public val QueryChannelsRequest.identifier: QueryChannelsIdentifier
 public val QueryChannelsSpec.identifier: QueryChannelsIdentifier
     get() = when (val name = predefinedFilterName) {
         null -> QueryChannelsIdentifier.Standard(filter, querySort)
-        else -> QueryChannelsIdentifier.Predefined(name, predefinedFilterValues, predefinedSortValues)
+        else -> QueryChannelsIdentifier.Predefined(
+            name = name,
+            filterValues = predefinedFilterValues.normalizedIdentifierValues(),
+            sortValues = predefinedSortValues.normalizedIdentifierValues(),
+        )
     }
+
+private fun Map<String, Any>?.normalizedIdentifierValues(): Map<String, Any>? =
+    if (isNullOrEmpty()) null else this
