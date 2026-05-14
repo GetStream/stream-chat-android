@@ -31,10 +31,23 @@ public interface QueryChannelsState {
     /** If the channels need to be synced. */
     public val recoveryNeeded: StateFlow<Boolean>
 
-    /** The filter is associated with this query channels state. */
+    /**
+     * The filter associated with this query channels state.
+     *
+     * For grouped queries (states keyed by `QueryChannelsIdentifier.Grouped`), this is a
+     * placeholder ([io.getstream.chat.android.models.Filters.neutral]) — grouped lists are
+     * partitioned server-side and do not have a client-side filter. Do not rely on this value
+     * for grouped states.
+     */
     public val filter: FilterObject
 
-    /** The sort object which requested for this query channels state. */
+    /**
+     * The sort associated with this query channels state.
+     *
+     * For grouped queries (states keyed by `QueryChannelsIdentifier.Grouped`), this is a
+     * placeholder (`last_message_at` descending) — grouped lists are ordered server-side and
+     * do not have a client-side sort. Do not rely on this value for grouped states.
+     */
     public val sort: QuerySorter<Channel>
 
     /** The request for the current page. */

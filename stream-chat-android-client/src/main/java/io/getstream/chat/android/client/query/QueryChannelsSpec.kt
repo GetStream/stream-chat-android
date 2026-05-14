@@ -31,7 +31,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 public data class QueryChannelsSpec(
     val filter: FilterObject,
     val querySort: QuerySorter<Channel>,
-    val cids: Set<String> = emptySet(),
+    var cids: Set<String> = emptySet(),
     val groupKey: String? = null,
 ) {
 

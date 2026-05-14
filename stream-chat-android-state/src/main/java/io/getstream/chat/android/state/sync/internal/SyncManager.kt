@@ -452,7 +452,15 @@ internal class SyncManager(
             return
         }
 
-        when (val result = chatClient.queryGroupedChannels().await()) {
+        // TODO: Align with iOS before publishing!
+        val result = chatClient.queryGroupedChannels(
+            limit = null,
+            groups = null,
+            watch = true,
+            presence = true,
+        ).await()
+
+        when (result) {
             is Result.Success ->
                 logger.v { "[updateGroupedQueryChannels] succeeded (listener applied)" }
             is Result.Failure ->

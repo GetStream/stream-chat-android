@@ -474,8 +474,8 @@ internal class EventMapping(
             id = channel_id,
             type = channel_type,
             memberCount = channel_member_count ?: 0,
-            name = channel_custom?.get("name") as? String,
-            image = channel_custom?.get("image") as? String,
+            name = channel_custom?.get(CHANNEL_CUSTOM_NAME) as? String,
+            image = channel_custom?.get(CHANNEL_CUSTOM_IMAGE) as? String,
         )
         NewMessageEvent(
             type = type,
@@ -1320,5 +1320,10 @@ internal class EventMapping(
             user = user?.toDomain(),
             rawData = rawData,
         )
+    }
+
+    companion object {
+        private const val CHANNEL_CUSTOM_NAME = "name"
+        private const val CHANNEL_CUSTOM_IMAGE = "image"
     }
 }
