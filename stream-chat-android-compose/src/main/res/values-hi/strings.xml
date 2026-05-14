@@ -196,7 +196,10 @@
   <string name="stream_compose_message_list_show_translation">"अनुवाद दिखाएँ"</string>
   <string name="stream_compose_message_list_thread_footnote_thread_replies">"%d जवाब"</string>
   <string name="stream_compose_message_list_thread_footnote_thread_reply">"%d जवाब"</string>
-  <string name="stream_compose_message_list_unread_separator">"%d अपठित मैसेज"</string>
+  <plurals name="stream_compose_message_list_unread_separator">
+    <item quantity="one">"%d अपठित मैसेज"</item>
+    <item quantity="other">"%d अपठित मैसेज"</item>
+  </plurals>
   <string name="stream_compose_message_list_unsupported_attachment">"असमर्थित अटैचमेंट"</string>
   <string name="stream_compose_message_list_view">"देखें"</string>
   <string name="stream_compose_message_list_view_original">"मूल देखें"</string>

@@ -136,7 +136,10 @@
   <string name="stream_compose_message_list_show_translation">"Tampilkan terjemahan"</string>
   <string name="stream_compose_message_list_thread_footnote_thread_replies">"%d balasan"</string>
   <string name="stream_compose_message_list_thread_footnote_thread_reply">"%d balasan"</string>
-  <string name="stream_compose_message_list_unread_separator">"%d pesan belum dibaca"</string>
+  <plurals name="stream_compose_message_list_unread_separator">
+    <item quantity="one">"%d pesan belum dibaca"</item>
+    <item quantity="other">"%d pesan belum dibaca"</item>
+  </plurals>
   <string name="stream_compose_message_list_unsupported_attachment">"Lampiran tidak didukung"</string>
   <string name="stream_compose_message_list_view">"Lihat"</string>
   <string name="stream_compose_message_list_view_original">"Lihat aslinya"</string>

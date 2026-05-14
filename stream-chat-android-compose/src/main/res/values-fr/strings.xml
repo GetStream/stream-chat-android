@@ -136,7 +136,10 @@
   <string name="stream_compose_message_list_show_translation">"Afficher la traduction"</string>
   <string name="stream_compose_message_list_thread_footnote_thread_replies">"%d réponses"</string>
   <string name="stream_compose_message_list_thread_footnote_thread_reply">"%d réponse"</string>
-  <string name="stream_compose_message_list_unread_separator">"%d messages non lus"</string>
+  <plurals name="stream_compose_message_list_unread_separator">
+    <item quantity="one">"%d message non lu"</item>
+    <item quantity="other">"%d messages non lus"</item>
+  </plurals>
   <string name="stream_compose_message_list_unsupported_attachment">"Pièce jointe non prise en charge"</string>
   <string name="stream_compose_message_list_view">"Voir"</string>
   <string name="stream_compose_message_list_view_original">"Voir l\'original"</string>

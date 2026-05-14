@@ -42,6 +42,7 @@ import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
@@ -220,6 +221,7 @@ internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItem
         modifier = Modifier
             .semantics(mergeDescendants = true) {
                 testTag = "Stream_MessageDateSeparator"
+                heading()
             }
             .padding(vertical = StreamTokens.spacingXs)
             .fillMaxWidth(),
@@ -233,13 +235,16 @@ internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItem
  */
 @Composable
 internal fun DefaultMessageUnreadSeparatorContent(unreadSeparatorItemState: UnreadSeparatorItemState) {
+    val unreadCount = unreadSeparatorItemState.unreadCount
     MessagesStripDivider(
         modifier = Modifier.semantics(mergeDescendants = true) {
             testTag = "Stream_UnreadMessagesBadge"
+            heading()
         },
-        text = stringResource(
-            R.string.stream_compose_message_list_unread_separator,
-            unreadSeparatorItemState.unreadCount,
+        text = pluralStringResource(
+            R.plurals.stream_compose_message_list_unread_separator,
+            unreadCount,
+            unreadCount,
         ),
     )
 }
