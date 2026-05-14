@@ -40,6 +40,7 @@ import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.state.event.handler.chat.factory.groupAwareChatEventHandlerFactory
 import io.getstream.chat.android.state.extensions.internal.logic
 import io.getstream.chat.android.state.extensions.internal.parseAttachmentNameFromUrl
 import io.getstream.chat.android.state.extensions.internal.requestsAsState
@@ -158,21 +159,23 @@ public fun ChatClient.queryChannelsAsState(
  * served by [queryChannelsAsState] instead.
  *
  * @param identifier The grouped query's identifier whose state should be initialized.
- * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] that will be used to create [ChatEventHandler].
+ * @param chatEventHandlerFactory The factory used to create the [ChatEventHandler] that routes
+ * events into this grouped list. Defaults to a group-aware factory keyed on [identifier].
  * @param coroutineScope The [CoroutineScope] used for executing the request.
  *
  * @return A StateFlow that emits null until the user is connected, then emits the [QueryChannelsState] for the identifier.
  */
 @InternalStreamChatApi
 @JvmOverloads
-public fun ChatClient.initQueryChannelsAsState(
+public fun ChatClient.initGroupedQueryChannelsAsState(
     identifier: QueryChannelsIdentifier.Grouped,
-    chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(clientState),
+    chatEventHandlerFactory: ChatEventHandlerFactory =
+        groupAwareChatEventHandlerFactory(groupKey = identifier.group, clientState = clientState),
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): StateFlow<QueryChannelsState?> {
-    StreamLog.d(TAG) { "[initQueryChannelsAsState] identifier: $identifier" }
+    StreamLog.d(TAG) { "[initGroupedQueryChannelsAsState] identifier: $identifier" }
     return getStateOrNull(coroutineScope) {
-        requestsAsState(coroutineScope).initQueryChannelsState(identifier, chatEventHandlerFactory)
+        requestsAsState(coroutineScope).initGroupedQueryChannelsState(identifier, chatEventHandlerFactory)
     }
 }
 

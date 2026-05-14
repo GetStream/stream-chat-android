@@ -626,7 +626,6 @@ internal class ChannelListViewModelTest {
                     chatClient = chatClient,
                     groupKey = groupKey,
                     isDraftMessageEnabled = false,
-                    chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
                     messageSearchSort = messageSearchSort,
                     globalState = MutableStateFlow(globalState),
                 )

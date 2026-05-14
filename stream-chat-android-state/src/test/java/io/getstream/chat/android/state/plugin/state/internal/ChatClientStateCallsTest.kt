@@ -92,13 +92,13 @@ internal class ChatClientStateCallsTest {
     }
 
     @Test
-    fun `initQueryChannelsState creates state without API call`() = runTest {
+    fun `initGroupedQueryChannelsState creates state without API call`() = runTest {
         // Given - user is connected
         userFlow.value = User(id = "test-user")
         val factory = ChatEventHandlerFactory(clientState)
 
         // When
-        val result = chatClientStateCalls.initQueryChannelsState(identifier, factory)
+        val result = chatClientStateCalls.initGroupedQueryChannelsState(identifier, factory)
 
         // Then — no remote queryChannels API call; the offline grouped load runs locally.
         verify(chatClient, never()).queryChannels(any())
@@ -106,14 +106,14 @@ internal class ChatClientStateCallsTest {
     }
 
     @Test
-    fun `initQueryChannelsState waits for user before proceeding`() = runTest {
+    fun `initGroupedQueryChannelsState waits for user before proceeding`() = runTest {
         // Given - user is NOT connected yet
         val factory = ChatEventHandlerFactory(clientState)
         var completed = false
 
-        // When - launch initQueryChannelsState (it should suspend waiting for user)
+        // When - launch initGroupedQueryChannelsState (it should suspend waiting for user)
         val job = launch {
-            chatClientStateCalls.initQueryChannelsState(identifier, factory)
+            chatClientStateCalls.initGroupedQueryChannelsState(identifier, factory)
             completed = true
         }
         advanceUntilIdle()
@@ -131,13 +131,13 @@ internal class ChatClientStateCallsTest {
     }
 
     @Test
-    fun `initQueryChannelsState returns state matching the identifier`() = runTest {
+    fun `initGroupedQueryChannelsState returns state matching the identifier`() = runTest {
         // Given
         userFlow.value = User(id = "test-user")
         val factory = ChatEventHandlerFactory(clientState)
 
         // When
-        chatClientStateCalls.initQueryChannelsState(identifier, factory)
+        chatClientStateCalls.initGroupedQueryChannelsState(identifier, factory)
 
         // Then - stateRegistry.queryChannels should be called with the identifier
         verify(stateRegistry).queryChannels(identifier)

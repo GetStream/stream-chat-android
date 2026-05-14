@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.state.event.handler.chat
 
-import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomString
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -24,51 +23,59 @@ import org.junit.jupiter.api.Test
 internal class DefaultChannelGroupResolverTest {
 
     @Test
-    fun `Given a channel with an explicit group When resolved Then returns the group plus the all sentinel`() {
-        val channel = randomChannel(extraData = mapOf("group" to "vip"))
+    fun `Given a channel_custom with an explicit group When resolved Then returns the group plus the all sentinel`() {
+        val channelCustom: Map<String, Any> = mapOf("group" to "vip")
         val resolver = DefaultChannelGroupResolver()
 
-        val result = resolver.resolve(channel, currentGroup = randomString())
+        val result = resolver.resolve(channelCustom, currentGroup = randomString())
 
         assertEquals(setOf("vip", "all"), result)
     }
 
     @Test
-    fun `Given a channel with no group extra When resolved Then returns only the all sentinel`() {
-        val channel = randomChannel(extraData = emptyMap())
+    fun `Given a null channel_custom When resolved Then returns only the all sentinel`() {
         val resolver = DefaultChannelGroupResolver()
 
-        val result = resolver.resolve(channel, currentGroup = randomString())
+        val result = resolver.resolve(channelCustom = null, currentGroup = randomString())
+
+        assertEquals(setOf("all"), result)
+    }
+
+    @Test
+    fun `Given an empty channel_custom When resolved Then returns only the all sentinel`() {
+        val resolver = DefaultChannelGroupResolver()
+
+        val result = resolver.resolve(channelCustom = emptyMap(), currentGroup = randomString())
 
         assertEquals(setOf("all"), result)
     }
 
     @Test
     fun `Given a custom group field name When resolved Then reads that field`() {
-        val channel = randomChannel(extraData = mapOf("tier" to "gold", "group" to "ignored"))
+        val channelCustom: Map<String, Any> = mapOf("tier" to "gold", "group" to "ignored")
         val resolver = DefaultChannelGroupResolver(groupFieldName = "tier")
 
-        val result = resolver.resolve(channel, currentGroup = randomString())
+        val result = resolver.resolve(channelCustom, currentGroup = randomString())
 
         assertEquals(setOf("gold", "all"), result)
     }
 
     @Test
     fun `Given the all sentinel is disabled When resolved Then returns only the explicit group`() {
-        val channel = randomChannel(extraData = mapOf("group" to "vip"))
+        val channelCustom: Map<String, Any> = mapOf("group" to "vip")
         val resolver = DefaultChannelGroupResolver(allGroupKey = null)
 
-        val result = resolver.resolve(channel, currentGroup = randomString())
+        val result = resolver.resolve(channelCustom, currentGroup = randomString())
 
         assertEquals(setOf("vip"), result)
     }
 
     @Test
-    fun `Given a non-string group extra When resolved Then ignores it and returns only the all sentinel`() {
-        val channel = randomChannel(extraData = mapOf("group" to 42))
+    fun `Given a non-string group value When resolved Then ignores it and returns only the all sentinel`() {
+        val channelCustom: Map<String, Any> = mapOf("group" to 42)
         val resolver = DefaultChannelGroupResolver()
 
-        val result = resolver.resolve(channel, currentGroup = randomString())
+        val result = resolver.resolve(channelCustom, currentGroup = randomString())
 
         assertEquals(setOf("all"), result)
     }

@@ -5,25 +5,8 @@ public abstract class io/getstream/chat/android/state/event/handler/chat/BaseCha
 	public fun handleCidEvent (Lio/getstream/chat/android/client/events/CidEvent;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/state/event/handler/chat/EventHandlingResult;
 }
 
-public abstract interface class io/getstream/chat/android/state/event/handler/chat/ChannelGroupResolver {
-	public abstract fun resolve (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;)Ljava/util/Set;
-}
-
 public abstract interface class io/getstream/chat/android/state/event/handler/chat/ChatEventHandler {
 	public abstract fun handleChatEvent (Lio/getstream/chat/android/client/events/ChatEvent;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/state/event/handler/chat/EventHandlingResult;
-}
-
-public final class io/getstream/chat/android/state/event/handler/chat/DefaultChannelGroupResolver : io/getstream/chat/android/state/event/handler/chat/ChannelGroupResolver {
-	public static final field Companion Lio/getstream/chat/android/state/event/handler/chat/DefaultChannelGroupResolver$Companion;
-	public static final field DEFAULT_ALL_GROUP_KEY Ljava/lang/String;
-	public static final field DEFAULT_GROUP_FIELD_NAME Ljava/lang/String;
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun resolve (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;)Ljava/util/Set;
-}
-
-public final class io/getstream/chat/android/state/event/handler/chat/DefaultChannelGroupResolver$Companion {
 }
 
 public class io/getstream/chat/android/state/event/handler/chat/DefaultChatEventHandler : io/getstream/chat/android/state/event/handler/chat/BaseChatEventHandler {
@@ -78,24 +61,10 @@ public final class io/getstream/chat/android/state/event/handler/chat/EventHandl
 	public fun toString ()Ljava/lang/String;
 }
 
-public class io/getstream/chat/android/state/event/handler/chat/GroupAwareChatEventHandler : io/getstream/chat/android/state/event/handler/chat/DefaultChatEventHandler {
-	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/state/event/handler/chat/ChannelGroupResolver;Lkotlinx/coroutines/flow/StateFlow;Lio/getstream/chat/android/client/setup/state/ClientState;)V
-	protected final fun getGroupKey ()Ljava/lang/String;
-	protected final fun getResolver ()Lio/getstream/chat/android/state/event/handler/chat/ChannelGroupResolver;
-	public fun handleChannelEvent (Lio/getstream/chat/android/client/events/HasChannel;Lio/getstream/chat/android/models/FilterObject;)Lio/getstream/chat/android/state/event/handler/chat/EventHandlingResult;
-	public fun handleCidEvent (Lio/getstream/chat/android/client/events/CidEvent;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/state/event/handler/chat/EventHandlingResult;
-}
-
 public class io/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory {
 	public fun <init> ()V
 	public fun <init> (Lio/getstream/chat/android/client/setup/state/ClientState;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/client/setup/state/ClientState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun chatEventHandler (Lkotlinx/coroutines/flow/StateFlow;)Lio/getstream/chat/android/state/event/handler/chat/ChatEventHandler;
-}
-
-public class io/getstream/chat/android/state/event/handler/chat/factory/GroupAwareChatEventHandlerFactory : io/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory {
-	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/state/event/handler/chat/ChannelGroupResolver;Lio/getstream/chat/android/client/setup/state/ClientState;)V
-	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/state/event/handler/chat/ChannelGroupResolver;Lio/getstream/chat/android/client/setup/state/ClientState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun chatEventHandler (Lkotlinx/coroutines/flow/StateFlow;)Lio/getstream/chat/android/state/event/handler/chat/ChatEventHandler;
 }
 

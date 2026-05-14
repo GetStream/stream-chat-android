@@ -27,7 +27,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
-import io.getstream.chat.android.state.event.handler.chat.factory.GroupAwareChatEventHandlerFactory
+import io.getstream.chat.android.state.event.handler.chat.factory.groupAwareChatEventHandlerFactory
 import io.getstream.chat.android.state.extensions.globalStateFlow
 
 /**
@@ -95,12 +95,15 @@ public class ChannelViewModelFactory internal constructor(
      * Grouped [ChannelListViewModel] factory. Wires the ViewModel to the state identified by
      * [groupKey] without firing a remote call; `queryGroupedChannels` responses populate it.
      *
+     * Internally builds a group-aware [ChatEventHandlerFactory] keyed on [groupKey] that routes
+     * channels based on the inbound event's `channel_custom` map. This is not customizable yet;
+     * the routing contract is still settling.
+     *
      * @param chatClient The client used to fetch data.
      * @param groupKey Identifies the group whose state this ViewModel observes.
      * @param channelLimit How many channels we fetch per page.
      * @param memberLimit Members fetched per channel. When `null`, server-side default is used.
      * @param messageLimit Messages fetched per channel. When `null`, server-side default is used.
-     * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
      * @param isDraftMessageEnabled If the draft message feature is enabled.
      * @param messageSearchSort Optional sorting for message search results.
      */
@@ -111,10 +114,6 @@ public class ChannelViewModelFactory internal constructor(
         channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
         memberLimit: Int? = null,
         messageLimit: Int? = null,
-        chatEventHandlerFactory: ChatEventHandlerFactory = GroupAwareChatEventHandlerFactory(
-            groupKey = groupKey,
-            clientState = chatClient.clientState,
-        ),
         isDraftMessageEnabled: Boolean = false,
         messageSearchSort: QuerySorter<Message>? = null,
     ) : this(
@@ -123,7 +122,10 @@ public class ChannelViewModelFactory internal constructor(
         channelLimit = channelLimit,
         memberLimit = memberLimit,
         messageLimit = messageLimit,
-        chatEventHandlerFactory = chatEventHandlerFactory,
+        chatEventHandlerFactory = groupAwareChatEventHandlerFactory(
+            groupKey = groupKey,
+            clientState = chatClient.clientState,
+        ),
         isDraftMessageEnabled = isDraftMessageEnabled,
         messageSearchSort = messageSearchSort,
     )

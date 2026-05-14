@@ -18,6 +18,7 @@ package io.getstream.chat.android.state.event.handler.chat.factory
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.state.event.handler.chat.ChannelGroupResolver
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
@@ -28,18 +29,10 @@ import kotlinx.coroutines.flow.StateFlow
 /**
  * Produces [GroupAwareChatEventHandler] instances for grouped channel lists.
  *
- * Pair with `QueryChannelsIdentifier.Grouped(groupKey)` when initializing a grouped query's
- * state via `ChannelListViewModel(chatClient, groupKey = ...)` so that `channel.updated` and
- * channel-add events route channels into the correct group.
- *
- * @param groupKey The group identifier this factory is producing handlers for.
- * @param resolver Decides which group keys a channel belongs to. Defaults to
- * [DefaultChannelGroupResolver], which reads `channel.extraData["group"]` and always includes
- * an implicit `"all"` sentinel.
- * @param clientState Used by the inherited [io.getstream.chat.android.state.event.handler.chat.DefaultChatEventHandler]
- * to perform current-user membership checks.
+ * Internal: external consumers should not construct this directly. Compose code reaches it via
+ * [groupAwareChatEventHandlerFactory], which is the only seam exposed across module boundaries.
  */
-public open class GroupAwareChatEventHandlerFactory(
+internal class GroupAwareChatEventHandlerFactory(
     private val groupKey: String,
     private val resolver: ChannelGroupResolver = DefaultChannelGroupResolver(),
     private val clientState: ClientState = ChatClient.instance().clientState,
@@ -53,3 +46,20 @@ public open class GroupAwareChatEventHandlerFactory(
             clientState = clientState,
         )
 }
+
+/**
+ * Builds the group-aware [ChatEventHandlerFactory] used to drive grouped channel lists.
+ *
+ * Marked as [InternalStreamChatApi] because the underlying handler/factory/resolver classes are
+ * deliberately hidden — the grouped-channels contract is still settling and we do not yet want to
+ * commit to a public extension point. Consumers should instantiate a grouped
+ * `ChannelListViewModel` instead of calling this directly.
+ */
+@InternalStreamChatApi
+public fun groupAwareChatEventHandlerFactory(
+    groupKey: String,
+    clientState: ClientState,
+): ChatEventHandlerFactory = GroupAwareChatEventHandlerFactory(
+    groupKey = groupKey,
+    clientState = clientState,
+)

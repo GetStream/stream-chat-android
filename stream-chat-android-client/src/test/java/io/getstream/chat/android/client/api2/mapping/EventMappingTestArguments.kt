@@ -33,7 +33,6 @@ import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelCustomDto
 import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
@@ -186,6 +185,11 @@ internal object EventMappingTestArguments {
     private val CHANNEL_MEMBER_COUNT = positiveRandomInt()
     private val CHANNEL_NAME = randomString()
     private val CHANNEL_IMAGE = randomString()
+    private val CHANNEL_CUSTOM: Map<String, Any> = mapOf(
+        "name" to CHANNEL_NAME,
+        "image" to CHANNEL_IMAGE,
+        "group" to "vip",
+    )
     private val MESSAGE_ID = randomString()
     private val MESSAGE = Mother.randomDownstreamMessageDto()
     private val MESSAGE_WITHOUT_CHANNEL_INFO = MESSAGE.copy(channel = null)
@@ -226,10 +230,7 @@ internal object EventMappingTestArguments {
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
         channel_member_count = CHANNEL_MEMBER_COUNT,
-        channel_custom = DownstreamChannelCustomDto(
-            name = CHANNEL_NAME,
-            image = CHANNEL_IMAGE,
-        ),
+        channel_custom = CHANNEL_CUSTOM,
         message = MESSAGE_WITHOUT_CHANNEL_INFO,
         grouped_unread_channels = GROUPED_UNREAD_CHANNELS,
     )
@@ -287,6 +288,7 @@ internal object EventMappingTestArguments {
         user = USER,
         message = MESSAGE,
         channel = CHANNEL,
+        channel_custom = CHANNEL_CUSTOM,
     )
 
     private val channelUpdatedDto = ChannelUpdatedEventDto(
@@ -297,6 +299,7 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         message = MESSAGE,
         channel = CHANNEL,
+        channel_custom = CHANNEL_CUSTOM,
     )
 
     private val channelUserBannedDto = ChannelUserBannedEventDto(
@@ -327,6 +330,7 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         channel = CHANNEL,
         user = USER,
+        channel_custom = CHANNEL_CUSTOM,
     )
 
     private val connectedDto = ConnectedEventDto(
@@ -464,6 +468,7 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         channel = CHANNEL,
         member = MEMBER,
+        channel_custom = CHANNEL_CUSTOM,
     )
 
     private val notificationChannelDeletedDto = NotificationChannelDeletedEventDto(
@@ -560,6 +565,7 @@ internal object EventMappingTestArguments {
         message = MESSAGE,
         channel = CHANNEL,
         grouped_unread_channels = GROUPED_UNREAD_CHANNELS,
+        channel_custom = CHANNEL_CUSTOM,
     )
 
     private val notificationThreadMessageNewDto = NotificationThreadMessageNewEventDto(
@@ -836,8 +842,8 @@ internal object EventMappingTestArguments {
                 id = newMessageDto.channel_id,
                 type = newMessageDto.channel_type,
                 memberCount = newMessageDto.channel_member_count ?: 0,
-                name = newMessageDto.channel_custom?.name,
-                image = newMessageDto.channel_custom?.image,
+                name = newMessageDto.channel_custom?.get("name") as? String,
+                image = newMessageDto.channel_custom?.get("image") as? String,
             )
             newMessageDto.message.toDomain(channelInfo)
         },
@@ -846,6 +852,7 @@ internal object EventMappingTestArguments {
         unreadChannels = newMessageDto.unread_channels,
         channelMessageCount = newMessageDto.channel_message_count,
         groupedUnreadChannels = newMessageDto.grouped_unread_channels,
+        channelCustom = newMessageDto.channel_custom,
     )
 
     private val draftMessageUpdatedEvent = DraftMessageUpdatedEvent(
@@ -911,6 +918,7 @@ internal object EventMappingTestArguments {
         channel = with(domainMapping) {
             channelUpdatedByUserDto.channel.toDomain()
         },
+        channelCustom = channelUpdatedByUserDto.channel_custom,
     )
 
     private val channelUpdated = ChannelUpdatedEvent(
@@ -924,6 +932,7 @@ internal object EventMappingTestArguments {
         channel = with(domainMapping) {
             channelUpdatedDto.channel.toDomain()
         },
+        channelCustom = channelUpdatedDto.channel_custom,
     )
 
     private val channelUserBanned = ChannelUserBannedEvent(
@@ -957,6 +966,7 @@ internal object EventMappingTestArguments {
         channelType = channelVisibleDto.channel_type,
         channel = with(domainMapping) { channelVisibleDto.channel.toDomain() },
         channelId = channelVisibleDto.channel_id,
+        channelCustom = channelVisibleDto.channel_custom,
     )
 
     private val connected = ConnectedEvent(
@@ -1115,6 +1125,7 @@ internal object EventMappingTestArguments {
             notificationAddedToChannelDto.channel.toDomain()
         },
         member = with(domainMapping) { notificationAddedToChannelDto.member.toDomain() },
+        channelCustom = notificationAddedToChannelDto.channel_custom,
     )
 
     private val notificationChannelDeleted = NotificationChannelDeletedEvent(
@@ -1230,6 +1241,7 @@ internal object EventMappingTestArguments {
             notificationMessageNewDto.channel.toDomain()
         },
         groupedUnreadChannels = notificationMessageNewDto.grouped_unread_channels,
+        channelCustom = notificationMessageNewDto.channel_custom,
     )
 
     private val notificationThreadMessageNew = NotificationThreadMessageNewEvent(

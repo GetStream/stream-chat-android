@@ -16,31 +16,30 @@
 
 package io.getstream.chat.android.state.event.handler.chat
 
-import io.getstream.chat.android.models.Channel
-
 /**
- * Default [ChannelGroupResolver] backed by `channel.extraData`.
+ * Default [ChannelGroupResolver] backed by `event.channelCustom`.
  *
- * Reads an explicit group key from `channel.extraData[groupFieldName]` (defaults to `"group"`)
+ * Reads an explicit group key from `channelCustom[groupFieldName]` (defaults to `"group"`)
  * and always includes the [allGroupKey] sentinel (defaults to `"all"`) so that a designated
  * "all channels" grouped query always sees every channel.
  *
- * @param groupFieldName The key in `channel.extraData` carrying the explicit group identifier.
+ * @param groupFieldName The key in the event's `channel_custom` map carrying the explicit group
+ * identifier.
  * @param allGroupKey The sentinel group key representing "every channel". Pass `null` to disable
  * the implicit sentinel.
  */
-public class DefaultChannelGroupResolver(
+internal class DefaultChannelGroupResolver(
     private val groupFieldName: String = DEFAULT_GROUP_FIELD_NAME,
     private val allGroupKey: String? = DEFAULT_ALL_GROUP_KEY,
 ) : ChannelGroupResolver {
 
-    override fun resolve(channel: Channel, currentGroup: String): Set<String> = buildSet {
-        (channel.extraData[groupFieldName] as? String)?.let(::add)
+    override fun resolve(channelCustom: Map<String, Any>?, currentGroup: String): Set<String> = buildSet {
+        (channelCustom?.get(groupFieldName) as? String)?.let(::add)
         allGroupKey?.let(::add)
     }
 
-    public companion object {
-        public const val DEFAULT_GROUP_FIELD_NAME: String = "group"
-        public const val DEFAULT_ALL_GROUP_KEY: String = "all"
+    companion object {
+        const val DEFAULT_GROUP_FIELD_NAME: String = "group"
+        const val DEFAULT_ALL_GROUP_KEY: String = "all"
     }
 }

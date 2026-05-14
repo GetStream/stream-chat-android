@@ -77,11 +77,11 @@ internal class ChatClientStateCalls(
      * launching a remote queryChannels API call. Channels cached under the identifier's DB key
      * are optimistically loaded into the state.
      */
-    internal suspend fun initQueryChannelsState(
+    internal suspend fun initGroupedQueryChannelsState(
         identifier: QueryChannelsIdentifier.Grouped,
         chatEventHandlerFactory: ChatEventHandlerFactory,
     ): QueryChannelsState {
-        logger.d { "[initQueryChannelsState] identifier: $identifier" }
+        logger.d { "[initGroupedQueryChannelsState] identifier: $identifier" }
         chatClient.clientState.user.first { it != null }
         val state = deferredState
             .await()

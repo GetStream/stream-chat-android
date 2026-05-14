@@ -46,9 +46,9 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
-import io.getstream.chat.android.state.event.handler.chat.factory.GroupAwareChatEventHandlerFactory
+import io.getstream.chat.android.state.event.handler.chat.factory.groupAwareChatEventHandlerFactory
 import io.getstream.chat.android.state.extensions.globalStateFlow
-import io.getstream.chat.android.state.extensions.initQueryChannelsAsState
+import io.getstream.chat.android.state.extensions.initGroupedQueryChannelsAsState
 import io.getstream.chat.android.state.extensions.queryChannelsAsState
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
@@ -146,10 +146,10 @@ public class ChannelListViewModel internal constructor(
      * Grouped channel list constructor. Subscribes to the state identified by [groupKey] without
      * issuing a remote call; the state is populated externally by `queryGroupedChannels` responses.
      *
-     * Defaults [chatEventHandlerFactory] to a [GroupAwareChatEventHandlerFactory] keyed on
-     * [groupKey] so that `channel.updated` and channel-add events route channels into the
-     * correct group out of the box. Pass a custom factory (e.g. with a custom
-     * [io.getstream.chat.android.state.event.handler.chat.ChannelGroupResolver]) to override.
+     * Internally builds a group-aware [ChatEventHandlerFactory] keyed on [groupKey] so that
+     * `channel.updated` and channel-add events route channels into the correct group based on the
+     * event's `channel_custom` map. This is not customizable yet; the routing contract is still
+     * settling.
      */
     public constructor(
         chatClient: ChatClient,
@@ -157,10 +157,6 @@ public class ChannelListViewModel internal constructor(
         channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
         memberLimit: Int? = null,
         messageLimit: Int? = null,
-        chatEventHandlerFactory: ChatEventHandlerFactory = GroupAwareChatEventHandlerFactory(
-            groupKey = groupKey,
-            clientState = chatClient.clientState,
-        ),
         searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
         isDraftMessageEnabled: Boolean = false,
         messageSearchSort: QuerySorter<Message>? = null,
@@ -171,7 +167,10 @@ public class ChannelListViewModel internal constructor(
         channelLimit = channelLimit,
         memberLimit = memberLimit,
         messageLimit = messageLimit,
-        chatEventHandlerFactory = chatEventHandlerFactory,
+        chatEventHandlerFactory = groupAwareChatEventHandlerFactory(
+            groupKey = groupKey,
+            clientState = chatClient.clientState,
+        ),
         searchDebounceMs = searchDebounceMs,
         isDraftMessageEnabled = isDraftMessageEnabled,
         messageSearchSort = messageSearchSort,
@@ -363,7 +362,7 @@ public class ChannelListViewModel internal constructor(
      * - **Standard**: build a standard `QueryChannelsRequest` from filter/sort and issue
      *   `queryChannelsAsState`.
      * - **Grouped + no active channel search**: subscribe to the identifier-keyed state via
-     *   `initQueryChannelsAsState`. No remote call; `queryGroupedChannels` responses populate
+     *   `initGroupedQueryChannelsAsState`. No remote call; `queryGroupedChannels` responses populate
      *   the state via the listener.
      * - **Grouped + active channel search**: fall back to a standalone `queryChannelsAsState`
      *   using [optimizedChannelSearchFilter].
@@ -563,7 +562,7 @@ public class ChannelListViewModel internal constructor(
      */
     private fun observeGroupedChannels(groupKey: String) =
         observeQueryChannelsInternal(tag = "observeGroupedChannels") {
-            chatClient.initQueryChannelsAsState(
+            chatClient.initGroupedQueryChannelsAsState(
                 identifier = QueryChannelsIdentifier.Grouped(groupKey),
                 chatEventHandlerFactory = chatEventHandlerFactory,
                 coroutineScope = chListScope,
