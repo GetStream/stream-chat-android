@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.persistance.repository.noop
 
-import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.models.Channel
@@ -28,15 +27,11 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  */
 internal object NoOpQueryChannelsRepository : QueryChannelsRepository {
     override suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec) { /* No-Op */ }
-
-    @Deprecated(
-        message = "Use selectBy(QueryChannelsIdentifier) instead.",
-        replaceWith = ReplaceWith(
-            "selectBy(QueryChannelsIdentifier.Standard(filter, querySort))",
-            "io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier",
-        ),
-    )
     override suspend fun selectBy(filter: FilterObject, querySort: QuerySorter<Channel>): QueryChannelsSpec? = null
-    override suspend fun selectBy(identifier: QueryChannelsIdentifier): QueryChannelsSpec? = null
+    override suspend fun selectBy(
+        predefinedFilterName: String,
+        filterValues: Map<String, Any>?,
+        sortValues: Map<String, Any>?,
+    ): QueryChannelsSpec? = null
     override suspend fun clear() { /* No-Op */ }
 }

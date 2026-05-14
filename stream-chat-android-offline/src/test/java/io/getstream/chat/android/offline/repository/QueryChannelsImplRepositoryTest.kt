@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.repository
 
-import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.test.randomQueryChannelsSpec
 import io.getstream.chat.android.models.ContainsFilterObject
 import io.getstream.chat.android.models.Filters
@@ -77,10 +76,6 @@ internal class QueryChannelsImplRepositoryTest {
 
     @Test
     fun `Given query channels spec in DB When select by id Should return not null result`() = runTest {
-        val identifier = QueryChannelsIdentifier.Standard(
-            filter = Filters.contains("cid", "cid1"),
-            sort = QuerySortByField(),
-        )
         whenever(dao.select(any())) doReturn randomQueryChannelsEntity(
             id = "id1",
             filter = Filters.contains("cid", "cid1"),
@@ -88,7 +83,7 @@ internal class QueryChannelsImplRepositoryTest {
             cids = listOf("cid1"),
         )
 
-        val result = sut.selectBy(identifier)
+        val result = sut.selectBy(Filters.contains("cid", "cid1"), QuerySortByField())
 
         result.shouldNotBeNull()
         result.filter.shouldBeInstanceOf<ContainsFilterObject>()
@@ -101,18 +96,15 @@ internal class QueryChannelsImplRepositoryTest {
     fun `Given no row in DB with such id When select by id Should return null`() = runTest {
         whenever(dao.select(any())) doReturn null
 
-        val result = sut.selectBy(QueryChannelsIdentifier.Standard(NeutralFilterObject, QuerySortByField()))
+        val result = sut.selectBy(NeutralFilterObject, QuerySortByField())
 
         result.shouldBeNull()
     }
 
     @Test
     fun `Two Predefined identifiers with same name but different filterValues produce different DB ids`() = runTest {
-        val identifierA = QueryChannelsIdentifier.Predefined("p", mapOf("a" to 1), null)
-        val identifierB = QueryChannelsIdentifier.Predefined("p", mapOf("a" to 2), null)
-
-        sut.selectBy(identifierA)
-        sut.selectBy(identifierB)
+        sut.selectBy("p", mapOf("a" to 1), null)
+        sut.selectBy("p", mapOf("a" to 2), null)
 
         val captor = argumentCaptor<String>()
         verify(dao, times(2)).select(captor.capture())
@@ -122,7 +114,6 @@ internal class QueryChannelsImplRepositoryTest {
 
     @Test
     fun `selectBy with Predefined identifier round-trips predefined fields from the entity`() = runTest {
-        val identifier = QueryChannelsIdentifier.Predefined("p", mapOf("a" to 1), mapOf("b" to 2))
         whenever(dao.select(any())) doReturn randomQueryChannelsEntity(
             id = "id-predefined",
             filter = NeutralFilterObject,
@@ -133,7 +124,7 @@ internal class QueryChannelsImplRepositoryTest {
             predefinedSortValues = mapOf("b" to 2),
         )
 
-        val spec = sut.selectBy(identifier)
+        val spec = sut.selectBy("p", mapOf("a" to 1), mapOf("b" to 2))
 
         spec.shouldNotBeNull()
         assertEquals("p", spec.predefinedFilterName)

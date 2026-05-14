@@ -76,14 +76,14 @@ internal class QueryChannelsDatabaseLogicTest {
         val identifier = QueryChannelsIdentifier.Standard(filter, sort)
         val pagination = AnyChannelPaginationRequest()
 
-        whenever(queryChannelsRepository.selectBy(identifier)) doReturn null
+        whenever(queryChannelsRepository.selectBy(filter, sort)) doReturn null
 
         // When
         val result = logic.fetchChannelsFromCache(pagination, identifier)
 
         // Then
         assertNull(result)
-        verify(queryChannelsRepository).selectBy(identifier)
+        verify(queryChannelsRepository).selectBy(filter, sort)
     }
 
     @Test
@@ -112,7 +112,7 @@ internal class QueryChannelsDatabaseLogicTest {
         val channel3 = randomChannel(id = "channel3", type = "messaging")
         val expectedChannels = listOf(channel1, channel2, channel3)
 
-        whenever(queryChannelsRepository.selectBy(identifier)) doReturn cachedSpec
+        whenever(queryChannelsRepository.selectBy(filter, sort)) doReturn cachedSpec
         whenever(repositoryFacade.selectChannels(listOf(cid1, cid2, cid3), pagination)) doReturn expectedChannels
 
         // When
@@ -121,7 +121,7 @@ internal class QueryChannelsDatabaseLogicTest {
         // Then
         assertEquals(cachedSpec, result?.spec)
         assertEquals(expectedChannels, result?.channels)
-        verify(queryChannelsRepository).selectBy(identifier)
+        verify(queryChannelsRepository).selectBy(filter, sort)
         verify(repositoryFacade).selectChannels(listOf(cid1, cid2, cid3), pagination)
     }
 
@@ -139,7 +139,7 @@ internal class QueryChannelsDatabaseLogicTest {
             cids = emptySet(),
         )
 
-        whenever(queryChannelsRepository.selectBy(identifier)) doReturn cachedSpec
+        whenever(queryChannelsRepository.selectBy(filter, sort)) doReturn cachedSpec
         whenever(repositoryFacade.selectChannels(emptyList(), pagination)) doReturn emptyList()
 
         // When
@@ -148,7 +148,7 @@ internal class QueryChannelsDatabaseLogicTest {
         // Then
         assertEquals(cachedSpec, result?.spec)
         assertEquals(emptyList<Channel>(), result?.channels)
-        verify(queryChannelsRepository).selectBy(identifier)
+        verify(queryChannelsRepository).selectBy(filter, sort)
         verify(repositoryFacade).selectChannels(emptyList(), pagination)
     }
 

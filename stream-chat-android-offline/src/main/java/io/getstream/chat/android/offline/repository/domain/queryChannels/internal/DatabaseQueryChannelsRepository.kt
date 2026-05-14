@@ -20,6 +20,9 @@ import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdent
 import io.getstream.chat.android.client.internal.state.plugin.identifier
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.query.QueryChannelsSpec
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.querysort.QuerySorter
 
 /**
  * Repository for queries of channels. This implementation uses the database.
@@ -37,8 +40,17 @@ internal class DatabaseQueryChannelsRepository(
         queryChannelsDao.insert(toEntity(queryChannelsSpec))
     }
 
-    override suspend fun selectBy(identifier: QueryChannelsIdentifier): QueryChannelsSpec? {
-        return queryChannelsDao.select(generateId(identifier))?.let(Companion::toModel)
+    override suspend fun selectBy(filter: FilterObject, querySort: QuerySorter<Channel>): QueryChannelsSpec? {
+        return queryChannelsDao.select(generateId(QueryChannelsIdentifier.Standard(filter, querySort)))?.let(::toModel)
+    }
+
+    override suspend fun selectBy(
+        predefinedFilterName: String,
+        filterValues: Map<String, Any>?,
+        sortValues: Map<String, Any>?,
+    ): QueryChannelsSpec? {
+        val identifier = QueryChannelsIdentifier.Predefined(predefinedFilterName, filterValues, sortValues)
+        return queryChannelsDao.select(generateId(identifier))?.let(::toModel)
     }
 
     override suspend fun clear() {

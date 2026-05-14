@@ -61,7 +61,12 @@ internal class QueryChannelsDatabaseLogic(
         pagination: AnyChannelPaginationRequest,
         identifier: QueryChannelsIdentifier,
     ): CachedQueryChannels? {
-        val spec = queryChannelsRepository.selectBy(identifier) ?: return null
+        val spec = when (identifier) {
+            is QueryChannelsIdentifier.Standard ->
+                queryChannelsRepository.selectBy(identifier.filter, identifier.sort)
+            is QueryChannelsIdentifier.Predefined ->
+                queryChannelsRepository.selectBy(identifier.name, identifier.filterValues, identifier.sortValues)
+        } ?: return null
         val channels = repositoryFacade
             .selectChannels(spec.cids.toList(), pagination)
             .applyPagination(pagination)
