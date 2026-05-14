@@ -124,6 +124,7 @@
   <string name="stream_compose_message_deleted_preview">"Pesan dihapus"</string>
   <string name="stream_compose_message_item_open_thread">"Buka utas"</string>
   <string name="stream_compose_message_item_options">"Tampilkan opsi pesan"</string>
+  <string name="stream_compose_message_attachment_open">"Buka lampiran"</string>
   <string name="stream_compose_message_reactions_show">"Tampilkan reaksi"</string>
   <string name="stream_compose_message_list_auto_translated">"Diterjemahkan"</string>
   <string name="stream_compose_message_list_empty_messages">"Tidak ada pesan"</string>

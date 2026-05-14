@@ -110,6 +110,7 @@
     <string name="stream_compose_message_item_open_thread">Open thread</string>
     <string name="stream_compose_message_item_options">Show message options</string>
     <string name="stream_compose_message_reactions_show">Show reactions</string>
+    <string name="stream_compose_message_attachment_open">Open attachment</string>
 
     <!--  Quoted Message  -->
     <string name="stream_compose_quoted_message_audio_recording">Voice message (%s)</string>

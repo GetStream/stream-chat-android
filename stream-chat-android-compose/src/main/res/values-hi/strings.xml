@@ -184,6 +184,7 @@
   <string name="stream_compose_message_deleted_preview">"मैसेज हटा दिया गया"</string>
   <string name="stream_compose_message_item_open_thread">"थ्रेड खोलें"</string>
   <string name="stream_compose_message_item_options">"संदेश के विकल्प दिखाएँ"</string>
+  <string name="stream_compose_message_attachment_open">"अटैचमेंट खोलें"</string>
   <string name="stream_compose_message_reactions_show">"प्रतिक्रियाएँ दिखाएँ"</string>
   <string name="stream_compose_message_list_auto_translated">"अनुवादित"</string>
   <string name="stream_compose_message_list_empty_messages">"कोई मैसेज नहीं"</string>

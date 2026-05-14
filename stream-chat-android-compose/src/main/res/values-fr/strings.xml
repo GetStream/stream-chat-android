@@ -124,6 +124,7 @@
   <string name="stream_compose_message_deleted_preview">"Message supprimé"</string>
   <string name="stream_compose_message_item_open_thread">"Ouvrir le fil"</string>
   <string name="stream_compose_message_item_options">"Afficher les options du message"</string>
+  <string name="stream_compose_message_attachment_open">"Ouvrir la pièce jointe"</string>
   <string name="stream_compose_message_reactions_show">"Afficher les réactions"</string>
   <string name="stream_compose_message_list_auto_translated">"Traduit"</string>
   <string name="stream_compose_message_list_empty_messages">"Aucun message"</string>

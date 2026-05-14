@@ -452,6 +452,7 @@ internal fun MediaAttachmentContentItem(
         attachment.uploadState is Attachment.UploadState.InProgress ||
         attachment.uploadState is Attachment.UploadState.Idle
 
+    val openAttachmentLabel = stringResource(R.string.stream_compose_message_attachment_open)
     Box(
         modifier = modifier
             .semantics {
@@ -465,6 +466,7 @@ internal fun MediaAttachmentContentItem(
             .combinedClickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = ripple(),
+                onClickLabel = openAttachmentLabel,
                 onClick = {
                     if (message.syncStatus == SyncStatus.COMPLETED) {
                         onItemClick(
