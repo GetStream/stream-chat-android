@@ -184,6 +184,7 @@
   <string name="stream_compose_message_deleted_preview">"Messaggio cancellato"</string>
   <string name="stream_compose_message_item_open_thread">"Apri thread"</string>
   <string name="stream_compose_message_item_options">"Mostra opzioni messaggio"</string>
+  <string name="stream_compose_message_reactions_show">"Mostra reazioni"</string>
   <string name="stream_compose_message_list_auto_translated">"Tradotto"</string>
   <string name="stream_compose_message_list_empty_messages">"Nessun messaggio"</string>
   <string name="stream_compose_message_list_error_cannot_open_link">"Nessuna app per aprire questo url:\n%s"</string>

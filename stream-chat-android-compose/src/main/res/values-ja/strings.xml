@@ -136,6 +136,7 @@
   <string name="stream_compose_message_deleted_preview">"メッセージは削除されました"</string>
   <string name="stream_compose_message_item_open_thread">"スレッドを開く"</string>
   <string name="stream_compose_message_item_options">"メッセージのオプションを表示"</string>
+  <string name="stream_compose_message_reactions_show">"リアクションを表示"</string>
   <string name="stream_compose_message_list_auto_translated">"翻訳済み"</string>
   <string name="stream_compose_message_list_empty_messages">"メッセージはありません"</string>
   <string name="stream_compose_message_list_error_cannot_open_link">"このURLを開くアプリがありません:\n%s"</string>
