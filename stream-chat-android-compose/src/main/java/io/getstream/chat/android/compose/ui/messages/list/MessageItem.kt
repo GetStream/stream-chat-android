@@ -39,10 +39,14 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
@@ -331,10 +335,15 @@ internal fun DefaultMessageModeratedContent(moderatedMessageItemState: Moderated
  */
 @Composable
 internal fun DefaultMessageTypingIndicatorContent(state: TypingItemState) {
+    val typingDescription = typingUsersDescription(state.typingUsers)
     Row(
         modifier = Modifier
             .padding(StreamTokens.spacingXs)
-            .testTag("Stream_MessageListTypingIndicator"),
+            .testTag("Stream_MessageListTypingIndicator")
+            .semantics(mergeDescendants = true) {
+                contentDescription = typingDescription
+                liveRegion = LiveRegionMode.Polite
+            },
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
         verticalAlignment = Alignment.Bottom,
     ) {
@@ -366,6 +375,27 @@ internal fun DefaultMessageTypingIndicatorContent(state: TypingItemState) {
                 TypingIndicator()
             }
         }
+    }
+}
+
+@Composable
+private fun typingUsersDescription(typingUsers: List<User>): String {
+    val resources = LocalResources.current
+    return when (typingUsers.size) {
+        1 -> stringResource(
+            R.string.stream_compose_channel_list_typing_one,
+            typingUsers.first().name,
+        )
+        2 -> stringResource(
+            R.string.stream_compose_channel_list_typing_two,
+            typingUsers[0].name,
+            typingUsers[1].name,
+        )
+        else -> resources.getQuantityString(
+            R.plurals.stream_compose_channel_list_typing_many,
+            typingUsers.size,
+            typingUsers.size,
+        )
     }
 }
 
