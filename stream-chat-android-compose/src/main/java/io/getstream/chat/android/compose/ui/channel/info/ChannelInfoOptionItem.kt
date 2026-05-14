@@ -16,9 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.channel.info
 
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -104,23 +102,22 @@ private fun ChannelInfoOptionContent(
         }
 
         is ChannelInfoViewState.Content.Option.BlockUser -> {
-            CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.accentError)) {
-                ChannelInfoOptionButton(
-                    icon = R.drawable.stream_design_ic_no_sign,
-                    text = if (option.isBlocked) {
-                        stringResource(UiCommonR.string.stream_ui_channel_info_option_unblock_user)
+            ChannelInfoOptionButton(
+                icon = R.drawable.stream_design_ic_no_sign,
+                text = if (option.isBlocked) {
+                    stringResource(UiCommonR.string.stream_ui_channel_info_option_unblock_user)
+                } else {
+                    stringResource(UiCommonR.string.stream_ui_channel_info_option_block_user)
+                },
+                destructive = false,
+                onClick = {
+                    if (option.isBlocked) {
+                        onViewAction(ChannelInfoViewAction.UnblockUserClick)
                     } else {
-                        stringResource(UiCommonR.string.stream_ui_channel_info_option_block_user)
-                    },
-                    onClick = {
-                        if (option.isBlocked) {
-                            onViewAction(ChannelInfoViewAction.UnblockUserClick)
-                        } else {
-                            onViewAction(ChannelInfoViewAction.BlockUserClick)
-                        }
-                    },
-                )
-            }
+                        onViewAction(ChannelInfoViewAction.BlockUserClick)
+                    }
+                },
+            )
         }
 
         is ChannelInfoViewState.Content.Option.PinnedMessages -> {
@@ -148,31 +145,29 @@ private fun ChannelInfoOptionContent(
         }
 
         is ChannelInfoViewState.Content.Option.LeaveChannel -> {
-            CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.accentError)) {
-                ChannelInfoOptionButton(
-                    icon = R.drawable.stream_design_ic_leave,
-                    text = if (isGroupChannel) {
-                        stringResource(UiCommonR.string.stream_ui_channel_info_option_leave_group)
-                    } else {
-                        stringResource(UiCommonR.string.stream_ui_channel_info_option_leave_conversation)
-                    },
-                    onClick = { onViewAction(ChannelInfoViewAction.LeaveChannelClick) },
-                )
-            }
+            ChannelInfoOptionButton(
+                icon = R.drawable.stream_design_ic_leave,
+                text = if (isGroupChannel) {
+                    stringResource(UiCommonR.string.stream_ui_channel_info_option_leave_group)
+                } else {
+                    stringResource(UiCommonR.string.stream_ui_channel_info_option_leave_conversation)
+                },
+                destructive = true,
+                onClick = { onViewAction(ChannelInfoViewAction.LeaveChannelClick) },
+            )
         }
 
         is ChannelInfoViewState.Content.Option.DeleteChannel -> {
-            CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.accentError)) {
-                ChannelInfoOptionButton(
-                    icon = R.drawable.stream_design_ic_delete,
-                    text = if (isGroupChannel) {
-                        stringResource(UiCommonR.string.stream_ui_channel_info_option_delete_group)
-                    } else {
-                        stringResource(UiCommonR.string.stream_ui_channel_info_option_delete_conversation)
-                    },
-                    onClick = { onViewAction(ChannelInfoViewAction.DeleteChannelClick) },
-                )
-            }
+            ChannelInfoOptionButton(
+                icon = R.drawable.stream_design_ic_delete,
+                text = if (isGroupChannel) {
+                    stringResource(UiCommonR.string.stream_ui_channel_info_option_delete_group)
+                } else {
+                    stringResource(UiCommonR.string.stream_ui_channel_info_option_delete_conversation)
+                },
+                destructive = true,
+                onClick = { onViewAction(ChannelInfoViewAction.DeleteChannelClick) },
+            )
         }
     }
 }
