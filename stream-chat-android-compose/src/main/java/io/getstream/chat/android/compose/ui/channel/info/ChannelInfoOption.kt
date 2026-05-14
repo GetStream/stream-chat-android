@@ -82,6 +82,7 @@ internal fun ChannelInfoOption(
 internal fun ChannelInfoOptionButton(
     @DrawableRes icon: Int,
     text: String,
+    destructive: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -92,11 +93,13 @@ internal fun ChannelInfoOptionButton(
         Icon(
             painter = painterResource(icon),
             contentDescription = null,
+            tint = if (destructive) ChatTheme.colors.buttonDestructiveText else ChatTheme.colors.textSecondary,
         )
         Text(
             modifier = Modifier.weight(1f),
             text = text,
             style = ChatTheme.typography.bodyDefault,
+            color = if (destructive) ChatTheme.colors.buttonDestructiveText else ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -172,6 +175,7 @@ private fun ChannelInfoOptionButtonPreview() {
         ChannelInfoOptionButton(
             icon = R.drawable.stream_design_ic_delete,
             text = "Delete",
+            destructive = true,
             onClick = {},
         )
     }
