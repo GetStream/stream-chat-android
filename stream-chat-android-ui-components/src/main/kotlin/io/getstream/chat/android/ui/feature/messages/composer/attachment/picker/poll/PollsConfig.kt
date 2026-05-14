@@ -20,7 +20,8 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 /**
- * The configuration for the various poll features. It determines if the user can or cannot enable certain poll features.
+ * The configuration for the various poll features. It determines if the user can or cannot enable
+ * certain poll features.
  *
  * @param multipleVotes Configuration for allowing multiple votes in a poll.
  * @param anonymousPoll Configuration for enabling anonymous polls.
