@@ -3532,6 +3532,7 @@ public final class io/getstream/chat/android/client/query/QueryChannelsSpec {
 	public final fun getGroupKey ()Ljava/lang/String;
 	public final fun getQuerySort ()Lio/getstream/chat/android/models/querysort/QuerySorter;
 	public fun hashCode ()I
+	public final fun setCids (Ljava/util/Set;)V
 	public fun toString ()Ljava/lang/String;
 }
 
