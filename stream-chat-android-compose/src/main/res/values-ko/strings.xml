@@ -126,13 +126,17 @@
   <string name="stream_compose_message_composer_command_unavailable_in_reply">"답장 중에는 사용할 수 없습니다"</string>
   <string name="stream_compose_message_composer_commands_unavailable_in_edit">"수정 중에는 명령을 사용할 수 없습니다"</string>
   <string name="stream_compose_message_composer_instant_commands">"인스턴트 명령어"</string>
+  <string name="stream_compose_message_composer_save_action">"변경 사항 저장"</string>
   <string name="stream_compose_message_composer_save_button">"저장"</string>
+  <string name="stream_compose_message_composer_send_action">"메시지 보내기"</string>
   <string name="stream_compose_message_composer_send_button">"보내기"</string>
   <string name="stream_compose_message_composer_show_in_channel">"채널에도 전송"</string>
   <string name="stream_compose_message_composer_unsupported_attachment">"지원되지 않는 첨부파일"</string>
   <string name="stream_compose_message_composer_attachments">"첨부파일"</string>
   <string name="stream_compose_message_composer_attachments_collapsed">"축소됨"</string>
+  <string name="stream_compose_message_composer_attachments_close">"첨부파일 닫기"</string>
   <string name="stream_compose_message_composer_attachments_expanded">"확장됨"</string>
+  <string name="stream_compose_message_composer_attachments_open">"첨부파일 열기"</string>
   <string name="stream_compose_message_deleted">"메시지가 삭제되었습니다"</string>
   <string name="stream_compose_message_deleted_preview">"메시지가 삭제되었습니다"</string>
   <string name="stream_compose_message_item_open_thread">"스레드 열기"</string>

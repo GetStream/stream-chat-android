@@ -126,13 +126,17 @@
   <string name="stream_compose_message_composer_command_unavailable_in_reply">"返信中は利用できません"</string>
   <string name="stream_compose_message_composer_commands_unavailable_in_edit">"編集中はコマンドを利用できません"</string>
   <string name="stream_compose_message_composer_instant_commands">"インスタントコマンド"</string>
+  <string name="stream_compose_message_composer_save_action">"変更を保存"</string>
   <string name="stream_compose_message_composer_save_button">"保存"</string>
+  <string name="stream_compose_message_composer_send_action">"メッセージを送信"</string>
   <string name="stream_compose_message_composer_send_button">"送信"</string>
   <string name="stream_compose_message_composer_show_in_channel">"チャンネルにも送信"</string>
   <string name="stream_compose_message_composer_unsupported_attachment">"サポートされていない添付ファイル"</string>
   <string name="stream_compose_message_composer_attachments">"添付ファイル"</string>
   <string name="stream_compose_message_composer_attachments_collapsed">"折りたたみ"</string>
+  <string name="stream_compose_message_composer_attachments_close">"添付ファイルを閉じる"</string>
   <string name="stream_compose_message_composer_attachments_expanded">"展開"</string>
+  <string name="stream_compose_message_composer_attachments_open">"添付ファイルを開く"</string>
   <string name="stream_compose_message_deleted">"メッセージは削除されました"</string>
   <string name="stream_compose_message_deleted_preview">"メッセージは削除されました"</string>
   <string name="stream_compose_message_item_open_thread">"スレッドを開く"</string>

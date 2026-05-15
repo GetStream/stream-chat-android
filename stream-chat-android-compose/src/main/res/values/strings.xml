@@ -180,10 +180,14 @@
     <string name="stream_compose_message_composer_file_not_supported">File type is not supported</string>
     <string name="stream_compose_message_composer_unsupported_attachment">Unsupported attachment</string>
     <string name="stream_compose_message_composer_send_button">Send</string>
+    <string name="stream_compose_message_composer_send_action">Send message</string>
     <string name="stream_compose_message_composer_save_button">Save</string>
+    <string name="stream_compose_message_composer_save_action">Save changes</string>
     <string name="stream_compose_message_composer_attachments">Attachments</string>
     <string name="stream_compose_message_composer_attachments_collapsed">collapsed</string>
     <string name="stream_compose_message_composer_attachments_expanded">expanded</string>
+    <string name="stream_compose_message_composer_attachments_open">Open attachments</string>
+    <string name="stream_compose_message_composer_attachments_close">Close attachments</string>
 
     <!-- Message Preview -->
     <string name="stream_compose_audio_recording_preview">Voice message</string>

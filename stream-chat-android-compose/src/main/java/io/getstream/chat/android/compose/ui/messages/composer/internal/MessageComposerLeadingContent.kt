@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
@@ -68,46 +69,72 @@ internal fun MessageComposerLeadingContent(
             val iconRotation by animateFloatAsState(
                 targetValue = if (isAttachmentPickerVisible) OpenAttachmentPickerButtonRotation else 0f,
             )
-            val pickerStateDescription = stringResource(
-                if (isAttachmentPickerVisible) {
-                    R.string.stream_compose_message_composer_attachments_expanded
+            AttachmentPickerButton(
+                isPickerVisible = isAttachmentPickerVisible,
+                iconRotation = iconRotation,
+                onClick = onAttachmentsClick,
+            )
+        }
+    }
+}
+
+@Composable
+private fun AttachmentPickerButton(
+    isPickerVisible: Boolean,
+    iconRotation: Float,
+    onClick: () -> Unit,
+) {
+    val pickerStateDescription = stringResource(
+        if (isPickerVisible) {
+            R.string.stream_compose_message_composer_attachments_expanded
+        } else {
+            R.string.stream_compose_message_composer_attachments_collapsed
+        },
+    )
+    val pickerActionLabel = stringResource(
+        if (isPickerVisible) {
+            R.string.stream_compose_message_composer_attachments_close
+        } else {
+            R.string.stream_compose_message_composer_attachments_open
+        },
+    )
+    FilledIconButton(
+        modifier = Modifier
+            .padding(end = 8.dp)
+            .border(
+                width = 1.dp,
+                color = ChatTheme.colors.borderCoreDefault,
+                shape = CircleShape,
+            )
+            .then(
+                if (ChatTheme.config.composer.floatingStyleEnabled) {
+                    Modifier.shadow(6.dp, shape = CircleShape)
                 } else {
-                    R.string.stream_compose_message_composer_attachments_collapsed
+                    Modifier
                 },
             )
-            FilledIconButton(
-                modifier = Modifier
-                    .padding(end = 8.dp)
-                    .border(
-                        width = 1.dp,
-                        color = ChatTheme.colors.borderCoreDefault,
-                        shape = CircleShape,
-                    )
-                    .then(
-                        if (ChatTheme.config.composer.floatingStyleEnabled) {
-                            Modifier.shadow(6.dp, shape = CircleShape)
-                        } else {
-                            Modifier
-                        },
-                    )
-                    .size(48.dp)
-                    .testTag("Stream_ComposerAttachmentsButton")
-                    .semantics { stateDescription = pickerStateDescription },
-                colors = IconButtonDefaults.filledIconButtonColors(
-                    containerColor = ChatTheme.colors.backgroundCoreElevation1,
-                    disabledContainerColor = ChatTheme.colors.backgroundCoreElevation1,
-                    contentColor = ChatTheme.colors.buttonSecondaryText,
-                    disabledContentColor = ChatTheme.colors.textDisabled,
-                ),
-                onClick = onAttachmentsClick,
-            ) {
-                Icon(
-                    modifier = Modifier.graphicsLayer { rotationZ = iconRotation },
-                    painter = painterResource(id = R.drawable.stream_design_ic_plus),
-                    contentDescription = stringResource(R.string.stream_compose_message_composer_attachments),
-                )
-            }
-        }
+            .size(48.dp)
+            .testTag("Stream_ComposerAttachmentsButton")
+            .semantics {
+                stateDescription = pickerStateDescription
+                onClick(label = pickerActionLabel) {
+                    onClick()
+                    true
+                }
+            },
+        colors = IconButtonDefaults.filledIconButtonColors(
+            containerColor = ChatTheme.colors.backgroundCoreElevation1,
+            disabledContainerColor = ChatTheme.colors.backgroundCoreElevation1,
+            contentColor = ChatTheme.colors.buttonSecondaryText,
+            disabledContentColor = ChatTheme.colors.textDisabled,
+        ),
+        onClick = onClick,
+    ) {
+        Icon(
+            modifier = Modifier.graphicsLayer { rotationZ = iconRotation },
+            painter = painterResource(id = R.drawable.stream_design_ic_plus),
+            contentDescription = stringResource(R.string.stream_compose_message_composer_attachments),
+        )
     }
 }
 

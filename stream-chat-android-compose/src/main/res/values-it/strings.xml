@@ -174,13 +174,17 @@
   <string name="stream_compose_message_composer_command_unavailable_in_reply">"Non disponibile durante la risposta"</string>
   <string name="stream_compose_message_composer_commands_unavailable_in_edit">"I comandi non sono disponibili durante la modifica"</string>
   <string name="stream_compose_message_composer_instant_commands">"Comandi istantanei"</string>
+  <string name="stream_compose_message_composer_save_action">"Salva modifiche"</string>
   <string name="stream_compose_message_composer_save_button">"Salva"</string>
+  <string name="stream_compose_message_composer_send_action">"Invia messaggio"</string>
   <string name="stream_compose_message_composer_send_button">"Invia"</string>
   <string name="stream_compose_message_composer_show_in_channel">"Invia anche nel canale"</string>
   <string name="stream_compose_message_composer_unsupported_attachment">"Allegato non supportato"</string>
   <string name="stream_compose_message_composer_attachments">"Allegati"</string>
   <string name="stream_compose_message_composer_attachments_collapsed">"compresso"</string>
+  <string name="stream_compose_message_composer_attachments_close">"Chiudi allegati"</string>
   <string name="stream_compose_message_composer_attachments_expanded">"espanso"</string>
+  <string name="stream_compose_message_composer_attachments_open">"Apri allegati"</string>
   <string name="stream_compose_message_deleted">"Messaggio cancellato"</string>
   <string name="stream_compose_message_deleted_preview">"Messaggio cancellato"</string>
   <string name="stream_compose_message_item_open_thread">"Apri thread"</string>
