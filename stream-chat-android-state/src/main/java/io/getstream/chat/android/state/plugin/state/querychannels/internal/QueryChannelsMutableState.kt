@@ -33,6 +33,7 @@ import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
+import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -125,6 +126,7 @@ internal class QueryChannelsMutableState(
     internal val channelsOffset: StateFlow<Int> = _channelsOffset!!
 
     private var _nextCursor: MutableStateFlow<String?>? = MutableStateFlow(null)
+    private var _groupedQueryConfig: MutableStateFlow<GroupedQueryConfig?>? = MutableStateFlow(null)
 
     override var chatEventHandlerFactory: ChatEventHandlerFactory? = null
         set(value) {
@@ -152,6 +154,7 @@ internal class QueryChannelsMutableState(
     override val loadingMore: StateFlow<Boolean> = _loadingMore!!
     override val endOfChannels: StateFlow<Boolean> = _endOfChannels!!
     override val nextCursor: StateFlow<String?> = _nextCursor!!
+    override val groupedQueryConfig: StateFlow<GroupedQueryConfig?> = _groupedQueryConfig!!
     override val channels: StateFlow<List<Channel>?> = sortedChannels
     override val channelsStateData: StateFlow<ChannelsStateData> =
         loading.combine(sortedChannels) { loading: Boolean, channels: List<Channel>? ->
@@ -229,6 +232,15 @@ internal class QueryChannelsMutableState(
         _nextCursor?.value = cursor
     }
 
+    /**
+     * Store the configuration that produced the current page of grouped results. Read back by
+     * [io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel] for paginated
+     * calls and by [io.getstream.chat.android.state.sync.internal.SyncManager] for recovery.
+     */
+    fun setGroupedQueryConfig(config: GroupedQueryConfig) {
+        _groupedQueryConfig?.value = config
+    }
+
     fun destroy() {
         _channels = null
         _loading = null
@@ -238,6 +250,7 @@ internal class QueryChannelsMutableState(
         _recoveryNeeded = null
         _channelsOffset = null
         _nextCursor = null
+        _groupedQueryConfig = null
     }
 }
 

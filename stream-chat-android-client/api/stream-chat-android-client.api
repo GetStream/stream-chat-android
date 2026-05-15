@@ -3404,6 +3404,8 @@ public abstract interface class io/getstream/chat/android/client/plugin/listener
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/QueryGroupedChannelsListener {
+	public fun onQueryGroupedChannelsRequest (Ljava/lang/Integer;Ljava/util/Map;ZZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun onQueryGroupedChannelsRequest$suspendImpl (Lio/getstream/chat/android/client/plugin/listeners/QueryGroupedChannelsListener;Ljava/lang/Integer;Ljava/util/Map;ZZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryGroupedChannelsResult (Lio/getstream/result/Result;Ljava/lang/Integer;Ljava/util/Map;ZZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 

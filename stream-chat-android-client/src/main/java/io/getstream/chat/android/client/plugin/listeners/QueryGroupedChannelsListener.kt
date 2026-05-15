@@ -26,6 +26,24 @@ import io.getstream.result.Result
 public interface QueryGroupedChannelsListener {
 
     /**
+     * Called before the query grouped channels request is dispatched to the API. Fires regardless
+     * of whether the call later succeeds or fails, so the state plugin can persist the request
+     * parameters early and recover them even when the response never lands.
+     *
+     * @param limit The request-level default per-group limit, or `null` for the server default.
+     * @param groups The per-group request options being sent, or `null` when the request asks for
+     * the server-defined default set of groups.
+     * @param watch Whether watching was requested.
+     * @param presence Whether presence was requested.
+     */
+    public suspend fun onQueryGroupedChannelsRequest(
+        limit: Int?,
+        groups: Map<String, GroupedChannelsGroupQuery>?,
+        watch: Boolean,
+        presence: Boolean,
+    ) { /* No-Op */ }
+
+    /**
      * Called when the query grouped channels request completes.
      *
      * @param result The result of the query grouped channels request.

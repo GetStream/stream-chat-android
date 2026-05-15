@@ -23,6 +23,7 @@ import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -177,6 +178,91 @@ internal class QueryGroupedChannelsListenerStateTest {
             verify(queryChannelsLogic).applyGroupedResult(groupDirect, isFirstPage = true)
             verify(queryChannelsLogic).applyGroupedResult(groupSupport, isFirstPage = true)
         }
+
+    @Test
+    fun `onQueryGroupedChannelsRequest with explicit groups writes config per requested key`() = runTest {
+        // when
+        listener.onQueryGroupedChannelsRequest(
+            limit = 20,
+            groups = mapOf(
+                "a" to GroupedChannelsGroupQuery(limit = 5),
+                "b" to GroupedChannelsGroupQuery(),
+            ),
+            watch = true,
+            presence = false,
+        )
+        // then - per-group override captured for "a", request-level only for "b"
+        verify(queryChannelsLogic).setGroupedQueryConfig(
+            GroupedQueryConfig(limit = 20, pageSize = 5, watch = true, presence = false),
+        )
+        verify(queryChannelsLogic).setGroupedQueryConfig(
+            GroupedQueryConfig(limit = 20, pageSize = null, watch = true, presence = false),
+        )
+        verify(logic).queryChannels(eq(QueryChannelsIdentifier.Grouped("a")))
+        verify(logic).queryChannels(eq(QueryChannelsIdentifier.Grouped("b")))
+    }
+
+    @Test
+    fun `onQueryGroupedChannelsRequest with null groups writes nothing`() = runTest {
+        // when
+        listener.onQueryGroupedChannelsRequest(
+            limit = null,
+            groups = null,
+            watch = true,
+            presence = false,
+        )
+        // then - no per-group keys to write to; defer to result-side capture
+        verify(queryChannelsLogic, never()).setGroupedQueryConfig(any())
+    }
+
+    @Test
+    fun `success writes captured config with per-group override to matching group and general limit to others`() =
+        runTest {
+            // given
+            whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(emptyMap())
+            doNothing().`when`(globalState).setGroupedUnreadChannels(any())
+            val groupA = GroupedChannelsGroup(groupKey = "a", channels = emptyList())
+            val groupB = GroupedChannelsGroup(groupKey = "b", channels = emptyList())
+            val result = Result.Success(
+                value = GroupedChannels(groups = mapOf("a" to groupA, "b" to groupB)),
+            )
+            // when - "a" has a per-group limit override; "b" only the request-level fallback
+            listener.onQueryGroupedChannelsResult(
+                result = result,
+                limit = 20,
+                groups = mapOf("a" to GroupedChannelsGroupQuery(limit = 5)),
+                watch = true,
+                presence = false,
+            )
+            // then - per-group override captured for "a", request-level only for "b"
+            verify(queryChannelsLogic).setGroupedQueryConfig(
+                GroupedQueryConfig(limit = 20, pageSize = 5, watch = true, presence = false),
+            )
+            verify(queryChannelsLogic).setGroupedQueryConfig(
+                GroupedQueryConfig(limit = 20, pageSize = null, watch = true, presence = false),
+            )
+        }
+
+    @Test
+    fun `success with all-null request still captures watch and presence flags`() = runTest {
+        // given - recovery-shaped call where the SDK relies solely on server defaults
+        whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(emptyMap())
+        doNothing().`when`(globalState).setGroupedUnreadChannels(any())
+        val group = GroupedChannelsGroup(groupKey = "direct", channels = emptyList())
+        val result = Result.Success(GroupedChannels(groups = mapOf("direct" to group)))
+        // when
+        listener.onQueryGroupedChannelsResult(
+            result = result,
+            limit = null,
+            groups = null,
+            watch = true,
+            presence = true,
+        )
+        // then - config still written so subsequent pagination knows the watch/presence flags
+        verify(queryChannelsLogic).setGroupedQueryConfig(
+            GroupedQueryConfig(limit = null, pageSize = null, watch = true, presence = true),
+        )
+    }
 
     @Test
     fun `success treats keys with requested next cursor as paginated`() = runTest {

@@ -826,9 +826,18 @@ public class ChannelListViewModel internal constructor(
             logger.v { "[loadMoreGroupedChannels] rejected (already loading more)" }
             return
         }
+        val config = state.groupedQueryConfig.value
         channelsState = channelsState.copy(isLoadingMore = true)
         val result = chatClient.queryGroupedChannels(
-            groups = mapOf(groupKey to GroupedChannelsGroupQuery(next = cursor)),
+            limit = config?.limit,
+            groups = mapOf(
+                groupKey to GroupedChannelsGroupQuery(
+                    limit = config?.pageSize,
+                    next = cursor,
+                ),
+            ),
+            watch = config?.watch ?: false,
+            presence = config?.presence ?: false,
         ).await()
         if (result.isSuccess) {
             logger.v { "[loadMoreGroupedChannels] completed (listener applied)" }

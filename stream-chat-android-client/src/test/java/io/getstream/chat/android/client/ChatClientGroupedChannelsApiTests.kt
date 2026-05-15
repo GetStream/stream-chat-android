@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -79,6 +80,75 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
         val result = sut.queryGroupedChannels().await()
         // then
         verifyNetworkError(result, errorCode)
+    }
+
+    @Test
+    fun `queryGroupedChannels dispatches request to plugin listeners before issuing the call`() = runTest {
+        // given
+        val plugin: Plugin = mock()
+        plugins.add(plugin)
+        val groupedChannels = GroupedChannels(
+            groups = mapOf(
+                "direct" to GroupedChannelsGroup(
+                    groupKey = "direct",
+                    channels = listOf(randomChannel()),
+                ),
+            ),
+        )
+        val sut = Fixture()
+            .givenQueryGroupedChannelsResult(RetroSuccess(groupedChannels).toRetrofitCall())
+            .get()
+        val groupsParam = mapOf("direct" to GroupedChannelsGroupQuery(limit = 25))
+        // when
+        sut.queryGroupedChannels(
+            limit = 30,
+            groups = groupsParam,
+            watch = true,
+            presence = false,
+        ).await()
+        // then - the request hook fires BEFORE the result hook
+        inOrder(plugin) {
+            verify(plugin).onQueryGroupedChannelsRequest(
+                limit = eq(30),
+                groups = eq(groupsParam),
+                watch = eq(true),
+                presence = eq(false),
+            )
+            verify(plugin).onQueryGroupedChannelsResult(
+                result = any(),
+                limit = eq(30),
+                groups = eq(groupsParam),
+                watch = eq(true),
+                presence = eq(false),
+            )
+        }
+    }
+
+    @Test
+    fun `queryGroupedChannels dispatches request hook even when the call fails`() = runTest {
+        // given
+        val plugin: Plugin = mock()
+        plugins.add(plugin)
+        val errorCode = positiveRandomInt()
+        val sut = Fixture()
+            .givenQueryGroupedChannelsResult(RetroError<GroupedChannels>(errorCode).toRetrofitCall())
+            .get()
+        val groupsParam = mapOf("direct" to GroupedChannelsGroupQuery(limit = 25))
+        // when
+        sut.queryGroupedChannels(
+            limit = 30,
+            groups = groupsParam,
+            watch = true,
+            presence = false,
+        ).await()
+        // then - request hook ran, giving the state plugin a chance to capture the config
+        // before the result hook reports the failure
+        verify(plugin).onQueryGroupedChannelsRequest(
+            limit = eq(30),
+            groups = eq(groupsParam),
+            watch = eq(true),
+            presence = eq(false),
+        )
     }
 
     @Test

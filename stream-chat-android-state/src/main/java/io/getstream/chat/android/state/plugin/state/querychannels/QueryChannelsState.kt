@@ -72,6 +72,16 @@ public interface QueryChannelsState {
     public val nextCursor: StateFlow<String?>
 
     /**
+     * Configuration captured from the most recent grouped query response that targeted this
+     * group. Used by paginated and recovery calls so they reuse the caller's original
+     * [GroupedQueryConfig.limit], [GroupedQueryConfig.pageSize], [GroupedQueryConfig.watch] and
+     * [GroupedQueryConfig.presence].
+     *
+     * `null` for standard queries and until the first grouped response has been observed.
+     */
+    public val groupedQueryConfig: StateFlow<GroupedQueryConfig?>
+
+    /**
      *  The collection of channels loaded by the query channels request.
      *  The StateFlow is initialized with null which means that channels are not loaded yet.
      */

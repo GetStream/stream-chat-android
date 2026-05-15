@@ -43,6 +43,7 @@ import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.core.utils.date.diff
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
@@ -444,20 +445,36 @@ internal class SyncManager(
      * routes the response into the corresponding per-group state and persists it.
      */
     private suspend fun updateGroupedQueryChannels(recoverAll: Boolean) {
-        val hasGroupedRecovery = logicRegistry.getActiveQueryChannelsLogic()
-            .any { it.groupKey() != null && (it.recoveryNeeded().value || recoverAll) }
+        val activeGroupedLogics = logicRegistry.getActiveQueryChannelsLogic()
+            .filter { it.groupKey() != null && (it.recoveryNeeded().value || recoverAll) }
 
-        if (!hasGroupedRecovery) {
+        if (activeGroupedLogics.isEmpty()) {
             logger.v { "[updateGroupedQueryChannels] no grouped queries to restore" }
             return
         }
 
-        // TODO: Align with iOS before publishing!
+        // Shared fields (limit, watch, presence) are identical across groups from the same
+        // original session — take the first captured config. Per-group page sizes are merged in
+        // the `groups` map below so the server returns the same page sizes the caller chose.
+        //
+        // Always include every active group's key, even when the captured per-group `pageSize` is
+        // null. An empty `{}` per-group entry is meaningful: it tells the server "refresh this
+        // group too". Filtering it out would cause re-sync to skip that group entirely.
+        val shared = activeGroupedLogics.firstNotNullOfOrNull { it.groupedQueryConfig() }
+        val groupsParam = activeGroupedLogics
+            .mapNotNull { logic ->
+                val key = logic.groupKey() ?: return@mapNotNull null
+                val cfg = logic.groupedQueryConfig() ?: return@mapNotNull null
+                key to GroupedChannelsGroupQuery(limit = cfg.pageSize)
+            }
+            .toMap()
+            .takeIf { it.isNotEmpty() }
+
         val result = chatClient.queryGroupedChannels(
-            limit = null,
-            groups = null,
-            watch = true,
-            presence = true,
+            limit = shared?.limit,
+            groups = groupsParam,
+            watch = shared?.watch ?: false,
+            presence = shared?.presence ?: false,
         ).await()
 
         when (result) {

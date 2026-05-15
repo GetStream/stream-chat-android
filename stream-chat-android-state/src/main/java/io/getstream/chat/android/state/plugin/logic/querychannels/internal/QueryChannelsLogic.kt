@@ -30,6 +30,7 @@ import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toOfflinePaginationRequest
+import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.StateFlow
@@ -139,6 +140,12 @@ internal class QueryChannelsLogic(
     }
 
     internal fun groupKey(): String? = (identifier as? QueryChannelsIdentifier.Grouped)?.group
+
+    internal fun groupedQueryConfig(): GroupedQueryConfig? = queryChannelsStateLogic.getGroupedQueryConfig()
+
+    internal fun setGroupedQueryConfig(config: GroupedQueryConfig) {
+        queryChannelsStateLogic.setGroupedQueryConfig(config)
+    }
 
     internal fun currentRequest(): QueryChannelsRequest? = queryChannelsStateLogic.getState().currentRequest.value
 

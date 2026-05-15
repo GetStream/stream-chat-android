@@ -28,6 +28,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
+import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.log.taggedLogger
@@ -127,6 +128,12 @@ internal class QueryChannelsStateLogic(
     internal fun setNextCursor(cursor: String?) {
         mutableState.setNextCursor(cursor)
     }
+
+    internal fun setGroupedQueryConfig(config: GroupedQueryConfig) {
+        mutableState.setGroupedQueryConfig(config)
+    }
+
+    internal fun getGroupedQueryConfig(): GroupedQueryConfig? = mutableState.groupedQueryConfig.value
 
     internal fun setCids(cids: Set<String>) {
         mutableState.setCids(cids)
