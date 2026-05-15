@@ -39,6 +39,14 @@ public data class PollsConfig(
     val questionTextLimit: Int? = null,
     val optionTextLimit: Int? = null,
 ) : Parcelable {
+
+   init {
+        require(multipleVotes.configurable || !multipleVotes.defaultValue) {
+            "Invalid PollsConfig: multipleVotes cannot have defaultValue=true while " +
+                "configurable=false as the user would be unable to set maxVotesAllowed."
+        }
+    }
+
     public companion object {
         /**
          * The default configuration for polls. All features are configurable and disabled by default.
