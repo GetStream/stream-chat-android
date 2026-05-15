@@ -72,10 +72,6 @@ internal class GroupAwareChatEventHandler(
             is NotificationAddedToChannelEvent -> watchAndAddIfBelongs(event.cid, event.channelCustom)
             is NotificationMessageNewEvent -> watchAndAddIfBelongs(event.cid, event.channelCustom)
             is ChannelVisibleEvent -> watchAndAddIfBelongs(event.cid, event.channelCustom)
-            // TODO: MemberAddedEvent flicker — when the current user is added to a channel in
-            //  another group, super may Add it here until the follow-up `channel.updated` arrives
-            //  and routeByGroup reclassifies. Verify whether iOS exhibits the same behavior and
-            //  align the contract before exposing the grouped path as stable.
             else -> super.handleChannelEvent(event, filter)
         }
     }
