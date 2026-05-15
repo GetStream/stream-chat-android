@@ -56,7 +56,7 @@ internal class QueryChannelsMutableState(
 
     override val sort: QuerySorter<Channel> = when (identifier) {
         is QueryChannelsIdentifier.Standard -> identifier.sort
-        is QueryChannelsIdentifier.Grouped -> QuerySortByField.descByName("last_message_at")
+        is QueryChannelsIdentifier.Grouped -> QuerySortByField.descByName("last_updated")
     }
 
     internal var rawChannels: Map<String, Channel>?

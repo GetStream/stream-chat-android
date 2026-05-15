@@ -45,7 +45,7 @@ public interface QueryChannelsState {
      * The sort associated with this query channels state.
      *
      * For grouped queries (states keyed by `QueryChannelsIdentifier.Grouped`), this is a
-     * placeholder (`last_message_at` descending) — grouped lists are ordered server-side and
+     * placeholder (`last_updated` descending) — grouped lists are ordered server-side and
      * do not have a client-side sort. Do not rely on this value for grouped states.
      */
     public val sort: QuerySorter<Channel>
