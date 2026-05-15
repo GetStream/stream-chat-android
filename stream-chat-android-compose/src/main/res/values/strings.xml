@@ -117,6 +117,7 @@
     <string name="stream_compose_quoted_message_giphy_tag">Giphy</string>
     <string name="stream_compose_quoted_message_media">%d media</string>
     <string name="stream_compose_quoted_message_reply_to">Reply to %s</string>
+    <string name="stream_compose_quoted_message_reply_to_you">Reply to you</string>
     <string name="stream_compose_quoted_message_you">You</string>
 
     <plurals name="stream_compose_quoted_message_files">
@@ -183,6 +184,8 @@
     <string name="stream_compose_message_composer_send_action">Send message</string>
     <string name="stream_compose_message_composer_save_button">Save</string>
     <string name="stream_compose_message_composer_save_action">Save changes</string>
+    <string name="stream_compose_message_composer_cancel_editing">Cancel editing</string>
+    <string name="stream_compose_message_composer_cancel_reply">Cancel reply</string>
     <string name="stream_compose_message_composer_attachments">Attachments</string>
     <string name="stream_compose_message_composer_attachments_collapsed">collapsed</string>
     <string name="stream_compose_message_composer_attachments_expanded">expanded</string>

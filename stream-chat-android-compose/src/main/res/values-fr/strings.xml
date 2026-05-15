@@ -114,6 +114,8 @@
   <string name="stream_compose_message_composer_command_unavailable_in_reply">"Indisponible lors d\'une réponse"</string>
   <string name="stream_compose_message_composer_commands_unavailable_in_edit">"Les commandes sont indisponibles lors de la modification"</string>
   <string name="stream_compose_message_composer_instant_commands">"Commandes instantanées"</string>
+  <string name="stream_compose_message_composer_cancel_editing">"Annuler la modification"</string>
+  <string name="stream_compose_message_composer_cancel_reply">"Annuler la réponse"</string>
   <string name="stream_compose_message_composer_save_action">"Enregistrer les modifications"</string>
   <string name="stream_compose_message_composer_save_button">"Enregistrer"</string>
   <string name="stream_compose_message_composer_send_action">"Envoyer le message"</string>
@@ -215,6 +217,7 @@
   <string name="stream_compose_quoted_message_giphy_tag">"Giphy"</string>
   <string name="stream_compose_quoted_message_media">"%d média"</string>
   <string name="stream_compose_quoted_message_reply_to">"Répondre à %s"</string>
+  <string name="stream_compose_quoted_message_reply_to_you">"Répondre à vous-même"</string>
   <string name="stream_compose_quoted_message_you">"Vous"</string>
   <string name="stream_compose_reactions_add">"Ajouter une réaction"</string>
   <string name="stream_compose_reactions_remove">"Appuyez pour supprimer"</string>

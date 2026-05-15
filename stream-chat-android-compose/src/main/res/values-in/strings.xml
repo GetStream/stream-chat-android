@@ -114,6 +114,8 @@
   <string name="stream_compose_message_composer_command_unavailable_in_reply">"Tidak tersedia saat membalas"</string>
   <string name="stream_compose_message_composer_commands_unavailable_in_edit">"Perintah tidak tersedia saat mengedit"</string>
   <string name="stream_compose_message_composer_instant_commands">"Perintah Instan"</string>
+  <string name="stream_compose_message_composer_cancel_editing">"Batalkan pengeditan"</string>
+  <string name="stream_compose_message_composer_cancel_reply">"Batalkan balasan"</string>
   <string name="stream_compose_message_composer_save_action">"Simpan perubahan"</string>
   <string name="stream_compose_message_composer_save_button">"Simpan"</string>
   <string name="stream_compose_message_composer_send_action">"Kirim pesan"</string>
@@ -215,6 +217,7 @@
   <string name="stream_compose_quoted_message_giphy_tag">"Giphy"</string>
   <string name="stream_compose_quoted_message_media">"%d media"</string>
   <string name="stream_compose_quoted_message_reply_to">"Balas ke %s"</string>
+  <string name="stream_compose_quoted_message_reply_to_you">"Balas ke diri sendiri"</string>
   <string name="stream_compose_quoted_message_you">"Anda"</string>
   <string name="stream_compose_reactions_add">"Tambahkan reaksi"</string>
   <string name="stream_compose_reactions_remove">"Ketuk untuk menghapus"</string>
