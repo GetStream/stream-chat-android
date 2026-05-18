@@ -59,7 +59,6 @@
   <string name="stream_compose_channel_item_muted">"silenciado"</string>
   <string name="stream_compose_channel_item_open">"Abrir conversación"</string>
   <string name="stream_compose_channel_item_options">"Abrir opciones de conversación"</string>
-  <string name="stream_compose_cd_message_item">"Elemento de mensaje"</string>
   <string name="stream_compose_cd_play_button">"Botón de reproducción"</string>
   <string name="stream_compose_channel_list_draft">"Borrador: "</string>
   <string name="stream_compose_channel_list_empty_channels">"No hay conversaciones aún"</string>
@@ -123,6 +122,10 @@
   <string name="stream_compose_message_composer_attachments_expanded">"expandido"</string>
   <string name="stream_compose_message_deleted">"Mensaje eliminado"</string>
   <string name="stream_compose_message_deleted_preview">"Mensaje eliminado"</string>
+  <string name="stream_compose_message_item_open_thread">"Abrir hilo"</string>
+  <string name="stream_compose_message_item_options">"Mostrar opciones del mensaje"</string>
+  <string name="stream_compose_message_attachment_open">"Abrir archivo adjunto"</string>
+  <string name="stream_compose_message_reactions_show">"Mostrar reacciones"</string>
   <string name="stream_compose_message_list_auto_translated">"Traducido"</string>
   <string name="stream_compose_message_list_empty_messages">"Sin mensajes"</string>
   <string name="stream_compose_message_list_error_cannot_open_link">"No hay ninguna aplicación para ver esta URL:\n%s"</string>
@@ -135,7 +138,10 @@
   <string name="stream_compose_message_list_show_translation">"Mostrar traducción"</string>
   <string name="stream_compose_message_list_thread_footnote_thread_replies">"%d respuestas"</string>
   <string name="stream_compose_message_list_thread_footnote_thread_reply">"%d respuesta"</string>
-  <string name="stream_compose_message_list_unread_separator">"%d mensajes no leídos"</string>
+  <plurals name="stream_compose_message_list_unread_separator">
+    <item quantity="one">"%d mensaje no leído"</item>
+    <item quantity="other">"%d mensajes no leídos"</item>
+  </plurals>
   <string name="stream_compose_message_list_unsupported_attachment">"Archivo adjunto no compatible"</string>
   <string name="stream_compose_message_list_view">"Ver"</string>
   <string name="stream_compose_message_list_view_original">"Ver original"</string>

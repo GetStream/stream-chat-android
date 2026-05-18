@@ -59,7 +59,6 @@
   <string name="stream_compose_channel_item_muted">"음소거됨"</string>
   <string name="stream_compose_channel_item_open">"대화 열기"</string>
   <string name="stream_compose_channel_item_options">"대화 옵션 열기"</string>
-  <string name="stream_compose_cd_message_item">"메시지 항목"</string>
   <string name="stream_compose_cd_play_button">"재생 버튼"</string>
   <string name="stream_compose_channel_list_draft">"임시 저장: "</string>
   <string name="stream_compose_channel_list_empty_channels">"아직 대화가 없습니다"</string>
@@ -135,6 +134,10 @@
   <string name="stream_compose_message_composer_attachments_expanded">"확장됨"</string>
   <string name="stream_compose_message_deleted">"메시지가 삭제되었습니다"</string>
   <string name="stream_compose_message_deleted_preview">"메시지가 삭제되었습니다"</string>
+  <string name="stream_compose_message_item_open_thread">"스레드 열기"</string>
+  <string name="stream_compose_message_item_options">"메시지 옵션 표시"</string>
+  <string name="stream_compose_message_attachment_open">"첨부파일 열기"</string>
+  <string name="stream_compose_message_reactions_show">"반응 보기"</string>
   <string name="stream_compose_message_list_auto_translated">"번역됨"</string>
   <string name="stream_compose_message_list_empty_messages">"메시지 없음"</string>
   <string name="stream_compose_message_list_error_cannot_open_link">"이 URL을 열 수 있는 앱이 없습니다:\n%s"</string>
@@ -150,7 +153,10 @@
   <plurals name="stream_compose_message_list_thread_separator">
     <item quantity="other">"%d개의 답장"</item>
   </plurals>
-  <string name="stream_compose_message_list_unread_separator">"%d개의 읽지 않은 메시지"</string>
+  <plurals name="stream_compose_message_list_unread_separator">
+    <item quantity="one">"%d개의 읽지 않은 메시지"</item>
+    <item quantity="other">"%d개의 읽지 않은 메시지"</item>
+  </plurals>
   <string name="stream_compose_message_list_unsupported_attachment">"지원되지 않는 첨부파일"</string>
   <string name="stream_compose_message_list_view">"보기"</string>
   <string name="stream_compose_message_list_view_original">"원문 보기"</string>

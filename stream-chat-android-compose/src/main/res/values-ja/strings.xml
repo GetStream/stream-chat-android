@@ -59,7 +59,6 @@
   <string name="stream_compose_channel_item_muted">"ミュート中"</string>
   <string name="stream_compose_channel_item_open">"会話を開く"</string>
   <string name="stream_compose_channel_item_options">"会話のオプションを開く"</string>
-  <string name="stream_compose_cd_message_item">"メッセージ項目"</string>
   <string name="stream_compose_cd_play_button">"再生ボタン"</string>
   <string name="stream_compose_channel_list_draft">"下書き: "</string>
   <string name="stream_compose_channel_list_empty_channels">"会話はまだありません"</string>
@@ -135,6 +134,10 @@
   <string name="stream_compose_message_composer_attachments_expanded">"展開"</string>
   <string name="stream_compose_message_deleted">"メッセージは削除されました"</string>
   <string name="stream_compose_message_deleted_preview">"メッセージは削除されました"</string>
+  <string name="stream_compose_message_item_open_thread">"スレッドを開く"</string>
+  <string name="stream_compose_message_item_options">"メッセージのオプションを表示"</string>
+  <string name="stream_compose_message_attachment_open">"添付ファイルを開く"</string>
+  <string name="stream_compose_message_reactions_show">"リアクションを表示"</string>
   <string name="stream_compose_message_list_auto_translated">"翻訳済み"</string>
   <string name="stream_compose_message_list_empty_messages">"メッセージはありません"</string>
   <string name="stream_compose_message_list_error_cannot_open_link">"このURLを開くアプリがありません:\n%s"</string>
@@ -150,7 +153,10 @@
   <plurals name="stream_compose_message_list_thread_separator">
     <item quantity="other">"%d件の返信"</item>
   </plurals>
-  <string name="stream_compose_message_list_unread_separator">"%d件の未読メッセージ"</string>
+  <plurals name="stream_compose_message_list_unread_separator">
+    <item quantity="one">"%d件の未読メッセージ"</item>
+    <item quantity="other">"%d件の未読メッセージ"</item>
+  </plurals>
   <string name="stream_compose_message_list_unsupported_attachment">"サポートされていない添付ファイル"</string>
   <string name="stream_compose_message_list_view">"表示"</string>
   <string name="stream_compose_message_list_view_original">"原文を表示"</string>

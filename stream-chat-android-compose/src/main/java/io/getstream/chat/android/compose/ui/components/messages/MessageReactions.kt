@@ -34,11 +34,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewReactionData
 import io.getstream.chat.android.compose.state.messages.MessageReactionItemState
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
@@ -67,6 +69,7 @@ public fun ClusteredMessageReactions(
         reactions.size,
         reactions.size,
     )
+    val openLabel = stringResource(R.string.stream_compose_message_reactions_show)
     val colors = ChatTheme.colors
     val count = reactions.sumOf(MessageReactionItemState::count)
 
@@ -78,7 +81,7 @@ public fun ClusteredMessageReactions(
             }
             .background(colors.backgroundCoreElevation1, CircleShape)
             .border(1.dp, color = colors.borderCoreSubtle, shape = CircleShape)
-            .ifNotNull(onClick) { clip(CircleShape).clickable(onClick = it) }
+            .ifNotNull(onClick) { clip(CircleShape).clickable(onClickLabel = openLabel, onClick = it) }
             .padding(horizontal = StreamTokens.spacingXs, vertical = StreamTokens.spacing2xs),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
@@ -175,13 +178,14 @@ private fun ReactionChip(
     onClick: (() -> Unit)?,
     content: @Composable RowScope.() -> Unit,
 ) {
+    val openLabel = stringResource(R.string.stream_compose_message_reactions_show)
     val colors = ChatTheme.colors
     Row(
         modifier = Modifier
             .fillMaxHeight()
             .background(colors.backgroundCoreElevation1, CircleShape)
             .border(1.dp, color = colors.borderCoreSubtle, shape = CircleShape)
-            .ifNotNull(onClick) { clip(CircleShape).clickable(onClick = it) }
+            .ifNotNull(onClick) { clip(CircleShape).clickable(onClickLabel = openLabel, onClick = it) }
             .padding(horizontal = StreamTokens.spacingXs, vertical = StreamTokens.spacing2xs),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),

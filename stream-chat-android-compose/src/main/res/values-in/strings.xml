@@ -59,7 +59,6 @@
   <string name="stream_compose_channel_item_muted">"dibisukan"</string>
   <string name="stream_compose_channel_item_open">"Buka percakapan"</string>
   <string name="stream_compose_channel_item_options">"Buka opsi percakapan"</string>
-  <string name="stream_compose_cd_message_item">"Item pesan"</string>
   <string name="stream_compose_cd_play_button">"Tombol putar"</string>
   <string name="stream_compose_channel_list_draft">"Draf: "</string>
   <string name="stream_compose_channel_list_empty_channels">"Belum ada percakapan"</string>
@@ -123,6 +122,10 @@
   <string name="stream_compose_message_composer_attachments_expanded">"diperluas"</string>
   <string name="stream_compose_message_deleted">"Pesan dihapus"</string>
   <string name="stream_compose_message_deleted_preview">"Pesan dihapus"</string>
+  <string name="stream_compose_message_item_open_thread">"Buka utas"</string>
+  <string name="stream_compose_message_item_options">"Tampilkan opsi pesan"</string>
+  <string name="stream_compose_message_attachment_open">"Buka lampiran"</string>
+  <string name="stream_compose_message_reactions_show">"Tampilkan reaksi"</string>
   <string name="stream_compose_message_list_auto_translated">"Diterjemahkan"</string>
   <string name="stream_compose_message_list_empty_messages">"Tidak ada pesan"</string>
   <string name="stream_compose_message_list_error_cannot_open_link">"Tidak ada aplikasi untuk membuka URL ini:\n%s"</string>
@@ -135,7 +138,10 @@
   <string name="stream_compose_message_list_show_translation">"Tampilkan terjemahan"</string>
   <string name="stream_compose_message_list_thread_footnote_thread_replies">"%d balasan"</string>
   <string name="stream_compose_message_list_thread_footnote_thread_reply">"%d balasan"</string>
-  <string name="stream_compose_message_list_unread_separator">"%d pesan belum dibaca"</string>
+  <plurals name="stream_compose_message_list_unread_separator">
+    <item quantity="one">"%d pesan belum dibaca"</item>
+    <item quantity="other">"%d pesan belum dibaca"</item>
+  </plurals>
   <string name="stream_compose_message_list_unsupported_attachment">"Lampiran tidak didukung"</string>
   <string name="stream_compose_message_list_view">"Lihat"</string>
   <string name="stream_compose_message_list_view_original">"Lihat aslinya"</string>
