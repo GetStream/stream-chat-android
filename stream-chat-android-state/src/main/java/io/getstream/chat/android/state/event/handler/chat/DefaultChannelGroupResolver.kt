@@ -17,14 +17,19 @@
 package io.getstream.chat.android.state.event.handler.chat
 
 /**
- * Default [ChannelGroupResolver] backed by `event.channelCustom`.
+ * Default [ChannelGroupResolver].
  *
- * Reads an explicit group key from `channelCustom[groupFieldName]` (defaults to `"group"`)
- * and always includes the [allGroupKey] sentinel (defaults to `"all"`) so that a designated
+ * Reads an explicit group key from the first of the following that yields a non-null `String`:
+ *  1. `channelCustom["custom"][groupFieldName]` — nested `custom` block inside `channel_custom`.
+ *  2. `channelCustom[groupFieldName]` — top-level entry inside `channel_custom`.
+ *  3. `channelExtraData[groupFieldName]` — channel's own `extraData`, when the event-level
+ *     `channel_custom` does not carry it.
+ *
+ * Always includes the [allGroupKey] sentinel (defaults to `"all"`) so that a designated
  * "all channels" grouped query always sees every channel.
  *
- * @param groupFieldName The key in the event's `channel_custom` map carrying the explicit group
- * identifier.
+ * @param groupFieldName The key carrying the explicit group identifier in any of the three
+ * source maps consulted by [resolve].
  * @param allGroupKey The sentinel group key representing "every channel". Pass `null` to disable
  * the implicit sentinel.
  */
@@ -33,9 +38,24 @@ internal class DefaultChannelGroupResolver(
     private val allGroupKey: String? = DEFAULT_ALL_GROUP_KEY,
 ) : ChannelGroupResolver {
 
-    override fun resolve(channelCustom: Map<String, Any>?, currentGroup: String): Set<String> = buildSet {
-        (channelCustom?.get(groupFieldName) as? String)?.let(::add)
+    override fun resolve(
+        channelCustom: Map<String, Any>?,
+        channelExtraData: Map<String, Any>?,
+        currentGroup: String,
+    ): Set<String> = buildSet {
+        resolveGroup(channelCustom, channelExtraData)?.let(::add)
         allGroupKey?.let(::add)
+    }
+
+    private fun resolveGroup(
+        channelCustom: Map<String, Any>?,
+        channelExtraData: Map<String, Any>?,
+    ): String? {
+        val nested = (channelCustom?.get("custom") as? Map<*, *>)?.get(groupFieldName) as? String
+        if (nested != null) return nested
+        val topLevel = channelCustom?.get(groupFieldName) as? String
+        if (topLevel != null) return topLevel
+        return channelExtraData?.get(groupFieldName) as? String
     }
 
     companion object {

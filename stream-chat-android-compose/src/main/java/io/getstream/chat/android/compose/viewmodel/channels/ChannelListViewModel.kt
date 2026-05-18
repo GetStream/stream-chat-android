@@ -30,6 +30,7 @@ import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.util.extensions.asState
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.utils.Debouncer
 import io.getstream.chat.android.models.AndFilterObject
 import io.getstream.chat.android.models.Channel
@@ -806,6 +807,7 @@ public class ChannelListViewModel internal constructor(
         channelsState = channelsState.copy(isLoadingMore = false)
     }
 
+    @OptIn(InternalStreamChatApi::class)
     private suspend fun loadMoreGroupedChannels(groupKey: String) {
         logger.d { "[loadMoreGroupedChannels] groupKey: $groupKey" }
         val state = queryChannelsState.value
@@ -828,7 +830,7 @@ public class ChannelListViewModel internal constructor(
         }
         val config = state.groupedQueryConfig.value
         channelsState = channelsState.copy(isLoadingMore = true)
-        val result = chatClient.queryGroupedChannels(
+        val result = chatClient.queryGroupedChannelsInternal(
             limit = config?.limit,
             groups = mapOf(
                 groupKey to GroupedChannelsGroupQuery(

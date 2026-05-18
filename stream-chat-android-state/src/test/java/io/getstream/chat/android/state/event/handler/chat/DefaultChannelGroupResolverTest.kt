@@ -27,25 +27,33 @@ internal class DefaultChannelGroupResolverTest {
         val channelCustom: Map<String, Any> = mapOf("group" to "vip")
         val resolver = DefaultChannelGroupResolver()
 
-        val result = resolver.resolve(channelCustom, currentGroup = randomString())
+        val result = resolver.resolve(channelCustom, channelExtraData = null, currentGroup = randomString())
 
         assertEquals(setOf("vip", "all"), result)
     }
 
     @Test
-    fun `Given a null channel_custom When resolved Then returns only the all sentinel`() {
+    fun `Given a null channel_custom and null extraData When resolved Then returns only the all sentinel`() {
         val resolver = DefaultChannelGroupResolver()
 
-        val result = resolver.resolve(channelCustom = null, currentGroup = randomString())
+        val result = resolver.resolve(
+            channelCustom = null,
+            channelExtraData = null,
+            currentGroup = randomString(),
+        )
 
         assertEquals(setOf("all"), result)
     }
 
     @Test
-    fun `Given an empty channel_custom When resolved Then returns only the all sentinel`() {
+    fun `Given an empty channel_custom and empty extraData When resolved Then returns only the all sentinel`() {
         val resolver = DefaultChannelGroupResolver()
 
-        val result = resolver.resolve(channelCustom = emptyMap(), currentGroup = randomString())
+        val result = resolver.resolve(
+            channelCustom = emptyMap(),
+            channelExtraData = emptyMap(),
+            currentGroup = randomString(),
+        )
 
         assertEquals(setOf("all"), result)
     }
@@ -55,7 +63,7 @@ internal class DefaultChannelGroupResolverTest {
         val channelCustom: Map<String, Any> = mapOf("tier" to "gold", "group" to "ignored")
         val resolver = DefaultChannelGroupResolver(groupFieldName = "tier")
 
-        val result = resolver.resolve(channelCustom, currentGroup = randomString())
+        val result = resolver.resolve(channelCustom, channelExtraData = null, currentGroup = randomString())
 
         assertEquals(setOf("gold", "all"), result)
     }
@@ -65,7 +73,7 @@ internal class DefaultChannelGroupResolverTest {
         val channelCustom: Map<String, Any> = mapOf("group" to "vip")
         val resolver = DefaultChannelGroupResolver(allGroupKey = null)
 
-        val result = resolver.resolve(channelCustom, currentGroup = randomString())
+        val result = resolver.resolve(channelCustom, channelExtraData = null, currentGroup = randomString())
 
         assertEquals(setOf("vip"), result)
     }
@@ -75,7 +83,72 @@ internal class DefaultChannelGroupResolverTest {
         val channelCustom: Map<String, Any> = mapOf("group" to 42)
         val resolver = DefaultChannelGroupResolver()
 
-        val result = resolver.resolve(channelCustom, currentGroup = randomString())
+        val result = resolver.resolve(channelCustom, channelExtraData = null, currentGroup = randomString())
+
+        assertEquals(setOf("all"), result)
+    }
+
+    @Test
+    fun `Given group nested under custom When resolved Then returns the nested group`() {
+        val channelCustom: Map<String, Any> = mapOf("custom" to mapOf("group" to "vip"))
+        val resolver = DefaultChannelGroupResolver()
+
+        val result = resolver.resolve(channelCustom, channelExtraData = null, currentGroup = randomString())
+
+        assertEquals(setOf("vip", "all"), result)
+    }
+
+    @Test
+    fun `Given group present in custom and at top level When resolved Then nested custom wins`() {
+        val channelCustom: Map<String, Any> = mapOf(
+            "custom" to mapOf("group" to "vip"),
+            "group" to "other",
+        )
+        val resolver = DefaultChannelGroupResolver()
+
+        val result = resolver.resolve(channelCustom, channelExtraData = null, currentGroup = randomString())
+
+        assertEquals(setOf("vip", "all"), result)
+    }
+
+    @Test
+    fun `Given group only in extraData When resolved Then falls back to extraData`() {
+        val channelExtraData: Map<String, Any> = mapOf("group" to "vip")
+        val resolver = DefaultChannelGroupResolver()
+
+        val result = resolver.resolve(channelCustom = null, channelExtraData = channelExtraData, currentGroup = randomString())
+
+        assertEquals(setOf("vip", "all"), result)
+    }
+
+    @Test
+    fun `Given group in channel_custom and in extraData When resolved Then channel_custom wins over extraData`() {
+        val channelCustom: Map<String, Any> = mapOf("group" to "vip")
+        val channelExtraData: Map<String, Any> = mapOf("group" to "other")
+        val resolver = DefaultChannelGroupResolver()
+
+        val result = resolver.resolve(channelCustom, channelExtraData, currentGroup = randomString())
+
+        assertEquals(setOf("vip", "all"), result)
+    }
+
+    @Test
+    fun `Given group in nested custom and in extraData When resolved Then nested custom wins over extraData`() {
+        val channelCustom: Map<String, Any> = mapOf("custom" to mapOf("group" to "vip"))
+        val channelExtraData: Map<String, Any> = mapOf("group" to "other")
+        val resolver = DefaultChannelGroupResolver()
+
+        val result = resolver.resolve(channelCustom, channelExtraData, currentGroup = randomString())
+
+        assertEquals(setOf("vip", "all"), result)
+    }
+
+    @Test
+    fun `Given non-string extraData group When resolved Then ignores it and returns only the all sentinel`() {
+        val channelExtraData: Map<String, Any> = mapOf("group" to 99)
+        val resolver = DefaultChannelGroupResolver()
+
+        val result = resolver.resolve(channelCustom = null, channelExtraData = channelExtraData, currentGroup = randomString())
 
         assertEquals(setOf("all"), result)
     }

@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.test.randomConnectedEvent
 import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.GroupedChannels
@@ -84,6 +85,7 @@ import org.mockito.kotlin.whenever
 import java.util.Date
 
 @Suppress("LargeClass")
+@OptIn(InternalStreamChatApi::class)
 @ExperimentalCoroutinesApi
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class SyncManagerTest {
@@ -572,7 +574,7 @@ internal class SyncManagerTest {
             whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryLogic)
             whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
             whenever(
-                chatClient.queryGroupedChannels(
+                chatClient.queryGroupedChannelsInternal(
                     limit = anyOrNull(),
                     groups = anyOrNull(),
                     watch = any(),
@@ -597,7 +599,7 @@ internal class SyncManagerTest {
             syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
             delay(100)
 
-            verify(chatClient).queryGroupedChannels(
+            verify(chatClient).queryGroupedChannelsInternal(
                 limit = null,
                 groups = mapOf("all" to io.getstream.chat.android.models.GroupedChannelsGroupQuery(limit = 5)),
                 watch = true,
@@ -628,7 +630,7 @@ internal class SyncManagerTest {
 
             whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryLogic)
             whenever(
-                chatClient.queryGroupedChannels(
+                chatClient.queryGroupedChannelsInternal(
                     limit = anyOrNull(),
                     groups = anyOrNull(),
                     watch = any(),
@@ -675,7 +677,7 @@ internal class SyncManagerTest {
 
             whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryLogic)
             whenever(
-                chatClient.queryGroupedChannels(
+                chatClient.queryGroupedChannelsInternal(
                     limit = anyOrNull(),
                     groups = anyOrNull(),
                     watch = any(),
@@ -728,7 +730,7 @@ internal class SyncManagerTest {
             whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
             whenever(stateRegistry.getActiveChannelStates()) doReturn emptyList()
             whenever(
-                chatClient.queryGroupedChannels(
+                chatClient.queryGroupedChannelsInternal(
                     limit = anyOrNull(),
                     groups = anyOrNull(),
                     watch = any(),
@@ -777,7 +779,7 @@ internal class SyncManagerTest {
             whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryLogicA, queryLogicB)
             whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
             whenever(
-                chatClient.queryGroupedChannels(
+                chatClient.queryGroupedChannelsInternal(
                     limit = anyOrNull(),
                     groups = anyOrNull(),
                     watch = any(),
@@ -793,7 +795,7 @@ internal class SyncManagerTest {
             syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
             delay(100)
 
-            verify(chatClient).queryGroupedChannels(
+            verify(chatClient).queryGroupedChannelsInternal(
                 limit = null,
                 groups = mapOf(
                     "a" to io.getstream.chat.android.models.GroupedChannelsGroupQuery(limit = 5),
@@ -826,7 +828,7 @@ internal class SyncManagerTest {
             whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryLogic)
             whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
             whenever(
-                chatClient.queryGroupedChannels(
+                chatClient.queryGroupedChannelsInternal(
                     limit = anyOrNull(),
                     groups = anyOrNull(),
                     watch = any(),
@@ -845,7 +847,7 @@ internal class SyncManagerTest {
             // The group key is kept in the map even with no per-group pageSize so the server
             // still refreshes it. The empty `GroupedChannelsGroupQuery(limit = null)` serializes
             // as `{}` and signals "include this group in the response".
-            verify(chatClient).queryGroupedChannels(
+            verify(chatClient).queryGroupedChannelsInternal(
                 limit = 20,
                 groups = mapOf("all" to io.getstream.chat.android.models.GroupedChannelsGroupQuery(limit = null)),
                 watch = true,
@@ -869,7 +871,7 @@ internal class SyncManagerTest {
             whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryLogic)
             whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
             whenever(
-                chatClient.queryGroupedChannels(
+                chatClient.queryGroupedChannelsInternal(
                     limit = anyOrNull(),
                     groups = anyOrNull(),
                     watch = any(),
@@ -885,7 +887,7 @@ internal class SyncManagerTest {
             syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
             delay(100)
 
-            verify(chatClient).queryGroupedChannels(
+            verify(chatClient).queryGroupedChannelsInternal(
                 limit = null,
                 groups = null,
                 watch = false,

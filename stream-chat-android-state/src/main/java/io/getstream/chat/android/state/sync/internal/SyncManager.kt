@@ -39,6 +39,7 @@ import io.getstream.chat.android.client.sync.stringify
 import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.core.utils.date.diff
 import io.getstream.chat.android.models.Attachment
@@ -440,10 +441,11 @@ internal class SyncManager(
 
     /**
      * Drives the recovery flow for grouped channel queries: when at least one active grouped
-     * logic needs recovery, calls [ChatClient.queryGroupedChannels] once. The
+     * logic needs recovery, calls [ChatClient.queryGroupedChannelsInternal] once. The
      * [io.getstream.chat.android.state.plugin.listener.internal.QueryGroupedChannelsListenerState]
      * routes the response into the corresponding per-group state and persists it.
      */
+    @OptIn(InternalStreamChatApi::class)
     private suspend fun updateGroupedQueryChannels(recoverAll: Boolean) {
         val activeGroupedLogics = logicRegistry.getActiveQueryChannelsLogic()
             .filter { it.groupKey() != null && (it.recoveryNeeded().value || recoverAll) }
@@ -470,7 +472,7 @@ internal class SyncManager(
             .toMap()
             .takeIf { it.isNotEmpty() }
 
-        val result = chatClient.queryGroupedChannels(
+        val result = chatClient.queryGroupedChannelsInternal(
             limit = shared?.limit,
             groups = groupsParam,
             watch = shared?.watch ?: false,
@@ -481,7 +483,7 @@ internal class SyncManager(
             is Result.Success ->
                 logger.v { "[updateGroupedQueryChannels] succeeded (listener applied)" }
             is Result.Failure ->
-                logger.e { "[updateGroupedQueryChannels] queryGroupedChannels failed: ${result.value}" }
+                logger.e { "[updateGroupedQueryChannels] queryGroupedChannelsInternal failed: ${result.value}" }
         }
     }
 

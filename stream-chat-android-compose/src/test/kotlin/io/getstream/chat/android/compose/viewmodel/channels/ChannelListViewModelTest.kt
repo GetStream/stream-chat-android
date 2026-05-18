@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.AndFilterObject
 import io.getstream.chat.android.models.AutocompleteFilterObject
 import io.getstream.chat.android.models.Channel
@@ -73,6 +74,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
 
+@OptIn(InternalStreamChatApi::class)
 @ExperimentalCoroutinesApi
 @ExtendWith(TestCoroutineExtension::class)
 internal class ChannelListViewModelTest {
@@ -536,7 +538,7 @@ internal class ChannelListViewModelTest {
             viewModel.loadMore()
             advanceUntilIdle()
 
-            verify(chatClient).queryGroupedChannels(
+            verify(chatClient).queryGroupedChannelsInternal(
                 limit = 20,
                 groups = mapOf(
                     "team-a" to GroupedChannelsGroupQuery(limit = 5, next = "cursor-1"),
@@ -566,7 +568,7 @@ internal class ChannelListViewModelTest {
             viewModel.loadMore()
             advanceUntilIdle()
 
-            verify(chatClient).queryGroupedChannels(
+            verify(chatClient).queryGroupedChannelsInternal(
                 limit = null,
                 groups = mapOf(
                     "team-a" to GroupedChannelsGroupQuery(limit = null, next = "cursor-2"),
@@ -632,7 +634,7 @@ internal class ChannelListViewModelTest {
             result: GroupedChannels = GroupedChannels(groups = emptyMap()),
         ) = apply {
             whenever(
-                chatClient.queryGroupedChannels(
+                chatClient.queryGroupedChannelsInternal(
                     limit = anyOrNull(),
                     groups = anyOrNull(),
                     watch = any(),

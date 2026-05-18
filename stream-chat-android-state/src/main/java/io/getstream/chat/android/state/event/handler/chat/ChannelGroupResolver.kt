@@ -23,20 +23,29 @@ package io.getstream.chat.android.state.event.handler.chat
  * Used by [GroupAwareChatEventHandler] to decide whether an incoming event-bearing channel
  * should be added to, removed from, or skipped by a query identified by
  * [io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier.Grouped].
- * The classification is read from `event.channelCustom` rather than `channel.extraData` because
- * the cached/event-bearing channel can lag the server while the event itself carries the
- * authoritative custom map.
+ * The classification reads from `event.channelCustom` first because the cached/event-bearing
+ * channel can lag the server while the event itself carries the authoritative custom map.
+ * `channel.extraData` is consulted as a fallback for events where the custom map is absent or
+ * does not carry the group key (e.g. server payloads that promote `group` onto the channel
+ * itself rather than into the event-level `channel_custom`).
  */
 internal fun interface ChannelGroupResolver {
 
     /**
      * @param channelCustom The `channel_custom` map from the inbound event, or `null` when the
      * event does not carry one.
+     * @param channelExtraData The `extraData` of the channel attached to (or cached for) the
+     * inbound event, or `null` when no channel is available. Used as a fallback when the group
+     * key isn't present in [channelCustom].
      * @param currentGroup The group key of the query asking. Most resolvers will not need this,
      * but it allows a single resolver instance to be shared across multiple grouped queries and
      * still differentiate behavior per asker (e.g. logging, short-circuiting, per-group rules).
      * @return The set of group keys this channel belongs to. A channel can belong to multiple
      * groups (e.g. an explicit group plus an `"all"` sentinel).
      */
-    fun resolve(channelCustom: Map<String, Any>?, currentGroup: String): Set<String>
+    fun resolve(
+        channelCustom: Map<String, Any>?,
+        channelExtraData: Map<String, Any>?,
+        currentGroup: String,
+    ): Set<String>
 }

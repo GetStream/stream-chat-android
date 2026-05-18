@@ -281,7 +281,7 @@ internal class GroupAwareChatEventHandlerTest {
     @Test
     fun `Given a custom resolver that reads a different field When ChannelUpdatedEvent arrives Should use custom field`() {
         val channel = randomChannel()
-        val customResolver = ChannelGroupResolver { channelCustom, _ ->
+        val customResolver = ChannelGroupResolver { channelCustom, _, _ ->
             setOfNotNull(channelCustom?.get("tier") as? String)
         }
         val handler = handlerFor(
@@ -304,7 +304,7 @@ internal class GroupAwareChatEventHandlerTest {
     fun `Given custom resolver Should receive the handler's groupKey as currentGroup`() {
         val channel = randomChannel()
         var capturedGroup: String? = null
-        val capturingResolver = ChannelGroupResolver { _, currentGroup ->
+        val capturingResolver = ChannelGroupResolver { _, _, currentGroup ->
             capturedGroup = currentGroup
             setOf("vip")
         }

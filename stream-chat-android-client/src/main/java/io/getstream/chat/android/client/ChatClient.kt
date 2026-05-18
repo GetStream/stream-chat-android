@@ -3148,7 +3148,28 @@ internal constructor(
     }
 
     /**
-     * Queries channels grouped into server-defined groups.
+     * Queries channels grouped into server-defined groups and returns the first page of each.
+     *
+     * @param limit Default max channels per group. `null` uses the server default.
+     * @param watch Whether to start watching the returned channels for real-time events.
+     * @param presence Whether to receive presence events for the members of the returned channels.
+     *
+     * @return A [Call] containing a [GroupedChannels] with per-group channels and cursors.
+     */
+    @CheckResult
+    public fun queryGroupedChannels(
+        limit: Int? = null,
+        watch: Boolean = false,
+        presence: Boolean = false,
+    ): Call<GroupedChannels> = queryGroupedChannelsInternal(
+        limit = limit,
+        groups = null,
+        watch = watch,
+        presence = presence,
+    )
+
+    /**
+     * Internal variant of [queryGroupedChannels] that accepts a per-group configuration map.
      *
      * Supports per-group request options (`limit`, `next`/`prev` cursors) and returns per-group
      * pagination cursors. Pagination (`next` or `prev` on any group) is only allowed when
@@ -3157,14 +3178,15 @@ internal constructor(
      * @param limit Default max channels per group when a group does not specify its own limit.
      * `null` uses the server default.
      * @param groups Optional per-group configuration keyed by group name. `null` returns the
-     * server-defined default set.
+     * first pages of the server-defined default set.
      * @param watch Whether to start watching the returned channels for real-time events.
      * @param presence Whether to receive presence events for the members of the returned channels.
      *
      * @return A [Call] containing a [GroupedChannels] with per-group channels and cursors.
      */
     @CheckResult
-    public fun queryGroupedChannels(
+    @InternalStreamChatApi
+    public fun queryGroupedChannelsInternal(
         limit: Int? = null,
         groups: Map<String, GroupedChannelsGroupQuery>? = null,
         watch: Boolean = false,

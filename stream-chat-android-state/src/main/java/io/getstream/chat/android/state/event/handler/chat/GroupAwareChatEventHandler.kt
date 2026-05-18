@@ -31,12 +31,13 @@ import kotlinx.coroutines.flow.StateFlow
 
 /**
  * [ChatEventHandler] that routes channels in and out of a grouped channel list based on the
- * group key carried by the inbound event's `channel_custom` map.
+ * group key resolved by [ChannelGroupResolver]. By default, the resolver consults
+ * `event.channel_custom` first (the authoritative diff the server emits with each event) and
+ * falls back to `channel.extraData` for events where the server promotes `group` onto the
+ * channel itself rather than into `channel_custom`.
  *
  * Intended to be paired with `QueryChannelsIdentifier.Grouped(groupKey)` — one handler instance
- * per grouped query. Classification is performed against `event.channelCustom` rather than
- * `channel.extraData` because the cached channel can lag the server while the event itself
- * carries the authoritative custom map.
+ * per grouped query.
  *
  * For channel-bearing events ([ChannelUpdatedEvent], [ChannelUpdatedByUserEvent]):
  * - If [groupKey] is in the resolved set and the channel is not currently in this list,
@@ -69,9 +70,12 @@ internal class GroupAwareChatEventHandler(
         return when (event) {
             is ChannelUpdatedEvent -> routeByGroup(event.channel, event.channelCustom)
             is ChannelUpdatedByUserEvent -> routeByGroup(event.channel, event.channelCustom)
-            is NotificationAddedToChannelEvent -> watchAndAddIfBelongs(event.cid, event.channelCustom)
-            is NotificationMessageNewEvent -> watchAndAddIfBelongs(event.cid, event.channelCustom)
-            is ChannelVisibleEvent -> watchAndAddIfBelongs(event.cid, event.channelCustom)
+            is NotificationAddedToChannelEvent ->
+                watchAndAddIfBelongs(event.cid, event.channelCustom, event.channel.extraData)
+            is NotificationMessageNewEvent ->
+                watchAndAddIfBelongs(event.cid, event.channelCustom, event.channel.extraData)
+            is ChannelVisibleEvent ->
+                watchAndAddIfBelongs(event.cid, event.channelCustom, event.channel.extraData)
             else -> super.handleChannelEvent(event, filter)
         }
     }
@@ -81,7 +85,7 @@ internal class GroupAwareChatEventHandler(
         filter: FilterObject,
         cachedChannel: Channel?,
     ): EventHandlingResult {
-        if (event is NewMessageEvent && !belongsHere(event.channelCustom)) {
+        if (event is NewMessageEvent && !belongsHere(event.channelCustom, cachedChannel?.extraData)) {
             return EventHandlingResult.Skip
         }
         return super.handleCidEvent(event, filter, cachedChannel)
@@ -89,10 +93,11 @@ internal class GroupAwareChatEventHandler(
 
     /**
      * Routes a channel-bearing event to Add / Remove / Skip based on the group resolved from the
-     * event's `channelCustom` and whether the channel is currently in this grouped list.
+     * event's `channelCustom` (with the channel's own `extraData` as a fallback) and whether the
+     * channel is currently in this grouped list.
      */
     private fun routeByGroup(channel: Channel, channelCustom: Map<String, Any>?): EventHandlingResult {
-        val belongsHere = belongsHere(channelCustom)
+        val belongsHere = belongsHere(channelCustom, channel.extraData)
         val isInList = channels.value?.containsKey(channel.cid) == true
         return when {
             belongsHere && !isInList -> EventHandlingResult.Add(channel)
@@ -101,13 +106,17 @@ internal class GroupAwareChatEventHandler(
         }
     }
 
-    private fun watchAndAddIfBelongs(cid: String, channelCustom: Map<String, Any>?): EventHandlingResult =
-        if (belongsHere(channelCustom)) {
+    private fun watchAndAddIfBelongs(
+        cid: String,
+        channelCustom: Map<String, Any>?,
+        channelExtraData: Map<String, Any>?,
+    ): EventHandlingResult =
+        if (belongsHere(channelCustom, channelExtraData)) {
             EventHandlingResult.WatchAndAdd(cid)
         } else {
             EventHandlingResult.Skip
         }
 
-    private fun belongsHere(channelCustom: Map<String, Any>?): Boolean =
-        resolver.resolve(channelCustom, groupKey).contains(groupKey)
+    private fun belongsHere(channelCustom: Map<String, Any>?, channelExtraData: Map<String, Any>?): Boolean =
+        resolver.resolve(channelCustom, channelExtraData, groupKey).contains(groupKey)
 }

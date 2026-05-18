@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
@@ -36,12 +37,14 @@ import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 /**
  * Tests for the [ChatClient.queryGroupedChannels] endpoint.
  */
+@OptIn(InternalStreamChatApi::class)
 internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
 
     @Test
@@ -83,7 +86,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
     }
 
     @Test
-    fun `queryGroupedChannels dispatches request to plugin listeners before issuing the call`() = runTest {
+    fun `queryGroupedChannelsInternal dispatches request to plugin listeners before issuing the call`() = runTest {
         // given
         val plugin: Plugin = mock()
         plugins.add(plugin)
@@ -100,7 +103,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
             .get()
         val groupsParam = mapOf("direct" to GroupedChannelsGroupQuery(limit = 25))
         // when
-        sut.queryGroupedChannels(
+        sut.queryGroupedChannelsInternal(
             limit = 30,
             groups = groupsParam,
             watch = true,
@@ -125,7 +128,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
     }
 
     @Test
-    fun `queryGroupedChannels dispatches request hook even when the call fails`() = runTest {
+    fun `queryGroupedChannelsInternal dispatches request hook even when the call fails`() = runTest {
         // given
         val plugin: Plugin = mock()
         plugins.add(plugin)
@@ -135,7 +138,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
             .get()
         val groupsParam = mapOf("direct" to GroupedChannelsGroupQuery(limit = 25))
         // when
-        sut.queryGroupedChannels(
+        sut.queryGroupedChannelsInternal(
             limit = 30,
             groups = groupsParam,
             watch = true,
@@ -152,7 +155,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
     }
 
     @Test
-    fun `queryGroupedChannels dispatches result to plugin listeners`() = runTest {
+    fun `queryGroupedChannelsInternal dispatches result to plugin listeners`() = runTest {
         // given
         val plugin: Plugin = mock()
         plugins.add(plugin)
@@ -172,7 +175,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
             .get()
         val groupsParam = mapOf("direct" to GroupedChannelsGroupQuery(limit = 25, next = "cursor"))
         // when
-        sut.queryGroupedChannels(
+        sut.queryGroupedChannelsInternal(
             limit = 30,
             groups = groupsParam,
             watch = true,
@@ -186,6 +189,46 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
             watch = eq(true),
             presence = eq(false),
         )
+    }
+
+    @Test
+    fun `public queryGroupedChannels delegates to internal with null groups and fires hooks once`() = runTest {
+        // given
+        val plugin: Plugin = mock()
+        plugins.add(plugin)
+        val groupedChannels = GroupedChannels(
+            groups = mapOf(
+                "direct" to GroupedChannelsGroup(
+                    groupKey = "direct",
+                    channels = listOf(randomChannel()),
+                ),
+            ),
+        )
+        val sut = Fixture()
+            .givenQueryGroupedChannelsResult(RetroSuccess(groupedChannels).toRetrofitCall())
+            .get()
+        // when - public entry point (no `groups` argument)
+        sut.queryGroupedChannels(
+            limit = 30,
+            watch = true,
+            presence = false,
+        ).await()
+        // then - hooks fire exactly once, with groups = null, ordered request before result
+        inOrder(plugin) {
+            verify(plugin, times(1)).onQueryGroupedChannelsRequest(
+                limit = eq(30),
+                groups = eq(null),
+                watch = eq(true),
+                presence = eq(false),
+            )
+            verify(plugin, times(1)).onQueryGroupedChannelsResult(
+                result = any(),
+                limit = eq(30),
+                groups = eq(null),
+                watch = eq(true),
+                presence = eq(false),
+            )
+        }
     }
 
     internal inner class Fixture {
