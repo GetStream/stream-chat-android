@@ -30,6 +30,7 @@ import io.getstream.chat.android.ui.common.helper.VideoHeadersProvider
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.utils.ChannelNameFormatter
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.poll.PollsConfig
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory
@@ -272,6 +273,15 @@ public object ChatUI {
      */
     @JvmStatic
     public var showOriginalTranslationEnabled: Boolean = false
+
+    /**
+     * Configuration for poll creation features. Controls which poll features are configurable by the user
+     * and their default values.
+     *
+     * @see PollsConfig
+     */
+    @JvmStatic
+    public var pollsConfig: PollsConfig = PollsConfig.Default
 
     /**
      * Provides a custom renderer for user avatars.
