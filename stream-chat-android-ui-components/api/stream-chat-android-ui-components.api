@@ -19,6 +19,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun getMessageTextTransformer ()Lio/getstream/chat/android/ui/helper/transformer/ChatMessageTextTransformer;
 	public static final fun getMimeTypeIconProvider ()Lio/getstream/chat/android/ui/helper/MimeTypeIconProvider;
 	public static final fun getNavigator ()Lio/getstream/chat/android/ui/navigation/ChatNavigator;
+	public static final fun getPollsConfig ()Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollsConfig;
 	public static final fun getQuotedAttachmentFactoryManager ()Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/QuotedAttachmentFactoryManager;
 	public static final fun getReactionPushEmojiFactory ()Lio/getstream/chat/android/ui/common/helper/ReactionPushEmojiFactory;
 	public static final fun getShowOriginalTranslationEnabled ()Z
@@ -48,6 +49,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun setMessageTextTransformer (Lio/getstream/chat/android/ui/helper/transformer/ChatMessageTextTransformer;)V
 	public static final fun setMimeTypeIconProvider (Lio/getstream/chat/android/ui/helper/MimeTypeIconProvider;)V
 	public static final fun setNavigator (Lio/getstream/chat/android/ui/navigation/ChatNavigator;)V
+	public static final fun setPollsConfig (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollsConfig;)V
 	public static final fun setQuotedAttachmentFactoryManager (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/QuotedAttachmentFactoryManager;)V
 	public static final fun setReactionPushEmojiFactory (Lio/getstream/chat/android/ui/common/helper/ReactionPushEmojiFactory;)V
 	public static final fun setShowOriginalTranslationEnabled (Z)V
@@ -1506,6 +1508,8 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 
 public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/CreatePollDialogFragment$Companion {
 	public final fun newInstance (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/CreatePollDialogFragment$CreatePollDialogListener;)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/CreatePollDialogFragment;
+	public final fun newInstance (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/CreatePollDialogFragment$CreatePollDialogListener;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollsConfig;)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/CreatePollDialogFragment;
+	public static synthetic fun newInstance$default (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/CreatePollDialogFragment$Companion;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/CreatePollDialogFragment$CreatePollDialogListener;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollsConfig;ILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/CreatePollDialogFragment;
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/CreatePollDialogFragment$CreatePollDialogListener {
@@ -1524,6 +1528,7 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 	public final fun getPollIsReady ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun onOptionTextChanged (ILjava/lang/String;)V
 	public final fun onTitleChanged (Ljava/lang/String;)V
+	public final fun setAllowAnswers (Z)V
 	public final fun setAllowMultipleVotes (Z)V
 	public final fun setAnnonymousPoll (Z)V
 	public final fun setMaxAnswer (Ljava/lang/Integer;)V
@@ -1531,6 +1536,7 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/OptionsAdapter : androidx/recyclerview/widget/ListAdapter {
+	public fun <init> (Ljava/lang/Integer;Lkotlin/jvm/functions/Function2;)V
 	public fun <init> (Lkotlin/jvm/functions/Function2;)V
 	public fun getItemId (I)J
 	public synthetic fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;I)V
@@ -1540,8 +1546,8 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/OptionsAdapter$OptionViewHolder : androidx/recyclerview/widget/RecyclerView$ViewHolder {
-	public fun <init> (Landroid/view/ViewGroup;Lio/getstream/chat/android/ui/databinding/StreamUiPollOptionBinding;Lkotlin/jvm/functions/Function2;)V
-	public synthetic fun <init> (Landroid/view/ViewGroup;Lio/getstream/chat/android/ui/databinding/StreamUiPollOptionBinding;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Landroid/view/ViewGroup;Lio/getstream/chat/android/ui/databinding/StreamUiPollOptionBinding;Ljava/lang/Integer;Lkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> (Landroid/view/ViewGroup;Lio/getstream/chat/android/ui/databinding/StreamUiPollOptionBinding;Ljava/lang/Integer;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun bind (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollAnswer;)V
 }
 
@@ -1558,6 +1564,75 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 	public final fun getText ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig : android/os/Parcelable {
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public static final field Companion Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig$Companion;
+	public fun <init> (ZZ)V
+	public final fun component1 ()Z
+	public final fun component2 ()Z
+	public final fun copy (ZZ)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;ZZILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;
+	public final fun describeContents ()I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConfigurable ()Z
+	public final fun getDefaultValue ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public final fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig$Companion {
+	public final fun getDefault ()Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;
+	public final fun getNotConfigurable ()Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig$Creator : android/os/Parcelable$Creator {
+	public fun <init> ()V
+	public final fun createFromParcel (Landroid/os/Parcel;)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;
+	public synthetic fun createFromParcel (Landroid/os/Parcel;)Ljava/lang/Object;
+	public final fun newArray (I)[Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;
+	public synthetic fun newArray (I)[Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollsConfig : android/os/Parcelable {
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public static final field Companion Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollsConfig$Companion;
+	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;Ljava/lang/Integer;Ljava/lang/Integer;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;Ljava/lang/Integer;Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;
+	public final fun component2 ()Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;
+	public final fun component3 ()Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;
+	public final fun component4 ()Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;
+	public final fun component5 ()Ljava/lang/Integer;
+	public final fun component6 ()Ljava/lang/Integer;
+	public final fun copy (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;Ljava/lang/Integer;Ljava/lang/Integer;)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollsConfig;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollsConfig;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;Ljava/lang/Integer;Ljava/lang/Integer;ILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollsConfig;
+	public final fun describeContents ()I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAllowComments ()Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;
+	public final fun getAnonymousPoll ()Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;
+	public final fun getMultipleVotes ()Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;
+	public final fun getOptionTextLimit ()Ljava/lang/Integer;
+	public final fun getQuestionTextLimit ()Ljava/lang/Integer;
+	public final fun getSuggestAnOption ()Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollFeatureConfig;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public final fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollsConfig$Companion {
+	public final fun getDefault ()Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollsConfig;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollsConfig$Creator : android/os/Parcelable$Creator {
+	public fun <init> ()V
+	public final fun createFromParcel (Landroid/os/Parcel;)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollsConfig;
+	public synthetic fun createFromParcel (Landroid/os/Parcel;)Ljava/lang/Object;
+	public final fun newArray (I)[Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollsConfig;
+	public synthetic fun newArray (I)[Ljava/lang/Object;
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/preview/AttachmentPreviewFactoryManager {

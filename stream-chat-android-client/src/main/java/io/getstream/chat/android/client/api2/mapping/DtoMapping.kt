@@ -43,6 +43,7 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageTransformer
+import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
@@ -52,6 +53,8 @@ internal class DtoMapping(
     private val messageTransformer: MessageTransformer,
     private val userTransformer: UserTransformer,
 ) {
+
+    private val supportedUpstreamMessageTypes = setOf(MessageType.REGULAR, MessageType.SYSTEM)
 
     /**
      * Converts [Attachment] to [AttachmentDto].
@@ -121,13 +124,14 @@ internal class DtoMapping(
     internal fun Message.toDto(): UpstreamMessageDto =
         messageTransformer.transform(this)
             .run {
+                val upstreamType = if (type in supportedUpstreamMessageTypes) type else ""
                 UpstreamMessageDto(
                     attachments = attachments.map { it.toDto() },
                     cid = cid,
                     command = command,
                     html = html,
                     id = id,
-                    type = type,
+                    type = upstreamType,
                     mentioned_users = mentionedUsersIds,
                     parent_id = parentId,
                     pin_expires = pinExpires,
