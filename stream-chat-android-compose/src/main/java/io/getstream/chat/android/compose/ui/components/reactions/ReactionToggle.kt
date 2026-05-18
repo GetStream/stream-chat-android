@@ -72,7 +72,7 @@ internal fun ReactionToggle(
                     .ifNotNull(onCheckedChange) { onChange ->
                         clip(CircleShape).toggleable(
                             value = checked,
-                            role = Role.Switch,
+                            role = Role.Checkbox,
                             onValueChange = onChange,
                         )
                     }
