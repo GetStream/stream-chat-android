@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.poll
 
 import android.os.Bundle
+import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -24,12 +25,14 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.os.BundleCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.models.CreatePollParams
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.utils.PollsConstants
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentCreatePollBinding
@@ -41,6 +44,8 @@ import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Represent the bottom sheet dialog that allows users to pick attachments.
+ *
+ * Use [newInstance] to create an instance with optional [PollsConfig].
  */
 public class CreatePollDialogFragment : AppCompatDialogFragment() {
 
@@ -48,8 +53,16 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
     private val binding get() = _binding!!
     private var createPollDialogListener: CreatePollDialogListener? = null
     private val createPollViewModel: CreatePollViewModel by viewModels()
+    private val pollsConfig: PollsConfig by lazy {
+        arguments?.let {
+            BundleCompat.getParcelable(it, ARG_POLLS_CONFIG, PollsConfig::class.java)
+        } ?: ChatUI.pollsConfig
+    }
     private val optionsAdapter: OptionsAdapter by lazy {
-        OptionsAdapter { id, text -> createPollViewModel.onOptionTextChanged(id, text) }
+        OptionsAdapter(
+            optionTextLimit = pollsConfig.optionTextLimit,
+            onOptionChange = { id, text -> createPollViewModel.onOptionTextChanged(id, text) },
+        )
     }
     private lateinit var sendMenuItem: MenuItem
 
@@ -75,6 +88,49 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.root.applyEdgeToEdgePadding(typeMask = WindowInsetsCompat.Type.systemBars())
         setupDialog()
+
+        if (savedInstanceState == null) {
+            // Configure poll feature visibility and default values based on pollsConfig
+            configurePollFeatures()
+        }
+    }
+
+    /**
+     * Configures the visibility and default values of poll features based on [pollsConfig].
+     */
+    private fun configurePollFeatures() {
+        // Configure multiple votes feature
+        createPollViewModel.setAllowMultipleVotes(pollsConfig.multipleVotes.defaultValue)
+        binding.multipleAnswersLabel.isVisible = pollsConfig.multipleVotes.configurable
+        binding.multipleAnswersSwitch.isVisible = pollsConfig.multipleVotes.configurable
+        if (pollsConfig.multipleVotes.configurable) {
+            binding.multipleAnswersSwitch.isChecked = pollsConfig.multipleVotes.defaultValue
+            binding.multipleAnswersCount.isVisible = pollsConfig.multipleVotes.defaultValue
+        }
+
+        // Configure anonymous poll feature
+        createPollViewModel.setAnnonymousPoll(pollsConfig.anonymousPoll.defaultValue)
+        binding.anonymousPollLabel.isVisible = pollsConfig.anonymousPoll.configurable
+        binding.anonymousPollSwitch.isVisible = pollsConfig.anonymousPoll.configurable
+        if (pollsConfig.anonymousPoll.configurable) {
+            binding.anonymousPollSwitch.isChecked = pollsConfig.anonymousPoll.defaultValue
+        }
+
+        // Configure suggest an option feature
+        createPollViewModel.setSuggestAnOption(pollsConfig.suggestAnOption.defaultValue)
+        binding.suggestAnOptionLabel.isVisible = pollsConfig.suggestAnOption.configurable
+        binding.suggestAnOptionSwitch.isVisible = pollsConfig.suggestAnOption.configurable
+        if (pollsConfig.suggestAnOption.configurable) {
+            binding.suggestAnOptionSwitch.isChecked = pollsConfig.suggestAnOption.defaultValue
+        }
+
+        // Configure add a comment feature
+        createPollViewModel.setAllowAnswers(pollsConfig.allowComments.defaultValue)
+        binding.addACommentLabel.isVisible = pollsConfig.allowComments.configurable
+        binding.addACommentLabelSwitch.isVisible = pollsConfig.allowComments.configurable
+        if (pollsConfig.allowComments.configurable) {
+            binding.addACommentLabelSwitch.isChecked = pollsConfig.allowComments.defaultValue
+        }
     }
 
     /**
@@ -82,6 +138,10 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
      */
     private fun setupDialog() {
         setupToolbar(binding.toolbar)
+        pollsConfig.questionTextLimit?.takeIf { it > 0 }?.let { limit ->
+            binding.question.filters = arrayOf(InputFilter.LengthFilter(limit))
+        }
+
         binding.multipleAnswersSwitch.setOnCheckedChangeListener { _, isChecked ->
             binding.multipleAnswersCount.isVisible = isChecked
             createPollViewModel.setAllowMultipleVotes(isChecked)
@@ -97,6 +157,9 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
         }
         binding.suggestAnOptionSwitch.setOnCheckedChangeListener { _, isChecked ->
             createPollViewModel.setSuggestAnOption(isChecked)
+        }
+        binding.addACommentLabelSwitch.setOnCheckedChangeListener { _, isChecked ->
+            createPollViewModel.setAllowAnswers(isChecked)
         }
         binding.addOption.setOnClickListener {
             createPollViewModel.createOption()
@@ -159,15 +222,25 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
 
     public companion object {
         public const val TAG: String = "create_poll_dialog_fragment"
+        private const val ARG_POLLS_CONFIG: String = "arg_polls_config"
 
         /**
          * Creates a new instance of [CreatePollDialogFragment].
          *
+         * @param createPollDialogListener The listener for poll creation events.
+         * @param pollsConfig Optional configuration for poll features. Defaults to [ChatUI.pollsConfig].
          * @return A new instance of [CreatePollDialogFragment].
          */
-        public fun newInstance(createPollDialogListener: CreatePollDialogListener): CreatePollDialogFragment {
-            return CreatePollDialogFragment()
-                .setCreatePollDialogListener(createPollDialogListener)
+        @JvmOverloads
+        public fun newInstance(
+            createPollDialogListener: CreatePollDialogListener,
+            pollsConfig: PollsConfig? = null,
+        ): CreatePollDialogFragment {
+            return CreatePollDialogFragment().apply {
+                arguments = Bundle().apply {
+                    pollsConfig?.let { config -> putParcelable(ARG_POLLS_CONFIG, config) }
+                }
+            }.setCreatePollDialogListener(createPollDialogListener)
         }
     }
 

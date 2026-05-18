@@ -46,6 +46,7 @@ public class CreatePollViewModel : ViewModel() {
     private val createPoll = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     private var suggestAnOption = false
     private var annonymousPoll = false
+    private var allowAnswers = false
     private var allowMultipleVotes = MutableStateFlow(false)
     private var maxAnswers: MutableStateFlow<Int?> = MutableStateFlow(null)
 
@@ -91,6 +92,7 @@ public class CreatePollViewModel : ViewModel() {
                     options = options.map { PollOption(text = it.text) },
                     votingVisibility = if (annonymousPoll) VotingVisibility.ANONYMOUS else VotingVisibility.PUBLIC,
                     allowUserSuggestedOptions = suggestAnOption,
+                    allowAnswers = allowAnswers,
                     maxVotesAllowed = maxAnswers.takeIf { allowMultipleVotes } ?: 1,
                     enforceUniqueVote = !allowMultipleVotes,
                 )
@@ -201,5 +203,14 @@ public class CreatePollViewModel : ViewModel() {
      */
     public fun setAnnonymousPoll(annonymousPoll: Boolean) {
         this.annonymousPoll = annonymousPoll
+    }
+
+    /**
+     * Set if the poll allows users to add answers/comments.
+     *
+     * @param allowAnswers True if the poll allows users to add answers/comments, false otherwise.
+     */
+    public fun setAllowAnswers(allowAnswers: Boolean) {
+        this.allowAnswers = allowAnswers
     }
 }
