@@ -61,8 +61,9 @@ internal fun Modifier.micButtonSemantics(): Modifier {
  * @param recordingState Current recording state to observe.
  * @param cancelRequested `true` when the user invoked a cancel or delete action since the last
  *  transition was processed.
- * @param onTransitionConsumed Invoked after each processed transition so the caller can reset
- *  [cancelRequested] to `false`.
+ * @param onTransitionConsumed Invoked only when a transition is actually announced, so the
+ *  caller can reset [cancelRequested] to `false`. Transitions that don't result in an
+ *  announcement leave the flag untouched.
  */
 @Composable
 internal fun AnnounceRecordingTransitions(
@@ -80,18 +81,21 @@ internal fun AnnounceRecordingTransitions(
     LaunchedEffect(currentIsIdle, currentIsHold) {
         val wasIdle = previousWasIdle
         previousWasIdle = currentIsIdle
+        var consumed = false
         when (recordingState) {
             is RecordingState.Hold -> if (wasIdle) {
                 view.announceForAccessibility(startedAnnouncement)
+                consumed = true
             }
             is RecordingState.Idle -> if (!wasIdle && cancelRequested) {
                 view.announceForAccessibility(cancelledAnnouncement)
+                consumed = true
             }
             is RecordingState.Locked,
             is RecordingState.Overview,
             is RecordingState.Complete,
             -> Unit
         }
-        onTransitionConsumed()
+        if (consumed) onTransitionConsumed()
     }
 }
