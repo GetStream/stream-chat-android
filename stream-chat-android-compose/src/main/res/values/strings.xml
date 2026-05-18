@@ -215,18 +215,23 @@
     </plurals>
 
     <!-- Audio Recording -->
-    <string name="stream_compose_audio_recording_start">Record audio message</string>
+    <string name="stream_compose_audio_recording_start">Record audio message. Press and hold to record.</string>
+    <string name="stream_compose_audio_recording_state_started">Recording started. Slide left to cancel, up to lock.</string>
+    <string name="stream_compose_audio_recording_state_cancelled">Recording cancelled</string>
     <string name="stream_compose_audio_recording_hint_send">Hold to record. Release to send.</string>
     <string name="stream_compose_audio_recording_hint_save">Hold to record. Release to save.</string>
     <string name="stream_compose_audio_recording_slide_to_cancel">Slide to cancel</string>
     <string name="stream_compose_audio_recording_delete">Delete recording</string>
     <string name="stream_compose_audio_recording_stop">Stop recording</string>
     <string name="stream_compose_audio_recording_send">Send recording</string>
+    <string name="stream_compose_audio_recording_confirm">Confirm recording</string>
     <string name="stream_compose_audio_recording_play">Play</string>
     <string name="stream_compose_audio_recording_pause">Pause</string>
     <string name="stream_compose_audio_recording_progress">Audio recording progress</string>
     <string name="stream_compose_audio_recording_lock">Lock recording</string>
     <string name="stream_compose_audio_recording_locked">Recording locked</string>
+    <string name="stream_compose_audio_recording_label">Audio recording</string>
+    <string name="stream_compose_audio_recording_locked_label">Audio recording in progress</string>
 
     <!-- Audio Playback -->
     <string name="stream_compose_audio_playback_pause">Pause</string>
