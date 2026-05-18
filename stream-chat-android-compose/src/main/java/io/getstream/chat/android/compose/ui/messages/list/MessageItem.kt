@@ -39,7 +39,6 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
-import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -379,9 +378,8 @@ internal fun DefaultMessageTypingIndicatorContent(state: TypingItemState) {
 }
 
 @Composable
-private fun typingUsersDescription(typingUsers: List<User>): String {
-    val resources = LocalResources.current
-    return when (typingUsers.size) {
+private fun typingUsersDescription(typingUsers: List<User>): String =
+    when (typingUsers.size) {
         1 -> stringResource(
             R.string.stream_compose_channel_list_typing_one,
             typingUsers.first().name,
@@ -391,13 +389,12 @@ private fun typingUsersDescription(typingUsers: List<User>): String {
             typingUsers[0].name,
             typingUsers[1].name,
         )
-        else -> resources.getQuantityString(
+        else -> pluralStringResource(
             R.plurals.stream_compose_channel_list_typing_many,
             typingUsers.size,
             typingUsers.size,
         )
     }
-}
 
 private const val MaxTypingUsersAvatars = 3
 
