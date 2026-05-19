@@ -111,8 +111,8 @@ public fun PollOptionList(
                         optionItemList = optionItemList.toMutableList().apply { removeAt(index) }
                         onQuestionsChanged(optionItemList)
                     },
-                    onMoveUp = if (index > 0) { { move(index, index - 1) } } else null,
-                    onMoveDown = if (index < optionItemList.lastIndex) { { move(index, index + 1) } } else null,
+                    onMoveUp = index.takeIf { it > 0 }?.let { i -> { move(i, i - 1) } },
+                    onMoveDown = index.takeIf { it < optionItemList.lastIndex }?.let { i -> { move(i, i + 1) } },
                 )
             }
         }
@@ -142,18 +142,8 @@ private fun ReorderableScope.PollOptionRow(
     val moveUpLabel = stringResource(R.string.stream_compose_poll_option_move_up)
     val moveDownLabel = stringResource(R.string.stream_compose_poll_option_move_down)
     val moveActions = listOfNotNull(
-        onMoveUp?.let { move ->
-            CustomAccessibilityAction(moveUpLabel) {
-                move()
-                true
-            }
-        },
-        onMoveDown?.let { move ->
-            CustomAccessibilityAction(moveDownLabel) {
-                move()
-                true
-            }
-        },
+        onMoveUp.toMoveAction(moveUpLabel),
+        onMoveDown.toMoveAction(moveDownLabel),
     )
     Column(
         modifier = Modifier
@@ -264,6 +254,14 @@ internal val PollInputShape = RoundedCornerShape(StreamTokens.radiusLg)
 
 private fun List<PollOptionItem>.moveItem(fromIndex: Int, toIndex: Int): List<PollOptionItem> =
     toMutableList().apply { add(toIndex, removeAt(fromIndex)) }
+
+private fun (() -> Unit)?.toMoveAction(label: String): CustomAccessibilityAction? =
+    this?.let { invoke ->
+        CustomAccessibilityAction(label) {
+            invoke()
+            true
+        }
+    }
 
 private fun List<PollOptionItem>.updateOnTitleChange(
     context: Context,
