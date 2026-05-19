@@ -558,7 +558,7 @@ internal class DomainMappingTest {
             authorName = attachmentDto.author_name,
             authorLink = attachmentDto.author_link,
             fallback = attachmentDto.fallback,
-            fileSize = attachmentDto.file_size,
+            fileSize = attachmentDto.file_size ?: 0,
             image = attachmentDto.image,
             imageUrl = attachmentDto.image_url,
             mimeType = attachmentDto.mime_type,
