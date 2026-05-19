@@ -202,10 +202,10 @@
   <string name="stream_compose_poll_option_limit_votes_description">"2〜10の選択肢から選択"</string>
   <string name="stream_compose_poll_option_limit_votes_increase">"1人あたりの投票数を増やす"</string>
   <string name="stream_compose_poll_option_limit_votes_input">"1人あたりの投票数"</string>
-  <string name="stream_compose_poll_option_remove">"投票の選択肢を削除"</string>
+  <string name="stream_compose_poll_option_remove">"選択肢%sを削除"</string>
   <string name="stream_compose_poll_option_move_down">"下に移動"</string>
   <string name="stream_compose_poll_option_move_up">"上に移動"</string>
-  <string name="stream_compose_poll_option_reorder">"投票の選択肢を並べ替え"</string>
+  <string name="stream_compose_poll_option_reorder">"選択肢%sを並べ替え"</string>
   <string name="stream_compose_poll_option_results_error">"投票の選択肢の結果の読み込み中にエラーが発生しました。後でもう一度お試しください。"</string>
   <string name="stream_compose_poll_option_switch_add_comment">"コメントを追加"</string>
   <string name="stream_compose_poll_option_switch_add_comment_description">"他のユーザーがコメントを追加できるようにする"</string>

@@ -202,10 +202,10 @@
   <string name="stream_compose_poll_option_limit_votes_description">"2\u201310개의 옵션 중 선택"</string>
   <string name="stream_compose_poll_option_limit_votes_increase">"1인당 투표 수 늘리기"</string>
   <string name="stream_compose_poll_option_limit_votes_input">"1인당 투표 수"</string>
-  <string name="stream_compose_poll_option_remove">"투표 옵션 삭제"</string>
+  <string name="stream_compose_poll_option_remove">"옵션 %s 삭제"</string>
   <string name="stream_compose_poll_option_move_down">"아래로 이동"</string>
   <string name="stream_compose_poll_option_move_up">"위로 이동"</string>
-  <string name="stream_compose_poll_option_reorder">"투표 옵션 재정렬"</string>
+  <string name="stream_compose_poll_option_reorder">"옵션 %s 재정렬"</string>
   <string name="stream_compose_poll_option_results_error">"투표 옵션 결과를 불러오는 중 오류가 발생했습니다. 나중에 다시 시도해 주세요."</string>
   <string name="stream_compose_poll_option_switch_add_comment">"댓글 추가"</string>
   <string name="stream_compose_poll_option_switch_add_comment_description">"다른 사용자가 댓글을 추가할 수 있도록 허용"</string>

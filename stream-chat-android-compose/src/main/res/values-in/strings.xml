@@ -181,10 +181,10 @@
   <string name="stream_compose_poll_option_limit_votes_description">"Pilih antara 2\u201310 opsi"</string>
   <string name="stream_compose_poll_option_limit_votes_increase">"Tambah suara per orang"</string>
   <string name="stream_compose_poll_option_limit_votes_input">"Suara per orang"</string>
-  <string name="stream_compose_poll_option_remove">"Hapus opsi polling"</string>
+  <string name="stream_compose_poll_option_remove">"Hapus opsi %s"</string>
   <string name="stream_compose_poll_option_move_down">"Pindahkan ke bawah"</string>
   <string name="stream_compose_poll_option_move_up">"Pindahkan ke atas"</string>
-  <string name="stream_compose_poll_option_reorder">"Urutkan ulang opsi polling"</string>
+  <string name="stream_compose_poll_option_reorder">"Urutkan ulang opsi %s"</string>
   <string name="stream_compose_poll_option_results_error">"Terjadi kesalahan saat memuat hasil opsi polling. Silakan coba lagi nanti."</string>
   <string name="stream_compose_poll_option_switch_add_comment">"Tambahkan komentar"</string>
   <string name="stream_compose_poll_option_switch_add_comment_description">"Izinkan orang lain menambahkan komentar"</string>

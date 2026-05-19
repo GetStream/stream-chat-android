@@ -103,6 +103,7 @@ public fun PollOptionList(
             key(item.key) {
                 PollOptionRow(
                     item = item,
+                    index = index,
                     onTitleChange = { newTitle ->
                         optionItemList = optionItemList.updateOnTitleChange(context, index, newTitle)
                         onQuestionsChanged.invoke(optionItemList)
@@ -111,8 +112,10 @@ public fun PollOptionList(
                         optionItemList = optionItemList.toMutableList().apply { removeAt(index) }
                         onQuestionsChanged(optionItemList)
                     },
-                    onMoveUp = index.takeIf { it > 0 }?.let { i -> { move(i, i - 1) } },
-                    onMoveDown = index.takeIf { it < optionItemList.lastIndex }?.let { i -> { move(i, i + 1) } },
+                    moves = PollOptionMoves(
+                        up = index.takeIf { it > 0 }?.let { i -> { move(i, i - 1) } },
+                        down = index.takeIf { it < optionItemList.lastIndex }?.let { i -> { move(i, i + 1) } },
+                    ),
                 )
             }
         }
@@ -133,17 +136,16 @@ public fun PollOptionList(
 @Composable
 private fun ReorderableScope.PollOptionRow(
     item: PollOptionItem,
+    index: Int,
     onTitleChange: (String) -> Unit,
     onRemove: () -> Unit,
-    onMoveUp: (() -> Unit)?,
-    onMoveDown: (() -> Unit)?,
+    moves: PollOptionMoves,
 ) {
     val colors = ChatTheme.colors
-    val moveUpLabel = stringResource(R.string.stream_compose_poll_option_move_up)
-    val moveDownLabel = stringResource(R.string.stream_compose_poll_option_move_down)
+    val displayName = item.title.ifBlank { (index + 1).toString() }
     val moveActions = listOfNotNull(
-        onMoveUp.toMoveAction(moveUpLabel),
-        onMoveDown.toMoveAction(moveDownLabel),
+        moves.up.toMoveAction(stringResource(R.string.stream_compose_poll_option_move_up)),
+        moves.down.toMoveAction(stringResource(R.string.stream_compose_poll_option_move_down)),
     )
     Column(
         modifier = Modifier
@@ -163,9 +165,8 @@ private fun ReorderableScope.PollOptionRow(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.stream_design_ic_reorder),
-                    contentDescription = stringResource(R.string.stream_compose_poll_option_reorder),
+                    contentDescription = stringResource(R.string.stream_compose_poll_option_reorder, displayName),
                     tint = colors.inputTextIcon,
-                    modifier = Modifier.size(20.dp),
                 )
             }
 
@@ -179,7 +180,7 @@ private fun ReorderableScope.PollOptionRow(
             IconButton(onClick = onRemove) {
                 Icon(
                     painter = painterResource(R.drawable.stream_design_ic_minus_circle),
-                    contentDescription = stringResource(R.string.stream_compose_poll_option_remove),
+                    contentDescription = stringResource(R.string.stream_compose_poll_option_remove, displayName),
                     tint = colors.inputTextIcon,
                     modifier = Modifier.size(20.dp),
                 )
@@ -262,6 +263,11 @@ private fun (() -> Unit)?.toMoveAction(label: String): CustomAccessibilityAction
             true
         }
     }
+
+private data class PollOptionMoves(
+    val up: (() -> Unit)?,
+    val down: (() -> Unit)?,
+)
 
 private fun List<PollOptionItem>.updateOnTitleChange(
     context: Context,
