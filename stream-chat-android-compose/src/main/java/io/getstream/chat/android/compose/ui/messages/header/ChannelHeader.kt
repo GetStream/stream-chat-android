@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -263,12 +264,17 @@ internal fun DefaultChannelHeaderTrailingContent(
     currentUser: User?,
     onClick: ((Channel) -> Unit)?,
 ) {
+    val openInfoLabel = stringResource(R.string.stream_compose_channel_header_open_info)
     ChatTheme.componentFactory.ChannelAvatar(
         params = ChannelAvatarParams(
             modifier = Modifier
                 .size(40.dp)
                 .ifNotNull(onClick) { callback ->
-                    clickable(bounded = false) { callback(channel) }
+                    clickable(
+                        bounded = false,
+                        onClickLabel = openInfoLabel,
+                        role = Role.Button,
+                    ) { callback(channel) }
                 },
             channel = channel,
             currentUser = currentUser,

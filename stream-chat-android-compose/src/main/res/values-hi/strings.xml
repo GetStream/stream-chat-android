@@ -116,6 +116,7 @@
   <string name="stream_compose_avatar_overflow_count">"+%1$d"</string>
   <string name="stream_compose_block_user">"उपयोगकर्ता को ब्लॉक करें"</string>
   <string name="stream_compose_cancel">"रद्द करें"</string>
+  <string name="stream_compose_channel_header_open_info">"बातचीत की जानकारी खोलें"</string>
   <string name="stream_compose_channel_item_muted">"म्यूट किया गया"</string>
   <string name="stream_compose_channel_item_open">"बातचीत खोलें"</string>
   <string name="stream_compose_channel_item_options">"बातचीत के विकल्प खोलें"</string>
