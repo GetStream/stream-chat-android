@@ -220,6 +220,7 @@
   <string name="stream_compose_poll_questions_title">"질문"</string>
   <string name="stream_compose_poll_results">"투표 결과"</string>
   <string name="stream_compose_poll_suggest_option">"옵션 제안"</string>
+  <string name="stream_compose_poll_create_action">"투표 만들기"</string>
   <string name="stream_compose_poll_title">"투표 만들기"</string>
   <plurals name="stream_compose_poll_total_vote_counts">
     <item quantity="other">"총 %d표"</item>

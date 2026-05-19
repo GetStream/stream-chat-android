@@ -259,6 +259,7 @@
   <string name="stream_compose_poll_questions_title">"Domanda"</string>
   <string name="stream_compose_poll_results">"Risultati sondaggio"</string>
   <string name="stream_compose_poll_suggest_option">"Suggerisci opzione"</string>
+  <string name="stream_compose_poll_create_action">"crea sondaggio"</string>
   <string name="stream_compose_poll_title">"Crea sondaggio"</string>
   <string name="stream_compose_poll_view_more">"Vedi tutti"</string>
   <string name="stream_compose_poll_view_result">"Vedi risultati"</string>

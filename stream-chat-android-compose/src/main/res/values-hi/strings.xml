@@ -259,6 +259,7 @@
   <string name="stream_compose_poll_questions_title">"प्रश्न"</string>
   <string name="stream_compose_poll_results">"पोल परिणाम"</string>
   <string name="stream_compose_poll_suggest_option">"विकल्प सुझाएँ"</string>
+  <string name="stream_compose_poll_create_action">"पोल बनाएँ"</string>
   <string name="stream_compose_poll_title">"पोल बनाएँ"</string>
   <string name="stream_compose_poll_view_more">"सभी देखें"</string>
   <string name="stream_compose_poll_view_result">"परिणाम देखें"</string>

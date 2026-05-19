@@ -199,6 +199,7 @@
   <string name="stream_compose_poll_questions_title">"Pertanyaan"</string>
   <string name="stream_compose_poll_results">"Hasil Polling"</string>
   <string name="stream_compose_poll_suggest_option">"Sarankan Opsi"</string>
+  <string name="stream_compose_poll_create_action">"buat polling"</string>
   <string name="stream_compose_poll_title">"Buat Polling"</string>
   <string name="stream_compose_poll_view_more">"Lihat semua"</string>
   <string name="stream_compose_poll_view_result">"Lihat Hasil"</string>

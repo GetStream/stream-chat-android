@@ -306,6 +306,7 @@
 
     <!--  Poll  -->
     <string name="stream_compose_poll_title">Create Poll</string>
+    <string name="stream_compose_poll_create_action">create poll</string>
     <string name="stream_compose_poll_questions_title">Question</string>
     <string name="stream_compose_poll_questions_description">Ask a question</string>
     <string name="stream_compose_poll_option_title">Options</string>

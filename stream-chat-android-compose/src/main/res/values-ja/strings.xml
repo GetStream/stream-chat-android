@@ -220,6 +220,7 @@
   <string name="stream_compose_poll_questions_title">"質問"</string>
   <string name="stream_compose_poll_results">"投票結果"</string>
   <string name="stream_compose_poll_suggest_option">"選択肢を提案"</string>
+  <string name="stream_compose_poll_create_action">"投票を作成"</string>
   <string name="stream_compose_poll_title">"投票を作成"</string>
   <plurals name="stream_compose_poll_total_vote_counts">
     <item quantity="other">"合計%d票"</item>

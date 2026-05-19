@@ -125,6 +125,7 @@ internal fun DefaultPollOptionsHeaderTrailingContent(
     StreamButton(
         onClick = onPollCreateClicked,
         enabled = enabled,
+        onClickLabel = stringResource(R.string.stream_compose_poll_create_action),
         style = StreamButtonStyleDefaults.primarySolid,
     ) {
         Icon(
