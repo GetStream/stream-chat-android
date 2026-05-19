@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
-import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -31,33 +30,23 @@ import kotlinx.coroutines.flow.StateFlow
 
 /**
  * [ChatEventHandler] that routes channels in and out of a grouped channel list based on the
- * group key resolved by [ChannelGroupResolver]. By default, the resolver consults
- * `event.channel_custom` first (the authoritative diff the server emits with each event) and
- * falls back to `channel.extraData` for events where the server promotes `group` onto the
- * channel itself rather than into `channel_custom`.
+ * channel's resolved group(s).
  *
  * Intended to be paired with `QueryChannelsIdentifier.Grouped(groupKey)` — one handler instance
- * per grouped query.
+ * per grouped query. On every event carrying full channel data (e.g. [ChannelUpdatedEvent]),
+ * the handler asks the [resolver] which groups the channel belongs to:
+ * - If [groupKey] is in the set and the channel is not currently in this list, [EventHandlingResult.Add].
+ * - If [groupKey] is not in the set and the channel IS currently in this list, [EventHandlingResult.Remove].
+ * - Otherwise [EventHandlingResult.Skip] (no state churn for re-adding already-present channels
+ *   nor for ignoring non-members).
  *
- * For channel-bearing events ([ChannelUpdatedEvent], [ChannelUpdatedByUserEvent]):
- * - If [groupKey] is in the resolved set and the channel is not currently in this list,
- *   [EventHandlingResult.Add].
- * - If [groupKey] is not in the resolved set and the channel IS currently in this list,
- *   [EventHandlingResult.Remove].
- * - Otherwise [EventHandlingResult.Skip].
+ * For events that carry only a `cid` (e.g. [io.getstream.chat.android.client.events.MemberAddedEvent]),
+ * the handler delegates to [DefaultChatEventHandler] and then filters any resulting `Add` through
+ * the resolver, using the supplied `cachedChannel` as the input to the group lookup.
  *
- * For watch-and-add events ([NotificationAddedToChannelEvent], [NotificationMessageNewEvent],
- * [ChannelVisibleEvent]): emits [EventHandlingResult.WatchAndAdd] when the event's
- * `channel_custom` says the channel belongs here, otherwise [EventHandlingResult.Skip].
- *
- * For [NewMessageEvent]: filtered up-front in [handleCidEvent] using `event.channelCustom` before
- * [DefaultChatEventHandler] gets a chance to `Add(cachedChannel)`. Off-group messages produce
- * [EventHandlingResult.Skip].
- *
- * Member events (`MemberAddedEvent`/`MemberUpdatedEvent`/`MemberRemovedEvent`) and other CID-only
- * events do not carry `channel_custom`, so they delegate to [DefaultChatEventHandler] unchanged.
- * This means a user added to a channel in another group can briefly appear in this list until the
- * follow-up `channel.updated` arrives and [routeByGroup] reclassifies it.
+ * Removal events (`ChannelDeletedEvent`, `ChannelHiddenEvent`, `MemberRemovedEvent` for the
+ * current user, etc.) are inherited from [DefaultChatEventHandler] unchanged — leaving a channel
+ * removes it from any list it was in, regardless of group.
  */
 internal class GroupAwareChatEventHandler(
     private val groupKey: String,
@@ -68,14 +57,19 @@ internal class GroupAwareChatEventHandler(
 
     override fun handleChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
         return when (event) {
-            is ChannelUpdatedEvent -> routeByGroup(event.channel, event.channelCustom)
-            is ChannelUpdatedByUserEvent -> routeByGroup(event.channel, event.channelCustom)
-            is NotificationAddedToChannelEvent ->
-                watchAndAddIfBelongs(event.cid, event.channelCustom, event.channel.extraData)
-            is NotificationMessageNewEvent ->
-                watchAndAddIfBelongs(event.cid, event.channelCustom, event.channel.extraData)
-            is ChannelVisibleEvent ->
-                watchAndAddIfBelongs(event.cid, event.channelCustom, event.channel.extraData)
+            is ChannelUpdatedEvent,
+            is ChannelUpdatedByUserEvent,
+                -> routeByGroup(event.channel)
+
+            is NotificationAddedToChannelEvent,
+            is NotificationMessageNewEvent,
+            is ChannelVisibleEvent,
+                -> if (channelBelongsHere(event.channel)) {
+                EventHandlingResult.WatchAndAdd(event.cid)
+            } else {
+                EventHandlingResult.Skip
+            }
+
             else -> super.handleChannelEvent(event, filter)
         }
     }
@@ -85,19 +79,17 @@ internal class GroupAwareChatEventHandler(
         filter: FilterObject,
         cachedChannel: Channel?,
     ): EventHandlingResult {
-        if (event is NewMessageEvent && !belongsHere(event.channelCustom, cachedChannel?.extraData)) {
-            return EventHandlingResult.Skip
-        }
-        return super.handleCidEvent(event, filter, cachedChannel)
+        val defaultResult = super.handleCidEvent(event, filter, cachedChannel)
+        return filterResultByGroup(defaultResult, cachedChannel)
     }
 
     /**
-     * Routes a channel-bearing event to Add / Remove / Skip based on the group resolved from the
-     * event's `channelCustom` (with the channel's own `extraData` as a fallback) and whether the
-     * channel is currently in this grouped list.
+     * Routes a channel-bearing event to Add / Remove / Skip based on the channel's resolved groups
+     * and whether it is currently in this grouped list. Re-adding an already-present channel is
+     * skipped — channel-state updates flow through a separate pipeline, so we don't churn the list.
      */
-    private fun routeByGroup(channel: Channel, channelCustom: Map<String, Any>?): EventHandlingResult {
-        val belongsHere = belongsHere(channelCustom, channel.extraData)
+    private fun routeByGroup(channel: Channel): EventHandlingResult {
+        val belongsHere = channelBelongsHere(channel)
         val isInList = channels.value?.containsKey(channel.cid) == true
         return when {
             belongsHere && !isInList -> EventHandlingResult.Add(channel)
@@ -106,17 +98,30 @@ internal class GroupAwareChatEventHandler(
         }
     }
 
-    private fun watchAndAddIfBelongs(
-        cid: String,
-        channelCustom: Map<String, Any>?,
-        channelExtraData: Map<String, Any>?,
-    ): EventHandlingResult =
-        if (belongsHere(channelCustom, channelExtraData)) {
-            EventHandlingResult.WatchAndAdd(cid)
-        } else {
-            EventHandlingResult.Skip
-        }
+    private fun channelBelongsHere(channel: Channel): Boolean =
+        resolver.resolve(channel, groupKey).contains(groupKey)
 
-    private fun belongsHere(channelCustom: Map<String, Any>?, channelExtraData: Map<String, Any>?): Boolean =
-        resolver.resolve(channelCustom, channelExtraData, groupKey).contains(groupKey)
+    /**
+     * Downgrades an `Add`/`WatchAndAdd` from the default handler to `Skip` if the resolver says
+     * the channel does not belong in this group. `Remove`/`Skip` pass through unchanged.
+     */
+    private fun filterResultByGroup(
+        result: EventHandlingResult,
+        cachedChannel: Channel?,
+    ): EventHandlingResult = when (result) {
+        is EventHandlingResult.Add ->
+            if (channelBelongsHere(result.channel)) result else EventHandlingResult.Skip
+
+        is EventHandlingResult.WatchAndAdd ->
+            // No channel data on the event; use cachedChannel if available. If we have nothing
+            // to resolve against, trust the default and rely on the subsequent channel.updated
+            // (which carries full channel data) to clean up.
+            if (cachedChannel != null && !channelBelongsHere(cachedChannel)) {
+                EventHandlingResult.Skip
+            } else {
+                result
+            }
+
+        else -> result
+    }
 }

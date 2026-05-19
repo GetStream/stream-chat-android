@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.test.randomChannelDeletedEvent
 import io.getstream.chat.android.client.test.randomChannelUpdatedEvent
 import io.getstream.chat.android.client.test.randomMemberAddedEvent
 import io.getstream.chat.android.client.test.randomMemberRemovedEvent
-import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomNotificationAddedToChannelEvent
 import io.getstream.chat.android.client.test.randomNotificationMessageNewEvent
 import io.getstream.chat.android.models.Channel
@@ -29,7 +28,6 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMember
-import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -44,13 +42,9 @@ internal class GroupAwareChatEventHandlerTest {
 
     @Test
     fun `Given channel belongs to this group and is not cached When ChannelUpdatedEvent arrives Should add`() {
-        val channel = randomChannel()
+        val channel = randomChannel(extraData = mapOf("group" to "vip"))
         val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap())
-        val event = randomChannelUpdatedEvent(
-            cid = channel.cid,
-            channel = channel,
-            channelCustom = mapOf("group" to "vip"),
-        )
+        val event = randomChannelUpdatedEvent(cid = channel.cid, channel = channel)
 
         val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
 
@@ -59,13 +53,9 @@ internal class GroupAwareChatEventHandlerTest {
 
     @Test
     fun `Given channel belongs to this group and is already cached When ChannelUpdatedEvent arrives Should skip`() {
-        val channel = randomChannel()
+        val channel = randomChannel(extraData = mapOf("group" to "vip"))
         val handler = handlerFor(groupKey = "vip", cachedChannels = mapOf(channel.cid to channel))
-        val event = randomChannelUpdatedEvent(
-            cid = channel.cid,
-            channel = channel,
-            channelCustom = mapOf("group" to "vip"),
-        )
+        val event = randomChannelUpdatedEvent(cid = channel.cid, channel = channel)
 
         val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
 
@@ -74,13 +64,9 @@ internal class GroupAwareChatEventHandlerTest {
 
     @Test
     fun `Given channel moved to another group and is currently cached When ChannelUpdatedEvent arrives Should remove`() {
-        val channel = randomChannel()
+        val channel = randomChannel(extraData = mapOf("group" to "other"))
         val handler = handlerFor(groupKey = "vip", cachedChannels = mapOf(channel.cid to channel))
-        val event = randomChannelUpdatedEvent(
-            cid = channel.cid,
-            channel = channel,
-            channelCustom = mapOf("group" to "other"),
-        )
+        val event = randomChannelUpdatedEvent(cid = channel.cid, channel = channel)
 
         val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
 
@@ -89,13 +75,9 @@ internal class GroupAwareChatEventHandlerTest {
 
     @Test
     fun `Given channel belongs to another group and is not cached When ChannelUpdatedEvent arrives Should skip`() {
-        val channel = randomChannel()
+        val channel = randomChannel(extraData = mapOf("group" to "other"))
         val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap())
-        val event = randomChannelUpdatedEvent(
-            cid = channel.cid,
-            channel = channel,
-            channelCustom = mapOf("group" to "other"),
-        )
+        val event = randomChannelUpdatedEvent(cid = channel.cid, channel = channel)
 
         val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
 
@@ -104,13 +86,9 @@ internal class GroupAwareChatEventHandlerTest {
 
     @Test
     fun `Given handler is for the all group When ChannelUpdatedEvent arrives Should always add`() {
-        val channel = randomChannel()
+        val channel = randomChannel(extraData = mapOf("group" to "vip"))
         val handler = handlerFor(groupKey = "all", cachedChannels = emptyMap())
-        val event = randomChannelUpdatedEvent(
-            cid = channel.cid,
-            channel = channel,
-            channelCustom = mapOf("group" to "vip"),
-        )
+        val event = randomChannelUpdatedEvent(cid = channel.cid, channel = channel)
 
         val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
 
@@ -119,13 +97,9 @@ internal class GroupAwareChatEventHandlerTest {
 
     @Test
     fun `Given channel does not belong here When NotificationAddedToChannelEvent arrives Should skip`() {
-        val channel = randomChannel()
+        val channel = randomChannel(extraData = mapOf("group" to "other"))
         val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap())
-        val event = randomNotificationAddedToChannelEvent(
-            cid = channel.cid,
-            channel = channel,
-            channelCustom = mapOf("group" to "other"),
-        )
+        val event = randomNotificationAddedToChannelEvent(cid = channel.cid, channel = channel)
 
         val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
 
@@ -134,13 +108,9 @@ internal class GroupAwareChatEventHandlerTest {
 
     @Test
     fun `Given channel belongs here When NotificationAddedToChannelEvent arrives Should watch and add`() {
-        val channel = randomChannel()
+        val channel = randomChannel(extraData = mapOf("group" to "vip"))
         val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap())
-        val event = randomNotificationAddedToChannelEvent(
-            cid = channel.cid,
-            channel = channel,
-            channelCustom = mapOf("group" to "vip"),
-        )
+        val event = randomNotificationAddedToChannelEvent(cid = channel.cid, channel = channel)
 
         val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
 
@@ -149,13 +119,9 @@ internal class GroupAwareChatEventHandlerTest {
 
     @Test
     fun `Given channel does not belong here When NotificationMessageNewEvent arrives Should skip`() {
-        val channel = randomChannel()
+        val channel = randomChannel(extraData = mapOf("group" to "other"))
         val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap())
-        val event = randomNotificationMessageNewEvent(
-            cid = channel.cid,
-            channel = channel,
-            channelCustom = mapOf("group" to "other"),
-        )
+        val event = randomNotificationMessageNewEvent(cid = channel.cid, channel = channel)
 
         val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
 
@@ -163,73 +129,9 @@ internal class GroupAwareChatEventHandlerTest {
     }
 
     @Test
-    fun `Given NewMessageEvent for another group Should skip without consulting super`() {
-        val channel = randomChannel()
-        val handler = handlerFor(
-            groupKey = "vip",
-            cachedChannels = emptyMap(),
-        )
-        val event = randomNewMessageEvent(
-            cid = channel.cid,
-            channelCustom = mapOf("group" to "other"),
-        )
-
-        // cachedChannel is provided; if super were consulted it could return Add. We assert Skip.
-        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = channel)
-
-        assertEquals(EventHandlingResult.Skip, result)
-    }
-
-    @Test
-    fun `Given NewMessageEvent for this group with cached channel absent from list Should add`() {
-        val channel = randomChannel()
-        val handler = handlerFor(
-            groupKey = "vip",
-            cachedChannels = emptyMap(),
-        )
-        val event = randomNewMessageEvent(
-            cid = channel.cid,
-            message = randomMessage(type = "regular"),
-            channelCustom = mapOf("group" to "vip"),
-        )
-
-        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = channel)
-
-        assertEquals(EventHandlingResult.Add(channel), result)
-    }
-
-    @Test
-    fun `Given NewMessageEvent for this group but no cached channel Should skip`() {
-        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap())
-        val event = randomNewMessageEvent(
-            channelCustom = mapOf("group" to "vip"),
-        )
-
-        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
-
-        assertEquals(EventHandlingResult.Skip, result)
-    }
-
-    @Test
-    fun `Given system NewMessageEvent for this group Should skip via super`() {
-        val channel = randomChannel()
-        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap())
-        val event = randomNewMessageEvent(
-            cid = channel.cid,
-            message = randomMessage(type = "system"),
-            channelCustom = mapOf("group" to "vip"),
-        )
-
-        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = channel)
-
-        assertEquals(EventHandlingResult.Skip, result)
-    }
-
-    @Test
-    fun `Given current user joined with a cached channel When MemberAddedEvent arrives Should add via super`() {
-        // Member events do not carry channel_custom and the handler trusts super (no group filter).
+    fun `Given current user joined with matching cached channel When MemberAddedEvent arrives Should add`() {
         val currentUser = randomUser()
-        val channel = randomChannel()
+        val channel = randomChannel(extraData = mapOf("group" to "vip"))
         val handler = handlerFor(
             groupKey = "vip",
             cachedChannels = emptyMap(),
@@ -246,9 +148,28 @@ internal class GroupAwareChatEventHandlerTest {
     }
 
     @Test
+    fun `Given current user joined with non-matching cached channel When MemberAddedEvent arrives Should skip`() {
+        val currentUser = randomUser()
+        val channel = randomChannel(extraData = mapOf("group" to "other"))
+        val handler = handlerFor(
+            groupKey = "vip",
+            cachedChannels = emptyMap(),
+            currentUser = currentUser,
+        )
+        val event = randomMemberAddedEvent(
+            cid = channel.cid,
+            member = randomMember(user = currentUser),
+        )
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = channel)
+
+        assertEquals(EventHandlingResult.Skip, result)
+    }
+
+    @Test
     fun `Given current user left a cached channel When MemberRemovedEvent arrives Should remove regardless of group`() {
         val currentUser = randomUser()
-        val channel = randomChannel()
+        val channel = randomChannel(extraData = mapOf("group" to "vip"))
         val handler = handlerFor(
             groupKey = "vip",
             cachedChannels = mapOf(channel.cid to channel),
@@ -266,7 +187,7 @@ internal class GroupAwareChatEventHandlerTest {
 
     @Test
     fun `Given a cached channel When ChannelDeletedEvent arrives Should remove regardless of group`() {
-        val channel = randomChannel()
+        val channel = randomChannel(extraData = mapOf("group" to "vip"))
         val handler = handlerFor(
             groupKey = "vip",
             cachedChannels = mapOf(channel.cid to channel),
@@ -280,20 +201,16 @@ internal class GroupAwareChatEventHandlerTest {
 
     @Test
     fun `Given a custom resolver that reads a different field When ChannelUpdatedEvent arrives Should use custom field`() {
-        val channel = randomChannel()
-        val customResolver = ChannelGroupResolver { channelCustom, _, _ ->
-            setOfNotNull(channelCustom?.get("tier") as? String)
+        val channel = randomChannel(extraData = mapOf("tier" to "vip"))
+        val customResolver = ChannelGroupResolver { ch, _ ->
+            setOfNotNull(ch.extraData["tier"] as? String)
         }
         val handler = handlerFor(
             groupKey = "vip",
             cachedChannels = emptyMap(),
             resolver = customResolver,
         )
-        val event = randomChannelUpdatedEvent(
-            cid = channel.cid,
-            channel = channel,
-            channelCustom = mapOf("tier" to "vip"),
-        )
+        val event = randomChannelUpdatedEvent(cid = channel.cid, channel = channel)
 
         val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
 
@@ -302,9 +219,9 @@ internal class GroupAwareChatEventHandlerTest {
 
     @Test
     fun `Given custom resolver Should receive the handler's groupKey as currentGroup`() {
-        val channel = randomChannel()
+        val channel = randomChannel(extraData = mapOf("group" to "vip"))
         var capturedGroup: String? = null
-        val capturingResolver = ChannelGroupResolver { _, _, currentGroup ->
+        val capturingResolver = ChannelGroupResolver { _, currentGroup ->
             capturedGroup = currentGroup
             setOf("vip")
         }
@@ -313,11 +230,7 @@ internal class GroupAwareChatEventHandlerTest {
             cachedChannels = emptyMap(),
             resolver = capturingResolver,
         )
-        val event = randomChannelUpdatedEvent(
-            cid = channel.cid,
-            channel = channel,
-            channelCustom = mapOf("group" to "vip"),
-        )
+        val event = randomChannelUpdatedEvent(cid = channel.cid, channel = channel)
 
         handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
 

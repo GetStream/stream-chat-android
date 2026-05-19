@@ -95,9 +95,8 @@ public class ChannelViewModelFactory internal constructor(
      * Grouped [ChannelListViewModel] factory. Wires the ViewModel to the state identified by
      * [groupKey] without firing a remote call; `queryGroupedChannels` responses populate it.
      *
-     * Internally builds a group-aware [ChatEventHandlerFactory] keyed on [groupKey] that routes
-     * channels based on the inbound event's `channel_custom` map. This is not customizable yet;
-     * the routing contract is still settling.
+     * Internally builds a group-aware [ChatEventHandlerFactory] keyed on [groupKey] so that
+     * `channel.updated` and channel-add events route channels into the correct group.
      *
      * @param chatClient The client used to fetch data.
      * @param groupKey Identifies the group whose state this ViewModel observes.

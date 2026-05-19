@@ -197,7 +197,6 @@ public data class ChannelUpdatedEvent(
     override val channelId: String,
     override val channel: Channel,
     val message: Message?,
-    val channelCustom: Map<String, Any>? = null,
 ) : CidEvent(), HasChannel
 
 /**
@@ -213,7 +212,6 @@ public data class ChannelUpdatedByUserEvent(
     override val user: User,
     override val channel: Channel,
     val message: Message?,
-    val channelCustom: Map<String, Any>? = null,
 ) : CidEvent(), UserEvent, HasChannel
 
 /**
@@ -228,7 +226,6 @@ public data class ChannelVisibleEvent(
     override val channelId: String,
     override val user: User,
     override val channel: Channel,
-    val channelCustom: Map<String, Any>? = null,
 ) : CidEvent(), UserEvent, HasChannel
 
 /**
@@ -376,7 +373,6 @@ public data class NewMessageEvent(
     override val unreadChannels: Int = 0,
     val channelMessageCount: Int?,
     override val groupedUnreadChannels: Map<String, Int>? = null,
-    val channelCustom: Map<String, Any>? = null,
 ) : CidEvent(), UserEvent, HasMessage, HasWatcherCount, HasUnreadCounts, HasGroupedUnreadChannels
 
 /**
@@ -393,7 +389,6 @@ public data class NotificationAddedToChannelEvent(
     override val member: Member,
     override val totalUnreadCount: Int = 0,
     override val unreadChannels: Int = 0,
-    val channelCustom: Map<String, Any>? = null,
 ) : CidEvent(), HasChannel, HasMember, HasUnreadCounts
 
 /**
@@ -553,7 +548,6 @@ public data class NotificationMessageNewEvent(
     override val totalUnreadCount: Int = 0,
     override val unreadChannels: Int = 0,
     override val groupedUnreadChannels: Map<String, Int>? = null,
-    val channelCustom: Map<String, Any>? = null,
 ) : CidEvent(), HasChannel, HasMessage, HasUnreadCounts, HasGroupedUnreadChannels
 
 /**

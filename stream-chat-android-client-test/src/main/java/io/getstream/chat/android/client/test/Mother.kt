@@ -133,7 +133,6 @@ public fun randomChannelVisibleEvent(
     channelId: String = randomString(),
     user: User = randomUser(),
     channel: Channel = randomChannel(),
-    channelCustom: Map<String, Any>? = null,
 ): ChannelVisibleEvent = ChannelVisibleEvent(
     type = EventType.CHANNEL_VISIBLE,
     createdAt = createdAt,
@@ -143,7 +142,6 @@ public fun randomChannelVisibleEvent(
     channelId = channelId,
     user = user,
     channel = channel,
-    channelCustom = channelCustom,
 )
 
 public fun randomUserStartWatchingEvent(
@@ -447,7 +445,6 @@ public fun randomNotificationAddedToChannelEvent(
     member: Member = randomMember(),
     totalUnreadCount: Int = randomInt(),
     unreadChannels: Int = randomInt(),
-    channelCustom: Map<String, Any>? = null,
 ): NotificationAddedToChannelEvent {
     return NotificationAddedToChannelEvent(
         type = EventType.NOTIFICATION_ADDED_TO_CHANNEL,
@@ -460,7 +457,6 @@ public fun randomNotificationAddedToChannelEvent(
         member = member,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
-        channelCustom = channelCustom,
     )
 }
 
@@ -474,7 +470,6 @@ public fun randomNotificationMessageNewEvent(
     totalUnreadCount: Int = randomInt(),
     unreadChannels: Int = randomInt(),
     groupedUnreadChannels: Map<String, Int>? = null,
-    channelCustom: Map<String, Any>? = null,
 ): NotificationMessageNewEvent = NotificationMessageNewEvent(
     type = EventType.NOTIFICATION_MESSAGE_NEW,
     createdAt = createdAt,
@@ -487,7 +482,6 @@ public fun randomNotificationMessageNewEvent(
     totalUnreadCount = totalUnreadCount,
     unreadChannels = unreadChannels,
     groupedUnreadChannels = groupedUnreadChannels,
-    channelCustom = channelCustom,
 )
 
 public fun randomMessageUpdateEvent(
@@ -515,7 +509,6 @@ public fun randomChannelUpdatedEvent(
     channelId: String = randomString(),
     message: Message = randomMessage(),
     channel: Channel = randomChannel(),
-    channelCustom: Map<String, Any>? = null,
 ): ChannelUpdatedEvent {
     return ChannelUpdatedEvent(
         type = EventType.CHANNEL_UPDATED,
@@ -526,7 +519,6 @@ public fun randomChannelUpdatedEvent(
         channelId = channelId,
         message = message,
         channel = channel,
-        channelCustom = channelCustom,
     )
 }
 
@@ -538,7 +530,6 @@ public fun randomChannelUpdatedByUserEvent(
     message: Message = randomMessage(),
     channel: Channel = randomChannel(),
     user: User = randomUser(),
-    channelCustom: Map<String, Any>? = null,
 ): ChannelUpdatedByUserEvent {
     return ChannelUpdatedByUserEvent(
         type = EventType.CHANNEL_UPDATED,
@@ -550,7 +541,6 @@ public fun randomChannelUpdatedByUserEvent(
         message = message,
         channel = channel,
         user = user,
-        channelCustom = channelCustom,
     )
 }
 
@@ -566,7 +556,6 @@ public fun randomNewMessageEvent(
     unreadChannels: Int = randomInt(),
     channelMessageCount: Int? = positiveRandomInt(),
     groupedUnreadChannels: Map<String, Int>? = null,
-    channelCustom: Map<String, Any>? = null,
 ): NewMessageEvent {
     return NewMessageEvent(
         type = EventType.MESSAGE_NEW,
@@ -582,7 +571,6 @@ public fun randomNewMessageEvent(
         unreadChannels = unreadChannels,
         channelMessageCount = channelMessageCount,
         groupedUnreadChannels = groupedUnreadChannels,
-        channelCustom = channelCustom,
     )
 }
 

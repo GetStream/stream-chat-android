@@ -148,9 +148,7 @@ public class ChannelListViewModel internal constructor(
      * issuing a remote call; the state is populated externally by `queryGroupedChannels` responses.
      *
      * Internally builds a group-aware [ChatEventHandlerFactory] keyed on [groupKey] so that
-     * `channel.updated` and channel-add events route channels into the correct group based on the
-     * event's `channel_custom` map. This is not customizable yet; the routing contract is still
-     * settling.
+     * `channel.updated` and channel-add events route channels into the correct group.
      */
     public constructor(
         chatClient: ChatClient,

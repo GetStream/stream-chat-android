@@ -301,7 +301,6 @@ internal class EventMapping(
             channelId = channel_id,
             message = message?.toDomain(channel.toChannelInfo()),
             channel = channel.toDomain(),
-            channelCustom = channel_custom,
         )
     }
 
@@ -319,7 +318,6 @@ internal class EventMapping(
             user = user.toDomain(),
             message = message?.toDomain(channel.toChannelInfo()),
             channel = channel.toDomain(),
-            channelCustom = channel_custom,
         )
     }
 
@@ -336,7 +334,6 @@ internal class EventMapping(
             channelId = channel_id,
             user = user.toDomain(),
             channel = channel.toDomain(),
-            channelCustom = channel_custom,
         )
     }
 
@@ -474,8 +471,8 @@ internal class EventMapping(
             id = channel_id,
             type = channel_type,
             memberCount = channel_member_count ?: 0,
-            name = channel_custom?.get(CHANNEL_CUSTOM_NAME) as? String,
-            image = channel_custom?.get(CHANNEL_CUSTOM_IMAGE) as? String,
+            name = channel_custom?.name,
+            image = channel_custom?.image,
         )
         NewMessageEvent(
             type = type,
@@ -491,7 +488,6 @@ internal class EventMapping(
             unreadChannels = unread_channels,
             channelMessageCount = channel_message_count,
             groupedUnreadChannels = grouped_unread_channels,
-            channelCustom = channel_custom,
         )
     }
 
@@ -510,7 +506,6 @@ internal class EventMapping(
             member = member.toDomain(),
             totalUnreadCount = total_unread_count,
             unreadChannels = unread_channels,
-            channelCustom = channel_custom,
         )
     }
 
@@ -691,7 +686,6 @@ internal class EventMapping(
             totalUnreadCount = total_unread_count,
             unreadChannels = unread_channels,
             groupedUnreadChannels = grouped_unread_channels,
-            channelCustom = channel_custom,
         )
     }
 
@@ -1320,10 +1314,5 @@ internal class EventMapping(
             user = user?.toDomain(),
             rawData = rawData,
         )
-    }
-
-    companion object {
-        private const val CHANNEL_CUSTOM_NAME = "name"
-        private const val CHANNEL_CUSTOM_IMAGE = "image"
     }
 }
