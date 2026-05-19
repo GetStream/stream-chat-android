@@ -28,6 +28,7 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnPoll
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnPollOptionClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnReactionViewClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnShowAllPollOptionClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnSuggestPollOptionClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnThreadClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnTranslatedLabelClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUnreadLabelReachedListener
@@ -57,6 +58,7 @@ internal class MessageListListenerContainerImpl(
     onShowAllPollOptionClickListener: OnShowAllPollOptionClickListener,
     onPollCloseClickListener: OnPollCloseClickListener,
     onViewPollResultClickListener: OnViewPollResultClickListener,
+    onSuggestPollOptionClickListener: OnSuggestPollOptionClickListener,
 ) : MessageListListeners {
     private object EmptyFunctions {
         val ONE_PARAM: (Any) -> Boolean = { _ -> false }
@@ -196,6 +198,14 @@ internal class MessageListListenerContainerImpl(
     ) { realListener ->
         OnViewPollResultClickListener { poll ->
             realListener().onViewPollResultClick(poll)
+        }
+    }
+
+    override var onSuggestPollOptionClickListener: OnSuggestPollOptionClickListener by ListenerDelegate(
+        onSuggestPollOptionClickListener,
+    ) { realListener ->
+        OnSuggestPollOptionClickListener { poll ->
+            realListener().onSuggestPollOptionClick(poll)
         }
     }
 }
