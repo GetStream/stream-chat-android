@@ -46,6 +46,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -157,15 +158,19 @@ private fun ReorderableScope.PollOptionRow(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            val reorderLabel = stringResource(R.string.stream_compose_poll_option_reorder, displayName)
             Box(
                 modifier = Modifier
+                    .semantics(mergeDescendants = true) {
+                        contentDescription = reorderLabel
+                        customActions = moveActions
+                    }
                     .draggableHandle()
-                    .minimumInteractiveComponentSize()
-                    .semantics(mergeDescendants = true) { customActions = moveActions },
+                    .minimumInteractiveComponentSize(),
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.stream_design_ic_reorder),
-                    contentDescription = stringResource(R.string.stream_compose_poll_option_reorder, displayName),
+                    contentDescription = null,
                     tint = colors.inputTextIcon,
                 )
             }
