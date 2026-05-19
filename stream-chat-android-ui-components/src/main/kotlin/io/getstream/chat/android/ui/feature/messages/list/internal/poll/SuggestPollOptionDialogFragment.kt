@@ -32,7 +32,7 @@ import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
  * Dialog that lets a voter suggest a new option for a poll.
  *
  * Delivers the entered option via the fragment-result API under [REQUEST_KEY], with
- * the poll id in [BUNDLE_KEY_POLL_ID] and the trimmed option text in [BUNDLE_KEY_OPTION_TEXT].
+ * the poll id in [BUNDLE_KEY_POLL_ID] and the option text in [BUNDLE_KEY_OPTION_TEXT].
  */
 public class SuggestPollOptionDialogFragment : AppCompatDialogFragment() {
 
@@ -47,8 +47,8 @@ public class SuggestPollOptionDialogFragment : AppCompatDialogFragment() {
             .setTitle(R.string.stream_ui_poll_suggest_option_dialog_title)
             .setView(binding.root)
             .setPositiveButton(R.string.stream_ui_poll_suggest_option_dialog_submit) { _, _ ->
-                val text = binding.optionInput.text?.toString()?.trim().orEmpty()
-                if (text.isNotEmpty()) {
+                val text = binding.optionInput.text?.toString().orEmpty()
+                if (text.isNotBlank()) {
                     parentFragmentManager.setFragmentResult(
                         REQUEST_KEY,
                         bundleOf(
