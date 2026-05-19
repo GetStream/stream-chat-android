@@ -240,6 +240,8 @@
   <string name="stream_compose_poll_option_limit_votes_increase">"प्रति व्यक्ति वोट बढ़ाएँ"</string>
   <string name="stream_compose_poll_option_limit_votes_input">"प्रति व्यक्ति वोट"</string>
   <string name="stream_compose_poll_option_remove">"पोल विकल्प हटाएँ"</string>
+  <string name="stream_compose_poll_option_move_down">"नीचे ले जाएँ"</string>
+  <string name="stream_compose_poll_option_move_up">"ऊपर ले जाएँ"</string>
   <string name="stream_compose_poll_option_reorder">"पोल विकल्प क्रम बदलें"</string>
   <string name="stream_compose_poll_option_switch_add_comment">"टिप्पणी जोड़ें"</string>
   <string name="stream_compose_poll_option_switch_add_comment_description">"दूसरों को टिप्पणी जोड़ने दें"</string>
