@@ -59,12 +59,12 @@ internal class GroupAwareChatEventHandler(
         return when (event) {
             is ChannelUpdatedEvent,
             is ChannelUpdatedByUserEvent,
-                -> routeByGroup(event.channel)
+            -> routeByGroup(event.channel)
 
             is NotificationAddedToChannelEvent,
             is NotificationMessageNewEvent,
             is ChannelVisibleEvent,
-                -> if (channelBelongsHere(event.channel)) {
+            -> if (channelBelongsHere(event.channel)) {
                 EventHandlingResult.WatchAndAdd(event.cid)
             } else {
                 EventHandlingResult.Skip
