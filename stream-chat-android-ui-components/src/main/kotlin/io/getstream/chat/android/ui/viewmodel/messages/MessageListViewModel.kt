@@ -299,6 +299,10 @@ public class MessageListViewModel(
                 option = event.option,
             )
             is Event.PollClosed -> messageListController.closePoll(event.poll)
+            is Event.PollOptionSuggested -> messageListController.addPollOption(
+                pollId = event.pollId,
+                option = event.option,
+            )
         }
     }
 
@@ -814,5 +818,13 @@ public class MessageListViewModel(
          * @param poll The poll to be closed.
          */
         public data class PollClosed(val poll: Poll) : Event()
+
+        /**
+         * When the user suggests a new option for a poll.
+         *
+         * @param pollId The id of the poll to add the option to.
+         * @param option The text of the option suggested by the user.
+         */
+        public data class PollOptionSuggested(val pollId: String, val option: String) : Event()
     }
 }

@@ -2324,6 +2324,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/MessageLis
 	public final fun setOnReactionViewClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnReactionViewClickListener;)V
 	public final fun setOnReplyMessageClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnReplyMessageClickListener;)V
 	public final fun setOnScrollToBottomHandler (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnScrollToBottomHandler;)V
+	public final fun setOnSuggestPollOptionClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnSuggestPollOptionClickListener;)V
 	public final fun setOnThreadClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnThreadClickListener;)V
 	public final fun setOnUnreadLabelClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnUnreadLabelClickListener;)V
 	public final fun setOnUnreadLabelReachedListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnUnreadLabelReachedListener;)V
@@ -2528,6 +2529,10 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/li
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnShowAllPollOptionClickListener {
 	public abstract fun onShowAllPollOptionClick (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Poll;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnSuggestPollOptionClickListener {
+	public abstract fun onSuggestPollOptionClick (Lio/getstream/chat/android/models/Poll;)Z
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnThreadClickListener {
@@ -3049,6 +3054,7 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/li
 	public abstract fun getOnPollCloseClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnPollCloseClickListener;
 	public abstract fun getOnPollOptionClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnPollOptionClickListener;
 	public abstract fun getOnShowAllPollOptionClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnShowAllPollOptionClickListener;
+	public abstract fun getOnSuggestPollOptionClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnSuggestPollOptionClickListener;
 	public abstract fun getOnViewPollResultClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnViewPollResultClickListener;
 	public abstract fun getReactionViewClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnReactionViewClickListener;
 	public abstract fun getThreadClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnThreadClickListener;
@@ -3129,7 +3135,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/vi
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/view/PollViewStyle : io/getstream/chat/android/ui/helper/ViewStyle {
-	public fun <init> (Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;)V
+	public fun <init> (Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;)V
 	public final fun component1 ()Lio/getstream/chat/android/ui/font/TextStyle;
 	public final fun component2 ()Lio/getstream/chat/android/ui/font/TextStyle;
 	public final fun component3 ()Landroid/graphics/drawable/Drawable;
@@ -3138,8 +3144,9 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/vi
 	public final fun component6 ()Lio/getstream/chat/android/ui/font/TextStyle;
 	public final fun component7 ()Lio/getstream/chat/android/ui/font/TextStyle;
 	public final fun component8 ()Lio/getstream/chat/android/ui/font/TextStyle;
-	public final fun copy (Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/view/PollViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/messages/list/adapter/view/PollViewStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/view/PollViewStyle;
+	public final fun component9 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun copy (Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/view/PollViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/messages/list/adapter/view/PollViewStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/view/PollViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getPollCloseTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
 	public final fun getPollOptionCheckDrawable ()Landroid/graphics/drawable/Drawable;
@@ -3148,6 +3155,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/vi
 	public final fun getPollResultsTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
 	public final fun getPollShowAllOptionsTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
 	public final fun getPollSubtitleTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun getPollSuggestOptionTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
 	public final fun getPollTitleTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -3423,6 +3431,16 @@ public final class io/getstream/chat/android/ui/feature/messages/list/internal/p
 
 public final class io/getstream/chat/android/ui/feature/messages/list/internal/poll/PollResultsDialogFragment$Companion {
 	public final fun newInstance (Lio/getstream/chat/android/models/Poll;)Lio/getstream/chat/android/ui/feature/messages/list/internal/poll/PollResultsDialogFragment;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/internal/poll/SuggestPollOptionDialogFragment : androidx/appcompat/app/AppCompatDialogFragment {
+	public static final field Companion Lio/getstream/chat/android/ui/feature/messages/list/internal/poll/SuggestPollOptionDialogFragment$Companion;
+	public fun <init> ()V
+	public fun onCreateDialog (Landroid/os/Bundle;)Landroid/app/Dialog;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/internal/poll/SuggestPollOptionDialogFragment$Companion {
+	public final fun newInstance (Ljava/lang/String;)Lio/getstream/chat/android/ui/feature/messages/list/internal/poll/SuggestPollOptionDialogFragment;
 }
 
 public class io/getstream/chat/android/ui/feature/messages/list/options/message/DefaultMessageOptionItemsFactory : io/getstream/chat/android/ui/feature/messages/list/options/message/MessageOptionItemsFactory {
@@ -4893,6 +4911,19 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListVi
 	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$PollClosed;Lio/getstream/chat/android/models/Poll;ILjava/lang/Object;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$PollClosed;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getPoll ()Lio/getstream/chat/android/models/Poll;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$PollOptionSuggested : io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$PollOptionSuggested;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$PollOptionSuggested;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$PollOptionSuggested;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getOption ()Ljava/lang/String;
+	public final fun getPollId ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

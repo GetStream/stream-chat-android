@@ -95,6 +95,7 @@ import io.getstream.chat.android.ui.feature.messages.list.internal.SwipeReplyCal
 import io.getstream.chat.android.ui.feature.messages.list.internal.canReplyToMessage
 import io.getstream.chat.android.ui.feature.messages.list.internal.poll.AllPollOptionsDialogFragment
 import io.getstream.chat.android.ui.feature.messages.list.internal.poll.PollResultsDialogFragment
+import io.getstream.chat.android.ui.feature.messages.list.internal.poll.SuggestPollOptionDialogFragment
 import io.getstream.chat.android.ui.feature.messages.list.options.message.MessageOptionItem
 import io.getstream.chat.android.ui.feature.messages.list.options.message.MessageOptionItemsFactory
 import io.getstream.chat.android.ui.feature.messages.list.options.message.MessageOptionsDialogFragment
@@ -609,6 +610,13 @@ public class MessageListView : ConstraintLayout {
             true
         } ?: false
     }
+    private val defaultOnSuggestPollOptionClickListener = OnSuggestPollOptionClickListener { poll ->
+        context.getFragmentManager()?.let { fragmentManager ->
+            SuggestPollOptionDialogFragment.newInstance(poll.id)
+                .show(fragmentManager, SuggestPollOptionDialogFragment.TAG)
+            true
+        } ?: false
+    }
 
     private val listenerContainer = MessageListListenersImpl(
         messageClickListener = defaultMessageClickListener,
@@ -626,6 +634,7 @@ public class MessageListView : ConstraintLayout {
         onShowAllPollOptionClickListener = defaultOnShowAllPollOptionClickListener,
         onPollCloseClickListener = defaultOnPollCloseClickListener,
         onViewPollResultClickListener = defaultOnViewPollResultClickListener,
+        onSuggestPollOptionClickListener = defaultOnSuggestPollOptionClickListener,
     )
     private var enterThreadListener = defaultEnterThreadListener
     private var userReactionClickListener = defaultUserReactionClickListener
@@ -1393,6 +1402,20 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Set the Suggest Poll Option click listener to be used by MessageListView.
+     *
+     * @param listener The listener to use. If null, the default will be used instead.
+     */
+    public fun setOnSuggestPollOptionClickListener(listener: OnSuggestPollOptionClickListener?) {
+        listenerContainer.onSuggestPollOptionClickListener =
+            if (listener == null) {
+                defaultOnSuggestPollOptionClickListener
+            } else {
+                OnSuggestPollOptionClickListener(listener::onSuggestPollOptionClick)
+            }
+    }
+
+    /**
      * Sets the message long click listener to be used by MessageListView.
      *
      * @param listener The listener to use. If null, the default will be used instead.
@@ -2009,6 +2032,11 @@ public class MessageListView : ConstraintLayout {
     public fun interface OnViewPollResultClickListener {
         public fun onViewPollResultClick(poll: Poll): Boolean
     }
+
+    public fun interface OnSuggestPollOptionClickListener {
+        public fun onSuggestPollOptionClick(poll: Poll): Boolean
+    }
+
 
     public fun interface OnReplyMessageClickListener {
         public fun onReplyClick(replyTo: Message): Boolean

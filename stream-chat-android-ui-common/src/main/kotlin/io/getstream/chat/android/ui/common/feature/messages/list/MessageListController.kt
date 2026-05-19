@@ -2421,8 +2421,18 @@ public class MessageListController(
      * @param option The text of the new option to be added.
      */
     public fun addPollOption(poll: Poll, option: String) {
+        addPollOption(pollId = poll.id, option = option)
+    }
+
+    /**
+     * Creates a new poll option for the poll identified by [pollId].
+     *
+     * @param pollId The id of the poll to which the option will be added.
+     * @param option The text of the new option to be added.
+     */
+    public fun addPollOption(pollId: String, option: String) {
         scope.launch {
-            chatClient.createPollOption(poll.id, PollOption(text = option)).await()
+            chatClient.createPollOption(pollId, PollOption(text = option)).await()
         }
     }
 
