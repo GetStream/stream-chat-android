@@ -18,12 +18,11 @@ package io.getstream.chat.android.ui.feature.messages.list.internal.poll
 
 import android.app.Dialog
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.os.bundleOf
+import androidx.core.widget.doAfterTextChanged
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiDialogSuggestPollOptionBinding
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
@@ -65,15 +64,9 @@ public class SuggestPollOptionDialogFragment : AppCompatDialogFragment() {
         dialog.setOnShowListener {
             val confirm = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             confirm.isEnabled = false
-            binding.optionInput.addTextChangedListener(
-                object : TextWatcher {
-                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
-                    override fun afterTextChanged(s: Editable?) {
-                        confirm.isEnabled = s?.toString()?.trim()?.isNotEmpty() == true
-                    }
-                },
-            )
+            binding.optionInput.doAfterTextChanged { editable ->
+                confirm.isEnabled = editable?.toString()?.trim()?.isNotEmpty() == true
+            }
             binding.optionInput.requestFocus()
             dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         }
