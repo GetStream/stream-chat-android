@@ -125,5 +125,15 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+
+        <attr name="streamUiPollSuggestOptionTextSize" format="dimension|reference" />
+        <attr name="streamUiPollSuggestOptionTextColor" format="color|reference" />
+        <attr name="streamUiPollSuggestOptionFontAssets" format="string" />
+        <attr name="streamUiPollSuggestOptionTextFont" format="reference" />
+        <attr name="streamUiPollSuggestOptionTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
     </declare-styleable>
 </resources>

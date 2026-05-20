@@ -39,6 +39,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemPollCloseBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollHeaderBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollResultsBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollShowAllOptionsBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemPollSuggestOptionBinding
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.PollViewStyle
 import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
@@ -56,6 +57,7 @@ internal class PollView : RecyclerView {
     var onClosePollClick: ((Poll) -> Unit) = { _ -> }
     var onViewPollResultsClick: ((Poll) -> Unit) = { _ -> }
     var onShowAllPollOptionClick: (() -> Unit) = { }
+    var onSuggestOptionClick: ((Poll) -> Unit) = { _ -> }
 
     constructor(context: Context) : this(context, null, 0)
 
@@ -87,6 +89,7 @@ internal class PollView : RecyclerView {
                 onClosePollClick = { onClosePollClick(poll) },
                 onViewPollResultsClick = { onViewPollResultsClick(poll) },
                 onShowAllOptionsClick = { onShowAllPollOptionClick() },
+                onSuggestOptionClick = { onSuggestOptionClick(poll) },
             )
             adapter = pollAdapter
         }
@@ -121,6 +124,9 @@ internal class PollView : RecyclerView {
             .takeIf { poll.options.size > PollsConstants.MIN_NUMBER_OF_VISIBLE_OPTIONS }
             ?.let(pollItems::add)
 
+        PollItem.SuggestOption.takeIf { poll.allowUserSuggestedOptions && !poll.closed }
+            ?.let(pollItems::add)
+
         pollItems.add(PollItem.ViewResults)
 
         PollItem.Close.takeIf { isMine && !poll.closed }
@@ -136,6 +142,7 @@ private class PollAdapter(
     private val onClosePollClick: () -> Unit,
     private val onViewPollResultsClick: () -> Unit,
     private val onShowAllOptionsClick: () -> Unit,
+    private val onSuggestOptionClick: () -> Unit,
 ) : ListAdapter<PollItem, PollItemViewHolder<out PollItem>>(PollItemDiffCallback) {
 
     companion object {
@@ -144,6 +151,7 @@ private class PollAdapter(
         private const val VIEW_TYPE_CLOSE = 3
         private const val VIEW_TYPE_RESULTS = 4
         private const val VIEW_TYPE_SHOW_ALL_OPTIONS = 5
+        private const val VIEW_TYPE_SUGGEST_OPTION = 6
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PollItemViewHolder<out PollItem> {
@@ -177,6 +185,12 @@ private class PollAdapter(
                 onShowAllOptionsClick,
             )
 
+            VIEW_TYPE_SUGGEST_OPTION -> SuggestOptionViewHolder(
+                StreamUiItemPollSuggestOptionBinding.inflate(parent.streamThemeInflater, parent, false)
+                    .applyStyle(pollViewStyle),
+                onSuggestOptionClick,
+            )
+
             else -> throw IllegalArgumentException("Unknown view type: $viewType")
         }
     }
@@ -187,6 +201,7 @@ private class PollAdapter(
         PollItem.Close -> VIEW_TYPE_CLOSE
         PollItem.ViewResults -> VIEW_TYPE_RESULTS
         is PollItem.ShowAllOptions -> VIEW_TYPE_SHOW_ALL_OPTIONS
+        PollItem.SuggestOption -> VIEW_TYPE_SUGGEST_OPTION
     }
 
     override fun onBindViewHolder(holder: PollItemViewHolder<out PollItem>, position: Int) {
@@ -224,6 +239,7 @@ private sealed class PollItem {
     data object Close : PollItem()
     data class ShowAllOptions(val count: Int) : PollItem()
     data object ViewResults : PollItem()
+    data object SuggestOption : PollItem()
 }
 
 private sealed class PollItemViewHolder<T : PollItem>(binding: ViewBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -334,6 +350,15 @@ private class ViewResultsViewHolder(
     }
 }
 
+private class SuggestOptionViewHolder(
+    private val binding: StreamUiItemPollSuggestOptionBinding,
+    private val onSuggestOptionClick: () -> Unit,
+) : PollItemViewHolder<PollItem.SuggestOption>(binding) {
+    override fun bind(pollItem: PollItem.SuggestOption) {
+        binding.root.setOnClickListener { onSuggestOptionClick() }
+    }
+}
+
 private fun StreamUiItemPollHeaderBinding.applyStyle(style: PollViewStyle) = this.apply {
     title.setTextStyle(style.pollTitleTextStyle)
     subtitle.setTextStyle(style.pollSubtitleTextStyle)
@@ -355,4 +380,8 @@ private fun StreamUiItemPollResultsBinding.applyStyle(style: PollViewStyle) = th
 
 private fun StreamUiItemPollShowAllOptionsBinding.applyStyle(style: PollViewStyle) = this.apply {
     pollShowAllOptions.setTextStyle(style.pollShowAllOptionsTextStyle)
+}
+
+private fun StreamUiItemPollSuggestOptionBinding.applyStyle(style: PollViewStyle) = this.apply {
+    pollSuggestOption.setTextStyle(style.pollSuggestOptionTextStyle)
 }

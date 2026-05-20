@@ -35,6 +35,7 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.MessagesState
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TypingEvent
@@ -49,6 +50,7 @@ import io.getstream.chat.android.randomMembers
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMessageList
 import io.getstream.chat.android.randomOption
+import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomPollVote
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
@@ -995,6 +997,21 @@ internal class MessageListControllerTests {
     }
 
     @Test
+    fun `When calling addPollOption, ChatClient createPollOption is invoked`() = runTest {
+        val poll = randomPoll()
+        val optionText = randomString()
+        val chatClient = mock<ChatClient>()
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelState(messagesState = MutableStateFlow(emptyList()))
+            .givenCreatePollOption(callFrom { PollOption(text = optionText) })
+            .get()
+        controller.addPollOption(poll = poll, option = optionText)
+
+        verify(chatClient).createPollOption(poll.id, PollOption(text = optionText))
+    }
+
+    @Test
     fun `When toggleOriginalText, the message translation is toggled`() = runTest {
         val messageId = randomString()
         val message = randomMessage(
@@ -1289,6 +1306,10 @@ internal class MessageListControllerTests {
 
         fun givenRemoveVote(vote: Call<Vote>) = apply {
             whenever(chatClient.removePollVote(any(), any(), voteId = any())) doReturn vote
+        }
+
+        fun givenCreatePollOption(option: Call<PollOption>) = apply {
+            whenever(chatClient.createPollOption(any(), any())) doReturn option
         }
 
         fun givenSendReaction(reaction: Call<Reaction>) = apply {

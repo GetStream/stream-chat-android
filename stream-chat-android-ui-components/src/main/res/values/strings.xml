@@ -203,6 +203,9 @@
     <string name="stream_ui_poll_view_results_error">An error occurred while loading the poll results. Please try again later.</string>
     <string name="stream_ui_poll_show_all_votes">Show All</string>
     <string name="stream_ui_poll_option_results_error">An error occurred while loading the poll option results. Please try again later.</string>
+    <string name="stream_ui_poll_suggest_option_dialog_title">Suggest an option</string>
+    <string name="stream_ui_poll_suggest_option_dialog_submit">Confirm</string>
+    <string name="stream_ui_poll_suggest_option_dialog_cancel">Dismiss</string>
     <!-- Header Title -->
     <string name="stream_ui_message_list_header_thread_title">Thread Reply</string>
     <string name="stream_ui_message_list_header_untitled_channel">Channel without name</string>
