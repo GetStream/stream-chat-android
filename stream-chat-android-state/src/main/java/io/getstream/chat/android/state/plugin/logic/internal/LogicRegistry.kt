@@ -30,6 +30,7 @@ import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.state.event.handler.chat.factory.GroupAwareChatEventHandlerFactory
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogicImpl
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
@@ -80,8 +81,15 @@ internal class LogicRegistry internal constructor(
 
     internal fun queryChannels(identifier: QueryChannelsIdentifier): QueryChannelsLogic {
         return queryChannels.getOrPut(identifier) {
+            val mutableState = stateRegistry.queryChannels(identifier).toMutableState()
+            if (identifier is QueryChannelsIdentifier.Grouped) {
+                mutableState.chatEventHandlerFactory = GroupAwareChatEventHandlerFactory(
+                    groupKey = identifier.group,
+                    clientState = clientState,
+                )
+            }
             val queryChannelsStateLogic = QueryChannelsStateLogic(
-                mutableState = stateRegistry.queryChannels(identifier).toMutableState(),
+                mutableState = mutableState,
                 stateRegistry = stateRegistry,
                 logicRegistry = this,
                 coroutineScope = coroutineScope,
