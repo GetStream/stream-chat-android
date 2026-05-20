@@ -18,11 +18,13 @@ package io.getstream.chat.android.ui.feature.messages.list.internal.poll
 
 import android.app.Dialog
 import android.os.Bundle
+import android.text.InputFilter
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.os.bundleOf
 import androidx.core.widget.doAfterTextChanged
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiDialogSuggestPollOptionBinding
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
@@ -42,6 +44,10 @@ public class SuggestPollOptionDialogFragment : AppCompatDialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val binding = StreamUiDialogSuggestPollOptionBinding.inflate(requireContext().streamThemeInflater)
+
+        ChatUI.pollsConfig.optionTextLimit?.takeIf { it > 0 }?.let { limit ->
+            binding.optionInput.filters = arrayOf(InputFilter.LengthFilter(limit))
+        }
 
         val dialog = AlertDialog.Builder(requireContext().createStreamThemeWrapper())
             .setTitle(R.string.stream_ui_poll_suggest_option_dialog_title)
