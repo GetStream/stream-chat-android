@@ -52,6 +52,8 @@ internal fun MessageComposerInputTrailingContent(
     state: MessageComposerState,
     recordingActions: AudioRecordingActions,
     onSendClick: (String, List<Attachment>) -> Unit,
+    sendActionLabel: String? = null,
+    saveActionLabel: String? = null,
 ) {
     val inputText = state.inputValue
     val coolDownTime = state.coolDownTime
@@ -88,12 +90,14 @@ internal fun MessageComposerInputTrailingContent(
                 params = MessageComposerSaveButtonParams(
                     enabled = button.enabled,
                     onClick = { onSendClick(inputText, attachments) },
+                    onClickLabel = saveActionLabel,
                 ),
             )
 
             is ActionButton.Send -> ChatTheme.componentFactory.MessageComposerSendButton(
                 params = MessageComposerSendButtonParams(
                     onClick = { onSendClick(inputText, attachments) },
+                    onClickLabel = sendActionLabel,
                 ),
             )
 
@@ -119,15 +123,16 @@ private sealed interface ActionButton {
 @Composable
 internal fun MessageComposerSendButton(
     onClick: () -> Unit,
+    onClickLabel: String? = null,
 ) {
-    val sendActionLabel = stringResource(R.string.stream_compose_message_composer_send_action)
+    val resolvedLabel = onClickLabel ?: stringResource(R.string.stream_compose_message_composer_send_action)
     FilledIconButton(
         modifier = Modifier
             .size(48.dp)
             .padding(StreamTokens.spacingXs)
             .testTag("Stream_ComposerSendButton")
             .semantics {
-                onClick(label = sendActionLabel) {
+                onClick(label = resolvedLabel) {
                     onClick()
                     true
                 }
@@ -149,8 +154,9 @@ internal fun MessageComposerSendButton(
 internal fun MessageComposerSaveButton(
     enabled: Boolean,
     onClick: () -> Unit,
+    onClickLabel: String? = null,
 ) {
-    val saveActionLabel = stringResource(R.string.stream_compose_message_composer_save_action)
+    val resolvedLabel = onClickLabel ?: stringResource(R.string.stream_compose_message_composer_save_action)
     FilledIconButton(
         enabled = enabled,
         modifier = Modifier
@@ -158,7 +164,7 @@ internal fun MessageComposerSaveButton(
             .padding(StreamTokens.spacingXs)
             .testTag("Stream_ComposerSaveButton")
             .semantics {
-                onClick(label = saveActionLabel) {
+                onClick(label = resolvedLabel) {
                     onClick()
                     true
                 }

@@ -50,6 +50,7 @@ internal fun MessageComposerLeadingContent(
     messageInputState: MessageComposerState,
     isAttachmentPickerVisible: Boolean,
     onAttachmentsClick: () -> Unit,
+    onAttachmentsClickLabel: String? = null,
 ) {
     val canSendMessage = messageInputState.canSendMessage()
 
@@ -73,6 +74,7 @@ internal fun MessageComposerLeadingContent(
                 isPickerVisible = isAttachmentPickerVisible,
                 iconRotation = iconRotation,
                 onClick = onAttachmentsClick,
+                onClickLabel = onAttachmentsClickLabel,
             )
         }
     }
@@ -83,6 +85,7 @@ private fun AttachmentPickerButton(
     isPickerVisible: Boolean,
     iconRotation: Float,
     onClick: () -> Unit,
+    onClickLabel: String? = null,
 ) {
     val pickerStateDescription = stringResource(
         if (isPickerVisible) {
@@ -91,7 +94,7 @@ private fun AttachmentPickerButton(
             R.string.stream_compose_message_composer_attachments_collapsed
         },
     )
-    val pickerActionLabel = stringResource(
+    val resolvedActionLabel = onClickLabel ?: stringResource(
         if (isPickerVisible) {
             R.string.stream_compose_message_composer_attachments_close
         } else {
@@ -117,7 +120,7 @@ private fun AttachmentPickerButton(
             .testTag("Stream_ComposerAttachmentsButton")
             .semantics {
                 stateDescription = pickerStateDescription
-                onClick(label = pickerActionLabel) {
+                onClick(label = resolvedActionLabel) {
                     onClick()
                     true
                 }
