@@ -52,6 +52,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
+import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 
@@ -290,78 +291,126 @@ internal fun DefaultChannelHeaderTrailingContent(
     )
 }
 
-@Preview(name = "ChannelHeader Preview (Connected)")
+@Preview
 @Composable
 private fun ChannelHeaderConnectedPreview() {
     ChatTheme {
-        ChannelHeader(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            channel = PreviewChannelData.channelWithImage,
-            currentUser = PreviewUserData.user1,
-            connectionState = ConnectionState.Connected,
-        )
+        ChannelHeaderConnected()
     }
 }
 
-@Preview(name = "ChannelHeader Preview (Connecting)")
+@Composable
+internal fun ChannelHeaderConnected() {
+    ChannelHeader(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        channel = PreviewChannelData.channelWithImage,
+        currentUser = PreviewUserData.user1,
+        connectionState = ConnectionState.Connected,
+    )
+}
+
+@Preview
 @Composable
 private fun ChannelHeaderConnectingPreview() {
     ChatTheme {
-        ChannelHeader(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            channel = PreviewChannelData.channelWithImage,
-            currentUser = PreviewUserData.user1,
-            connectionState = ConnectionState.Connecting,
-        )
+        ChannelHeaderConnecting()
     }
 }
 
-@Preview(name = "ChannelHeader Preview (Offline)")
+@Composable
+internal fun ChannelHeaderConnecting() {
+    ChannelHeader(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        channel = PreviewChannelData.channelWithImage,
+        currentUser = PreviewUserData.user1,
+        connectionState = ConnectionState.Connecting,
+    )
+}
+
+@Preview
 @Composable
 private fun ChannelHeaderOfflinePreview() {
     ChatTheme {
-        ChannelHeader(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            channel = PreviewChannelData.channelWithImage,
-            currentUser = PreviewUserData.user1,
-            connectionState = ConnectionState.Offline,
-        )
+        ChannelHeaderOffline()
     }
 }
 
-@Preview(name = "ChannelHeader Preview (User Typing)")
 @Composable
-private fun ChannelHeaderUserTypingPreview() {
-    ChatTheme {
-        ChannelHeader(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            channel = PreviewChannelData.channelWithImage,
-            currentUser = PreviewUserData.user1,
-            typingUsers = listOf(PreviewUserData.user2),
-            connectionState = ConnectionState.Connected,
-        )
-    }
+internal fun ChannelHeaderOffline() {
+    ChannelHeader(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        channel = PreviewChannelData.channelWithImage,
+        currentUser = PreviewUserData.user1,
+        connectionState = ConnectionState.Offline,
+    )
 }
 
-@Preview(name = "ChannelHeader Preview (Many Members)")
+@Preview
 @Composable
 private fun ChannelHeaderManyMembersPreview() {
     ChatTheme {
-        ChannelHeader(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            channel = PreviewChannelData.channelWithManyMembers,
-            currentUser = PreviewUserData.user1,
-            connectionState = ConnectionState.Connected,
-        )
+        ChannelHeaderManyMembers()
     }
+}
+
+@Composable
+internal fun ChannelHeaderManyMembers() {
+    ChannelHeader(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        channel = PreviewChannelData.channelWithManyMembers,
+        currentUser = PreviewUserData.user1,
+        connectionState = ConnectionState.Connected,
+    )
+}
+
+@Preview
+@Composable
+private fun ChannelHeaderFewMembersPreview() {
+    ChatTheme {
+        ChannelHeaderFewMembers()
+    }
+}
+
+@Composable
+internal fun ChannelHeaderFewMembers() {
+    ChannelHeader(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        channel = PreviewChannelData.channelWithFewMembers,
+        currentUser = PreviewUserData.user1,
+        connectionState = ConnectionState.Connected,
+    )
+}
+
+@Preview
+@Composable
+private fun ChannelHeaderThreadModePreview() {
+    ChatTheme {
+        ChannelHeaderThreadMode()
+    }
+}
+
+@Composable
+internal fun ChannelHeaderThreadMode() {
+    ChannelHeader(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        channel = PreviewChannelData.channelWithImage,
+        currentUser = PreviewUserData.user1,
+        connectionState = ConnectionState.Connected,
+        messageMode = MessageMode.MessageThread(
+            parentMessage = PreviewMessageData.message1,
+            threadState = null,
+        ),
+    )
 }
