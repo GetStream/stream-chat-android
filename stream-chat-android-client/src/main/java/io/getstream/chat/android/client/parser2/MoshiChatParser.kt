@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.parser2
 
-import android.util.Log
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.FlagRequestAdapterFactory
@@ -62,10 +61,6 @@ internal class MoshiChatParser(
     private val dtoMapping: DtoMapping,
     private val directEventParser: DirectEventParser?,
 ) : ChatParser {
-
-    init {
-        Log.d("X_PETAR", "DEP: $directEventParser")
-    }
 
     private val moshi: Moshi by lazy {
         Moshi.Builder()
@@ -150,7 +145,6 @@ internal class MoshiChatParser(
     private fun parseAndProcessEvent(raw: String): ChatEvent {
         val directEvent = directEventParser?.parse(raw)
         if (directEvent != null) {
-            Log.d("X_PETAR", "Event from DEP: ${directEvent.type}")
             // Direct adapters handle enrichment inline — no enrichIfNeeded() needed.
             return directEvent
         }
