@@ -115,6 +115,7 @@ import io.getstream.chat.android.state.event.handler.internal.batch.SocketEventC
 import io.getstream.chat.android.state.event.handler.internal.utils.realType
 import io.getstream.chat.android.state.event.handler.internal.utils.toChannelUserRead
 import io.getstream.chat.android.state.plugin.config.MessageBufferConfig
+import io.getstream.chat.android.state.plugin.config.MessageBufferOverflow
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
@@ -129,6 +130,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -177,7 +179,10 @@ internal class EventHandlerSequential(
     private val bufferedNewMessageEvents: MutableSharedFlow<ChatEvent> by lazy {
         MutableSharedFlow(
             extraBufferCapacity = bufferConfig.capacity,
-            onBufferOverflow = bufferConfig.overflow,
+            onBufferOverflow = when (bufferConfig.overflow) {
+                MessageBufferOverflow.DROP_OLDEST -> BufferOverflow.DROP_OLDEST
+                MessageBufferOverflow.DROP_LATEST -> BufferOverflow.DROP_LATEST
+            },
         )
     }
     private val socketEventCollector = SocketEventCollector(scope) { batchEvent ->

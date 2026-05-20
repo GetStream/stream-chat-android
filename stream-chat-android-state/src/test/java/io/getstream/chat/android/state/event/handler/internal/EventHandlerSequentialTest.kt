@@ -55,12 +55,12 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.state.plugin.config.MessageBufferConfig
+import io.getstream.chat.android.state.plugin.config.MessageBufferOverflow
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
@@ -189,7 +189,7 @@ internal class EventHandlerSequentialTest {
                 MessageBufferConfig(
                     channelTypes = setOf(BUFFERED_CHANNEL_TYPE),
                     capacity = 1,
-                    overflow = BufferOverflow.DROP_OLDEST,
+                    overflow = MessageBufferOverflow.DROP_OLDEST,
                 ),
             )
             .withReadEventsCapabilityForAny()
@@ -230,7 +230,7 @@ internal class EventHandlerSequentialTest {
                 MessageBufferConfig(
                     channelTypes = setOf(BUFFERED_CHANNEL_TYPE),
                     capacity = 1,
-                    overflow = BufferOverflow.DROP_LATEST,
+                    overflow = MessageBufferOverflow.DROP_LATEST,
                 ),
             )
             .withReadEventsCapabilityForAny()
@@ -271,7 +271,7 @@ internal class EventHandlerSequentialTest {
                 MessageBufferConfig(
                     channelTypes = setOf("livestream"),
                     capacity = 1,
-                    overflow = BufferOverflow.DROP_OLDEST,
+                    overflow = MessageBufferOverflow.DROP_OLDEST,
                 ),
             )
             .withReadEventsCapabilityForAny()
@@ -306,7 +306,7 @@ internal class EventHandlerSequentialTest {
                 MessageBufferConfig(
                     channelTypes = setOf(BUFFERED_CHANNEL_TYPE),
                     capacity = capacity,
-                    overflow = BufferOverflow.DROP_OLDEST,
+                    overflow = MessageBufferOverflow.DROP_OLDEST,
                 ),
             )
             .withReadEventsCapabilityForAny()

@@ -22,7 +22,6 @@ import io.getstream.chat.android.models.TimeDuration
 import io.getstream.chat.android.state.extensions.queryChannelsAsState
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
-import kotlinx.coroutines.channels.BufferOverflow
 
 /**
  * Provides a configuration for [io.getstream.chat.android.state.plugin.internal.StatePlugin].
@@ -182,6 +181,14 @@ public data class ChannelMessageLimit(
  * By default this is a no-op: no channel types are configured, so the buffered code path is not
  * active and the SDK behaves exactly as if this configuration did not exist.
  *
+ * **Event ordering caveat.** When buffering is active, `NewMessageEvent`s for opted-in channel
+ * types flow through a separate buffer from all other events. As a consequence, the relative
+ * ordering between buffered `NewMessageEvent`s and non-buffered events (e.g. `ReactionNewEvent`,
+ * `MessageUpdatedEvent`) for the same channel is **not guaranteed** — a reaction added to
+ * message X may be processed before the `NewMessageEvent` for X. Because this configuration
+ * already tolerates dropping events on overflow, callers opting in are expected to tolerate
+ * this consistency relaxation as well.
+ *
  * Example — drop the oldest pending `NewMessageEvent` for `messaging` channels when more than
  * 100 are queued:
  * ```kotlin
@@ -190,7 +197,7 @@ public data class ChannelMessageLimit(
  *         messageBufferConfig = MessageBufferConfig(
  *             channelTypes = setOf("messaging"),
  *             capacity = 100,
- *             overflow = BufferOverflow.DROP_OLDEST,
+ *             overflow = MessageBufferOverflow.DROP_OLDEST,
  *         ),
  *     ),
  * )
@@ -202,19 +209,32 @@ public data class ChannelMessageLimit(
  * check is skipped.
  *
  * @param capacity The maximum number of `NewMessageEvent`s that can be queued in the buffer
- * while the consumer is busy. Once exceeded, [overflow] decides which event to drop or whether
- * to suspend. Defaults to `Int.MAX_VALUE`, which effectively disables overflow.
+ * while the consumer is busy. Once exceeded, [overflow] decides which event to drop. Defaults to
+ * `Int.MAX_VALUE`, which effectively disables overflow.
  *
  * @param overflow The strategy applied when the buffer is full:
- * - [BufferOverflow.SUSPEND] (default): the producer suspends until space is available. Note
- *   that the underlying socket listener uses non-suspending `tryEmit`, so with `SUSPEND` an
- *   overflowing emission is simply reported as a failed emit rather than blocking the socket.
- * - [BufferOverflow.DROP_OLDEST]: the oldest queued event is evicted to make room for the new
- *   one. Useful for live channels where freshness matters more than completeness.
- * - [BufferOverflow.DROP_LATEST]: the newest event is discarded and the queued events are kept.
+ * - [MessageBufferOverflow.DROP_OLDEST] (default): the oldest queued event is evicted to make
+ *   room for the new one. Useful for live channels where freshness matters more than completeness.
+ * - [MessageBufferOverflow.DROP_LATEST]: the newest event is discarded and the queued events are
+ *   kept.
  */
 public data class MessageBufferConfig(
     public val channelTypes: Set<String> = emptySet(),
     public val capacity: Int = Int.MAX_VALUE,
-    public val overflow: BufferOverflow = BufferOverflow.SUSPEND,
+    public val overflow: MessageBufferOverflow = MessageBufferOverflow.DROP_OLDEST,
 )
+
+/**
+ * Strategy applied when the [MessageBufferConfig] buffer is full.
+ *
+ * Mirrors a subset of [kotlinx.coroutines.channels.BufferOverflow]: the suspending strategy is
+ * intentionally excluded because the SDK emits into the buffer via non-suspending `tryEmit`,
+ * which makes the suspending semantics unreachable.
+ */
+public enum class MessageBufferOverflow {
+    /** Evict the oldest queued event to make room for the new one. */
+    DROP_OLDEST,
+
+    /** Discard the newest event and keep the queued events. */
+    DROP_LATEST,
+}
