@@ -111,7 +111,9 @@ import kotlinx.coroutines.launch
  * @param onBackPressed Handler for when the user taps on the Back button and/or the system
  * back button.
  * @param onHeaderTitleClick Handler for when the user taps on the header section.
+ * @param onHeaderTitleClickLabel Semantic / accessibility label for [onHeaderTitleClick].
  * @param onChannelAvatarClick Handler called when the user taps on the channel avatar.
+ * @param onChannelAvatarClickLabel Semantic / accessibility label for [onChannelAvatarClick].
  * @param skipPushNotification If new messages should skip triggering a push notification when sent. False by default.
  * @param skipEnrichUrl If new messages being sent, or existing ones being updated should skip enriching the URL.
  * If URL is not enriched, it will not be displayed as a link attachment. False by default.
@@ -128,7 +130,9 @@ public fun ChannelScreen(
     viewModelFactory: ChannelViewModelFactory,
     onBackPressed: () -> Unit = {},
     onHeaderTitleClick: ((channel: Channel) -> Unit)? = null,
+    onHeaderTitleClickLabel: String? = null,
     onChannelAvatarClick: ((Channel) -> Unit)? = null,
+    onChannelAvatarClickLabel: String? = null,
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
     verticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
@@ -138,7 +142,9 @@ public fun ChannelScreen(
             viewModelFactory = viewModelFactory,
             backAction = it,
             onHeaderTitleClick = onHeaderTitleClick,
+            onHeaderTitleClickLabel = onHeaderTitleClickLabel,
             onChannelAvatarClick = onChannelAvatarClick,
+            onChannelAvatarClickLabel = onChannelAvatarClickLabel,
         )
     },
     bottomBarContent: @Composable () -> Unit = {
@@ -331,6 +337,8 @@ internal fun DefaultTopBarContent(
     backAction: BackAction,
     onHeaderTitleClick: ((channel: Channel) -> Unit)?,
     onChannelAvatarClick: ((Channel) -> Unit)?,
+    onHeaderTitleClickLabel: String? = null,
+    onChannelAvatarClickLabel: String? = null,
 ) {
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = viewModelFactory)
 
@@ -347,7 +355,9 @@ internal fun DefaultTopBarContent(
             messageMode = messageMode,
             onBackPressed = backAction,
             onHeaderTitleClick = onHeaderTitleClick,
+            onHeaderTitleClickLabel = onHeaderTitleClickLabel,
             onChannelAvatarClick = onChannelAvatarClick,
+            onChannelAvatarClickLabel = onChannelAvatarClickLabel,
             modifier = Modifier.defaultMinSize(minHeight = 72.dp),
         ),
     )
