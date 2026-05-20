@@ -25,8 +25,9 @@
   <string name="stream_compose_attachment_added_file">"ファイルを添付しました"</string>
   <string name="stream_compose_attachment_added_photo">"写真を添付しました"</string>
   <string name="stream_compose_attachment_added_video">"動画を添付しました"</string>
-  <string name="stream_compose_attachment_camera_picker">"カメラを開く"</string>
+  <string name="stream_compose_attachment_camera_picker">"カメラ"</string>
   <string name="stream_compose_attachment_camera_picker_content">"写真を撮って共有"</string>
+  <string name="stream_compose_attachment_camera_picker_cta">"カメラを開く"</string>
   <string name="stream_compose_attachment_commands_picker">"コマンド"</string>
   <string name="stream_compose_attachment_file_picker">"ファイル"</string>
   <string name="stream_compose_attachment_media_picker">"メディア"</string>

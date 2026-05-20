@@ -25,8 +25,9 @@
   <string name="stream_compose_attachment_added_file">"Fichier joint"</string>
   <string name="stream_compose_attachment_added_photo">"Photo jointe"</string>
   <string name="stream_compose_attachment_added_video">"Vidéo jointe"</string>
-  <string name="stream_compose_attachment_camera_picker">"Ouvrir la caméra"</string>
+  <string name="stream_compose_attachment_camera_picker">"Caméra"</string>
   <string name="stream_compose_attachment_camera_picker_content">"Prendre une photo et la partager"</string>
+  <string name="stream_compose_attachment_camera_picker_cta">"Ouvrir la caméra"</string>
   <string name="stream_compose_attachment_commands_picker">"Commandes"</string>
   <string name="stream_compose_attachment_file_picker">"Fichiers"</string>
   <string name="stream_compose_attachment_media_picker">"Médias"</string>

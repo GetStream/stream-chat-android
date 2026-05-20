@@ -25,8 +25,9 @@
   <string name="stream_compose_attachment_added_file">"File dilampirkan"</string>
   <string name="stream_compose_attachment_added_photo">"Foto dilampirkan"</string>
   <string name="stream_compose_attachment_added_video">"Video dilampirkan"</string>
-  <string name="stream_compose_attachment_camera_picker">"Buka Kamera"</string>
+  <string name="stream_compose_attachment_camera_picker">"Kamera"</string>
   <string name="stream_compose_attachment_camera_picker_content">"Ambil foto dan bagikan"</string>
+  <string name="stream_compose_attachment_camera_picker_cta">"Buka Kamera"</string>
   <string name="stream_compose_attachment_commands_picker">"Perintah"</string>
   <string name="stream_compose_attachment_file_picker">"File"</string>
   <string name="stream_compose_attachment_media_picker">"Media"</string>
