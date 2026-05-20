@@ -1877,7 +1877,7 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/pol
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/attachments/poll/ComposableSingletons$PollCreationHeaderKt;
 	public fun <init> ()V
 	public final fun getLambda$1291237378$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda$2011802524$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1718700457$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$226546083$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
@@ -1902,7 +1902,7 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/pol
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/CreatePollScreenKt {
-	public static final fun CreatePollScreen (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public static final fun CreatePollScreen (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/PollCreationDiscardDialogKt {
@@ -1910,7 +1910,7 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/pol
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/PollCreationHeaderKt {
-	public static final fun PollCreationHeader (Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun PollCreationHeader (Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;ZLkotlin/jvm/functions/Function0;Ljava/lang/String;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionDuplicated : io/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError {
