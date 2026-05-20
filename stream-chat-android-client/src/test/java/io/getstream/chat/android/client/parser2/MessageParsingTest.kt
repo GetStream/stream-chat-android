@@ -193,6 +193,20 @@ internal class MessageParsingTest {
         assertEquals(resultChannelFirst, resultQuotedFirst)
     }
 
+    // Locks down the documented one-level depth limit of channelInfo propagation in the direct
+    // path. If full recursion is added later, this test will fail and the documented limit in
+    // MessageAdapter should be removed.
+    @Test
+    fun `Direct path - channelInfo propagation stops at one level deep`() {
+        val result = messageAdapter.fromJson(MessageTestData.jsonTwoDeepQuotedMessage)
+        // Depth 0 (outer): has `channel`, so channelInfo is set.
+        assertEquals(MessageTestData.expectedChannelInfo, result?.channelInfo)
+        // Depth 1: no `channel`, but gets the outer's channelInfo via one-level enrichment.
+        assertEquals(MessageTestData.expectedChannelInfo, result?.replyTo?.channelInfo)
+        // Depth 2: no `channel`, and propagation stops — channelInfo stays null.
+        assertEquals(null, result?.replyTo?.replyTo?.channelInfo)
+    }
+
     // endregion
 
     // region Required field error parity (both paths must throw on the same JSON)

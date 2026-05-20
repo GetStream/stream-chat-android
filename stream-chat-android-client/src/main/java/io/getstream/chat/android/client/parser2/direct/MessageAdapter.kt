@@ -182,8 +182,16 @@ internal class MessageAdapter(
 
         val resolvedChannelInfo = channel ?: fallbackChannelInfo
 
-        // Enrich quoted message with parent's resolved channelInfo (matching DTO toDomain behavior
-        // where parent passes its resolved channelInfo as fallback to quoted_message.toDomain())
+        // Enrich the quoted message with the parent's resolved channelInfo (matching DTO
+        // toDomain behavior where the parent passes its resolved channelInfo as fallback to
+        // quoted_message.toDomain()).
+        //
+        // Known limit: channelInfo propagation is only one level deep. A two-deep chain
+        // (message -> quoted_message -> quoted_message) where the inner two messages have no
+        // `channel` field will leave the innermost message's channelInfo null, while the DTO
+        // path would propagate the outer message's channelInfo down two levels. Two-deep
+        // quoted_message chains are rare in practice; if support is needed, this fallback
+        // needs to be threaded recursively (or replaced with a post-hoc traversal).
         val enrichedQuotedMessage = quotedMessage?.let { qm ->
             if (resolvedChannelInfo != null && qm.channelInfo == null) {
                 qm.copy(channelInfo = resolvedChannelInfo)

@@ -146,6 +146,17 @@ internal object NewMessageEventTestData {
         "channel_id": "general"
     }"""
 
+    @Language("JSON")
+    val jsonMalformedCreatedAt = """{
+        "type": "message.new",
+        "created_at": "not-a-date",
+        "user": $MINIMAL_USER_JSON,
+        "cid": "messaging:general",
+        "channel_type": "messaging",
+        "channel_id": "general",
+        "message": $MINIMAL_MESSAGE_JSON
+    }"""
+
     private val minimalUser = User(
         id = "user-1",
         role = "user",

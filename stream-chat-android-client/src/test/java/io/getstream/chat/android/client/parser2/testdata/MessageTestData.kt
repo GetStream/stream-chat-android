@@ -696,6 +696,71 @@ internal object MessageTestData {
         name = "General",
     )
 
+    /**
+     * Outer message has `channel`; the inner two messages (depth 1 and depth 2) do not.
+     * Locks down the documented one-level depth limit of channelInfo propagation in the
+     * direct path: depth-1 message gets the outer's channelInfo, depth-2 message stays null.
+     */
+    @Language("JSON")
+    val jsonTwoDeepQuotedMessage = """{
+        "id": "msg-outer",
+        "cid": "messaging:general",
+        "text": "Outer",
+        "html": "<p>Outer</p>",
+        "type": "regular",
+        "user": {"id": "user-1", "role": "user", "banned": false, "online": true},
+        "attachments": [],
+        "latest_reactions": [],
+        "own_reactions": [],
+        "mentioned_users": [],
+        "reply_count": 0,
+        "deleted_reply_count": 0,
+        "silent": false,
+        "created_at": "2020-01-01T00:00:00.000Z",
+        "updated_at": "2020-01-01T00:00:00.000Z",
+        "channel": {
+            "cid": "messaging:general",
+            "id": "general",
+            "type": "messaging",
+            "member_count": 5,
+            "name": "General"
+        },
+        "quoted_message": {
+            "id": "msg-mid",
+            "cid": "messaging:general",
+            "text": "Mid",
+            "html": "<p>Mid</p>",
+            "type": "regular",
+            "user": {"id": "user-2", "role": "user", "banned": false, "online": true},
+            "attachments": [],
+            "latest_reactions": [],
+            "own_reactions": [],
+            "mentioned_users": [],
+            "reply_count": 0,
+            "deleted_reply_count": 0,
+            "silent": false,
+            "created_at": "2020-01-01T00:00:00.000Z",
+            "updated_at": "2020-01-01T00:00:00.000Z",
+            "quoted_message": {
+                "id": "msg-inner",
+                "cid": "messaging:general",
+                "text": "Inner",
+                "html": "<p>Inner</p>",
+                "type": "regular",
+                "user": {"id": "user-3", "role": "user", "banned": false, "online": true},
+                "attachments": [],
+                "latest_reactions": [],
+                "own_reactions": [],
+                "mentioned_users": [],
+                "reply_count": 0,
+                "deleted_reply_count": 0,
+                "silent": false,
+                "created_at": "2020-01-01T00:00:00.000Z",
+                "updated_at": "2020-01-01T00:00:00.000Z"
+            }
+        }
+    }"""
+
     val expectedQuotedMessageWithChannel = Message(
         id = "msg-parent",
         cid = "messaging:general",

@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.parser2.direct
 
 import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.client.events.NewMessageEvent
@@ -89,6 +90,10 @@ internal class NewMessageEventAdapter(
 
         JsonParsingUtils.requireField(type, "type", reader)
         JsonParsingUtils.requireField(rawCreatedAt, "created_at", reader)
+        if (createdAt == null) {
+            // rawCreatedAt was present but unparseable; mirror DTO path which throws via ExactDateAdapter.
+            throw JsonDataException("Unparseable 'created_at' value '$rawCreatedAt' at ${reader.path}")
+        }
         JsonParsingUtils.requireField(user, "user", reader)
         JsonParsingUtils.requireField(cid, "cid", reader)
         JsonParsingUtils.requireField(channelType, "channel_type", reader)

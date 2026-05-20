@@ -239,5 +239,19 @@ internal class NewMessageEventParsingTest {
         }
     }
 
+    @Test
+    fun `DTO path - throws on malformed created_at`() {
+        assertThrows<JsonDataException> {
+            parser.fromJson(NewMessageEventTestData.jsonMalformedCreatedAt, NewMessageEventDto::class.java)
+        }
+    }
+
+    @Test
+    fun `Direct path - throws on malformed created_at`() {
+        assertThrows<JsonDataException> {
+            adapter.fromJson(NewMessageEventTestData.jsonMalformedCreatedAt)
+        }
+    }
+
     // endregion
 }

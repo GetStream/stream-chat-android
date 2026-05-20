@@ -40,6 +40,7 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.UserTransformer
+import io.getstream.log.taggedLogger
 import okio.Buffer
 import java.util.Date
 
@@ -114,6 +115,9 @@ internal class DirectEventParser(
     }
 
     companion object {
+
+        private val logger by taggedLogger("DirectEventParser")
+
         /**
          * Extracts the `"type"` field value from the top level of a JSON object
          * using a streaming [JsonReader]. Stops as soon as the field is found.
@@ -139,7 +143,8 @@ internal class DirectEventParser(
                     }
                     null
                 }
-            } catch (@Suppress("TooGenericExceptionCaught", "SwallowedException") _: Exception) {
+            } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+                logger.v { "extractType failed; falling back to DTO path: ${e.message}" }
                 null
             }
         }
