@@ -127,7 +127,7 @@
     <string name="channel_attachments_media_loading_more_error">Failed to load more media attachments</string>
     <string name="channel_attachments_files_loading_more_error">Failed to load more files attachments</string>
 
-    <!-- Messages -->
-    <string name="messages_open_channel_info">Open channel info</string>
+    <!-- Channel -->
+    <string name="channel_open_info">Open channel info</string>
 
 </resources>

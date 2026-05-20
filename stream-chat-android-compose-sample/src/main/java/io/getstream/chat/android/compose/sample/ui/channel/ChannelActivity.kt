@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.sample.ui
+package io.getstream.chat.android.compose.sample.ui.channel
 
 import android.content.Context
 import android.content.Intent
@@ -27,8 +27,7 @@ import androidx.compose.ui.res.stringResource
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
-import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActivity
-import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
+import io.getstream.chat.android.compose.sample.ui.SampleChatTheme
 import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.theme.AttachmentPickerConfig
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
@@ -37,7 +36,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFact
 import io.getstream.chat.android.compose.viewmodel.messages.ComposerOptions
 import io.getstream.chat.android.models.Channel
 
-class MessagesActivity : ComponentActivity() {
+class ChannelActivity : ComponentActivity() {
 
     private val settings by lazy { customSettings() }
 
@@ -92,7 +91,7 @@ class MessagesActivity : ComponentActivity() {
             viewModelFactory = factory,
             onBackPressed = { finish() },
             onChannelAvatarClick = ::openChannelInfo,
-            onChannelAvatarClickLabel = stringResource(R.string.messages_open_channel_info),
+            onChannelAvatarClickLabel = stringResource(R.string.channel_open_info),
         )
     }
 
@@ -116,7 +115,7 @@ class MessagesActivity : ComponentActivity() {
             messageId: String? = null,
             parentMessageId: String? = null,
         ): Intent {
-            return Intent(context, MessagesActivity::class.java).apply {
+            return Intent(context, ChannelActivity::class.java).apply {
                 putExtra(KEY_CHANNEL_ID, channelId)
                 putExtra(KEY_MESSAGE_ID, messageId)
                 putExtra(KEY_PARENT_MESSAGE_ID, parentMessageId)
