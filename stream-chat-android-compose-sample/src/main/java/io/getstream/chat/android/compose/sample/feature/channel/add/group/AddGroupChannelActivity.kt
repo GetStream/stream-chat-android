@@ -24,7 +24,7 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.compose.sample.R
-import io.getstream.chat.android.compose.sample.ui.MessagesActivity
+import io.getstream.chat.android.compose.sample.ui.channel.ChannelActivity
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import kotlinx.coroutines.flow.collectLatest
 
@@ -76,7 +76,7 @@ class AddGroupChannelActivity : ComponentActivity() {
     }
 
     private fun openChannel(cid: String) {
-        val intent = MessagesActivity.createIntent(this, cid)
+        val intent = ChannelActivity.createIntent(this, cid)
         startActivity(intent)
         finish()
     }

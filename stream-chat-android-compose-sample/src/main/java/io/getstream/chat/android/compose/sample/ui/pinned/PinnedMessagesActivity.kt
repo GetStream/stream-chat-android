@@ -24,7 +24,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.ui.Modifier
-import io.getstream.chat.android.compose.sample.ui.MessagesActivity
+import io.getstream.chat.android.compose.sample.ui.channel.ChannelActivity
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModelFactory
@@ -71,7 +71,7 @@ class PinnedMessagesActivity : ComponentActivity() {
     }
 
     private fun openMessage(message: Message) {
-        val intent = MessagesActivity.createIntent(
+        val intent = ChannelActivity.createIntent(
             context = applicationContext,
             channelId = message.cid,
             messageId = message.id,

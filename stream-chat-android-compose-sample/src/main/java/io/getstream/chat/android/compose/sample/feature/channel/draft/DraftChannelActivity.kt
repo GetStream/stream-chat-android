@@ -27,7 +27,7 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.sample.R
-import io.getstream.chat.android.compose.sample.ui.MessagesActivity
+import io.getstream.chat.android.compose.sample.ui.channel.ChannelActivity
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import kotlinx.coroutines.flow.collectLatest
 
@@ -68,7 +68,7 @@ class DraftChannelActivity : ComponentActivity() {
                         when (event) {
                             is DraftChannelViewEvent.NavigateToChannel -> {
                                 startActivity(
-                                    MessagesActivity.createIntent(
+                                    ChannelActivity.createIntent(
                                         context = applicationContext,
                                         channelId = event.cid,
                                     ),
