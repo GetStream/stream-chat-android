@@ -165,12 +165,16 @@ constructor(
     }
     private val eventMapping by lazy { EventMapping(domainMapping) }
 
-    private val directEventParser by lazy {
-        DirectEventParser(
-            currentUserIdProvider = currentUserIdProvider,
-            messageTransformer = apiModelTransformers.incomingMessageTransformer,
-            userTransformer = apiModelTransformers.incomingUserTransformer,
-        )
+    private val directEventParser: DirectEventParser? by lazy {
+        if (config.fastEventParsing) {
+            DirectEventParser(
+                currentUserIdProvider = currentUserIdProvider,
+                messageTransformer = apiModelTransformers.incomingMessageTransformer,
+                userTransformer = apiModelTransformers.incomingUserTransformer,
+            )
+        } else {
+            null
+        }
     }
 
     private val moshiParser: ChatParser by lazy {

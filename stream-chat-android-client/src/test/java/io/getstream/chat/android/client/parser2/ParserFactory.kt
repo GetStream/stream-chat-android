@@ -25,6 +25,7 @@ internal object ParserFactory {
     fun createMoshiChatParser(
         currentUserIdProvider: () -> String = { "" },
         apiModelTransformers: ApiModelTransformers = ApiModelTransformers(),
+        fastEventParsing: Boolean = true,
     ): MoshiChatParser = MoshiChatParser(
         eventMapping = EventMapping(
             DomainMapping(
@@ -42,6 +43,6 @@ internal object ParserFactory {
             currentUserIdProvider = currentUserIdProvider,
             messageTransformer = apiModelTransformers.incomingMessageTransformer,
             userTransformer = apiModelTransformers.incomingUserTransformer,
-        ),
+        ).takeIf { fastEventParsing },
     )
 }
