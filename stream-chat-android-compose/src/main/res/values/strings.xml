@@ -297,7 +297,6 @@
     <!-- Content Description -->
     <string name="stream_compose_channel_item_open">Open conversation</string>
     <string name="stream_compose_channel_item_options">Open conversation options</string>
-    <string name="stream_compose_channel_header_open_info">Open conversation info</string>
     <string name="stream_compose_channel_item_muted">muted</string>
     <plurals name="stream_compose_channel_item_unread">
         <item quantity="one">%d unread message</item>

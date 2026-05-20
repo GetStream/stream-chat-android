@@ -56,7 +56,6 @@
   <string name="stream_compose_avatar_overflow_count">"+%1$d"</string>
   <string name="stream_compose_block_user">"Bloquer l\'utilisateur"</string>
   <string name="stream_compose_cancel">"Annuler"</string>
-  <string name="stream_compose_channel_header_open_info">"Ouvrir les informations de la conversation"</string>
   <string name="stream_compose_channel_item_muted">"en sourdine"</string>
   <string name="stream_compose_channel_item_open">"Ouvrir la conversation"</string>
   <string name="stream_compose_channel_item_options">"Ouvrir les options de conversation"</string>

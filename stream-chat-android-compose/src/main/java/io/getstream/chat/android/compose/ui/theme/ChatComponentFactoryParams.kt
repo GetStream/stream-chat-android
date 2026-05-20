@@ -395,6 +395,7 @@ public data class SearchResultItemTrailingContentParams(
  * @param onBackPressed Action invoked when the back button is pressed.
  * @param onHeaderTitleClick Action invoked when the header title is clicked.
  * @param onChannelAvatarClick Action invoked when the channel avatar is clicked.
+ * @param onChannelAvatarClickLabel Semantic / accessibility label for [onChannelAvatarClick].
  */
 public data class ChannelHeaderParams(
     val channel: Channel,
@@ -406,6 +407,7 @@ public data class ChannelHeaderParams(
     val onBackPressed: () -> Unit = {},
     val onHeaderTitleClick: ((Channel) -> Unit)? = null,
     val onChannelAvatarClick: ((Channel) -> Unit)? = null,
+    val onChannelAvatarClickLabel: String? = null,
 )
 
 /**
@@ -444,11 +446,13 @@ public data class ChannelHeaderCenterContentParams(
  * @param channel The channel to display.
  * @param currentUser The currently logged in user.
  * @param onClick Action invoked when the trailing content is clicked.
+ * @param onClickLabel Semantic / accessibility label for [onClick].
  */
 public data class ChannelHeaderTrailingContentParams(
     val channel: Channel,
     val currentUser: User?,
     val onClick: ((Channel) -> Unit)? = null,
+    val onClickLabel: String? = null,
 )
 
 /**

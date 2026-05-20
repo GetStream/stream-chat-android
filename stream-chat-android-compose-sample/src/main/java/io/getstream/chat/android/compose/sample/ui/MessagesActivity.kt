@@ -23,6 +23,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActivity
@@ -90,6 +92,7 @@ class MessagesActivity : ComponentActivity() {
             viewModelFactory = factory,
             onBackPressed = { finish() },
             onChannelAvatarClick = ::openChannelInfo,
+            onChannelAvatarClickLabel = stringResource(R.string.messages_open_channel_info),
         )
     }
 

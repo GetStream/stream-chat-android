@@ -56,7 +56,6 @@
   <string name="stream_compose_avatar_overflow_count">"+%1$d"</string>
   <string name="stream_compose_block_user">"Blokir pengguna"</string>
   <string name="stream_compose_cancel">"Batal"</string>
-  <string name="stream_compose_channel_header_open_info">"Buka info percakapan"</string>
   <string name="stream_compose_channel_item_muted">"dibisukan"</string>
   <string name="stream_compose_channel_item_open">"Buka percakapan"</string>
   <string name="stream_compose_channel_item_options">"Buka opsi percakapan"</string>

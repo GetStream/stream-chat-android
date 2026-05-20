@@ -634,6 +634,7 @@ public interface ChatComponentFactory {
             onBackPressed = params.onBackPressed,
             onHeaderTitleClick = params.onHeaderTitleClick,
             onChannelAvatarClick = params.onChannelAvatarClick,
+            onChannelAvatarClickLabel = params.onChannelAvatarClickLabel,
         )
     }
 
@@ -677,6 +678,7 @@ public interface ChatComponentFactory {
             channel = params.channel,
             currentUser = params.currentUser,
             onClick = params.onClick,
+            onClickLabel = params.onClickLabel,
         )
     }
 

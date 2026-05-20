@@ -112,6 +112,7 @@ import kotlinx.coroutines.launch
  * back button.
  * @param onHeaderTitleClick Handler for when the user taps on the header section.
  * @param onChannelAvatarClick Handler called when the user taps on the channel avatar.
+ * @param onChannelAvatarClickLabel Semantic / accessibility label for [onChannelAvatarClick].
  * @param skipPushNotification If new messages should skip triggering a push notification when sent. False by default.
  * @param skipEnrichUrl If new messages being sent, or existing ones being updated should skip enriching the URL.
  * If URL is not enriched, it will not be displayed as a link attachment. False by default.
@@ -129,6 +130,7 @@ public fun ChannelScreen(
     onBackPressed: () -> Unit = {},
     onHeaderTitleClick: ((channel: Channel) -> Unit)? = null,
     onChannelAvatarClick: ((Channel) -> Unit)? = null,
+    onChannelAvatarClickLabel: String? = null,
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
     verticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
@@ -139,6 +141,7 @@ public fun ChannelScreen(
             backAction = it,
             onHeaderTitleClick = onHeaderTitleClick,
             onChannelAvatarClick = onChannelAvatarClick,
+            onChannelAvatarClickLabel = onChannelAvatarClickLabel,
         )
     },
     bottomBarContent: @Composable () -> Unit = {
@@ -331,6 +334,7 @@ internal fun DefaultTopBarContent(
     backAction: BackAction,
     onHeaderTitleClick: ((channel: Channel) -> Unit)?,
     onChannelAvatarClick: ((Channel) -> Unit)?,
+    onChannelAvatarClickLabel: String? = null,
 ) {
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = viewModelFactory)
 
@@ -348,6 +352,7 @@ internal fun DefaultTopBarContent(
             onBackPressed = backAction,
             onHeaderTitleClick = onHeaderTitleClick,
             onChannelAvatarClick = onChannelAvatarClick,
+            onChannelAvatarClickLabel = onChannelAvatarClickLabel,
             modifier = Modifier.defaultMinSize(minHeight = 72.dp),
         ),
     )

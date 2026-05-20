@@ -56,7 +56,6 @@
   <string name="stream_compose_avatar_overflow_count">"+%1$d"</string>
   <string name="stream_compose_block_user">"사용자 차단"</string>
   <string name="stream_compose_cancel">"취소"</string>
-  <string name="stream_compose_channel_header_open_info">"대화 정보 열기"</string>
   <string name="stream_compose_channel_item_muted">"음소거됨"</string>
   <string name="stream_compose_channel_item_open">"대화 열기"</string>
   <string name="stream_compose_channel_item_options">"대화 옵션 열기"</string>

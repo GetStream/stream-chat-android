@@ -69,6 +69,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * @param onBackPressed Handler that propagates the back button click event.
  * @param onHeaderTitleClick Action handler when the user taps on the header title section.
  * @param onChannelAvatarClick Action handler called when the user taps on the channel avatar.
+ * @param onChannelAvatarClickLabel Semantic / accessibility label for [onChannelAvatarClick].
  * @param leadingContent The content shown at the start of the header, by default a [BackButton].
  * @param centerContent The content shown in the middle of the header and represents the core information, by default
  * [DefaultChannelHeaderCenterContent].
@@ -85,6 +86,7 @@ public fun ChannelHeader(
     onBackPressed: () -> Unit = {},
     onHeaderTitleClick: ((Channel) -> Unit)? = null,
     onChannelAvatarClick: ((Channel) -> Unit)? = null,
+    onChannelAvatarClickLabel: String? = null,
     leadingContent: @Composable RowScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelHeaderLeadingContent(
@@ -116,6 +118,7 @@ public fun ChannelHeader(
                     channel = channel,
                     currentUser = currentUser,
                     onClick = onChannelAvatarClick,
+                    onClickLabel = onChannelAvatarClickLabel,
                 ),
             )
         }
@@ -257,14 +260,15 @@ internal fun DefaultChannelHeaderSubtitle(
  * @param channel The channel used to display the avatar.
  * @param currentUser The current user. Used for choosing which avatar to display.
  * @param onClick The handler called when the user taps on the channel avatar.
+ * @param onClickLabel Semantic / accessibility label for [onClick].
  */
 @Composable
 internal fun DefaultChannelHeaderTrailingContent(
     channel: Channel,
     currentUser: User?,
     onClick: ((Channel) -> Unit)?,
+    onClickLabel: String? = null,
 ) {
-    val openInfoLabel = stringResource(R.string.stream_compose_channel_header_open_info)
     ChatTheme.componentFactory.ChannelAvatar(
         params = ChannelAvatarParams(
             modifier = Modifier
@@ -272,7 +276,7 @@ internal fun DefaultChannelHeaderTrailingContent(
                 .ifNotNull(onClick) { callback ->
                     clickable(
                         bounded = false,
-                        onClickLabel = openInfoLabel,
+                        onClickLabel = onClickLabel,
                         role = Role.Button,
                     ) { callback(channel) }
                 },
