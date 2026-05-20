@@ -633,6 +633,7 @@ public interface ChatComponentFactory {
             messageMode = params.messageMode,
             onBackPressed = params.onBackPressed,
             onHeaderTitleClick = params.onHeaderTitleClick,
+            onHeaderTitleClickLabel = params.onHeaderTitleClickLabel,
             onChannelAvatarClick = params.onChannelAvatarClick,
             onChannelAvatarClickLabel = params.onChannelAvatarClickLabel,
         )
@@ -664,6 +665,7 @@ public interface ChatComponentFactory {
             connectionState = params.connectionState,
             messageMode = params.messageMode,
             onHeaderTitleClick = params.onClick,
+            onHeaderTitleClickLabel = params.onClickLabel,
         )
     }
 

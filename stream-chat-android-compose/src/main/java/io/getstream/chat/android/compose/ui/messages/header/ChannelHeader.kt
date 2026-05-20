@@ -68,6 +68,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * @param messageMode The current message mode, that changes the header content, if we're in a Thread.
  * @param onBackPressed Handler that propagates the back button click event.
  * @param onHeaderTitleClick Action handler when the user taps on the header title section.
+ * @param onHeaderTitleClickLabel Semantic / accessibility label for [onHeaderTitleClick].
  * @param onChannelAvatarClick Action handler called when the user taps on the channel avatar.
  * @param onChannelAvatarClickLabel Semantic / accessibility label for [onChannelAvatarClick].
  * @param leadingContent The content shown at the start of the header, by default a [BackButton].
@@ -85,6 +86,7 @@ public fun ChannelHeader(
     messageMode: MessageMode = MessageMode.Normal,
     onBackPressed: () -> Unit = {},
     onHeaderTitleClick: ((Channel) -> Unit)? = null,
+    onHeaderTitleClickLabel: String? = null,
     onChannelAvatarClick: ((Channel) -> Unit)? = null,
     onChannelAvatarClickLabel: String? = null,
     leadingContent: @Composable RowScope.() -> Unit = {
@@ -107,6 +109,7 @@ public fun ChannelHeader(
                     typingUsers = typingUsers,
                     messageMode = messageMode,
                     onClick = onHeaderTitleClick,
+                    onClickLabel = onHeaderTitleClickLabel,
                 ),
             )
         }
@@ -155,6 +158,7 @@ internal fun DefaultChannelHeaderLeadingContent(onBackPressed: () -> Unit) {
  * @param modifier Modifier for styling.
  * @param messageMode Currently active message mode, used to define the title information.
  * @param onHeaderTitleClick Handler for when the user taps on the header title section.
+ * @param onHeaderTitleClickLabel Semantic / accessibility label for [onHeaderTitleClick].
  */
 @Suppress("LongMethod")
 @Composable
@@ -165,6 +169,7 @@ internal fun DefaultChannelHeaderCenterContent(
     modifier: Modifier = Modifier,
     messageMode: MessageMode = MessageMode.Normal,
     onHeaderTitleClick: ((Channel) -> Unit)? = null,
+    onHeaderTitleClickLabel: String? = null,
 ) {
     val title = when (messageMode) {
         MessageMode.Normal -> ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser)
@@ -186,12 +191,11 @@ internal fun DefaultChannelHeaderCenterContent(
     Column(
         modifier = modifier
             .height(IntrinsicSize.Max)
-            .run {
-                if (onHeaderTitleClick != null) {
-                    clickable { onHeaderTitleClick(channel) }
-                } else {
-                    this
-                }
+            .ifNotNull(onHeaderTitleClick) { callback ->
+                clickable(
+                    onClickLabel = onHeaderTitleClickLabel,
+                    role = Role.Button,
+                ) { callback(channel) }
             },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,

@@ -394,6 +394,7 @@ public data class SearchResultItemTrailingContentParams(
  * @param messageMode The current message mode.
  * @param onBackPressed Action invoked when the back button is pressed.
  * @param onHeaderTitleClick Action invoked when the header title is clicked.
+ * @param onHeaderTitleClickLabel Semantic / accessibility label for [onHeaderTitleClick].
  * @param onChannelAvatarClick Action invoked when the channel avatar is clicked.
  * @param onChannelAvatarClickLabel Semantic / accessibility label for [onChannelAvatarClick].
  */
@@ -406,6 +407,7 @@ public data class ChannelHeaderParams(
     val messageMode: MessageMode = MessageMode.Normal,
     val onBackPressed: () -> Unit = {},
     val onHeaderTitleClick: ((Channel) -> Unit)? = null,
+    val onHeaderTitleClickLabel: String? = null,
     val onChannelAvatarClick: ((Channel) -> Unit)? = null,
     val onChannelAvatarClickLabel: String? = null,
 )
@@ -429,6 +431,7 @@ public data class ChannelHeaderLeadingContentParams(
  * @param typingUsers The list of users currently typing.
  * @param messageMode The current message mode.
  * @param onClick Action invoked when the header is clicked.
+ * @param onClickLabel Semantic / accessibility label for [onClick].
  */
 public data class ChannelHeaderCenterContentParams(
     val channel: Channel,
@@ -438,6 +441,7 @@ public data class ChannelHeaderCenterContentParams(
     val typingUsers: List<User> = emptyList(),
     val messageMode: MessageMode = MessageMode.Normal,
     val onClick: ((Channel) -> Unit)? = null,
+    val onClickLabel: String? = null,
 )
 
 /**
