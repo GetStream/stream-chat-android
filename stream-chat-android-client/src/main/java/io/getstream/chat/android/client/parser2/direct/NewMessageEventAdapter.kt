@@ -106,8 +106,10 @@ internal class NewMessageEventAdapter(
         val needsCid = message.cid != cid
         val replyTo = message.replyTo
         val needsReplyToCid = replyTo != null && replyTo.cid != cid
+        val needsReplyToChannelInfo = replyTo != null && replyTo.channelInfo == null
+        val needsReplyToEnrichment = needsReplyToCid || needsReplyToChannelInfo
 
-        val enrichedMessage = if (needsChannelInfo || needsCid || needsReplyToCid) {
+        val enrichedMessage = if (needsChannelInfo || needsCid || needsReplyToEnrichment) {
             val fallbackChannelInfo = ChannelInfo(
                 cid = cid,
                 id = channelId,
@@ -119,7 +121,16 @@ internal class NewMessageEventAdapter(
             message.copy(
                 channelInfo = message.channelInfo ?: fallbackChannelInfo,
                 cid = if (needsCid) cid else message.cid,
-                replyTo = if (needsReplyToCid) replyTo.copy(cid = cid) else replyTo,
+                replyTo = replyTo?.let { rt ->
+                    if (needsReplyToEnrichment) {
+                        rt.copy(
+                            cid = if (needsReplyToCid) cid else rt.cid,
+                            channelInfo = rt.channelInfo ?: fallbackChannelInfo,
+                        )
+                    } else {
+                        rt
+                    }
+                },
             )
         } else {
             message

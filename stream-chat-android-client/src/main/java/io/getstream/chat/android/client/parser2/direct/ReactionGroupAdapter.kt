@@ -18,63 +18,20 @@ package io.getstream.chat.android.client.parser2.direct
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.models.ReactionGroup
 import java.util.Date
 
 /**
- * Adapter for parsing [ReactionGroup] objects from JSON.
+ * Parser for [ReactionGroup] objects.
  *
- * **IMPORTANT**: This adapter requires a `type` parameter that is NOT present in the JSON.
- * The type comes from the map key when parsing `reaction_groups: Map<String, ReactionGroup>`.
- *
- * **Usage Example (in MessageAdapter)**:
- * ```kotlin
- * // When parsing reaction_groups map in a message:
- * "reaction_groups" -> {
- *     if (reader.peek() == JsonReader.Token.BEGIN_OBJECT) {
- *         reader.beginObject()
- *         val groups = mutableMapOf<String, ReactionGroup>()
- *         while (reader.hasNext()) {
- *             val type = reader.nextName()  // The map key is the reaction type
- *             reactionGroupAdapter.parseWithType(reader, type)?.let {
- *                 groups[type] = it
- *             }
- *         }
- *         reader.endObject()
- *         reactionGroups = groups
- *     } else {
- *         reader.skipValue()
- *     }
- * }
- * ```
- *
- * Do NOT use the standard [fromJson] method - it will throw [UnsupportedOperationException].
+ * Intentionally NOT a [JsonAdapter]: a `ReactionGroup` cannot be parsed standalone because its
+ * `type` field is not present in the JSON object — it comes from the surrounding map key when
+ * parsing `reaction_groups: Map<String, ReactionGroup>`. Use [parseReactionGroupsMap] for the
+ * common case, or [parseWithType] when the type is known externally.
  */
 internal class ReactionGroupAdapter(
     private val dateAdapter: JsonAdapter<Date>,
-) : JsonAdapter<ReactionGroup>() {
-
-    /**
-     * **DO NOT USE** - ReactionGroup cannot be parsed without a type parameter.
-     * Use [parseWithType] instead.
-     *
-     * @throws UnsupportedOperationException always, with guidance on correct usage
-     */
-    override fun fromJson(reader: JsonReader): ReactionGroup {
-        throw UnsupportedOperationException(
-            """
-            ReactionGroupAdapter.fromJson() cannot be used directly because the 'type' field
-            is not in the JSON - it comes from the map key when parsing reaction_groups.
-
-            Use parseWithType(reader, type) instead, where 'type' is the map key.
-
-            Example in MessageAdapter:
-              val reactionType = reader.nextName()  // The map key
-              val reactionGroup = reactionGroupAdapter.parseWithType(reader, reactionType)
-            """.trimIndent(),
-        )
-    }
+) {
 
     /**
      * Parse a ReactionGroup with the given type.
@@ -150,9 +107,5 @@ internal class ReactionGroupAdapter(
         }
         reader.endObject()
         return groups
-    }
-
-    override fun toJson(p0: JsonWriter, p1: ReactionGroup?) {
-        error("Serialization not supported for direct-to-domain path")
     }
 }

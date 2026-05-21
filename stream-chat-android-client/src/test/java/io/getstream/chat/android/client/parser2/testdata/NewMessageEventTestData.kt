@@ -157,6 +157,56 @@ internal object NewMessageEventTestData {
         "message": $MINIMAL_MESSAGE_JSON
     }"""
 
+    @Language("JSON")
+    private const val QUOTED_MESSAGE_NO_CHANNEL_JSON = """{
+        "id":"msg-q",
+        "cid":"messaging:general",
+        "text":"Quoted text",
+        "html":"<p>Quoted</p>",
+        "type":"regular",
+        "user":$MINIMAL_USER_JSON,
+        "attachments":[],
+        "latest_reactions":[],
+        "own_reactions":[],
+        "mentioned_users":[],
+        "reply_count":0,
+        "deleted_reply_count":0,
+        "created_at":"2020-01-01T00:00:00.000Z",
+        "updated_at":"2020-01-01T00:00:00.000Z",
+        "silent":false
+    }"""
+
+    @Language("JSON")
+    private const val MESSAGE_WITH_QUOTED_NO_CHANNEL_JSON = """{
+        "id":"msg-1",
+        "cid":"messaging:general",
+        "text":"Hello",
+        "html":"<p>Hello</p>",
+        "type":"regular",
+        "user":$MINIMAL_USER_JSON,
+        "attachments":[],
+        "latest_reactions":[],
+        "own_reactions":[],
+        "mentioned_users":[],
+        "reply_count":0,
+        "deleted_reply_count":0,
+        "created_at":"2020-01-01T00:00:00.000Z",
+        "updated_at":"2020-01-01T00:00:00.000Z",
+        "silent":false,
+        "quoted_message":$QUOTED_MESSAGE_NO_CHANNEL_JSON
+    }"""
+
+    @Language("JSON")
+    val jsonQuotedMessageNoChannel = """{
+        "type": "message.new",
+        "created_at": "2020-01-01T00:00:00.000Z",
+        "user": $MINIMAL_USER_JSON,
+        "cid": "messaging:general",
+        "channel_type": "messaging",
+        "channel_id": "general",
+        "message": $MESSAGE_WITH_QUOTED_NO_CHANNEL_JSON
+    }"""
+
     private val minimalUser = User(
         id = "user-1",
         role = "user",
