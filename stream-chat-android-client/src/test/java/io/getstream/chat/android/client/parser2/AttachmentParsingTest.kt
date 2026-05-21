@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.parser2
 
-import com.squareup.moshi.JsonDataException
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.parser2.direct.AttachmentAdapter
@@ -26,7 +25,6 @@ import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 internal class AttachmentParsingTest {
 
@@ -92,20 +90,19 @@ internal class AttachmentParsingTest {
 
     // endregion
 
-    // region file_size: null (non-nullable Int — both paths must throw)
+    // region file_size: null — coalesces to 0 on both paths
 
     @Test
-    fun `DTO path - throws on file_size null`() {
-        assertThrows<JsonDataException> {
-            parser.fromJson(AttachmentTestData.jsonWithFileSizeNull, AttachmentDto::class.java)
-        }
+    fun `DTO path - file_size null coalesces to 0`() {
+        val dto = parser.fromJson(AttachmentTestData.jsonWithFileSizeNull, AttachmentDto::class.java)
+        val attachment = with(domainMapping) { dto.toDomain() }
+        assertEquals(0, attachment.fileSize)
     }
 
     @Test
-    fun `Direct path - throws on file_size null`() {
-        assertThrows<JsonDataException> {
-            attachmentAdapter.fromJson(AttachmentTestData.jsonWithFileSizeNull)
-        }
+    fun `Direct path - file_size null coalesces to 0`() {
+        val attachment = attachmentAdapter.fromJson(AttachmentTestData.jsonWithFileSizeNull)
+        assertEquals(0, attachment?.fileSize)
     }
 
     // endregion
