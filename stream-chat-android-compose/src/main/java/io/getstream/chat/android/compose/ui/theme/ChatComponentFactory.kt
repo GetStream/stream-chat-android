@@ -2773,7 +2773,8 @@ public interface ChatComponentFactory {
                 .background(ChatTheme.colors.backgroundCoreSurfaceSubtle)
                 .topBorder(color = ChatTheme.colors.borderCoreSubtle)
                 .bottomBorder(color = ChatTheme.colors.borderCoreSubtle)
-                .padding(horizontal = StreamTokens.spacingMd, vertical = StreamTokens.spacingXs),
+                .padding(horizontal = StreamTokens.spacingMd, vertical = StreamTokens.spacingXs)
+                .semantics { heading() },
             text = params.label,
             style = ChatTheme.typography.captionEmphasis,
             color = ChatTheme.colors.chatTextSystem,
