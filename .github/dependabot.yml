@@ -10,6 +10,7 @@ updates:
       stream-conventions:
         patterns:
           - "GetStream/stream-build-conventions-android"
+          - "GetStream/stream-build-conventions-android/*"
 
   - package-ecosystem: gradle
     directory: /
