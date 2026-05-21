@@ -12,5 +12,5 @@ permissions:
 
 jobs:
   pr-clean-stale:
-    uses: GetStream/stream-build-conventions-android/.github/workflows/pr-clean-stale.yaml@v0.12.1
+    uses: GetStream/stream-build-conventions-android/.github/workflows/pr-clean-stale.yaml@v0.13.0
     secrets: inherit
