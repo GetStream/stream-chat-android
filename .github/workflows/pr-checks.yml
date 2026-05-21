@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v6.0.2
-      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@v0.12.1
+      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@v0.13.0
       - name: Detekt
         run: ./gradlew detekt
 
