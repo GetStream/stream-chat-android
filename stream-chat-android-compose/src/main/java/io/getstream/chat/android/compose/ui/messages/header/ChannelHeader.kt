@@ -34,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -205,7 +206,9 @@ internal fun DefaultChannelHeaderCenterContent(
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            modifier = Modifier.testTag("Stream_ChannelName"),
+            modifier = Modifier
+                .testTag("Stream_ChannelName")
+                .semantics { heading() },
             text = title,
             style = ChatTheme.typography.headingSmall,
             maxLines = 1,
