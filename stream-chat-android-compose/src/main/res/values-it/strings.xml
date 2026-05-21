@@ -85,8 +85,9 @@
   <string name="stream_compose_attachment_added_file">"File allegato"</string>
   <string name="stream_compose_attachment_added_photo">"Foto allegata"</string>
   <string name="stream_compose_attachment_added_video">"Video allegato"</string>
-  <string name="stream_compose_attachment_camera_picker">"Apri fotocamera"</string>
+  <string name="stream_compose_attachment_camera_picker">"Fotocamera"</string>
   <string name="stream_compose_attachment_camera_picker_content">"Scatta una foto e condividila"</string>
+  <string name="stream_compose_attachment_camera_picker_cta">"Apri fotocamera"</string>
   <string name="stream_compose_attachment_commands_picker">"Comandi"</string>
   <string name="stream_compose_attachment_file_picker">"File"</string>
   <string name="stream_compose_attachment_media_picker">"Media"</string>

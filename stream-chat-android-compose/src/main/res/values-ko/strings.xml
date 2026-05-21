@@ -25,8 +25,9 @@
   <string name="stream_compose_attachment_added_file">"파일 첨부됨"</string>
   <string name="stream_compose_attachment_added_photo">"사진 첨부됨"</string>
   <string name="stream_compose_attachment_added_video">"동영상 첨부됨"</string>
-  <string name="stream_compose_attachment_camera_picker">"카메라 열기"</string>
+  <string name="stream_compose_attachment_camera_picker">"카메라"</string>
   <string name="stream_compose_attachment_camera_picker_content">"사진을 찍어 공유하세요"</string>
+  <string name="stream_compose_attachment_camera_picker_cta">"카메라 열기"</string>
   <string name="stream_compose_attachment_commands_picker">"명령어"</string>
   <string name="stream_compose_attachment_file_picker">"파일"</string>
   <string name="stream_compose_attachment_media_picker">"미디어"</string>

@@ -25,8 +25,9 @@
   <string name="stream_compose_attachment_added_file">"Archivo adjuntado"</string>
   <string name="stream_compose_attachment_added_photo">"Foto adjuntada"</string>
   <string name="stream_compose_attachment_added_video">"Vídeo adjuntado"</string>
-  <string name="stream_compose_attachment_camera_picker">"Abrir cámara"</string>
+  <string name="stream_compose_attachment_camera_picker">"Cámara"</string>
   <string name="stream_compose_attachment_camera_picker_content">"Tomar una foto y compartir"</string>
+  <string name="stream_compose_attachment_camera_picker_cta">"Abrir cámara"</string>
   <string name="stream_compose_attachment_commands_picker">"Comandos"</string>
   <string name="stream_compose_attachment_file_picker">"Archivos"</string>
   <string name="stream_compose_attachment_media_picker">"Multimedia"</string>
