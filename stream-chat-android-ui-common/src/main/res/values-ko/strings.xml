@@ -25,6 +25,10 @@
   <string name="stream_ui_channel_attachments_media_empty_title">"사진 또는 동영상 없음"</string>
   <string name="stream_ui_channel_attachments_media_load_error">"미디어 첨부를 로드하지 못했습니다!"</string>
   <string name="stream_ui_channel_attachments_media_title">"사진 &amp; 동영상"</string>
+  <string name="stream_ui_channel_attachments_media_item_photo">"사진"</string>
+  <string name="stream_ui_channel_attachments_media_item_video">"동영상"</string>
+  <string name="stream_ui_channel_attachments_media_item_photo_from_user">"%1$s님의 사진"</string>
+  <string name="stream_ui_channel_attachments_media_item_video_from_user">"%1$s님의 동영상"</string>
   <string name="stream_ui_channel_info_add_members_error">"멤버 추가에 실패했습니다"</string>
   <string name="stream_ui_channel_info_ban_member_error">"멤버 차단에 실패했습니다"</string>
   <string name="stream_ui_channel_info_ban_member_modal_no_timeout">"영구적"</string>

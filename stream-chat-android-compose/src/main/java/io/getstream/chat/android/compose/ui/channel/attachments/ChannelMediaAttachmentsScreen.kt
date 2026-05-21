@@ -30,6 +30,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -51,6 +55,7 @@ import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewAction
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 import io.getstream.result.Error
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Displays the channel media attachments screen.
@@ -109,8 +114,9 @@ private fun ChannelMediaAttachmentsContent(
     onSharingError: (error: Error) -> Unit = {},
 ) {
     val gridState = rememberLazyGridState()
+    val paneTitleText = stringResource(UiCommonR.string.stream_ui_channel_attachments_media_title)
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.semantics { paneTitle = paneTitleText },
         topBar = {
             ChatTheme.componentFactory.ChannelMediaAttachmentsTopBar(
                 params = ChannelMediaAttachmentsTopBarParams(
@@ -144,9 +150,24 @@ internal fun ChannelMediaAttachmentsItem(
 ) {
     val data = item.attachment.upload
         ?: if (item.attachment.isImage()) item.attachment.imageUrl else item.attachment.thumbUrl
+    val isVideo = item.attachment.isVideo()
+    val senderName = item.message.user.name
+    val tileDescription = when {
+        isVideo && senderName.isNotBlank() ->
+            stringResource(UiCommonR.string.stream_ui_channel_attachments_media_item_video_from_user, senderName)
+        isVideo ->
+            stringResource(UiCommonR.string.stream_ui_channel_attachments_media_item_video)
+        senderName.isNotBlank() ->
+            stringResource(UiCommonR.string.stream_ui_channel_attachments_media_item_photo_from_user, senderName)
+        else ->
+            stringResource(UiCommonR.string.stream_ui_channel_attachments_media_item_photo)
+    }
     Box(
-        modifier = Modifier
-            .clickable(onClick = onClick),
+        modifier = modifier
+            .clickable(onClick = onClick)
+            .semantics(mergeDescendants = true) {
+                contentDescription = tileDescription
+            },
     ) {
         StreamAsyncImage(
             modifier = Modifier
