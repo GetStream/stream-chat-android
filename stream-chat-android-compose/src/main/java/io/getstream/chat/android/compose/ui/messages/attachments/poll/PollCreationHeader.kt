@@ -135,7 +135,7 @@ private fun DefaultPollOptionsHeaderTrailingContent(
     ) {
         Icon(
             painter = painterResource(R.drawable.stream_design_ic_checkmark),
-            contentDescription = stringResource(R.string.stream_compose_poll_title),
+            contentDescription = onClickLabel,
         )
     }
 }
