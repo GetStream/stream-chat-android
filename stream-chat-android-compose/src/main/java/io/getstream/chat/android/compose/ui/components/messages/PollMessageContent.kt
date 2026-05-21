@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
@@ -50,6 +51,10 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.hideFromAccessibility
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -69,6 +74,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageFailedIconParams
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.MessageStyling.PollStyle
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.ui.util.passiveRipple
 import io.getstream.chat.android.compose.util.extensions.toSet
@@ -427,23 +433,35 @@ private fun PollOptionItem(
     onRemoveVote: () -> Unit,
 ) {
     val typography = ChatTheme.typography
+    val toggleRole = if (poll.maxVotesAllowed == 1) Role.RadioButton else Role.Checkbox
+    val onToggle: (Boolean) -> Unit = { enabled ->
+        val canVote = poll.maxVotesAllowed?.let { checkedCount < it } ?: true
+        if (enabled && canVote && !checked) {
+            onCastVote.invoke()
+        } else if (!enabled) {
+            onRemoveVote.invoke()
+        }
+    }
 
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .applyIf(!poll.closed) {
+                toggleable(
+                    value = checked,
+                    role = toggleRole,
+                    onValueChange = onToggle,
+                )
+            }
+            .semantics(mergeDescendants = true) {},
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (!poll.closed) {
             RadioCheck(
+                modifier = Modifier.semantics { hideFromAccessibility() },
                 checked = checked,
-                onCheckedChange = { enabled: Boolean ->
-                    val canVote = poll.maxVotesAllowed?.let { checkedCount < it } ?: true
-                    if (enabled && canVote && !checked) {
-                        onCastVote.invoke()
-                    } else if (!enabled) {
-                        onRemoveVote.invoke()
-                    }
-                },
+                onCheckedChange = onToggle,
                 borderColor = style.outlineColor,
             )
         }
@@ -488,7 +506,8 @@ private fun PollOptionItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp)
-                    .clip(RoundedCornerShape(4.dp)),
+                    .clip(RoundedCornerShape(4.dp))
+                    .clearAndSetSemantics {},
                 progress = { progress },
                 color = style.progressColor,
                 trackColor = style.trackColor,
