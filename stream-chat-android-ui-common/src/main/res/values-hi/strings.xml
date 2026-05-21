@@ -25,6 +25,10 @@
   <string name="stream_ui_channel_attachments_media_empty_title">"कोई फ़ोटो या वीडियो नहीं"</string>
   <string name="stream_ui_channel_attachments_media_load_error">"मीडिया अटैचमेंट लोड करने में विफल!"</string>
   <string name="stream_ui_channel_attachments_media_title">"फ़ोटो &amp; वीडियो"</string>
+  <string name="stream_ui_channel_attachments_media_item_photo">"फ़ोटो"</string>
+  <string name="stream_ui_channel_attachments_media_item_video">"वीडियो"</string>
+  <string name="stream_ui_channel_attachments_media_item_photo_from_user">"%1$s की फ़ोटो"</string>
+  <string name="stream_ui_channel_attachments_media_item_video_from_user">"%1$s का वीडियो"</string>
   <string name="stream_ui_channel_info_add_members_error">"सदस्य जोड़ने में विफल"</string>
   <string name="stream_ui_channel_info_ban_member_error">"सदस्य को प्रतिबंधित करने में विफल"</string>
   <string name="stream_ui_channel_info_ban_member_modal_no_timeout">"स्थायी रूप से"</string>

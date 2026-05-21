@@ -199,6 +199,10 @@
     <string name="stream_ui_channel_attachments_media_empty_title">No photos or videos</string>
     <string name="stream_ui_channel_attachments_media_empty_text">Share a photo or video to see it here</string>
     <string name="stream_ui_channel_attachments_media_load_error">Failed to load media attachments!</string>
+    <string name="stream_ui_channel_attachments_media_item_photo">Photo</string>
+    <string name="stream_ui_channel_attachments_media_item_video">Video</string>
+    <string name="stream_ui_channel_attachments_media_item_photo_from_user">Photo from %1$s</string>
+    <string name="stream_ui_channel_attachments_media_item_video_from_user">Video from %1$s</string>
 
     <string name="stream_ui_channel_attachments_files_title">Files</string>
     <string name="stream_ui_channel_attachments_files_empty_title">No files</string>
