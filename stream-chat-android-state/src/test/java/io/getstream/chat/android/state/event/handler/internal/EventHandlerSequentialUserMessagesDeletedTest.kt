@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.state.plugin.config.MessageBufferConfig
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
@@ -345,6 +346,7 @@ internal class EventHandlerSequentialUserMessagesDeletedTest {
             repos = repos,
             sideEffect = sideEffect,
             syncedEvents = syncedEvents,
+            bufferConfig = MessageBufferConfig(),
             scope = scope,
         )
     }

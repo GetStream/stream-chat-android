@@ -25,6 +25,7 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.event.handler.internal.EventHandler
 import io.getstream.chat.android.state.event.handler.internal.EventHandlerSequential
+import io.getstream.chat.android.state.plugin.config.MessageBufferConfig
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -146,6 +147,7 @@ internal class TotalUnreadCountTest {
             repos = repos,
             sideEffect = sideEffect,
             syncedEvents = syncedEvents,
+            bufferConfig = MessageBufferConfig(),
         )
 
         fun givenMockedRepositories(): Fixture {
