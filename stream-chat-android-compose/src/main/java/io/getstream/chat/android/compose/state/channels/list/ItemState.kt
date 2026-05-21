@@ -35,6 +35,7 @@ public sealed class ItemState {
      * @param typingUsers The list of users currently typing in the channel.
      * @param draftMessage The draft message for the current user in the channel.
      * @param isSelected Whether this channel is currently selected (e.g. via long-press context menu).
+     * @param isUserMuted If this is a 1:1 channel and the other member is muted by the current user.
      */
     public data class ChannelItemState(
         val channel: Channel,
@@ -42,6 +43,7 @@ public sealed class ItemState {
         val typingUsers: List<User> = emptyList(),
         val draftMessage: DraftMessage? = null,
         val isSelected: Boolean = false,
+        val isUserMuted: Boolean = false,
     ) : ItemState() {
         override val key: String = channel.cid
     }

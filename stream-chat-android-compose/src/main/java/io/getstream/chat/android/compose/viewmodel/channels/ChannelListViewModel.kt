@@ -822,7 +822,8 @@ public class ChannelListViewModel(
         return channels.map {
             ItemState.ChannelItemState(
                 channel = it,
-                isMuted = it.cid in mutedChannelIds || it.isOneToOneMutedByUser(currentUser, mutedUserIds),
+                isMuted = it.cid in mutedChannelIds,
+                isUserMuted = it.isOneToOneMutedByUser(currentUser, mutedUserIds),
                 typingUsers = typingEvents[it.cid]?.users ?: emptyList(),
                 draftMessage = draftMessages[it.cid],
             )

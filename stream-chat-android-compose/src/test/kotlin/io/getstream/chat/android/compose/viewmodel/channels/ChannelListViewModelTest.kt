@@ -194,7 +194,7 @@ internal class ChannelListViewModelTest {
         }
 
     @Test
-    fun `Given a DM with a muted user Should mark the channel as muted`() = runTest {
+    fun `Given a DM with a muted user Should mark the channel item as user-muted`() = runTest {
         val viewModel = Fixture()
             .givenCurrentUser(currentUser)
             .givenChannelsQuery()
@@ -208,11 +208,12 @@ internal class ChannelListViewModelTest {
             .get(this)
 
         val channelItem = viewModel.channelsState.channelItems.first() as ItemState.ChannelItemState
-        assertTrue(channelItem.isMuted)
+        assertFalse(channelItem.isMuted)
+        assertTrue(channelItem.isUserMuted)
     }
 
     @Test
-    fun `Given a DM without a muted user Should not mark the channel as muted`() = runTest {
+    fun `Given a DM without a muted user Should not mark the channel item as muted`() = runTest {
         val viewModel = Fixture()
             .givenCurrentUser(currentUser)
             .givenChannelsQuery()
@@ -226,10 +227,11 @@ internal class ChannelListViewModelTest {
 
         val channelItem = viewModel.channelsState.channelItems.first() as ItemState.ChannelItemState
         assertFalse(channelItem.isMuted)
+        assertFalse(channelItem.isUserMuted)
     }
 
     @Test
-    fun `Given a DM whose other member is not muted Should not mark the channel as muted`() = runTest {
+    fun `Given a DM whose other member is not muted Should not mark the channel item as muted`() = runTest {
         val unrelatedUserMute = Mute(
             user = currentUser,
             target = User(id = "unrelatedUser"),
@@ -251,10 +253,11 @@ internal class ChannelListViewModelTest {
 
         val channelItem = viewModel.channelsState.channelItems.first() as ItemState.ChannelItemState
         assertFalse(channelItem.isMuted)
+        assertFalse(channelItem.isUserMuted)
     }
 
     @Test
-    fun `Given a group channel with a muted user Should not mark the channel as muted`() = runTest {
+    fun `Given a group channel with a muted user Should not mark the channel item as muted`() = runTest {
         val groupChannel = Channel(
             type = "messaging",
             id = "groupChannel",
@@ -278,6 +281,7 @@ internal class ChannelListViewModelTest {
 
         val channelItem = viewModel.channelsState.channelItems.first() as ItemState.ChannelItemState
         assertFalse(channelItem.isMuted)
+        assertFalse(channelItem.isUserMuted)
     }
 
     @Test
