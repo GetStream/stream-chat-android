@@ -85,8 +85,9 @@
   <string name="stream_compose_attachment_added_file">"फ़ाइल संलग्न की गई"</string>
   <string name="stream_compose_attachment_added_photo">"फ़ोटो संलग्न की गई"</string>
   <string name="stream_compose_attachment_added_video">"वीडियो संलग्न किया गया"</string>
-  <string name="stream_compose_attachment_camera_picker">"कैमरा खोलें"</string>
+  <string name="stream_compose_attachment_camera_picker">"कैमरा"</string>
   <string name="stream_compose_attachment_camera_picker_content">"फ़ोटो लें और साझा करें"</string>
+  <string name="stream_compose_attachment_camera_picker_cta">"कैमरा खोलें"</string>
   <string name="stream_compose_attachment_commands_picker">"कमांड्स"</string>
   <string name="stream_compose_attachment_file_picker">"फ़ाइलें"</string>
   <string name="stream_compose_attachment_media_picker">"मीडिया"</string>

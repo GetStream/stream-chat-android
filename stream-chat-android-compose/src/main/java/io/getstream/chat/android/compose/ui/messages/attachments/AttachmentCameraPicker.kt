@@ -132,7 +132,7 @@ private fun AttachmentCameraPickerContent(
         Spacer(modifier = Modifier.height(StreamTokens.spacingMd))
         StreamTextButton(
             style = StreamButtonStyleDefaults.secondaryOutline,
-            text = stringResource(id = R.string.stream_compose_attachment_camera_picker),
+            text = stringResource(id = R.string.stream_compose_attachment_camera_picker_cta),
             onClick = onCaptureClick,
         )
     }
