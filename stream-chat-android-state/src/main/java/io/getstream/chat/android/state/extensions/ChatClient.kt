@@ -170,7 +170,7 @@ public fun ChatClient.queryChannelsAsState(
 public fun ChatClient.initGroupedQueryChannelsAsState(
     identifier: QueryChannelsIdentifier.Grouped,
     chatEventHandlerFactory: ChatEventHandlerFactory =
-        groupAwareChatEventHandlerFactory(groupKey = identifier.group, clientState = clientState),
+        groupAwareChatEventHandlerFactory(groupKey = identifier.groupKey, clientState = clientState),
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): StateFlow<QueryChannelsState?> {
     StreamLog.d(TAG) { "[initGroupedQueryChannelsAsState] identifier: $identifier" }

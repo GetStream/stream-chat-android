@@ -444,6 +444,9 @@ internal class SyncManager(
      * logic needs recovery, calls [ChatClient.queryGroupedChannelsInternal] once. The
      * [io.getstream.chat.android.state.plugin.listener.internal.QueryGroupedChannelsListenerState]
      * routes the response into the corresponding per-group state and persists it.
+     *
+     * Assumes all active grouped queries share the same request-level `limit`, `watch`, and
+     * `presence` flags — the first captured config wins.
      */
     @OptIn(InternalStreamChatApi::class)
     private suspend fun updateGroupedQueryChannels(recoverAll: Boolean) {

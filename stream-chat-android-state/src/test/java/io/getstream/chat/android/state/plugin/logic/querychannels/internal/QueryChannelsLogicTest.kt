@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
-import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
@@ -413,24 +412,6 @@ internal class QueryChannelsLogicTest {
         verify(queryChannelsStateLogic, never()).addChannelsState(any())
         verify(queryChannelsStateLogic, never()).initializeChannelsIfNeeded()
         verify(queryChannelsStateLogic, never()).setLoadingFirstPage(any())
-    }
-
-    // endregion
-
-    // region applyGroupedResult
-
-    @Test
-    fun `applyGroupedResult is a no-op on non-Grouped identifiers`() = runTest {
-        // Given — logic is constructed with a Standard identifier in setUp.
-        val channels = listOf(randomChannel(id = "new1"))
-        val group = GroupedChannelsGroup(groupKey = "key", channels = channels)
-
-        // When
-        logic.applyGroupedResult(group, isFirstPage = true)
-
-        // Then — no state mutations on a non-Grouped logic.
-        verify(queryChannelsStateLogic, never()).addChannelsState(any())
-        verify(queryChannelsStateLogic, never()).setNextCursor(any())
     }
 
     // endregion

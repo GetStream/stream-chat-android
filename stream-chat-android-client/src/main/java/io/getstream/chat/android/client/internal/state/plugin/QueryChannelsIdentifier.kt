@@ -40,10 +40,10 @@ public sealed interface QueryChannelsIdentifier {
     ) : QueryChannelsIdentifier
 
     /**
-     * Grouped queryChannels. Identity is the stable [group] key returned by the server.
+     * Grouped queryChannels. Identity is the stable [groupKey] returned by the server.
      */
     public data class Grouped(
-        public val group: String,
+        public val groupKey: String,
     ) : QueryChannelsIdentifier
 }
 

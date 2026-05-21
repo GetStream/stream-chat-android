@@ -18,6 +18,7 @@ package io.getstream.chat.android.state.plugin.logic.internal
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.FilterObject
@@ -25,8 +26,11 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.state.event.handler.grouped.internal.GroupAwareChatEventHandlerFactory
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.state.plugin.state.querythreads.internal.QueryThreadsMutableState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.test.TestScope
@@ -36,7 +40,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.concurrent.ConcurrentHashMap
 
@@ -59,6 +66,9 @@ internal class LogicRegistryTest {
     private val threadsStateCache:
         ConcurrentHashMap<Pair<FilterObject?, QuerySorter<Thread>>, QueryThreadsMutableState> = ConcurrentHashMap()
 
+    /** One mutable state mock per identifier; used by the grouped-channels tests below. */
+    private val channelsStateByIdentifier = mutableMapOf<QueryChannelsIdentifier, QueryChannelsMutableState>()
+
     @BeforeEach
     fun setUp() {
         stateRegistry = mock()
@@ -74,6 +84,11 @@ internal class LogicRegistryTest {
             threadsStateCache.getOrPut(filter to sort) {
                 QueryThreadsMutableState(filter, sort)
             }
+        }
+
+        whenever(stateRegistry.queryChannels(any<QueryChannelsIdentifier>())).thenAnswer {
+            val identifier = it.getArgument<QueryChannelsIdentifier>(0)
+            channelsStateByIdentifier.getOrPut(identifier) { mock() }
         }
 
         logicRegistry = LogicRegistry(
@@ -304,4 +319,40 @@ internal class LogicRegistryTest {
         Assertions.assertTrue(activeLogics.contains(queryThreadsLogic1))
         Assertions.assertTrue(activeLogics.contains(queryThreadsLogic2))
     }
+
+    // region queryChannels (grouped + identifier-keyed)
+
+    @Test
+    fun `queryChannels with Grouped identifier creates a logic instance`() {
+        val identifier = QueryChannelsIdentifier.Grouped("vip")
+
+        val logic = logicRegistry.queryChannels(identifier)
+
+        Assertions.assertNotNull(logic)
+    }
+
+    @Test
+    fun `queryChannels with Grouped identifier returns the same instance on repeat call`() {
+        val identifier = QueryChannelsIdentifier.Grouped("vip")
+
+        val first = logicRegistry.queryChannels(identifier)
+        val second = logicRegistry.queryChannels(identifier)
+
+        Assertions.assertSame(first, second)
+    }
+
+    @Test
+    fun `queryChannels with Grouped identifier auto-installs a GroupAwareChatEventHandlerFactory`() {
+        val identifier = QueryChannelsIdentifier.Grouped("vip")
+        val state = channelsStateByIdentifier.getOrPut(identifier) { mock() }
+        whenever(state.chatEventHandlerFactory) doReturn null
+
+        logicRegistry.queryChannels(identifier)
+
+        val captor = argumentCaptor<ChatEventHandlerFactory>()
+        verify(state).chatEventHandlerFactory = captor.capture()
+        Assertions.assertTrue(captor.firstValue is GroupAwareChatEventHandlerFactory)
+    }
+
+    // endregion
 }

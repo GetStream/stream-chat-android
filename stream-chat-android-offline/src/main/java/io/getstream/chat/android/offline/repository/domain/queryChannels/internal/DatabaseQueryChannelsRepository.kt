@@ -59,7 +59,7 @@ internal class DatabaseQueryChannelsRepository(
             is QueryChannelsIdentifier.Standard ->
                 "${identifier.filter.hashCode()}-${identifier.sort.toDto().hashCode()}"
             is QueryChannelsIdentifier.Grouped ->
-                "grp:${identifier.group}"
+                "grp:${identifier.groupKey}"
         }
 
         private fun toEntity(spec: QueryChannelsSpec): QueryChannelsEntity = QueryChannelsEntity(

@@ -139,7 +139,7 @@ internal class QueryChannelsLogic(
         is QueryChannelsIdentifier.Grouped -> queryChannelsStateLogic.getState().filter
     }
 
-    internal fun groupKey(): String? = (identifier as? QueryChannelsIdentifier.Grouped)?.group
+    internal fun groupKey(): String? = (identifier as? QueryChannelsIdentifier.Grouped)?.groupKey
 
     internal fun groupedQueryConfig(): GroupedQueryConfig? = queryChannelsStateLogic.getGroupedQueryConfig()
 
@@ -232,6 +232,9 @@ internal class QueryChannelsLogic(
                 queryChannelsStateLogic.removeChannels(existing.keys)
             }
             queryChannelsStateLogic.setCids(emptySet())
+            // Defensive: Grouped uses cursor pagination, not offset. Resetting guards against any
+            // future cross-path leakage from a Standard offset query mistakenly sharing this state.
+            queryChannelsStateLogic.setChannelsOffset(0)
         }
 
         queryChannelsStateLogic.addChannelsState(channels)

@@ -71,7 +71,7 @@ internal class QueryChannelsMutableState(
         filter = filter,
         querySort = sort,
         cids = emptySet(),
-        groupKey = (identifier as? QueryChannelsIdentifier.Grouped)?.group,
+        groupKey = (identifier as? QueryChannelsIdentifier.Grouped)?.groupKey,
     )
 
     /**

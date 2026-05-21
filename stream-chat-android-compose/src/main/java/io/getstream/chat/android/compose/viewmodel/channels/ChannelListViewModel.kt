@@ -568,7 +568,6 @@ public class ChannelListViewModel internal constructor(
     /**
      * Shared implementation for observing a [QueryChannelsState] from a [createState] producer.
      */
-    @Suppress("LongMethod")
     private fun observeQueryChannelsInternal(
         tag: String,
         createState: () -> StateFlow<QueryChannelsState?>?,

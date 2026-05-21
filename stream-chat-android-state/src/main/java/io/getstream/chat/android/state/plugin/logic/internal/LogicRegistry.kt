@@ -82,9 +82,13 @@ internal class LogicRegistry internal constructor(
     internal fun queryChannels(identifier: QueryChannelsIdentifier): QueryChannelsLogic {
         return queryChannels.getOrPut(identifier) {
             val mutableState = stateRegistry.queryChannels(identifier).toMutableState()
-            if (identifier is QueryChannelsIdentifier.Grouped) {
+            // Idempotent default install: if a caller (e.g. ChatClientStateCalls) has already set a
+            // custom factory on the state, do not clobber it here.
+            if (identifier is QueryChannelsIdentifier.Grouped &&
+                mutableState.chatEventHandlerFactory == null
+            ) {
                 mutableState.chatEventHandlerFactory = GroupAwareChatEventHandlerFactory(
-                    groupKey = identifier.group,
+                    groupKey = identifier.groupKey,
                     clientState = clientState,
                 )
             }
