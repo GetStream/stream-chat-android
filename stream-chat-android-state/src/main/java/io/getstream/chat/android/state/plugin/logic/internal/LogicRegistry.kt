@@ -30,7 +30,7 @@ import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.chat.android.state.event.handler.chat.factory.GroupAwareChatEventHandlerFactory
+import io.getstream.chat.android.state.event.handler.grouped.internal.GroupAwareChatEventHandlerFactory
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogicImpl
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic

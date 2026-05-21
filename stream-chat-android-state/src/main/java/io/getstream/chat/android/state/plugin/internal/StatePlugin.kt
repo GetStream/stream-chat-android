@@ -50,6 +50,7 @@ import io.getstream.chat.android.client.plugin.listeners.UnblockUserListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.event.handler.grouped.internal.GroupedUnreadChannelsUpdater
 import io.getstream.chat.android.state.event.handler.internal.EventHandler
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.listener.internal.BlockUserListenerState
@@ -111,12 +112,17 @@ public class StatePlugin internal constructor(
     private val syncManager: SyncManager,
     private val eventHandler: EventHandler,
     private val mutableGlobalState: MutableGlobalState,
+    private val groupedUnreadChannelsUpdater: GroupedUnreadChannelsUpdater,
     private val queryingChannelsFree: MutableStateFlow<Boolean>,
     private val statePluginConfig: StatePluginConfig,
 ) : Plugin,
     QueryMembersListener by QueryMembersListenerState(logic),
     QueryChannelsListener by QueryChannelsListenerState(logic, queryingChannelsFree),
-    QueryGroupedChannelsListener by QueryGroupedChannelsListenerState(logic, mutableGlobalState),
+    QueryGroupedChannelsListener by QueryGroupedChannelsListenerState(
+        logic = logic,
+        globalState = mutableGlobalState,
+        groupedUnreadChannelsUpdater = groupedUnreadChannelsUpdater,
+    ),
     QueryChannelListener by QueryChannelListenerState(logic),
     ThreadQueryListener by ThreadQueryListenerState(logic, repositoryFacade),
     ChannelMarkReadListener by ChannelMarkReadListenerState(stateRegistry),

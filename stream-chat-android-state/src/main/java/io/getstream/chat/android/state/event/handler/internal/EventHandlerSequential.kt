@@ -111,6 +111,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.mergeChannelFromEvent
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
+import io.getstream.chat.android.state.event.handler.grouped.internal.GroupedUnreadChannelsUpdater
 import io.getstream.chat.android.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.state.event.handler.internal.batch.SocketEventCollector
 import io.getstream.chat.android.state.event.handler.internal.utils.realType
@@ -159,6 +160,10 @@ internal class EventHandlerSequential(
     private val sideEffect: suspend () -> Unit,
     private val syncedEvents: Flow<List<ChatEvent>>,
     scope: CoroutineScope,
+    private val groupedUnreadChannelsUpdater: GroupedUnreadChannelsUpdater = GroupedUnreadChannelsUpdater(
+        stateRegistry = stateRegistry,
+        currentUserId = currentUserId,
+    ),
 ) : EventHandler {
 
     private val logger by taggedLogger(TAG)
@@ -380,8 +385,17 @@ internal class EventHandlerSequential(
                 (event as? DraftMessageUpdatedEvent)?.let { mutableGlobalState.updateDraftMessage(it.draftMessage) }
                 (event as? DraftMessageDeletedEvent)?.let { mutableGlobalState.removeDraftMessage(it.draftMessage) }
                 (event as? HasUnreadCounts)?.let { modifyValuesFromEvent(it) }
-                (event as? HasGroupedUnreadChannels)?.groupedUnreadChannels?.let {
-                    groupedUnreadChannels = it
+                (event as? HasGroupedUnreadChannels)?.let { e ->
+                    groupedUnreadChannels = groupedUnreadChannelsUpdater
+                        .calculateUpdatedCounts(groupedUnreadChannels, e)
+                }
+                (event as? ChannelUpdatedEvent)?.let { e ->
+                    groupedUnreadChannels = groupedUnreadChannelsUpdater
+                        .calculateUpdatedCounts(groupedUnreadChannels, e)
+                }
+                (event as? ChannelUpdatedByUserEvent)?.let { e ->
+                    groupedUnreadChannels = groupedUnreadChannelsUpdater
+                        .calculateUpdatedCounts(groupedUnreadChannels, e)
                 }
                 (event as? HasOwnUser)?.let { modifyValuesFromUser(it.me) }
                 (event as? HasUnreadThreadCounts)?.let { modifyUnreadThreadsCount(it) }

@@ -27,6 +27,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.errorhandler.StateErrorHandlerFactory
+import io.getstream.chat.android.state.event.handler.grouped.internal.GroupedUnreadChannelsUpdater
 import io.getstream.chat.android.state.event.handler.internal.EventHandler
 import io.getstream.chat.android.state.event.handler.internal.EventHandlerSequential
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
@@ -124,6 +125,11 @@ public class StreamStatePluginFactory(
 
         chatClient.logicRegistry = logic
 
+        val groupedUnreadChannelsUpdater = GroupedUnreadChannelsUpdater(
+            stateRegistry = stateRegistry,
+            currentUserId = user.id,
+        )
+
         val syncManager = SyncManager(
             currentUserId = user.id,
             scope = scope,
@@ -149,6 +155,7 @@ public class StreamStatePluginFactory(
             clientState = clientState,
             mutableGlobalState = mutableGlobalState,
             repos = repositoryFacade,
+            groupedUnreadChannelsUpdater = groupedUnreadChannelsUpdater,
             syncedEvents = syncManager.syncedEvents,
             sideEffect = syncManager::awaitSyncing,
         )
@@ -175,6 +182,7 @@ public class StreamStatePluginFactory(
             syncManager = syncManager,
             eventHandler = eventHandler,
             mutableGlobalState = mutableGlobalState,
+            groupedUnreadChannelsUpdater = groupedUnreadChannelsUpdater,
             queryingChannelsFree = isQueryingFree,
             statePluginConfig = config,
         )
@@ -190,6 +198,7 @@ public class StreamStatePluginFactory(
         clientState: ClientState,
         mutableGlobalState: MutableGlobalState,
         repos: RepositoryFacade,
+        groupedUnreadChannelsUpdater: GroupedUnreadChannelsUpdater,
         sideEffect: suspend () -> Unit,
         syncedEvents: Flow<List<ChatEvent>>,
     ): EventHandler {
@@ -202,6 +211,7 @@ public class StreamStatePluginFactory(
             clientState = clientState,
             mutableGlobalState = mutableGlobalState,
             repos = repos,
+            groupedUnreadChannelsUpdater = groupedUnreadChannelsUpdater,
             syncedEvents = syncedEvents,
             sideEffect = sideEffect,
         )

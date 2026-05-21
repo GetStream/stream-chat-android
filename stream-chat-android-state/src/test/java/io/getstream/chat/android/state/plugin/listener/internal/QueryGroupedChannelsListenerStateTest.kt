@@ -20,8 +20,10 @@ import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdent
 import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
+import io.getstream.chat.android.state.event.handler.grouped.internal.GroupedUnreadChannelsUpdater
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
+import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.result.Error
@@ -46,7 +48,12 @@ internal class QueryGroupedChannelsListenerStateTest {
         on(it.queryChannels(any<QueryChannelsIdentifier>())) doReturn queryChannelsLogic
     }
     private val globalState: MutableGlobalState = mock()
-    private val listener = QueryGroupedChannelsListenerState(logic, globalState)
+    private val stateRegistry: StateRegistry = mock()
+    private val groupedUnreadChannelsUpdater = GroupedUnreadChannelsUpdater(
+        stateRegistry = stateRegistry,
+        currentUserId = "test-user",
+    )
+    private val listener = QueryGroupedChannelsListenerState(logic, globalState, groupedUnreadChannelsUpdater)
 
     @Test
     fun `successful result merges returned unread counts into existing global state`() = runTest {

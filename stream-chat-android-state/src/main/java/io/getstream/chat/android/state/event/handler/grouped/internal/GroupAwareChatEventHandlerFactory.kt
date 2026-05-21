@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.state.event.handler.chat.factory
+package io.getstream.chat.android.state.event.handler.grouped.internal
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.state.event.handler.chat.ChannelGroupResolver
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
-import io.getstream.chat.android.state.event.handler.chat.DefaultChannelGroupResolver
-import io.getstream.chat.android.state.event.handler.chat.GroupAwareChatEventHandler
+import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import kotlinx.coroutines.flow.StateFlow
 
 /**

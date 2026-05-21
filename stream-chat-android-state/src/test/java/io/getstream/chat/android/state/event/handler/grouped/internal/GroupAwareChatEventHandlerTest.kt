@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.state.event.handler.chat
+package io.getstream.chat.android.state.event.handler.grouped.internal
 
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannelDeletedEvent
@@ -29,6 +29,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

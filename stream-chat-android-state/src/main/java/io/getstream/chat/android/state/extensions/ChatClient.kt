@@ -40,7 +40,7 @@ import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
-import io.getstream.chat.android.state.event.handler.chat.factory.groupAwareChatEventHandlerFactory
+import io.getstream.chat.android.state.event.handler.grouped.internal.groupAwareChatEventHandlerFactory
 import io.getstream.chat.android.state.extensions.internal.logic
 import io.getstream.chat.android.state.extensions.internal.parseAttachmentNameFromUrl
 import io.getstream.chat.android.state.extensions.internal.requestsAsState

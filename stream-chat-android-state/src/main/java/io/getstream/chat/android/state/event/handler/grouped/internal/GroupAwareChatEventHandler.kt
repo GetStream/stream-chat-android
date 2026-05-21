@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.state.event.handler.chat
+package io.getstream.chat.android.state.event.handler.grouped.internal
 
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
@@ -26,6 +26,8 @@ import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.state.event.handler.chat.DefaultChatEventHandler
+import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import kotlinx.coroutines.flow.StateFlow
 
 /**

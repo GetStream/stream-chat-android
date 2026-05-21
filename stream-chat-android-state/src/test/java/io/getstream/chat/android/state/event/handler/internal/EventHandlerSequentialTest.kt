@@ -172,6 +172,33 @@ internal class EventHandlerSequentialTest {
         mutableGlobalState.groupedUnreadChannels.value `should be equal to` expectedGroupedUnreadChannels
     }
 
+    @Test
+    fun `ChannelUpdatedEvent migrates grouped unread count when group field changes`() = runTest {
+        val cid = "messaging:channel-id"
+        val mutableGlobalState = MutableGlobalState(currentUser.id).apply {
+            setGroupedUnreadChannels(mapOf("a" to 1, "b" to 0))
+        }
+        val newChannel = randomChannel(
+            id = "channel-id",
+            type = "messaging",
+            extraData = mapOf("group" to "b"),
+        )
+        val handler = Fixture()
+            .withCurrentUser(currentUser)
+            .withMutableGlobalState(mutableGlobalState)
+            .withActiveChannel(
+                channelType = "messaging",
+                channelId = "channel-id",
+                extraData = mapOf("group" to "a"),
+                unreadMessages = 1,
+            )
+            .get(this)
+
+        handler.handleEvents(randomChannelUpdatedEvent(cid = cid, channel = newChannel))
+
+        mutableGlobalState.groupedUnreadChannels.value `should be equal to` mapOf("a" to 0, "b" to 1)
+    }
+
     @ParameterizedTest
     @MethodSource("sharedLocationArguments")
     fun `GlobalState should be updated with shared locations`(
@@ -224,6 +251,36 @@ internal class EventHandlerSequentialTest {
 
         fun withRepositoryFacade(repos: RepositoryFacade) = apply {
             this.repos = repos
+        }
+
+        /**
+         * Stubs [stateRegistry] so the channel identified by [channelType] / [channelId] is
+         * active and `mutableChannel(...).toChannel()` returns a channel with the given
+         * [extraData] and a single [ChannelUserRead] for [currentUser] carrying [unreadMessages].
+         */
+        fun withActiveChannel(
+            channelType: String,
+            channelId: String,
+            extraData: Map<String, Any>,
+            unreadMessages: Int,
+        ) = apply {
+            val cached = randomChannel(
+                id = channelId,
+                type = channelType,
+                extraData = extraData,
+                read = listOf(
+                    io.getstream.chat.android.randomChannelUserRead(
+                        user = currentUser,
+                        unreadMessages = unreadMessages,
+                    ),
+                ),
+            )
+            val channelMutableState: io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState =
+                mock {
+                    on { toChannel() } doReturn cached
+                }
+            whenever(stateRegistry.isActiveChannel(channelType, channelId)) doReturn true
+            whenever(stateRegistry.mutableChannel(channelType, channelId)) doReturn channelMutableState
         }
 
         fun get(scope: CoroutineScope) = EventHandlerSequential(

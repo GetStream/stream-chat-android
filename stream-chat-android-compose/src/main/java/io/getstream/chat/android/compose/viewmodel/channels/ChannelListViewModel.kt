@@ -47,7 +47,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
-import io.getstream.chat.android.state.event.handler.chat.factory.groupAwareChatEventHandlerFactory
+import io.getstream.chat.android.state.event.handler.grouped.internal.groupAwareChatEventHandlerFactory
 import io.getstream.chat.android.state.extensions.globalStateFlow
 import io.getstream.chat.android.state.extensions.initGroupedQueryChannelsAsState
 import io.getstream.chat.android.state.extensions.queryChannelsAsState

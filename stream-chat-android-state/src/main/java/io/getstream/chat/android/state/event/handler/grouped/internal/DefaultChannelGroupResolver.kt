@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.state.event.handler.chat
+package io.getstream.chat.android.state.event.handler.grouped.internal
 
 import io.getstream.chat.android.models.Channel
 
@@ -40,7 +40,6 @@ internal class DefaultChannelGroupResolver(
     }
 
     companion object {
-        const val DEFAULT_GROUP_FIELD_NAME: String = "group"
         const val DEFAULT_ALL_GROUP_KEY: String = "all"
     }
 }

@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdent
 import io.getstream.chat.android.client.plugin.listeners.QueryGroupedChannelsListener
 import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
+import io.getstream.chat.android.state.event.handler.grouped.internal.GroupedUnreadChannelsUpdater
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
@@ -28,6 +29,7 @@ import io.getstream.result.Result
 internal class QueryGroupedChannelsListenerState(
     private val logic: LogicRegistry,
     private val globalState: MutableGlobalState,
+    private val groupedUnreadChannelsUpdater: GroupedUnreadChannelsUpdater,
 ) : QueryGroupedChannelsListener {
 
     override suspend fun onQueryGroupedChannelsRequest(
@@ -63,12 +65,11 @@ internal class QueryGroupedChannelsListenerState(
     ) {
         if (result !is Result.Success) return
 
-        // The request may include any subset of groups (pagination, custom per-group limits,
-        // or the default set). Always merge the returned counts into the existing map so groups
-        // not present in this response retain their previous counts.
-        val returnedUnreadCounts = result.value.groups.mapValues { (_, group) -> group.unreadChannels }
-        val merged = globalState.groupedUnreadChannels.value + returnedUnreadCounts
-        globalState.setGroupedUnreadChannels(merged)
+        val next = groupedUnreadChannelsUpdater.calculateUpdatedCounts(
+            current = globalState.groupedUnreadChannels.value,
+            result = result.value,
+        )
+        globalState.setGroupedUnreadChannels(next)
 
         // Route each returned group's channels into the per-group state. The captured config lets
         // both ChannelListViewModel.loadMoreGroupedChannels and SyncManager.updateGroupedQueryChannels
