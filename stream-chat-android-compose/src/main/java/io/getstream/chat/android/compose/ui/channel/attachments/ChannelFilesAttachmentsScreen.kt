@@ -26,6 +26,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -44,6 +47,7 @@ import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewAction
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Displays the channel files attachments screen.
@@ -97,8 +101,9 @@ private fun ChannelFilesAttachmentsContent(
     onLoadMoreRequested: () -> Unit = {},
 ) {
     val listState = rememberLazyListState()
+    val paneTitleText = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_title)
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.semantics { paneTitle = paneTitleText },
         topBar = {
             ChatTheme.componentFactory.ChannelFilesAttachmentsTopBar(
                 params = ChannelFilesAttachmentsTopBarParams(
