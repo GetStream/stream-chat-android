@@ -16,6 +16,10 @@
 
 package io.getstream.chat.android.client.parser
 
+import io.getstream.chat.android.client.createAIIndicatorClearEventStringJson
+import io.getstream.chat.android.client.createAIIndicatorStopEventStringJson
+import io.getstream.chat.android.client.createAIIndicatorUpdatedEventStringJson
+import io.getstream.chat.android.client.createAnswerCastedEventStringJson
 import io.getstream.chat.android.client.createChannelDeletedEventStringJson
 import io.getstream.chat.android.client.createChannelHiddenEventStringJson
 import io.getstream.chat.android.client.createChannelTruncatedEventStringJson
@@ -26,6 +30,9 @@ import io.getstream.chat.android.client.createChannelUserBannedEventStringJson
 import io.getstream.chat.android.client.createChannelUserUnbannedEventStringJson
 import io.getstream.chat.android.client.createChannelVisibleEventStringJson
 import io.getstream.chat.android.client.createConnectedEventStringJson
+import io.getstream.chat.android.client.createConnectionErrorEventStringJson
+import io.getstream.chat.android.client.createDraftMessageDeletedEventStringJson
+import io.getstream.chat.android.client.createDraftMessageUpdatedEventStringJson
 import io.getstream.chat.android.client.createGlobalUserBannedEventStringJson
 import io.getstream.chat.android.client.createGlobalUserUnbannedEventStringJson
 import io.getstream.chat.android.client.createHealthEventStringJson
@@ -35,6 +42,7 @@ import io.getstream.chat.android.client.createMemberRemovedEventStringJson
 import io.getstream.chat.android.client.createMemberUpdatedEventStringJson
 import io.getstream.chat.android.client.createMessageDeletedEventStringJson
 import io.getstream.chat.android.client.createMessageDeletedServerSideEventStringJson
+import io.getstream.chat.android.client.createMessageDeliveredEventStringJson
 import io.getstream.chat.android.client.createMessageReadEventStringJson
 import io.getstream.chat.android.client.createMessageUpdatedEventStringJson
 import io.getstream.chat.android.client.createNewMessageEventStringJson
@@ -50,18 +58,35 @@ import io.getstream.chat.android.client.createNotificationMarkReadEventStringJso
 import io.getstream.chat.android.client.createNotificationMarkUnreadEventStringJson
 import io.getstream.chat.android.client.createNotificationMessageNewEventStringJson
 import io.getstream.chat.android.client.createNotificationMutesUpdatedEventStringJson
+import io.getstream.chat.android.client.createNotificationReminderDueEventStringJson
 import io.getstream.chat.android.client.createNotificationRemovedFromChannelEventStringJson
+import io.getstream.chat.android.client.createNotificationThreadMessageNewEventStringJson
+import io.getstream.chat.android.client.createPollClosedEventStringJson
+import io.getstream.chat.android.client.createPollDeletedEventStringJson
+import io.getstream.chat.android.client.createPollUpdatedEventStringJson
 import io.getstream.chat.android.client.createReactionDeletedEventStringJson
 import io.getstream.chat.android.client.createReactionNewEventStringJson
 import io.getstream.chat.android.client.createReactionUpdateEventStringJson
+import io.getstream.chat.android.client.createReminderCreatedEventStringJson
+import io.getstream.chat.android.client.createReminderDeletedEventStringJson
+import io.getstream.chat.android.client.createReminderUpdatedEventStringJson
 import io.getstream.chat.android.client.createTypingStartEventStringJson
 import io.getstream.chat.android.client.createTypingStopEventStringJson
 import io.getstream.chat.android.client.createUnknownEventStringJson
 import io.getstream.chat.android.client.createUserDeletedEventStringJson
+import io.getstream.chat.android.client.createUserMessagesDeletedEventStringJson
 import io.getstream.chat.android.client.createUserPresenceChangedEventStringJson
 import io.getstream.chat.android.client.createUserStartWatchingEventStringJson
 import io.getstream.chat.android.client.createUserStopWatchingEventStringJson
 import io.getstream.chat.android.client.createUserUpdatedEventStringJson
+import io.getstream.chat.android.client.createVoteCastedEventStringJson
+import io.getstream.chat.android.client.createVoteChangedEventStringJson
+import io.getstream.chat.android.client.createVoteRemovedEventStringJson
+import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.events.AIIndicatorClearEvent
+import io.getstream.chat.android.client.events.AIIndicatorStopEvent
+import io.getstream.chat.android.client.events.AIIndicatorUpdatedEvent
+import io.getstream.chat.android.client.events.AnswerCastedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -72,6 +97,9 @@ import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.ConnectionErrorEvent
+import io.getstream.chat.android.client.events.DraftMessageDeletedEvent
+import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HealthEvent
@@ -80,6 +108,7 @@ import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
 import io.getstream.chat.android.client.events.MemberUpdatedEvent
 import io.getstream.chat.android.client.events.MessageDeletedEvent
+import io.getstream.chat.android.client.events.MessageDeliveredEvent
 import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
@@ -94,28 +123,48 @@ import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationReminderDueEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
+import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
+import io.getstream.chat.android.client.events.PollClosedEvent
+import io.getstream.chat.android.client.events.PollDeletedEvent
+import io.getstream.chat.android.client.events.PollUpdatedEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
+import io.getstream.chat.android.client.events.ReminderCreatedEvent
+import io.getstream.chat.android.client.events.ReminderDeletedEvent
+import io.getstream.chat.android.client.events.ReminderUpdatedEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.events.UserDeletedEvent
+import io.getstream.chat.android.client.events.UserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
+import io.getstream.chat.android.client.events.VoteCastedEvent
+import io.getstream.chat.android.client.events.VoteChangedEvent
+import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
+import io.getstream.chat.android.models.Answer
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageReminder
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.models.VotingVisibility
 import org.junit.jupiter.params.provider.Arguments
 import java.util.Date
 
@@ -209,6 +258,23 @@ internal object EventArguments {
         image = "https://domain.io/avatars/285/channel.png",
     )
 
+    private val messageAttachment = Attachment(
+        type = "image",
+        imageUrl = "https://example.com/image.png",
+        thumbUrl = "https://example.com/thumb.png",
+        fileSize = 1234,
+        mimeType = "image/png",
+    )
+
+    private val messageReaction = Reaction(
+        messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+        type = "like",
+        score = 1,
+        user = user,
+        userId = "bender",
+        createdAt = date,
+    )
+
     private val message = Message(
         id = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
         text = "Hello",
@@ -219,6 +285,14 @@ internal object EventArguments {
         cid = channel.cid,
         type = "regular",
         channelInfo = channelInfo,
+        attachments = listOf(messageAttachment),
+        latestReactions = listOf(messageReaction),
+        ownReactions = listOf(messageReaction),
+        reactionCounts = mapOf("like" to 1),
+        reactionScores = mapOf("like" to 1),
+        mentionedUsers = listOf(user),
+        replyCount = 1,
+        threadParticipants = listOf(user),
     )
 
     private val reaction = Reaction(
@@ -228,6 +302,70 @@ internal object EventArguments {
         user = user,
         userId = "bender",
         createdAt = date,
+    )
+
+    private val poll = Poll(
+        id = "poll-id",
+        name = "Test Poll",
+        description = "A test poll",
+        options = listOf(Option(id = "option-1", text = "Option 1")),
+        votingVisibility = VotingVisibility.PUBLIC,
+        enforceUniqueVote = true,
+        maxVotesAllowed = 1,
+        allowUserSuggestedOptions = false,
+        allowAnswers = true,
+        voteCount = 1,
+        voteCountsByOption = mapOf("option-1" to 1),
+        votes = emptyList(),
+        ownVotes = emptyList(),
+        createdAt = date,
+        updatedAt = date,
+        closed = false,
+        answersCount = 0,
+        answers = emptyList(),
+        createdBy = user,
+    )
+
+    private val vote = Vote(
+        id = "vote-id",
+        pollId = "poll-id",
+        optionId = "option-1",
+        createdAt = date,
+        updatedAt = date,
+        user = user,
+    )
+
+    private val answer = Answer(
+        id = "answer-id",
+        pollId = "poll-id",
+        text = "My answer",
+        createdAt = date,
+        updatedAt = date,
+        user = user,
+    )
+
+    private val draftMessage = DraftMessage(
+        id = "draft-message-id",
+        cid = cid,
+        text = "Draft text",
+    )
+
+    private val reminder = MessageReminder(
+        remindAt = date,
+        cid = cid,
+        channel = null,
+        messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+        message = null,
+        createdAt = date,
+        updatedAt = date,
+    )
+
+    private val chatError = ChatError(
+        code = 4,
+        message = "Token expired",
+        statusCode = 401,
+        duration = "0.5ms",
+        moreInfo = "https://getstream.io/chat/docs/",
     )
 
     private val channelDeletedEvent = ChannelDeletedEvent(
@@ -689,6 +827,205 @@ internal object EventArguments {
         rawCreatedAt = streamDateFormatter.format(date),
         user = user,
     )
+    private val connectionErrorEvent = ConnectionErrorEvent(
+        type = EventType.CONNECTION_ERROR,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        connectionId = connectionId,
+        error = chatError,
+    )
+    private val draftMessageUpdatedEvent = DraftMessageUpdatedEvent(
+        type = EventType.DRAFT_MESSAGE_UPDATED,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        draftMessage = draftMessage,
+    )
+    private val draftMessageDeletedEvent = DraftMessageDeletedEvent(
+        type = EventType.DRAFT_MESSAGE_DELETED,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        draftMessage = draftMessage,
+    )
+    private val messageDeliveredEvent = MessageDeliveredEvent(
+        type = EventType.MESSAGE_DELIVERED,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        lastDeliveredAt = date,
+        lastDeliveredMessageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+    )
+    private val notificationThreadMessageNewEvent = NotificationThreadMessageNewEvent(
+        type = EventType.NOTIFICATION_THREAD_MESSAGE_NEW,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        message = message,
+        channel = channel,
+        unreadThreads = 1,
+        unreadThreadMessages = 2,
+    )
+    private val pollUpdatedEvent = PollUpdatedEvent(
+        type = EventType.POLL_UPDATED,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+        poll = poll,
+    )
+    private val pollDeletedEvent = PollDeletedEvent(
+        type = EventType.POLL_DELETED,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+        poll = poll,
+    )
+    private val pollClosedEvent = PollClosedEvent(
+        type = EventType.POLL_CLOSED,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+        poll = poll,
+    )
+    private val voteCastedEvent = VoteCastedEvent(
+        type = EventType.POLL_VOTE_CASTED,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+        poll = poll,
+        newVote = vote,
+    )
+    private val answerCastedEvent = AnswerCastedEvent(
+        type = EventType.POLL_VOTE_CASTED,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+        poll = poll,
+        newAnswer = answer,
+    )
+    private val voteChangedEvent = VoteChangedEvent(
+        type = EventType.POLL_VOTE_CHANGED,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+        poll = poll,
+        newVote = vote,
+    )
+    private val voteRemovedEvent = VoteRemovedEvent(
+        type = EventType.POLL_VOTE_REMOVED,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+        poll = poll,
+        removedVote = vote,
+    )
+    private val reminderCreatedEvent = ReminderCreatedEvent(
+        type = EventType.REMINDER_CREATED,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+        userId = "bender",
+        reminder = reminder,
+    )
+    private val reminderUpdatedEvent = ReminderUpdatedEvent(
+        type = EventType.REMINDER_UPDATED,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+        userId = "bender",
+        reminder = reminder,
+    )
+    private val reminderDeletedEvent = ReminderDeletedEvent(
+        type = EventType.REMINDER_DELETED,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+        userId = "bender",
+        reminder = reminder,
+    )
+    private val notificationReminderDueEvent = NotificationReminderDueEvent(
+        type = EventType.NOTIFICATION_REMINDER_DUE,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+        userId = "bender",
+        reminder = reminder,
+    )
+    private val aiIndicatorUpdatedEvent = AIIndicatorUpdatedEvent(
+        type = EventType.AI_TYPING_INDICATOR_UPDATED,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        aiState = "AI_STATE_THINKING",
+        messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+    )
+    private val aiIndicatorClearEvent = AIIndicatorClearEvent(
+        type = EventType.AI_TYPING_INDICATOR_CLEAR,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+    )
+    private val aiIndicatorStopEvent = AIIndicatorStopEvent(
+        type = EventType.AI_TYPING_INDICATOR_STOP,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+    )
+    private val userMessagesDeletedEvent = UserMessagesDeletedEvent(
+        type = EventType.USER_MESSAGES_DELETED,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        hardDelete = false,
+    )
 
     private val events: List<ChatEvent> = listOf(
         channelTruncatedEvent,
@@ -734,8 +1071,29 @@ internal object EventArguments {
         newMessageEvent,
         newMessageWithoutUnreadCountsEvent,
         markAllReadEvent,
+        connectionErrorEvent,
+        draftMessageUpdatedEvent,
+        draftMessageDeletedEvent,
+        messageDeliveredEvent,
+        notificationThreadMessageNewEvent,
+        pollUpdatedEvent,
+        pollDeletedEvent,
+        pollClosedEvent,
+        voteCastedEvent,
+        answerCastedEvent,
+        voteChangedEvent,
+        voteRemovedEvent,
+        reminderCreatedEvent,
+        reminderUpdatedEvent,
+        reminderDeletedEvent,
+        notificationReminderDueEvent,
+        aiIndicatorUpdatedEvent,
+        aiIndicatorClearEvent,
+        aiIndicatorStopEvent,
+        userMessagesDeletedEvent,
     )
 
+    @Suppress("LongMethod")
     private fun eventArgumentsList() = listOf(
         Arguments.of(createChannelTruncatedEventStringJson(), channelTruncatedEvent),
         Arguments.of(createChannelTruncatedServerSideEventStringJson(), channelTruncatedServerSideEvent),
@@ -785,6 +1143,26 @@ internal object EventArguments {
         Arguments.of(createUnknownEventStringJson(), unknownEvent),
         Arguments.of(createUnknownEventStringJson("some.unknown.type"), otherUnknownEvent),
         Arguments.of(createMarkAllReadEventStringJson(), markAllReadEvent),
+        Arguments.of(createConnectionErrorEventStringJson(), connectionErrorEvent),
+        Arguments.of(createDraftMessageUpdatedEventStringJson(), draftMessageUpdatedEvent),
+        Arguments.of(createDraftMessageDeletedEventStringJson(), draftMessageDeletedEvent),
+        Arguments.of(createMessageDeliveredEventStringJson(), messageDeliveredEvent),
+        Arguments.of(createNotificationThreadMessageNewEventStringJson(), notificationThreadMessageNewEvent),
+        Arguments.of(createPollUpdatedEventStringJson(), pollUpdatedEvent),
+        Arguments.of(createPollDeletedEventStringJson(), pollDeletedEvent),
+        Arguments.of(createPollClosedEventStringJson(), pollClosedEvent),
+        Arguments.of(createVoteCastedEventStringJson(), voteCastedEvent),
+        Arguments.of(createAnswerCastedEventStringJson(), answerCastedEvent),
+        Arguments.of(createVoteChangedEventStringJson(), voteChangedEvent),
+        Arguments.of(createVoteRemovedEventStringJson(), voteRemovedEvent),
+        Arguments.of(createReminderCreatedEventStringJson(), reminderCreatedEvent),
+        Arguments.of(createReminderUpdatedEventStringJson(), reminderUpdatedEvent),
+        Arguments.of(createReminderDeletedEventStringJson(), reminderDeletedEvent),
+        Arguments.of(createNotificationReminderDueEventStringJson(), notificationReminderDueEvent),
+        Arguments.of(createAIIndicatorUpdatedEventStringJson(), aiIndicatorUpdatedEvent),
+        Arguments.of(createAIIndicatorClearEventStringJson(), aiIndicatorClearEvent),
+        Arguments.of(createAIIndicatorStopEventStringJson(), aiIndicatorStopEvent),
+        Arguments.of(createUserMessagesDeletedEventStringJson(), userMessagesDeletedEvent),
     )
 
     fun randomEvent(): ChatEvent = events.random()

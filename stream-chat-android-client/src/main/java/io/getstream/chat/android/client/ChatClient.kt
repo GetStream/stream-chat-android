@@ -4731,6 +4731,7 @@ internal constructor(
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
         private var distinctApiCalls: Boolean = true
         private var debugRequests: Boolean = false
+        private var fastEventParsing: Boolean = false
         private var repositoryFactoryProvider: RepositoryFactory.Provider? = null
         private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.CONNECTED
         private var fileTransformer: FileTransformer = NoOpFileTransformer
@@ -4998,6 +4999,22 @@ internal constructor(
         }
 
         /**
+         * Enables the fast event-parsing path for incoming WebSocket events.
+         *
+         * When enabled, supported event types are parsed directly into domain models, bypassing
+         * the DTO intermediate layer. Unsupported event types fall back to the default DTO-based
+         * parser, so behavior is preserved for events the fast path does not yet handle.
+         *
+         * Currently supported event types:
+         * - `message.new`
+         *
+         * Disabled by default. The set of supported event types may grow over time.
+         */
+        public fun fastEventParsing(enabled: Boolean): Builder = apply {
+            this.fastEventParsing = enabled
+        }
+
+        /**
          * Sets a custom [RetryPolicy] used to determine whether a particular call should be retried.
          * By default, no calls are retried.
          * @see [NoRetryPolicy]
@@ -5070,8 +5087,9 @@ internal constructor(
                 warmUp = warmUp,
                 loggerConfig = ChatLoggerConfigImpl(logLevel, loggerHandler),
                 distinctApiCalls = distinctApiCalls,
-                debugRequests,
-                notificationConfig,
+                debugRequests = debugRequests,
+                notificationConfig = notificationConfig,
+                fastEventParsing = fastEventParsing,
             )
             setupStreamLog()
 

@@ -1,0 +1,108 @@
+/*
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.getstream.chat.android.client.parser2
+
+import com.squareup.moshi.JsonDataException
+import com.squareup.moshi.Moshi
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
+import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
+import io.getstream.chat.android.client.parser2.adapters.DateAdapter
+import io.getstream.chat.android.client.parser2.direct.MessageReminderInfoAdapter
+import io.getstream.chat.android.client.parser2.testdata.MessageReminderInfoTestData
+import io.getstream.chat.android.models.NoOpChannelTransformer
+import io.getstream.chat.android.models.NoOpMessageTransformer
+import io.getstream.chat.android.models.NoOpUserTransformer
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import java.util.Date
+
+internal class MessageReminderInfoParsingTest {
+
+    private val parser = ParserFactory.createMoshiChatParser()
+
+    private val domainMapping = DomainMapping(
+        currentUserIdProvider = { "" },
+        channelTransformer = NoOpChannelTransformer,
+        messageTransformer = NoOpMessageTransformer,
+        userTransformer = NoOpUserTransformer,
+    )
+
+    private val moshi = Moshi.Builder().add(DateAdapter()).build()
+    private val dateAdapter = moshi.adapter(Date::class.java)
+    private val adapter = MessageReminderInfoAdapter(dateAdapter)
+
+    // region DTO path (JSON → DownstreamReminderInfoDto → MessageReminderInfo)
+
+    @Test
+    fun `DTO path - deserializes all fields`() {
+        val dto = parser.fromJson(MessageReminderInfoTestData.jsonAllFields, DownstreamReminderInfoDto::class.java)
+        val domain = with(domainMapping) { dto.toDomain() }
+        assertEquals(MessageReminderInfoTestData.expectedAllFields, domain)
+    }
+
+    @Test
+    fun `DTO path - deserializes with optional fields missing`() {
+        val dto = parser.fromJson(MessageReminderInfoTestData.jsonOptionalFieldsMissing, DownstreamReminderInfoDto::class.java)
+        val domain = with(domainMapping) { dto.toDomain() }
+        assertEquals(MessageReminderInfoTestData.expectedOptionalFieldsMissing, domain)
+    }
+
+    // endregion
+
+    // region Direct path (JSON → MessageReminderInfo via MessageReminderInfoAdapter)
+
+    @Test
+    fun `Direct path - deserializes all fields`() {
+        val domain = adapter.fromJson(MessageReminderInfoTestData.jsonAllFields)
+        assertEquals(MessageReminderInfoTestData.expectedAllFields, domain)
+    }
+
+    @Test
+    fun `Direct path - deserializes with optional fields missing`() {
+        val domain = adapter.fromJson(MessageReminderInfoTestData.jsonOptionalFieldsMissing)
+        assertEquals(MessageReminderInfoTestData.expectedOptionalFieldsMissing, domain)
+    }
+
+    // endregion
+
+    // region Error message parity
+
+    @Test
+    fun `Both paths - same error on missing created_at`() {
+        val dtoException = assertThrows<JsonDataException> {
+            parser.fromJson(MessageReminderInfoTestData.jsonMissingCreatedAt, DownstreamReminderInfoDto::class.java)
+        }
+        val directException = assertThrows<JsonDataException> {
+            adapter.fromJson(MessageReminderInfoTestData.jsonMissingCreatedAt)
+        }
+        assertEquals(dtoException.message, directException.message)
+    }
+
+    @Test
+    fun `Both paths - same error on missing updated_at`() {
+        val dtoException = assertThrows<JsonDataException> {
+            parser.fromJson(MessageReminderInfoTestData.jsonMissingUpdatedAt, DownstreamReminderInfoDto::class.java)
+        }
+        val directException = assertThrows<JsonDataException> {
+            adapter.fromJson(MessageReminderInfoTestData.jsonMissingUpdatedAt)
+        }
+        assertEquals(dtoException.message, directException.message)
+    }
+
+    // endregion
+}

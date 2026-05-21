@@ -71,6 +71,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.parser2.DirectEventParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
 import io.getstream.chat.android.client.scope.ClientScope
@@ -164,10 +165,23 @@ constructor(
     }
     private val eventMapping by lazy { EventMapping(domainMapping) }
 
+    private val directEventParser: DirectEventParser? by lazy {
+        if (config.fastEventParsing) {
+            DirectEventParser(
+                currentUserIdProvider = currentUserIdProvider,
+                messageTransformer = apiModelTransformers.incomingMessageTransformer,
+                userTransformer = apiModelTransformers.incomingUserTransformer,
+            )
+        } else {
+            null
+        }
+    }
+
     private val moshiParser: ChatParser by lazy {
         MoshiChatParser(
             eventMapping = eventMapping,
             dtoMapping = dtoMapping,
+            directEventParser = directEventParser,
         )
     }
     private val socketFactory: SocketFactory by lazy { SocketFactory(moshiParser, tokenManager, headersUtil) }
