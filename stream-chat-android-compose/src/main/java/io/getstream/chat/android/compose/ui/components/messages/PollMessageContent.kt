@@ -53,6 +53,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
@@ -486,8 +487,15 @@ private fun PollOptionItem(
                     )
                 }
 
+                val voteCountDescription = pluralStringResource(
+                    R.plurals.stream_compose_poll_vote_counts,
+                    voteCount,
+                    voteCount,
+                )
                 Text(
-                    modifier = Modifier.align(Alignment.CenterVertically),
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .semantics { contentDescription = voteCountDescription },
                     text = voteCount.toString(),
                     style = typography.metadataDefault,
                     color = style.textColor,
