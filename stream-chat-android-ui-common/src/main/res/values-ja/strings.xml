@@ -25,6 +25,10 @@
   <string name="stream_ui_channel_attachments_media_empty_title">"写真・動画はありません"</string>
   <string name="stream_ui_channel_attachments_media_load_error">"メディア添付の読み込みに失敗しました！"</string>
   <string name="stream_ui_channel_attachments_media_title">"写真 &amp; 動画"</string>
+  <string name="stream_ui_channel_attachments_media_item_photo">"写真"</string>
+  <string name="stream_ui_channel_attachments_media_item_video">"動画"</string>
+  <string name="stream_ui_channel_attachments_media_item_photo_from_user">"%1$sからの写真"</string>
+  <string name="stream_ui_channel_attachments_media_item_video_from_user">"%1$sからの動画"</string>
   <string name="stream_ui_channel_info_add_members_error">"メンバーの追加に失敗しました"</string>
   <string name="stream_ui_channel_info_ban_member_error">"メンバーのBANに失敗しました"</string>
   <string name="stream_ui_channel_info_ban_member_modal_no_timeout">"永久"</string>
