@@ -163,7 +163,7 @@ internal fun ChannelMediaAttachmentsItem(
             stringResource(UiCommonR.string.stream_ui_channel_attachments_media_item_photo)
     }
     Box(
-        modifier = Modifier
+        modifier = modifier
             .clickable(onClick = onClick)
             .semantics(mergeDescendants = true) {
                 contentDescription = tileDescription
