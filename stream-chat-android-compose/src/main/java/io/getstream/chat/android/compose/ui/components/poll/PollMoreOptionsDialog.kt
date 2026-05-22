@@ -36,6 +36,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.LinearProgressIndicator
@@ -48,7 +49,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.hideFromAccessibility
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,6 +68,7 @@ import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
 import io.getstream.chat.android.compose.ui.components.common.RadioCheck
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -190,7 +199,9 @@ private fun Content(
 @Composable
 internal fun PollMoreOptionsTitle(title: String) {
     PollSection(
-        modifier = Modifier.padding(vertical = StreamTokens.spacing2xl),
+        modifier = Modifier
+            .padding(vertical = StreamTokens.spacing2xl)
+            .semantics(mergeDescendants = true) { heading() },
         verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
         contentPadding = PaddingValues(StreamTokens.spacingMd),
     ) {
@@ -259,25 +270,36 @@ private fun PollMoreOptionItem(
 ) {
     val colors = ChatTheme.colors
     val typography = ChatTheme.typography
+    val toggleRole = if (poll.maxVotesAllowed == 1) Role.RadioButton else Role.Checkbox
+    val onToggle: (Boolean) -> Unit = { enabled ->
+        val canVote = poll.maxVotesAllowed?.let { checkedCount < it } ?: true
+        if (enabled && canVote && !checked) {
+            onCastVote.invoke()
+        } else if (!enabled) {
+            onRemoveVote.invoke()
+        }
+    }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(StreamTokens.spacingXs),
+            .padding(StreamTokens.spacingXs)
+            .applyIf(!poll.closed) {
+                toggleable(
+                    value = checked,
+                    role = toggleRole,
+                    onValueChange = onToggle,
+                )
+            }
+            .semantics(mergeDescendants = true) {},
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (!poll.closed) {
             RadioCheck(
+                modifier = Modifier.semantics { hideFromAccessibility() },
                 checked = checked,
-                onCheckedChange = { enabled ->
-                    val canVote = poll.maxVotesAllowed?.let { checkedCount < it } ?: true
-                    if (enabled && canVote && !checked) {
-                        onCastVote.invoke()
-                    } else if (!enabled) {
-                        onRemoveVote.invoke()
-                    }
-                },
+                onCheckedChange = onToggle,
                 borderColor = colors.chatBorderOnChatIncoming,
             )
         }
@@ -302,8 +324,15 @@ private fun PollMoreOptionItem(
                     )
                 }
 
+                val voteCountDescription = pluralStringResource(
+                    R.plurals.stream_compose_poll_vote_counts,
+                    voteCount,
+                    voteCount,
+                )
                 Text(
-                    modifier = Modifier.align(Alignment.CenterVertically),
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .semantics { contentDescription = voteCountDescription },
                     text = voteCount.toString(),
                     style = typography.metadataDefault,
                     color = colors.chatTextIncoming,
@@ -322,7 +351,8 @@ private fun PollMoreOptionItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp)
-                    .clip(RoundedCornerShape(4.dp)),
+                    .clip(RoundedCornerShape(4.dp))
+                    .clearAndSetSemantics {},
                 progress = { progress },
                 color = colors.chatPollProgressFillIncoming,
                 trackColor = colors.chatPollProgressTrackIncoming,
