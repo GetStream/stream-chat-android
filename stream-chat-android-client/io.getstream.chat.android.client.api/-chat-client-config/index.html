@@ -1,85 +1,116 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>ChatClientConfig</title>
-<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
-    <script>document.documentElement.classList.replace("no-js","js");</script>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
-    if (storage == null) {
+      if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
         if (osDarkSchemePreferred === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    } else {
+      } else {
         const savedDarkMode = JSON.parse(storage)
-        if(savedDarkMode === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    }
+      }
     </script>
-<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
 <link href="../../../styles/style.css" rel="Stylesheet">
 <link href="../../../styles/main.css" rel="Stylesheet">
 <link href="../../../styles/prism.css" rel="Stylesheet">
 <link href="../../../styles/logo-styles.css" rel="Stylesheet">
-<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
-<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
 <script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
 <script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
 <script type="text/javascript" src="../../../scripts/main.js" defer></script>
 <script type="text/javascript" src="../../../scripts/prism.js" async></script>
-<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script></head>
 <body>
-    <div class="root">
-<nav class="navigation" id="navigation-wrapper">
-    <div class="navigation--inner">
-        <div class="navigation-title">
-            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
-            <div class="library-name">
-<a class="library-name--link" href="../../../index.html">
-                            stream-chat-android
-                    </a>            </div>
-            <div class="library-version">7.1.0
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../index.html" tabindex="1">
+                    stream-chat-android
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">7.2.0
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":stream-chat-android-client/main">androidJvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":stream-chat-android-client/main" data-filter=":stream-chat-android-client/main">
+                                <span class="checkbox--icon"></span>
+                                androidJvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
             </div>
         </div>
-        <div class="filter-section" id="filter-section">
-                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":stream-chat-android-client:dokkaHtmlPartial/release">androidJvm</button>
-        </div>
-    </div>
-    <div class="navigation-controls">
-        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
-        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
-    </div>
-</nav>
-        <div id="container">
-            <div class="sidebar" id="leftColumn">
-                <div class="sidebar--inner" id="sideMenu"></div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    stream-chat-android
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
             </div>
-            <div id="main">
-<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-client::io.getstream.chat.android.client.api/ChatClientConfig///PointingToDeclaration//-423410878">
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-client::io.getstream.chat.android.client.api/ChatClientConfig///PointingToDeclaration//1662354712">
   <div class="breadcrumbs"><a href="../../index.html">stream-chat-android-client</a><span class="delimiter">/</span><a href="../index.html">io.getstream.chat.android.client.api</a><span class="delimiter">/</span><span class="current">ChatClientConfig</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Chat</span><wbr><span>Client</span><wbr><span><span>Config</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">ChatClientConfig</a>&nbsp;<span><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a>&nbsp;</span><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>offlineEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>ignoredOfflineChannelTypes<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-set/index.html">Set</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span><span class="token operator"> = </span>emptySet()<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>userPresence<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>isAutomaticSyncOnReconnectEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>syncMaxThreshold<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-time-duration/index.html">TimeDuration</a><span class="token operator"> = </span>TimeDuration.hours(hours = 12)<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>now<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span>{ System.currentTimeMillis() }<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>messageLimitConfig<span class="token operator">: </span><a href="../-message-limit-config/index.html">MessageLimitConfig</a><span class="token operator"> = </span>MessageLimitConfig()<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>useLegacyChannelLogic<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span></div><p class="paragraph">Provides a configuration for the <a href="../../io.getstream.chat.android.client/-chat-client/index.html">ChatClient</a> behavior.</p><h4 class="">Parameters</h4><div class="table"><div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>user</span><wbr><span><span>Presence</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Controls whether the SDK subscribes to and processes user presence events (online/offline status, last active time). When enabled (default: <code class="lang-kotlin">true</code>), the SDK receives real-time updates about user presence changes and updates the user objects in channels, members, and watchers accordingly. This affects both WebSocket event subscriptions and the <code class="lang-kotlin">presence</code> parameter in API requests. Disabling this can reduce network traffic and processing overhead if your application doesn't need to display user online/offline status.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>is</span><wbr><span>Automatic</span><wbr><span>Sync</span><wbr><span>On</span><wbr><span>Reconnect</span><wbr><span><span>Enabled</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Specifies if local data is updated with subscribing to web-socket events after reconnection. When turning this off, it is up for SDK user to observe web-socket connection state for reconnection and syncing data by calling, for example <a href="../../io.getstream.chat.android.client/-chat-client/query-channels.html">ChatClient.queryChannels</a>, or the StatePlugin methods such as ChatClient.queryChannelsAsState / ChatClient.watchChannelAsState. Note that these calls fetch the latest state and also subscribe to web-socket events if the query's <code class="lang-kotlin">watch</code> is set to true.</p><p class="paragraph">Web-socket connection status can be monitored by observing the <a href="../../io.getstream.chat.android.client.setup.state/-client-state/connection-state.html">ClientState.connectionState</a> flow, exposed from the <a href="../../io.getstream.chat.android.client/-chat-client/client-state.html">ChatClient.clientState</a>:</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">client.clientState.connectionState.collectLatest { state -&gt;<br>    when (state) {<br>        is ConnectionState.Connected -&gt; {<br>            // Data can be updated and watching can be resumed<br>        }<br>        else -&gt; {}<br>    }<br>}</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>sync</span><wbr><span>Max</span><wbr><span><span>Threshold</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The maximum age threshold for pending local operations (channels, messages, reactions) before they are considered too old to retry and are discarded. Default is 12 hours. When the SDK attempts to retry failed operations (e.g., sending a message, creating a channel, adding a reaction) upon reconnection, it checks if the operation's timestamp (createdLocallyAt, updatedLocallyAt, deletedAt, or createdAt) exceeds this threshold. If it does, the operation is removed from the local database instead of being retried, preventing the SDK from attempting to sync stale operations that are no longer relevant.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>now</span></span></u></div></span></div><div><div class="title"><p class="paragraph">A function that provides the current time in milliseconds since epoch (Unix timestamp). Defaults to <a href="https://developer.android.com/reference/kotlin/java/lang/System.html#currenttimemillis">System.currentTimeMillis</a>. This is used throughout the state plugin for time-based operations such as:</p><ul><li><p class="paragraph">Determining if pinned messages have expired (based on <code class="lang-kotlin">pinExpires</code> timestamp)</p></li><li><p class="paragraph">Calculating sync thresholds and time differences</p></li><li><p class="paragraph">Timestamping state updates This parameter primarily exists for testing purposes, allowing tests to inject a controlled time source, but can also be used in production if you need custom time handling (e.g., using a synchronized server time).</p></li></ul></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>message</span><wbr><span>Limit</span><wbr><span><span>Config</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Configuration that controls the maximum number of messages kept in memory for different channel types. This helps manage memory usage in channels with large message histories. When the number of messages exceeds the configured limit (plus a buffer), older messages are automatically trimmed from the in-memory state. By default, no limits are applied, meaning all messages are kept in memory. See <a href="../-message-limit-config/index.html">MessageLimitConfig</a> and <a href="../-channel-message-limit/index.html">ChannelMessageLimit</a> for configuration details.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>use</span><wbr><span>Legacy</span><wbr><span>Channel</span><wbr><span><span>Logic</span></span></u></div></span></div><div><div class="title"><p class="paragraph">When set to true, the SDK uses the legacy channel state management logic for handling channel updates and events. This may be necessary for compatibility with existing implementations. When set to false, the SDK employs the new channel state management logic, which includes optimizations and performance improvements. Default is false.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>offline</span><wbr><span><span>Enabled</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Flag to enable or disable offline support. Default is <code class="lang-kotlin">true</code>.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>ignored</span><wbr><span>Offline</span><wbr><span>Channel</span><wbr><span><span>Types</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Set of channel types to be ignored by offline support. Default is an empty set.</p></div></div></div></div></div></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">ChatClientConfig</a>&nbsp;<span><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a>&nbsp;</span><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>offlineEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>ignoredOfflineChannelTypes<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-set/index.html">Set</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span><span class="token operator"> = </span>emptySet()<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>userPresence<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>isAutomaticSyncOnReconnectEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>syncMaxThreshold<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-time-duration/index.html">TimeDuration</a><span class="token operator"> = </span>TimeDuration.hours(hours = 12)<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>now<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span>{ System.currentTimeMillis() }<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>messageLimitConfig<span class="token operator">: </span><a href="../-message-limit-config/index.html">MessageLimitConfig</a><span class="token operator"> = </span>MessageLimitConfig()<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>useLegacyChannelLogic<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span></div><p class="paragraph">Provides a configuration for the <a href="../../io.getstream.chat.android.client/-chat-client/index.html">ChatClient</a> behavior.</p><h4 class="tableheader">Parameters</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>user</span><wbr><span><span>Presence</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Controls whether the SDK subscribes to and processes user presence events (online/offline status, last active time). When enabled (default: <code class="lang-kotlin">true</code>), the SDK receives real-time updates about user presence changes and updates the user objects in channels, members, and watchers accordingly. This affects both WebSocket event subscriptions and the <code class="lang-kotlin">presence</code> parameter in API requests. Disabling this can reduce network traffic and processing overhead if your application doesn't need to display user online/offline status.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>is</span><wbr><span>Automatic</span><wbr><span>Sync</span><wbr><span>On</span><wbr><span>Reconnect</span><wbr><span><span>Enabled</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Specifies if local data is updated with subscribing to web-socket events after reconnection. When turning this off, it is up for SDK user to observe web-socket connection state for reconnection and syncing data by calling, for example <a href="../../io.getstream.chat.android.client/-chat-client/query-channels.html">ChatClient.queryChannels</a>, or the StatePlugin methods such as ChatClient.queryChannelsAsState / ChatClient.watchChannelAsState. Note that these calls fetch the latest state and also subscribe to web-socket events if the query's <code class="lang-kotlin">watch</code> is set to true.</p><p class="paragraph">Web-socket connection status can be monitored by observing the <a href="../../io.getstream.chat.android.client.setup.state/-client-state/connection-state.html">ClientState.connectionState</a> flow, exposed from the <a href="../../io.getstream.chat.android.client/-chat-client/client-state.html">ChatClient.clientState</a>:</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">client.clientState.connectionState.collectLatest { state -&gt;<br>    when (state) {<br>        is ConnectionState.Connected -&gt; {<br>            // Data can be updated and watching can be resumed<br>        }<br>        else -&gt; {}<br>    }<br>}</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>sync</span><wbr><span>Max</span><wbr><span><span>Threshold</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The maximum age threshold for pending local operations (channels, messages, reactions) before they are considered too old to retry and are discarded. Default is 12 hours. When the SDK attempts to retry failed operations (e.g., sending a message, creating a channel, adding a reaction) upon reconnection, it checks if the operation's timestamp (createdLocallyAt, updatedLocallyAt, deletedAt, or createdAt) exceeds this threshold. If it does, the operation is removed from the local database instead of being retried, preventing the SDK from attempting to sync stale operations that are no longer relevant.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>now</span></span></u></div></span></div><div><div class="title"><p class="paragraph">A function that provides the current time in milliseconds since epoch (Unix timestamp). Defaults to <a href="https://developer.android.com/reference/kotlin/java/lang/System.html#currenttimemillis">System.currentTimeMillis</a>. This is used throughout the state plugin for time-based operations such as:</p><ul><li><p class="paragraph">Determining if pinned messages have expired (based on <code class="lang-kotlin">pinExpires</code> timestamp)</p></li><li><p class="paragraph">Calculating sync thresholds and time differences</p></li><li><p class="paragraph">Timestamping state updates This parameter primarily exists for testing purposes, allowing tests to inject a controlled time source, but can also be used in production if you need custom time handling (e.g., using a synchronized server time).</p></li></ul></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>message</span><wbr><span>Limit</span><wbr><span><span>Config</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Configuration that controls the maximum number of messages kept in memory for different channel types. This helps manage memory usage in channels with large message histories. When the number of messages exceeds the configured limit (plus a buffer), older messages are automatically trimmed from the in-memory state. By default, no limits are applied, meaning all messages are kept in memory. See <a href="../-message-limit-config/index.html">MessageLimitConfig</a> and <a href="../-channel-message-limit/index.html">ChannelMessageLimit</a> for configuration details.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>use</span><wbr><span>Legacy</span><wbr><span>Channel</span><wbr><span><span>Logic</span></span></u></div></span></div><div><div class="title"><p class="paragraph">When set to true, the SDK uses the legacy channel state management logic for handling channel updates and events. This may be necessary for compatibility with existing implementations. When set to false, the SDK employs the new channel state management logic, which includes optimizations and performance improvements. Default is false.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>offline</span><wbr><span><span>Enabled</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Flag to enable or disable offline support. Default is <code class="lang-kotlin">true</code>.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>ignored</span><wbr><span>Offline</span><wbr><span>Channel</span><wbr><span><span>Types</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Set of channel types to be ignored by offline support. Default is an empty set.</p></div></div></div></div></div></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
       <div data-togglable="CONSTRUCTOR">
-        <h2 class="">Constructors</h2>
-        <div class="table"><a data-name="-215703220%2FConstructors%2F-423410878" anchor-label="ChatClientConfig" id="-215703220%2FConstructors%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="-215703220%2FConstructors%2F1662354712" anchor-label="ChatClientConfig" id="-215703220%2FConstructors%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-chat-client-config.html"><span>Chat</span><wbr><span>Client</span><wbr><span><span>Config</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-215703220%2FConstructors%2F-423410878"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-215703220%2FConstructors%2F1662354712"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a></div></div><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">offlineEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">ignoredOfflineChannelTypes<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-set/index.html">Set</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span><span class="token operator"> = </span>emptySet()<span class="token punctuation">, </span></span><span class="parameter ">userPresence<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">isAutomaticSyncOnReconnectEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">syncMaxThreshold<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-time-duration/index.html">TimeDuration</a><span class="token operator"> = </span>TimeDuration.hours(hours = 12)<span class="token punctuation">, </span></span><span class="parameter ">now<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span>{ System.currentTimeMillis() }<span class="token punctuation">, </span></span><span class="parameter ">messageLimitConfig<span class="token operator">: </span><a href="../-message-limit-config/index.html">MessageLimitConfig</a><span class="token operator"> = </span>MessageLimitConfig()<span class="token punctuation">, </span></span><span class="parameter ">useLegacyChannelLogic<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a></div></div><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">offlineEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">ignoredOfflineChannelTypes<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-set/index.html">Set</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span><span class="token operator"> = </span>emptySet()<span class="token punctuation">, </span></span><span class="parameter ">userPresence<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">isAutomaticSyncOnReconnectEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">syncMaxThreshold<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-time-duration/index.html">TimeDuration</a><span class="token operator"> = </span>TimeDuration.hours(hours = 12)<span class="token punctuation">, </span></span><span class="parameter ">now<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span>{ System.currentTimeMillis() }<span class="token punctuation">, </span></span><span class="parameter ">messageLimitConfig<span class="token operator">: </span><a href="../-message-limit-config/index.html">MessageLimitConfig</a><span class="token operator"> = </span>MessageLimitConfig()<span class="token punctuation">, </span></span><span class="parameter ">useLegacyChannelLogic<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span></div></div></div>
                 </div>
               </div>
             </div>
@@ -87,123 +118,123 @@
         </div>
       </div>
       <div data-togglable="PROPERTY">
-        <h2 class="">Properties</h2>
-        <div class="table"><a data-name="-1075543953%2FProperties%2F-423410878" anchor-label="ignoredOfflineChannelTypes" id="-1075543953%2FProperties%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="-1075543953%2FProperties%2F1662354712" anchor-label="ignoredOfflineChannelTypes" id="-1075543953%2FProperties%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="ignored-offline-channel-types.html"><span>ignored</span><wbr><span>Offline</span><wbr><span>Channel</span><wbr><span><span>Types</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1075543953%2FProperties%2F-423410878"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1075543953%2FProperties%2F1662354712"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="ignored-offline-channel-types.html">ignoredOfflineChannelTypes</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-set/index.html">Set</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="ignored-offline-channel-types.html">ignoredOfflineChannelTypes</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-set/index.html">Set</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-165257601%2FProperties%2F-423410878" anchor-label="isAutomaticSyncOnReconnectEnabled" id="-165257601%2FProperties%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+<a data-name="-165257601%2FProperties%2F1662354712" anchor-label="isAutomaticSyncOnReconnectEnabled" id="-165257601%2FProperties%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="is-automatic-sync-on-reconnect-enabled.html"><span>is</span><wbr><span>Automatic</span><wbr><span>Sync</span><wbr><span>On</span><wbr><span>Reconnect</span><wbr><span><span>Enabled</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-165257601%2FProperties%2F-423410878"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-165257601%2FProperties%2F1662354712"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-automatic-sync-on-reconnect-enabled.html">isAutomaticSyncOnReconnectEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-automatic-sync-on-reconnect-enabled.html">isAutomaticSyncOnReconnectEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-433934208%2FProperties%2F-423410878" anchor-label="messageLimitConfig" id="-433934208%2FProperties%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+<a data-name="-433934208%2FProperties%2F1662354712" anchor-label="messageLimitConfig" id="-433934208%2FProperties%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="message-limit-config.html"><span>message</span><wbr><span>Limit</span><wbr><span><span>Config</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-433934208%2FProperties%2F-423410878"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-433934208%2FProperties%2F1662354712"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="message-limit-config.html">messageLimitConfig</a><span class="token operator">: </span><a href="../-message-limit-config/index.html">MessageLimitConfig</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="message-limit-config.html">messageLimitConfig</a><span class="token operator">: </span><a href="../-message-limit-config/index.html">MessageLimitConfig</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1196089746%2FProperties%2F-423410878" anchor-label="now" id="-1196089746%2FProperties%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+<a data-name="-1196089746%2FProperties%2F1662354712" anchor-label="now" id="-1196089746%2FProperties%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="now.html"><span><span>now</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1196089746%2FProperties%2F-423410878"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1196089746%2FProperties%2F1662354712"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="now.html">now</a><span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-long/index.html">Long</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="now.html">now</a><span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-320831880%2FProperties%2F-423410878" anchor-label="offlineEnabled" id="-320831880%2FProperties%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+<a data-name="-320831880%2FProperties%2F1662354712" anchor-label="offlineEnabled" id="-320831880%2FProperties%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="offline-enabled.html"><span>offline</span><wbr><span><span>Enabled</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-320831880%2FProperties%2F-423410878"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-320831880%2FProperties%2F1662354712"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="offline-enabled.html">offlineEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="offline-enabled.html">offlineEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="350986996%2FProperties%2F-423410878" anchor-label="syncMaxThreshold" id="350986996%2FProperties%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+<a data-name="350986996%2FProperties%2F1662354712" anchor-label="syncMaxThreshold" id="350986996%2FProperties%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="sync-max-threshold.html"><span>sync</span><wbr><span>Max</span><wbr><span><span>Threshold</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="350986996%2FProperties%2F-423410878"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="350986996%2FProperties%2F1662354712"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="sync-max-threshold.html">syncMaxThreshold</a><span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-time-duration/index.html">TimeDuration</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="sync-max-threshold.html">syncMaxThreshold</a><span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-time-duration/index.html">TimeDuration</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1976603975%2FProperties%2F-423410878" anchor-label="useLegacyChannelLogic" id="-1976603975%2FProperties%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+<a data-name="-1976603975%2FProperties%2F1662354712" anchor-label="useLegacyChannelLogic" id="-1976603975%2FProperties%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="use-legacy-channel-logic.html"><span>use</span><wbr><span>Legacy</span><wbr><span>Channel</span><wbr><span><span>Logic</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1976603975%2FProperties%2F-423410878"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1976603975%2FProperties%2F1662354712"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="use-legacy-channel-logic.html">useLegacyChannelLogic</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="use-legacy-channel-logic.html">useLegacyChannelLogic</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-477952080%2FProperties%2F-423410878" anchor-label="userPresence" id="-477952080%2FProperties%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+<a data-name="-477952080%2FProperties%2F1662354712" anchor-label="userPresence" id="-477952080%2FProperties%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="user-presence.html"><span>user</span><wbr><span><span>Presence</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-477952080%2FProperties%2F-423410878"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-477952080%2FProperties%2F1662354712"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="user-presence.html">userPresence</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="user-presence.html">userPresence</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -213,12 +244,22 @@
     </div>
   </div>
 </div>
-      <div class="footer">
-        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
-      </div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
             </div>
         </div>
     </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
-

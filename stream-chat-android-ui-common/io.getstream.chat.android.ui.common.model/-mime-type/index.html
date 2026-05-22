@@ -1,490 +1,521 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>MimeType</title>
-<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
-    <script>document.documentElement.classList.replace("no-js","js");</script>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
-    if (storage == null) {
+      if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
         if (osDarkSchemePreferred === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    } else {
+      } else {
         const savedDarkMode = JSON.parse(storage)
-        if(savedDarkMode === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    }
+      }
     </script>
-<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
 <link href="../../../styles/style.css" rel="Stylesheet">
 <link href="../../../styles/main.css" rel="Stylesheet">
 <link href="../../../styles/prism.css" rel="Stylesheet">
 <link href="../../../styles/logo-styles.css" rel="Stylesheet">
-<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
-<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
 <script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
 <script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
 <script type="text/javascript" src="../../../scripts/main.js" defer></script>
 <script type="text/javascript" src="../../../scripts/prism.js" async></script>
-<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script></head>
 <body>
-    <div class="root">
-<nav class="navigation" id="navigation-wrapper">
-    <div class="navigation--inner">
-        <div class="navigation-title">
-            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
-            <div class="library-name">
-<a class="library-name--link" href="../../../index.html">
-                            stream-chat-android
-                    </a>            </div>
-            <div class="library-version">7.1.0
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../index.html" tabindex="1">
+                    stream-chat-android
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">7.2.0
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":stream-chat-android-ui-common/main">androidJvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":stream-chat-android-ui-common/main" data-filter=":stream-chat-android-ui-common/main">
+                                <span class="checkbox--icon"></span>
+                                androidJvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
             </div>
         </div>
-        <div class="filter-section" id="filter-section">
-                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":stream-chat-android-ui-common:dokkaHtmlPartial/release">androidJvm</button>
-        </div>
-    </div>
-    <div class="navigation-controls">
-        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
-        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
-    </div>
-</nav>
-        <div id="container">
-            <div class="sidebar" id="leftColumn">
-                <div class="sidebar--inner" id="sideMenu"></div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    stream-chat-android
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
             </div>
-            <div id="main">
-<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-ui-common::io.getstream.chat.android.ui.common.model/MimeType///PointingToDeclaration//-348677689">
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-ui-common::io.getstream.chat.android.ui.common.model/MimeType///PointingToDeclaration//-109015011">
   <div class="breadcrumbs"><a href="../../index.html">stream-chat-android-ui-common</a><span class="delimiter">/</span><a href="../index.html">io.getstream.chat.android.ui.common.model</a><span class="delimiter">/</span><span class="current">MimeType</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Mime</span><wbr><span><span>Type</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">MimeType</a></div><p class="paragraph">Defines the possible MIME types for file attachments.</p></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">MimeType</a></div><p class="paragraph">Defines the possible MIME types for file attachments.</p></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
       <div data-togglable="PROPERTY">
-        <h2 class="">Properties</h2>
-        <div class="table"><a data-name="1234165091%2FProperties%2F-348677689" anchor-label="MIME_TYPE_7Z" id="1234165091%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="1234165091%2FProperties%2F-109015011" anchor-label="MIME_TYPE_7Z" id="1234165091%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_7-z.html"><span><span>MIME_TYPE_7Z</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1234165091%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_7-z.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>7Z</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1234165091%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_7-z.html">MIME_TYPE_7Z</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_7-z.html">MIME_TYPE_7Z</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1136195887%2FProperties%2F-348677689" anchor-label="MIME_TYPE_AAC" id="-1136195887%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="-1136195887%2FProperties%2F-109015011" anchor-label="MIME_TYPE_AAC" id="-1136195887%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-a-a-c.html"><span><span>MIME_TYPE_AAC</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1136195887%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-a-a-c.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>AAC</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1136195887%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-a-a-c.html">MIME_TYPE_AAC</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-a-a-c.html">MIME_TYPE_AAC</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1381922196%2FProperties%2F-348677689" anchor-label="MIME_TYPE_AUDIO_MP4" id="-1381922196%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="-1381922196%2FProperties%2F-109015011" anchor-label="MIME_TYPE_AUDIO_MP4" id="-1381922196%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-a-u-d-i-o_-m-p4.html"><span><span>MIME_TYPE_AUDIO_MP4</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1381922196%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-a-u-d-i-o_-m-p4.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>AUDIO_</span><wbr><span>MP4</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1381922196%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-a-u-d-i-o_-m-p4.html">MIME_TYPE_AUDIO_MP4</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-a-u-d-i-o_-m-p4.html">MIME_TYPE_AUDIO_MP4</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-927109522%2FProperties%2F-348677689" anchor-label="MIME_TYPE_CSV" id="-927109522%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="-927109522%2FProperties%2F-109015011" anchor-label="MIME_TYPE_CSV" id="-927109522%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-c-s-v.html"><span><span>MIME_TYPE_CSV</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-927109522%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-c-s-v.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>CSV</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-927109522%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-c-s-v.html">MIME_TYPE_CSV</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-c-s-v.html">MIME_TYPE_CSV</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1322711172%2FProperties%2F-348677689" anchor-label="MIME_TYPE_DOC" id="-1322711172%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="-1322711172%2FProperties%2F-109015011" anchor-label="MIME_TYPE_DOC" id="-1322711172%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-d-o-c.html"><span><span>MIME_TYPE_DOC</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1322711172%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-d-o-c.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>DOC</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1322711172%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-d-o-c.html">MIME_TYPE_DOC</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-d-o-c.html">MIME_TYPE_DOC</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1620620666%2FProperties%2F-348677689" anchor-label="MIME_TYPE_DOCX" id="-1620620666%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="-1620620666%2FProperties%2F-109015011" anchor-label="MIME_TYPE_DOCX" id="-1620620666%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-d-o-c-x.html"><span><span>MIME_TYPE_DOCX</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1620620666%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-d-o-c-x.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>DOCX</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1620620666%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-d-o-c-x.html">MIME_TYPE_DOCX</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-d-o-c-x.html">MIME_TYPE_DOCX</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="826389104%2FProperties%2F-348677689" anchor-label="MIME_TYPE_GIF" id="826389104%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="826389104%2FProperties%2F-109015011" anchor-label="MIME_TYPE_GIF" id="826389104%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-g-i-f.html"><span><span>MIME_TYPE_GIF</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="826389104%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-g-i-f.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>GIF</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="826389104%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-g-i-f.html">MIME_TYPE_GIF</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-g-i-f.html">MIME_TYPE_GIF</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="532071291%2FProperties%2F-348677689" anchor-label="MIME_TYPE_HTML" id="532071291%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="532071291%2FProperties%2F-109015011" anchor-label="MIME_TYPE_HTML" id="532071291%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-h-t-m-l.html"><span><span>MIME_TYPE_HTML</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="532071291%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-h-t-m-l.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>HTML</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="532071291%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-h-t-m-l.html">MIME_TYPE_HTML</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-h-t-m-l.html">MIME_TYPE_HTML</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="423812922%2FProperties%2F-348677689" anchor-label="MIME_TYPE_M4A" id="423812922%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="423812922%2FProperties%2F-109015011" anchor-label="MIME_TYPE_M4A" id="423812922%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-m4-a.html"><span><span>MIME_TYPE_M4A</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="423812922%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-m4-a.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>M4A</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="423812922%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-m4-a.html">MIME_TYPE_M4A</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-m4-a.html">MIME_TYPE_M4A</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="232401231%2FProperties%2F-348677689" anchor-label="MIME_TYPE_MD" id="232401231%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="232401231%2FProperties%2F-109015011" anchor-label="MIME_TYPE_MD" id="232401231%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-m-d.html"><span><span>MIME_TYPE_MD</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="232401231%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-m-d.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>MD</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="232401231%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-m-d.html">MIME_TYPE_MD</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-m-d.html">MIME_TYPE_MD</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1269003552%2FProperties%2F-348677689" anchor-label="MIME_TYPE_MOV" id="1269003552%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="1269003552%2FProperties%2F-109015011" anchor-label="MIME_TYPE_MOV" id="1269003552%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-m-o-v.html"><span><span>MIME_TYPE_MOV</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1269003552%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-m-o-v.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>MOV</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1269003552%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-m-o-v.html">MIME_TYPE_MOV</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-m-o-v.html">MIME_TYPE_MOV</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1144924324%2FProperties%2F-348677689" anchor-label="MIME_TYPE_MP3" id="1144924324%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="1144924324%2FProperties%2F-109015011" anchor-label="MIME_TYPE_MP3" id="1144924324%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-m-p3.html"><span><span>MIME_TYPE_MP3</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1144924324%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-m-p3.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>MP3</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1144924324%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-m-p3.html">MIME_TYPE_MP3</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-m-p3.html">MIME_TYPE_MP3</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1175944131%2FProperties%2F-348677689" anchor-label="MIME_TYPE_MP4" id="1175944131%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="1175944131%2FProperties%2F-109015011" anchor-label="MIME_TYPE_MP4" id="1175944131%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-m-p4.html"><span><span>MIME_TYPE_MP4</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1175944131%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-m-p4.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>MP4</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1175944131%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-m-p4.html">MIME_TYPE_MP4</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-m-p4.html">MIME_TYPE_MP4</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1290328747%2FProperties%2F-348677689" anchor-label="MIME_TYPE_ODT" id="-1290328747%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="-1290328747%2FProperties%2F-109015011" anchor-label="MIME_TYPE_ODT" id="-1290328747%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-o-d-t.html"><span><span>MIME_TYPE_ODT</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1290328747%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-o-d-t.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>ODT</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1290328747%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-o-d-t.html">MIME_TYPE_ODT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-o-d-t.html">MIME_TYPE_ODT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1979342590%2FProperties%2F-348677689" anchor-label="MIME_TYPE_PDF" id="-1979342590%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="-1979342590%2FProperties%2F-109015011" anchor-label="MIME_TYPE_PDF" id="-1979342590%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-p-d-f.html"><span><span>MIME_TYPE_PDF</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1979342590%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-p-d-f.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>PDF</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1979342590%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-p-d-f.html">MIME_TYPE_PDF</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-p-d-f.html">MIME_TYPE_PDF</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1404368320%2FProperties%2F-348677689" anchor-label="MIME_TYPE_PPT" id="1404368320%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="1404368320%2FProperties%2F-109015011" anchor-label="MIME_TYPE_PPT" id="1404368320%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-p-p-t.html"><span><span>MIME_TYPE_PPT</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1404368320%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-p-p-t.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>PPT</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1404368320%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-p-p-t.html">MIME_TYPE_PPT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-p-p-t.html">MIME_TYPE_PPT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1314464962%2FProperties%2F-348677689" anchor-label="MIME_TYPE_PPTX" id="1314464962%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="1314464962%2FProperties%2F-109015011" anchor-label="MIME_TYPE_PPTX" id="1314464962%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-p-p-t-x.html"><span><span>MIME_TYPE_PPTX</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1314464962%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-p-p-t-x.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>PPTX</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1314464962%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-p-p-t-x.html">MIME_TYPE_PPTX</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-p-p-t-x.html">MIME_TYPE_PPTX</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1842344070%2FProperties%2F-348677689" anchor-label="MIME_TYPE_QUICKTIME" id="-1842344070%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="-1842344070%2FProperties%2F-109015011" anchor-label="MIME_TYPE_QUICKTIME" id="-1842344070%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-q-u-i-c-k-t-i-m-e.html"><span><span>MIME_TYPE_QUICKTIME</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1842344070%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-q-u-i-c-k-t-i-m-e.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>QUICKTIME</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1842344070%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-q-u-i-c-k-t-i-m-e.html">MIME_TYPE_QUICKTIME</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-q-u-i-c-k-t-i-m-e.html">MIME_TYPE_QUICKTIME</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-706452751%2FProperties%2F-348677689" anchor-label="MIME_TYPE_RAR" id="-706452751%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="-706452751%2FProperties%2F-109015011" anchor-label="MIME_TYPE_RAR" id="-706452751%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-r-a-r.html"><span><span>MIME_TYPE_RAR</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-706452751%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-r-a-r.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>RAR</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-706452751%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-r-a-r.html">MIME_TYPE_RAR</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-r-a-r.html">MIME_TYPE_RAR</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="12106704%2FProperties%2F-348677689" anchor-label="MIME_TYPE_RTF" id="12106704%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="12106704%2FProperties%2F-109015011" anchor-label="MIME_TYPE_RTF" id="12106704%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-r-t-f.html"><span><span>MIME_TYPE_RTF</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="12106704%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-r-t-f.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>RTF</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="12106704%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-r-t-f.html">MIME_TYPE_RTF</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-r-t-f.html">MIME_TYPE_RTF</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1215925841%2FProperties%2F-348677689" anchor-label="MIME_TYPE_TAR" id="-1215925841%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="-1215925841%2FProperties%2F-109015011" anchor-label="MIME_TYPE_TAR" id="-1215925841%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-t-a-r.html"><span><span>MIME_TYPE_TAR</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1215925841%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-t-a-r.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>TAR</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1215925841%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-t-a-r.html">MIME_TYPE_TAR</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-t-a-r.html">MIME_TYPE_TAR</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-511600316%2FProperties%2F-348677689" anchor-label="MIME_TYPE_TXT" id="-511600316%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="-511600316%2FProperties%2F-109015011" anchor-label="MIME_TYPE_TXT" id="-511600316%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-t-x-t.html"><span><span>MIME_TYPE_TXT</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-511600316%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-t-x-t.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>TXT</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-511600316%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-t-x-t.html">MIME_TYPE_TXT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-t-x-t.html">MIME_TYPE_TXT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="2004660199%2FProperties%2F-348677689" anchor-label="MIME_TYPE_VIDEO_MP4" id="2004660199%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="2004660199%2FProperties%2F-109015011" anchor-label="MIME_TYPE_VIDEO_MP4" id="2004660199%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-v-i-d-e-o_-m-p4.html"><span><span>MIME_TYPE_VIDEO_MP4</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2004660199%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-v-i-d-e-o_-m-p4.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>VIDEO_</span><wbr><span>MP4</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2004660199%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-v-i-d-e-o_-m-p4.html">MIME_TYPE_VIDEO_MP4</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-v-i-d-e-o_-m-p4.html">MIME_TYPE_VIDEO_MP4</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1740728162%2FProperties%2F-348677689" anchor-label="MIME_TYPE_VIDEO_QUICKTIME" id="-1740728162%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="-1740728162%2FProperties%2F-109015011" anchor-label="MIME_TYPE_VIDEO_QUICKTIME" id="-1740728162%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-v-i-d-e-o_-q-u-i-c-k-t-i-m-e.html"><span><span>MIME_TYPE_VIDEO_QUICKTIME</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1740728162%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-v-i-d-e-o_-q-u-i-c-k-t-i-m-e.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>VIDEO_</span><wbr><span>QUICKTIME</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1740728162%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-v-i-d-e-o_-q-u-i-c-k-t-i-m-e.html">MIME_TYPE_VIDEO_QUICKTIME</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-v-i-d-e-o_-q-u-i-c-k-t-i-m-e.html">MIME_TYPE_VIDEO_QUICKTIME</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1751371400%2FProperties%2F-348677689" anchor-label="MIME_TYPE_VND" id="1751371400%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="1751371400%2FProperties%2F-109015011" anchor-label="MIME_TYPE_VND" id="1751371400%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-v-n-d.html"><span><span>MIME_TYPE_VND</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1751371400%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-v-n-d.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>VND</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1751371400%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-v-n-d.html">MIME_TYPE_VND</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-v-n-d.html">MIME_TYPE_VND</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-216032619%2FProperties%2F-348677689" anchor-label="MIME_TYPE_XLS" id="-216032619%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="-216032619%2FProperties%2F-109015011" anchor-label="MIME_TYPE_XLS" id="-216032619%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-x-l-s.html"><span><span>MIME_TYPE_XLS</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-216032619%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-x-l-s.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>XLS</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-216032619%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-x-l-s.html">MIME_TYPE_XLS</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-x-l-s.html">MIME_TYPE_XLS</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1673323891%2FProperties%2F-348677689" anchor-label="MIME_TYPE_XLSX" id="-1673323891%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="-1673323891%2FProperties%2F-109015011" anchor-label="MIME_TYPE_XLSX" id="-1673323891%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-x-l-s-x.html"><span><span>MIME_TYPE_XLSX</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1673323891%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-x-l-s-x.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>XLSX</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1673323891%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-x-l-s-x.html">MIME_TYPE_XLSX</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-x-l-s-x.html">MIME_TYPE_XLSX</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="591560115%2FProperties%2F-348677689" anchor-label="MIME_TYPE_ZIP" id="591560115%2FProperties%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="591560115%2FProperties%2F-109015011" anchor-label="MIME_TYPE_ZIP" id="591560115%2FProperties%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-m-i-m-e_-t-y-p-e_-z-i-p.html"><span><span>MIME_TYPE_ZIP</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="591560115%2FProperties%2F-348677689"></span>
+                  <div><a href="-m-i-m-e_-t-y-p-e_-z-i-p.html"><span>MIME_</span><wbr><span>TYPE_</span><wbr><span>ZIP</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="591560115%2FProperties%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-z-i-p.html">MIME_TYPE_ZIP</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-m-i-m-e_-t-y-p-e_-z-i-p.html">MIME_TYPE_ZIP</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -494,12 +525,22 @@
     </div>
   </div>
 </div>
-      <div class="footer">
-        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
-      </div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
             </div>
         </div>
     </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
-

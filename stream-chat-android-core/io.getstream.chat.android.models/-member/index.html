@@ -1,85 +1,116 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>Member</title>
-<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
-    <script>document.documentElement.classList.replace("no-js","js");</script>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
-    if (storage == null) {
+      if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
         if (osDarkSchemePreferred === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    } else {
+      } else {
         const savedDarkMode = JSON.parse(storage)
-        if(savedDarkMode === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    }
+      }
     </script>
-<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
 <link href="../../../styles/style.css" rel="Stylesheet">
 <link href="../../../styles/main.css" rel="Stylesheet">
 <link href="../../../styles/prism.css" rel="Stylesheet">
 <link href="../../../styles/logo-styles.css" rel="Stylesheet">
-<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
-<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
 <script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
 <script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
 <script type="text/javascript" src="../../../scripts/main.js" defer></script>
 <script type="text/javascript" src="../../../scripts/prism.js" async></script>
-<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script></head>
 <body>
-    <div class="root">
-<nav class="navigation" id="navigation-wrapper">
-    <div class="navigation--inner">
-        <div class="navigation-title">
-            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
-            <div class="library-name">
-<a class="library-name--link" href="../../../index.html">
-                            stream-chat-android
-                    </a>            </div>
-            <div class="library-version">7.1.0
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../index.html" tabindex="1">
+                    stream-chat-android
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">7.2.0
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":stream-chat-android-core/main">jvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":stream-chat-android-core/main" data-filter=":stream-chat-android-core/main">
+                                <span class="checkbox--icon"></span>
+                                jvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
             </div>
         </div>
-        <div class="filter-section" id="filter-section">
-                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":stream-chat-android-core:dokkaHtmlPartial/main">jvm</button>
-        </div>
-    </div>
-    <div class="navigation-controls">
-        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
-        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
-    </div>
-</nav>
-        <div id="container">
-            <div class="sidebar" id="leftColumn">
-                <div class="sidebar--inner" id="sideMenu"></div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    stream-chat-android
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
             </div>
-            <div id="main">
-<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-core::io.getstream.chat.android.models/Member///PointingToDeclaration//-1733806941">
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-core::io.getstream.chat.android.models/Member///PointingToDeclaration//-355421435">
   <div class="breadcrumbs"><a href="../../index.html">stream-chat-android-core</a><span class="delimiter">/</span><a href="../index.html">io.getstream.chat.android.models</a><span class="delimiter">/</span><span class="current">Member</span></div>
   <div class="cover ">
     <h1 class="cover"><span><span>Member</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="androidx.compose.runtime/Immutable///PointingToDeclaration/"><span class="token annotation builtin">Immutable</span></span></div></div><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">Member</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>user<span class="token operator">: </span><a href="../-user/index.html">User</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>createdAt<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>updatedAt<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>isInvited<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>inviteAcceptedAt<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>inviteRejectedAt<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>shadowBanned<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>banned<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>channelRole<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>notificationsMuted<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>status<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>banExpires<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>pinnedAt<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>archivedAt<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>extraData<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span><span class="token operator"> = </span>emptyMap()</span></span><span class="token punctuation">)</span> : <a href="../-user-entity/index.html">UserEntity</a>, <a href="../-custom-object/index.html">CustomObject</a>, <a href="../../io.getstream.chat.android.models.querysort/-comparable-field-provider/index.html">ComparableFieldProvider</a></div><p class="paragraph">Represents a channel member.</p></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="androidx.compose.runtime/Immutable///PointingToDeclaration/"><span class="token annotation builtin">Immutable</span></span></div></div><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">Member</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>user<span class="token operator">: </span><a href="../-user/index.html">User</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>createdAt<span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>updatedAt<span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>isInvited<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>inviteAcceptedAt<span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>inviteRejectedAt<span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>shadowBanned<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>banned<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>channelRole<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>notificationsMuted<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>status<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>banExpires<span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>pinnedAt<span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>archivedAt<span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>extraData<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span><span class="token operator"> = </span>emptyMap()</span></span><span class="token punctuation">)</span> : <a href="../-user-entity/index.html">UserEntity</a>, <a href="../-custom-object/index.html">CustomObject</a>, <a href="../../io.getstream.chat.android.models.querysort/-comparable-field-provider/index.html">ComparableFieldProvider</a></div><p class="paragraph">Represents a channel member.</p></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
       <div data-togglable="CONSTRUCTOR">
-        <h2 class="">Constructors</h2>
-        <div class="table"><a data-name="-46088852%2FConstructors%2F-1733806941" anchor-label="Member" id="-46088852%2FConstructors%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="-46088852%2FConstructors%2F-355421435" anchor-label="Member" id="-46088852%2FConstructors%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-member.html"><span><span>Member</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-46088852%2FConstructors%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-46088852%2FConstructors%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">user<span class="token operator">: </span><a href="../-user/index.html">User</a><span class="token punctuation">, </span></span><span class="parameter ">createdAt<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">updatedAt<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">isInvited<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">inviteAcceptedAt<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">inviteRejectedAt<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">shadowBanned<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">banned<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">channelRole<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">notificationsMuted<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">status<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">banExpires<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">pinnedAt<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">archivedAt<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">extraData<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span><span class="token operator"> = </span>emptyMap()</span></span><span class="token punctuation">)</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">user<span class="token operator">: </span><a href="../-user/index.html">User</a><span class="token punctuation">, </span></span><span class="parameter ">createdAt<span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">updatedAt<span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">isInvited<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">inviteAcceptedAt<span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">inviteRejectedAt<span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">shadowBanned<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">banned<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">channelRole<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">notificationsMuted<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">status<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">banExpires<span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">pinnedAt<span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">archivedAt<span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">extraData<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span><span class="token operator"> = </span>emptyMap()</span></span><span class="token punctuation">)</span></div></div></div>
                 </div>
               </div>
             </div>
@@ -87,228 +118,228 @@
         </div>
       </div>
       <div data-togglable="PROPERTY">
-        <h2 class="">Properties</h2>
-        <div class="table"><a data-name="891547427%2FProperties%2F-1733806941" anchor-label="archivedAt" id="891547427%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="891547427%2FProperties%2F-355421435" anchor-label="archivedAt" id="891547427%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="archived-at.html"><span>archived</span><wbr><span><span>At</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="891547427%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="891547427%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="archived-at.html">archivedAt</a><span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">The date when this channel was archived.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="archived-at.html">archivedAt</a><span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The date when this channel was archived.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1784658099%2FProperties%2F-1733806941" anchor-label="banExpires" id="1784658099%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="1784658099%2FProperties%2F-355421435" anchor-label="banExpires" id="1784658099%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="ban-expires.html"><span>ban</span><wbr><span><span>Expires</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1784658099%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1784658099%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="ban-expires.html">banExpires</a><span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">The date the ban expires.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="ban-expires.html">banExpires</a><span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The date the ban expires.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1401761114%2FProperties%2F-1733806941" anchor-label="banned" id="1401761114%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="1401761114%2FProperties%2F-355421435" anchor-label="banned" id="1401761114%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="banned.html"><span><span>banned</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1401761114%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1401761114%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="banned.html">banned</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></div><div class="brief "><p class="paragraph">If channel member is banned.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="banned.html">banned</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">If channel member is banned.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-314195031%2FProperties%2F-1733806941" anchor-label="channelRole" id="-314195031%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="-314195031%2FProperties%2F-355421435" anchor-label="channelRole" id="-314195031%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="channel-role.html"><span>channel</span><wbr><span><span>Role</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-314195031%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-314195031%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="channel-role.html">channelRole</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">The user's channel-level role.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="channel-role.html">channelRole</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The user's channel-level role.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1096585721%2FProperties%2F-1733806941" anchor-label="createdAt" id="-1096585721%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="-1096585721%2FProperties%2F-355421435" anchor-label="createdAt" id="-1096585721%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="created-at.html"><span>created</span><wbr><span><span>At</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1096585721%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1096585721%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="created-at.html">createdAt</a><span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">When the user became a member.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="created-at.html">createdAt</a><span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">When the user became a member.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1615901624%2FProperties%2F-1733806941" anchor-label="extraData" id="-1615901624%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="-1615901624%2FProperties%2F-355421435" anchor-label="extraData" id="-1615901624%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="extra-data.html"><span>extra</span><wbr><span><span>Data</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1615901624%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1615901624%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="extra-data.html">extraData</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">A map of custom fields for the member.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="extra-data.html">extraData</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">A map of custom fields for the member.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-961150923%2FProperties%2F-1733806941" anchor-label="inviteAcceptedAt" id="-961150923%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="-961150923%2FProperties%2F-355421435" anchor-label="inviteAcceptedAt" id="-961150923%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="invite-accepted-at.html"><span>invite</span><wbr><span>Accepted</span><wbr><span><span>At</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-961150923%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-961150923%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="invite-accepted-at.html">inviteAcceptedAt</a><span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">The date the invite was accepted.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="invite-accepted-at.html">inviteAcceptedAt</a><span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The date the invite was accepted.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1986936062%2FProperties%2F-1733806941" anchor-label="inviteRejectedAt" id="1986936062%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="1986936062%2FProperties%2F-355421435" anchor-label="inviteRejectedAt" id="1986936062%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="invite-rejected-at.html"><span>invite</span><wbr><span>Rejected</span><wbr><span><span>At</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1986936062%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1986936062%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="invite-rejected-at.html">inviteRejectedAt</a><span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">The date the invite was rejected.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="invite-rejected-at.html">inviteRejectedAt</a><span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The date the invite was rejected.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="2067757585%2FProperties%2F-1733806941" anchor-label="isInvited" id="2067757585%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="2067757585%2FProperties%2F-355421435" anchor-label="isInvited" id="2067757585%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="is-invited.html"><span>is</span><wbr><span><span>Invited</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2067757585%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2067757585%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-invited.html">isInvited</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">If the user is invited.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-invited.html">isInvited</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">If the user is invited.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1790839243%2FProperties%2F-1733806941" anchor-label="notificationsMuted" id="-1790839243%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="-1790839243%2FProperties%2F-355421435" anchor-label="notificationsMuted" id="-1790839243%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="notifications-muted.html"><span>notifications</span><wbr><span><span>Muted</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1790839243%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1790839243%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="notifications-muted.html">notificationsMuted</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">If notifications are muted for the user in the channel.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="notifications-muted.html">notificationsMuted</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">If notifications are muted for the user in the channel.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1135504429%2FProperties%2F-1733806941" anchor-label="pinnedAt" id="1135504429%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="1135504429%2FProperties%2F-355421435" anchor-label="pinnedAt" id="1135504429%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="pinned-at.html"><span>pinned</span><wbr><span><span>At</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1135504429%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1135504429%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="pinned-at.html">pinnedAt</a><span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">The date when this channel was pinned.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="pinned-at.html">pinnedAt</a><span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The date when this channel was pinned.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="969744346%2FProperties%2F-1733806941" anchor-label="shadowBanned" id="969744346%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="969744346%2FProperties%2F-355421435" anchor-label="shadowBanned" id="969744346%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="shadow-banned.html"><span>shadow</span><wbr><span><span>Banned</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="969744346%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="969744346%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="shadow-banned.html">shadowBanned</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></div><div class="brief "><p class="paragraph">If channel member is shadow banned.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="shadow-banned.html">shadowBanned</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">If channel member is shadow banned.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="7844614%2FProperties%2F-1733806941" anchor-label="status" id="7844614%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="7844614%2FProperties%2F-355421435" anchor-label="status" id="7844614%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="status.html"><span><span>status</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="7844614%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="7844614%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="status.html">status</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">The status of the user in the channel.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="status.html">status</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The status of the user in the channel.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-2030075820%2FProperties%2F-1733806941" anchor-label="updatedAt" id="-2030075820%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="-2030075820%2FProperties%2F-355421435" anchor-label="updatedAt" id="-2030075820%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="updated-at.html"><span>updated</span><wbr><span><span>At</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2030075820%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2030075820%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="updated-at.html">updatedAt</a><span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">When the membership data was last updated.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="updated-at.html">updatedAt</a><span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Date.html">Date</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">When the membership data was last updated.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-550572019%2FProperties%2F-1733806941" anchor-label="user" id="-550572019%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="-550572019%2FProperties%2F-355421435" anchor-label="user" id="-550572019%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="user.html"><span><span>user</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-550572019%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-550572019%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="user.html">user</a><span class="token operator">: </span><a href="../-user/index.html">User</a></div><div class="brief "><p class="paragraph">The user who is a member of the channel.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="user.html">user</a><span class="token operator">: </span><a href="../-user/index.html">User</a></div><div class="brief "><p class="paragraph">The user who is a member of the channel.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -316,48 +347,48 @@
         </div>
       </div>
       <div data-togglable="FUNCTION">
-        <h2 class="">Functions</h2>
-        <div class="table"><a data-name="-1471375274%2FFunctions%2F-1733806941" anchor-label="getComparableField" id="-1471375274%2FFunctions%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="-1471375274%2FFunctions%2F-355421435" anchor-label="getComparableField" id="-1471375274%2FFunctions%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="get-comparable-field.html"><span>get</span><wbr><span>Comparable</span><wbr><span><span>Field</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1471375274%2FFunctions%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1471375274%2FFunctions%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="get-comparable-field.html"><span class="token function">getComparableField</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">fieldName<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-comparable/index.html">Comparable</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Gets a comparable fields from a name.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="get-comparable-field.html"><span class="token function">getComparableField</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">fieldName<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-comparable/index.html">Comparable</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Gets a comparable fields from a name.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1388919314%2FFunctions%2F-1733806941" anchor-label="getExtraValue" id="-1388919314%2FFunctions%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="-1388919314%2FFunctions%2F-355421435" anchor-label="getExtraValue" id="-1388919314%2FFunctions%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="../-custom-object/get-extra-value.html"><span>get</span><wbr><span>Extra</span><wbr><span><span>Value</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1388919314%2FFunctions%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1388919314%2FFunctions%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><a href="../-custom-object/get-extra-value.html">T</a><span class="token operator">&gt; </span><a href="../-custom-object/get-extra-value.html"><span class="token function">getExtraValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">key<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">default<span class="token operator">: </span><a href="../-custom-object/get-extra-value.html">T</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-custom-object/get-extra-value.html">T</a></div><div class="brief "><p class="paragraph">Returns the value associated with the given <a href="../-custom-object/get-extra-value.html">key</a>, or <a href="../-custom-object/get-extra-value.html">default</a> if the key is not present in the <a href="../-custom-object/extra-data.html">extraData</a>.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><a href="../-custom-object/get-extra-value.html">T</a><span class="token operator">&gt; </span><a href="../-custom-object/get-extra-value.html"><span class="token function">getExtraValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">key<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">default<span class="token operator">: </span><a href="../-custom-object/get-extra-value.html">T</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-custom-object/get-extra-value.html">T</a></div><div class="brief "><p class="paragraph">Returns the value associated with the given <a href="../-custom-object/get-extra-value.html">key</a>, or <a href="../-custom-object/get-extra-value.html">default</a> if the key is not present in the <a href="../-custom-object/extra-data.html">extraData</a>.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1658625102%2FFunctions%2F-1733806941" anchor-label="getUserId" id="-1658625102%2FFunctions%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="-1658625102%2FFunctions%2F-355421435" anchor-label="getUserId" id="-1658625102%2FFunctions%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="../-user-entity/get-user-id.html"><span>get</span><wbr><span>User</span><wbr><span><span>Id</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1658625102%2FFunctions%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1658625102%2FFunctions%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-user-entity/get-user-id.html"><span class="token function">getUserId</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Returns the user ID.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-user-entity/get-user-id.html"><span class="token function">getUserId</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Returns the user ID.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -367,12 +398,22 @@
     </div>
   </div>
 </div>
-      <div class="footer">
-        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
-      </div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
             </div>
         </div>
     </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
-

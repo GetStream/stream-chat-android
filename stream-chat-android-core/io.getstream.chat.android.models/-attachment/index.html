@@ -1,85 +1,116 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>Attachment</title>
-<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
-    <script>document.documentElement.classList.replace("no-js","js");</script>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
-    if (storage == null) {
+      if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
         if (osDarkSchemePreferred === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    } else {
+      } else {
         const savedDarkMode = JSON.parse(storage)
-        if(savedDarkMode === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    }
+      }
     </script>
-<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
 <link href="../../../styles/style.css" rel="Stylesheet">
 <link href="../../../styles/main.css" rel="Stylesheet">
 <link href="../../../styles/prism.css" rel="Stylesheet">
 <link href="../../../styles/logo-styles.css" rel="Stylesheet">
-<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
-<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
 <script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
 <script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
 <script type="text/javascript" src="../../../scripts/main.js" defer></script>
 <script type="text/javascript" src="../../../scripts/prism.js" async></script>
-<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script></head>
 <body>
-    <div class="root">
-<nav class="navigation" id="navigation-wrapper">
-    <div class="navigation--inner">
-        <div class="navigation-title">
-            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
-            <div class="library-name">
-<a class="library-name--link" href="../../../index.html">
-                            stream-chat-android
-                    </a>            </div>
-            <div class="library-version">7.1.0
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../index.html" tabindex="1">
+                    stream-chat-android
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">7.2.0
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":stream-chat-android-core/main">jvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":stream-chat-android-core/main" data-filter=":stream-chat-android-core/main">
+                                <span class="checkbox--icon"></span>
+                                jvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
             </div>
         </div>
-        <div class="filter-section" id="filter-section">
-                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":stream-chat-android-core:dokkaHtmlPartial/main">jvm</button>
-        </div>
-    </div>
-    <div class="navigation-controls">
-        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
-        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
-    </div>
-</nav>
-        <div id="container">
-            <div class="sidebar" id="leftColumn">
-                <div class="sidebar--inner" id="sideMenu"></div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    stream-chat-android
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
             </div>
-            <div id="main">
-<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-core::io.getstream.chat.android.models/Attachment///PointingToDeclaration//-1733806941">
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-core::io.getstream.chat.android.models/Attachment///PointingToDeclaration//-355421435">
   <div class="breadcrumbs"><a href="../../index.html">stream-chat-android-core</a><span class="delimiter">/</span><a href="../index.html">io.getstream.chat.android.models</a><span class="delimiter">/</span><span class="current">Attachment</span></div>
   <div class="cover ">
     <h1 class="cover"><span><span>Attachment</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="androidx.compose.runtime/Immutable///PointingToDeclaration/"><span class="token annotation builtin">Immutable</span></span></div></div><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">Attachment</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>authorName<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>authorLink<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>titleLink<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>thumbUrl<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>imageUrl<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>assetUrl<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>ogUrl<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>mimeType<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>fileSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>title<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>text<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>type<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>image<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>name<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>fallback<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>originalHeight<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>originalWidth<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>upload<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html">File</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>uploadState<span class="token operator">: </span><a href="-upload-state/index.html">Attachment.UploadState</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>extraData<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span><span class="token operator"> = </span>mapOf()</span></span><span class="token punctuation">)</span> : <a href="../-custom-object/index.html">CustomObject</a></div><p class="paragraph">Represents an attachment. Most commonly these are files, images, videos and audio recordings, but the class is flexible enough that it can represent other things as well such as a date, a given location or other things.</p><p class="paragraph">If you want to create a custom attachment we suggest you use <a href="extra-data.html">extraData</a> to store the information you need.</p><h4 class="">Parameters</h4><div class="table"><div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>author</span><wbr><span><span>Name</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The name of the site the URL leads to.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>author</span><wbr><span><span>Link</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The link to the website.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>title</span><wbr><span><span>Link</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The link to the URL or the resource linked.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>thumb</span><wbr><span><span>Url</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The URL for the thumbnail version of the attachment, given the attachment has a visual quality, e.g. is a video, an image, a link to a website or similar.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>image</span><wbr><span><span>Url</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The URL for the raw version of the attachment.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>asset</span><wbr><span><span>Url</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The URL for the asset.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>og</span><wbr><span><span>Url</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The original link that was enriched.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>mime</span><wbr><span><span>Type</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The mime type of the given attachment. e.g. "image/jpeg"</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>file</span><wbr><span><span>Size</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The size of the given attachment.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>title</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The title of the attachment.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>text</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The page description.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>type</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The type of the attachment. e.g "file", "image, "audio".</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>image</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The image attachment.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>name</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The attachment name.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>fallback</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Fallback text used when <a href="title.html">title</a> and <a href="name.html">name</a> are absent. Displayed in channel-list previews and other summary surfaces. For image attachments this corresponds to the HTML img alt attribute.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>original</span><wbr><span><span>Height</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The original height of the attachment. Provided if the attachment is of type "image".</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>original</span><wbr><span><span>Width</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The original width of the attachment. Provided if the attachment is of type "image".</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>upload</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The local file that will be uploaded when the attachment is sent.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>upload</span><wbr><span><span>State</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The state of the upload, i.e. the current progress of uploading the file.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>extra</span><wbr><span><span>Data</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Stores various extra information that can be sent when uploading the attachment or read when downloading it.</p></div></div></div></div></div></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="androidx.compose.runtime/Immutable///PointingToDeclaration/"><span class="token annotation builtin">Immutable</span></span></div></div><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">Attachment</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>authorName<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>authorLink<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>titleLink<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>thumbUrl<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>imageUrl<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>assetUrl<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>ogUrl<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>mimeType<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>fileSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>title<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>text<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>type<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>image<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>fallback<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>originalHeight<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>originalWidth<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>upload<span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/io/File.html">File</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>uploadState<span class="token operator">: </span><a href="-upload-state/index.html">Attachment.UploadState</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>extraData<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span><span class="token operator"> = </span>mapOf()</span></span><span class="token punctuation">)</span> : <a href="../-custom-object/index.html">CustomObject</a></div><p class="paragraph">Represents an attachment. Most commonly these are files, images, videos and audio recordings, but the class is flexible enough that it can represent other things as well such as a date, a given location or other things.</p><p class="paragraph">If you want to create a custom attachment we suggest you use <a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-attachment/--root--.html">extraData</a> to store the information you need.</p><h4 class="tableheader">Parameters</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>author</span><wbr><span><span>Name</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The name of the site the URL leads to.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>author</span><wbr><span><span>Link</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The link to the website.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>title</span><wbr><span><span>Link</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The link to the URL or the resource linked.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>thumb</span><wbr><span><span>Url</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The URL for the thumbnail version of the attachment, given the attachment has a visual quality, e.g. is a video, an image, a link to a website or similar.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>image</span><wbr><span><span>Url</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The URL for the raw version of the attachment.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>asset</span><wbr><span><span>Url</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The URL for the asset.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>og</span><wbr><span><span>Url</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The original link that was enriched.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>mime</span><wbr><span><span>Type</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The mime type of the given attachment. e.g. "image/jpeg"</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>file</span><wbr><span><span>Size</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The size of the given attachment.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>title</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The title of the attachment.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>text</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The page description.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>type</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The type of the attachment. e.g "file", "image, "audio".</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>image</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The image attachment.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>name</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The attachment name.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>fallback</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Fallback text used when <a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-attachment/--root--.html">title</a> and <a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-attachment/--root--.html">name</a> are absent. Displayed in channel-list previews and other summary surfaces. For image attachments this corresponds to the HTML img alt attribute.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>original</span><wbr><span><span>Height</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The original height of the attachment. Provided if the attachment is of type "image".</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>original</span><wbr><span><span>Width</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The original width of the attachment. Provided if the attachment is of type "image".</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>upload</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The local file that will be uploaded when the attachment is sent.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>upload</span><wbr><span><span>State</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The state of the upload, i.e. the current progress of uploading the file.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>extra</span><wbr><span><span>Data</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Stores various extra information that can be sent when uploading the attachment or read when downloading it.</p></div></div></div></div></div></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
       <div data-togglable="CONSTRUCTOR">
-        <h2 class="">Constructors</h2>
-        <div class="table"><a data-name="1448662756%2FConstructors%2F-1733806941" anchor-label="Attachment" id="1448662756%2FConstructors%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="1448662756%2FConstructors%2F-355421435" anchor-label="Attachment" id="1448662756%2FConstructors%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-attachment.html"><span><span>Attachment</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1448662756%2FConstructors%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1448662756%2FConstructors%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">authorName<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">authorLink<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">titleLink<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">thumbUrl<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">imageUrl<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">assetUrl<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">ogUrl<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">mimeType<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">fileSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter ">title<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">text<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">type<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">image<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">fallback<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">originalHeight<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">originalWidth<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">upload<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html">File</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">uploadState<span class="token operator">: </span><a href="-upload-state/index.html">Attachment.UploadState</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">extraData<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span><span class="token operator"> = </span>mapOf()</span></span><span class="token punctuation">)</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">authorName<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">authorLink<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">titleLink<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">thumbUrl<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">imageUrl<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">assetUrl<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">ogUrl<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">mimeType<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">fileSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter ">title<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">text<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">type<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">image<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">fallback<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">originalHeight<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">originalWidth<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">upload<span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/io/File.html">File</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">uploadState<span class="token operator">: </span><a href="-upload-state/index.html">Attachment.UploadState</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">extraData<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span><span class="token operator"> = </span>mapOf()</span></span><span class="token punctuation">)</span></div></div></div>
                 </div>
               </div>
             </div>
@@ -87,33 +118,33 @@
         </div>
       </div>
       <div data-togglable="TYPE">
-        <h2 class="">Types</h2>
-        <div class="table"><a data-name="-82807279%2FClasslikes%2F-1733806941" anchor-label="Builder" id="-82807279%2FClasslikes%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="-82807279%2FClasslikes%2F-355421435" anchor-label="Builder" id="-82807279%2FClasslikes%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-builder/index.html"><span><span>Builder</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-82807279%2FClasslikes%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-82807279%2FClasslikes%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-builder/index.html">Builder</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-builder/index.html">Builder</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1897389756%2FClasslikes%2F-1733806941" anchor-label="UploadState" id="1897389756%2FClasslikes%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="1897389756%2FClasslikes%2F-355421435" anchor-label="UploadState" id="1897389756%2FClasslikes%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-upload-state/index.html"><span>Upload</span><wbr><span><span>State</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1897389756%2FClasslikes%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1897389756%2FClasslikes%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">sealed </span><span class="token keyword">class </span><a href="-upload-state/index.html">UploadState</a></div><div class="brief "><p class="paragraph">Represents various states in attachment upload lifecycle.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">sealed </span><span class="token keyword">class </span><a href="-upload-state/index.html">UploadState</a></div><div class="brief "><p class="paragraph">Represents various states in attachment upload lifecycle.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -121,303 +152,303 @@
         </div>
       </div>
       <div data-togglable="PROPERTY">
-        <h2 class="">Properties</h2>
-        <div class="table"><a data-name="1129352386%2FProperties%2F-1733806941" anchor-label="assetUrl" id="1129352386%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="1129352386%2FProperties%2F-355421435" anchor-label="assetUrl" id="1129352386%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="asset-url.html"><span>asset</span><wbr><span><span>Url</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1129352386%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1129352386%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="asset-url.html">assetUrl</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="asset-url.html">assetUrl</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1992415932%2FProperties%2F-1733806941" anchor-label="authorLink" id="1992415932%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="1992415932%2FProperties%2F-355421435" anchor-label="authorLink" id="1992415932%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="author-link.html"><span>author</span><wbr><span><span>Link</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1992415932%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1992415932%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="author-link.html">authorLink</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="author-link.html">authorLink</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-26188469%2FProperties%2F-1733806941" anchor-label="authorName" id="-26188469%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="-26188469%2FProperties%2F-355421435" anchor-label="authorName" id="-26188469%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="author-name.html"><span>author</span><wbr><span><span>Name</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-26188469%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-26188469%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="author-name.html">authorName</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="author-name.html">authorName</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1712627999%2FProperties%2F-1733806941" anchor-label="extraData" id="1712627999%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="1712627999%2FProperties%2F-355421435" anchor-label="extraData" id="1712627999%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="extra-data.html"><span>extra</span><wbr><span><span>Data</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1712627999%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1712627999%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="extra-data.html">extraData</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="extra-data.html">extraData</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1676481633%2FProperties%2F-1733806941" anchor-label="fallback" id="-1676481633%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="-1676481633%2FProperties%2F-355421435" anchor-label="fallback" id="-1676481633%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="fallback.html"><span><span>fallback</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1676481633%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1676481633%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="fallback.html">fallback</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="fallback.html">fallback</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="249995076%2FProperties%2F-1733806941" anchor-label="fileSize" id="249995076%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="249995076%2FProperties%2F-355421435" anchor-label="fileSize" id="249995076%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="file-size.html"><span>file</span><wbr><span><span>Size</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="249995076%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="249995076%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="file-size.html">fileSize</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="file-size.html">fileSize</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-713570114%2FProperties%2F-1733806941" anchor-label="image" id="-713570114%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="-713570114%2FProperties%2F-355421435" anchor-label="image" id="-713570114%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="image.html"><span><span>image</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-713570114%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-713570114%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="image.html">image</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="image.html">image</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="507104429%2FProperties%2F-1733806941" anchor-label="imageUrl" id="507104429%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="507104429%2FProperties%2F-355421435" anchor-label="imageUrl" id="507104429%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="image-url.html"><span>image</span><wbr><span><span>Url</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="507104429%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="507104429%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="image-url.html">imageUrl</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="image-url.html">imageUrl</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1913962893%2FProperties%2F-1733806941" anchor-label="mimeType" id="-1913962893%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="-1913962893%2FProperties%2F-355421435" anchor-label="mimeType" id="-1913962893%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="mime-type.html"><span>mime</span><wbr><span><span>Type</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1913962893%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1913962893%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="mime-type.html">mimeType</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="mime-type.html">mimeType</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1591556630%2FProperties%2F-1733806941" anchor-label="name" id="1591556630%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="1591556630%2FProperties%2F-355421435" anchor-label="name" id="1591556630%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="name.html"><span><span>name</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1591556630%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1591556630%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="name.html">name</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="name.html">name</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="457513250%2FProperties%2F-1733806941" anchor-label="ogUrl" id="457513250%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="457513250%2FProperties%2F-355421435" anchor-label="ogUrl" id="457513250%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="og-url.html"><span>og</span><wbr><span><span>Url</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="457513250%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="457513250%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="og-url.html">ogUrl</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="og-url.html">ogUrl</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-356668951%2FProperties%2F-1733806941" anchor-label="originalHeight" id="-356668951%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="-356668951%2FProperties%2F-355421435" anchor-label="originalHeight" id="-356668951%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="original-height.html"><span>original</span><wbr><span><span>Height</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-356668951%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-356668951%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="original-height.html">originalHeight</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="original-height.html">originalHeight</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1690671332%2FProperties%2F-1733806941" anchor-label="originalWidth" id="1690671332%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="1690671332%2FProperties%2F-355421435" anchor-label="originalWidth" id="1690671332%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="original-width.html"><span>original</span><wbr><span><span>Width</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1690671332%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1690671332%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="original-width.html">originalWidth</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="original-width.html">originalWidth</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1405597260%2FProperties%2F-1733806941" anchor-label="text" id="-1405597260%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="-1405597260%2FProperties%2F-355421435" anchor-label="text" id="-1405597260%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="text.html"><span><span>text</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1405597260%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1405597260%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="text.html">text</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="text.html">text</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="131702440%2FProperties%2F-1733806941" anchor-label="thumbUrl" id="131702440%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="131702440%2FProperties%2F-355421435" anchor-label="thumbUrl" id="131702440%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="thumb-url.html"><span>thumb</span><wbr><span><span>Url</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="131702440%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="131702440%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="thumb-url.html">thumbUrl</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="thumb-url.html">thumbUrl</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="901543521%2FProperties%2F-1733806941" anchor-label="title" id="901543521%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="901543521%2FProperties%2F-355421435" anchor-label="title" id="901543521%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="title.html"><span><span>title</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="901543521%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="901543521%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="title.html">title</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="title.html">title</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1406578297%2FProperties%2F-1733806941" anchor-label="titleLink" id="-1406578297%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="-1406578297%2FProperties%2F-355421435" anchor-label="titleLink" id="-1406578297%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="title-link.html"><span>title</span><wbr><span><span>Link</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1406578297%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1406578297%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="title-link.html">titleLink</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="title-link.html">titleLink</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1773635513%2FProperties%2F-1733806941" anchor-label="type" id="-1773635513%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="-1773635513%2FProperties%2F-355421435" anchor-label="type" id="-1773635513%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="type.html"><span><span>type</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1773635513%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1773635513%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="type.html">type</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="type.html">type</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="2143471200%2FProperties%2F-1733806941" anchor-label="upload" id="2143471200%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="2143471200%2FProperties%2F-355421435" anchor-label="upload" id="2143471200%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="upload.html"><span><span>upload</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2143471200%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2143471200%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="upload.html">upload</a><span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html">File</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">The local file to upload when the attachment is sent. The <a href="asset-url.html">assetUrl</a> property will be populated with the URL of the uploaded file when done.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="upload.html">upload</a><span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/io/File.html">File</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The local file to upload when the attachment is sent. The <a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-attachment/--root--.html">assetUrl</a> property will be populated with the URL of the uploaded file when done.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1016335273%2FProperties%2F-1733806941" anchor-label="uploadState" id="1016335273%2FProperties%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="1016335273%2FProperties%2F-355421435" anchor-label="uploadState" id="1016335273%2FProperties%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="upload-state.html"><span>upload</span><wbr><span><span>State</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1016335273%2FProperties%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1016335273%2FProperties%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="upload-state.html">uploadState</a><span class="token operator">: </span><a href="-upload-state/index.html">Attachment.UploadState</a><span class="token operator">?</span><span class="token operator"> = </span>null</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="upload-state.html">uploadState</a><span class="token operator">: </span><a href="-upload-state/index.html">Attachment.UploadState</a><span class="token operator">?</span></div></div></div>
                 </div>
               </div>
             </div>
@@ -425,48 +456,48 @@
         </div>
       </div>
       <div data-togglable="FUNCTION">
-        <h2 class="">Functions</h2>
-        <div class="table"><a data-name="-1388919314%2FFunctions%2F-1733806941" anchor-label="getExtraValue" id="-1388919314%2FFunctions%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="-1388919314%2FFunctions%2F-355421435" anchor-label="getExtraValue" id="-1388919314%2FFunctions%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="../-custom-object/get-extra-value.html"><span>get</span><wbr><span>Extra</span><wbr><span><span>Value</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1388919314%2FFunctions%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1388919314%2FFunctions%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><a href="../-custom-object/get-extra-value.html">T</a><span class="token operator">&gt; </span><a href="../-custom-object/get-extra-value.html"><span class="token function">getExtraValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">key<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">default<span class="token operator">: </span><a href="../-custom-object/get-extra-value.html">T</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-custom-object/get-extra-value.html">T</a></div><div class="brief "><p class="paragraph">Returns the value associated with the given <a href="../-custom-object/get-extra-value.html">key</a>, or <a href="../-custom-object/get-extra-value.html">default</a> if the key is not present in the <a href="../-custom-object/extra-data.html">extraData</a>.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><a href="../-custom-object/get-extra-value.html">T</a><span class="token operator">&gt; </span><a href="../-custom-object/get-extra-value.html"><span class="token function">getExtraValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">key<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">default<span class="token operator">: </span><a href="../-custom-object/get-extra-value.html">T</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-custom-object/get-extra-value.html">T</a></div><div class="brief "><p class="paragraph">Returns the value associated with the given <a href="../-custom-object/get-extra-value.html">key</a>, or <a href="../-custom-object/get-extra-value.html">default</a> if the key is not present in the <a href="../-custom-object/extra-data.html">extraData</a>.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="377934278%2FFunctions%2F-1733806941" anchor-label="newBuilder" id="377934278%2FFunctions%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="377934278%2FFunctions%2F-355421435" anchor-label="newBuilder" id="377934278%2FFunctions%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="new-builder.html"><span>new</span><wbr><span><span>Builder</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="377934278%2FFunctions%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="377934278%2FFunctions%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="new-builder.html"><span class="token function">newBuilder</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-builder/index.html">Attachment.Builder</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="new-builder.html"><span class="token function">newBuilder</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-builder/index.html">Attachment.Builder</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1976135509%2FFunctions%2F-1733806941" anchor-label="toString" id="1976135509%2FFunctions%2F-1733806941" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-core:dokkaHtmlPartial/main" data-filterable-set=":stream-chat-android-core:dokkaHtmlPartial/main">
+<a data-name="1976135509%2FFunctions%2F-355421435" anchor-label="toString" id="1976135509%2FFunctions%2F-355421435" data-filterable-set=":stream-chat-android-core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-core/main" data-filterable-set=":stream-chat-android-core/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="to-string.html"><span>to</span><wbr><span><span>String</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1976135509%2FFunctions%2F-1733806941"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1976135509%2FFunctions%2F-355421435"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="to-string.html"><span class="token function">toString</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-core/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="to-string.html"><span class="token function">toString</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -476,12 +507,22 @@
     </div>
   </div>
 </div>
-      <div class="footer">
-        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
-      </div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
             </div>
         </div>
     </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
-

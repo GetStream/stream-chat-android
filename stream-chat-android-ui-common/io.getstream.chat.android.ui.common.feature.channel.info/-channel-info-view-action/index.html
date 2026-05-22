@@ -1,355 +1,386 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>ChannelInfoViewAction</title>
-<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
-    <script>document.documentElement.classList.replace("no-js","js");</script>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
-    if (storage == null) {
+      if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
         if (osDarkSchemePreferred === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    } else {
+      } else {
         const savedDarkMode = JSON.parse(storage)
-        if(savedDarkMode === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    }
+      }
     </script>
-<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
 <link href="../../../styles/style.css" rel="Stylesheet">
 <link href="../../../styles/main.css" rel="Stylesheet">
 <link href="../../../styles/prism.css" rel="Stylesheet">
 <link href="../../../styles/logo-styles.css" rel="Stylesheet">
-<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
-<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
 <script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
 <script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
 <script type="text/javascript" src="../../../scripts/main.js" defer></script>
 <script type="text/javascript" src="../../../scripts/prism.js" async></script>
-<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script></head>
 <body>
-    <div class="root">
-<nav class="navigation" id="navigation-wrapper">
-    <div class="navigation--inner">
-        <div class="navigation-title">
-            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
-            <div class="library-name">
-<a class="library-name--link" href="../../../index.html">
-                            stream-chat-android
-                    </a>            </div>
-            <div class="library-version">7.1.0
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../index.html" tabindex="1">
+                    stream-chat-android
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">7.2.0
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":stream-chat-android-ui-common/main">androidJvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":stream-chat-android-ui-common/main" data-filter=":stream-chat-android-ui-common/main">
+                                <span class="checkbox--icon"></span>
+                                androidJvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
             </div>
         </div>
-        <div class="filter-section" id="filter-section">
-                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":stream-chat-android-ui-common:dokkaHtmlPartial/release">androidJvm</button>
-        </div>
-    </div>
-    <div class="navigation-controls">
-        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
-        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
-    </div>
-</nav>
-        <div id="container">
-            <div class="sidebar" id="leftColumn">
-                <div class="sidebar--inner" id="sideMenu"></div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    stream-chat-android
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
             </div>
-            <div id="main">
-<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-ui-common::io.getstream.chat.android.ui.common.feature.channel.info/ChannelInfoViewAction///PointingToDeclaration//-348677689">
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-ui-common::io.getstream.chat.android.ui.common.feature.channel.info/ChannelInfoViewAction///PointingToDeclaration//-109015011">
   <div class="breadcrumbs"><a href="../../index.html">stream-chat-android-ui-common</a><span class="delimiter">/</span><a href="../index.html">io.getstream.chat.android.ui.common.feature.channel.info</a><span class="delimiter">/</span><span class="current">ChannelInfoViewAction</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Channel</span><wbr><span>Info</span><wbr><span>View</span><wbr><span><span>Action</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">sealed </span><span class="token keyword">interface </span><a href="index.html">ChannelInfoViewAction</a></div><p class="paragraph">Represents actions that can be performed from the channel information view.</p><h4 class="">Inheritors</h4><div class="table"><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-expand-members-click/index.html">ExpandMembersClick</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-collapse-members-click/index.html">CollapseMembersClick</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-member-click/index.html">MemberClick</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-rename-channel-click/index.html">RenameChannelClick</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-pinned-messages-click/index.html">PinnedMessagesClick</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-media-attachments-click/index.html">MediaAttachmentsClick</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-files-attachments-click/index.html">FilesAttachmentsClick</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-mute-channel-click/index.html">MuteChannelClick</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-unmute-channel-click/index.html">UnmuteChannelClick</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-mute-user-click/index.html">MuteUserClick</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-unmute-user-click/index.html">UnmuteUserClick</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-block-user-click/index.html">BlockUserClick</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-unblock-user-click/index.html">UnblockUserClick</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-leave-channel-click/index.html">LeaveChannelClick</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-leave-channel-confirmation-click/index.html">LeaveChannelConfirmationClick</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-delete-channel-click/index.html">DeleteChannelClick</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-delete-channel-confirmation-click/index.html">DeleteChannelConfirmationClick</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-ban-member-confirmation-click/index.html">BanMemberConfirmationClick</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-remove-member-confirmation-click/index.html">RemoveMemberConfirmationClick</a></div></span></div><div></div></div></div></div></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">sealed </span><span class="token keyword">interface </span><a href="index.html">ChannelInfoViewAction</a></div><p class="paragraph">Represents actions that can be performed from the channel information view.</p><h4 class="tableheader">Inheritors</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-expand-members-click/index.html">ExpandMembersClick</a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-collapse-members-click/index.html">CollapseMembersClick</a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-member-click/index.html">MemberClick</a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-rename-channel-click/index.html">RenameChannelClick</a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-pinned-messages-click/index.html">PinnedMessagesClick</a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-media-attachments-click/index.html">MediaAttachmentsClick</a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-files-attachments-click/index.html">FilesAttachmentsClick</a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-mute-channel-click/index.html">MuteChannelClick</a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-unmute-channel-click/index.html">UnmuteChannelClick</a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-mute-user-click/index.html">MuteUserClick</a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-unmute-user-click/index.html">UnmuteUserClick</a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-block-user-click/index.html">BlockUserClick</a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-unblock-user-click/index.html">UnblockUserClick</a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-leave-channel-click/index.html">LeaveChannelClick</a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-leave-channel-confirmation-click/index.html">LeaveChannelConfirmationClick</a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-delete-channel-click/index.html">DeleteChannelClick</a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-delete-channel-confirmation-click/index.html">DeleteChannelConfirmationClick</a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-ban-member-confirmation-click/index.html">BanMemberConfirmationClick</a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-remove-member-confirmation-click/index.html">RemoveMemberConfirmationClick</a></div></span></div><div></div></div></div></div></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
       <div data-togglable="TYPE">
-        <h2 class="">Types</h2>
-        <div class="table"><a data-name="621035429%2FClasslikes%2F-348677689" anchor-label="BanMemberConfirmationClick" id="621035429%2FClasslikes%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="621035429%2FClasslikes%2F-109015011" anchor-label="BanMemberConfirmationClick" id="621035429%2FClasslikes%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-ban-member-confirmation-click/index.html"><span>Ban</span><wbr><span>Member</span><wbr><span>Confirmation</span><wbr><span><span>Click</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="621035429%2FClasslikes%2F-348677689"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="621035429%2FClasslikes%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-ban-member-confirmation-click/index.html">BanMemberConfirmationClick</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>memberId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>timeoutInMinutes<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the confirmation click action to ban the member.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-ban-member-confirmation-click/index.html">BanMemberConfirmationClick</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>memberId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>timeoutInMinutes<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the confirmation click action to ban the member.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1728303807%2FClasslikes%2F-348677689" anchor-label="BlockUserClick" id="1728303807%2FClasslikes%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="1728303807%2FClasslikes%2F-109015011" anchor-label="BlockUserClick" id="1728303807%2FClasslikes%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-block-user-click/index.html"><span>Block</span><wbr><span>User</span><wbr><span><span>Click</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1728303807%2FClasslikes%2F-348677689"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1728303807%2FClasslikes%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-block-user-click/index.html">BlockUserClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the block user click action.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-block-user-click/index.html">BlockUserClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the block user click action.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="860161011%2FClasslikes%2F-348677689" anchor-label="CollapseMembersClick" id="860161011%2FClasslikes%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="860161011%2FClasslikes%2F-109015011" anchor-label="CollapseMembersClick" id="860161011%2FClasslikes%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-collapse-members-click/index.html"><span>Collapse</span><wbr><span>Members</span><wbr><span><span>Click</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="860161011%2FClasslikes%2F-348677689"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="860161011%2FClasslikes%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-collapse-members-click/index.html">CollapseMembersClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the collapse list of members click action.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-collapse-members-click/index.html">CollapseMembersClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the collapse list of members click action.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1879265633%2FClasslikes%2F-348677689" anchor-label="DeleteChannelClick" id="-1879265633%2FClasslikes%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="-1879265633%2FClasslikes%2F-109015011" anchor-label="DeleteChannelClick" id="-1879265633%2FClasslikes%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-delete-channel-click/index.html"><span>Delete</span><wbr><span>Channel</span><wbr><span><span>Click</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1879265633%2FClasslikes%2F-348677689"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1879265633%2FClasslikes%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-delete-channel-click/index.html">DeleteChannelClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the delete channel click action.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-delete-channel-click/index.html">DeleteChannelClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the delete channel click action.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1589934900%2FClasslikes%2F-348677689" anchor-label="DeleteChannelConfirmationClick" id="1589934900%2FClasslikes%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="1589934900%2FClasslikes%2F-109015011" anchor-label="DeleteChannelConfirmationClick" id="1589934900%2FClasslikes%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-delete-channel-confirmation-click/index.html"><span>Delete</span><wbr><span>Channel</span><wbr><span>Confirmation</span><wbr><span><span>Click</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1589934900%2FClasslikes%2F-348677689"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1589934900%2FClasslikes%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-delete-channel-confirmation-click/index.html">DeleteChannelConfirmationClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the confirmation click action for deleting a channel.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-delete-channel-confirmation-click/index.html">DeleteChannelConfirmationClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the confirmation click action for deleting a channel.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="757665958%2FClasslikes%2F-348677689" anchor-label="ExpandMembersClick" id="757665958%2FClasslikes%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="757665958%2FClasslikes%2F-109015011" anchor-label="ExpandMembersClick" id="757665958%2FClasslikes%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-expand-members-click/index.html"><span>Expand</span><wbr><span>Members</span><wbr><span><span>Click</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="757665958%2FClasslikes%2F-348677689"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="757665958%2FClasslikes%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-expand-members-click/index.html">ExpandMembersClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the expand list of members click action.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-expand-members-click/index.html">ExpandMembersClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the expand list of members click action.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1949638140%2FClasslikes%2F-348677689" anchor-label="FilesAttachmentsClick" id="-1949638140%2FClasslikes%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="-1949638140%2FClasslikes%2F-109015011" anchor-label="FilesAttachmentsClick" id="-1949638140%2FClasslikes%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-files-attachments-click/index.html"><span>Files</span><wbr><span>Attachments</span><wbr><span><span>Click</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1949638140%2FClasslikes%2F-348677689"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1949638140%2FClasslikes%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-files-attachments-click/index.html">FilesAttachmentsClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the files attachments click action.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-files-attachments-click/index.html">FilesAttachmentsClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the files attachments click action.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1170657623%2FClasslikes%2F-348677689" anchor-label="LeaveChannelClick" id="1170657623%2FClasslikes%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="1170657623%2FClasslikes%2F-109015011" anchor-label="LeaveChannelClick" id="1170657623%2FClasslikes%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-leave-channel-click/index.html"><span>Leave</span><wbr><span>Channel</span><wbr><span><span>Click</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1170657623%2FClasslikes%2F-348677689"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1170657623%2FClasslikes%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-leave-channel-click/index.html">LeaveChannelClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the leave channel click action.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-leave-channel-click/index.html">LeaveChannelClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the leave channel click action.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1969731092%2FClasslikes%2F-348677689" anchor-label="LeaveChannelConfirmationClick" id="-1969731092%2FClasslikes%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="-1969731092%2FClasslikes%2F-109015011" anchor-label="LeaveChannelConfirmationClick" id="-1969731092%2FClasslikes%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-leave-channel-confirmation-click/index.html"><span>Leave</span><wbr><span>Channel</span><wbr><span>Confirmation</span><wbr><span><span>Click</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1969731092%2FClasslikes%2F-348677689"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1969731092%2FClasslikes%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-leave-channel-confirmation-click/index.html">LeaveChannelConfirmationClick</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>quitMessage<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the confirmation click action for leaving a channel.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-leave-channel-confirmation-click/index.html">LeaveChannelConfirmationClick</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>quitMessage<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the confirmation click action for leaving a channel.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="739339063%2FClasslikes%2F-348677689" anchor-label="MediaAttachmentsClick" id="739339063%2FClasslikes%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="739339063%2FClasslikes%2F-109015011" anchor-label="MediaAttachmentsClick" id="739339063%2FClasslikes%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-media-attachments-click/index.html"><span>Media</span><wbr><span>Attachments</span><wbr><span><span>Click</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="739339063%2FClasslikes%2F-348677689"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="739339063%2FClasslikes%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-media-attachments-click/index.html">MediaAttachmentsClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the media attachments click action.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-media-attachments-click/index.html">MediaAttachmentsClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the media attachments click action.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1774674267%2FClasslikes%2F-348677689" anchor-label="MemberClick" id="-1774674267%2FClasslikes%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="-1774674267%2FClasslikes%2F-109015011" anchor-label="MemberClick" id="-1774674267%2FClasslikes%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-member-click/index.html"><span>Member</span><wbr><span><span>Click</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1774674267%2FClasslikes%2F-348677689"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1774674267%2FClasslikes%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-member-click/index.html">MemberClick</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>member<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-member/index.html">Member</a></span></span><span class="token punctuation">)</span> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the click action on a member.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-member-click/index.html">MemberClick</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>member<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-member/index.html">Member</a></span></span><span class="token punctuation">)</span> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the click action on a member.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1380783729%2FClasslikes%2F-348677689" anchor-label="MuteChannelClick" id="1380783729%2FClasslikes%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="1380783729%2FClasslikes%2F-109015011" anchor-label="MuteChannelClick" id="1380783729%2FClasslikes%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-mute-channel-click/index.html"><span>Mute</span><wbr><span>Channel</span><wbr><span><span>Click</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1380783729%2FClasslikes%2F-348677689"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1380783729%2FClasslikes%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-mute-channel-click/index.html">MuteChannelClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the mute channel click action.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-mute-channel-click/index.html">MuteChannelClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the mute channel click action.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="16626575%2FClasslikes%2F-348677689" anchor-label="MuteUserClick" id="16626575%2FClasslikes%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="16626575%2FClasslikes%2F-109015011" anchor-label="MuteUserClick" id="16626575%2FClasslikes%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-mute-user-click/index.html"><span>Mute</span><wbr><span>User</span><wbr><span><span>Click</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="16626575%2FClasslikes%2F-348677689"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="16626575%2FClasslikes%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-mute-user-click/index.html">MuteUserClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the mute user click action.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-mute-user-click/index.html">MuteUserClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the mute user click action.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1069141455%2FClasslikes%2F-348677689" anchor-label="PinnedMessagesClick" id="1069141455%2FClasslikes%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="1069141455%2FClasslikes%2F-109015011" anchor-label="PinnedMessagesClick" id="1069141455%2FClasslikes%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-pinned-messages-click/index.html"><span>Pinned</span><wbr><span>Messages</span><wbr><span><span>Click</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1069141455%2FClasslikes%2F-348677689"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1069141455%2FClasslikes%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-pinned-messages-click/index.html">PinnedMessagesClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the pinned messages click action.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-pinned-messages-click/index.html">PinnedMessagesClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the pinned messages click action.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1791845026%2FClasslikes%2F-348677689" anchor-label="RemoveMemberConfirmationClick" id="-1791845026%2FClasslikes%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="-1791845026%2FClasslikes%2F-109015011" anchor-label="RemoveMemberConfirmationClick" id="-1791845026%2FClasslikes%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-remove-member-confirmation-click/index.html"><span>Remove</span><wbr><span>Member</span><wbr><span>Confirmation</span><wbr><span><span>Click</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1791845026%2FClasslikes%2F-348677689"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1791845026%2FClasslikes%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-remove-member-confirmation-click/index.html">RemoveMemberConfirmationClick</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>memberId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the confirmation click action to remove the member.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-remove-member-confirmation-click/index.html">RemoveMemberConfirmationClick</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>memberId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the confirmation click action to remove the member.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1465027820%2FClasslikes%2F-348677689" anchor-label="RenameChannelClick" id="1465027820%2FClasslikes%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="1465027820%2FClasslikes%2F-109015011" anchor-label="RenameChannelClick" id="1465027820%2FClasslikes%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-rename-channel-click/index.html"><span>Rename</span><wbr><span>Channel</span><wbr><span><span>Click</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1465027820%2FClasslikes%2F-348677689"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1465027820%2FClasslikes%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-rename-channel-click/index.html">RenameChannelClick</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>name<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the rename channel click action.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-rename-channel-click/index.html">RenameChannelClick</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the rename channel click action.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-145575290%2FClasslikes%2F-348677689" anchor-label="UnblockUserClick" id="-145575290%2FClasslikes%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="-145575290%2FClasslikes%2F-109015011" anchor-label="UnblockUserClick" id="-145575290%2FClasslikes%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-unblock-user-click/index.html"><span>Unblock</span><wbr><span>User</span><wbr><span><span>Click</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-145575290%2FClasslikes%2F-348677689"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-145575290%2FClasslikes%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-unblock-user-click/index.html">UnblockUserClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the unblock user click action.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-unblock-user-click/index.html">UnblockUserClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the unblock user click action.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="174268536%2FClasslikes%2F-348677689" anchor-label="UnmuteChannelClick" id="174268536%2FClasslikes%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="174268536%2FClasslikes%2F-109015011" anchor-label="UnmuteChannelClick" id="174268536%2FClasslikes%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-unmute-channel-click/index.html"><span>Unmute</span><wbr><span>Channel</span><wbr><span><span>Click</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="174268536%2FClasslikes%2F-348677689"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="174268536%2FClasslikes%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-unmute-channel-click/index.html">UnmuteChannelClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the unmute channel click action.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-unmute-channel-click/index.html">UnmuteChannelClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the unmute channel click action.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1895841512%2FClasslikes%2F-348677689" anchor-label="UnmuteUserClick" id="1895841512%2FClasslikes%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
-          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+<a data-name="1895841512%2FClasslikes%2F-109015011" anchor-label="UnmuteUserClick" id="1895841512%2FClasslikes%2F-109015011" data-filterable-set=":stream-chat-android-ui-common/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-common/main" data-filterable-set=":stream-chat-android-ui-common/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-unmute-user-click/index.html"><span>Unmute</span><wbr><span>User</span><wbr><span><span>Click</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1895841512%2FClasslikes%2F-348677689"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1895841512%2FClasslikes%2F-109015011"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-unmute-user-click/index.html">UnmuteUserClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the unmute user click action.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">object </span><a href="-unmute-user-click/index.html">UnmuteUserClick</a> : <a href="index.html">ChannelInfoViewAction</a></div><div class="brief "><p class="paragraph">Represents the unmute user click action.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -359,12 +390,22 @@
     </div>
   </div>
 </div>
-      <div class="footer">
-        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
-      </div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
             </div>
         </div>
     </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
-
