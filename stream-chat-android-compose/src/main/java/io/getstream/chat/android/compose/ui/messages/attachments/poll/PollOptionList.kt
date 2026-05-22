@@ -44,6 +44,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
@@ -72,6 +78,10 @@ public fun PollOptionList(
     val context = LocalContext.current
     val colors = ChatTheme.colors
     var optionItemList by remember(optionItems) { mutableStateOf(optionItems) }
+    val move: (Int, Int) -> Unit = { from, to ->
+        optionItemList = optionItemList.moveItem(from, to)
+        onQuestionsChanged(optionItemList)
+    }
 
     Column(
         modifier = modifier
@@ -88,17 +98,13 @@ public fun PollOptionList(
 
         ReorderableColumn(
             list = optionItemList,
-            onSettle = { fromIndex, toIndex ->
-                optionItemList = optionItemList.toMutableList().apply {
-                    add(toIndex, removeAt(fromIndex))
-                }
-                onQuestionsChanged(optionItemList)
-            },
+            onSettle = move,
             verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
         ) { index, item, _ ->
             key(item.key) {
                 PollOptionRow(
                     item = item,
+                    index = index,
                     onTitleChange = { newTitle ->
                         optionItemList = optionItemList.updateOnTitleChange(context, index, newTitle)
                         onQuestionsChanged.invoke(optionItemList)
@@ -107,6 +113,10 @@ public fun PollOptionList(
                         optionItemList = optionItemList.toMutableList().apply { removeAt(index) }
                         onQuestionsChanged(optionItemList)
                     },
+                    moves = PollOptionMoves(
+                        up = index.takeIf { it > 0 }?.let { i -> { move(i, i - 1) } },
+                        down = index.takeIf { it < optionItemList.lastIndex }?.let { i -> { move(i, i + 1) } },
+                    ),
                 )
             }
         }
@@ -127,10 +137,17 @@ public fun PollOptionList(
 @Composable
 private fun ReorderableScope.PollOptionRow(
     item: PollOptionItem,
+    index: Int,
     onTitleChange: (String) -> Unit,
     onRemove: () -> Unit,
+    moves: PollOptionMoves,
 ) {
     val colors = ChatTheme.colors
+    val displayName = item.title.ifBlank { (index + 1).toString() }
+    val moveActions = listOfNotNull(
+        moves.up.toMoveAction(stringResource(R.string.stream_compose_poll_option_move_up)),
+        moves.down.toMoveAction(stringResource(R.string.stream_compose_poll_option_move_down)),
+    )
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -141,16 +158,20 @@ private fun ReorderableScope.PollOptionRow(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            val reorderLabel = stringResource(R.string.stream_compose_poll_option_reorder, displayName)
             Box(
                 modifier = Modifier
+                    .semantics(mergeDescendants = true) {
+                        contentDescription = reorderLabel
+                        customActions = moveActions
+                    }
                     .draggableHandle()
                     .minimumInteractiveComponentSize(),
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.stream_design_ic_reorder),
-                    contentDescription = stringResource(R.string.stream_compose_poll_option_reorder),
+                    contentDescription = null,
                     tint = colors.inputTextIcon,
-                    modifier = Modifier.size(20.dp),
                 )
             }
 
@@ -164,7 +185,7 @@ private fun ReorderableScope.PollOptionRow(
             IconButton(onClick = onRemove) {
                 Icon(
                     painter = painterResource(R.drawable.stream_design_ic_minus_circle),
-                    contentDescription = stringResource(R.string.stream_compose_poll_option_remove),
+                    contentDescription = stringResource(R.string.stream_compose_poll_option_remove, displayName),
                     tint = colors.inputTextIcon,
                     modifier = Modifier.size(20.dp),
                 )
@@ -187,7 +208,8 @@ private fun PollOptionErrorRow(pollOptionError: PollOptionError) {
                 start = StreamTokens.spacingMd,
                 end = StreamTokens.spacingMd,
                 bottom = StreamTokens.spacingSm,
-            ),
+            )
+            .semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -235,6 +257,22 @@ private fun AddPollOptionButton(onClick: () -> Unit) {
 // Align with IconButton's default min touch target size
 internal val PollInputMinHeight @Composable get() = LocalMinimumInteractiveComponentSize.current
 internal val PollInputShape = RoundedCornerShape(StreamTokens.radiusLg)
+
+private fun List<PollOptionItem>.moveItem(fromIndex: Int, toIndex: Int): List<PollOptionItem> =
+    toMutableList().apply { add(toIndex, removeAt(fromIndex)) }
+
+private fun (() -> Unit)?.toMoveAction(label: String): CustomAccessibilityAction? =
+    this?.let { invoke ->
+        CustomAccessibilityAction(label) {
+            invoke()
+            true
+        }
+    }
+
+private data class PollOptionMoves(
+    val up: (() -> Unit)?,
+    val down: (() -> Unit)?,
+)
 
 private fun List<PollOptionItem>.updateOnTitleChange(
     context: Context,

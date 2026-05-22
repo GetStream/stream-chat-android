@@ -240,8 +240,10 @@
   <string name="stream_compose_poll_option_limit_votes_description">"Scegli tra 2\u201310 opzioni"</string>
   <string name="stream_compose_poll_option_limit_votes_increase">"Aumenta voti per persona"</string>
   <string name="stream_compose_poll_option_limit_votes_input">"Voti per persona"</string>
-  <string name="stream_compose_poll_option_remove">"Rimuovi opzione sondaggio"</string>
-  <string name="stream_compose_poll_option_reorder">"Riordina opzione sondaggio"</string>
+  <string name="stream_compose_poll_option_remove">"Rimuovi opzione %s"</string>
+  <string name="stream_compose_poll_option_move_down">"Sposta giù"</string>
+  <string name="stream_compose_poll_option_move_up">"Sposta su"</string>
+  <string name="stream_compose_poll_option_reorder">"Riordina opzione %s"</string>
   <string name="stream_compose_poll_option_switch_add_comment">"Aggiungi un commento"</string>
   <string name="stream_compose_poll_option_switch_add_comment_description">"Permetti ad altri di aggiungere commenti"</string>
   <string name="stream_compose_poll_option_switch_anonymous_poll">"Sondaggio anonimo"</string>
@@ -260,6 +262,7 @@
   <string name="stream_compose_poll_questions_title">"Domanda"</string>
   <string name="stream_compose_poll_results">"Risultati sondaggio"</string>
   <string name="stream_compose_poll_suggest_option">"Suggerisci opzione"</string>
+  <string name="stream_compose_poll_create_action">"crea sondaggio"</string>
   <string name="stream_compose_poll_title">"Crea sondaggio"</string>
   <string name="stream_compose_poll_view_more">"Vedi tutti"</string>
   <string name="stream_compose_poll_view_result">"Vedi risultati"</string>

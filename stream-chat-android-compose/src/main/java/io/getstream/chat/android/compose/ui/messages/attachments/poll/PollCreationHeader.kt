@@ -50,6 +50,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param onBackPressed A lambda that will be executed if users click the back button on the default [leadingContent].
  * @param enabledCreation Represents if user can click the creation button or not.
  * @param onPollCreateClicked A lambda that will be executed if users click the poll creation button.
+ * @param onPollCreateClickedLabel Semantic / accessibility label for [onPollCreateClicked].
  * @param leadingContent Customizable composable function that represents the leading content of a poll creation item, usually
  * holding a back action button.
  * @param centerContent Customizable composable function that represents the center content of a poll creation item, usually
@@ -63,6 +64,7 @@ public fun PollCreationHeader(
     onBackPressed: () -> Unit = {},
     enabledCreation: Boolean,
     onPollCreateClicked: () -> Unit,
+    onPollCreateClickedLabel: String? = null,
     leadingContent: @Composable (RowScope.() -> Unit)? = null,
     centerContent: @Composable (RowScope.() -> Unit)? = null,
     trailingContent: @Composable (RowScope.() -> Unit)? = null,
@@ -86,7 +88,8 @@ public fun PollCreationHeader(
 
             trailingContent?.invoke(this) ?: DefaultPollOptionsHeaderTrailingContent(
                 enabled = enabledCreation,
-                onPollCreateClicked = onPollCreateClicked,
+                onPollCreateClick = onPollCreateClicked,
+                onPollCreateClickLabel = onPollCreateClickedLabel,
             )
         }
     }
@@ -118,18 +121,21 @@ internal fun DefaultPollOptionsHeaderCenterContent(modifier: Modifier, title: St
 }
 
 @Composable
-internal fun DefaultPollOptionsHeaderTrailingContent(
+private fun DefaultPollOptionsHeaderTrailingContent(
     enabled: Boolean,
-    onPollCreateClicked: () -> Unit,
+    onPollCreateClick: () -> Unit,
+    onPollCreateClickLabel: String? = null,
 ) {
+    val onClickLabel = onPollCreateClickLabel ?: stringResource(R.string.stream_compose_poll_create_action)
     StreamButton(
-        onClick = onPollCreateClicked,
+        onClick = onPollCreateClick,
         enabled = enabled,
+        onClickLabel = onClickLabel,
         style = StreamButtonStyleDefaults.primarySolid,
     ) {
         Icon(
             painter = painterResource(R.drawable.stream_design_ic_checkmark),
-            contentDescription = stringResource(R.string.stream_compose_poll_title),
+            contentDescription = onClickLabel,
         )
     }
 }

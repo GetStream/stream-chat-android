@@ -83,6 +83,7 @@ internal fun StreamButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    onClickLabel: String? = null,
     style: StreamButtonStyle = StreamButtonStyleDefaults.primarySolid,
     size: StreamButtonSize = StreamButtonSize.Medium,
     content: @Composable () -> Unit,
@@ -95,6 +96,7 @@ internal fun StreamButton(
             .ifNotNull(style.borderColor(enabled)) { border(1.dp, it, CircleShape) }
             .clickable(
                 onClick = onClick,
+                onClickLabel = onClickLabel,
                 enabled = enabled,
                 role = Role.Button,
                 interactionSource = remember(::MutableInteractionSource),
