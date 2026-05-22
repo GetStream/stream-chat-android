@@ -23,6 +23,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.compose.R
@@ -54,7 +56,7 @@ public fun ThreadsScreen(
     val user by listViewModel.user.collectAsState()
     val connectionState by listViewModel.connectionState.collectAsState()
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize().semantics { paneTitle = title }) {
         ChatTheme.componentFactory.ThreadListHeader(
             params = ThreadListHeaderParams(
                 title = title,

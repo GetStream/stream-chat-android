@@ -44,6 +44,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -179,10 +181,12 @@ public fun ChatsScreen(
         onDispose { navigator.popUpTo(ThreePaneRole.List) }
     }
 
-    val listPane = remember(listContentMode) {
+    val listPane = remember(listContentMode, title) {
         movableContentOf { modifier: Modifier ->
             Scaffold(
-                modifier = modifier.safeDrawingPadding(),
+                modifier = modifier
+                    .safeDrawingPadding()
+                    .semantics { paneTitle = title },
                 containerColor = ChatTheme.colors.backgroundCoreApp,
                 topBar = { listTopBarContent() },
                 bottomBar = { listBottomBarContent() },

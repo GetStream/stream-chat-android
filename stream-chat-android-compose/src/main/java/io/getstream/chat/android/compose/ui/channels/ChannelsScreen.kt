@@ -41,6 +41,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
@@ -123,7 +125,9 @@ public fun ChannelsScreen(
             .testTag("Stream_ChannelsScreen"),
     ) {
         Scaffold(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .semantics { paneTitle = title },
             topBar = {
                 if (isShowingHeader) {
                     ChatTheme.componentFactory.ChannelListHeader(
