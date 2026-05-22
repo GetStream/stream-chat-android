@@ -164,8 +164,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun queryDraftMessages (Ljava/lang/Integer;Ljava/lang/Integer;)Lio/getstream/result/call/Call;
 	public final fun queryDrafts (Lio/getstream/chat/android/models/FilterObject;ILjava/lang/String;Lio/getstream/chat/android/models/querysort/QuerySorter;)Lio/getstream/result/call/Call;
 	public static synthetic fun queryDrafts$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/FilterObject;ILjava/lang/String;Lio/getstream/chat/android/models/querysort/QuerySorter;ILjava/lang/Object;)Lio/getstream/result/call/Call;
-	public final fun queryGroupedChannels (Ljava/lang/Integer;ZZ)Lio/getstream/result/call/Call;
-	public static synthetic fun queryGroupedChannels$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/Integer;ZZILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun queryGroupedChannels (Ljava/util/List;Ljava/lang/Integer;ZZ)Lio/getstream/result/call/Call;
+	public static synthetic fun queryGroupedChannels$default (Lio/getstream/chat/android/client/ChatClient;Ljava/util/List;Ljava/lang/Integer;ZZILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun queryMembers (Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/List;)Lio/getstream/result/call/Call;
 	public static synthetic fun queryMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun queryPollVotes (Ljava/lang/String;Lio/getstream/chat/android/models/FilterObject;Ljava/lang/Integer;Ljava/lang/String;Lio/getstream/chat/android/models/querysort/QuerySorter;)Lio/getstream/result/call/Call;

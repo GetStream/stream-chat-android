@@ -67,7 +67,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
             .givenQueryGroupedChannelsResult(RetroSuccess(groupedChannels).toRetrofitCall())
             .get()
         // when
-        val result = sut.queryGroupedChannels().await()
+        val result = sut.queryGroupedChannels(groups = listOf("direct")).await()
         // then
         verifySuccess(result, groupedChannels)
     }
@@ -80,7 +80,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
             .givenQueryGroupedChannelsResult(RetroError<GroupedChannels>(errorCode).toRetrofitCall())
             .get()
         // when
-        val result = sut.queryGroupedChannels().await()
+        val result = sut.queryGroupedChannels(groups = listOf("direct")).await()
         // then
         verifyNetworkError(result, errorCode)
     }
@@ -192,7 +192,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
     }
 
     @Test
-    fun `public queryGroupedChannels delegates to internal with null groups and fires hooks once`() = runTest {
+    fun `public queryGroupedChannels delegates to internal with default per-group queries and fires hooks once`() = runTest {
         // given
         val plugin: Plugin = mock()
         plugins.add(plugin)
@@ -207,24 +207,27 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
         val sut = Fixture()
             .givenQueryGroupedChannelsResult(RetroSuccess(groupedChannels).toRetrofitCall())
             .get()
-        // when - public entry point (no `groups` argument)
+        val expectedGroups = mapOf("direct" to GroupedChannelsGroupQuery())
+        // when - public entry point: a list of group names, no per-group pagination
         sut.queryGroupedChannels(
+            groups = listOf("direct"),
             limit = 30,
             watch = true,
             presence = false,
         ).await()
-        // then - hooks fire exactly once, with groups = null, ordered request before result
+        // then - hooks fire exactly once, with each requested group mapped to a default
+        // GroupedChannelsGroupQuery, ordered request before result
         inOrder(plugin) {
             verify(plugin, times(1)).onQueryGroupedChannelsRequest(
                 limit = eq(30),
-                groups = eq(null),
+                groups = eq(expectedGroups),
                 watch = eq(true),
                 presence = eq(false),
             )
             verify(plugin, times(1)).onQueryGroupedChannelsResult(
                 result = any(),
                 limit = eq(30),
-                groups = eq(null),
+                groups = eq(expectedGroups),
                 watch = eq(true),
                 presence = eq(false),
             )

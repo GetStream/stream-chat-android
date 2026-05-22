@@ -3148,8 +3148,10 @@ internal constructor(
     }
 
     /**
-     * Queries channels grouped into server-defined groups and returns the first page of each.
+     * Queries channels grouped into the specified groups and returns the first page of each.
      *
+     * @param groups The group names to fetch. Required; must contain at least one group name.
+     * Duplicate names are silently de-duplicated.
      * @param limit Default max channels per group. `null` uses the server default.
      * @param watch Whether to start watching the returned channels for real-time events.
      * @param presence Whether to receive presence events for the members of the returned channels.
@@ -3158,12 +3160,13 @@ internal constructor(
      */
     @CheckResult
     public fun queryGroupedChannels(
+        groups: List<String>,
         limit: Int? = null,
         watch: Boolean = false,
         presence: Boolean = false,
     ): Call<GroupedChannels> = queryGroupedChannelsInternal(
         limit = limit,
-        groups = null,
+        groups = groups.associateWith { GroupedChannelsGroupQuery() },
         watch = watch,
         presence = presence,
     )
