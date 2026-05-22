@@ -2381,14 +2381,23 @@ public class MessageListView : ConstraintLayout {
         public fun onViewPollResultClick(poll: Poll): Boolean
     }
 
+    /**
+     * Listener for clicks on the "Suggest an option" button of a poll that allows user-suggested options.
+     */
     public fun interface OnSuggestPollOptionClickListener {
         public fun onSuggestPollOptionClick(poll: Poll): Boolean
     }
 
+    /**
+     * Listener for clicks on the "Add a comment" button of a poll that allows answers.
+     */
     public fun interface OnAddPollCommentClickListener {
         public fun onAddPollCommentClick(message: Message, poll: Poll): Boolean
     }
 
+    /**
+     * Listener for clicks on the "View comments" button of a poll that has answers.
+     */
     public fun interface OnViewPollCommentsClickListener {
         public fun onViewPollCommentsClick(message: Message, poll: Poll): Boolean
     }
