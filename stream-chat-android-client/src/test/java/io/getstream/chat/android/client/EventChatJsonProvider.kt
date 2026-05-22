@@ -585,6 +585,217 @@ internal fun createNewMessageWithoutUnreadCountsEventStringJson() =
         """.trimIndent(),
     )
 
+internal fun createConnectionErrorEventStringJson() =
+    createChatEventStringJson(
+        "connection.error",
+        """
+            "connection_id": "6cfffec7-40df-40ac-901a-6ea6c5b7fb83",
+            "error": ${createErrorJsonString()}
+        """.trimIndent(),
+    )
+
+internal fun createDraftMessageUpdatedEventStringJson() =
+    createChatEventStringJson(
+        "draft.updated",
+        """
+            "draft": ${createDraftJsonString()}
+        """.trimIndent(),
+    )
+
+internal fun createDraftMessageDeletedEventStringJson() =
+    createChatEventStringJson(
+        "draft.deleted",
+        """
+            "draft": ${createDraftJsonString()}
+        """.trimIndent(),
+    )
+
+internal fun createMessageDeliveredEventStringJson() =
+    createChatEventStringJson(
+        "message.delivered",
+        """
+            "user": ${createUserJsonString()},
+            "cid": "channelType:channelId",
+            "channel_type": "channelType",
+            "channel_id": "channelId",
+            "last_delivered_at": "2020-06-29T06:14:28.000Z",
+            "last_delivered_message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755"
+        """.trimIndent(),
+    )
+
+internal fun createNotificationThreadMessageNewEventStringJson() =
+    createChatEventStringJson(
+        "notification.thread_message_new",
+        """
+            "cid": "channelType:channelId",
+            "channel_type": "channelType",
+            "channel_id": "channelId",
+            "message": ${createMessageJsonString()},
+            "channel": ${createChannelJsonString()},
+            "unread_threads": 1,
+            "unread_thread_messages": 2
+        """.trimIndent(),
+    )
+
+internal fun createPollUpdatedEventStringJson() =
+    createChatEventStringJson(
+        "poll.updated",
+        """
+            "cid": "channelType:channelId",
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "poll": ${createPollJsonString()}
+        """.trimIndent(),
+    )
+
+internal fun createPollDeletedEventStringJson() =
+    createChatEventStringJson(
+        "poll.deleted",
+        """
+            "cid": "channelType:channelId",
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "poll": ${createPollJsonString()}
+        """.trimIndent(),
+    )
+
+internal fun createPollClosedEventStringJson() =
+    createChatEventStringJson(
+        "poll.closed",
+        """
+            "cid": "channelType:channelId",
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "poll": ${createPollJsonString()}
+        """.trimIndent(),
+    )
+
+internal fun createVoteCastedEventStringJson() =
+    createChatEventStringJson(
+        "poll.vote_casted",
+        """
+            "cid": "channelType:channelId",
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "poll": ${createPollJsonString()},
+            "poll_vote": ${createPollVoteJsonString()}
+        """.trimIndent(),
+    )
+
+internal fun createAnswerCastedEventStringJson() =
+    createChatEventStringJson(
+        "poll.vote_casted",
+        """
+            "cid": "channelType:channelId",
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "poll": ${createPollJsonString()},
+            "poll_vote": ${createPollAnswerVoteJsonString()}
+        """.trimIndent(),
+    )
+
+internal fun createVoteChangedEventStringJson() =
+    createChatEventStringJson(
+        "poll.vote_changed",
+        """
+            "cid": "channelType:channelId",
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "poll": ${createPollJsonString()},
+            "poll_vote": ${createPollVoteJsonString()}
+        """.trimIndent(),
+    )
+
+internal fun createVoteRemovedEventStringJson() =
+    createChatEventStringJson(
+        "poll.vote_removed",
+        """
+            "cid": "channelType:channelId",
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "poll": ${createPollJsonString()},
+            "poll_vote": ${createPollVoteJsonString()}
+        """.trimIndent(),
+    )
+
+internal fun createReminderCreatedEventStringJson() =
+    createChatEventStringJson(
+        "reminder.created",
+        """
+            "cid": "channelType:channelId",
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "user_id": "bender",
+            "reminder": ${createReminderJsonString()}
+        """.trimIndent(),
+    )
+
+internal fun createReminderUpdatedEventStringJson() =
+    createChatEventStringJson(
+        "reminder.updated",
+        """
+            "cid": "channelType:channelId",
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "user_id": "bender",
+            "reminder": ${createReminderJsonString()}
+        """.trimIndent(),
+    )
+
+internal fun createReminderDeletedEventStringJson() =
+    createChatEventStringJson(
+        "reminder.deleted",
+        """
+            "cid": "channelType:channelId",
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "user_id": "bender",
+            "reminder": ${createReminderJsonString()}
+        """.trimIndent(),
+    )
+
+internal fun createNotificationReminderDueEventStringJson() =
+    createChatEventStringJson(
+        "notification.reminder_due",
+        """
+            "cid": "channelType:channelId",
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "user_id": "bender",
+            "reminder": ${createReminderJsonString()}
+        """.trimIndent(),
+    )
+
+internal fun createAIIndicatorUpdatedEventStringJson() =
+    createChatEventStringJson(
+        "ai_indicator.update",
+        """
+            "cid": "channelType:channelId",
+            "user": ${createUserJsonString()},
+            "ai_state": "AI_STATE_THINKING",
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755"
+        """.trimIndent(),
+    )
+
+internal fun createAIIndicatorClearEventStringJson() =
+    createChatEventStringJson(
+        "ai_indicator.clear",
+        """
+            "cid": "channelType:channelId",
+            "user": ${createUserJsonString()}
+        """.trimIndent(),
+    )
+
+internal fun createAIIndicatorStopEventStringJson() =
+    createChatEventStringJson(
+        "ai_indicator.stop",
+        """
+            "cid": "channelType:channelId",
+            "user": ${createUserJsonString()}
+        """.trimIndent(),
+    )
+
+internal fun createUserMessagesDeletedEventStringJson() =
+    createChatEventStringJson(
+        "user.messages.deleted",
+        """
+            "user": ${createUserJsonString()},
+            "cid": "channelType:channelId",
+            "channel_type": "channelType",
+            "channel_id": "channelId",
+            "hard_delete": false
+        """.trimIndent(),
+    )
+
 internal fun createUnknownEventStringJson(type: String = "unknown_event") =
     createChatEventStringJson(type, null)
 
@@ -628,19 +839,55 @@ private fun createMessageJsonString() =
             "channel": ${createChannelInfoJsonString()},
             "user": ${createUserJsonString()},
             "html": "<p>Hello</p>",
-            "attachments": [ ],
-            "latest_reactions": [ ],
-            "own_reactions": [ ],
-            "reaction_counts": { },
-            "reaction_scores": { },
-            "reply_count": 0,
+            "attachments": [
+                ${createMessageAttachmentJsonString()}
+            ],
+            "latest_reactions": [
+                ${createMessageReactionJsonString()}
+            ],
+            "own_reactions": [
+                ${createMessageReactionJsonString()}
+            ],
+            "reaction_counts": {"like": 1},
+            "reaction_scores": {"like": 1},
+            "reply_count": 1,
             "deleted_reply_count": 0,
             "created_at": "2020-06-29T06:14:28.000Z",
             "updated_at": "2020-06-29T06:14:28.000Z",
-            "mentioned_users": [ ],
+            "mentioned_users": [
+                ${createUserJsonString()}
+            ],
+            "thread_participants": [
+                ${createUserJsonString()}
+            ],
             "silent": false,
             "type": "regular",
             "cid": ""
+        }
+    """.trimIndent()
+
+@Language("JSON")
+private fun createMessageAttachmentJsonString() =
+    """
+        {
+            "type": "image",
+            "image_url": "https://example.com/image.png",
+            "thumb_url": "https://example.com/thumb.png",
+            "file_size": 1234,
+            "mime_type": "image/png"
+        }
+    """.trimIndent()
+
+@Language("JSON")
+private fun createMessageReactionJsonString() =
+    """
+        {
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "type": "like",
+            "score": 1,
+            "user": ${createUserJsonString()},
+            "user_id": "bender",
+            "created_at": "2020-06-29T06:14:28.000Z"
         }
     """.trimIndent()
 
@@ -736,6 +983,103 @@ private fun createReactionJsonString() =
             "user": ${createUserJsonString()},
             "user_id": "bender",
             "created_at": "2020-06-29T06:14:28.000Z"
+        }
+    """.trimIndent()
+
+@Language("JSON")
+private fun createPollJsonString() =
+    """
+        {
+            "id": "poll-id",
+            "name": "Test Poll",
+            "description": "A test poll",
+            "options": [
+                {"id": "option-1", "text": "Option 1"}
+            ],
+            "voting_visibility": "public",
+            "enforce_unique_vote": true,
+            "max_votes_allowed": 1,
+            "allow_user_suggested_options": false,
+            "allow_answers": true,
+            "vote_count": 1,
+            "vote_counts_by_option": {"option-1": 1},
+            "latest_votes_by_option": {},
+            "own_votes": [],
+            "created_at": "2020-06-29T06:14:28.000Z",
+            "updated_at": "2020-06-29T06:14:28.000Z",
+            "is_closed": false,
+            "answers_count": 0,
+            "latest_answers": [],
+            "created_by": ${createUserJsonString()},
+            "created_by_id": "bender"
+        }
+    """.trimIndent()
+
+@Language("JSON")
+private fun createPollVoteJsonString() =
+    """
+        {
+            "id": "vote-id",
+            "poll_id": "poll-id",
+            "option_id": "option-1",
+            "created_at": "2020-06-29T06:14:28.000Z",
+            "updated_at": "2020-06-29T06:14:28.000Z",
+            "user": ${createUserJsonString()},
+            "user_id": "bender"
+        }
+    """.trimIndent()
+
+@Language("JSON")
+private fun createPollAnswerVoteJsonString() =
+    """
+        {
+            "id": "answer-id",
+            "poll_id": "poll-id",
+            "option_id": "",
+            "created_at": "2020-06-29T06:14:28.000Z",
+            "updated_at": "2020-06-29T06:14:28.000Z",
+            "user": ${createUserJsonString()},
+            "user_id": "bender",
+            "is_answer": true,
+            "answer_text": "My answer"
+        }
+    """.trimIndent()
+
+@Language("JSON")
+private fun createDraftJsonString() =
+    """
+        {
+            "message": {
+                "id": "draft-message-id",
+                "text": "Draft text"
+            },
+            "channel_cid": "channelType:channelId"
+        }
+    """.trimIndent()
+
+@Language("JSON")
+private fun createReminderJsonString() =
+    """
+        {
+            "remind_at": "2020-06-29T06:14:28.000Z",
+            "channel_cid": "channelType:channelId",
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "created_at": "2020-06-29T06:14:28.000Z",
+            "updated_at": "2020-06-29T06:14:28.000Z"
+        }
+    """.trimIndent()
+
+@Language("JSON")
+private fun createErrorJsonString() =
+    """
+        {
+            "code": 4,
+            "message": "Token expired",
+            "StatusCode": 401,
+            "duration": "0.5ms",
+            "exception_fields": {},
+            "more_info": "https://getstream.io/chat/docs/",
+            "details": []
         }
     """.trimIndent()
 

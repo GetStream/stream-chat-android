@@ -17,7 +17,12 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.parser2.testdata.NewMessageEventTestData
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 
@@ -31,5 +36,38 @@ internal class MoshiChatParserTest {
     fun `Should create proper event`(eventData: String, expectedEvent: ChatEvent) {
         val parsedEvent = parser.fromJson(eventData, ChatEvent::class.java)
         assertEquals(expectedEvent, parsedEvent)
+    }
+
+    @Nested
+    inner class FastEventParsingToggle {
+
+        @Test
+        fun `falls back to DTO path when fast event parsing is disabled`() {
+            val parserWithoutFastPath = ParserFactory.createMoshiChatParser(fastEventParsing = false)
+
+            val event = parserWithoutFastPath.fromJson(
+                NewMessageEventTestData.jsonAllFields,
+                ChatEvent::class.java,
+            )
+
+            assertTrue(event is NewMessageEvent)
+        }
+
+        @Test
+        fun `fast and DTO paths produce the same event for message_new`() {
+            val parserWithFastPath = ParserFactory.createMoshiChatParser(fastEventParsing = true)
+            val parserWithoutFastPath = ParserFactory.createMoshiChatParser(fastEventParsing = false)
+
+            val fastResult = parserWithFastPath.fromJson(
+                NewMessageEventTestData.jsonAllFields,
+                ChatEvent::class.java,
+            )
+            val dtoResult = parserWithoutFastPath.fromJson(
+                NewMessageEventTestData.jsonAllFields,
+                ChatEvent::class.java,
+            )
+
+            assertEquals(dtoResult, fastResult)
+        }
     }
 }
