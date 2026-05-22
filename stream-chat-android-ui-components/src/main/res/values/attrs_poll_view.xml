@@ -135,5 +135,25 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+
+        <attr name="streamUiPollAddCommentTextSize" format="dimension|reference" />
+        <attr name="streamUiPollAddCommentTextColor" format="color|reference" />
+        <attr name="streamUiPollAddCommentFontAssets" format="string" />
+        <attr name="streamUiPollAddCommentTextFont" format="reference" />
+        <attr name="streamUiPollAddCommentTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiPollViewCommentsTextSize" format="dimension|reference" />
+        <attr name="streamUiPollViewCommentsTextColor" format="color|reference" />
+        <attr name="streamUiPollViewCommentsFontAssets" format="string" />
+        <attr name="streamUiPollViewCommentsTextFont" format="reference" />
+        <attr name="streamUiPollViewCommentsTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
     </declare-styleable>
 </resources>

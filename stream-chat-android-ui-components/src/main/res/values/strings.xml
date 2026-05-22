@@ -206,6 +206,10 @@
     <string name="stream_ui_poll_suggest_option_dialog_title">Suggest an option</string>
     <string name="stream_ui_poll_suggest_option_dialog_submit">Confirm</string>
     <string name="stream_ui_poll_suggest_option_dialog_cancel">Dismiss</string>
+    <string name="stream_ui_poll_add_comment_dialog_submit">Confirm</string>
+    <string name="stream_ui_poll_add_comment_dialog_cancel">Dismiss</string>
+    <string name="stream_ui_poll_comments_title">Poll Comments</string>
+    <string name="stream_ui_poll_update_comment_label">Update comment</string>
     <!-- Header Title -->
     <string name="stream_ui_message_list_header_thread_title">Thread Reply</string>
     <string name="stream_ui_message_list_header_untitled_channel">Channel without name</string>

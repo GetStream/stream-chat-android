@@ -39,6 +39,8 @@ public data class PollViewStyle(
     public val pollResultsTextStyle: TextStyle,
     public val pollShowAllOptionsTextStyle: TextStyle,
     public val pollSuggestOptionTextStyle: TextStyle,
+    public val pollAddCommentTextStyle: TextStyle = TextStyle(),
+    public val pollViewCommentsTextStyle: TextStyle = TextStyle(),
 ) : ViewStyle {
 
     internal companion object {
@@ -204,6 +206,44 @@ public data class PollViewStyle(
                         Typeface.NORMAL,
                     )
                     .build()
+
+                val pollAddCommentTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.PollView_streamUiPollAddCommentTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_large),
+                    )
+                    .color(
+                        R.styleable.PollView_streamUiPollAddCommentTextColor,
+                        context.getColorCompat(R.color.stream_ui_accent_blue),
+                    )
+                    .font(
+                        R.styleable.PollView_streamUiPollAddCommentFontAssets,
+                        R.styleable.PollView_streamUiPollAddCommentTextFont,
+                    )
+                    .style(
+                        R.styleable.PollView_streamUiPollAddCommentTextStyle,
+                        Typeface.NORMAL,
+                    )
+                    .build()
+
+                val pollViewCommentsTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.PollView_streamUiPollViewCommentsTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_large),
+                    )
+                    .color(
+                        R.styleable.PollView_streamUiPollViewCommentsTextColor,
+                        context.getColorCompat(R.color.stream_ui_accent_blue),
+                    )
+                    .font(
+                        R.styleable.PollView_streamUiPollViewCommentsFontAssets,
+                        R.styleable.PollView_streamUiPollViewCommentsTextFont,
+                    )
+                    .style(
+                        R.styleable.PollView_streamUiPollViewCommentsTextStyle,
+                        Typeface.NORMAL,
+                    )
+                    .build()
                 return PollViewStyle(
                     pollTitleTextStyle = pollTitleTextStyle,
                     pollSubtitleTextStyle = pollSubtitleTextStyle,
@@ -214,6 +254,8 @@ public data class PollViewStyle(
                     pollResultsTextStyle = pollResultsTextStyle,
                     pollShowAllOptionsTextStyle = pollShowAllOptionsTextStyle,
                     pollSuggestOptionTextStyle = pollSuggestOptionTextStyle,
+                    pollAddCommentTextStyle = pollAddCommentTextStyle,
+                    pollViewCommentsTextStyle = pollViewCommentsTextStyle,
                 ).let(TransformStyle.pollViewStyleTransformer::transform)
             }
         }
