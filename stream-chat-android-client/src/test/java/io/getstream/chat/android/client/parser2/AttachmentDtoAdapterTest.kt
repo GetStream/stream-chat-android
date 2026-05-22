@@ -49,4 +49,10 @@ internal class AttachmentDtoAdapterTest {
         val jsonString = parser.toJson(AttachmentDtoTestData.attachmentWithoutExtraData)
         jsonString.shouldEqualJson(AttachmentDtoTestData.jsonWithoutExtraData)
     }
+
+    @Test
+    fun `Deserialize JSON attachment with null file_size`() {
+        val attachment = parser.fromJson(AttachmentDtoTestData.jsonWithNullFileSize, AttachmentDto::class.java)
+        attachment shouldBeEqualTo AttachmentDtoTestData.attachmentWithNullFileSize
+    }
 }

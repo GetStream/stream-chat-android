@@ -33,7 +33,7 @@ internal data class AttachmentDto(
     val author_name: String?,
     val author_link: String?,
     val fallback: String?,
-    val file_size: Int = 0,
+    val file_size: Int?,
     val image: String?,
     val image_url: String?,
     val mime_type: String?,
