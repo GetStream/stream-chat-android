@@ -52,12 +52,14 @@ import io.getstream.chat.android.models.CreatePollParams
  * @param onBack Called when the user navigates back from the poll creation screen
  *  (via back press or discard). Resets the ViewModel state.
  * @param onCreatePoll Called when the user submits a new poll configuration.
+ * @param onCreatePollLabel Semantic / accessibility label for the poll creation button that triggers [onCreatePoll].
  */
 @Suppress("LongMethod")
 @Composable
 public fun CreatePollScreen(
     onBack: () -> Unit,
     onCreatePoll: (CreatePollParams) -> Unit,
+    onCreatePollLabel: String? = null,
 ) {
     val viewModel: CreatePollViewModel = viewModel(
         factory = CreatePollViewModelFactory(ChatTheme.config.polls),
@@ -88,6 +90,7 @@ public fun CreatePollScreen(
             PollCreationHeader(
                 modifier = Modifier.fillMaxWidth(),
                 enabledCreation = state.isCreationEnabled,
+                onPollCreateClickedLabel = onCreatePollLabel,
                 onPollCreateClicked = {
                     onCreatePoll(
                         createPollParamsFrom(

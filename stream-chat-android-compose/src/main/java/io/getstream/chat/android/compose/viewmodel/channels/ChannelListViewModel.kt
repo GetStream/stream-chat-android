@@ -52,6 +52,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.utils.extensions.defaultChannelListFilter
+import io.getstream.chat.android.ui.common.utils.extensions.isOneToOne
 import io.getstream.log.taggedLogger
 import io.getstream.result.call.toUnitCall
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -283,6 +284,7 @@ public class ChannelListViewModel(
                             ),
                         )
                     }
+
                     is SearchQuery.Messages -> {
                         chListScope.coroutineContext.cancelChildren()
                         handleSearchQuery(query.query)
@@ -401,6 +403,7 @@ public class ChannelListViewModel(
                     next = result.value.next,
                 )
             }
+
             is io.getstream.result.Result.Failure -> {
                 logger.e { "[searchMessages] #$src; failed: ${result.value}" }
                 currentState.copy(
@@ -433,7 +436,8 @@ public class ChannelListViewModel(
                     channelMutes,
                     typingChannels,
                     channelDraftMessages,
-                ) { state, channelMutes, typingChannels, channelDraftMessages ->
+                    globalMuted,
+                ) { state, channelMutes, typingChannels, channelDraftMessages, userMutes ->
                     when (state) {
                         ChannelsStateData.NoQueryActive,
                         ChannelsStateData.Loading,
@@ -458,6 +462,7 @@ public class ChannelListViewModel(
                                 channelItems = createChannelItems(
                                     channels = state.channels,
                                     channelMutes = channelMutes,
+                                    userMutes = userMutes,
                                     typingEvents = typingChannels,
                                     draftMessages = channelDraftMessages.takeIf { draftMessagesEnabled } ?: emptyMap(),
                                 ),
@@ -575,6 +580,7 @@ public class ChannelListViewModel(
             is SearchQuery.Empty,
             is SearchQuery.Channels,
             -> chListScope.launch { loadMoreQueryChannels() }
+
             is SearchQuery.Messages,
             -> searchScope.launch { loadMoreQueryMessages() }
         }
@@ -801,24 +807,36 @@ public class ChannelListViewModel(
      *
      * @param channels The channels to show.
      * @param channelMutes The list of channels muted for the current user.
-     *
+     * @param userMutes The list of users muted by the current user.
      */
     private fun createChannelItems(
         channels: List<Channel>,
         channelMutes: List<ChannelMute>,
+        userMutes: List<Mute>,
         typingEvents: Map<String, TypingEvent>,
         draftMessages: Map<String, DraftMessage>,
     ): List<ItemState.ChannelItemState> {
         val mutedChannelIds = channelMutes.map { channelMute -> channelMute.channel?.cid }.toSet()
+        val mutedUserIds = userMutes.mapNotNullTo(mutableSetOf()) { it.target?.id }
+        val currentUser = user.value
         return channels.map {
             ItemState.ChannelItemState(
                 channel = it,
                 isMuted = it.cid in mutedChannelIds,
+                isUserMuted = it.isOneToOneMutedByUser(currentUser, mutedUserIds),
                 typingUsers = typingEvents[it.cid]?.users ?: emptyList(),
                 draftMessage = draftMessages[it.cid],
             )
         }
     }
+
+    /** Checks if a 1:1 channel is muted via user mute (i.e. the other member is muted). */
+    private fun Channel.isOneToOneMutedByUser(currentUser: User?, mutedUserIds: Set<String>): Boolean =
+        if (mutedUserIds.isEmpty() || !isOneToOne(currentUser)) {
+            false
+        } else {
+            members.any { it.user.id != currentUser?.id && it.user.id in mutedUserIds }
+        }
 
     internal companion object {
         /**

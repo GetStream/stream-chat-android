@@ -254,7 +254,7 @@ private fun TitleRow(
     unreadCount: Int,
 ) {
     val channel = channelItemState.channel
-    val isMuted = channelItemState.isMuted
+    val isMuted = channelItemState.isMuted || channelItemState.isUserMuted
     val mutePosition = ChatTheme.config.channelList.muteIndicatorPosition
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -344,7 +344,9 @@ private fun MessageRow(
             MessageContent(channelItemState, currentUser, lastMessage, isDirectMessaging)
         }
 
-        if (channelItemState.isMuted && mutePosition == MuteIndicatorPosition.TrailingBottom) {
+        if ((channelItemState.isMuted || channelItemState.isUserMuted) &&
+            mutePosition == MuteIndicatorPosition.TrailingBottom
+        ) {
             Icon(
                 modifier = Modifier
                     .testTag("Stream_ChannelMutedIcon")

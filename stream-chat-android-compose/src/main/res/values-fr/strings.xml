@@ -182,8 +182,10 @@
   <string name="stream_compose_poll_option_limit_votes_description">"Choisir entre 2\u201310 options"</string>
   <string name="stream_compose_poll_option_limit_votes_increase">"Augmenter les votes par personne"</string>
   <string name="stream_compose_poll_option_limit_votes_input">"Votes par personne"</string>
-  <string name="stream_compose_poll_option_remove">"Supprimer l\'option du sondage"</string>
-  <string name="stream_compose_poll_option_reorder">"Réorganiser l\'option du sondage"</string>
+  <string name="stream_compose_poll_option_remove">"Supprimer l\'option %s"</string>
+  <string name="stream_compose_poll_option_move_down">"Déplacer vers le bas"</string>
+  <string name="stream_compose_poll_option_move_up">"Déplacer vers le haut"</string>
+  <string name="stream_compose_poll_option_reorder">"Réorganiser l\'option %s"</string>
   <string name="stream_compose_poll_option_results_error">"Une erreur est survenue lors du chargement des résultats de l\'option du sondage. Veuillez réessayer plus tard."</string>
   <string name="stream_compose_poll_option_switch_add_comment">"Ajouter un commentaire"</string>
   <string name="stream_compose_poll_option_switch_add_comment_description">"Permettre aux autres d\'ajouter des commentaires"</string>
@@ -200,6 +202,7 @@
   <string name="stream_compose_poll_questions_title">"Question"</string>
   <string name="stream_compose_poll_results">"Résultats du sondage"</string>
   <string name="stream_compose_poll_suggest_option">"Suggérer une option"</string>
+  <string name="stream_compose_poll_create_action">"créer un sondage"</string>
   <string name="stream_compose_poll_title">"Créer un sondage"</string>
   <string name="stream_compose_poll_view_more">"Tout voir"</string>
   <string name="stream_compose_poll_view_result">"Voir les résultats"</string>

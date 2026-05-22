@@ -39,6 +39,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
@@ -127,6 +128,7 @@ public fun PollOptionInput(
         if (value.isBlank()) {
             Text(
                 text = description,
+                modifier = Modifier.semantics { hideFromAccessibility() },
                 style = typography.bodyDefault,
                 color = colors.inputTextPlaceholder,
             )

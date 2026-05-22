@@ -23,16 +23,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -43,7 +46,9 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -167,7 +172,15 @@ private fun PollSwitchHeader(
     onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = LocalMinimumInteractiveComponentSize.current)
+            .toggleable(
+                value = enabled,
+                role = Role.Switch,
+                onValueChange = onCheckedChange,
+            )
+            .semantics(mergeDescendants = true) {},
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
@@ -189,8 +202,9 @@ private fun PollSwitchHeader(
         }
 
         StreamSwitch(
+            modifier = Modifier.semantics { hideFromAccessibility() },
             checked = enabled,
-            onCheckedChange = onCheckedChange,
+            onCheckedChange = null,
         )
     }
 }
@@ -209,7 +223,15 @@ private fun LimitVotesPerPerson(
             .padding(top = StreamTokens.spacingMd),
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .defaultMinSize(minHeight = LocalMinimumInteractiveComponentSize.current)
+                .toggleable(
+                    value = enabled,
+                    role = Role.Switch,
+                    onValueChange = onCheckedChange,
+                )
+                .semantics(mergeDescendants = true) {},
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(
@@ -229,8 +251,9 @@ private fun LimitVotesPerPerson(
             }
 
             StreamSwitch(
+                modifier = Modifier.semantics { hideFromAccessibility() },
                 checked = enabled,
-                onCheckedChange = onCheckedChange,
+                onCheckedChange = null,
             )
         }
 

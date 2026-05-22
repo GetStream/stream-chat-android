@@ -25,6 +25,10 @@
   <string name="stream_ui_channel_attachments_media_empty_title">"Nessuna foto o video"</string>
   <string name="stream_ui_channel_attachments_media_load_error">"Impossibile caricare gli allegati multimediali!"</string>
   <string name="stream_ui_channel_attachments_media_title">"Foto &amp; Video"</string>
+  <string name="stream_ui_channel_attachments_media_item_photo">"Foto"</string>
+  <string name="stream_ui_channel_attachments_media_item_video">"Video"</string>
+  <string name="stream_ui_channel_attachments_media_item_photo_from_user">"Foto di %1$s"</string>
+  <string name="stream_ui_channel_attachments_media_item_video_from_user">"Video di %1$s"</string>
   <string name="stream_ui_channel_info_add_members_error">"Impossibile aggiungere i membri"</string>
   <string name="stream_ui_channel_info_ban_member_error">"Impossibile bannare il membro"</string>
   <string name="stream_ui_channel_info_ban_member_modal_no_timeout">"Permanentemente"</string>

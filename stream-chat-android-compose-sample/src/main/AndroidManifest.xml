@@ -114,7 +114,13 @@
             />
         <activity android:name=".feature.reminders.MessageRemindersActivity" />
         <activity android:name=".ui.profile.UserProfileActivity" />
-        <activity android:name=".ui.channel.attachments.ChannelFilesAttachmentsActivity" />
-        <activity android:name=".ui.channel.attachments.ChannelMediaAttachmentsActivity" />
+        <activity
+            android:name=".ui.channel.attachments.ChannelFilesAttachmentsActivity"
+            android:label="@string/stream_ui_channel_attachments_files_title"
+            />
+        <activity
+            android:name=".ui.channel.attachments.ChannelMediaAttachmentsActivity"
+            android:label="@string/stream_ui_channel_attachments_media_title"
+            />
     </application>
 </manifest>
