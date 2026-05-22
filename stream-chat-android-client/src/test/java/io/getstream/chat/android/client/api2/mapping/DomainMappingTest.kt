@@ -569,6 +569,16 @@ internal class DomainMappingTest {
     }
 
     @Test
+    fun `AttachmentDto with null file_size falls back to 0`() {
+        val attachmentDto = randomAttachmentDto(fileSize = null)
+        val sut = Fixture().get()
+        val attachment = with(sut) {
+            attachmentDto.toDomain()
+        }
+        assertEquals(0, attachment.fileSize)
+    }
+
+    @Test
     fun `BannedUserResponse is correctly mapped to BannedUser`() {
         val bannedUserResponse = randomBannedUserResponse()
         val sut = Fixture().get()
