@@ -69,7 +69,8 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
  * You can use the default implementation by not passing in an instance yourself, or you
  * can customize the behavior using its parameters.
  * @param viewModelKey Key to differentiate between instances of [ChannelListViewModel].
- * @param title Header title.
+ * @param title Header title. Also drives the screen's `paneTitle` semantic, announced by TalkBack
+ * when the screen appears as a pane (e.g. an adaptive-layout pane or a Compose Navigation route).
  * @param isShowingHeader If we show the header or hide it.
  * @param searchMode The search mode for the screen.
  * @param onHeaderActionClick Handler for the default header action.

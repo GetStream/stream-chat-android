@@ -40,7 +40,8 @@ import io.getstream.chat.android.models.Thread
  * It can be used without most parameters for default behavior, that can be tweaked if necessary.
  *
  * @param viewModelFactory The factory used to build the [ThreadListViewModel].
- * @param title Header title.
+ * @param title Header title. Also drives the screen's `paneTitle` semantic, announced by TalkBack
+ * when the screen appears as a pane (e.g. an adaptive-layout pane or a Compose Navigation route).
  * @param onHeaderAvatarClick Handle for when the user clicks on the header avatar.
  * @param onThreadClick Handler for Thread item clicks.
  */

@@ -108,6 +108,8 @@ import kotlin.math.abs
  * When the initial [ChannelViewModelFactory] is requested (before a channel is selected),
  * `channelId`, `messageId`, and `parentMessageId` are `null`.
  * @param title The title displayed in the list pane top bar. Default is `"Stream Chat"`.
+ * Also drives the list pane's `paneTitle` semantic, announced by TalkBack when the list pane
+ * appears or becomes active (e.g. switching between panes in the adaptive layout).
  * @param searchMode The current search mode. Default is [SearchMode.None].
  * @param listContentMode The mode for displaying the list content. Default is [ChatListContentMode.Channels].
  * @param onBackPress Callback invoked when the user presses the back button.
