@@ -66,54 +66,71 @@
         <activity
             android:name=".ui.login.UserLoginActivity"
             android:exported="false"
+            android:label="@string/user_login_screen_title"
             />
         <activity
             android:name=".ui.login.CustomLoginActivity"
             android:exported="false"
+            android:label="@string/user_login_advanced_options"
             android:windowSoftInputMode="adjustResize"
             />
         <activity
             android:name=".ui.chats.ChatsActivity"
             android:exported="false"
+            android:label="@string/app_bottom_bar_chats"
             />
         <activity
             android:name=".feature.channel.list.ChannelsActivity"
             android:exported="false"
+            android:label="@string/app_bottom_bar_chats"
             />
         <activity
             android:name=".ui.channel.ChannelActivity"
             android:exported="false"
+            android:label="@string/channel_title"
             android:windowSoftInputMode="adjustResize"
             />
         <activity
             android:name=".ui.channel.DirectChannelInfoActivity"
             android:exported="false"
+            android:label="@string/stream_ui_channel_info_contact_title"
             />
         <activity
             android:name=".ui.channel.GroupChannelInfoActivity"
             android:exported="false"
+            android:label="@string/stream_ui_channel_info_group_title"
             />
         <activity
             android:name=".ui.pinned.PinnedMessagesActivity"
             android:exported="false"
+            android:label="@string/pinned_messages_title"
             />
         <activity
             android:name=".feature.channel.add.AddChannelActivity"
             android:exported="false"
+            android:label="@string/add_channel_title"
             android:windowSoftInputMode="adjustResize"
             />
         <activity
             android:name=".feature.channel.add.group.AddGroupChannelActivity"
             android:exported="false"
+            android:label="@string/add_group_channel_members_title"
             android:windowSoftInputMode="adjustResize"
             />
         <activity
             android:name=".feature.channel.draft.DraftChannelActivity"
             android:exported="false"
+            android:label="@string/stream_compose_channel_list_header_new_chat"
             android:windowSoftInputMode="adjustResize"
             />
-        <activity android:name=".feature.reminders.MessageRemindersActivity" />
-        <activity android:name=".ui.profile.UserProfileActivity" />
+        <activity
+            android:name=".feature.reminders.MessageRemindersActivity"
+            android:label="@string/reminders_title"
+            />
+        <activity
+            android:name=".ui.profile.UserProfileActivity"
+            android:label="@string/user_profile_title"
+            />
         <activity
             android:name=".ui.channel.attachments.ChannelFilesAttachmentsActivity"
             android:label="@string/stream_ui_channel_attachments_files_title"
