@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.ui.components.poll
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -29,52 +28,32 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.toggleable
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
-import io.getstream.chat.android.compose.ui.components.common.RadioCheck
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageStyling.PollStyle
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
-import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewPollData
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
@@ -255,7 +234,7 @@ private fun PollMoreOptionsItemList(
     }
 }
 
-@Suppress("LongParameterList", "LongMethod")
+@Suppress("LongParameterList")
 @Composable
 private fun PollMoreOptionItem(
     poll: Poll,
@@ -269,102 +248,25 @@ private fun PollMoreOptionItem(
     onRemoveVote: () -> Unit,
 ) {
     val colors = ChatTheme.colors
-    val typography = ChatTheme.typography
-    val toggleRole = if (poll.maxVotesAllowed == 1) Role.RadioButton else Role.Checkbox
-    val onToggle: (Boolean) -> Unit = { enabled ->
-        val canVote = poll.maxVotesAllowed?.let { checkedCount < it } ?: true
-        if (enabled && canVote && !checked) {
-            onCastVote.invoke()
-        } else if (!enabled) {
-            onRemoveVote.invoke()
-        }
-    }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(StreamTokens.spacingXs)
-            .applyIf(!poll.closed) {
-                toggleable(
-                    value = checked,
-                    role = toggleRole,
-                    onValueChange = onToggle,
-                )
-            }
-            .semantics(mergeDescendants = true) {},
-        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        if (!poll.closed) {
-            RadioCheck(
-                modifier = Modifier.semantics { hideFromAccessibility() },
-                checked = checked,
-                onCheckedChange = onToggle,
-                borderColor = colors.chatBorderOnChatIncoming,
-            )
-        }
-
-        Column(verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs)) {
-            Row(Modifier.heightIn(min = AvatarSize.ExtraSmall)) {
-                Text(
-                    modifier = Modifier.weight(1f),
-                    text = option.text,
-                    style = typography.captionDefault,
-                    color = colors.chatTextIncoming,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-
-                if (users.isNotEmpty() && poll.votingVisibility != VotingVisibility.ANONYMOUS) {
-                    UserAvatarStack(
-                        overlap = StreamTokens.spacingXs,
-                        users = users.take(MaxStackedAvatars),
-                        avatarSize = AvatarSize.ExtraSmall,
-                        modifier = Modifier.padding(start = StreamTokens.spacingXs, end = StreamTokens.spacing2xs),
-                    )
-                }
-
-                val voteCountDescription = pluralStringResource(
-                    R.plurals.stream_compose_poll_vote_counts,
-                    voteCount,
-                    voteCount,
-                )
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .semantics { contentDescription = voteCountDescription },
-                    text = voteCount.toString(),
-                    style = typography.metadataDefault,
-                    color = colors.chatTextIncoming,
-                )
-            }
-
-            val progress by animateFloatAsState(
-                targetValue = if (voteCount == 0 || totalVoteCount == 0) {
-                    0f
-                } else {
-                    voteCount / totalVoteCount.toFloat()
-                },
-            )
-
-            LinearProgressIndicator(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp)
-                    .clip(RoundedCornerShape(4.dp))
-                    .clearAndSetSemantics {},
-                progress = { progress },
-                color = colors.chatPollProgressFillIncoming,
-                trackColor = colors.chatPollProgressTrackIncoming,
-                gapSize = 0.dp,
-                strokeCap = StrokeCap.Square,
-                drawStopIndicator = { /* Don't draw the stop indicator */ },
-            )
-        }
-    }
+    PollOptionVotingRow(
+        modifier = Modifier.padding(StreamTokens.spacingXs),
+        poll = poll,
+        option = option,
+        voteCount = voteCount,
+        totalVoteCount = totalVoteCount,
+        users = users,
+        checkedCount = checkedCount,
+        checked = checked,
+        style = PollStyle(
+            textColor = colors.chatTextIncoming,
+            outlineColor = colors.chatBorderOnChatIncoming,
+            progressColor = colors.chatPollProgressFillIncoming,
+            trackColor = colors.chatPollProgressTrackIncoming,
+        ),
+        onCastVote = onCastVote,
+        onRemoveVote = onRemoveVote,
+    )
 }
-
-private const val MaxStackedAvatars = 3
 
 @Preview
 @Composable
