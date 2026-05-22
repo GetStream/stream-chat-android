@@ -55,6 +55,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -204,21 +206,23 @@ private fun PollViewResultItem(
     modifier: Modifier,
 ) {
     PollSection(modifier) {
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    start = StreamTokens.spacingMd,
-                    end = StreamTokens.spacingMd,
-                    top = StreamTokens.spacingMd,
-                    bottom = StreamTokens.spacing2xs,
-                ),
-            text = stringResource(R.string.stream_compose_poll_option_label, index + 1),
-            color = ChatTheme.colors.textTertiary,
-            style = ChatTheme.typography.headingExtraSmall,
-        )
+        Column(modifier = Modifier.semantics(mergeDescendants = true) { heading() }) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = StreamTokens.spacingMd,
+                        end = StreamTokens.spacingMd,
+                        top = StreamTokens.spacingMd,
+                        bottom = StreamTokens.spacing2xs,
+                    ),
+                text = stringResource(R.string.stream_compose_poll_option_label, index + 1),
+                color = ChatTheme.colors.textTertiary,
+                style = ChatTheme.typography.headingExtraSmall,
+            )
 
-        PollResultOptionInfo(item)
+            PollResultOptionInfo(item)
+        }
 
         item.votes.forEach { vote ->
             PollVoteItem(
@@ -315,7 +319,7 @@ private fun PollViewResultTitle(
     modifier: Modifier,
 ) {
     PollSection(
-        modifier = modifier,
+        modifier = modifier.semantics(mergeDescendants = true) { heading() },
         verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
         contentPadding = PaddingValues(StreamTokens.spacingMd),
     ) {

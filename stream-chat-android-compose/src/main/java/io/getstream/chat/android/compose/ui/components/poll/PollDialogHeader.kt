@@ -23,10 +23,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.R
@@ -40,6 +44,9 @@ public fun PollDialogHeader(
     onBackPressed: () -> Unit,
     trailingContent: @Composable () -> Unit = {},
 ) {
+    val view = LocalView.current
+    LaunchedEffect(title) { view.announceForAccessibility(title) }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -52,7 +59,9 @@ public fun PollDialogHeader(
         )
 
         Text(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .semantics { heading() },
             text = title,
             style = ChatTheme.typography.headingMedium,
             maxLines = 1,
