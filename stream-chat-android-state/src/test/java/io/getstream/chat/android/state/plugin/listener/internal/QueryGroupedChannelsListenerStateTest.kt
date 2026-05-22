@@ -56,7 +56,7 @@ internal class QueryGroupedChannelsListenerStateTest {
     private val listener = QueryGroupedChannelsListenerState(logic, globalState, groupedUnreadChannelsUpdater)
 
     @Test
-    fun `successful result merges returned unread counts into existing global state`() = runTest {
+    fun `successful first-page result merges returned unread counts into existing global state`() = runTest {
         // given
         whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(
             mapOf("direct" to 4, "support" to 1),
@@ -75,11 +75,11 @@ internal class QueryGroupedChannelsListenerStateTest {
                 ),
             ),
         )
-        // when
+        // when - first-page request (no next/prev cursor)
         listener.onQueryGroupedChannelsResult(
             result = result,
             limit = null,
-            groups = mapOf("support" to GroupedChannelsGroupQuery(next = "cursor")),
+            groups = mapOf("support" to GroupedChannelsGroupQuery()),
             watch = false,
             presence = false,
         )
@@ -87,6 +87,37 @@ internal class QueryGroupedChannelsListenerStateTest {
         verify(globalState, times(1)).setGroupedUnreadChannels(
             mapOf("direct" to 4, "support" to 7),
         )
+    }
+
+    @Test
+    fun `successful pagination result does not update grouped unread counts`() = runTest {
+        // given
+        whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(
+            mapOf("direct" to 4, "support" to 1),
+        )
+        val result = Result.Success(
+            value = GroupedChannels(
+                groups = mapOf(
+                    "support" to GroupedChannelsGroup(
+                        groupKey = "support",
+                        channels = emptyList(),
+                        unreadChannels = 7,
+                        next = null,
+                        prev = null,
+                    ),
+                ),
+            ),
+        )
+        // when - paginated request (`next` cursor set on the requested group)
+        listener.onQueryGroupedChannelsResult(
+            result = result,
+            limit = null,
+            groups = mapOf("support" to GroupedChannelsGroupQuery(next = "cursor")),
+            watch = false,
+            presence = false,
+        )
+        // then - pagination payload does not carry unread counts
+        verify(globalState, never()).setGroupedUnreadChannels(any())
     }
 
     @Test

@@ -65,11 +65,15 @@ internal class QueryGroupedChannelsListenerState(
     ) {
         if (result !is Result.Success) return
 
-        val next = groupedUnreadChannelsUpdater.calculateUpdatedCounts(
-            current = globalState.groupedUnreadChannels.value,
-            result = result.value,
-        )
-        globalState.setGroupedUnreadChannels(next)
+        // Only the first page carries initial unread counts.
+        val isFirstPageRequest = groups.orEmpty().values.none { it.next != null || it.prev != null }
+        if (isFirstPageRequest) {
+            val next = groupedUnreadChannelsUpdater.calculateUpdatedCounts(
+                current = globalState.groupedUnreadChannels.value,
+                result = result.value,
+            )
+            globalState.setGroupedUnreadChannels(next)
+        }
 
         // Route each returned group's channels into the per-group state. The captured config lets
         // both ChannelListViewModel.loadMoreGroupedChannels and SyncManager.updateGroupedQueryChannels
