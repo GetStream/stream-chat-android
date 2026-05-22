@@ -37,6 +37,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomVote
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
@@ -190,6 +191,31 @@ internal class MessageListViewModelTest {
     }
 
     @Test
+    fun `Given a poll When casting an answer Should cast poll answer`() = runTest {
+        val messages = listOf(message1, message2)
+        val chatClient = MockChatClientBuilder().build()
+        val pollId = randomString()
+        val answer = randomString()
+
+        val viewModel = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState(messageState = MessagesState.Result(messages), messages = messages)
+            .givenCastPollAnswer()
+            .get()
+
+        viewModel.onEvent(
+            MessageListViewModel.Event.PollAnswerCast(
+                messageId = message1.id,
+                pollId = pollId,
+                answer = answer,
+            ),
+        )
+
+        verify(chatClient).castPollAnswer(messageId = message1.id, pollId = pollId, answer = answer)
+    }
+
+    @Test
     fun `Given no previous own reactions on a message When leaving a reaction Should leave reaction`() = runTest {
         val messages = listOf(message1, message2)
         val messageState = MessagesState.Result(messages)
@@ -330,6 +356,10 @@ internal class MessageListViewModelTest {
             whenever(chatClient.deleteReaction(any(), any(), any())) doReturn Message().asCall()
         }
 
+        fun givenCastPollAnswer() = apply {
+            whenever(chatClient.castPollAnswer(any(), any(), any())) doReturn randomVote().asCall()
+        }
+
         fun givenChannelState(
             channelData: ChannelData = ChannelData(
                 type = CHANNEL_TYPE,
@@ -381,7 +411,6 @@ internal class MessageListViewModelTest {
                     threadLoadOrderOlderToNewer = false,
                     channelState = MutableStateFlow(channelState),
                 ),
-
             )
         }
     }

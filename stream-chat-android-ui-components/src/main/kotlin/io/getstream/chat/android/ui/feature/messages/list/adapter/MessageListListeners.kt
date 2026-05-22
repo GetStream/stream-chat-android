@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.feature.messages.list.adapter
 
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnAddPollCommentClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnAttachmentClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnAttachmentDownloadClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnGiphySendListener
@@ -33,6 +34,7 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnThre
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnTranslatedLabelClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUnreadLabelReachedListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUserClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnViewPollCommentsClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnViewPollResultClickListener
 
 public sealed interface MessageListListeners {
@@ -54,4 +56,6 @@ public sealed interface MessageListListeners {
     public val onPollCloseClickListener: OnPollCloseClickListener
     public val onViewPollResultClickListener: OnViewPollResultClickListener
     public val onSuggestPollOptionClickListener: OnSuggestPollOptionClickListener
+    public val onAddPollCommentClickListener: OnAddPollCommentClickListener
+    public val onViewPollCommentsClickListener: OnViewPollCommentsClickListener
 }
