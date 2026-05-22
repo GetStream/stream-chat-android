@@ -39,6 +39,7 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
+import java.util.Locale
 import io.getstream.chat.android.ui.common.R as UiCommonR
 
 internal class QuotedMessageBodyBuilderTest {
@@ -58,6 +59,7 @@ internal class QuotedMessageBodyBuilderTest {
             autoTranslationEnabled = autoTranslationEnabled,
             durationFormatter = mockDurationFormatter(),
             streamCdnImageResizing = defaultStreamCdnImageResizing(),
+            locale = Locale.US,
         )
 
         builder.build(message, currentUser) `should be equal to` expected
@@ -452,6 +454,7 @@ internal class QuotedMessageBodyBuilderTest {
                 false,
                 QuotedMessageBody(
                     text = MOCK_AUDIO_RECORDING,
+                    spokenText = MOCK_AUDIO_RECORDING,
                     iconId = R.drawable.stream_design_ic_voice,
                 ),
             ),

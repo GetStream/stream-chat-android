@@ -56,6 +56,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
@@ -63,6 +65,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.audio.spokenDuration
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
@@ -115,7 +118,9 @@ internal fun VideoPlaybackControls(
             )
         }
 
+        val durationDescription = spokenDuration(state.currentPosition.toInt())
         Text(
+            modifier = Modifier.semantics { contentDescription = durationDescription },
             text = ChatTheme.durationFormatter.format(state.currentPosition.toInt()),
             style = ChatTheme.typography.captionDefault,
             color = if (state.isPlaying) ChatTheme.colors.accentPrimary else ChatTheme.colors.textPrimary,

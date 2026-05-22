@@ -63,6 +63,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
+import io.getstream.chat.android.compose.ui.components.audio.spokenDuration
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
@@ -156,7 +157,9 @@ internal fun MessageComposerAudioRecordingHoldContent(
                 )
             }
 
+            val durationDescription = spokenDuration(state.durationInMs)
             Text(
+                modifier = Modifier.semantics { contentDescription = durationDescription },
                 text = ChatTheme.durationFormatter.format(state.durationInMs),
                 style = ChatTheme.typography.bodyEmphasis,
                 color = ChatTheme.colors.textPrimary,
@@ -202,7 +205,9 @@ internal fun MessageComposerAudioRecordingLockedContent(
                 )
             }
 
+            val durationDescription = spokenDuration(state.durationInMs)
             Text(
+                modifier = Modifier.semantics { contentDescription = durationDescription },
                 text = ChatTheme.durationFormatter.format(state.durationInMs),
                 style = ChatTheme.typography.bodyEmphasis,
                 color = ChatTheme.colors.textPrimary,
