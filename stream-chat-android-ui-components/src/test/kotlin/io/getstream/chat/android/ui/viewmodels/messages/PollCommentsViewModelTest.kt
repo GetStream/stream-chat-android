@@ -20,7 +20,7 @@ import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomPoll
-import io.getstream.chat.android.state.plugin.state.StateRegistry
+import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.observeAll

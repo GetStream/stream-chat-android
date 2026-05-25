@@ -409,7 +409,7 @@ private class ViewCommentsViewHolder(
 ) : PollItemViewHolder<PollItem.ViewComments>(binding) {
     override fun bind(pollItem: PollItem.ViewComments) {
         binding.pollViewComments.text = binding.root.resources.getQuantityString(
-            R.plurals.stream_ui_poll_action_view_comments,
+            UiCommonR.plurals.stream_ui_poll_action_view_comments,
             pollItem.count,
             pollItem.count,
         )
