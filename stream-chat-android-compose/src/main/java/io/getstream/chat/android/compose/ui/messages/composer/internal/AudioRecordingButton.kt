@@ -63,8 +63,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
@@ -118,11 +116,31 @@ internal fun AudioRecordingButton(
     val showFloatingIcons = recordingState is RecordingState.Hold || recordingState is RecordingState.Locked
     val floatingMic = rememberFloatingMicState(recordingState)
 
+    var cancelRequested by remember { mutableStateOf(false) }
+    val cancelTrackingActions = remember(recordingActions) {
+        recordingActions.copy(
+            onCancelRecording = {
+                cancelRequested = true
+                recordingActions.onCancelRecording()
+            },
+            onDeleteRecording = {
+                cancelRequested = true
+                recordingActions.onDeleteRecording()
+            },
+        )
+    }
+
+    AnnounceRecordingTransitions(
+        recordingState = recordingState,
+        cancelRequested = cancelRequested,
+        onTransitionConsumed = { cancelRequested = false },
+    )
+
     Box(modifier = modifier.applyIf(isRecording) { fillMaxWidth() }) {
         if (isRecording) {
             AudioRecordingContent(
                 recordingState = recordingState,
-                recordingActions = recordingActions,
+                recordingActions = cancelTrackingActions,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -131,7 +149,7 @@ internal fun AudioRecordingButton(
             modifier = Modifier.align(Alignment.CenterEnd),
             isVisible = floatingMic.isVisible,
             recordingState = recordingState,
-            recordingActions = recordingActions,
+            recordingActions = cancelTrackingActions,
             floatingActive = floatingMic.isFloating,
             floatingOffset = floatingMic.offset,
         )
@@ -310,13 +328,11 @@ private fun MicButtonGestureArea(
     val showPressed = isFingerDown || hint.snackbarHostState.currentSnackbarData != null
     PressInteractionEffect(showPressed, pressOffset, interactionSource)
 
-    val buttonDescription = stringResource(R.string.stream_compose_audio_recording_start)
-
     val buttonSize = if (isVisible) MicButtonSize else 0.dp
     Box(
         modifier = Modifier
             .size(buttonSize)
-            .semantics { contentDescription = buttonDescription }
+            .micButtonSemantics()
             .pointerInput(Unit) {
                 awaitEachGesture {
                     val down = awaitFirstDown()
