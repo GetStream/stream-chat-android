@@ -25,8 +25,9 @@
   <string name="stream_compose_attachment_added_file">"ファイルを添付しました"</string>
   <string name="stream_compose_attachment_added_photo">"写真を添付しました"</string>
   <string name="stream_compose_attachment_added_video">"動画を添付しました"</string>
-  <string name="stream_compose_attachment_camera_picker">"カメラを開く"</string>
+  <string name="stream_compose_attachment_camera_picker">"カメラ"</string>
   <string name="stream_compose_attachment_camera_picker_content">"写真を撮って共有"</string>
+  <string name="stream_compose_attachment_camera_picker_cta">"カメラを開く"</string>
   <string name="stream_compose_attachment_commands_picker">"コマンド"</string>
   <string name="stream_compose_attachment_file_picker">"ファイル"</string>
   <string name="stream_compose_attachment_media_picker">"メディア"</string>
@@ -59,7 +60,6 @@
   <string name="stream_compose_channel_item_muted">"ミュート中"</string>
   <string name="stream_compose_channel_item_open">"会話を開く"</string>
   <string name="stream_compose_channel_item_options">"会話のオプションを開く"</string>
-  <string name="stream_compose_cd_message_item">"メッセージ項目"</string>
   <string name="stream_compose_cd_play_button">"再生ボタン"</string>
   <string name="stream_compose_channel_list_draft">"下書き: "</string>
   <string name="stream_compose_channel_list_empty_channels">"会話はまだありません"</string>
@@ -135,6 +135,10 @@
   <string name="stream_compose_message_composer_attachments_expanded">"展開"</string>
   <string name="stream_compose_message_deleted">"メッセージは削除されました"</string>
   <string name="stream_compose_message_deleted_preview">"メッセージは削除されました"</string>
+  <string name="stream_compose_message_item_open_thread">"スレッドを開く"</string>
+  <string name="stream_compose_message_item_options">"メッセージのオプションを表示"</string>
+  <string name="stream_compose_message_attachment_open">"添付ファイルを開く"</string>
+  <string name="stream_compose_message_reactions_show">"リアクションを表示"</string>
   <string name="stream_compose_message_list_auto_translated">"翻訳済み"</string>
   <string name="stream_compose_message_list_empty_messages">"メッセージはありません"</string>
   <string name="stream_compose_message_list_error_cannot_open_link">"このURLを開くアプリがありません:\n%s"</string>
@@ -150,7 +154,10 @@
   <plurals name="stream_compose_message_list_thread_separator">
     <item quantity="other">"%d件の返信"</item>
   </plurals>
-  <string name="stream_compose_message_list_unread_separator">"%d件の未読メッセージ"</string>
+  <plurals name="stream_compose_message_list_unread_separator">
+    <item quantity="one">"%d件の未読メッセージ"</item>
+    <item quantity="other">"%d件の未読メッセージ"</item>
+  </plurals>
   <string name="stream_compose_message_list_unsupported_attachment">"サポートされていない添付ファイル"</string>
   <string name="stream_compose_message_list_view">"表示"</string>
   <string name="stream_compose_message_list_view_original">"原文を表示"</string>
@@ -196,8 +203,10 @@
   <string name="stream_compose_poll_option_limit_votes_description">"2〜10の選択肢から選択"</string>
   <string name="stream_compose_poll_option_limit_votes_increase">"1人あたりの投票数を増やす"</string>
   <string name="stream_compose_poll_option_limit_votes_input">"1人あたりの投票数"</string>
-  <string name="stream_compose_poll_option_remove">"投票の選択肢を削除"</string>
-  <string name="stream_compose_poll_option_reorder">"投票の選択肢を並べ替え"</string>
+  <string name="stream_compose_poll_option_remove">"選択肢%sを削除"</string>
+  <string name="stream_compose_poll_option_move_down">"下に移動"</string>
+  <string name="stream_compose_poll_option_move_up">"上に移動"</string>
+  <string name="stream_compose_poll_option_reorder">"選択肢%sを並べ替え"</string>
   <string name="stream_compose_poll_option_results_error">"投票の選択肢の結果の読み込み中にエラーが発生しました。後でもう一度お試しください。"</string>
   <string name="stream_compose_poll_option_switch_add_comment">"コメントを追加"</string>
   <string name="stream_compose_poll_option_switch_add_comment_description">"他のユーザーがコメントを追加できるようにする"</string>
@@ -214,6 +223,7 @@
   <string name="stream_compose_poll_questions_title">"質問"</string>
   <string name="stream_compose_poll_results">"投票結果"</string>
   <string name="stream_compose_poll_suggest_option">"選択肢を提案"</string>
+  <string name="stream_compose_poll_create_action">"投票を作成"</string>
   <string name="stream_compose_poll_title">"投票を作成"</string>
   <plurals name="stream_compose_poll_total_vote_counts">
     <item quantity="other">"合計%d票"</item>

@@ -85,8 +85,9 @@
   <string name="stream_compose_attachment_added_file">"फ़ाइल संलग्न की गई"</string>
   <string name="stream_compose_attachment_added_photo">"फ़ोटो संलग्न की गई"</string>
   <string name="stream_compose_attachment_added_video">"वीडियो संलग्न किया गया"</string>
-  <string name="stream_compose_attachment_camera_picker">"कैमरा खोलें"</string>
+  <string name="stream_compose_attachment_camera_picker">"कैमरा"</string>
   <string name="stream_compose_attachment_camera_picker_content">"फ़ोटो लें और साझा करें"</string>
+  <string name="stream_compose_attachment_camera_picker_cta">"कैमरा खोलें"</string>
   <string name="stream_compose_attachment_commands_picker">"कमांड्स"</string>
   <string name="stream_compose_attachment_file_picker">"फ़ाइलें"</string>
   <string name="stream_compose_attachment_media_picker">"मीडिया"</string>
@@ -119,7 +120,6 @@
   <string name="stream_compose_channel_item_muted">"म्यूट किया गया"</string>
   <string name="stream_compose_channel_item_open">"बातचीत खोलें"</string>
   <string name="stream_compose_channel_item_options">"बातचीत के विकल्प खोलें"</string>
-  <string name="stream_compose_cd_message_item">"मैसेज आइटम"</string>
   <string name="stream_compose_cd_play_button">"चलाएँ बटन"</string>
   <string name="stream_compose_channel_list_draft">"ड्राफ़्ट: "</string>
   <string name="stream_compose_channel_list_empty_channels">"कोई चैनल उपलब्ध नहीं है"</string>
@@ -183,6 +183,10 @@
   <string name="stream_compose_message_composer_attachments_expanded">"विस्तृत"</string>
   <string name="stream_compose_message_deleted">"मैसेज मिटाया गया"</string>
   <string name="stream_compose_message_deleted_preview">"मैसेज हटा दिया गया"</string>
+  <string name="stream_compose_message_item_open_thread">"थ्रेड खोलें"</string>
+  <string name="stream_compose_message_item_options">"संदेश के विकल्प दिखाएँ"</string>
+  <string name="stream_compose_message_attachment_open">"अटैचमेंट खोलें"</string>
+  <string name="stream_compose_message_reactions_show">"प्रतिक्रियाएँ दिखाएँ"</string>
   <string name="stream_compose_message_list_auto_translated">"अनुवादित"</string>
   <string name="stream_compose_message_list_empty_messages">"कोई मैसेज नहीं"</string>
   <string name="stream_compose_message_list_error_cannot_open_link">"इस url को देखने के लिए कोई ऐप नहीं है:\n%s"</string>
@@ -195,7 +199,10 @@
   <string name="stream_compose_message_list_show_translation">"अनुवाद दिखाएँ"</string>
   <string name="stream_compose_message_list_thread_footnote_thread_replies">"%d जवाब"</string>
   <string name="stream_compose_message_list_thread_footnote_thread_reply">"%d जवाब"</string>
-  <string name="stream_compose_message_list_unread_separator">"%d अपठित मैसेज"</string>
+  <plurals name="stream_compose_message_list_unread_separator">
+    <item quantity="one">"%d अपठित मैसेज"</item>
+    <item quantity="other">"%d अपठित मैसेज"</item>
+  </plurals>
   <string name="stream_compose_message_list_unsupported_attachment">"असमर्थित अटैचमेंट"</string>
   <string name="stream_compose_message_list_view">"देखें"</string>
   <string name="stream_compose_message_list_view_original">"मूल देखें"</string>
@@ -233,8 +240,10 @@
   <string name="stream_compose_poll_option_limit_votes_description">"2\u201310 विकल्पों में से चुनें"</string>
   <string name="stream_compose_poll_option_limit_votes_increase">"प्रति व्यक्ति वोट बढ़ाएँ"</string>
   <string name="stream_compose_poll_option_limit_votes_input">"प्रति व्यक्ति वोट"</string>
-  <string name="stream_compose_poll_option_remove">"पोल विकल्प हटाएँ"</string>
-  <string name="stream_compose_poll_option_reorder">"पोल विकल्प क्रम बदलें"</string>
+  <string name="stream_compose_poll_option_remove">"विकल्प %s हटाएँ"</string>
+  <string name="stream_compose_poll_option_move_down">"नीचे ले जाएँ"</string>
+  <string name="stream_compose_poll_option_move_up">"ऊपर ले जाएँ"</string>
+  <string name="stream_compose_poll_option_reorder">"विकल्प %s का क्रम बदलें"</string>
   <string name="stream_compose_poll_option_switch_add_comment">"टिप्पणी जोड़ें"</string>
   <string name="stream_compose_poll_option_switch_add_comment_description">"दूसरों को टिप्पणी जोड़ने दें"</string>
   <string name="stream_compose_poll_option_switch_anonymous_poll">"गुमनाम पोल"</string>
@@ -253,6 +262,7 @@
   <string name="stream_compose_poll_questions_title">"प्रश्न"</string>
   <string name="stream_compose_poll_results">"पोल परिणाम"</string>
   <string name="stream_compose_poll_suggest_option">"विकल्प सुझाएँ"</string>
+  <string name="stream_compose_poll_create_action">"पोल बनाएँ"</string>
   <string name="stream_compose_poll_title">"पोल बनाएँ"</string>
   <string name="stream_compose_poll_view_more">"सभी देखें"</string>
   <string name="stream_compose_poll_view_result">"परिणाम देखें"</string>

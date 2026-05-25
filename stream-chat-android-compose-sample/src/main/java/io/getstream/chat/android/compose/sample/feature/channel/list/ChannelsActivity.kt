@@ -65,8 +65,8 @@ import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelAc
 import io.getstream.chat.android.compose.sample.feature.channel.add.group.AddGroupChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.feature.reminders.MessageRemindersActivity
-import io.getstream.chat.android.compose.sample.ui.MessagesActivity
 import io.getstream.chat.android.compose.sample.ui.SampleChatTheme
+import io.getstream.chat.android.compose.sample.ui.channel.ChannelActivity
 import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
@@ -372,7 +372,7 @@ class ChannelsActivity : ComponentActivity() {
 
     private fun openMessages(channel: Channel) {
         startActivity(
-            MessagesActivity.createIntent(
+            ChannelActivity.createIntent(
                 context = this,
                 channelId = channel.cid,
                 messageId = null,
@@ -383,7 +383,7 @@ class ChannelsActivity : ComponentActivity() {
 
     private fun openMessages(message: Message) {
         startActivity(
-            MessagesActivity.createIntent(
+            ChannelActivity.createIntent(
                 context = this,
                 channelId = message.cid,
                 messageId = message.id,
@@ -394,7 +394,7 @@ class ChannelsActivity : ComponentActivity() {
 
     private fun openThread(thread: Thread) {
         startActivity(
-            MessagesActivity.createIntent(
+            ChannelActivity.createIntent(
                 context = this,
                 channelId = thread.parentMessage.cid,
                 parentMessageId = thread.parentMessageId,

@@ -25,8 +25,9 @@
   <string name="stream_compose_attachment_added_file">"File dilampirkan"</string>
   <string name="stream_compose_attachment_added_photo">"Foto dilampirkan"</string>
   <string name="stream_compose_attachment_added_video">"Video dilampirkan"</string>
-  <string name="stream_compose_attachment_camera_picker">"Buka Kamera"</string>
+  <string name="stream_compose_attachment_camera_picker">"Kamera"</string>
   <string name="stream_compose_attachment_camera_picker_content">"Ambil foto dan bagikan"</string>
+  <string name="stream_compose_attachment_camera_picker_cta">"Buka Kamera"</string>
   <string name="stream_compose_attachment_commands_picker">"Perintah"</string>
   <string name="stream_compose_attachment_file_picker">"File"</string>
   <string name="stream_compose_attachment_media_picker">"Media"</string>
@@ -59,7 +60,6 @@
   <string name="stream_compose_channel_item_muted">"dibisukan"</string>
   <string name="stream_compose_channel_item_open">"Buka percakapan"</string>
   <string name="stream_compose_channel_item_options">"Buka opsi percakapan"</string>
-  <string name="stream_compose_cd_message_item">"Item pesan"</string>
   <string name="stream_compose_cd_play_button">"Tombol putar"</string>
   <string name="stream_compose_channel_list_draft">"Draf: "</string>
   <string name="stream_compose_channel_list_empty_channels">"Belum ada percakapan"</string>
@@ -123,6 +123,10 @@
   <string name="stream_compose_message_composer_attachments_expanded">"diperluas"</string>
   <string name="stream_compose_message_deleted">"Pesan dihapus"</string>
   <string name="stream_compose_message_deleted_preview">"Pesan dihapus"</string>
+  <string name="stream_compose_message_item_open_thread">"Buka utas"</string>
+  <string name="stream_compose_message_item_options">"Tampilkan opsi pesan"</string>
+  <string name="stream_compose_message_attachment_open">"Buka lampiran"</string>
+  <string name="stream_compose_message_reactions_show">"Tampilkan reaksi"</string>
   <string name="stream_compose_message_list_auto_translated">"Diterjemahkan"</string>
   <string name="stream_compose_message_list_empty_messages">"Tidak ada pesan"</string>
   <string name="stream_compose_message_list_error_cannot_open_link">"Tidak ada aplikasi untuk membuka URL ini:\n%s"</string>
@@ -135,7 +139,10 @@
   <string name="stream_compose_message_list_show_translation">"Tampilkan terjemahan"</string>
   <string name="stream_compose_message_list_thread_footnote_thread_replies">"%d balasan"</string>
   <string name="stream_compose_message_list_thread_footnote_thread_reply">"%d balasan"</string>
-  <string name="stream_compose_message_list_unread_separator">"%d pesan belum dibaca"</string>
+  <plurals name="stream_compose_message_list_unread_separator">
+    <item quantity="one">"%d pesan belum dibaca"</item>
+    <item quantity="other">"%d pesan belum dibaca"</item>
+  </plurals>
   <string name="stream_compose_message_list_unsupported_attachment">"Lampiran tidak didukung"</string>
   <string name="stream_compose_message_list_view">"Lihat"</string>
   <string name="stream_compose_message_list_view_original">"Lihat aslinya"</string>
@@ -175,8 +182,10 @@
   <string name="stream_compose_poll_option_limit_votes_description">"Pilih antara 2\u201310 opsi"</string>
   <string name="stream_compose_poll_option_limit_votes_increase">"Tambah suara per orang"</string>
   <string name="stream_compose_poll_option_limit_votes_input">"Suara per orang"</string>
-  <string name="stream_compose_poll_option_remove">"Hapus opsi polling"</string>
-  <string name="stream_compose_poll_option_reorder">"Urutkan ulang opsi polling"</string>
+  <string name="stream_compose_poll_option_remove">"Hapus opsi %s"</string>
+  <string name="stream_compose_poll_option_move_down">"Pindahkan ke bawah"</string>
+  <string name="stream_compose_poll_option_move_up">"Pindahkan ke atas"</string>
+  <string name="stream_compose_poll_option_reorder">"Urutkan ulang opsi %s"</string>
   <string name="stream_compose_poll_option_results_error">"Terjadi kesalahan saat memuat hasil opsi polling. Silakan coba lagi nanti."</string>
   <string name="stream_compose_poll_option_switch_add_comment">"Tambahkan komentar"</string>
   <string name="stream_compose_poll_option_switch_add_comment_description">"Izinkan orang lain menambahkan komentar"</string>
@@ -193,6 +202,7 @@
   <string name="stream_compose_poll_questions_title">"Pertanyaan"</string>
   <string name="stream_compose_poll_results">"Hasil Polling"</string>
   <string name="stream_compose_poll_suggest_option">"Sarankan Opsi"</string>
+  <string name="stream_compose_poll_create_action">"buat polling"</string>
   <string name="stream_compose_poll_title">"Buat Polling"</string>
   <string name="stream_compose_poll_view_more">"Lihat semua"</string>
   <string name="stream_compose_poll_view_result">"Lihat Hasil"</string>

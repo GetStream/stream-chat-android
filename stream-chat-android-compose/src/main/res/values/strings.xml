@@ -99,11 +99,18 @@
         <item quantity="one">%d Reply</item>
         <item quantity="other">%d Replies</item>
     </plurals>
-    <string name="stream_compose_message_list_unread_separator">%d unread messages</string>
+    <plurals name="stream_compose_message_list_unread_separator">
+        <item quantity="one">%d unread message</item>
+        <item quantity="other">%d unread messages</item>
+    </plurals>
     <string name="stream_compose_message_list_empty_messages">No messages</string>
     <string name="stream_compose_message_list_error_cannot_open_link">There is no app to view this url:\n%s</string>
     <string name="stream_compose_message_list_unsupported_attachment">Unsupported attachment</string>
     <string name="stream_compose_message_list_show_translation">Show translation</string>
+    <string name="stream_compose_message_item_open_thread">Open thread</string>
+    <string name="stream_compose_message_item_options">Show message options</string>
+    <string name="stream_compose_message_reactions_show">Show reactions</string>
+    <string name="stream_compose_message_attachment_open">Open attachment</string>
 
     <!--  Quoted Message  -->
     <string name="stream_compose_quoted_message_audio_recording">Voice message (%s)</string>
@@ -220,8 +227,9 @@
     <!-- Attachment Picker -->
     <string name="stream_compose_attachment_media_picker">Media</string>
     <string name="stream_compose_attachment_file_picker">Files</string>
-    <string name="stream_compose_attachment_camera_picker">Open Camera</string>
+    <string name="stream_compose_attachment_camera_picker">Camera</string>
     <string name="stream_compose_attachment_camera_picker_content">Take a photo and share</string>
+    <string name="stream_compose_attachment_camera_picker_cta">Open Camera</string>
     <string name="stream_compose_attachment_polls_picker">Polls</string>
     <string name="stream_compose_attachment_poll_picker_content">Create a poll and let everyone vote</string>
     <string name="stream_compose_attachment_poll_picker_cta">Create Poll</string>
@@ -295,11 +303,11 @@
         <item quantity="one">%d unread message</item>
         <item quantity="other">%d unread messages</item>
     </plurals>
-    <string name="stream_compose_cd_message_item">Message item</string>
     <string name="stream_compose_cd_play_button">Play button</string>
 
     <!--  Poll  -->
     <string name="stream_compose_poll_title">Create Poll</string>
+    <string name="stream_compose_poll_create_action">create poll</string>
     <string name="stream_compose_poll_questions_title">Question</string>
     <string name="stream_compose_poll_questions_description">Ask a question</string>
     <string name="stream_compose_poll_option_title">Options</string>
@@ -353,8 +361,10 @@
 
     <string name="stream_compose_poll_created_preview">Poll created: %s</string>
     <string name="stream_compose_poll_closed_preview">Poll closed: %s</string>
-    <string name="stream_compose_poll_option_reorder">Reorder poll option</string>
-    <string name="stream_compose_poll_option_remove">Remove poll option</string>
+    <string name="stream_compose_poll_option_reorder">Reorder option %s</string>
+    <string name="stream_compose_poll_option_move_up">Move up</string>
+    <string name="stream_compose_poll_option_move_down">Move down</string>
+    <string name="stream_compose_poll_option_remove">Remove option %s</string>
 
     <!--  Pinned message list  -->
     <string name="stream_compose_pinned_message_list_empty_title">No pinned messages</string>

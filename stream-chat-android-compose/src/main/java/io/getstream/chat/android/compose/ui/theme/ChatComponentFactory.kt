@@ -49,6 +49,8 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import io.getstream.chat.android.client.ChatClient
@@ -633,7 +635,9 @@ public interface ChatComponentFactory {
             messageMode = params.messageMode,
             onBackPressed = params.onBackPressed,
             onHeaderTitleClick = params.onHeaderTitleClick,
+            onHeaderTitleClickLabel = params.onHeaderTitleClickLabel,
             onChannelAvatarClick = params.onChannelAvatarClick,
+            onChannelAvatarClickLabel = params.onChannelAvatarClickLabel,
         )
     }
 
@@ -663,6 +667,7 @@ public interface ChatComponentFactory {
             connectionState = params.connectionState,
             messageMode = params.messageMode,
             onHeaderTitleClick = params.onClick,
+            onHeaderTitleClickLabel = params.onClickLabel,
         )
     }
 
@@ -677,6 +682,7 @@ public interface ChatComponentFactory {
             channel = params.channel,
             currentUser = params.currentUser,
             onClick = params.onClick,
+            onClickLabel = params.onClickLabel,
         )
     }
 
@@ -2700,6 +2706,7 @@ public interface ChatComponentFactory {
             title = {
                 Text(
                     text = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_title),
+                    modifier = Modifier.semantics { heading() },
                     style = ChatTheme.typography.headingSmall,
                     maxLines = 1,
                 )
@@ -2766,7 +2773,8 @@ public interface ChatComponentFactory {
                 .background(ChatTheme.colors.backgroundCoreSurfaceSubtle)
                 .topBorder(color = ChatTheme.colors.borderCoreSubtle)
                 .bottomBorder(color = ChatTheme.colors.borderCoreSubtle)
-                .padding(horizontal = StreamTokens.spacingMd, vertical = StreamTokens.spacingXs),
+                .padding(horizontal = StreamTokens.spacingMd, vertical = StreamTokens.spacingXs)
+                .semantics { heading() },
             text = params.label,
             style = ChatTheme.typography.captionEmphasis,
             color = ChatTheme.colors.chatTextSystem,
@@ -2822,6 +2830,7 @@ public interface ChatComponentFactory {
             title = {
                 Text(
                     text = stringResource(UiCommonR.string.stream_ui_channel_attachments_media_title),
+                    modifier = Modifier.semantics { heading() },
                     style = ChatTheme.typography.headingSmall,
                     maxLines = 1,
                 )

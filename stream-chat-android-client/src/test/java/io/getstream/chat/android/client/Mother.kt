@@ -756,7 +756,7 @@ internal object Mother {
         authorName: String? = randomString(),
         authorLink: String? = randomString(),
         fallback: String? = randomString(),
-        fileSize: Int = positiveRandomInt(),
+        fileSize: Int? = positiveRandomInt(),
         image: String? = randomString(),
         imageUrl: String? = randomString(),
         mimeType: String? = randomString(),

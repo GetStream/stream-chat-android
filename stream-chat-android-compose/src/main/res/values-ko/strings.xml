@@ -25,8 +25,9 @@
   <string name="stream_compose_attachment_added_file">"파일 첨부됨"</string>
   <string name="stream_compose_attachment_added_photo">"사진 첨부됨"</string>
   <string name="stream_compose_attachment_added_video">"동영상 첨부됨"</string>
-  <string name="stream_compose_attachment_camera_picker">"카메라 열기"</string>
+  <string name="stream_compose_attachment_camera_picker">"카메라"</string>
   <string name="stream_compose_attachment_camera_picker_content">"사진을 찍어 공유하세요"</string>
+  <string name="stream_compose_attachment_camera_picker_cta">"카메라 열기"</string>
   <string name="stream_compose_attachment_commands_picker">"명령어"</string>
   <string name="stream_compose_attachment_file_picker">"파일"</string>
   <string name="stream_compose_attachment_media_picker">"미디어"</string>
@@ -59,7 +60,6 @@
   <string name="stream_compose_channel_item_muted">"음소거됨"</string>
   <string name="stream_compose_channel_item_open">"대화 열기"</string>
   <string name="stream_compose_channel_item_options">"대화 옵션 열기"</string>
-  <string name="stream_compose_cd_message_item">"메시지 항목"</string>
   <string name="stream_compose_cd_play_button">"재생 버튼"</string>
   <string name="stream_compose_channel_list_draft">"임시 저장: "</string>
   <string name="stream_compose_channel_list_empty_channels">"아직 대화가 없습니다"</string>
@@ -135,6 +135,10 @@
   <string name="stream_compose_message_composer_attachments_expanded">"확장됨"</string>
   <string name="stream_compose_message_deleted">"메시지가 삭제되었습니다"</string>
   <string name="stream_compose_message_deleted_preview">"메시지가 삭제되었습니다"</string>
+  <string name="stream_compose_message_item_open_thread">"스레드 열기"</string>
+  <string name="stream_compose_message_item_options">"메시지 옵션 표시"</string>
+  <string name="stream_compose_message_attachment_open">"첨부파일 열기"</string>
+  <string name="stream_compose_message_reactions_show">"반응 보기"</string>
   <string name="stream_compose_message_list_auto_translated">"번역됨"</string>
   <string name="stream_compose_message_list_empty_messages">"메시지 없음"</string>
   <string name="stream_compose_message_list_error_cannot_open_link">"이 URL을 열 수 있는 앱이 없습니다:\n%s"</string>
@@ -150,7 +154,10 @@
   <plurals name="stream_compose_message_list_thread_separator">
     <item quantity="other">"%d개의 답장"</item>
   </plurals>
-  <string name="stream_compose_message_list_unread_separator">"%d개의 읽지 않은 메시지"</string>
+  <plurals name="stream_compose_message_list_unread_separator">
+    <item quantity="one">"%d개의 읽지 않은 메시지"</item>
+    <item quantity="other">"%d개의 읽지 않은 메시지"</item>
+  </plurals>
   <string name="stream_compose_message_list_unsupported_attachment">"지원되지 않는 첨부파일"</string>
   <string name="stream_compose_message_list_view">"보기"</string>
   <string name="stream_compose_message_list_view_original">"원문 보기"</string>
@@ -196,8 +203,10 @@
   <string name="stream_compose_poll_option_limit_votes_description">"2\u201310개의 옵션 중 선택"</string>
   <string name="stream_compose_poll_option_limit_votes_increase">"1인당 투표 수 늘리기"</string>
   <string name="stream_compose_poll_option_limit_votes_input">"1인당 투표 수"</string>
-  <string name="stream_compose_poll_option_remove">"투표 옵션 삭제"</string>
-  <string name="stream_compose_poll_option_reorder">"투표 옵션 재정렬"</string>
+  <string name="stream_compose_poll_option_remove">"옵션 %s 삭제"</string>
+  <string name="stream_compose_poll_option_move_down">"아래로 이동"</string>
+  <string name="stream_compose_poll_option_move_up">"위로 이동"</string>
+  <string name="stream_compose_poll_option_reorder">"옵션 %s 재정렬"</string>
   <string name="stream_compose_poll_option_results_error">"투표 옵션 결과를 불러오는 중 오류가 발생했습니다. 나중에 다시 시도해 주세요."</string>
   <string name="stream_compose_poll_option_switch_add_comment">"댓글 추가"</string>
   <string name="stream_compose_poll_option_switch_add_comment_description">"다른 사용자가 댓글을 추가할 수 있도록 허용"</string>
@@ -214,6 +223,7 @@
   <string name="stream_compose_poll_questions_title">"질문"</string>
   <string name="stream_compose_poll_results">"투표 결과"</string>
   <string name="stream_compose_poll_suggest_option">"옵션 제안"</string>
+  <string name="stream_compose_poll_create_action">"투표 만들기"</string>
   <string name="stream_compose_poll_title">"투표 만들기"</string>
   <plurals name="stream_compose_poll_total_vote_counts">
     <item quantity="other">"총 %d표"</item>

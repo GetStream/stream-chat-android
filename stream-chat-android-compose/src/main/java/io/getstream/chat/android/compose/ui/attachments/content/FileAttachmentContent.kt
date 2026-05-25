@@ -37,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,6 +46,7 @@ import io.getstream.chat.android.client.utils.attachment.isAudio
 import io.getstream.chat.android.client.utils.attachment.isFile
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
@@ -100,6 +102,7 @@ public fun FileAttachmentContent(
             )
             .testTag("Stream_MultipleFileAttachmentsColumn"),
     ) {
+        val openAttachmentLabel = stringResource(R.string.stream_compose_message_attachment_open)
         for (attachment in message.attachments) {
             if (attachment.isFile() || attachment.isAudio()) {
                 ChatTheme.componentFactory.FileAttachmentItem(
@@ -114,6 +117,7 @@ public fun FileAttachmentContent(
                             .combinedClickable(
                                 indication = ripple(),
                                 interactionSource = remember { MutableInteractionSource() },
+                                onClickLabel = openAttachmentLabel,
                                 onClick = { onItemClick(previewHandlers, attachment) },
                                 onLongClick = { attachmentState.onLongItemClick(message) },
                             ),

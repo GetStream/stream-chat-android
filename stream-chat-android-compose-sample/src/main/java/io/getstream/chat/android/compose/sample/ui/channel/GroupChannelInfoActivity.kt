@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.sample.feature.channel.draft.DraftChannelActivity
-import io.getstream.chat.android.compose.sample.ui.MessagesActivity
 import io.getstream.chat.android.compose.sample.ui.channel.attachments.ChannelFilesAttachmentsActivity
 import io.getstream.chat.android.compose.sample.ui.channel.attachments.ChannelMediaAttachmentsActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesActivity
@@ -111,7 +110,7 @@ class GroupChannelInfoActivity : ComponentActivity() {
                 openFilesAttachments()
 
             is ChannelInfoViewEvent.NavigateToChannel ->
-                startActivity(MessagesActivity.createIntent(context = this, channelId = event.cid))
+                startActivity(ChannelActivity.createIntent(context = this, channelId = event.cid))
 
             is ChannelInfoViewEvent.NavigateToDraftChannel ->
                 startActivity(DraftChannelActivity.createIntent(context = this, memberIds = listOf(event.memberId)))

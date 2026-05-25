@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,6 +52,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
+import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 
@@ -67,7 +69,9 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * @param messageMode The current message mode, that changes the header content, if we're in a Thread.
  * @param onBackPressed Handler that propagates the back button click event.
  * @param onHeaderTitleClick Action handler when the user taps on the header title section.
+ * @param onHeaderTitleClickLabel Semantic / accessibility label for [onHeaderTitleClick].
  * @param onChannelAvatarClick Action handler called when the user taps on the channel avatar.
+ * @param onChannelAvatarClickLabel Semantic / accessibility label for [onChannelAvatarClick].
  * @param leadingContent The content shown at the start of the header, by default a [BackButton].
  * @param centerContent The content shown in the middle of the header and represents the core information, by default
  * [DefaultChannelHeaderCenterContent].
@@ -83,7 +87,9 @@ public fun ChannelHeader(
     messageMode: MessageMode = MessageMode.Normal,
     onBackPressed: () -> Unit = {},
     onHeaderTitleClick: ((Channel) -> Unit)? = null,
+    onHeaderTitleClickLabel: String? = null,
     onChannelAvatarClick: ((Channel) -> Unit)? = null,
+    onChannelAvatarClickLabel: String? = null,
     leadingContent: @Composable RowScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelHeaderLeadingContent(
@@ -104,6 +110,7 @@ public fun ChannelHeader(
                     typingUsers = typingUsers,
                     messageMode = messageMode,
                     onClick = onHeaderTitleClick,
+                    onClickLabel = onHeaderTitleClickLabel,
                 ),
             )
         }
@@ -115,6 +122,7 @@ public fun ChannelHeader(
                     channel = channel,
                     currentUser = currentUser,
                     onClick = onChannelAvatarClick,
+                    onClickLabel = onChannelAvatarClickLabel,
                 ),
             )
         }
@@ -151,6 +159,7 @@ internal fun DefaultChannelHeaderLeadingContent(onBackPressed: () -> Unit) {
  * @param modifier Modifier for styling.
  * @param messageMode Currently active message mode, used to define the title information.
  * @param onHeaderTitleClick Handler for when the user taps on the header title section.
+ * @param onHeaderTitleClickLabel Semantic / accessibility label for [onHeaderTitleClick].
  */
 @Suppress("LongMethod")
 @Composable
@@ -161,6 +170,7 @@ internal fun DefaultChannelHeaderCenterContent(
     modifier: Modifier = Modifier,
     messageMode: MessageMode = MessageMode.Normal,
     onHeaderTitleClick: ((Channel) -> Unit)? = null,
+    onHeaderTitleClickLabel: String? = null,
 ) {
     val title = when (messageMode) {
         MessageMode.Normal -> ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser)
@@ -182,12 +192,11 @@ internal fun DefaultChannelHeaderCenterContent(
     Column(
         modifier = modifier
             .height(IntrinsicSize.Max)
-            .run {
-                if (onHeaderTitleClick != null) {
-                    clickable { onHeaderTitleClick(channel) }
-                } else {
-                    this
-                }
+            .ifNotNull(onHeaderTitleClick) { callback ->
+                clickable(
+                    onClickLabel = onHeaderTitleClickLabel,
+                    role = Role.Button,
+                ) { callback(channel) }
             },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -256,19 +265,25 @@ internal fun DefaultChannelHeaderSubtitle(
  * @param channel The channel used to display the avatar.
  * @param currentUser The current user. Used for choosing which avatar to display.
  * @param onClick The handler called when the user taps on the channel avatar.
+ * @param onClickLabel Semantic / accessibility label for [onClick].
  */
 @Composable
 internal fun DefaultChannelHeaderTrailingContent(
     channel: Channel,
     currentUser: User?,
     onClick: ((Channel) -> Unit)?,
+    onClickLabel: String? = null,
 ) {
     ChatTheme.componentFactory.ChannelAvatar(
         params = ChannelAvatarParams(
             modifier = Modifier
                 .size(40.dp)
                 .ifNotNull(onClick) { callback ->
-                    clickable(bounded = false) { callback(channel) }
+                    clickable(
+                        bounded = false,
+                        onClickLabel = onClickLabel,
+                        role = Role.Button,
+                    ) { callback(channel) }
                 },
             channel = channel,
             currentUser = currentUser,
@@ -276,78 +291,126 @@ internal fun DefaultChannelHeaderTrailingContent(
     )
 }
 
-@Preview(name = "ChannelHeader Preview (Connected)")
+@Preview
 @Composable
 private fun ChannelHeaderConnectedPreview() {
     ChatTheme {
-        ChannelHeader(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            channel = PreviewChannelData.channelWithImage,
-            currentUser = PreviewUserData.user1,
-            connectionState = ConnectionState.Connected,
-        )
+        ChannelHeaderConnected()
     }
 }
 
-@Preview(name = "ChannelHeader Preview (Connecting)")
+@Composable
+internal fun ChannelHeaderConnected() {
+    ChannelHeader(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        channel = PreviewChannelData.channelWithImage,
+        currentUser = PreviewUserData.user1,
+        connectionState = ConnectionState.Connected,
+    )
+}
+
+@Preview
 @Composable
 private fun ChannelHeaderConnectingPreview() {
     ChatTheme {
-        ChannelHeader(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            channel = PreviewChannelData.channelWithImage,
-            currentUser = PreviewUserData.user1,
-            connectionState = ConnectionState.Connecting,
-        )
+        ChannelHeaderConnecting()
     }
 }
 
-@Preview(name = "ChannelHeader Preview (Offline)")
+@Composable
+internal fun ChannelHeaderConnecting() {
+    ChannelHeader(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        channel = PreviewChannelData.channelWithImage,
+        currentUser = PreviewUserData.user1,
+        connectionState = ConnectionState.Connecting,
+    )
+}
+
+@Preview
 @Composable
 private fun ChannelHeaderOfflinePreview() {
     ChatTheme {
-        ChannelHeader(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            channel = PreviewChannelData.channelWithImage,
-            currentUser = PreviewUserData.user1,
-            connectionState = ConnectionState.Offline,
-        )
+        ChannelHeaderOffline()
     }
 }
 
-@Preview(name = "ChannelHeader Preview (User Typing)")
 @Composable
-private fun ChannelHeaderUserTypingPreview() {
-    ChatTheme {
-        ChannelHeader(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            channel = PreviewChannelData.channelWithImage,
-            currentUser = PreviewUserData.user1,
-            typingUsers = listOf(PreviewUserData.user2),
-            connectionState = ConnectionState.Connected,
-        )
-    }
+internal fun ChannelHeaderOffline() {
+    ChannelHeader(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        channel = PreviewChannelData.channelWithImage,
+        currentUser = PreviewUserData.user1,
+        connectionState = ConnectionState.Offline,
+    )
 }
 
-@Preview(name = "ChannelHeader Preview (Many Members)")
+@Preview
 @Composable
 private fun ChannelHeaderManyMembersPreview() {
     ChatTheme {
-        ChannelHeader(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            channel = PreviewChannelData.channelWithManyMembers,
-            currentUser = PreviewUserData.user1,
-            connectionState = ConnectionState.Connected,
-        )
+        ChannelHeaderManyMembers()
     }
+}
+
+@Composable
+internal fun ChannelHeaderManyMembers() {
+    ChannelHeader(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        channel = PreviewChannelData.channelWithManyMembers,
+        currentUser = PreviewUserData.user1,
+        connectionState = ConnectionState.Connected,
+    )
+}
+
+@Preview
+@Composable
+private fun ChannelHeaderFewMembersPreview() {
+    ChatTheme {
+        ChannelHeaderFewMembers()
+    }
+}
+
+@Composable
+internal fun ChannelHeaderFewMembers() {
+    ChannelHeader(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        channel = PreviewChannelData.channelWithFewMembers,
+        currentUser = PreviewUserData.user1,
+        connectionState = ConnectionState.Connected,
+    )
+}
+
+@Preview
+@Composable
+private fun ChannelHeaderThreadModePreview() {
+    ChatTheme {
+        ChannelHeaderThreadMode()
+    }
+}
+
+@Composable
+internal fun ChannelHeaderThreadMode() {
+    ChannelHeader(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        channel = PreviewChannelData.channelWithImage,
+        currentUser = PreviewUserData.user1,
+        connectionState = ConnectionState.Connected,
+        messageMode = MessageMode.MessageThread(
+            parentMessage = PreviewMessageData.message1,
+            threadState = null,
+        ),
+    )
 }

@@ -25,8 +25,9 @@
   <string name="stream_compose_attachment_added_file">"Archivo adjuntado"</string>
   <string name="stream_compose_attachment_added_photo">"Foto adjuntada"</string>
   <string name="stream_compose_attachment_added_video">"Vídeo adjuntado"</string>
-  <string name="stream_compose_attachment_camera_picker">"Abrir cámara"</string>
+  <string name="stream_compose_attachment_camera_picker">"Cámara"</string>
   <string name="stream_compose_attachment_camera_picker_content">"Tomar una foto y compartir"</string>
+  <string name="stream_compose_attachment_camera_picker_cta">"Abrir cámara"</string>
   <string name="stream_compose_attachment_commands_picker">"Comandos"</string>
   <string name="stream_compose_attachment_file_picker">"Archivos"</string>
   <string name="stream_compose_attachment_media_picker">"Multimedia"</string>
@@ -59,7 +60,6 @@
   <string name="stream_compose_channel_item_muted">"silenciado"</string>
   <string name="stream_compose_channel_item_open">"Abrir conversación"</string>
   <string name="stream_compose_channel_item_options">"Abrir opciones de conversación"</string>
-  <string name="stream_compose_cd_message_item">"Elemento de mensaje"</string>
   <string name="stream_compose_cd_play_button">"Botón de reproducción"</string>
   <string name="stream_compose_channel_list_draft">"Borrador: "</string>
   <string name="stream_compose_channel_list_empty_channels">"No hay conversaciones aún"</string>
@@ -123,6 +123,10 @@
   <string name="stream_compose_message_composer_attachments_expanded">"expandido"</string>
   <string name="stream_compose_message_deleted">"Mensaje eliminado"</string>
   <string name="stream_compose_message_deleted_preview">"Mensaje eliminado"</string>
+  <string name="stream_compose_message_item_open_thread">"Abrir hilo"</string>
+  <string name="stream_compose_message_item_options">"Mostrar opciones del mensaje"</string>
+  <string name="stream_compose_message_attachment_open">"Abrir archivo adjunto"</string>
+  <string name="stream_compose_message_reactions_show">"Mostrar reacciones"</string>
   <string name="stream_compose_message_list_auto_translated">"Traducido"</string>
   <string name="stream_compose_message_list_empty_messages">"Sin mensajes"</string>
   <string name="stream_compose_message_list_error_cannot_open_link">"No hay ninguna aplicación para ver esta URL:\n%s"</string>
@@ -135,7 +139,10 @@
   <string name="stream_compose_message_list_show_translation">"Mostrar traducción"</string>
   <string name="stream_compose_message_list_thread_footnote_thread_replies">"%d respuestas"</string>
   <string name="stream_compose_message_list_thread_footnote_thread_reply">"%d respuesta"</string>
-  <string name="stream_compose_message_list_unread_separator">"%d mensajes no leídos"</string>
+  <plurals name="stream_compose_message_list_unread_separator">
+    <item quantity="one">"%d mensaje no leído"</item>
+    <item quantity="other">"%d mensajes no leídos"</item>
+  </plurals>
   <string name="stream_compose_message_list_unsupported_attachment">"Archivo adjunto no compatible"</string>
   <string name="stream_compose_message_list_view">"Ver"</string>
   <string name="stream_compose_message_list_view_original">"Ver original"</string>
@@ -175,8 +182,10 @@
   <string name="stream_compose_poll_option_limit_votes_description">"Elegir entre 2\u201310 opciones"</string>
   <string name="stream_compose_poll_option_limit_votes_increase">"Aumentar votos por persona"</string>
   <string name="stream_compose_poll_option_limit_votes_input">"Votos por persona"</string>
-  <string name="stream_compose_poll_option_remove">"Eliminar opción de la encuesta"</string>
-  <string name="stream_compose_poll_option_reorder">"Reordenar opción de la encuesta"</string>
+  <string name="stream_compose_poll_option_remove">"Eliminar opción %s"</string>
+  <string name="stream_compose_poll_option_move_down">"Mover abajo"</string>
+  <string name="stream_compose_poll_option_move_up">"Mover arriba"</string>
+  <string name="stream_compose_poll_option_reorder">"Reordenar opción %s"</string>
   <string name="stream_compose_poll_option_results_error">"Se produjo un error al cargar los resultados de la opción de la encuesta. Inténtalo de nuevo más tarde."</string>
   <string name="stream_compose_poll_option_switch_add_comment">"Añadir un comentario"</string>
   <string name="stream_compose_poll_option_switch_add_comment_description">"Permitir que otros añadan comentarios"</string>
@@ -193,6 +202,7 @@
   <string name="stream_compose_poll_questions_title">"Pregunta"</string>
   <string name="stream_compose_poll_results">"Resultados de la encuesta"</string>
   <string name="stream_compose_poll_suggest_option">"Sugerir opción"</string>
+  <string name="stream_compose_poll_create_action">"crear encuesta"</string>
   <string name="stream_compose_poll_title">"Crear encuesta"</string>
   <string name="stream_compose_poll_view_more">"Ver todo"</string>
   <string name="stream_compose_poll_view_result">"Ver resultados"</string>

@@ -27,6 +27,7 @@ import io.getstream.chat.android.compose.sample.BuildConfig
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.list.ChannelsActivity
+import io.getstream.chat.android.compose.sample.ui.channel.ChannelActivity
 import io.getstream.chat.android.compose.sample.ui.chats.ChatsActivity
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.models.InitializationState
@@ -74,7 +75,7 @@ class StartupActivity : AppCompatActivity() {
                         TaskStackBuilder.create(applicationContext)
                             .addNextIntent(ChannelsActivity.createIntent(applicationContext))
                             .addNextIntent(
-                                MessagesActivity.createIntent(
+                                ChannelActivity.createIntent(
                                     context = applicationContext,
                                     channelId = channelId,
                                     messageId = messageId,

@@ -21,7 +21,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.ui.Modifier
-import io.getstream.chat.android.compose.sample.ui.MessagesActivity
+import io.getstream.chat.android.compose.sample.ui.channel.ChannelActivity
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
 
@@ -47,7 +47,7 @@ class MessageRemindersActivity : ComponentActivity() {
 
     private fun openMessages(message: Message) {
         startActivity(
-            MessagesActivity.createIntent(
+            ChannelActivity.createIntent(
                 context = this,
                 channelId = message.cid,
                 messageId = message.id,

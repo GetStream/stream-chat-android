@@ -27,8 +27,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.utils.message.isDeleted
@@ -91,9 +89,7 @@ public fun MessageFooter(
                 if (!messageItem.isMine) {
                     Text(
                         modifier = Modifier
-                            .clearAndSetSemantics {
-                                testTag = "Stream_MessageAuthorName"
-                            }
+                            .testTag("Stream_MessageAuthorName")
                             .padding(end = StreamTokens.spacingXs)
                             .weight(1f, fill = false),
                         text = message.user.name,
