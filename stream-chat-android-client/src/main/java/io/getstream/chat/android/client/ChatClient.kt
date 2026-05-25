@@ -4947,8 +4947,9 @@ internal constructor(
                 warmUp = warmUp,
                 loggerConfig = ChatLoggerConfigImpl(logLevel, loggerHandler),
                 distinctApiCalls = distinctApiCalls,
-                debugRequests,
-                notificationConfig,
+                debugRequests = debugRequests,
+                notificationConfig = notificationConfig,
+                fastEventParsing = chatClientConfig.fastEventParsing,
             )
             setupStreamLog()
 
