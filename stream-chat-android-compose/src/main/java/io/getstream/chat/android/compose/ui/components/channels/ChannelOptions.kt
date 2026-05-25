@@ -94,9 +94,12 @@ public fun ChannelOptions(
  * Each action is self-describing and carries its icon, label, and execution handler.
  *
  * Actions vary by channel type:
- * - **DM:** View Info, Mute/Unmute User, Block/Unblock User, Archive Chat, Delete Chat
- * - **Group (owner):** View Info, Archive Group, Delete Group
- * - **Group (member):** View Info, Archive Group, Leave Group
+ * - **DM:** View Info, Pin/Unpin Chat, Mute/Unmute User, Block/Unblock User, Archive/Unarchive Chat, Delete Chat
+ * - **Group (owner):** View Info, Pin/Unpin Chat, Archive/Unarchive Chat, Leave Group, Delete Group
+ * - **Group (member):** View Info, Pin/Unpin Chat, Archive/Unarchive Chat, Leave Group
+ *
+ * Pin and Archive actions are opt-in via [ChannelOptionsVisibility.isPinChannelVisible] and
+ * [ChannelOptionsVisibility.isArchiveChannelVisible] respectively.
  *
  * @param selectedChannel The currently selected channel.
  * @param isMuted If the channel is muted or not.
@@ -146,7 +149,7 @@ public fun buildDefaultChannelActions(
 
 /**
  * Builds channel actions for DM (1-to-1) channels.
- * Shows: View Info, Mute/Unmute User, Block/Unblock User, Archive Chat, Delete Chat.
+ * Shows: View Info, Pin/Unpin Chat, Mute/Unmute User, Block/Unblock User, Archive/Unarchive Chat, Delete Chat.
  */
 @Suppress("LongParameterList")
 @Composable
@@ -168,6 +171,11 @@ private fun buildDmChannelActions(
             selectedChannel = selectedChannel,
             onViewInfoAction = onViewInfoAction,
         ),
+        buildDmPinAction(
+            canPinChannel = optionVisibility.isPinChannelVisible,
+            selectedChannel = selectedChannel,
+            viewModel = viewModel,
+        ),
         buildDmMuteUserAction(
             isVisible = optionVisibility.isMuteUserVisible,
             otherUserId = otherUserId,
@@ -176,11 +184,6 @@ private fun buildDmChannelActions(
         ),
         buildDmBlockUserAction(
             otherUserId = otherUserId,
-            selectedChannel = selectedChannel,
-            viewModel = viewModel,
-        ),
-        buildDmPinAction(
-            canPinChannel = optionVisibility.isPinChannelVisible,
             selectedChannel = selectedChannel,
             viewModel = viewModel,
         ),
@@ -290,8 +293,8 @@ private fun buildDmDeleteAction(
 
 /**
  * Builds channel actions for group channels.
- * - **Owner (has DELETE_CHANNEL):** View Info, Archive Group, Delete Group
- * - **Member (no DELETE_CHANNEL):** View Info, Archive Group, Leave Group
+ * - **Owner (has DELETE_CHANNEL):** View Info, Pin/Unpin Chat, Archive/Unarchive Chat, Leave Group, Delete Group
+ * - **Member (no DELETE_CHANNEL):** View Info, Pin/Unpin Chat, Archive/Unarchive Chat, Leave Group
  */
 @Suppress("LongMethod", "LongParameterList")
 @Composable
