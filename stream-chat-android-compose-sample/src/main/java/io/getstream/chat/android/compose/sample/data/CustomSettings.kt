@@ -33,6 +33,7 @@ class CustomSettings(private val context: Context) {
 
     var isAdaptiveLayoutEnabled: Boolean by booleanPref(AdaptiveLayout)
 
+    var isChannelPinningEnabled: Boolean by booleanPref(ChannelPinning)
     var isComposerLinkPreviewEnabled: Boolean by booleanPref(ComposerLinkPreview)
     var isComposerFloatingStyleEnabled: Boolean by booleanPref(ComposerFloatingStyle)
     var isSystemAttachmentPickerEnabled: Boolean by booleanPref(SystemAttachmentPicker)
@@ -48,6 +49,7 @@ class CustomSettings(private val context: Context) {
 }
 
 private const val AdaptiveLayout = "adaptive_layout"
+private const val ChannelPinning = "channel_pinning"
 private const val ComposerLinkPreview = "composer_link_preview"
 private const val ComposerFloatingStyle = "composer_floating_style"
 private const val SystemAttachmentPicker = "system_attachment_picker"

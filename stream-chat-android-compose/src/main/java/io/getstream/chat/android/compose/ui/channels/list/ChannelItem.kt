@@ -38,6 +38,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -53,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.extensions.currentUserUnreadCount
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ItemState
@@ -69,8 +71,9 @@ import io.getstream.chat.android.compose.ui.theme.ChannelItemTrailingContentPara
 import io.getstream.chat.android.compose.ui.theme.ChannelItemUnreadCountIndicatorParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListConfig
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
+import io.getstream.chat.android.compose.ui.theme.LocalChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.MuteIndicatorPosition
+import io.getstream.chat.android.compose.ui.theme.PinIndicatorPosition
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.getLastMessage
@@ -78,6 +81,7 @@ import io.getstream.chat.android.compose.ui.util.getLastMessageIncludingDeleted
 import io.getstream.chat.android.compose.ui.util.isOneToOne
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
@@ -255,7 +259,9 @@ private fun TitleRow(
 ) {
     val channel = channelItemState.channel
     val isMuted = channelItemState.isMuted || channelItemState.isUserMuted
+    val isPinned = channel.isPinned()
     val mutePosition = ChatTheme.config.channelList.muteIndicatorPosition
+    val pinPosition = ChatTheme.config.channelList.pinIndicatorPosition
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -278,14 +284,10 @@ private fun TitleRow(
             )
 
             if (isMuted && mutePosition == MuteIndicatorPosition.InlineTitle) {
-                Icon(
-                    modifier = Modifier
-                        .testTag("Stream_ChannelMutedIcon")
-                        .size(16.dp),
-                    painter = painterResource(id = R.drawable.stream_design_ic_mute),
-                    contentDescription = stringResource(R.string.stream_compose_channel_item_muted),
-                    tint = ChatTheme.colors.textTertiary,
-                )
+                MutedIcon()
+            }
+            if (isPinned && pinPosition == PinIndicatorPosition.InlineTitle) {
+                PinnedIcon()
             }
         }
 
@@ -324,6 +326,7 @@ private fun MessageRow(
     val isDirectMessaging = channel.isOneToOne(currentUser)
     val isLastMessageFromCurrentUser = lastMessage?.user?.id == currentUser?.id
     val mutePosition = ChatTheme.config.channelList.muteIndicatorPosition
+    val pinPosition = ChatTheme.config.channelList.pinIndicatorPosition
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -347,16 +350,36 @@ private fun MessageRow(
         if ((channelItemState.isMuted || channelItemState.isUserMuted) &&
             mutePosition == MuteIndicatorPosition.TrailingBottom
         ) {
-            Icon(
-                modifier = Modifier
-                    .testTag("Stream_ChannelMutedIcon")
-                    .size(16.dp),
-                painter = painterResource(id = R.drawable.stream_design_ic_mute),
-                contentDescription = stringResource(R.string.stream_compose_channel_item_muted),
-                tint = ChatTheme.colors.textTertiary,
-            )
+            MutedIcon()
+        }
+        if (channel.isPinned() && pinPosition == PinIndicatorPosition.TrailingBottom) {
+            PinnedIcon()
         }
     }
+}
+
+@Composable
+private fun MutedIcon() {
+    Icon(
+        modifier = Modifier
+            .testTag("Stream_ChannelMutedIcon")
+            .size(16.dp),
+        painter = painterResource(id = R.drawable.stream_design_ic_mute),
+        contentDescription = stringResource(R.string.stream_compose_channel_item_muted),
+        tint = ChatTheme.colors.textTertiary,
+    )
+}
+
+@Composable
+private fun PinnedIcon() {
+    Icon(
+        modifier = Modifier
+            .testTag("Stream_ChannelPinnedIcon")
+            .size(16.dp),
+        painter = painterResource(id = R.drawable.stream_design_ic_pin),
+        contentDescription = stringResource(R.string.stream_compose_channel_item_pinned),
+        tint = ChatTheme.colors.textTertiary,
+    )
 }
 
 @Composable
@@ -490,21 +513,138 @@ internal fun ChannelItemMuted() {
 @Preview(showBackground = true)
 @Composable
 private fun ChannelItemMutedTrailingBottomPreview() {
-    ChatTheme(
-        config = ChatUiConfig(
-            channelList = ChannelListConfig(muteIndicatorPosition = MuteIndicatorPosition.TrailingBottom),
-        ),
-    ) {
+    ChatTheme {
         ChannelItemMutedTrailingBottom()
     }
 }
 
 @Composable
 internal fun ChannelItemMutedTrailingBottom() {
+    WithChannelListConfig(
+        config = ChatTheme.config.channelList.copy(
+            muteIndicatorPosition = MuteIndicatorPosition.TrailingBottom,
+        ),
+    ) {
+        ChannelItem(
+            currentUser = PreviewUserData.user1,
+            channel = PreviewChannelData.channelWithMessages,
+            isMuted = true,
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChannelItemPinnedPreview() {
+    ChatTheme {
+        ChannelItemPinned()
+    }
+}
+
+@Composable
+internal fun ChannelItemPinned() {
+    ChannelItem(
+        currentUser = PreviewUserData.user1,
+        channel = PreviewChannelData.channelWithMessages,
+        isPinned = true,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChannelItemPinnedTrailingBottomPreview() {
+    ChatTheme {
+        ChannelItemPinnedTrailingBottom()
+    }
+}
+
+@Composable
+internal fun ChannelItemPinnedTrailingBottom() {
+    WithChannelListConfig(
+        config = ChatTheme.config.channelList.copy(
+            pinIndicatorPosition = PinIndicatorPosition.TrailingBottom,
+        ),
+    ) {
+        ChannelItem(
+            currentUser = PreviewUserData.user1,
+            channel = PreviewChannelData.channelWithMessages,
+            isPinned = true,
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChannelItemMutedPinnedPreview() {
+    ChatTheme {
+        ChannelItemMutedPinned()
+    }
+}
+
+@Composable
+internal fun ChannelItemMutedPinned() {
     ChannelItem(
         currentUser = PreviewUserData.user1,
         channel = PreviewChannelData.channelWithMessages,
         isMuted = true,
+        isPinned = true,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChannelItemMutedPinnedTrailingBottomPreview() {
+    ChatTheme {
+        ChannelItemMutedPinnedTrailingBottom()
+    }
+}
+
+@Composable
+internal fun ChannelItemMutedPinnedTrailingBottom() {
+    WithChannelListConfig(
+        config = ChatTheme.config.channelList.copy(
+            muteIndicatorPosition = MuteIndicatorPosition.TrailingBottom,
+            pinIndicatorPosition = PinIndicatorPosition.TrailingBottom,
+        ),
+    ) {
+        ChannelItem(
+            currentUser = PreviewUserData.user1,
+            channel = PreviewChannelData.channelWithMessages,
+            isMuted = true,
+            isPinned = true,
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChannelItemMutedPinnedMixedPreview() {
+    ChatTheme {
+        ChannelItemMutedPinnedMixed()
+    }
+}
+
+@Composable
+internal fun ChannelItemMutedPinnedMixed() {
+    WithChannelListConfig(
+        config = ChatTheme.config.channelList.copy(
+            pinIndicatorPosition = PinIndicatorPosition.TrailingBottom,
+        ),
+    ) {
+        ChannelItem(
+            currentUser = PreviewUserData.user1,
+            channel = PreviewChannelData.channelWithMessages,
+            isMuted = true,
+            isPinned = true,
+        )
+    }
+}
+
+@Composable
+private fun WithChannelListConfig(config: ChannelListConfig, content: @Composable () -> Unit) {
+    CompositionLocalProvider(
+        LocalChatUiConfig provides ChatTheme.config.copy(channelList = config),
+        content = content,
     )
 }
 
@@ -635,12 +775,23 @@ private fun ChannelItem(
     currentUser: User?,
     channel: Channel,
     isMuted: Boolean = false,
+    isPinned: Boolean = false,
     draftMessage: DraftMessage? = null,
     isSelected: Boolean = false,
 ) {
+    val effectiveChannel = if (isPinned) {
+        channel.copy(
+            membership = Member(
+                user = currentUser ?: PreviewUserData.user1,
+                pinnedAt = Date(),
+            ),
+        )
+    } else {
+        channel
+    }
     ChannelItem(
         channelItem = ItemState.ChannelItemState(
-            channel = channel,
+            channel = effectiveChannel,
             isMuted = isMuted,
             draftMessage = draftMessage,
             isSelected = isSelected,

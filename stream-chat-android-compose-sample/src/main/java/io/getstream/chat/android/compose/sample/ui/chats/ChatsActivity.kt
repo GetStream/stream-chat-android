@@ -131,6 +131,8 @@ class ChatsActivity : ComponentActivity() {
     private val messageId by lazy { intent.getStringExtra(KEY_MESSAGE_ID) }
     private val parentMessageId by lazy { intent.getStringExtra(KEY_PARENT_MESSAGE_ID) }
 
+    private val settings by lazy { customSettings() }
+
     private val channelListViewModelFactory by lazy {
         val chatClient = ChatClient.instance()
         val currentUserId = chatClient.getCurrentUser()?.id ?: ""
@@ -165,6 +167,7 @@ class ChatsActivity : ComponentActivity() {
                     channelList = ChannelListConfig(
                         optionsVisibility = ChannelOptionsVisibility(
                             isViewInfoVisible = AdaptiveLayoutInfo.singlePaneWindow(),
+                            isPinChannelVisible = settings.isChannelPinningEnabled,
                         ),
                     ),
                 ),
@@ -608,7 +611,7 @@ class ChatsActivity : ComponentActivity() {
     ) = ChannelViewModelFactory(
         context = applicationContext,
         channelId = channelId,
-        composerOptions = ComposerOptions(linkPreviewEnabled = customSettings().isComposerLinkPreviewEnabled),
+        composerOptions = ComposerOptions(linkPreviewEnabled = settings.isComposerLinkPreviewEnabled),
         messageId = messageId,
         parentMessageId = parentMessageId,
     )

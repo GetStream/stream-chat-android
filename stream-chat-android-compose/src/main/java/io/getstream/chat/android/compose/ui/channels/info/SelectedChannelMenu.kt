@@ -72,11 +72,8 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
  * @param modifier Modifier for styling.
  * @param shape The shape of the component.
  * @param overlayColor The color applied to the overlay.
- * @param isMuted Whether the channel (or its DM counterpart) is muted. Surfaced as an inline icon
- * in the default header. Defaults to `false`; pass `true` when the channel-list row would render
- * the muted icon for this channel.
- * @param isPinned Whether the channel is pinned. Surfaced as an inline icon in the default header.
- * Defaults to `false`; pass `true` when the channel-list row would render the pinned icon.
+ * @param isMuted Whether the default header renders the muted icon next to the channel name.
+ * @param isPinned Whether the default header renders the pinned icon next to the channel name.
  * @param headerContent The content shown at the top of the dialog.
  * @param centerContent The content shown at the center of the dialog.
  */
@@ -289,15 +286,14 @@ internal fun SelectedChannelMenuMutedPinned() {
 }
 
 /**
- * Renders a [SelectedChannelMenu] over a full-size [Box] using shared sample data, so the
- * previews and snapshot tests only have to vary the surface and the two state-icon flags.
+ * Renders a [SelectedChannelMenu] over a full-size [Box] using preview sample data.
  *
- * @param alignment Where the menu sits inside the parent [Box] (centered vs. bottom sheet).
+ * @param alignment Vertical alignment of the menu inside the parent [Box].
  * @param shape The shape of the menu surface.
- * @param modifier Extra modifier applied before `fillMaxWidth`, `wrapContentHeight` and `align`
- * are chained on. Used by the centered preview to add outer padding.
- * @param isMuted Forwarded to [SelectedChannelMenu] to control the muted-icon visibility in the header.
- * @param isPinned Forwarded to [SelectedChannelMenu] to control the pinned-icon visibility in the header.
+ * @param modifier Modifier applied to the menu, before `fillMaxWidth`, `wrapContentHeight` and
+ * `align` are chained on.
+ * @param isMuted Whether the menu header renders the muted icon.
+ * @param isPinned Whether the menu header renders the pinned icon.
  */
 @Composable
 private fun SelectedChannelMenuSample(

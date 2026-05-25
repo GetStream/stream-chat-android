@@ -61,6 +61,7 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.add.group.AddGroupChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
@@ -108,6 +109,8 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ChannelsActivity : ComponentActivity() {
+
+    private val settings by lazy { customSettings() }
 
     /**
      * The provided predefined filter has the following specs:
@@ -168,7 +171,7 @@ class ChannelsActivity : ComponentActivity() {
                 config = ChatUiConfig(
                     channelList = ChannelListConfig(
                         optionsVisibility = ChannelOptionsVisibility(
-                            isPinChannelVisible = true,
+                            isPinChannelVisible = settings.isChannelPinningEnabled,
                         ),
                     ),
                 ),

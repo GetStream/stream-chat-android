@@ -1375,9 +1375,8 @@ public data class ChannelAvatarParams(
  * @param onChannelOptionConfirm Action invoked when a channel option is confirmed.
  * @param onDismiss Action invoked when the menu is dismissed.
  * @param modifier Modifier for styling.
- * @param isMuted Whether the channel (or its DM counterpart) is muted. Surfaced as an inline icon
- * in the menu header.
- * @param isPinned Whether the channel is pinned. Surfaced as an inline icon in the menu header.
+ * @param isMuted Whether the menu header renders the muted icon next to the channel name.
+ * @param isPinned Whether the menu header renders the pinned icon next to the channel name.
  */
 public data class ChannelMenuParams(
     val selectedChannel: Channel,

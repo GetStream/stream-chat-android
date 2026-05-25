@@ -903,14 +903,23 @@ public final class io/getstream/chat/android/compose/ui/channels/list/Composable
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/channels/list/ComposableSingletons$ChannelItemKt;
 	public fun <init> ()V
 	public final fun getLambda$-1095060318$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1232665624$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-262212850$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-781924446$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-851243681$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1003502438$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$112526037$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1228594335$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1334723625$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1340453964$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1561934893$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1593816240$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1946891593$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$2130050484$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$2144537814$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$230028639$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$468999837$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$481395312$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$633588870$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
@@ -2896,16 +2905,18 @@ public final class io/getstream/chat/android/compose/ui/theme/ChannelItemUnreadC
 public final class io/getstream/chat/android/compose/ui/theme/ChannelListConfig {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/compose/ui/theme/MuteIndicatorPosition;ZLio/getstream/chat/android/compose/ui/components/channels/ChannelOptionsVisibility;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/theme/MuteIndicatorPosition;ZLio/getstream/chat/android/compose/ui/components/channels/ChannelOptionsVisibility;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/compose/ui/theme/MuteIndicatorPosition;Lio/getstream/chat/android/compose/ui/theme/PinIndicatorPosition;ZLio/getstream/chat/android/compose/ui/components/channels/ChannelOptionsVisibility;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/theme/MuteIndicatorPosition;Lio/getstream/chat/android/compose/ui/theme/PinIndicatorPosition;ZLio/getstream/chat/android/compose/ui/components/channels/ChannelOptionsVisibility;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/compose/ui/theme/MuteIndicatorPosition;
-	public final fun component2 ()Z
-	public final fun component3 ()Lio/getstream/chat/android/compose/ui/components/channels/ChannelOptionsVisibility;
-	public final fun copy (Lio/getstream/chat/android/compose/ui/theme/MuteIndicatorPosition;ZLio/getstream/chat/android/compose/ui/components/channels/ChannelOptionsVisibility;)Lio/getstream/chat/android/compose/ui/theme/ChannelListConfig;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/ChannelListConfig;Lio/getstream/chat/android/compose/ui/theme/MuteIndicatorPosition;ZLio/getstream/chat/android/compose/ui/components/channels/ChannelOptionsVisibility;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ChannelListConfig;
+	public final fun component2 ()Lio/getstream/chat/android/compose/ui/theme/PinIndicatorPosition;
+	public final fun component3 ()Z
+	public final fun component4 ()Lio/getstream/chat/android/compose/ui/components/channels/ChannelOptionsVisibility;
+	public final fun copy (Lio/getstream/chat/android/compose/ui/theme/MuteIndicatorPosition;Lio/getstream/chat/android/compose/ui/theme/PinIndicatorPosition;ZLio/getstream/chat/android/compose/ui/components/channels/ChannelOptionsVisibility;)Lio/getstream/chat/android/compose/ui/theme/ChannelListConfig;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/ChannelListConfig;Lio/getstream/chat/android/compose/ui/theme/MuteIndicatorPosition;Lio/getstream/chat/android/compose/ui/theme/PinIndicatorPosition;ZLio/getstream/chat/android/compose/ui/components/channels/ChannelOptionsVisibility;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ChannelListConfig;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getMuteIndicatorPosition ()Lio/getstream/chat/android/compose/ui/theme/MuteIndicatorPosition;
 	public final fun getOptionsVisibility ()Lio/getstream/chat/android/compose/ui/components/channels/ChannelOptionsVisibility;
+	public final fun getPinIndicatorPosition ()Lio/getstream/chat/android/compose/ui/theme/PinIndicatorPosition;
 	public final fun getSwipeActionsEnabled ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -5530,6 +5541,14 @@ public final class io/getstream/chat/android/compose/ui/theme/MuteIndicatorPosit
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/ui/theme/MuteIndicatorPosition;
 	public static fun values ()[Lio/getstream/chat/android/compose/ui/theme/MuteIndicatorPosition;
+}
+
+public final class io/getstream/chat/android/compose/ui/theme/PinIndicatorPosition : java/lang/Enum {
+	public static final field InlineTitle Lio/getstream/chat/android/compose/ui/theme/PinIndicatorPosition;
+	public static final field TrailingBottom Lio/getstream/chat/android/compose/ui/theme/PinIndicatorPosition;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/ui/theme/PinIndicatorPosition;
+	public static fun values ()[Lio/getstream/chat/android/compose/ui/theme/PinIndicatorPosition;
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/PinnedMessageListEmptyContentParams {
