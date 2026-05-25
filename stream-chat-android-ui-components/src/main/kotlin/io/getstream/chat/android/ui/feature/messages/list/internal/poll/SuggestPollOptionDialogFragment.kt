@@ -69,9 +69,9 @@ public class SuggestPollOptionDialogFragment : AppCompatDialogFragment() {
 
         dialog.setOnShowListener {
             val confirm = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            confirm.isEnabled = false
+            confirm.isEnabled = binding.optionInput.text?.toString()?.isNotBlank() == true
             binding.optionInput.doAfterTextChanged { editable ->
-                confirm.isEnabled = editable?.toString()?.trim()?.isNotEmpty() == true
+                confirm.isEnabled = editable?.toString()?.isNotBlank() == true
             }
             binding.optionInput.requestFocus()
             dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
