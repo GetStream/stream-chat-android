@@ -1220,6 +1220,7 @@ public final class io/getstream/chat/android/compose/ui/components/channels/Chan
 
 public final class io/getstream/chat/android/compose/ui/components/channels/ChannelOptionsKt {
 	public static final fun ChannelOptions (Ljava/util/List;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun buildDefaultChannelActions (Lio/getstream/chat/android/models/Channel;Ljava/util/Set;Lio/getstream/chat/android/compose/viewmodel/channels/ChannelListViewModel;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)Ljava/util/List;
 	public static final fun buildDefaultChannelActions (Lio/getstream/chat/android/models/Channel;ZLjava/util/Set;Lio/getstream/chat/android/compose/viewmodel/channels/ChannelListViewModel;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)Ljava/util/List;
 }
 

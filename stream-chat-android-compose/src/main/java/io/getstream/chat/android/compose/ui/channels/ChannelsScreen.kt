@@ -212,7 +212,6 @@ public fun ChannelsScreen(
                 (dmCounterpartId != null && listViewModel.isUserMuted(dmCounterpartId))
             val channelActions = buildDefaultChannelActions(
                 selectedChannel = channel,
-                isMuted = isMuted,
                 ownCapabilities = channel.ownCapabilities,
                 viewModel = listViewModel,
                 onViewInfoAction = { ch ->

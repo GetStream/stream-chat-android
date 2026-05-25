@@ -362,7 +362,6 @@ class ChannelsActivity : ComponentActivity() {
             if (selectedChannel != null) {
                 val channelActions = buildDefaultChannelActions(
                     selectedChannel = selectedChannel,
-                    isMuted = channelsViewModel.isChannelMuted(selectedChannel.cid),
                     ownCapabilities = selectedChannel.ownCapabilities,
                     viewModel = channelsViewModel,
                     onViewInfoAction = ::viewChannelInfo,

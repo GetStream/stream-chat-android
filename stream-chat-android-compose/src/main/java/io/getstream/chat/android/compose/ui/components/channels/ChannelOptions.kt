@@ -103,17 +103,14 @@ public fun ChannelOptions(
  * [ChannelOptionsVisibility.isArchiveChannelVisible] respectively.
  *
  * @param selectedChannel The currently selected channel.
- * @param isMuted If the channel is muted or not.
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
  * @param viewModel The [ChannelListViewModel] to bind action handlers to.
  * @param onViewInfoAction Handler invoked when the user selects the "View Info" action.
  * @return The list of channel actions to display.
  */
-@Suppress("LongMethod", "LongParameterList")
 @Composable
 public fun buildDefaultChannelActions(
     selectedChannel: Channel,
-    isMuted: Boolean,
     ownCapabilities: Set<String>,
     viewModel: ChannelListViewModel,
     onViewInfoAction: (Channel) -> Unit,
@@ -147,6 +144,39 @@ public fun buildDefaultChannelActions(
         )
     }
 }
+
+/**
+ * Deprecated overload that forwarded an `isMuted` argument never read by the action builders. Use
+ * the overload without `isMuted` instead.
+ *
+ * @param selectedChannel The currently selected channel.
+ * @param isMuted Unused. Kept for source compatibility; the value is ignored.
+ * @param ownCapabilities Set of capabilities the user is given for the current channel.
+ * @param viewModel The [ChannelListViewModel] to bind action handlers to.
+ * @param onViewInfoAction Handler invoked when the user selects the "View Info" action.
+ * @return The list of channel actions to display.
+ */
+@Deprecated(
+    message = "The isMuted parameter is unused and will be removed in a future release.",
+    replaceWith = ReplaceWith(
+        "buildDefaultChannelActions(selectedChannel, ownCapabilities, viewModel, onViewInfoAction)",
+    ),
+    level = DeprecationLevel.WARNING,
+)
+@Suppress("UNUSED_PARAMETER", "LongParameterList")
+@Composable
+public fun buildDefaultChannelActions(
+    selectedChannel: Channel,
+    isMuted: Boolean,
+    ownCapabilities: Set<String>,
+    viewModel: ChannelListViewModel,
+    onViewInfoAction: (Channel) -> Unit,
+): List<ChannelAction> = buildDefaultChannelActions(
+    selectedChannel = selectedChannel,
+    ownCapabilities = ownCapabilities,
+    viewModel = viewModel,
+    onViewInfoAction = onViewInfoAction,
+)
 
 /**
  * Builds channel actions for DM (1-to-1) channels.
