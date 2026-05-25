@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.state.plugin.factory
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.MessageBufferConfig
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.internal.state.errorhandler.StateErrorHandlerFactory
@@ -154,6 +155,7 @@ public class StreamStatePluginFactory(
             repos = repositoryFacade,
             syncedEvents = syncManager.syncedEvents,
             sideEffect = syncManager::awaitSyncing,
+            bufferConfig = config.messageLimitConfig.messageBufferConfig,
         )
 
         val stateErrorHandlerFactory = StateErrorHandlerFactory(
@@ -189,6 +191,7 @@ public class StreamStatePluginFactory(
         repos: RepositoryFacade,
         sideEffect: suspend () -> Unit,
         syncedEvents: Flow<List<ChatEvent>>,
+        bufferConfig: MessageBufferConfig,
     ): EventHandler {
         return EventHandlerSequential(
             scope = scope,
@@ -201,6 +204,7 @@ public class StreamStatePluginFactory(
             repos = repos,
             syncedEvents = syncedEvents,
             sideEffect = sideEffect,
+            bufferConfig = bufferConfig,
         )
     }
 }
