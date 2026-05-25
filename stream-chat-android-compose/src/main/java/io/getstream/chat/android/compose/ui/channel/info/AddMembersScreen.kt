@@ -40,6 +40,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -101,11 +103,13 @@ internal fun AddMembersScreen(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
 ) {
+    val paneTitleText = stringResource(id = R.string.stream_compose_add_members_title)
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(ChatTheme.colors.backgroundCoreApp)
-            .systemBarsPadding(),
+            .systemBarsPadding()
+            .semantics { paneTitle = paneTitleText },
     ) {
         AddMembersHeader(
             hasSelection = state.selectedUserIds.isNotEmpty(),

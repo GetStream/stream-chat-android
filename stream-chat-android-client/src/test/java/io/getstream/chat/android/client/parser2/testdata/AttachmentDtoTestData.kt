@@ -66,6 +66,33 @@ internal object AttachmentDtoTestData {
     )
 
     @Language("JSON")
+    val jsonWithNullFileSize =
+        """{
+          "file_size": null
+        }
+        """.withoutWhitespace()
+    val attachmentWithNullFileSize = AttachmentDto(
+        asset_url = null,
+        author_name = null,
+        author_link = null,
+        fallback = null,
+        file_size = null,
+        image = null,
+        image_url = null,
+        mime_type = null,
+        name = null,
+        og_scrape_url = null,
+        text = null,
+        thumb_url = null,
+        title = null,
+        title_link = null,
+        type = null,
+        original_width = null,
+        original_height = null,
+        extraData = emptyMap(),
+    )
+
+    @Language("JSON")
     val jsonWithoutExtraData =
         """{
           "file_size": 0
