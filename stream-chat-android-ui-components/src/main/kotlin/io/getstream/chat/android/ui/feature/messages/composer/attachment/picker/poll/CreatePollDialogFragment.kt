@@ -138,7 +138,7 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
      */
     private fun setupDialog() {
         setupToolbar(binding.toolbar)
-        pollsConfig.questionTextLimit?.takeIf { it > 0 }?.let { limit ->
+        pollsConfig.questionTextLimit?.let { limit ->
             binding.question.filters = arrayOf(InputFilter.LengthFilter(limit))
         }
 

@@ -45,7 +45,7 @@ public class SuggestPollOptionDialogFragment : AppCompatDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val binding = StreamUiDialogSuggestPollOptionBinding.inflate(requireContext().streamThemeInflater)
 
-        ChatUI.pollsConfig.optionTextLimit?.takeIf { it > 0 }?.let { limit ->
+        ChatUI.pollsConfig.optionTextLimit?.let { limit ->
             binding.optionInput.filters = arrayOf(InputFilter.LengthFilter(limit))
         }
 

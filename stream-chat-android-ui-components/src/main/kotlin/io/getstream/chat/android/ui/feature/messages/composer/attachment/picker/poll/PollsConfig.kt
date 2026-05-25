@@ -45,6 +45,12 @@ public data class PollsConfig(
             "Invalid PollsConfig: multipleVotes cannot have defaultValue=true while " +
                 "configurable=false as the user would be unable to set maxVotesAllowed."
         }
+        require(questionTextLimit == null || questionTextLimit > 0) {
+            "Invalid PollsConfig: questionTextLimit must be > 0 when provided."
+        }
+        require(optionTextLimit == null || optionTextLimit > 0) {
+            "Invalid PollsConfig: optionTextLimit must be > 0 when provided."
+        }
     }
 
     public companion object {
