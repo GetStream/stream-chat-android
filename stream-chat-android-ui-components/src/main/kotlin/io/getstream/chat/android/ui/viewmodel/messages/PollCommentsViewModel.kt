@@ -21,10 +21,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.api.state.state
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.models.Poll
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
