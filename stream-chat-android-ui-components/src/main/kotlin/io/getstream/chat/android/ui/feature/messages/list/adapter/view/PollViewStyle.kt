@@ -38,7 +38,7 @@ public data class PollViewStyle(
     public val pollCloseTextStyle: TextStyle,
     public val pollResultsTextStyle: TextStyle,
     public val pollShowAllOptionsTextStyle: TextStyle,
-    public val pollSuggestOptionTextStyle: TextStyle,
+    public val pollSuggestOptionTextStyle: TextStyle = TextStyle(),
     public val pollAddCommentTextStyle: TextStyle = TextStyle(),
     public val pollViewCommentsTextStyle: TextStyle = TextStyle(),
 ) : ViewStyle {
