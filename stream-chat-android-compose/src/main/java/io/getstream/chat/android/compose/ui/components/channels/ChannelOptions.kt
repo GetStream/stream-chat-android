@@ -33,6 +33,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChannelOptionsItemParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.dmCounterpartId
 import io.getstream.chat.android.compose.ui.util.isDistinct
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.models.Channel
@@ -162,7 +163,7 @@ private fun buildDmChannelActions(
     viewModel: ChannelListViewModel,
     onViewInfoAction: (Channel) -> Unit,
 ): List<ChannelAction> {
-    val otherUserId = selectedChannel.members.firstOrNull { it.user.id != currentUser?.id }?.user?.id
+    val otherUserId = selectedChannel.dmCounterpartId(currentUser)
     val canDeleteChannel = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
 
     return listOfNotNull(

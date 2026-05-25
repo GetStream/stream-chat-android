@@ -45,6 +45,7 @@ import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
@@ -54,6 +55,7 @@ import io.getstream.chat.android.compose.ui.theme.ChannelListSearchInputParams
 import io.getstream.chat.android.compose.ui.theme.ChannelMenuParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.dmCounterpartId
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.models.Channel
@@ -205,9 +207,12 @@ public fun ChannelsScreen(
             exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)),
         ) {
             val channel = lastChannel.value
+            val dmCounterpartId = channel.dmCounterpartId(user)
+            val isMuted = listViewModel.isChannelMuted(channel.cid) ||
+                (dmCounterpartId != null && listViewModel.isUserMuted(dmCounterpartId))
             val channelActions = buildDefaultChannelActions(
                 selectedChannel = channel,
-                isMuted = listViewModel.isChannelMuted(channel.cid),
+                isMuted = isMuted,
                 ownCapabilities = channel.ownCapabilities,
                 viewModel = listViewModel,
                 onViewInfoAction = { ch ->
@@ -240,6 +245,8 @@ public fun ChannelsScreen(
                         }
                     },
                     onDismiss = remember(listViewModel) { { listViewModel.dismissChannelAction() } },
+                    isMuted = isMuted,
+                    isPinned = channel.isPinned(),
                 ),
             )
         }

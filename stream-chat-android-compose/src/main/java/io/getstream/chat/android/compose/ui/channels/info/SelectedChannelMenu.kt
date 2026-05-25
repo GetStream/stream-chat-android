@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.channels.info
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -26,6 +29,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -33,9 +37,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
@@ -64,6 +72,11 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
  * @param modifier Modifier for styling.
  * @param shape The shape of the component.
  * @param overlayColor The color applied to the overlay.
+ * @param isMuted Whether the channel (or its DM counterpart) is muted. Surfaced as an inline icon
+ * in the default header. Defaults to `false`; pass `true` when the channel-list row would render
+ * the muted icon for this channel.
+ * @param isPinned Whether the channel is pinned. Surfaced as an inline icon in the default header.
+ * Defaults to `false`; pass `true` when the channel-list row would render the pinned icon.
  * @param headerContent The content shown at the top of the dialog.
  * @param centerContent The content shown at the center of the dialog.
  */
@@ -77,12 +90,16 @@ public fun SelectedChannelMenu(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
     overlayColor: Color = ChatTheme.colors.backgroundCoreScrim,
+    isMuted: Boolean = false,
+    isPinned: Boolean = false,
     headerContent: @Composable ColumnScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMenuHeaderContent(
                 params = ChannelMenuHeaderContentParams(
                     selectedChannel = selectedChannel,
                     currentUser = currentUser,
+                    isMuted = isMuted,
+                    isPinned = isPinned,
                 ),
             )
         }
@@ -113,11 +130,15 @@ public fun SelectedChannelMenu(
  *
  * @param selectedChannel The channel the user selected.
  * @param currentUser The currently logged-in user data.
+ * @param isMuted Whether to render the muted icon inline with the channel name.
+ * @param isPinned Whether to render the pinned icon inline with the channel name.
  */
 @Composable
 internal fun DefaultSelectedChannelMenuHeaderContent(
     selectedChannel: Channel,
     currentUser: User?,
+    isMuted: Boolean = false,
+    isPinned: Boolean = false,
 ) {
     Row(
         modifier = Modifier
@@ -144,15 +165,11 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
                 .padding(start = StreamTokens.spacingSm)
                 .weight(1f),
         ) {
-            Text(
-                text = ChatTheme.channelNameFormatter.formatChannelName(
-                    selectedChannel,
-                    currentUser,
-                ),
-                style = ChatTheme.typography.headingSmall,
-                color = ChatTheme.colors.textPrimary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+            HeaderTitleRow(
+                selectedChannel = selectedChannel,
+                currentUser = currentUser,
+                isMuted = isMuted,
+                isPinned = isPinned,
             )
             Text(
                 text = selectedChannel.getMembersStatusText(
@@ -168,61 +185,145 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
     }
 }
 
-/**
- * Preview of [SelectedChannelMenu] styled as a centered modal dialog.
- *
- * Should show a centered dialog with channel members and channel options.
- */
-@Preview(showBackground = true, name = "SelectedChannelMenu Preview (Centered dialog)")
 @Composable
-private fun SelectedChannelMenuCenteredDialogPreview() {
-    ChatTheme {
-        Box(modifier = Modifier.fillMaxSize()) {
-            val channel = PreviewChannelData.channelWithManyMembers
-            SelectedChannelMenu(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .align(Alignment.Center),
-                shape = RoundedCornerShape(16.dp),
-                selectedChannel = channel,
-                currentUser = PreviewUserData.user1,
-                channelActions = listOf(
-                    ViewInfo(channel = channel, label = "Channel Info", onAction = {}),
-                ),
-                onChannelOptionConfirm = {},
-                onDismiss = {},
+private fun HeaderTitleRow(
+    selectedChannel: Channel,
+    currentUser: User?,
+    isMuted: Boolean,
+    isPinned: Boolean,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+    ) {
+        Text(
+            modifier = Modifier.weight(1f, fill = false),
+            text = ChatTheme.channelNameFormatter.formatChannelName(selectedChannel, currentUser),
+            style = ChatTheme.typography.headingSmall,
+            color = ChatTheme.colors.textPrimary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        if (isMuted) {
+            HeaderStateIcon(
+                iconRes = R.drawable.stream_design_ic_mute,
+                contentDescriptionRes = R.string.stream_compose_channel_item_muted,
+                testTag = "Stream_ChannelMenuHeaderMutedIcon",
+            )
+        }
+        if (isPinned) {
+            HeaderStateIcon(
+                iconRes = R.drawable.stream_design_ic_pin,
+                contentDescriptionRes = R.string.stream_compose_channel_item_pinned,
+                testTag = "Stream_ChannelMenuHeaderPinnedIcon",
             )
         }
     }
 }
 
-/**
- * Preview of [SelectedChannelMenu] styled as a bottom sheet dialog.
- *
- * Should show a bottom sheet dialog with channel members and channel options.
- */
-@Preview(showBackground = true, name = "SelectedChannelMenu Preview (Bottom sheet dialog)")
+@Composable
+private fun HeaderStateIcon(
+    @DrawableRes iconRes: Int,
+    @StringRes contentDescriptionRes: Int,
+    testTag: String,
+) {
+    Icon(
+        modifier = Modifier
+            .testTag(testTag)
+            .size(16.dp),
+        painter = painterResource(id = iconRes),
+        contentDescription = stringResource(contentDescriptionRes),
+        tint = ChatTheme.colors.textTertiary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SelectedChannelMenuCenteredDialogPreview() {
+    ChatTheme {
+        SelectedChannelMenuCenteredDialog()
+    }
+}
+
+@Composable
+internal fun SelectedChannelMenuCenteredDialog() {
+    SelectedChannelMenuSample(
+        alignment = Alignment.Center,
+        modifier = Modifier.padding(16.dp),
+        shape = RoundedCornerShape(16.dp),
+    )
+}
+
+@Preview(showBackground = true)
 @Composable
 private fun SelectedChannelMenuBottomSheetDialogPreview() {
     ChatTheme {
-        Box(modifier = Modifier.fillMaxSize()) {
-            val channel = PreviewChannelData.channelWithManyMembers
-            SelectedChannelMenu(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .align(Alignment.BottomCenter),
-                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-                selectedChannel = channel,
-                currentUser = PreviewUserData.user1,
-                channelActions = listOf(
-                    ViewInfo(channel = channel, label = "Channel Info", onAction = {}),
-                ),
-                onChannelOptionConfirm = {},
-                onDismiss = {},
-            )
-        }
+        SelectedChannelMenuBottomSheetDialog()
+    }
+}
+
+@Composable
+internal fun SelectedChannelMenuBottomSheetDialog() {
+    SelectedChannelMenuSample(
+        alignment = Alignment.BottomCenter,
+        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SelectedChannelMenuMutedPinnedPreview() {
+    ChatTheme {
+        SelectedChannelMenuMutedPinned()
+    }
+}
+
+@Composable
+internal fun SelectedChannelMenuMutedPinned() {
+    SelectedChannelMenuSample(
+        alignment = Alignment.BottomCenter,
+        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        isMuted = true,
+        isPinned = true,
+    )
+}
+
+/**
+ * Renders a [SelectedChannelMenu] over a full-size [Box] using shared sample data, so the
+ * previews and snapshot tests only have to vary the surface and the two state-icon flags.
+ *
+ * @param alignment Where the menu sits inside the parent [Box] (centered vs. bottom sheet).
+ * @param shape The shape of the menu surface.
+ * @param modifier Extra modifier applied before `fillMaxWidth`, `wrapContentHeight` and `align`
+ * are chained on. Used by the centered preview to add outer padding.
+ * @param isMuted Forwarded to [SelectedChannelMenu] to control the muted-icon visibility in the header.
+ * @param isPinned Forwarded to [SelectedChannelMenu] to control the pinned-icon visibility in the header.
+ */
+@Composable
+private fun SelectedChannelMenuSample(
+    alignment: Alignment,
+    shape: Shape,
+    modifier: Modifier = Modifier,
+    isMuted: Boolean = false,
+    isPinned: Boolean = false,
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        val channel = PreviewChannelData.channelWithManyMembers
+        SelectedChannelMenu(
+            modifier = modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .align(alignment),
+            shape = shape,
+            selectedChannel = channel,
+            currentUser = PreviewUserData.user1,
+            channelActions = listOf(
+                ViewInfo(channel = channel, label = "Channel Info", onAction = {}),
+            ),
+            onChannelOptionConfirm = {},
+            onDismiss = {},
+            isMuted = isMuted,
+            isPinned = isPinned,
+        )
     }
 }

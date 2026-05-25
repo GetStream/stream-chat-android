@@ -81,12 +81,15 @@ import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SearchInput
+import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionsVisibility
 import io.getstream.chat.android.compose.ui.components.channels.buildDefaultChannelActions
 import io.getstream.chat.android.compose.ui.mentions.MentionList
+import io.getstream.chat.android.compose.ui.theme.ChannelListConfig
 import io.getstream.chat.android.compose.ui.theme.ChannelListDividerItemParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListItemContentParams
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.threads.ThreadsScreen
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
@@ -161,7 +164,15 @@ class ChannelsActivity : ComponentActivity() {
             val unreadChannelsCount by unreadChannelsCountFlow.collectAsStateWithLifecycle(0)
             val unreadThreadsCount by unreadThreadsCountFlow.collectAsStateWithLifecycle(0)
 
-            SampleChatTheme {
+            SampleChatTheme(
+                config = ChatUiConfig(
+                    channelList = ChannelListConfig(
+                        optionsVisibility = ChannelOptionsVisibility(
+                            isPinChannelVisible = true,
+                        ),
+                    ),
+                ),
+            ) {
                 val user by channelsViewModel.user.collectAsStateWithLifecycle()
                 val drawerState = rememberDrawerState(DrawerValue.Closed)
                 val coroutineScope = rememberCoroutineScope()
