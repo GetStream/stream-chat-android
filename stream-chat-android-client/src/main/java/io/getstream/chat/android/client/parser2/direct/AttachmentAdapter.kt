@@ -54,7 +54,7 @@ internal class AttachmentAdapter : JsonAdapter<Attachment>() {
                 "author_name" -> authorName = JsonParsingUtils.readNullableString(reader)
                 "author_link" -> authorLink = JsonParsingUtils.readNullableString(reader)
                 "fallback" -> fallback = JsonParsingUtils.readNullableString(reader)
-                "file_size" -> fileSize = reader.nextInt()
+                "file_size" -> fileSize = JsonParsingUtils.readNullableInt(reader) ?: 0
                 "image" -> image = JsonParsingUtils.readNullableString(reader)
                 "image_url" -> imageUrl = JsonParsingUtils.readNullableString(reader)
                 "mime_type" -> mimeType = JsonParsingUtils.readNullableString(reader)
