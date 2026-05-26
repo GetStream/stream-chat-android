@@ -34,6 +34,8 @@ import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryCo
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 private const val INITIAL_CHANNEL_OFFSET = 0
 private const val CHANNEL_LIMIT = 30
@@ -47,6 +49,12 @@ internal class QueryChannelsLogic(
 ) {
 
     private val logger by taggedLogger("Chat:QueryChannelsLogic")
+
+    /**
+     * Serialises [applyGroupedResult] so concurrent grouped responses (e.g. recovery overlapping
+     * with pagination) cannot interleave their multi-step writes to [queryChannelsStateLogic].
+     */
+    private val groupedResultMutex = Mutex()
 
     /**
      * Sets the current request and optimistically loads any cached channels for the given
@@ -226,29 +234,31 @@ internal class QueryChannelsLogic(
                 "next: ${group.next}"
         }
 
-        if (isFirstPage) {
-            val existing = queryChannelsStateLogic.getChannels()
-            if (!existing.isNullOrEmpty()) {
-                queryChannelsStateLogic.removeChannels(existing.keys)
+        groupedResultMutex.withLock {
+            if (isFirstPage) {
+                val existing = queryChannelsStateLogic.getChannels()
+                if (!existing.isNullOrEmpty()) {
+                    queryChannelsStateLogic.removeChannels(existing.keys)
+                }
+                queryChannelsStateLogic.setCids(emptySet())
+                // Defensive: Grouped uses cursor pagination, not offset. Resetting guards against any
+                // future cross-path leakage from a Standard offset query mistakenly sharing this state.
+                queryChannelsStateLogic.setChannelsOffset(0)
             }
-            queryChannelsStateLogic.setCids(emptySet())
-            // Defensive: Grouped uses cursor pagination, not offset. Resetting guards against any
-            // future cross-path leakage from a Standard offset query mistakenly sharing this state.
-            queryChannelsStateLogic.setChannelsOffset(0)
+
+            queryChannelsStateLogic.addChannelsState(channels)
+            queryChannelsStateLogic.setNextCursor(group.next)
+            queryChannelsStateLogic.setEndOfChannels(group.next == null)
+            queryChannelsStateLogic.setLoadingFirstPage(false)
+            queryChannelsStateLogic.setLoadingMore(false)
+            queryChannelsStateLogic.setRecoveryNeeded(false)
+
+            // Persist
+            queryChannelsDatabaseLogic.insertQueryChannels(queryChannelsStateLogic.getQuerySpecs())
+            val channelConfigs = channels.map { ChannelConfig(it.type, it.config) }
+            queryChannelsDatabaseLogic.insertChannelConfigs(channelConfigs)
+            queryChannelsDatabaseLogic.storeStateForChannels(channels.toSet())
         }
-
-        queryChannelsStateLogic.addChannelsState(channels)
-        queryChannelsStateLogic.setNextCursor(group.next)
-        queryChannelsStateLogic.setEndOfChannels(group.next == null)
-        queryChannelsStateLogic.setLoadingFirstPage(false)
-        queryChannelsStateLogic.setLoadingMore(false)
-        queryChannelsStateLogic.setRecoveryNeeded(false)
-
-        // Persist
-        queryChannelsDatabaseLogic.insertQueryChannels(queryChannelsStateLogic.getQuerySpecs())
-        val channelConfigs = channels.map { ChannelConfig(it.type, it.config) }
-        queryChannelsDatabaseLogic.insertChannelConfigs(channelConfigs)
-        queryChannelsDatabaseLogic.storeStateForChannels(channels.toSet())
     }
 
     suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
