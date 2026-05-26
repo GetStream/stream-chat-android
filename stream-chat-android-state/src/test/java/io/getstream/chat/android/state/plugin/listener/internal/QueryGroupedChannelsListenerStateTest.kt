@@ -90,7 +90,7 @@ internal class QueryGroupedChannelsListenerStateTest {
     }
 
     @Test
-    fun `successful pagination result does not update grouped unread counts`() = runTest {
+    fun `successful pagination result with next cursor does not update grouped unread counts`() = runTest {
         // given
         whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(
             mapOf("direct" to 4, "support" to 1),
@@ -113,6 +113,37 @@ internal class QueryGroupedChannelsListenerStateTest {
             result = result,
             limit = null,
             groups = mapOf("support" to GroupedChannelsGroupQuery(next = "cursor")),
+            watch = false,
+            presence = false,
+        )
+        // then - pagination payload does not carry unread counts
+        verify(globalState, never()).setGroupedUnreadChannels(any())
+    }
+
+    @Test
+    fun `successful pagination result with prev cursor does not update grouped unread counts`() = runTest {
+        // given
+        whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(
+            mapOf("direct" to 4, "support" to 1),
+        )
+        val result = Result.Success(
+            value = GroupedChannels(
+                groups = mapOf(
+                    "support" to GroupedChannelsGroup(
+                        groupKey = "support",
+                        channels = emptyList(),
+                        unreadChannels = 7,
+                        next = null,
+                        prev = null,
+                    ),
+                ),
+            ),
+        )
+        // when - paginated request (`prev` cursor set on the requested group)
+        listener.onQueryGroupedChannelsResult(
+            result = result,
+            limit = null,
+            groups = mapOf("support" to GroupedChannelsGroupQuery(prev = "cursor")),
             watch = false,
             presence = false,
         )
@@ -178,7 +209,7 @@ internal class QueryGroupedChannelsListenerStateTest {
     }
 
     @Test
-    fun `success routes each returned group to the matching Grouped identifier as first page when no next cursor was requested`() =
+    fun `success routes each returned group to the matching Grouped identifier as first page when no cursor was requested`() =
         runTest {
             // given
             whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(emptyMap())
@@ -322,6 +353,33 @@ internal class QueryGroupedChannelsListenerStateTest {
             result = result,
             limit = null,
             groups = mapOf("support" to GroupedChannelsGroupQuery(next = "cursor")),
+            watch = false,
+            presence = false,
+        )
+        // then
+        verify(queryChannelsLogic).applyGroupedResult(groupSupport, isFirstPage = false)
+    }
+
+    @Test
+    fun `success treats keys with requested prev cursor as paginated`() = runTest {
+        // given
+        whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(emptyMap())
+        doNothing().`when`(globalState).setGroupedUnreadChannels(any())
+        val groupSupport = GroupedChannelsGroup(
+            groupKey = "support",
+            channels = emptyList(),
+            unreadChannels = 0,
+            next = null,
+            prev = null,
+        )
+        val result = Result.Success(
+            value = GroupedChannels(groups = mapOf("support" to groupSupport)),
+        )
+        // when - the request passed a prev cursor for "support"
+        listener.onQueryGroupedChannelsResult(
+            result = result,
+            limit = null,
+            groups = mapOf("support" to GroupedChannelsGroupQuery(prev = "cursor")),
             watch = false,
             presence = false,
         )

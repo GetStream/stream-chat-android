@@ -79,10 +79,11 @@ internal class QueryGroupedChannelsListenerState(
         // both ChannelListViewModel.loadMoreGroupedChannels and SyncManager.updateGroupedQueryChannels
         // reuse the caller's original parameters on paginated and recovery calls respectively.
         result.value.groups.forEach { (key, group) ->
-            // A request without a `next` cursor for this key (or no per-group query at all) is
-            // a first-page request → replace channels. With a `next` cursor → paginated → append.
-            val isFirstPage = groups?.get(key)?.next == null
-            val perGroupLimit = groups?.get(key)?.limit
+            // A request without `next`/`prev` cursors for this key (or no per-group query at all)
+            // is a first-page request → replace channels. With a cursor → paginated → append.
+            val perGroupQuery = groups?.get(key)
+            val isFirstPage = perGroupQuery?.let { it.next == null && it.prev == null } ?: true
+            val perGroupLimit = perGroupQuery?.limit
             val queryLogic = logic.queryChannels(QueryChannelsIdentifier.Grouped(key))
             queryLogic.setGroupedQueryConfig(
                 GroupedQueryConfig(
