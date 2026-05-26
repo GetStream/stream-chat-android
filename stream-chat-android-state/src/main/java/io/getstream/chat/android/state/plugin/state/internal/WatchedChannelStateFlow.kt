@@ -21,12 +21,13 @@ import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * A [StateFlow] wrapper that keeps a [WatchedChannelRecord] alive via a strong reference.
- * Returned by [io.getstream.chat.android.state.extensions.watchChannelAsState] so the
- * record's lifetime matches the caller's lifetime.
+ * A [StateFlow] wrapper returned by [io.getstream.chat.android.state.extensions.watchChannelAsState].
+ * Identifies a watched channel by [cid]; used as a weak key in
+ * [io.getstream.chat.android.state.plugin.state.StateRegistry]'s tracker so the entry is evicted
+ * automatically once the caller releases the returned flow.
  */
 @OptIn(ExperimentalForInheritanceCoroutinesApi::class)
 internal class WatchedChannelStateFlow(
     private val delegate: StateFlow<ChannelState?>,
-    @Suppress("unused") private val record: WatchedChannelRecord,
+    val cid: String,
 ) : StateFlow<ChannelState?> by delegate

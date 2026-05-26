@@ -492,7 +492,8 @@ internal class SyncManager(
 
     /**
      * Re-watches channels explicitly opened by the user (tracked via
-     * [io.getstream.chat.android.state.plugin.state.internal.WatchedChannelRecord] weak references in [StateRegistry]).
+     * [io.getstream.chat.android.state.plugin.state.internal.WatchedChannelStateFlow] weak references in
+     * [StateRegistry]).
      */
     private suspend fun rewatchTrackedWatchedChannels() {
         val online = clientState.isOnline
