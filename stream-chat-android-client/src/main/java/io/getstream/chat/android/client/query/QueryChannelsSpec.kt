@@ -25,35 +25,37 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  *
  * @property filter Filter conditions for the query.
  * @property querySort Sort specification for the query.
- * @property cids CIDs of channels currently associated with this query.
  * @property groupKey Non-null for grouped queries; identifies the group across reconnects.
  */
 public data class QueryChannelsSpec(
     val filter: FilterObject,
     val querySort: QuerySorter<Channel>,
-    var cids: Set<String> = emptySet(),
     val groupKey: String? = null,
 ) {
 
     /**
-     * Two-argument constructor preserved for source and binary compatibility with prior versions
-     * of this class (when [cids] and [groupKey] were mutable body fields).
+     * CIDs of channels currently associated with this query.
+     */
+    var cids: Set<String> = emptySet()
+
+    /**
+     * Builds a [io.getstream.chat.android.client.query.QueryChannelsSpec] from:
+     *
+     * @param filter The [FilterObject] for the query.
+     * @param querySort The [QuerySorter] for the query.
      */
     public constructor(
         filter: FilterObject,
         querySort: QuerySorter<Channel>,
-    ) : this(filter, querySort, emptySet(), null)
+    ) : this(filter, querySort, null)
 
     /**
      * Two-argument [copy] preserved for binary compatibility. Existing bytecode that referenced the
      * pre-refactor 2-arg `copy(filter, querySort)` continues to resolve through this method.
-     * [cids] and [groupKey] are carried over from the receiver.
-     *
-     * Source callers using `spec.copy(filter = x)` resolve here (more applicable overload than the
-     * auto-generated 4-arg copy), so cids/groupKey are preserved automatically.
+     * [groupKey]/[cids] are carried over from the receiver.
      */
     public fun copy(
         filter: FilterObject = this.filter,
         querySort: QuerySorter<Channel> = this.querySort,
-    ): QueryChannelsSpec = QueryChannelsSpec(filter, querySort, cids, groupKey)
+    ): QueryChannelsSpec = QueryChannelsSpec(filter, querySort, groupKey).also { it.cids = this.cids }
 }

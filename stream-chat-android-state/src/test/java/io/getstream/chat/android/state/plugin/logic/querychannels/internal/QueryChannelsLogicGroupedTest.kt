@@ -61,7 +61,6 @@ internal class QueryChannelsLogicGroupedTest {
         queryChannelsSpec = QueryChannelsSpec(
             filter = Filters.neutral(),
             querySort = QuerySortByField.descByName<Channel>("last_updated"),
-            cids = emptySet(),
             groupKey = GROUP_KEY,
         )
 

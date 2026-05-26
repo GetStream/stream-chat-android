@@ -59,7 +59,7 @@ internal class QueryChannelsStateLogicTest {
     private val testCid = (type to id).toCid()
 
     private val queryChannelsSpec =
-        QueryChannelsSpec(Filters.neutral(), QuerySortByField.descByName(""), setOf(testCid))
+        QueryChannelsSpec(Filters.neutral(), QuerySortByField.descByName("")).also { it.cids = setOf(testCid) }
 
     private val mutableState: QueryChannelsMutableState = mock {
         on(it.rawChannels) doReturn emptyMap()
@@ -210,8 +210,7 @@ internal class QueryChannelsStateLogicTest {
         val spec = QueryChannelsSpec(
             filter = Filters.neutral(),
             querySort = QuerySortByField.descByName(""),
-            cids = setOf(chA.cid, chB.cid, chC.cid),
-        )
+        ).also { it.cids = setOf(chA.cid, chB.cid, chC.cid) }
 
         whenever(mutableState.rawChannels) doReturn channels
         whenever(mutableState.queryChannelsSpec) doReturn spec

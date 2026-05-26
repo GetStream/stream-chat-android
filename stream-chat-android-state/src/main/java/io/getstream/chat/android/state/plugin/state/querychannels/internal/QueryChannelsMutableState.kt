@@ -66,32 +66,19 @@ internal class QueryChannelsMutableState(
             _channels?.value = value
         }
 
-    // Mutable backing field — replaced (immutably) by setCids().
-    private var _querySpec: QueryChannelsSpec = QueryChannelsSpec(
+    private val _querySpec: QueryChannelsSpec = QueryChannelsSpec(
         filter = filter,
         querySort = sort,
-        cids = emptySet(),
         groupKey = (identifier as? QueryChannelsIdentifier.Grouped)?.groupKey,
     )
 
-    /**
-     * Snapshot of the spec backing this state. Returned reference is immutable; use [setCids] to
-     * update.
-     */
+    /** Spec backing this state. [QueryChannelsSpec.cids] is mutated in place via [setCids]. */
     internal val queryChannelsSpec: QueryChannelsSpec
         get() = _querySpec
 
-    /**
-     * Replaces the held spec with a copy whose [QueryChannelsSpec.cids] is [cids].
-     * [QueryChannelsSpec.filter], [QueryChannelsSpec.querySort], and [QueryChannelsSpec.groupKey] are preserved.
-     */
+    /** Updates [QueryChannelsSpec.cids] on the held spec. */
     internal fun setCids(cids: Set<String>) {
-        _querySpec = QueryChannelsSpec(
-            filter = _querySpec.filter,
-            querySort = _querySpec.querySort,
-            cids = cids,
-            groupKey = _querySpec.groupKey,
-        )
+        _querySpec.cids = cids
     }
 
     /**

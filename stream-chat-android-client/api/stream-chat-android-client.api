@@ -3506,16 +3506,15 @@ public final class io/getstream/chat/android/client/query/CreateChannelParams {
 
 public final class io/getstream/chat/android/client/query/QueryChannelsSpec {
 	public fun <init> (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;)V
-	public fun <init> (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/Set;Ljava/lang/String;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/Set;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/lang/String;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/FilterObject;
 	public final fun component2 ()Lio/getstream/chat/android/models/querysort/QuerySorter;
-	public final fun component3 ()Ljava/util/Set;
-	public final fun component4 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
 	public final fun copy (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;)Lio/getstream/chat/android/client/query/QueryChannelsSpec;
-	public final fun copy (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/Set;Ljava/lang/String;)Lio/getstream/chat/android/client/query/QueryChannelsSpec;
+	public final fun copy (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/lang/String;)Lio/getstream/chat/android/client/query/QueryChannelsSpec;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/client/query/QueryChannelsSpec;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;ILjava/lang/Object;)Lio/getstream/chat/android/client/query/QueryChannelsSpec;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/query/QueryChannelsSpec;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/Set;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/query/QueryChannelsSpec;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/query/QueryChannelsSpec;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/query/QueryChannelsSpec;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCids ()Ljava/util/Set;
 	public final fun getFilter ()Lio/getstream/chat/android/models/FilterObject;

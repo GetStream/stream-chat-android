@@ -694,7 +694,7 @@ public fun randomQueryChannelsSpec(
     filter: FilterObject = NeutralFilterObject,
     sort: QuerySorter<Channel> = QuerySortByField(),
     cids: Set<String> = emptySet(),
-): QueryChannelsSpec = QueryChannelsSpec(filter, sort, cids)
+): QueryChannelsSpec = QueryChannelsSpec(filter, sort).also { it.cids = cids }
 
 public fun randomNotificationRemovedFromChannelEvent(
     cid: String = randomCID(),

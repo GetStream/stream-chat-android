@@ -73,8 +73,7 @@ internal class DatabaseQueryChannelsRepository(
         private fun toModel(entity: QueryChannelsEntity): QueryChannelsSpec = QueryChannelsSpec(
             filter = entity.filter,
             querySort = entity.querySort,
-            cids = entity.cids.toSet(),
             groupKey = entity.groupKey,
-        )
+        ).also { it.cids = entity.cids.toSet() }
     }
 }
