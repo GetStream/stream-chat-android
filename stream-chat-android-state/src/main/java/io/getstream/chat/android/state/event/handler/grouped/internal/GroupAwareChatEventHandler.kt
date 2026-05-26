@@ -19,6 +19,7 @@ package io.getstream.chat.android.state.event.handler.grouped.internal
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
@@ -31,7 +32,7 @@ import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * [ChatEventHandler] that routes channels in and out of a grouped channel list based on the
+ * [DefaultChatEventHandler] that routes channels in and out of a grouped channel list based on the
  * channel's resolved group(s).
  *
  * Intended to be paired with `QueryChannelsIdentifier.Grouped(groupKey)` — one handler instance
@@ -49,6 +50,11 @@ import kotlinx.coroutines.flow.StateFlow
  * Removal events (`ChannelDeletedEvent`, `ChannelHiddenEvent`, `MemberRemovedEvent` for the
  * current user, etc.) are inherited from [DefaultChatEventHandler] unchanged — leaving a channel
  * removes it from any list it was in, regardless of group.
+ *
+ * The handler overrides [handleChatEvent] directly (rather than [handleChannelEvent]) so that the
+ * `cachedChannel` resolved by the query layer — an in-memory snapshot of the per-channel state
+ * that has already absorbed any preceding `member.removed` event in the same batch — is available
+ * when deciding whether the current user is still a member.
  */
 internal class GroupAwareChatEventHandler(
     private val groupKey: String,
@@ -57,11 +63,15 @@ internal class GroupAwareChatEventHandler(
     clientState: ClientState,
 ) : DefaultChatEventHandler(channels, clientState) {
 
-    override fun handleChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
+    override fun handleChatEvent(
+        event: ChatEvent,
+        filter: FilterObject,
+        cachedChannel: Channel?,
+    ): EventHandlingResult {
         return when (event) {
             is ChannelUpdatedEvent,
             is ChannelUpdatedByUserEvent,
-            -> routeByGroup(event.channel)
+            -> routeByGroup((event as HasChannel).channel, cachedChannel)
 
             is NotificationAddedToChannelEvent,
             is NotificationMessageNewEvent,
@@ -72,7 +82,7 @@ internal class GroupAwareChatEventHandler(
                 EventHandlingResult.Skip
             }
 
-            else -> super.handleChannelEvent(event, filter)
+            else -> super.handleChatEvent(event, filter, cachedChannel)
         }
     }
 
@@ -86,12 +96,18 @@ internal class GroupAwareChatEventHandler(
     }
 
     /**
-     * Routes a channel-bearing event to Add / Remove / Skip based on the channel's resolved groups
-     * and whether it is currently in this grouped list. Re-adding an already-present channel is
-     * skipped — channel-state updates flow through a separate pipeline, so we don't churn the list.
+     * Routes a channel-bearing event to Add / Remove / Skip based on the channel's resolved groups,
+     * whether the current user is still a member, and whether it is currently in this grouped list.
+     *
+     * The membership guard prevents a `ChannelUpdatedEvent` from (re-)adding a channel the user has
+     * already left — e.g. when the channel's group is mutated to a group the user is watching but
+     * the user is no longer in `channel.members`. Membership is read from [cachedChannel], which
+     * the query layer resolves from the in-memory per-channel state after preceding `member.removed`
+     * events in the same batch have been applied. This is more reliable than `event.channel.membership`,
+     * which is not guaranteed to be populated on `channel.updated`.
      */
-    private fun routeByGroup(channel: Channel): EventHandlingResult {
-        val belongsHere = channelBelongsHere(channel)
+    private fun routeByGroup(channel: Channel, cachedChannel: Channel?): EventHandlingResult {
+        val belongsHere = channelBelongsHere(channel) && isCurrentUserMember(cachedChannel)
         val isInList = channels.value?.containsKey(channel.cid) == true
         return when {
             belongsHere && !isInList -> EventHandlingResult.Add(channel)
@@ -102,6 +118,26 @@ internal class GroupAwareChatEventHandler(
 
     private fun channelBelongsHere(channel: Channel): Boolean =
         resolver.resolve(channel, groupKey).contains(groupKey)
+
+    /**
+     * Returns `true` if the current user is known to be a member of [cachedChannel].
+     *
+     * Reads `cachedChannel.membership` — the SDK maintains this field independently of channel
+     * event payloads: `MemberAddedEvent`/`MemberRemovedEvent` for the current user trigger
+     * `addMembership`/`removeMembership`, and `ChannelData.mergeFromEvent` deliberately does NOT
+     * clobber it from `channel.updated` (which may omit it). So `membership == null` is the
+     * authoritative "the current user is not a member" signal.
+     *
+     * Conservative policy: when either the current user or the cached channel snapshot is
+     * unavailable, we cannot positively confirm membership, so we return `false` and the gate
+     * skips the Add. The `notification.added_to_channel` path (which carries explicit member
+     * info) covers legitimate joins for channels we have no prior state on.
+     */
+    private fun isCurrentUserMember(cachedChannel: Channel?): Boolean {
+        val currentUserId = clientState.user.value?.id ?: return false
+        val membership = cachedChannel?.membership ?: return false
+        return membership.getUserId() == currentUserId
+    }
 
     /**
      * Downgrades an `Add`/`WatchAndAdd` from the default handler to `Skip` if the resolver says
