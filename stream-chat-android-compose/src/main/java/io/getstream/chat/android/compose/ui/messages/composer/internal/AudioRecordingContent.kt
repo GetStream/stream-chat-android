@@ -318,7 +318,11 @@ private fun RowScope.OverviewPlaybackRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val playbackInMs = (currentProgress * state.durationInMs).toInt()
+        val durationDescription = rememberSpokenDurationFormatter()?.format(playbackInMs)
         Text(
+            modifier = Modifier.semantics {
+                if (durationDescription != null) contentDescription = durationDescription
+            },
             text = ChatTheme.durationFormatter.format(playbackInMs),
             style = ChatTheme.typography.bodyEmphasis,
             color = ChatTheme.colors.textPrimary,
