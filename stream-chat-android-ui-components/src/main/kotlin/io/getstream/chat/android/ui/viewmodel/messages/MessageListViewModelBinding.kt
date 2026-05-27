@@ -26,7 +26,10 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.feature.gallery.toAttachment
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
+import io.getstream.chat.android.ui.feature.messages.list.internal.poll.AddPollCommentDialogFragment
+import io.getstream.chat.android.ui.feature.messages.list.internal.poll.SuggestPollOptionDialogFragment
 import io.getstream.chat.android.ui.utils.PermissionChecker
+import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.BottomEndRegionReached
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.DeleteMessage
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.DownloadAttachment
@@ -186,4 +189,24 @@ public fun MessageListViewModel.bindView(
     view.setOnPollCloseClickListener { poll: Poll ->
         true.also { onEvent(MessageListViewModel.Event.PollClosed(poll)) }
     }
+    view.context.getFragmentManager()
+        ?.setFragmentResultListener(SuggestPollOptionDialogFragment.REQUEST_KEY, lifecycleOwner) { _, bundle ->
+            val pollId =
+                bundle.getString(SuggestPollOptionDialogFragment.BUNDLE_KEY_POLL_ID) ?: return@setFragmentResultListener
+            val optionText = bundle.getString(SuggestPollOptionDialogFragment.BUNDLE_KEY_OPTION_TEXT)?.trim()
+                ?.takeIf(String::isNotEmpty)
+                ?: return@setFragmentResultListener
+            onEvent(MessageListViewModel.Event.PollOptionSuggested(pollId, optionText))
+        }
+    view.context.getFragmentManager()
+        ?.setFragmentResultListener(AddPollCommentDialogFragment.REQUEST_KEY, lifecycleOwner) { _, bundle ->
+            val messageId = bundle.getString(AddPollCommentDialogFragment.BUNDLE_KEY_MESSAGE_ID)
+                ?: return@setFragmentResultListener
+            val pollId = bundle.getString(AddPollCommentDialogFragment.BUNDLE_KEY_POLL_ID)
+                ?: return@setFragmentResultListener
+            val answer = bundle.getString(AddPollCommentDialogFragment.BUNDLE_KEY_ANSWER)?.trim()
+                ?.takeIf(String::isNotEmpty)
+                ?: return@setFragmentResultListener
+            onEvent(MessageListViewModel.Event.PollAnswerCast(messageId = messageId, pollId = pollId, answer = answer))
+        }
 }
