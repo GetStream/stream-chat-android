@@ -73,9 +73,7 @@ internal fun PlaybackTimerText(
 internal fun spokenDuration(durationInMs: Int): String =
     spokenDuration(
         durationInMs = durationInMs,
-        locale = requireNotNull(ConfigurationCompat.getLocales(LocalConfiguration.current)[0]) {
-            "Configuration must contain at least one locale"
-        },
+        locale = ConfigurationCompat.getLocales(LocalConfiguration.current)[0] ?: Locale.getDefault(),
         fallbackFormatter = ChatTheme.durationFormatter,
     )
 

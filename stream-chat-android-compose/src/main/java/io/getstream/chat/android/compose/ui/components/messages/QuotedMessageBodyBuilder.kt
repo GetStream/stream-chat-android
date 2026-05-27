@@ -270,9 +270,7 @@ internal fun rememberBodyBuilder(): QuotedMessageBodyBuilder {
     val autoTranslationEnabled = ChatTheme.config.translation.enabled
     val durationFormatter = ChatTheme.durationFormatter
     val streamCdnImageResizing: StreamCdnImageResizing = ChatTheme.streamCdnImageResizing
-    val locale = requireNotNull(ConfigurationCompat.getLocales(LocalConfiguration.current)[0]) {
-        "Configuration must contain at least one locale"
-    }
+    val locale = ConfigurationCompat.getLocales(LocalConfiguration.current)[0] ?: Locale.getDefault()
 
     return remember(resources, autoTranslationEnabled, durationFormatter, streamCdnImageResizing, locale) {
         QuotedMessageBodyBuilder(
