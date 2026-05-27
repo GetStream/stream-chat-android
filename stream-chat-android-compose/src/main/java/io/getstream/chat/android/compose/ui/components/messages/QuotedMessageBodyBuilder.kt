@@ -19,11 +19,14 @@ package io.getstream.chat.android.compose.ui.components.messages
 import android.content.res.Resources
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.os.ConfigurationCompat
 import io.getstream.chat.android.client.extensions.durationInMs
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.audio.SpokenDurationFormatter
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.compose.ui.util.getMessageTextResId
@@ -37,6 +40,7 @@ import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageRe
 import io.getstream.chat.android.ui.common.utils.extensions.giphyFallbackPreviewUrl
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 import io.getstream.chat.android.ui.common.utils.extensions.linkPreviewImageUrl
+import java.util.Locale
 import io.getstream.chat.android.ui.common.R as UiCommonR
 
 internal class QuotedMessageBodyBuilder(
@@ -44,6 +48,7 @@ internal class QuotedMessageBodyBuilder(
     private val autoTranslationEnabled: Boolean,
     private val durationFormatter: DurationFormatter,
     private val streamCdnImageResizing: StreamCdnImageResizing,
+    private val spokenDurationFormatter: SpokenDurationFormatter,
 ) {
     fun build(message: Message, currentUser: User?): QuotedMessageBody {
         val messageText = when {
@@ -147,8 +152,10 @@ internal class QuotedMessageBodyBuilder(
             }
 
             summary.audioRecordingAttachment != null && size == 1 -> {
+                val durationMs = summary.audioRecordingAttachment.durationInMs ?: 0
                 QuotedMessageBody(
-                    text = messageText.ifBlank { textForAudioRecording(summary.audioRecordingAttachment) },
+                    text = messageText.ifBlank { textForAudioRecording(durationMs) },
+                    spokenText = if (messageText.isBlank()) spokenTextForAudioRecording(durationMs) else null,
                     iconId = R.drawable.stream_design_ic_voice,
                 )
             }
@@ -172,8 +179,13 @@ internal class QuotedMessageBodyBuilder(
         }
     }
 
-    private fun textForAudioRecording(audioRecordingAttachment: Attachment): String {
-        val duration = durationFormatter.format(audioRecordingAttachment.durationInMs ?: 0)
+    private fun textForAudioRecording(durationMs: Int): String {
+        val duration = durationFormatter.format(durationMs)
+        return resources.getString(R.string.stream_compose_quoted_message_audio_recording, duration)
+    }
+
+    private fun spokenTextForAudioRecording(durationMs: Int): String {
+        val duration = spokenDurationFormatter.format(durationMs)
         return resources.getString(R.string.stream_compose_quoted_message_audio_recording, duration)
     }
 
@@ -258,13 +270,24 @@ internal fun rememberBodyBuilder(): QuotedMessageBodyBuilder {
     val autoTranslationEnabled = ChatTheme.config.translation.enabled
     val durationFormatter = ChatTheme.durationFormatter
     val streamCdnImageResizing: StreamCdnImageResizing = ChatTheme.streamCdnImageResizing
+    val locale = ConfigurationCompat.getLocales(LocalConfiguration.current)[0] ?: Locale.getDefault()
+    val spokenDurationFormatter = remember(locale, durationFormatter) {
+        SpokenDurationFormatter(locale, durationFormatter)
+    }
 
-    return remember(resources, autoTranslationEnabled, durationFormatter, streamCdnImageResizing) {
+    return remember(
+        resources,
+        autoTranslationEnabled,
+        durationFormatter,
+        streamCdnImageResizing,
+        spokenDurationFormatter,
+    ) {
         QuotedMessageBodyBuilder(
             resources = resources,
             autoTranslationEnabled = autoTranslationEnabled,
             durationFormatter = durationFormatter,
             streamCdnImageResizing = streamCdnImageResizing,
+            spokenDurationFormatter = spokenDurationFormatter,
         )
     }
 }

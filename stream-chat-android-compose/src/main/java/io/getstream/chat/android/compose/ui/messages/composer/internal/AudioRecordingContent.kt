@@ -63,6 +63,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
+import io.getstream.chat.android.compose.ui.components.audio.rememberSpokenDurationFormatter
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
@@ -156,7 +157,11 @@ internal fun MessageComposerAudioRecordingHoldContent(
                 )
             }
 
+            val durationDescription = rememberSpokenDurationFormatter()?.format(state.durationInMs)
             Text(
+                modifier = Modifier.semantics {
+                    if (durationDescription != null) contentDescription = durationDescription
+                },
                 text = ChatTheme.durationFormatter.format(state.durationInMs),
                 style = ChatTheme.typography.bodyEmphasis,
                 color = ChatTheme.colors.textPrimary,
@@ -202,7 +207,11 @@ internal fun MessageComposerAudioRecordingLockedContent(
                 )
             }
 
+            val durationDescription = rememberSpokenDurationFormatter()?.format(state.durationInMs)
             Text(
+                modifier = Modifier.semantics {
+                    if (durationDescription != null) contentDescription = durationDescription
+                },
                 text = ChatTheme.durationFormatter.format(state.durationInMs),
                 style = ChatTheme.typography.bodyEmphasis,
                 color = ChatTheme.colors.textPrimary,
@@ -309,7 +318,11 @@ private fun RowScope.OverviewPlaybackRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val playbackInMs = (currentProgress * state.durationInMs).toInt()
+        val durationDescription = rememberSpokenDurationFormatter()?.format(playbackInMs)
         Text(
+            modifier = Modifier.semantics {
+                if (durationDescription != null) contentDescription = durationDescription
+            },
             text = ChatTheme.durationFormatter.format(playbackInMs),
             style = ChatTheme.typography.bodyEmphasis,
             color = ChatTheme.colors.textPrimary,

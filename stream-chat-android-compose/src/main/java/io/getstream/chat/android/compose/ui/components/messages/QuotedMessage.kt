@@ -189,10 +189,12 @@ private fun QuotedMessageText(body: QuotedMessageBody, color: Color) {
             )
         }
 
+        val spokenText = body.spokenText
         Text(
             modifier = Modifier
                 .weight(1f)
-                .testTag("Stream_QuotedMessage"),
+                .testTag("Stream_QuotedMessage")
+                .semantics { if (spokenText != null) contentDescription = spokenText },
             text = body.text,
             style = ChatTheme.typography.metadataDefault,
             color = color,
@@ -241,6 +243,7 @@ private fun QuotedMessageAttachmentPreview(body: QuotedMessageBody) {
 
 internal data class QuotedMessageBody(
     val text: String,
+    val spokenText: String? = null,
     @param:DrawableRes
     val iconId: Int? = null,
     val imagePreviewData: Any? = null,
