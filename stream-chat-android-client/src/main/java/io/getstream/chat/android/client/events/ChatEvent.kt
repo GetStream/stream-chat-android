@@ -531,7 +531,8 @@ public data class MarkAllReadEvent(
     override val user: User,
     override val totalUnreadCount: Int = 0,
     override val unreadChannels: Int = 0,
-) : ChatEvent(), UserEvent, HasUnreadCounts
+    override val groupedUnreadChannels: Map<String, Int>? = null,
+) : ChatEvent(), UserEvent, HasUnreadCounts, HasGroupedUnreadChannels
 
 /**
  * Triggered when a message is added to a channel

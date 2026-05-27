@@ -381,6 +381,7 @@ internal object EventMappingTestArguments {
         type = EventType.NOTIFICATION_MARK_READ,
         created_at = EXACT_DATE,
         user = USER,
+        grouped_unread_channels = GROUPED_UNREAD_CHANNELS,
     )
 
     private val memberAddedDto = MemberAddedEventDto(
@@ -1020,6 +1021,7 @@ internal object EventMappingTestArguments {
         createdAt = markAllReadDto.created_at.date,
         rawCreatedAt = markAllReadDto.created_at.rawDate,
         user = with(domainMapping) { markAllReadDto.user.toDomain() },
+        groupedUnreadChannels = markAllReadDto.grouped_unread_channels,
     )
 
     private val memberAdded = MemberAddedEvent(

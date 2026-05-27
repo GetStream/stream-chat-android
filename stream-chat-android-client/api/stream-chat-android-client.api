@@ -1575,19 +1575,21 @@ public final class io/getstream/chat/android/client/events/HealthEvent : io/gets
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/client/events/MarkAllReadEvent : io/getstream/chat/android/client/events/ChatEvent, io/getstream/chat/android/client/events/HasUnreadCounts, io/getstream/chat/android/client/events/UserEvent {
-	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/models/User;II)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/models/User;IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+public final class io/getstream/chat/android/client/events/MarkAllReadEvent : io/getstream/chat/android/client/events/ChatEvent, io/getstream/chat/android/client/events/HasGroupedUnreadChannels, io/getstream/chat/android/client/events/HasUnreadCounts, io/getstream/chat/android/client/events/UserEvent {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/models/User;IILjava/util/Map;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/models/User;IILjava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Date;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Lio/getstream/chat/android/models/User;
 	public final fun component5 ()I
 	public final fun component6 ()I
-	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/models/User;II)Lio/getstream/chat/android/client/events/MarkAllReadEvent;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/MarkAllReadEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/models/User;IIILjava/lang/Object;)Lio/getstream/chat/android/client/events/MarkAllReadEvent;
+	public final fun component7 ()Ljava/util/Map;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/models/User;IILjava/util/Map;)Lio/getstream/chat/android/client/events/MarkAllReadEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/MarkAllReadEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/models/User;IILjava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/MarkAllReadEvent;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getCreatedAt ()Ljava/util/Date;
+	public fun getGroupedUnreadChannels ()Ljava/util/Map;
 	public fun getRawCreatedAt ()Ljava/lang/String;
 	public fun getTotalUnreadCount ()I
 	public fun getType ()Ljava/lang/String;

@@ -832,6 +832,7 @@ internal object EventArguments {
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
         user = user,
+        groupedUnreadChannels = groupedUnreadChannels,
     )
     private val connectionErrorEvent = ConnectionErrorEvent(
         type = EventType.CONNECTION_ERROR,

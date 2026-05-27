@@ -601,6 +601,7 @@ public fun randomMarkAllReadEvent(
     user: User = randomUser(),
     totalUnreadCount: Int = randomInt(),
     unreadChannels: Int = randomInt(),
+    groupedUnreadChannels: Map<String, Int>? = null,
 ): MarkAllReadEvent = MarkAllReadEvent(
     type = EventType.NOTIFICATION_MARK_READ,
     createdAt = createdAt,
@@ -608,6 +609,7 @@ public fun randomMarkAllReadEvent(
     user = user,
     totalUnreadCount = totalUnreadCount,
     unreadChannels = unreadChannels,
+    groupedUnreadChannels = groupedUnreadChannels,
 )
 
 public fun randomReminderCreatedEvent(

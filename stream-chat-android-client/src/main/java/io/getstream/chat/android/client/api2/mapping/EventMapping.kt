@@ -667,6 +667,7 @@ internal class EventMapping(
             user = user.toDomain(),
             totalUnreadCount = total_unread_count,
             unreadChannels = unread_channels,
+            groupedUnreadChannels = grouped_unread_channels,
         )
     }
 

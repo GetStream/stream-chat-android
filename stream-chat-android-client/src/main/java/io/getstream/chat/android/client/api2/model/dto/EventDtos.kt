@@ -339,6 +339,7 @@ internal data class MarkAllReadEventDto(
     val user: DownstreamUserDto,
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
+    val grouped_unread_channels: Map<String, Int>? = null,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

@@ -1092,6 +1092,7 @@ internal fun createMarkAllReadEventStringJson() =
            "total_unread_count":0,
            "created_at":"2020-06-29T06:14:28.000Z",
            "type":"notification.mark_read",
-           "user":${createUserJsonString()}
+           "user":${createUserJsonString()},
+           "grouped_unread_channels": {"direct": 2, "support": 5}
         }
     """.trimIndent()
