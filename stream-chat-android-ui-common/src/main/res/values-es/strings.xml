@@ -89,7 +89,7 @@
   <string name="stream_ui_channel_info_option_leave_conversation">"Abandonar conversación"</string>
   <string name="stream_ui_channel_info_option_leave_group">"Abandonar grupo"</string>
   <string name="stream_ui_channel_info_option_media_attachments">"Fotos y Videos"</string>
-  <string name="stream_ui_channel_info_option_mute_conversation">"Silenciar conversación"</string>
+  <string name="stream_ui_channel_info_option_mute_conversation">"Silenciar chat"</string>
   <string name="stream_ui_channel_info_option_mute_group">"Silenciar grupo"</string>
   <string name="stream_ui_channel_info_option_mute_user">"Silenciar usuario"</string>
   <string name="stream_ui_channel_info_option_pinned_messages">"Mensajes fijados"</string>
