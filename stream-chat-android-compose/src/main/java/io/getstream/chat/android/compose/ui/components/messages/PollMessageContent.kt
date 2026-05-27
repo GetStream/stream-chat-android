@@ -64,7 +64,6 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
@@ -240,7 +239,7 @@ private fun PollMessageContent(
             )
             val voteCount = poll.voteCountsByOption[option.id] ?: 0
 
-            PollOptionItem(
+            PollOptionVotingRow(
                 modifier = Modifier.padding(padding),
                 poll = poll,
                 option = option,
@@ -395,36 +394,6 @@ private fun NewOptionDialog(
             }
         },
         containerColor = ChatTheme.colors.backgroundCoreElevation1,
-    )
-}
-
-@Suppress("LongParameterList")
-@Composable
-private fun PollOptionItem(
-    modifier: Modifier = Modifier,
-    poll: Poll,
-    option: Option,
-    voteCount: Int,
-    totalVoteCount: Int,
-    users: List<User>,
-    checkedCount: Int,
-    checked: Boolean,
-    style: PollStyle,
-    onCastVote: () -> Unit,
-    onRemoveVote: () -> Unit,
-) {
-    PollOptionVotingRow(
-        modifier = modifier,
-        poll = poll,
-        option = option,
-        voteCount = voteCount,
-        totalVoteCount = totalVoteCount,
-        users = users,
-        checkedCount = checkedCount,
-        checked = checked,
-        style = style,
-        onCastVote = onCastVote,
-        onRemoveVote = onRemoveVote,
     )
 }
 
