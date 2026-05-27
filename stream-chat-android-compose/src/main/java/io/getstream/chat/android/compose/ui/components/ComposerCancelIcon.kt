@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -52,7 +51,6 @@ public fun ComposerCancelIcon(
             .border(2.dp, colors.controlRemoveBorder, CircleShape)
             .padding(2.dp)
             .background(color = colors.controlRemoveBg, shape = CircleShape)
-            .size(20.dp)
             .clickable(bounded = false, onClick = onClick),
         painter = painterResource(R.drawable.stream_design_ic_xmark_small),
         contentDescription = contentDescription,
