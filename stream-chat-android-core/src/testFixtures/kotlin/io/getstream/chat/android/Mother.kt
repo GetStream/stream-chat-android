@@ -921,6 +921,22 @@ public fun randomOption(
     text = text,
 )
 
+public fun randomVote(
+    id: String = randomString(),
+    pollId: String = randomString(),
+    optionId: String = randomString(),
+    createdAt: Date = randomDate(),
+    updatedAt: Date = randomDate(),
+    user: User? = randomUser(),
+): Vote = Vote(
+    id = id,
+    pollId = pollId,
+    optionId = optionId,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    user = user,
+)
+
 public fun randomPollOption(
     id: String? = randomString(),
     text: String = randomString(),

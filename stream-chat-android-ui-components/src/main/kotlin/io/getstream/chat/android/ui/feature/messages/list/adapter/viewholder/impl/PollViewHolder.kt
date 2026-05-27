@@ -56,6 +56,15 @@ public class PollViewHolder(
                 binding.pollView.onShowAllPollOptionClick = {
                     messageListListeners?.onShowAllPollOptionClickListener?.onShowAllPollOptionClick(data.message, poll)
                 }
+                binding.pollView.onSuggestOptionClick = {
+                    messageListListeners?.onSuggestPollOptionClickListener?.onSuggestPollOptionClick(poll)
+                }
+                binding.pollView.onAddCommentClick = {
+                    messageListListeners?.onAddPollCommentClickListener?.onAddPollCommentClick(data.message, poll)
+                }
+                binding.pollView.onViewCommentsClick = {
+                    messageListListeners?.onViewPollCommentsClickListener?.onViewPollCommentsClick(data.message, poll)
+                }
             }
     }
 }
