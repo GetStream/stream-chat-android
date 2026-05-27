@@ -252,7 +252,18 @@ internal fun randomQueryChannelsEntity(
     filter: FilterObject = NeutralFilterObject,
     querySort: QuerySorter<Channel> = QuerySortByField(),
     cids: List<String> = emptyList(),
-): QueryChannelsEntity = QueryChannelsEntity(id, filter, querySort, cids)
+    predefinedFilterName: String? = null,
+    predefinedFilterValues: Map<String, Any>? = null,
+    predefinedSortValues: Map<String, Any>? = null,
+): QueryChannelsEntity = QueryChannelsEntity(
+    id = id,
+    filter = filter,
+    querySort = querySort,
+    cids = cids,
+    predefinedFilterName = predefinedFilterName,
+    predefinedFilterValues = predefinedFilterValues,
+    predefinedSortValues = predefinedSortValues,
+)
 
 internal fun createRoomDB(): ChatDatabase =
     Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), ChatDatabase::class.java)

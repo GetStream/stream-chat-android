@@ -79,9 +79,6 @@ import kotlin.coroutines.cancellation.CancellationException
  * [Channel] items in a list.
  *
  * @param chatClient Used to connect to the API.
- * @param initialSort The initial sort used for [Channel]s.
- * @param initialFilters The current data filter. Users can change this state using [setFilters] to
- * impact which data is shown on the UI.
  * @param channelLimit How many channels we fetch per page.
  * @param memberLimit How many members are fetched for each channel item when loading channels.
  * When `null`, the server-side default is used.
@@ -94,20 +91,93 @@ import kotlin.coroutines.cancellation.CancellationException
  * @param globalState A flow emitting the current [GlobalState].
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-@Suppress("TooManyFunctions")
-public class ChannelListViewModel(
+@Suppress("TooManyFunctions", "LongParameterList")
+public class ChannelListViewModel internal constructor(
     public val chatClient: ChatClient,
-    initialSort: QuerySorter<Channel> = QuerySortByField.descByName("last_updated"),
-    initialFilters: FilterObject? = null,
-    private val channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
-    private val memberLimit: Int? = null,
-    private val messageLimit: Int? = null,
-    private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
-    searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
-    private val draftMessagesEnabled: Boolean = true,
-    private val messageSearchSort: QuerySorter<Message>? = null,
-    private val globalState: Flow<GlobalState> = chatClient.globalStateFlow,
+    private val mode: QueryMode,
+    private val channelLimit: Int,
+    private val memberLimit: Int?,
+    private val messageLimit: Int?,
+    private val chatEventHandlerFactory: ChatEventHandlerFactory,
+    searchDebounceMs: Long,
+    private val draftMessagesEnabled: Boolean,
+    private val messageSearchSort: QuerySorter<Message>?,
+    private val globalState: Flow<GlobalState>,
 ) : ViewModel() {
+
+    /**
+     * Creates a view model that queries channels by an explicit filter and sort.
+     *
+     * @param initialSort The initial sort used for [Channel]s. Can be changed at runtime via [setQuerySort].
+     * @param initialFilters The data filter. Can be changed at runtime via [setFilters]. When `null`,
+     * a default filter scoped to messaging channels the current user is a member of is used.
+     */
+    public constructor(
+        chatClient: ChatClient,
+        initialSort: QuerySorter<Channel> = QuerySortByField.descByName("last_updated"),
+        initialFilters: FilterObject? = null,
+        channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
+        memberLimit: Int? = null,
+        messageLimit: Int? = null,
+        chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
+        searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
+        draftMessagesEnabled: Boolean = true,
+        messageSearchSort: QuerySorter<Message>? = null,
+        globalState: Flow<GlobalState> = chatClient.globalStateFlow,
+    ) : this(
+        chatClient = chatClient,
+        mode = QueryMode.Standard(initialFilter = initialFilters, initialSort = initialSort),
+        channelLimit = channelLimit,
+        memberLimit = memberLimit,
+        messageLimit = messageLimit,
+        chatEventHandlerFactory = chatEventHandlerFactory,
+        searchDebounceMs = searchDebounceMs,
+        draftMessagesEnabled = draftMessagesEnabled,
+        messageSearchSort = messageSearchSort,
+        globalState = globalState,
+    )
+
+    /**
+     * Creates a view model that queries channels using a predefined filter resolved by the server.
+     *
+     * The filter and sort are identified by [predefinedFilterName] and resolved server-side;
+     * [filterValues] and [sortValues] interpolate into the predefined template. [setFilters] and
+     * [setQuerySort] do not affect a view model created this way. Channel search still narrows the
+     * displayed list to the search predicate.
+     *
+     * @param predefinedFilterName The name of the predefined filter registered on the backend.
+     * @param filterValues Optional values interpolated into the predefined filter template.
+     * @param sortValues Optional values interpolated into the predefined sort template.
+     */
+    public constructor(
+        chatClient: ChatClient,
+        predefinedFilterName: String,
+        filterValues: Map<String, Any>? = null,
+        sortValues: Map<String, Any>? = null,
+        channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
+        memberLimit: Int? = null,
+        messageLimit: Int? = null,
+        chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
+        searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
+        draftMessagesEnabled: Boolean = true,
+        messageSearchSort: QuerySorter<Message>? = null,
+        globalState: Flow<GlobalState> = chatClient.globalStateFlow,
+    ) : this(
+        chatClient = chatClient,
+        mode = QueryMode.Predefined(
+            name = predefinedFilterName,
+            filterValues = filterValues,
+            sortValues = sortValues,
+        ),
+        channelLimit = channelLimit,
+        memberLimit = memberLimit,
+        messageLimit = messageLimit,
+        chatEventHandlerFactory = chatEventHandlerFactory,
+        searchDebounceMs = searchDebounceMs,
+        draftMessagesEnabled = draftMessagesEnabled,
+        messageSearchSort = messageSearchSort,
+        globalState = globalState,
+    )
 
     private val logger by taggedLogger("Chat:ChannelListVM")
 
@@ -132,14 +202,26 @@ public class ChannelListViewModel(
     private val queryChannelDebouncer = Debouncer(searchDebounceMs, chListScope)
 
     /**
-     * State flow that keeps the value of the current [FilterObject] for channels.
+     * State flow that keeps the value of the current [FilterObject] for channels. Only meaningful in
+     * [QueryMode.Standard]; remains `null` in [QueryMode.Predefined] (the server owns the filter).
      */
-    private val filterFlow: MutableStateFlow<FilterObject?> = MutableStateFlow(initialFilters)
+    private val filterFlow: MutableStateFlow<FilterObject?> = MutableStateFlow(
+        when (mode) {
+            is QueryMode.Standard -> mode.initialFilter
+            is QueryMode.Predefined -> null
+        },
+    )
 
     /**
-     * State flow that keeps the value of the current [QuerySorter] for channels.
+     * State flow that keeps the value of the current [QuerySorter] for channels. Only meaningful in
+     * [QueryMode.Standard]; in [QueryMode.Predefined] it carries an inert default (the server owns the sort).
      */
-    private val querySortFlow: MutableStateFlow<QuerySorter<Channel>> = MutableStateFlow(initialSort)
+    private val querySortFlow: MutableStateFlow<QuerySorter<Channel>> = MutableStateFlow(
+        when (mode) {
+            is QueryMode.Standard -> mode.initialSort
+            is QueryMode.Predefined -> QuerySortByField()
+        },
+    )
 
     /**
      * The currently active query configuration, stored in a [MutableStateFlow]. It's created using
@@ -219,23 +301,6 @@ public class ChannelListViewModel(
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
 
     /**
-     * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
-     */
-    private fun buildDefaultFilter(): Flow<FilterObject> {
-        return chatClient.clientState.user.map(Filters::defaultChannelListFilter).filterNotNull()
-    }
-
-    /**
-     * Checks if the channel is muted for the current user.
-     *
-     * @param cid The CID of the channel that needs to be checked.
-     * @return True if the channel is muted for the current user.
-     */
-    public fun isChannelMuted(cid: String): Boolean {
-        return channelMutes.value.any { cid == it.channel?.cid }
-    }
-
-    /**
      * Current query channels state that contains filter, sort and other states related to channels query.
      */
     private var queryChannelsState: StateFlow<QueryChannelsState?> = MutableStateFlow(null)
@@ -252,10 +317,9 @@ public class ChannelListViewModel(
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
      */
     init {
-        if (initialFilters == null) {
+        if (mode is QueryMode.Standard && mode.initialFilter == null) {
             viewModelScope.launch {
-                val filter = buildDefaultFilter().first()
-
+                val filter = defaultChannelsFilter().first()
                 this@ChannelListViewModel.filterFlow.value = filter
             }
         }
@@ -263,259 +327,6 @@ public class ChannelListViewModel(
         viewModelScope.launch {
             init()
         }
-    }
-
-    /**
-     * Makes the initial query to request channels and starts observing state changes.
-     */
-    private suspend fun init() {
-        logger.d { "[init] no args" }
-        combine(_searchQuery, queryConfigFlow, refreshFlow) { query, config, ts -> Triple(query, config, ts) }
-            .collectLatest { (query, config, ts) ->
-                logger.i { "[observeInit] ts: $ts, query: $query, config: $config" }
-                when (query) {
-                    is SearchQuery.Empty,
-                    is SearchQuery.Channels,
-                    -> {
-                        searchScope.coroutineContext.cancelChildren()
-                        observeQueryChannels(
-                            config.copy(
-                                filters = createQueryChannelsFilter(config.filters, query.query),
-                            ),
-                        )
-                    }
-
-                    is SearchQuery.Messages -> {
-                        chListScope.coroutineContext.cancelChildren()
-                        handleSearchQuery(query.query)
-                        observeSearchMessages(query.query)
-                    }
-                }
-            }
-    }
-
-    private suspend fun observeSearchMessages(query: String) = runCatching {
-        logger.d { "[observeSearchMessages] query: '$query'" }
-        searchMessageState.filterNotNull().collectLatest {
-            logger.v { "[observeSearchMessages] state: ${it.stringify()}" }
-            val channels = chatClient.repositoryFacade.selectChannels(it.messages.map { message -> message.cid })
-            channelsState = channelsState.copy(
-                searchQuery = _searchQuery.value,
-                isLoading = it.isLoading,
-                isLoadingMore = it.isLoadingMore,
-                endOfChannels = !it.canLoadMore,
-                channelItems = it.messages.map {
-                    val channel = channels.firstOrNull { channel -> channel.cid == it.cid }
-                    ItemState.SearchResultItemState(
-                        message = it,
-                        channel = channel,
-                    )
-                },
-            )
-        }
-    }.onFailure {
-        when (it is CancellationException) {
-            true -> logger.v { "[observeSearchMessages] cancelled('$query')" }
-            else -> logger.e { "[observeSearchMessages] failed: $it" }
-        }
-    }
-
-    private fun handleSearchQuery(query: String) {
-        logger.d { "[handleSearchQuery] query: '$query'" }
-        searchDebouncer.submitSuspendable {
-            searchMessagesForQuery(query)
-        }
-    }
-
-    private suspend fun searchMessagesForQuery(query: String) {
-        logger.d { "[searchMessagesForQuery] query: '$query'" }
-        val channelFilter = filterFlow.value ?: Filters.defaultChannelListFilter(user.value) ?: run {
-            logger.v { "[searchMessagesForQuery] rejected (no channel filter)" }
-            return
-        }
-        val newState = SearchMessageState(query = query, isLoading = true)
-        searchMessageState.value = newState
-        searchMessageState.value = searchMessages(src = "new", newState, channelFilter).also {
-            logger.v { "[searchMessagesForQuery] completed('$query'): ${it.messages.size}" }
-        }
-    }
-
-    private suspend fun loadMoreQueryMessages() {
-        logger.d { "[loadMoreQueryMessages] no args" }
-        val channelFilter = filterFlow.value ?: Filters.defaultChannelListFilter(user.value) ?: run {
-            logger.v { "[loadMoreQueryMessages] rejected (no channel filter)" }
-            return
-        }
-        val currentState = searchMessageState.value ?: run {
-            logger.v { "[loadMoreQueryMessages] rejected (no current state)" }
-            return
-        }
-        if (currentState.isLoading) {
-            logger.v { "[loadMoreQueryMessages] rejected (already loading)" }
-            return
-        }
-        if (currentState.isLoadingMore) {
-            logger.v { "[loadMoreQueryMessages] rejected (already loading more)" }
-            return
-        }
-        if (!currentState.canLoadMore) {
-            logger.v { "[loadMoreQueryMessages] rejected (end of messages)" }
-            return
-        }
-        val query = currentState.query
-        logger.v { "[loadMoreQueryMessages] query: 'query'" }
-        val newState = currentState.copy(isLoadingMore = true)
-        searchMessageState.value = newState
-        searchMessageState.value = searchMessages(src = "more", newState, channelFilter).also {
-            logger.v { "[loadMoreQueryMessages] completed('$query'): ${it.messages.size}" }
-        }
-    }
-
-    /**
-     * Searches for messages based on the current query.
-     */
-    private suspend fun searchMessages(
-        src: String,
-        currentState: SearchMessageState,
-        channelFilter: FilterObject,
-    ): SearchMessageState {
-        val limit = channelLimit
-        val next = currentState.next
-        logger.v {
-            "[searchMessages] #$src; query: '${currentState.query}', sort: $messageSearchSort, next: $next, " +
-                "limit: $limit"
-        }
-        val result = chatClient.searchMessages(
-            channelFilter = channelFilter,
-            messageFilter = Filters.autocomplete("text", currentState.query),
-            sort = messageSearchSort,
-            limit = limit,
-            next = next,
-        ).await()
-        return when (result) {
-            is io.getstream.result.Result.Success -> {
-                logger.v { "[searchMessages] #$src; completed(messages.size: ${result.value.messages.size})" }
-                currentState.copy(
-                    messages = currentState.messages + result.value.messages,
-                    isLoading = false,
-                    isLoadingMore = false,
-                    canLoadMore = !result.value.next.isNullOrEmpty(),
-                    next = result.value.next,
-                )
-            }
-
-            is io.getstream.result.Result.Failure -> {
-                logger.e { "[searchMessages] #$src; failed: ${result.value}" }
-                currentState.copy(
-                    isLoading = false,
-                    isLoadingMore = false,
-                )
-            }
-        }
-    }
-
-    @Suppress("LongMethod")
-    private fun observeQueryChannels(config: QueryConfig<Channel>) = runCatching {
-        queryChannelDebouncer.submitSuspendable {
-            val queryChannelsRequest = QueryChannelsRequest(
-                filter = config.filters,
-                querySort = config.querySort,
-                limit = channelLimit,
-                messageLimit = messageLimit,
-                memberLimit = memberLimit,
-            )
-            logger.d { "[observeQueryChannels] request: $queryChannelsRequest" }
-            queryChannelsState = chatClient.queryChannelsAsState(
-                request = queryChannelsRequest,
-                chatEventHandlerFactory = chatEventHandlerFactory,
-                coroutineScope = chListScope,
-            )
-            queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
-                combine(
-                    queryChannelsState.channelsStateData,
-                    channelMutes,
-                    typingChannels,
-                    channelDraftMessages,
-                    globalMuted,
-                ) { state, channelMutes, typingChannels, channelDraftMessages, userMutes ->
-                    when (state) {
-                        ChannelsStateData.NoQueryActive,
-                        ChannelsStateData.Loading,
-                        -> channelsState.copy(
-                            isLoading = true,
-                            searchQuery = _searchQuery.value,
-                        ).also { logger.d { "[observeQueryChannels] state: Loading" } }
-
-                        ChannelsStateData.OfflineNoResults -> {
-                            logger.v { "[observeQueryChannels] state: OfflineNoResults(channels are empty)" }
-                            channelsState.copy(
-                                isLoading = false,
-                                channelItems = emptyList(),
-                                searchQuery = _searchQuery.value,
-                            )
-                        }
-
-                        is ChannelsStateData.Result -> {
-                            logger.v { "[observeQueryChannels] state: Result(channels.size: ${state.channels.size})" }
-                            channelsState.copy(
-                                isLoading = false,
-                                channelItems = createChannelItems(
-                                    channels = state.channels,
-                                    channelMutes = channelMutes,
-                                    userMutes = userMutes,
-                                    typingEvents = typingChannels,
-                                    draftMessages = channelDraftMessages.takeIf { draftMessagesEnabled } ?: emptyMap(),
-                                ),
-                                isLoadingMore = false,
-                                endOfChannels = queryChannelsState.endOfChannels.value,
-                                searchQuery = _searchQuery.value,
-                            )
-                        }
-                    }
-                }.collectLatest { newState -> channelsState = newState }
-            }
-        }
-    }.onFailure {
-        when (it is CancellationException) {
-            true -> logger.v { "[observeQueryChannels] cancelled" }
-            else -> logger.e { "[observeQueryChannels] failed: $it" }
-        }
-    }
-
-    /**
-     * Creates a filter that is used to query channels.
-     *
-     * If the [searchQuery] is shorter than 3 characters, then returns the original [filter] provided by the user.
-     * Otherwise, returns a wrapped [filter] that also checks that the channel name match the
-     * [searchQuery].
-     *
-     * @param filter The filter that was passed by the user.
-     * @param searchQuery The search query used to filter the channels.
-     *
-     * @return The filter that will be used to query channels.
-     */
-    @Suppress("SpreadOperator")
-    private fun createQueryChannelsFilter(filter: FilterObject, searchQuery: String): FilterObject {
-        return if (searchQuery.length >= MIN_CHANNEL_SEARCH_QUERY_LENGTH) {
-            if (filter is AndFilterObject) {
-                // If the base filter is `AND`, extend it with the search query filter.
-                val filters = filter.filterObjects
-                val extendedFilters = filters + searchChannelFilter(searchQuery)
-                Filters.and(*extendedFilters.toTypedArray())
-            } else {
-                // If the base filter is not `AND`, wrap it in an `AND` with the search query filter.
-                Filters.and(filter, searchChannelFilter(searchQuery))
-            }
-        } else {
-            filter
-        }
-    }
-
-    private fun searchChannelFilter(searchQuery: String): FilterObject {
-        return Filters.or(
-            Filters.autocomplete("member.user.name", searchQuery),
-            Filters.autocomplete("name", searchQuery),
-        )
     }
 
     /**
@@ -547,13 +358,19 @@ public class ChannelListViewModel(
     /**
      * Allows for the change of filters used for channel queries.
      *
-     * Use this if you need to support runtime filter changes, through custom filters UI.
+     * Use this if you need to support runtime filter changes, through custom filters UI. The applied
+     * filter overrides the `initialFilters` set through the constructor.
      *
-     * Warning: The filter that's applied will override the `initialFilters` set through the constructor.
+     * Has no effect on view models constructed for a predefined-filter query — the predefined identity
+     * is fixed at construction. A warning is logged in that case.
      *
      * @param newFilters The new filters to be used as a baseline for filtering channels.
      */
     public fun setFilters(newFilters: FilterObject) {
+        if (mode is QueryMode.Predefined) {
+            logger.w { "[setFilters] ignored — view model uses predefined filter '${mode.name}'" }
+            return
+        }
         this.filterFlow.tryEmit(value = newFilters)
     }
 
@@ -561,8 +378,15 @@ public class ChannelListViewModel(
      * Allows for the change of the query sort used for channel queries.
      *
      * Use this if you need to support runtime sort changes, through custom sort UI.
+     *
+     * Has no effect on view models constructed for a predefined-filter query — the sort is resolved by
+     * the server. A warning is logged in that case.
      */
     public fun setQuerySort(querySort: QuerySorter<Channel>) {
+        if (mode is QueryMode.Predefined) {
+            logger.w { "[setQuerySort] ignored — view model uses predefined filter '${mode.name}'" }
+            return
+        }
         this.querySortFlow.tryEmit(value = querySort)
     }
 
@@ -580,50 +404,9 @@ public class ChannelListViewModel(
             is SearchQuery.Empty,
             is SearchQuery.Channels,
             -> chListScope.launch { loadMoreQueryChannels() }
-
             is SearchQuery.Messages,
             -> searchScope.launch { loadMoreQueryMessages() }
         }
-    }
-
-    private suspend fun loadMoreQueryChannels() {
-        logger.d { "[loadMoreQueryChannels] no args" }
-        val currentFilter = filterFlow.value
-        if (currentFilter == null) {
-            logger.v { "[loadMoreQueryChannels] rejected (no current filter)" }
-            return
-        }
-        val currentQuery = queryChannelsState.value?.nextPageRequest?.value
-        if (currentQuery == null) {
-            logger.v { "[loadMoreQueryChannels] rejected (no current query)" }
-            return
-        }
-        if (channelsState.endOfChannels) {
-            logger.v { "[loadMoreQueryChannels] rejected (end of channels)" }
-            return
-        }
-        if (channelsState.isLoadingMore) {
-            logger.v { "[loadMoreQueryChannels] rejected (already loading more)" }
-            return
-        }
-        val nextQuery = currentQuery.copy(
-            filter = createQueryChannelsFilter(currentFilter, _searchQuery.value.query),
-            querySort = querySortFlow.value,
-        )
-        if (lastNextQuery == nextQuery) {
-            logger.v { "[loadMoreQueryChannels] rejected (same query)" }
-            return
-        }
-        lastNextQuery = nextQuery
-        logger.v { "[loadMoreQueryChannels] offset: ${nextQuery.offset}, limit: ${nextQuery.limit}" }
-        channelsState = channelsState.copy(isLoadingMore = true)
-        val result = chatClient.queryChannels(nextQuery).await()
-        if (result.isSuccess) {
-            logger.v { "[loadMoreQueryChannels] completed; channels.size: ${result.getOrNull()?.size}" }
-        } else {
-            logger.e { "[loadMoreQueryChannels] failed: ${result.errorOrNull()}" }
-        }
-        channelsState = channelsState.copy(isLoadingMore = false)
     }
 
     /**
@@ -775,6 +558,16 @@ public class ChannelListViewModel(
     }
 
     /**
+     * Checks if the channel is muted for the current user.
+     *
+     * @param cid The CID of the channel that needs to be checked.
+     * @return True if the channel is muted for the current user.
+     */
+    public fun isChannelMuted(cid: String): Boolean {
+        return channelMutes.value.any { cid == it.channel?.cid }
+    }
+
+    /**
      * Checks if a user is muted by the current user.
      *
      * @param userId The ID of the user to check.
@@ -800,6 +593,329 @@ public class ChannelListViewModel(
     public fun dismissChannelAction() {
         activeChannelAction = null
         selectedChannel.value = null
+    }
+
+    /**
+     * Makes the initial query to request channels and starts observing state changes.
+     */
+    private suspend fun init() {
+        logger.d { "[init] no args" }
+        val activeQuery: Flow<SearchQuery> = when (mode) {
+            is QueryMode.Standard -> combine(_searchQuery, queryConfigFlow, refreshFlow) { query, _, _ -> query }
+            is QueryMode.Predefined -> combine(_searchQuery, refreshFlow) { query, _ -> query }
+        }
+        activeQuery.collectLatest { query ->
+            logger.i { "[observeInit] query: $query" }
+            when (query) {
+                is SearchQuery.Empty,
+                is SearchQuery.Channels,
+                -> {
+                    searchScope.coroutineContext.cancelChildren()
+                    observeQueryChannels(query.query)
+                }
+                is SearchQuery.Messages -> {
+                    chListScope.coroutineContext.cancelChildren()
+                    handleSearchQuery(query.query)
+                    observeSearchMessages(query.query)
+                }
+            }
+        }
+    }
+
+    private suspend fun observeSearchMessages(query: String) = runCatching {
+        logger.d { "[observeSearchMessages] query: '$query'" }
+        searchMessageState.filterNotNull().collectLatest {
+            logger.v { "[observeSearchMessages] state: ${it.stringify()}" }
+            val channels = chatClient.repositoryFacade.selectChannels(it.messages.map { message -> message.cid })
+            channelsState = channelsState.copy(
+                searchQuery = _searchQuery.value,
+                isLoading = it.isLoading,
+                isLoadingMore = it.isLoadingMore,
+                endOfChannels = !it.canLoadMore,
+                channelItems = it.messages.map {
+                    val channel = channels.firstOrNull { channel -> channel.cid == it.cid }
+                    ItemState.SearchResultItemState(
+                        message = it,
+                        channel = channel,
+                    )
+                },
+            )
+        }
+    }.onFailure {
+        when (it is CancellationException) {
+            true -> logger.v { "[observeSearchMessages] cancelled('$query')" }
+            else -> logger.e { "[observeSearchMessages] failed: $it" }
+        }
+    }
+
+    private fun handleSearchQuery(query: String) {
+        logger.d { "[handleSearchQuery] query: '$query'" }
+        searchDebouncer.submitSuspendable {
+            searchMessagesForQuery(query)
+        }
+    }
+
+    private suspend fun searchMessagesForQuery(query: String) {
+        logger.d { "[searchMessagesForQuery] query: '$query'" }
+        val channelFilter = messageSearchChannelFilter() ?: run {
+            logger.v { "[searchMessagesForQuery] rejected (no channel filter)" }
+            return
+        }
+        val newState = SearchMessageState(query = query, isLoading = true)
+        searchMessageState.value = newState
+        searchMessageState.value = searchMessages(src = "new", newState, channelFilter).also {
+            logger.v { "[searchMessagesForQuery] completed('$query'): ${it.messages.size}" }
+        }
+    }
+
+    private suspend fun loadMoreQueryMessages() {
+        logger.d { "[loadMoreQueryMessages] no args" }
+        val channelFilter = messageSearchChannelFilter() ?: run {
+            logger.v { "[loadMoreQueryMessages] rejected (no channel filter)" }
+            return
+        }
+        val currentState = searchMessageState.value ?: run {
+            logger.v { "[loadMoreQueryMessages] rejected (no current state)" }
+            return
+        }
+        if (currentState.isLoading) {
+            logger.v { "[loadMoreQueryMessages] rejected (already loading)" }
+            return
+        }
+        if (currentState.isLoadingMore) {
+            logger.v { "[loadMoreQueryMessages] rejected (already loading more)" }
+            return
+        }
+        if (!currentState.canLoadMore) {
+            logger.v { "[loadMoreQueryMessages] rejected (end of messages)" }
+            return
+        }
+        val query = currentState.query
+        logger.v { "[loadMoreQueryMessages] query: 'query'" }
+        val newState = currentState.copy(isLoadingMore = true)
+        searchMessageState.value = newState
+        searchMessageState.value = searchMessages(src = "more", newState, channelFilter).also {
+            logger.v { "[loadMoreQueryMessages] completed('$query'): ${it.messages.size}" }
+        }
+    }
+
+    /**
+     * Searches for messages based on the current query.
+     */
+    private suspend fun searchMessages(
+        src: String,
+        currentState: SearchMessageState,
+        channelFilter: FilterObject,
+    ): SearchMessageState {
+        val limit = channelLimit
+        val next = currentState.next
+        logger.v {
+            "[searchMessages] #$src; query: '${currentState.query}', sort: $messageSearchSort, next: $next, " +
+                "limit: $limit"
+        }
+        val result = chatClient.searchMessages(
+            channelFilter = channelFilter,
+            messageFilter = Filters.autocomplete("text", currentState.query),
+            sort = messageSearchSort,
+            limit = limit,
+            next = next,
+        ).await()
+        return when (result) {
+            is io.getstream.result.Result.Success -> {
+                logger.v { "[searchMessages] #$src; completed(messages.size: ${result.value.messages.size})" }
+                currentState.copy(
+                    messages = currentState.messages + result.value.messages,
+                    isLoading = false,
+                    isLoadingMore = false,
+                    canLoadMore = !result.value.next.isNullOrEmpty(),
+                    next = result.value.next,
+                )
+            }
+
+            is io.getstream.result.Result.Failure -> {
+                logger.e { "[searchMessages] #$src; failed: ${result.value}" }
+                currentState.copy(
+                    isLoading = false,
+                    isLoadingMore = false,
+                )
+            }
+        }
+    }
+
+    @Suppress("LongMethod")
+    private fun observeQueryChannels(searchQuery: String) = runCatching {
+        queryChannelDebouncer.submitSuspendable {
+            val queryChannelsRequest = buildQueryChannelsRequest(searchQuery) ?: run {
+                logger.v { "[observeQueryChannels] rejected (filter not yet initialized)" }
+                return@submitSuspendable
+            }
+            logger.d { "[observeQueryChannels] request: $queryChannelsRequest" }
+            queryChannelsState = chatClient.queryChannelsAsState(
+                request = queryChannelsRequest,
+                chatEventHandlerFactory = chatEventHandlerFactory,
+                coroutineScope = chListScope,
+            )
+            queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
+                combine(
+                    queryChannelsState.channelsStateData,
+                    channelMutes,
+                    typingChannels,
+                    channelDraftMessages,
+                    globalMuted,
+                ) { state, channelMutes, typingChannels, channelDraftMessages, userMutes ->
+                    when (state) {
+                        ChannelsStateData.NoQueryActive,
+                        ChannelsStateData.Loading,
+                        -> {
+                            logger.d { "[observeQueryChannels] state: Loading" }
+                            channelsState.copy(isLoading = true, searchQuery = _searchQuery.value)
+                        }
+
+                        ChannelsStateData.OfflineNoResults -> {
+                            logger.v { "[observeQueryChannels] state: OfflineNoResults(channels are empty)" }
+                            channelsState.copy(
+                                isLoading = false,
+                                channelItems = emptyList(),
+                                searchQuery = _searchQuery.value,
+                            )
+                        }
+
+                        is ChannelsStateData.Result -> {
+                            logger.v { "[observeQueryChannels] state: Result(channels.size: ${state.channels.size})" }
+                            channelsState.copy(
+                                isLoading = false,
+                                channelItems = createChannelItems(
+                                    channels = state.channels,
+                                    channelMutes = channelMutes,
+                                    userMutes = userMutes,
+                                    typingEvents = typingChannels,
+                                    draftMessages = channelDraftMessages.takeIf { draftMessagesEnabled } ?: emptyMap(),
+                                ),
+                                isLoadingMore = false,
+                                endOfChannels = queryChannelsState.endOfChannels.value,
+                                searchQuery = _searchQuery.value,
+                            )
+                        }
+                    }
+                }.collectLatest { newState -> channelsState = newState }
+            }
+        }
+    }.onFailure {
+        when (it is CancellationException) {
+            true -> logger.v { "[observeQueryChannels] cancelled" }
+            else -> logger.e { "[observeQueryChannels] failed: $it" }
+        }
+    }
+
+    /**
+     * Builds a [QueryChannelsRequest] for the current [mode] and [searchQuery]. Returns `null` in Standard
+     * mode when the filter has not yet been resolved (e.g. before [buildDefaultFilter] completes); in that
+     * case the caller should skip the request — the next emission of [filterFlow] will re-trigger.
+     *
+     * In Predefined mode with an active channel search, falls back to a Standard request whose filter is
+     * just [searchChannelFilter] (the predefined filter is server-owned and cannot be combined locally).
+     */
+    private fun buildQueryChannelsRequest(searchQuery: String): QueryChannelsRequest? = when (val mode = mode) {
+        is QueryMode.Standard -> {
+            val baseFilter = filterFlow.value ?: return null
+            QueryChannelsRequest(
+                filter = createQueryChannelsFilter(baseFilter, searchQuery),
+                querySort = querySortFlow.value,
+                limit = channelLimit,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
+            )
+        }
+        is QueryMode.Predefined -> if (searchQuery.length >= MIN_CHANNEL_SEARCH_QUERY_LENGTH) {
+            QueryChannelsRequest(
+                filter = optimizedChannelSearchFilter(searchQuery),
+                limit = channelLimit,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
+            )
+        } else {
+            QueryChannelsRequest(
+                predefinedFilter = mode.name,
+                filterValues = mode.filterValues,
+                sortValues = mode.sortValues,
+                limit = channelLimit,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
+            )
+        }
+    }
+
+    /**
+     * Creates a filter that is used to query channels.
+     *
+     * If the [searchQuery] is shorter than 3 characters, then returns the original [filter] provided by the user.
+     * Otherwise, returns a wrapped [filter] that also checks that the channel name match the
+     * [searchQuery].
+     *
+     * @param filter The filter that was passed by the user.
+     * @param searchQuery The search query used to filter the channels.
+     *
+     * @return The filter that will be used to query channels.
+     */
+    @Suppress("SpreadOperator")
+    private fun createQueryChannelsFilter(filter: FilterObject, searchQuery: String): FilterObject {
+        return if (searchQuery.length >= MIN_CHANNEL_SEARCH_QUERY_LENGTH) {
+            if (filter is AndFilterObject) {
+                // If the base filter is `AND`, extend it with the search query filter.
+                val filters = filter.filterObjects
+                val extendedFilters = filters + channelSearchFilter(searchQuery)
+                Filters.and(*extendedFilters.toTypedArray())
+            } else {
+                // If the base filter is not `AND`, wrap it in an `AND` with the search query filter.
+                Filters.and(filter, channelSearchFilter(searchQuery))
+            }
+        } else {
+            filter
+        }
+    }
+
+    private suspend fun loadMoreQueryChannels() {
+        logger.d { "[loadMoreQueryChannels] no args" }
+        val currentQuery = queryChannelsState.value?.nextPageRequest?.value
+        if (currentQuery == null) {
+            logger.v { "[loadMoreQueryChannels] rejected (no current query)" }
+            return
+        }
+        if (channelsState.endOfChannels) {
+            logger.v { "[loadMoreQueryChannels] rejected (end of channels)" }
+            return
+        }
+        if (channelsState.isLoadingMore) {
+            logger.v { "[loadMoreQueryChannels] rejected (already loading more)" }
+            return
+        }
+        val nextQuery = when (mode) {
+            is QueryMode.Standard -> {
+                val currentFilter = filterFlow.value ?: run {
+                    logger.v { "[loadMoreQueryChannels] rejected (no current filter)" }
+                    return
+                }
+                currentQuery.copy(
+                    filter = createQueryChannelsFilter(currentFilter, _searchQuery.value.query),
+                    querySort = querySortFlow.value,
+                )
+            }
+            is QueryMode.Predefined -> currentQuery
+        }
+        if (lastNextQuery == nextQuery) {
+            logger.v { "[loadMoreQueryChannels] rejected (same query)" }
+            return
+        }
+        lastNextQuery = nextQuery
+        logger.v { "[loadMoreQueryChannels] offset: ${nextQuery.offset}, limit: ${nextQuery.limit}" }
+        channelsState = channelsState.copy(isLoadingMore = true)
+        val result = chatClient.queryChannels(nextQuery).await()
+        if (result.isSuccess) {
+            logger.v { "[loadMoreQueryChannels] completed; channels.size: ${result.getOrNull()?.size}" }
+        } else {
+            logger.e { "[loadMoreQueryChannels] failed: ${result.errorOrNull()}" }
+        }
+        channelsState = channelsState.copy(isLoadingMore = false)
     }
 
     /**
@@ -838,6 +954,41 @@ public class ChannelListViewModel(
             members.any { it.user.id != currentUser?.id && it.user.id in mutedUserIds }
         }
 
+    /**
+     * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
+     */
+    private fun defaultChannelsFilter(): Flow<FilterObject> {
+        return chatClient.clientState.user.map(Filters::defaultChannelListFilter).filterNotNull()
+    }
+
+    @Deprecated(
+        message = "Avoid using this search query as `member.user.name` is an expensive operation. " +
+            "In the future, we should migrate to use optimizedChannelSearchFilter.",
+        replaceWith = ReplaceWith("optimizedChannelSearchFilter(searchQuery)"),
+    )
+    private fun channelSearchFilter(searchQuery: String): FilterObject {
+        return Filters.or(
+            Filters.autocomplete("member.user.name", searchQuery),
+            Filters.autocomplete("name", searchQuery),
+        )
+    }
+
+    private fun optimizedChannelSearchFilter(text: String) =
+        Filters.and(
+            Filters.autocomplete("name", text),
+            Filters.`in`("members", user.value?.id.orEmpty()),
+        )
+
+    private fun messageSearchChannelFilter() = when (mode) {
+        // Standard mode: Use the initial filters (backwards compatible)
+        is QueryMode.Standard -> filterFlow.value ?: Filters.defaultChannelListFilter(user.value)
+        // Predefined mode: Use simple membership filter (aligned with other platforms)
+        is QueryMode.Predefined -> when (val userId = user.value?.id) {
+            null -> null
+            else -> Filters.`in`("members", listOf(userId))
+        }
+    }
+
     internal companion object {
         /**
          * Default value of number of channels to return when querying channels.
@@ -847,12 +998,25 @@ public class ChannelListViewModel(
         /**
          * Debounce time for search queries.
          */
-        private const val SEARCH_DEBOUNCE_MS = 300L
+        internal const val SEARCH_DEBOUNCE_MS = 300L
 
         /**
          * Minimum length of the search query to start searching for channels.
          */
         private const val MIN_CHANNEL_SEARCH_QUERY_LENGTH = 3
+    }
+
+    internal sealed interface QueryMode {
+        data class Standard(
+            val initialFilter: FilterObject?,
+            val initialSort: QuerySorter<Channel>,
+        ) : QueryMode
+
+        data class Predefined(
+            val name: String,
+            val filterValues: Map<String, Any>?,
+            val sortValues: Map<String, Any>?,
+        ) : QueryMode
     }
 
     private data class SearchMessageState(

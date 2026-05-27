@@ -21,6 +21,8 @@ import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.event.ChatEventHandler
 import io.getstream.chat.android.client.api.event.ChatEventHandlerFactory
+import io.getstream.chat.android.client.api.state.globalStateFlow
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel.QueryMode
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
@@ -32,8 +34,6 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  * It currently provides the [ChannelListViewModel] using those dependencies.
  *
  * @param chatClient The client used to fetch data.
- * @param querySort The sorting order for channels.
- * @param filters The base filters used to filter out channels.
  * @param channelLimit How many channels we fetch per page.
  * @param memberLimit How many members are fetched for each channel item when loading channels.
  * When `null`, the server-side default is used.
@@ -43,17 +43,81 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  * @param draftMessagesEnabled If the draft message feature is enabled.
  * @param messageSearchSort Optional sorting for message search results. When `null`, the server-side default is used.
  */
-public class ChannelListViewModelFactory(
-    private val chatClient: ChatClient = ChatClient.instance(),
-    private val querySort: QuerySorter<Channel> = QuerySortByField.descByName("last_updated"),
-    private val filters: FilterObject? = null,
-    private val channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
-    private val memberLimit: Int? = null,
-    private val messageLimit: Int? = null,
-    private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
-    private val draftMessagesEnabled: Boolean = true,
-    private val messageSearchSort: QuerySorter<Message>? = null,
+@Suppress("LongParameterList")
+public class ChannelListViewModelFactory internal constructor(
+    private val chatClient: ChatClient,
+    private val mode: QueryMode,
+    private val channelLimit: Int,
+    private val memberLimit: Int?,
+    private val messageLimit: Int?,
+    private val chatEventHandlerFactory: ChatEventHandlerFactory,
+    private val draftMessagesEnabled: Boolean,
+    private val messageSearchSort: QuerySorter<Message>?,
 ) : ViewModelProvider.Factory {
+
+    /**
+     * Builds a factory for a [ChannelListViewModel] that queries channels by an explicit filter and sort.
+     *
+     * @param querySort The sorting order for channels.
+     * @param filters The base filters used to filter out channels. When `null`, a default filter scoped
+     * to messaging channels the current user is a member of is used.
+     */
+    @JvmOverloads
+    public constructor(
+        chatClient: ChatClient = ChatClient.instance(),
+        querySort: QuerySorter<Channel> = QuerySortByField.descByName("last_updated"),
+        filters: FilterObject? = null,
+        channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
+        memberLimit: Int? = null,
+        messageLimit: Int? = null,
+        chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
+        draftMessagesEnabled: Boolean = true,
+        messageSearchSort: QuerySorter<Message>? = null,
+    ) : this(
+        chatClient = chatClient,
+        mode = QueryMode.Standard(initialFilter = filters, initialSort = querySort),
+        channelLimit = channelLimit,
+        memberLimit = memberLimit,
+        messageLimit = messageLimit,
+        chatEventHandlerFactory = chatEventHandlerFactory,
+        draftMessagesEnabled = draftMessagesEnabled,
+        messageSearchSort = messageSearchSort,
+    )
+
+    /**
+     * Builds a factory for a [ChannelListViewModel] that queries channels using a predefined filter
+     * resolved by the server.
+     *
+     * @param predefinedFilterName The name of the predefined filter registered on the backend.
+     * @param filterValues Optional values interpolated into the predefined filter template.
+     * @param sortValues Optional values interpolated into the predefined sort template.
+     */
+    @JvmOverloads
+    public constructor(
+        chatClient: ChatClient = ChatClient.instance(),
+        predefinedFilterName: String,
+        filterValues: Map<String, Any>? = null,
+        sortValues: Map<String, Any>? = null,
+        channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
+        memberLimit: Int? = null,
+        messageLimit: Int? = null,
+        chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
+        draftMessagesEnabled: Boolean = true,
+        messageSearchSort: QuerySorter<Message>? = null,
+    ) : this(
+        chatClient = chatClient,
+        mode = QueryMode.Predefined(
+            name = predefinedFilterName,
+            filterValues = filterValues,
+            sortValues = sortValues,
+        ),
+        channelLimit = channelLimit,
+        memberLimit = memberLimit,
+        messageLimit = messageLimit,
+        chatEventHandlerFactory = chatEventHandlerFactory,
+        draftMessagesEnabled = draftMessagesEnabled,
+        messageSearchSort = messageSearchSort,
+    )
 
     /**
      * Create a new instance of [ChannelListViewModel] class.
@@ -65,14 +129,15 @@ public class ChannelListViewModelFactory(
         @Suppress("UNCHECKED_CAST")
         return ChannelListViewModel(
             chatClient = chatClient,
-            initialSort = querySort,
-            initialFilters = filters,
+            mode = mode,
             channelLimit = channelLimit,
-            messageLimit = messageLimit,
             memberLimit = memberLimit,
+            messageLimit = messageLimit,
             chatEventHandlerFactory = chatEventHandlerFactory,
+            searchDebounceMs = ChannelListViewModel.SEARCH_DEBOUNCE_MS,
             draftMessagesEnabled = draftMessagesEnabled,
             messageSearchSort = messageSearchSort,
+            globalState = chatClient.globalStateFlow,
         ) as T
     }
 }

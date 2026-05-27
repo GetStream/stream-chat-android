@@ -29,7 +29,9 @@ import io.getstream.chat.android.client.internal.state.plugin.logic.internal.Log
 import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
@@ -98,6 +100,15 @@ internal class QueryChannelsStateLogic(
     }
 
     /**
+     * Forwards the resolved [filter] and [sort] to the mutable state. Relevant for predefined
+     * queries (server-resolved values or DB rehydration); a no-op for standard queries since the
+     * values already match the constructor arguments.
+     */
+    internal fun applyResolvedSpec(filter: FilterObject, sort: QuerySorter<Channel>) {
+        mutableState.applyResolvedSpec(filter, sort)
+    }
+
+    /**
      * Set the end of channels.
      *
      * @parami isEnd Boolean
@@ -142,7 +153,7 @@ internal class QueryChannelsStateLogic(
      * @param channels List<Channel>.
      */
     internal suspend fun addChannelsState(channels: List<Channel>) {
-        mutableState.queryChannelsSpec.cids += channels.map { it.cid }
+        mutableState.setCids(mutableState.queryChannelsSpec.cids + channels.map { it.cid })
         val existingChannels = mutableState.rawChannels ?: emptyMap()
         mutableState.setChannels(
             existingChannels +
@@ -197,7 +208,7 @@ internal class QueryChannelsStateLogic(
             logger.w { "[removeChannels] rejected (existingChannels is null)" }
             return
         }
-        mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidSet
+        mutableState.setCids(mutableState.queryChannelsSpec.cids - cidSet)
         mutableState.setChannels(existingChannels - cidSet)
     }
 

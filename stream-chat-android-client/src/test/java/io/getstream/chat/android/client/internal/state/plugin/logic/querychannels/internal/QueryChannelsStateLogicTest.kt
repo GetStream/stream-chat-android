@@ -30,7 +30,6 @@ import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.test.runTest
-import org.amshove.kluent.`should contain same`
 import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -51,11 +50,11 @@ internal class QueryChannelsStateLogicTest {
     private val id = randomString()
     private val testCid = (type to id).toCid()
 
-    private val queryChannelsSpec =
-        QueryChannelsSpec(Filters.neutral(), QuerySortByField.descByName(""))
-            .apply {
-                cids = setOf(testCid)
-            }
+    private val queryChannelsSpec = QueryChannelsSpec(
+        filter = Filters.neutral(),
+        querySort = QuerySortByField.descByName(""),
+        cids = setOf(testCid),
+    )
 
     private val mutableState: QueryChannelsMutableState = mock {
         on(it.rawChannels) doReturn emptyMap()
@@ -132,7 +131,7 @@ internal class QueryChannelsStateLogicTest {
 
         queryChannelsStateLogic.addChannelsState(channels)
 
-        queryChannelsSpec.cids `should contain same` setOf(testCid, channel1.cid, channel2.cid)
+        verify(mutableState).setCids(setOf(testCid, channel1.cid, channel2.cid))
         verify(mutableState).setChannels(channels.associateBy { it.cid })
     }
 

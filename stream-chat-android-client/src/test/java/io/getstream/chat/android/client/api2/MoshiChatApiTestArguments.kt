@@ -42,6 +42,7 @@ import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
+import io.getstream.chat.android.client.api2.model.response.ParsedPredefinedFilterResponse
 import io.getstream.chat.android.client.api2.model.response.PollOptionResponse
 import io.getstream.chat.android.client.api2.model.response.PollResponse
 import io.getstream.chat.android.client.api2.model.response.PollVoteResponse
@@ -431,6 +432,32 @@ internal object MoshiChatApiTestArguments {
                             hide_messages_before = randomDateOrNull(),
                             draft = randomDownstreamDraftDto(),
                         ),
+                    ),
+                ),
+            ).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(RetroError<QueryChannelsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    @JvmStatic
+    fun queryChannelsWithPredefinedFilterInput() = listOf(
+        Arguments.of(
+            RetroSuccess(
+                QueryChannelsResponse(
+                    channels = listOf(
+                        ChannelResponse(
+                            channel = Mother.randomDownstreamChannelDto(),
+                            hidden = randomBoolean(),
+                            membership = Mother.randomDownstreamMemberDto(),
+                            hide_messages_before = randomDateOrNull(),
+                            draft = randomDownstreamDraftDto(),
+                        ),
+                    ),
+                    predefined_filter = ParsedPredefinedFilterResponse(
+                        name = "android_sample_filter",
+                        filter = mapOf("type" to "messaging"),
+                        sort = listOf(mapOf("field" to "last_message_at", "direction" to -1)),
                     ),
                 ),
             ).toRetrofitCall(),
