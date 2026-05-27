@@ -3450,16 +3450,6 @@ public final class io/getstream/chat/android/ui/feature/messages/list/internal/p
 	public final fun newInstance (Lio/getstream/chat/android/models/Poll;)Lio/getstream/chat/android/ui/feature/messages/list/internal/poll/PollResultsDialogFragment;
 }
 
-public final class io/getstream/chat/android/ui/feature/messages/list/internal/poll/SuggestPollOptionDialogFragment : androidx/appcompat/app/AppCompatDialogFragment {
-	public static final field Companion Lio/getstream/chat/android/ui/feature/messages/list/internal/poll/SuggestPollOptionDialogFragment$Companion;
-	public fun <init> ()V
-	public fun onCreateDialog (Landroid/os/Bundle;)Landroid/app/Dialog;
-}
-
-public final class io/getstream/chat/android/ui/feature/messages/list/internal/poll/SuggestPollOptionDialogFragment$Companion {
-	public final fun newInstance (Ljava/lang/String;)Lio/getstream/chat/android/ui/feature/messages/list/internal/poll/SuggestPollOptionDialogFragment;
-}
-
 public class io/getstream/chat/android/ui/feature/messages/list/options/message/DefaultMessageOptionItemsFactory : io/getstream/chat/android/ui/feature/messages/list/options/message/MessageOptionItemsFactory {
 	public fun <init> (Landroid/content/Context;)V
 	public fun createMessageOptionItems (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;ZLjava/util/Set;Lio/getstream/chat/android/ui/feature/messages/list/MessageListViewStyle;)Ljava/util/List;

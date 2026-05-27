@@ -36,7 +36,7 @@ import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
  * Delivers the entered option via the fragment-result API under [REQUEST_KEY], with
  * the poll id in [BUNDLE_KEY_POLL_ID] and the option text in [BUNDLE_KEY_OPTION_TEXT].
  */
-public class SuggestPollOptionDialogFragment : AppCompatDialogFragment() {
+internal class SuggestPollOptionDialogFragment : AppCompatDialogFragment() {
 
     private val pollId: String
         get() = requireArguments().getString(ARG_POLL_ID)
@@ -80,7 +80,7 @@ public class SuggestPollOptionDialogFragment : AppCompatDialogFragment() {
         return dialog
     }
 
-    public companion object {
+    companion object {
         internal const val TAG: String = "SuggestPollOptionDialogFragment"
         internal const val REQUEST_KEY: String = "stream_ui_suggest_poll_option_request"
         internal const val BUNDLE_KEY_POLL_ID: String = "stream_ui_suggest_poll_option_poll_id"
@@ -88,7 +88,7 @@ public class SuggestPollOptionDialogFragment : AppCompatDialogFragment() {
 
         private const val ARG_POLL_ID: String = "arg_poll_id"
 
-        public fun newInstance(pollId: String): SuggestPollOptionDialogFragment =
+        fun newInstance(pollId: String): SuggestPollOptionDialogFragment =
             SuggestPollOptionDialogFragment().apply {
                 arguments = bundleOf(ARG_POLL_ID to pollId)
             }
