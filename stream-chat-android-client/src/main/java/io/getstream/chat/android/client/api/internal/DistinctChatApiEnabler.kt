@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
@@ -77,7 +78,7 @@ internal class DistinctChatApiEnabler(
         return getApi().getPinnedMessages(channelType, channelId, limit, sort, pagination)
     }
 
-    override fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>> {
+    override fun queryChannels(query: QueryChannelsRequest): Call<QueryChannelsResult> {
         return getApi().queryChannels(query)
     }
 

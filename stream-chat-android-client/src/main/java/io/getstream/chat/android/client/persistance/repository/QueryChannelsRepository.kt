@@ -16,11 +16,9 @@
 
 package io.getstream.chat.android.client.persistance.repository
 
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.FilterObject
-import io.getstream.chat.android.models.querysort.QuerySorter
 
 /**
  * Repository for queries of channels.
@@ -36,12 +34,11 @@ public interface QueryChannelsRepository {
     public suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec)
 
     /**
-     * Selects by a filter and query sort.
+     * Selects a query spec by its identifier.
      *
-     * @param filter [FilterObject]
-     * @param querySort [QuerySorter]
+     * @param identifier The query spec identifier.
      */
-    public suspend fun selectBy(filter: FilterObject, querySort: QuerySorter<Channel>): QueryChannelsSpec?
+    public suspend fun selectBy(identifier: QueryChannelsIdentifier): QueryChannelsSpec?
 
     /**
      * Clear QueryChannels of this repository.
