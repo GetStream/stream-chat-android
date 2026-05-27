@@ -31,11 +31,13 @@ import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomInt
+import io.getstream.chat.android.randomPollOption
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomVote
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
@@ -216,6 +218,30 @@ internal class MessageListViewModelTest {
     }
 
     @Test
+    fun `Given a poll When suggesting an option Should create poll option`() = runTest {
+        val messages = listOf(message1, message2)
+        val chatClient = MockChatClientBuilder().build()
+        val pollId = randomString()
+        val option = randomString()
+
+        val viewModel = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState(messageState = MessagesState.Result(messages), messages = messages)
+            .givenCreatePollOption()
+            .get()
+
+        viewModel.onEvent(
+            MessageListViewModel.Event.PollOptionSuggested(
+                pollId = pollId,
+                option = option,
+            ),
+        )
+
+        verify(chatClient).createPollOption(pollId, PollOption(text = option))
+    }
+
+    @Test
     fun `Given no previous own reactions on a message When leaving a reaction Should leave reaction`() = runTest {
         val messages = listOf(message1, message2)
         val messageState = MessagesState.Result(messages)
@@ -358,6 +384,10 @@ internal class MessageListViewModelTest {
 
         fun givenCastPollAnswer() = apply {
             whenever(chatClient.castPollAnswer(any(), any(), any())) doReturn randomVote().asCall()
+        }
+
+        fun givenCreatePollOption() = apply {
+            whenever(chatClient.createPollOption(any(), any())) doReturn randomPollOption().asCall()
         }
 
         fun givenChannelState(
