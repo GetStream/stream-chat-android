@@ -100,7 +100,9 @@ public class UserReactionsView : FrameLayout {
             }
         }
 
-        gridLayoutManager.spanCount = userReactionItems.size.coerceAtMost(MAX_COLUMNS_COUNT)
+        gridLayoutManager.spanCount = userReactionItems.size
+            .coerceAtMost(MAX_COLUMNS_COUNT)
+            .coerceAtLeast(1)
         userReactionsAdapter.submitList(userReactionItems)
     }
 
