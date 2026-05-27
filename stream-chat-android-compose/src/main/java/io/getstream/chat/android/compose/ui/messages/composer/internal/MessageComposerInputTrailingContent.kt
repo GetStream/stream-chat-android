@@ -29,6 +29,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
@@ -50,6 +52,8 @@ internal fun MessageComposerInputTrailingContent(
     state: MessageComposerState,
     recordingActions: AudioRecordingActions,
     onSendClick: (String, List<Attachment>) -> Unit,
+    sendActionLabel: String? = null,
+    saveActionLabel: String? = null,
 ) {
     val inputText = state.inputValue
     val coolDownTime = state.coolDownTime
@@ -86,12 +90,14 @@ internal fun MessageComposerInputTrailingContent(
                 params = MessageComposerSaveButtonParams(
                     enabled = button.enabled,
                     onClick = { onSendClick(inputText, attachments) },
+                    onClickLabel = saveActionLabel,
                 ),
             )
 
             is ActionButton.Send -> ChatTheme.componentFactory.MessageComposerSendButton(
                 params = MessageComposerSendButtonParams(
                     onClick = { onSendClick(inputText, attachments) },
+                    onClickLabel = sendActionLabel,
                 ),
             )
 
@@ -117,12 +123,20 @@ private sealed interface ActionButton {
 @Composable
 internal fun MessageComposerSendButton(
     onClick: () -> Unit,
+    onClickLabel: String? = null,
 ) {
+    val resolvedLabel = onClickLabel ?: stringResource(R.string.stream_compose_message_composer_send_action)
     FilledIconButton(
         modifier = Modifier
             .size(48.dp)
             .padding(StreamTokens.spacingXs)
-            .testTag("Stream_ComposerSendButton"),
+            .testTag("Stream_ComposerSendButton")
+            .semantics {
+                onClick(label = resolvedLabel) {
+                    onClick()
+                    true
+                }
+            },
         colors = IconButtonDefaults.filledIconButtonColors(
             containerColor = ChatTheme.colors.accentPrimary,
             contentColor = ChatTheme.colors.buttonPrimaryTextOnAccent,
@@ -140,13 +154,21 @@ internal fun MessageComposerSendButton(
 internal fun MessageComposerSaveButton(
     enabled: Boolean,
     onClick: () -> Unit,
+    onClickLabel: String? = null,
 ) {
+    val resolvedLabel = onClickLabel ?: stringResource(R.string.stream_compose_message_composer_save_action)
     FilledIconButton(
         enabled = enabled,
         modifier = Modifier
             .size(48.dp)
             .padding(StreamTokens.spacingXs)
-            .testTag("Stream_ComposerSaveButton"),
+            .testTag("Stream_ComposerSaveButton")
+            .semantics {
+                onClick(label = resolvedLabel) {
+                    onClick()
+                    true
+                }
+            },
         colors = IconButtonDefaults.filledIconButtonColors(
             containerColor = ChatTheme.colors.accentPrimary,
             contentColor = ChatTheme.colors.buttonPrimaryTextOnAccent,

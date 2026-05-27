@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.chats
+package io.getstream.chat.android.compose.ui.threads
 
 import androidx.annotation.UiThread
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -22,7 +22,6 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.test.MockedChatClientTest
-import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.randomUser
@@ -37,56 +36,28 @@ import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [33])
-internal class ChatsScreenTest : MockedChatClientTest {
+internal class ThreadsScreenTest : MockedChatClientTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
 
     @Before
     fun prepare() {
-        val user = randomUser()
-        whenever(mockChatClient.getCurrentUser()) doReturn user
-        whenever(mockClientState.user) doReturn MutableStateFlow(user)
+        whenever(mockClientState.user) doReturn MutableStateFlow(randomUser())
         whenever(mockClientState.connectionState) doReturn MutableStateFlow(ConnectionState.Connected)
     }
 
     @Test
     @UiThread
-    fun `with search mode none`() {
+    fun `with default title`() {
         composeTestRule.setContent {
             ChatTheme {
-                ChatsScreen()
+                ThreadsScreen()
             }
         }
 
-        composeTestRule.onNodeWithText("Stream Chat").assertExists()
-        composeTestRule.onNodeWithTag("Stream_ChannelListLoading").assertExists()
-    }
-
-    @Test
-    @UiThread
-    fun `with search mode messages`() {
-        composeTestRule.setContent {
-            ChatTheme {
-                ChatsScreen(searchMode = SearchMode.Messages)
-            }
-        }
-
-        composeTestRule.onNodeWithText("Search").assertExists()
-        composeTestRule.onNodeWithTag("Stream_ChannelListLoading").assertExists()
-    }
-
-    @Test
-    @UiThread
-    fun `with list content mode threads`() {
-        composeTestRule.setContent {
-            ChatTheme {
-                ChatsScreen(listContentMode = ChatListContentMode.Threads)
-            }
-        }
-
-        composeTestRule.onNodeWithTag("Stream_ThreadListLoading")
-            .assertExists()
+        composeTestRule.onNodeWithText("Threads").assertExists()
+        composeTestRule.onNodeWithTag("Stream_ThreadListLoading").assertExists()
     }
 
     @Test
@@ -94,10 +65,10 @@ internal class ChatsScreenTest : MockedChatClientTest {
     fun `with custom title`() {
         composeTestRule.setContent {
             ChatTheme {
-                ChatsScreen(title = "My Chats")
+                ThreadsScreen(title = "My Threads")
             }
         }
 
-        composeTestRule.onNodeWithText("My Chats").assertExists()
+        composeTestRule.onNodeWithText("My Threads").assertExists()
     }
 }

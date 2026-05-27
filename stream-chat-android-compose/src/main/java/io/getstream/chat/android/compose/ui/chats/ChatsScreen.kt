@@ -44,6 +44,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -106,6 +108,8 @@ import kotlin.math.abs
  * When the initial [ChannelViewModelFactory] is requested (before a channel is selected),
  * `channelId`, `messageId`, and `parentMessageId` are `null`.
  * @param title The title displayed in the list pane top bar. Default is `"Stream Chat"`.
+ * Also drives the list pane's `paneTitle` semantic, announced by TalkBack when the list pane
+ * appears or becomes active (e.g. switching between panes in the adaptive layout).
  * @param searchMode The current search mode. Default is [SearchMode.None].
  * @param listContentMode The mode for displaying the list content. Default is [ChatListContentMode.Channels].
  * @param onBackPress Callback invoked when the user presses the back button.
@@ -179,10 +183,12 @@ public fun ChatsScreen(
         onDispose { navigator.popUpTo(ThreePaneRole.List) }
     }
 
-    val listPane = remember(listContentMode) {
+    val listPane = remember(listContentMode, title) {
         movableContentOf { modifier: Modifier ->
             Scaffold(
-                modifier = modifier.safeDrawingPadding(),
+                modifier = modifier
+                    .safeDrawingPadding()
+                    .semantics { paneTitle = title },
                 containerColor = ChatTheme.colors.backgroundCoreApp,
                 topBar = { listTopBarContent() },
                 bottomBar = { listBottomBarContent() },

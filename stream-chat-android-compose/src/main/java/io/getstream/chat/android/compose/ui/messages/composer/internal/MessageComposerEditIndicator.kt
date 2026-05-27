@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -67,6 +68,7 @@ internal fun MessageComposerEditIndicator(
                 .testTag("Stream_ComposerCancelEditButton")
                 .align(Alignment.TopEnd)
                 .offset(StreamTokens.spacing2xs, -StreamTokens.spacing2xs),
+            contentDescription = stringResource(R.string.stream_compose_message_composer_cancel_editing),
             onClick = onCancelClick,
         )
     }
@@ -82,7 +84,8 @@ private fun EditIndicatorCard(body: QuotedMessageBody) {
                 shape = RoundedCornerShape(StreamTokens.radiusLg),
             )
             .padding(StreamTokens.spacingXs)
-            .height(IntrinsicSize.Min),
+            .height(IntrinsicSize.Min)
+            .semantics(mergeDescendants = true) {},
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {
         VerticalDivider(

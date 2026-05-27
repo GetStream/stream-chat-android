@@ -75,6 +75,8 @@ import io.getstream.chat.android.ui.common.state.messages.composer.RecordingStat
  * @param onLinkPreviewClick Handler when a link preview is clicked.
  * @param onCancelLinkPreviewClick Handler when the cancel link preview button is clicked.
  * @param onSendClick Handler when the send button is clicked.
+ * @param sendActionLabel Semantic / accessibility label for [onSendClick] when sending a new message.
+ * @param saveActionLabel Semantic / accessibility label for [onSendClick] when saving an edit.
  * @param onAlsoSendToChannelChange Handler when the "Also send to channel" checkbox is changed.
  * @param recordingActions The [AudioRecordingActions] to be applied to the input.
  * @param onActiveCommandDismiss Called when the user taps the dismiss button on the command chip.
@@ -90,6 +92,8 @@ public fun MessageInput(
     onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onCancelLinkPreviewClick: (() -> Unit)? = null,
     onSendClick: (String, List<Attachment>) -> Unit = { _, _ -> },
+    sendActionLabel: String? = null,
+    saveActionLabel: String? = null,
     onAlsoSendToChannelChange: (Boolean) -> Unit = {},
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
     onActiveCommandDismiss: () -> Unit = {},
@@ -166,6 +170,8 @@ public fun MessageInput(
                     state = messageComposerState,
                     recordingActions = recordingActions,
                     onSendClick = onSendClick,
+                    sendActionLabel = sendActionLabel,
+                    saveActionLabel = saveActionLabel,
                 ),
             )
         }
