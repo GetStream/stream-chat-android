@@ -280,12 +280,12 @@ internal fun DefaultChannelHeaderTrailingContent(
     onClick: ((Channel) -> Unit)?,
     onClickLabel: String? = null,
 ) {
-    val avatarLabel = ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser)
     ChatTheme.componentFactory.ChannelAvatar(
         params = ChannelAvatarParams(
             modifier = Modifier
                 .size(40.dp)
                 .ifNotNull(onClick) { callback ->
+                    val avatarLabel = ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser)
                     clickable(
                         bounded = false,
                         onClickLabel = onClickLabel,
