@@ -26,7 +26,7 @@ import io.getstream.chat.android.client.extensions.durationInMs
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.audio.spokenDuration
+import io.getstream.chat.android.compose.ui.components.audio.SpokenDurationFormatter
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.compose.ui.util.getMessageTextResId
@@ -48,7 +48,7 @@ internal class QuotedMessageBodyBuilder(
     private val autoTranslationEnabled: Boolean,
     private val durationFormatter: DurationFormatter,
     private val streamCdnImageResizing: StreamCdnImageResizing,
-    private val locale: Locale,
+    private val spokenDurationFormatter: SpokenDurationFormatter,
 ) {
     fun build(message: Message, currentUser: User?): QuotedMessageBody {
         val messageText = when {
@@ -185,7 +185,7 @@ internal class QuotedMessageBodyBuilder(
     }
 
     private fun spokenTextForAudioRecording(durationMs: Int): String {
-        val duration = spokenDuration(durationMs, locale, durationFormatter)
+        val duration = spokenDurationFormatter.format(durationMs)
         return resources.getString(R.string.stream_compose_quoted_message_audio_recording, duration)
     }
 
@@ -271,14 +271,23 @@ internal fun rememberBodyBuilder(): QuotedMessageBodyBuilder {
     val durationFormatter = ChatTheme.durationFormatter
     val streamCdnImageResizing: StreamCdnImageResizing = ChatTheme.streamCdnImageResizing
     val locale = ConfigurationCompat.getLocales(LocalConfiguration.current)[0] ?: Locale.getDefault()
+    val spokenDurationFormatter = remember(locale, durationFormatter) {
+        SpokenDurationFormatter(locale, durationFormatter)
+    }
 
-    return remember(resources, autoTranslationEnabled, durationFormatter, streamCdnImageResizing, locale) {
+    return remember(
+        resources,
+        autoTranslationEnabled,
+        durationFormatter,
+        streamCdnImageResizing,
+        spokenDurationFormatter,
+    ) {
         QuotedMessageBodyBuilder(
             resources = resources,
             autoTranslationEnabled = autoTranslationEnabled,
             durationFormatter = durationFormatter,
             streamCdnImageResizing = streamCdnImageResizing,
-            locale = locale,
+            spokenDurationFormatter = spokenDurationFormatter,
         )
     }
 }

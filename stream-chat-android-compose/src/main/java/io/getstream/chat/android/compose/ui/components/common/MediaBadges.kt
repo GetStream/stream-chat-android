@@ -35,7 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.audio.spokenDuration
+import io.getstream.chat.android.compose.ui.components.audio.rememberSpokenDurationFormatter
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import java.util.Locale
@@ -95,9 +95,12 @@ private fun MediaBadge(
             contentDescription = null,
             tint = ChatTheme.colors.textOnInverse,
         )
-        val durationDescription = spokenDuration(durationInSeconds.seconds.inWholeMilliseconds.toInt())
+        val durationDescription = rememberSpokenDurationFormatter()
+            ?.format(durationInSeconds.seconds.inWholeMilliseconds.toInt())
         Text(
-            modifier = Modifier.semantics { contentDescription = durationDescription },
+            modifier = Modifier.semantics {
+                if (durationDescription != null) contentDescription = durationDescription
+            },
             text = if (compact) {
                 durationInSeconds.toCompactDuration()
             } else {

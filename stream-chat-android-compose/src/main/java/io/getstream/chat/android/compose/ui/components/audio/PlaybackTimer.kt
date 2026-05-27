@@ -42,9 +42,11 @@ internal fun PlaybackTimerText(
     val playbackInMs = (progress * totalDurationInMs).toInt()
     val timeToShow = if (countdown) totalDurationInMs - playbackInMs else playbackInMs
     val playbackText = ChatTheme.durationFormatter.format(timeToShow)
-    val spokenDuration = spokenDuration(timeToShow)
+    val spokenDuration = rememberSpokenDurationFormatter()?.format(timeToShow)
     Text(
-        modifier = Modifier.semantics { contentDescription = spokenDuration },
+        modifier = Modifier.semantics {
+            if (spokenDuration != null) contentDescription = spokenDuration
+        },
         text = playbackText,
         style = ChatTheme.typography.metadataEmphasis.copy(color),
     )

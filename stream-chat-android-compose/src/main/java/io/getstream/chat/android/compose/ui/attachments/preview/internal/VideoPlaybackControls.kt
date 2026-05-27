@@ -65,7 +65,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.audio.spokenDuration
+import io.getstream.chat.android.compose.ui.components.audio.rememberSpokenDurationFormatter
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
@@ -118,9 +118,11 @@ internal fun VideoPlaybackControls(
             )
         }
 
-        val durationDescription = spokenDuration(state.currentPosition.toInt())
+        val durationDescription = rememberSpokenDurationFormatter()?.format(state.currentPosition.toInt())
         Text(
-            modifier = Modifier.semantics { contentDescription = durationDescription },
+            modifier = Modifier.semantics {
+                if (durationDescription != null) contentDescription = durationDescription
+            },
             text = ChatTheme.durationFormatter.format(state.currentPosition.toInt()),
             style = ChatTheme.typography.captionDefault,
             color = if (state.isPlaying) ChatTheme.colors.accentPrimary else ChatTheme.colors.textPrimary,

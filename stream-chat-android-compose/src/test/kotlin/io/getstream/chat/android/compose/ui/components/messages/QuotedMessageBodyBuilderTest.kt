@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.components.messages
 import android.content.res.Resources
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.attachments.files.FileIconData
+import io.getstream.chat.android.compose.ui.components.audio.SpokenDurationFormatter
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
@@ -54,12 +55,13 @@ internal class QuotedMessageBodyBuilderTest {
         expected: QuotedMessageBody,
     ) {
         val resources = mockResources()
+        val durationFormatter = mockDurationFormatter()
         val builder = QuotedMessageBodyBuilder(
             resources = resources,
             autoTranslationEnabled = autoTranslationEnabled,
-            durationFormatter = mockDurationFormatter(),
+            durationFormatter = durationFormatter,
             streamCdnImageResizing = defaultStreamCdnImageResizing(),
-            locale = Locale.US,
+            spokenDurationFormatter = SpokenDurationFormatter(Locale.US, durationFormatter),
         )
 
         builder.build(message, currentUser) `should be equal to` expected
