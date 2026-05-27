@@ -43,6 +43,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.client.extensions.isMutedFor
+import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
@@ -51,13 +53,17 @@ import io.getstream.chat.android.compose.ui.theme.ChannelMenuCenterContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelMenuHeaderContentParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.dmCounterpartId
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelMute
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
+import java.util.Date
 
 /**
  * Shows special UI when an item is selected.
@@ -72,8 +78,6 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
  * @param modifier Modifier for styling.
  * @param shape The shape of the component.
  * @param overlayColor The color applied to the overlay.
- * @param isMuted Whether the default header renders the muted icon next to the channel name.
- * @param isPinned Whether the default header renders the pinned icon next to the channel name.
  * @param headerContent The content shown at the top of the dialog.
  * @param centerContent The content shown at the center of the dialog.
  */
@@ -87,16 +91,12 @@ public fun SelectedChannelMenu(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
     overlayColor: Color = ChatTheme.colors.backgroundCoreScrim,
-    isMuted: Boolean = false,
-    isPinned: Boolean = false,
     headerContent: @Composable ColumnScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMenuHeaderContent(
                 params = ChannelMenuHeaderContentParams(
                     selectedChannel = selectedChannel,
                     currentUser = currentUser,
-                    isMuted = isMuted,
-                    isPinned = isPinned,
                 ),
             )
         }
@@ -125,18 +125,19 @@ public fun SelectedChannelMenu(
 /**
  * Represents the default content shown at the top of [SelectedChannelMenu] dialog.
  *
+ * Renders inline muted and pinned icons next to the channel name based on the channel's pin state
+ * and the current user's mute settings. When [currentUser] is `null`, no state icons are rendered.
+ *
  * @param selectedChannel The channel the user selected.
  * @param currentUser The currently logged-in user data.
- * @param isMuted Whether to render the muted icon inline with the channel name.
- * @param isPinned Whether to render the pinned icon inline with the channel name.
  */
 @Composable
 internal fun DefaultSelectedChannelMenuHeaderContent(
     selectedChannel: Channel,
     currentUser: User?,
-    isMuted: Boolean = false,
-    isPinned: Boolean = false,
 ) {
+    val showPinnedIcon = selectedChannel.isPinned()
+    val showMutedIcon = currentUser != null && isChannelOrCounterpartMuted(selectedChannel, currentUser)
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -165,8 +166,8 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
             HeaderTitleRow(
                 selectedChannel = selectedChannel,
                 currentUser = currentUser,
-                isMuted = isMuted,
-                isPinned = isPinned,
+                showMutedIcon = showMutedIcon,
+                showPinnedIcon = showPinnedIcon,
             )
             Text(
                 text = selectedChannel.getMembersStatusText(
@@ -182,12 +183,18 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
     }
 }
 
+private fun isChannelOrCounterpartMuted(channel: Channel, currentUser: User): Boolean {
+    if (channel.isMutedFor(currentUser)) return true
+    val otherUserId = channel.dmCounterpartId(currentUser) ?: return false
+    return currentUser.mutes.any { it.target?.id == otherUserId }
+}
+
 @Composable
 private fun HeaderTitleRow(
     selectedChannel: Channel,
     currentUser: User?,
-    isMuted: Boolean,
-    isPinned: Boolean,
+    showMutedIcon: Boolean,
+    showPinnedIcon: Boolean,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -201,14 +208,14 @@ private fun HeaderTitleRow(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-        if (isMuted) {
+        if (showMutedIcon) {
             HeaderStateIcon(
                 iconRes = R.drawable.stream_design_ic_mute,
                 contentDescriptionRes = R.string.stream_compose_channel_item_muted,
                 testTag = "Stream_ChannelMenuHeaderMutedIcon",
             )
         }
-        if (isPinned) {
+        if (showPinnedIcon) {
             HeaderStateIcon(
                 iconRes = R.drawable.stream_design_ic_pin,
                 contentDescriptionRes = R.string.stream_compose_channel_item_pinned,
@@ -277,11 +284,26 @@ private fun SelectedChannelMenuMutedPinnedPreview() {
 
 @Composable
 internal fun SelectedChannelMenuMutedPinned() {
+    val baseChannel = PreviewChannelData.channelWithManyMembers
+    val pinnedChannel = baseChannel.copy(
+        membership = Member(user = PreviewUserData.user1, pinnedAt = Date()),
+    )
+    val mutedUser = PreviewUserData.user1.copy(
+        channelMutes = listOf(
+            ChannelMute(
+                user = PreviewUserData.user1,
+                channel = pinnedChannel,
+                createdAt = Date(),
+                updatedAt = Date(),
+                expires = null,
+            ),
+        ),
+    )
     SelectedChannelMenuSample(
         alignment = Alignment.BottomCenter,
         shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-        isMuted = true,
-        isPinned = true,
+        channel = pinnedChannel,
+        currentUser = mutedUser,
     )
 }
 
@@ -292,19 +314,19 @@ internal fun SelectedChannelMenuMutedPinned() {
  * @param shape The shape of the menu surface.
  * @param modifier Modifier applied to the menu, before `fillMaxWidth`, `wrapContentHeight` and
  * `align` are chained on.
- * @param isMuted Whether the menu header renders the muted icon.
- * @param isPinned Whether the menu header renders the pinned icon.
+ * @param channel The channel rendered in the menu.
+ * @param currentUser The user used to resolve member status text and to derive the inline state
+ * icons (muted, pinned) in the default header.
  */
 @Composable
 private fun SelectedChannelMenuSample(
     alignment: Alignment,
     shape: Shape,
     modifier: Modifier = Modifier,
-    isMuted: Boolean = false,
-    isPinned: Boolean = false,
+    channel: Channel = PreviewChannelData.channelWithManyMembers,
+    currentUser: User? = PreviewUserData.user1,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        val channel = PreviewChannelData.channelWithManyMembers
         SelectedChannelMenu(
             modifier = modifier
                 .fillMaxWidth()
@@ -312,14 +334,12 @@ private fun SelectedChannelMenuSample(
                 .align(alignment),
             shape = shape,
             selectedChannel = channel,
-            currentUser = PreviewUserData.user1,
+            currentUser = currentUser,
             channelActions = listOf(
                 ViewInfo(channel = channel, label = "Channel Info", onAction = {}),
             ),
             onChannelOptionConfirm = {},
             onDismiss = {},
-            isMuted = isMuted,
-            isPinned = isPinned,
         )
     }
 }

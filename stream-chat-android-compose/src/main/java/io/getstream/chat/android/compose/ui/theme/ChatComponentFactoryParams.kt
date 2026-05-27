@@ -1375,8 +1375,6 @@ public data class ChannelAvatarParams(
  * @param onChannelOptionConfirm Action invoked when a channel option is confirmed.
  * @param onDismiss Action invoked when the menu is dismissed.
  * @param modifier Modifier for styling.
- * @param isMuted Whether the menu header renders the muted icon next to the channel name.
- * @param isPinned Whether the menu header renders the pinned icon next to the channel name.
  */
 public data class ChannelMenuParams(
     val selectedChannel: Channel,
@@ -1385,8 +1383,6 @@ public data class ChannelMenuParams(
     val onChannelOptionConfirm: (ChannelAction) -> Unit,
     val onDismiss: () -> Unit,
     val modifier: Modifier = Modifier,
-    val isMuted: Boolean = false,
-    val isPinned: Boolean = false,
 )
 
 /**
@@ -1395,15 +1391,11 @@ public data class ChannelMenuParams(
  * @param selectedChannel The selected channel.
  * @param currentUser The currently logged in user.
  * @param modifier Modifier for styling.
- * @param isMuted Whether to render the muted icon inline with the channel name.
- * @param isPinned Whether to render the pinned icon inline with the channel name.
  */
 public data class ChannelMenuHeaderContentParams(
     val selectedChannel: Channel,
     val currentUser: User?,
     val modifier: Modifier = Modifier,
-    val isMuted: Boolean = false,
-    val isPinned: Boolean = false,
 )
 
 /**

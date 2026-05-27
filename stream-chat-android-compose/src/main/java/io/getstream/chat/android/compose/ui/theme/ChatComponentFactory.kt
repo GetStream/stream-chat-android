@@ -1805,8 +1805,6 @@ public interface ChatComponentFactory {
             channelActions = params.channelActions,
             onChannelOptionConfirm = params.onChannelOptionConfirm,
             onDismiss = params.onDismiss,
-            isMuted = params.isMuted,
-            isPinned = params.isPinned,
         )
     }
 
@@ -1820,8 +1818,6 @@ public interface ChatComponentFactory {
         DefaultSelectedChannelMenuHeaderContent(
             selectedChannel = params.selectedChannel,
             currentUser = params.currentUser,
-            isMuted = params.isMuted,
-            isPinned = params.isPinned,
         )
     }
 
