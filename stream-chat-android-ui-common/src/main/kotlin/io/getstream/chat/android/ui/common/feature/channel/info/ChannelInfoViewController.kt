@@ -528,6 +528,9 @@ private fun buildChannelOptionList(
         add(ChannelInfoViewState.Content.Option.PinnedMessages)
         add(ChannelInfoViewState.Content.Option.MediaAttachments)
         add(ChannelInfoViewState.Content.Option.FilesAttachments)
+        if (ChannelCapabilities.MUTE_CHANNEL in channelData.ownCapabilities) {
+            add(ChannelInfoViewState.Content.Option.MuteChannel(isMuted))
+        }
         val isUserMuted = mutedUsers.any { it.target?.id == singleMember.getUserId() }
         add(ChannelInfoViewState.Content.Option.MuteUser(isMuted = isUserMuted))
         val isUserBlocked = blockedUserIds.contains(singleMember.getUserId())

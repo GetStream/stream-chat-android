@@ -88,7 +88,7 @@
   <string name="stream_ui_channel_info_option_leave_conversation">"대화 나가기"</string>
   <string name="stream_ui_channel_info_option_leave_group">"그룹 나가기"</string>
   <string name="stream_ui_channel_info_option_media_attachments">"사진 &amp; 동영상"</string>
-  <string name="stream_ui_channel_info_option_mute_conversation">"대화 음소거"</string>
+  <string name="stream_ui_channel_info_option_mute_conversation">"채팅 음소거"</string>
   <string name="stream_ui_channel_info_option_mute_group">"그룹 음소거"</string>
   <string name="stream_ui_channel_info_option_mute_user">"사용자 음소거"</string>
   <string name="stream_ui_channel_info_option_pinned_messages">"고정된 메시지"</string>

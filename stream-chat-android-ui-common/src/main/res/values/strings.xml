@@ -135,7 +135,7 @@
     <string name="stream_ui_channel_info_remove_member_error">Failed to remove member</string>
     <string name="stream_ui_channel_info_add_members_error">Failed to add members</string>
 
-    <string name="stream_ui_channel_info_option_mute_conversation">Mute Conversation</string>
+    <string name="stream_ui_channel_info_option_mute_conversation">Mute Chat</string>
     <string name="stream_ui_channel_info_option_mute_group">Mute Group</string>
     <string name="stream_ui_channel_info_option_leave_conversation">Leave Conversation</string>
     <string name="stream_ui_channel_info_option_leave_group">Leave Group</string>
