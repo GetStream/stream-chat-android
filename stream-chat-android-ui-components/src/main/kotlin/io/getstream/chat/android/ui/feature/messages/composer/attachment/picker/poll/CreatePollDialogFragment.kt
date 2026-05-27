@@ -36,6 +36,7 @@ import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.utils.PollsConstants
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentCreatePollBinding
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.poll.CreatePollDialogFragment.Companion.newInstance
 import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import kotlinx.coroutines.flow.collectLatest
@@ -90,47 +91,50 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
         setupDialog()
 
         if (savedInstanceState == null) {
-            // Configure poll feature visibility and default values based on pollsConfig
-            configurePollFeatures()
+            applyFeatureDefaults()
         }
+        applyFeatureVisibility()
     }
 
     /**
-     * Configures the visibility and default values of poll features based on [pollsConfig].
+     * Applies the default state of poll features to the ViewModel and switches based on [pollsConfig].
      */
-    private fun configurePollFeatures() {
-        // Configure multiple votes feature
+    private fun applyFeatureDefaults() {
         createPollViewModel.setAllowMultipleVotes(pollsConfig.multipleVotes.defaultValue)
-        binding.multipleAnswersLabel.isVisible = pollsConfig.multipleVotes.configurable
-        binding.multipleAnswersSwitch.isVisible = pollsConfig.multipleVotes.configurable
         if (pollsConfig.multipleVotes.configurable) {
             binding.multipleAnswersSwitch.isChecked = pollsConfig.multipleVotes.defaultValue
-            binding.multipleAnswersCount.isVisible = pollsConfig.multipleVotes.defaultValue
         }
 
-        // Configure anonymous poll feature
         createPollViewModel.setAnnonymousPoll(pollsConfig.anonymousPoll.defaultValue)
-        binding.anonymousPollLabel.isVisible = pollsConfig.anonymousPoll.configurable
-        binding.anonymousPollSwitch.isVisible = pollsConfig.anonymousPoll.configurable
         if (pollsConfig.anonymousPoll.configurable) {
             binding.anonymousPollSwitch.isChecked = pollsConfig.anonymousPoll.defaultValue
         }
 
-        // Configure suggest an option feature
         createPollViewModel.setSuggestAnOption(pollsConfig.suggestAnOption.defaultValue)
-        binding.suggestAnOptionLabel.isVisible = pollsConfig.suggestAnOption.configurable
-        binding.suggestAnOptionSwitch.isVisible = pollsConfig.suggestAnOption.configurable
         if (pollsConfig.suggestAnOption.configurable) {
             binding.suggestAnOptionSwitch.isChecked = pollsConfig.suggestAnOption.defaultValue
         }
 
-        // Configure add a comment feature
         createPollViewModel.setAllowAnswers(pollsConfig.allowComments.defaultValue)
-        binding.addACommentLabel.isVisible = pollsConfig.allowComments.configurable
-        binding.addACommentLabelSwitch.isVisible = pollsConfig.allowComments.configurable
         if (pollsConfig.allowComments.configurable) {
             binding.addACommentLabelSwitch.isChecked = pollsConfig.allowComments.defaultValue
         }
+    }
+
+    private fun applyFeatureVisibility() {
+        binding.multipleAnswersLabel.isVisible = pollsConfig.multipleVotes.configurable
+        binding.multipleAnswersSwitch.isVisible = pollsConfig.multipleVotes.configurable
+        binding.multipleAnswersCount.isVisible =
+            pollsConfig.multipleVotes.configurable && binding.multipleAnswersSwitch.isChecked
+
+        binding.anonymousPollLabel.isVisible = pollsConfig.anonymousPoll.configurable
+        binding.anonymousPollSwitch.isVisible = pollsConfig.anonymousPoll.configurable
+
+        binding.suggestAnOptionLabel.isVisible = pollsConfig.suggestAnOption.configurable
+        binding.suggestAnOptionSwitch.isVisible = pollsConfig.suggestAnOption.configurable
+
+        binding.addACommentLabel.isVisible = pollsConfig.allowComments.configurable
+        binding.addACommentLabelSwitch.isVisible = pollsConfig.allowComments.configurable
     }
 
     /**
