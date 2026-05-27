@@ -928,7 +928,10 @@ public class SwipeToReplyContentParams
  * @param modifier Modifier for styling.
  * @param isAttachmentPickerVisible Whether the attachment picker is visible.
  * @param onSendMessage Action invoked when a message is sent.
+ * @param sendActionLabel Semantic / accessibility label for [onSendMessage].
+ * @param saveActionLabel Semantic / accessibility label for the save action (shown when editing a message).
  * @param onAttachmentsClick Action invoked when attachments button is clicked.
+ * @param attachmentsActionLabel Semantic / accessibility label for [onAttachmentsClick].
  * @param onValueChange Action invoked when the input value changes.
  * @param onAttachmentRemoved Action invoked when an attachment is removed.
  * @param onCancelAction Action invoked when the cancel button is clicked.
@@ -946,7 +949,10 @@ public data class MessageComposerParams(
     val modifier: Modifier = Modifier,
     val isAttachmentPickerVisible: Boolean = false,
     val onSendMessage: (String, List<Attachment>) -> Unit = { _, _ -> },
+    val sendActionLabel: String? = null,
+    val saveActionLabel: String? = null,
     val onAttachmentsClick: () -> Unit = {},
+    val attachmentsActionLabel: String? = null,
     val onValueChange: (String) -> Unit = {},
     val onAttachmentRemoved: (Attachment) -> Unit = {},
     val onCancelAction: () -> Unit = {},
@@ -1066,12 +1072,14 @@ public data class MessageComposerCommandSuggestionItemCenterContentParams(
  * @param state The current state of the message composer.
  * @param isAttachmentPickerVisible Whether the attachment picker is visible.
  * @param onAttachmentsClick Action invoked when attachments button is clicked.
+ * @param onAttachmentsClickLabel Semantic / accessibility label for [onAttachmentsClick].
  * @param modifier Modifier for styling.
  */
 public data class MessageComposerLeadingContentParams(
     val state: MessageComposerState,
     val isAttachmentPickerVisible: Boolean,
     val onAttachmentsClick: () -> Unit,
+    val onAttachmentsClickLabel: String? = null,
     val modifier: Modifier = Modifier,
 )
 
@@ -1084,6 +1092,8 @@ public data class MessageComposerLeadingContentParams(
  * @param onAttachmentRemoved Action invoked when an attachment is removed.
  * @param onCancel Action invoked when the cancel button is clicked.
  * @param onSendClick Action invoked when the send button is clicked.
+ * @param sendActionLabel Semantic / accessibility label for the send action.
+ * @param saveActionLabel Semantic / accessibility label for the save action (shown when editing a message).
  * @param onAlsoSendToChannelChange Action invoked when also-send-to-channel is changed.
  * @param recordingActions The actions to control the audio recording.
  * @param onActiveCommandDismiss Action invoked when the active command is dismissed.
@@ -1097,6 +1107,8 @@ public data class MessageComposerInputParams(
     val onAttachmentRemoved: (Attachment) -> Unit = {},
     val onCancel: () -> Unit = {},
     val onSendClick: (String, List<Attachment>) -> Unit = { _, _ -> },
+    val sendActionLabel: String? = null,
+    val saveActionLabel: String? = null,
     val onAlsoSendToChannelChange: (Boolean) -> Unit = {},
     val recordingActions: AudioRecordingActions = AudioRecordingActions.None,
     val onActiveCommandDismiss: () -> Unit = {},
@@ -1166,11 +1178,15 @@ public data class MessageComposerInputBottomContentParams(
  * @param state The current state of the message composer.
  * @param recordingActions The actions to control the audio recording.
  * @param onSendClick Action invoked when the send button is clicked.
+ * @param sendActionLabel Semantic / accessibility label for the send action.
+ * @param saveActionLabel Semantic / accessibility label for the save action (shown when editing a message).
  */
 public data class MessageComposerInputTrailingContentParams(
     val state: MessageComposerState,
     val recordingActions: AudioRecordingActions,
     val onSendClick: (String, List<Attachment>) -> Unit,
+    val sendActionLabel: String? = null,
+    val saveActionLabel: String? = null,
 )
 
 /**
@@ -1197,9 +1213,11 @@ public data class MessageComposerCoolDownIndicatorParams(
  * Parameters for [ChatComponentFactory.MessageComposerSendButton].
  *
  * @param onClick Action invoked when the button is clicked.
+ * @param onClickLabel Semantic / accessibility label for [onClick].
  */
 public data class MessageComposerSendButtonParams(
     val onClick: () -> Unit,
+    val onClickLabel: String? = null,
 )
 
 /**
@@ -1207,10 +1225,12 @@ public data class MessageComposerSendButtonParams(
  *
  * @param enabled Whether the save button is enabled.
  * @param onClick Action invoked when the button is clicked.
+ * @param onClickLabel Semantic / accessibility label for [onClick].
  */
 public data class MessageComposerSaveButtonParams(
     val enabled: Boolean,
     val onClick: () -> Unit,
+    val onClickLabel: String? = null,
 )
 
 /**
