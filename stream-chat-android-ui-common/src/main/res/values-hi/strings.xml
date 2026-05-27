@@ -89,7 +89,7 @@
   <string name="stream_ui_channel_info_option_leave_conversation">"बातचीत छोड़ें"</string>
   <string name="stream_ui_channel_info_option_leave_group">"समूह छोड़ें"</string>
   <string name="stream_ui_channel_info_option_media_attachments">"फ़ोटो &amp; वीडियो"</string>
-  <string name="stream_ui_channel_info_option_mute_conversation">"बातचीत म्यूट करें"</string>
+  <string name="stream_ui_channel_info_option_mute_conversation">"चैट म्यूट करें"</string>
   <string name="stream_ui_channel_info_option_mute_group">"समूह म्यूट करें"</string>
   <string name="stream_ui_channel_info_option_mute_user">"उपयोगकर्ता को म्यूट करें"</string>
   <string name="stream_ui_channel_info_option_pinned_messages">"पिन किए गए संदेश"</string>

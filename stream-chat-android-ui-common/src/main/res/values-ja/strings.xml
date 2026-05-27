@@ -88,7 +88,7 @@
   <string name="stream_ui_channel_info_option_leave_conversation">"会話から退出"</string>
   <string name="stream_ui_channel_info_option_leave_group">"グループから退出"</string>
   <string name="stream_ui_channel_info_option_media_attachments">"写真 &amp; 動画"</string>
-  <string name="stream_ui_channel_info_option_mute_conversation">"会話をミュート"</string>
+  <string name="stream_ui_channel_info_option_mute_conversation">"チャットをミュート"</string>
   <string name="stream_ui_channel_info_option_mute_group">"グループをミュート"</string>
   <string name="stream_ui_channel_info_option_mute_user">"ユーザーをミュート"</string>
   <string name="stream_ui_channel_info_option_pinned_messages">"ピン留めされたメッセージ"</string>

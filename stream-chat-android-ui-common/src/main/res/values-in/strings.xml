@@ -88,7 +88,7 @@
   <string name="stream_ui_channel_info_option_leave_conversation">"Keluar dari Percakapan"</string>
   <string name="stream_ui_channel_info_option_leave_group">"Keluar dari Grup"</string>
   <string name="stream_ui_channel_info_option_media_attachments">"Foto &amp; Video"</string>
-  <string name="stream_ui_channel_info_option_mute_conversation">"Bisukan Percakapan"</string>
+  <string name="stream_ui_channel_info_option_mute_conversation">"Bisukan Obrolan"</string>
   <string name="stream_ui_channel_info_option_mute_group">"Bisukan Grup"</string>
   <string name="stream_ui_channel_info_option_mute_user">"Bisukan Pengguna"</string>
   <string name="stream_ui_channel_info_option_pinned_messages">"Pesan Disematkan"</string>

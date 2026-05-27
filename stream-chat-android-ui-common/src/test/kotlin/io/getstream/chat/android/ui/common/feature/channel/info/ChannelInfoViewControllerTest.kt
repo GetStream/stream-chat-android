@@ -338,7 +338,7 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
-
+                        ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
                         ChannelInfoViewState.Content.Option.MuteUser(isMuted = false),
                         ChannelInfoViewState.Content.Option.BlockUser(isBlocked = false),
                         ChannelInfoViewState.Content.Option.DeleteChannel,

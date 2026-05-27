@@ -89,7 +89,7 @@
   <string name="stream_ui_channel_info_option_leave_conversation">"Quitter la conversation"</string>
   <string name="stream_ui_channel_info_option_leave_group">"Quitter le groupe"</string>
   <string name="stream_ui_channel_info_option_media_attachments">"Photos et Vidéos"</string>
-  <string name="stream_ui_channel_info_option_mute_conversation">"Mettre la conversation en sourdine"</string>
+  <string name="stream_ui_channel_info_option_mute_conversation">"Mettre la discussion en sourdine"</string>
   <string name="stream_ui_channel_info_option_mute_group">"Mettre le groupe en sourdine"</string>
   <string name="stream_ui_channel_info_option_mute_user">"Mettre l\'utilisateur en sourdine"</string>
   <string name="stream_ui_channel_info_option_pinned_messages">"Messages épinglés"</string>
