@@ -34,12 +34,13 @@ import io.getstream.chat.android.state.extensions.globalStateFlow
  * Builds the factory that contains all the dependencies required for the Channels Screen.
  * It currently provides the [ChannelListViewModel] using those dependencies.
  *
- * Two construction modes are supported:
+ * Three construction modes are supported:
  * - **Standard**: filter + sort drive a classical `queryChannels` request.
+ * - **Predefined**: a `predefinedFilterName` resolved server-side, with optional interpolation values.
  * - **Grouped**: a `groupKey` identifies a state populated by `queryGroupedChannels` responses.
  *
- * Pick the constructor that matches the mode you want — mixing filter/sort with a `groupKey` is
- * not supported.
+ * Pick the constructor that matches the mode you want — the three identity flavors are mutually
+ * exclusive.
  */
 @Suppress("LongParameterList")
 public class ChannelViewModelFactory internal constructor(
@@ -54,11 +55,12 @@ public class ChannelViewModelFactory internal constructor(
 ) : ViewModelProvider.Factory {
 
     /**
-     * Standard [ChannelListViewModel] factory.
+     * Builds a factory for a [ChannelListViewModel] that queries channels by an explicit filter and sort.
      *
      * @param chatClient The client used to fetch data.
      * @param querySort The sorting order for channels.
-     * @param filters The base filters used to filter out channels.
+     * @param filters The base filters used to filter out channels. When `null`, a default filter scoped
+     * to "messaging" channels the current user is a member of is used.
      * @param channelLimit How many channels we fetch per page.
      * @param memberLimit How many members are fetched for each channel item when loading channels.
      * When `null`, the server-side default is used.
@@ -92,6 +94,43 @@ public class ChannelViewModelFactory internal constructor(
     )
 
     /**
+     * Builds a factory for a [ChannelListViewModel] that queries channels using a predefined filter
+     * resolved by the server.
+     *
+     * @param predefinedFilterName The name of the predefined filter registered on the backend.
+     * @param filterValues Optional values interpolated into the predefined filter template.
+     * @param sortValues Optional values interpolated into the predefined sort template.
+     */
+    // TODO: restore @JvmOverloads once we resolve the JVM signature clash between the
+    //  Predefined `(ChatClient, String)` and Grouped `(ChatClient, String)` overloads — pick a
+    //  disambiguator (marker class, different param order, or named factory methods).
+    public constructor(
+        chatClient: ChatClient = ChatClient.instance(),
+        predefinedFilterName: String,
+        filterValues: Map<String, Any>? = null,
+        sortValues: Map<String, Any>? = null,
+        channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
+        memberLimit: Int? = null,
+        messageLimit: Int? = null,
+        chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
+        isDraftMessageEnabled: Boolean = false,
+        messageSearchSort: QuerySorter<Message>? = null,
+    ) : this(
+        chatClient = chatClient,
+        mode = QueryMode.Predefined(
+            name = predefinedFilterName,
+            filterValues = filterValues,
+            sortValues = sortValues,
+        ),
+        channelLimit = channelLimit,
+        memberLimit = memberLimit,
+        messageLimit = messageLimit,
+        chatEventHandlerFactory = chatEventHandlerFactory,
+        isDraftMessageEnabled = isDraftMessageEnabled,
+        messageSearchSort = messageSearchSort,
+    )
+
+    /**
      * Grouped [ChannelListViewModel] factory. Wires the ViewModel to the state identified by
      * [groupKey] without firing a remote call; `queryGroupedChannels` responses populate it.
      *
@@ -103,7 +142,7 @@ public class ChannelViewModelFactory internal constructor(
      * @param isDraftMessageEnabled If the draft message feature is enabled.
      * @param messageSearchSort Optional sorting for message search results.
      */
-    @JvmOverloads
+    // TODO: see TODO on the Predefined factory ctor — same JVM signature clash story.
     public constructor(
         chatClient: ChatClient = ChatClient.instance(),
         groupKey: String,

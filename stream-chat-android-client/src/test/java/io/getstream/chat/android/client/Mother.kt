@@ -589,6 +589,9 @@ internal object Mother {
         querySort: QuerySorter<Channel> = QuerySortByField(),
         messageLimit: Int? = randomInt(),
         memberLimit: Int? = randomInt(),
+        predefinedFilter: String? = null,
+        filterValues: Map<String, Any>? = null,
+        sortValues: Map<String, Any>? = null,
     ): QueryChannelsRequest {
         return QueryChannelsRequest(
             filter = filter,
@@ -597,6 +600,9 @@ internal object Mother {
             querySort = querySort,
             messageLimit = messageLimit,
             memberLimit = memberLimit,
+            predefinedFilter = predefinedFilter,
+            filterValues = filterValues,
+            sortValues = sortValues,
         )
     }
 

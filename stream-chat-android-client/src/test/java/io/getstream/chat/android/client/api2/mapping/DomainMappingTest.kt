@@ -60,6 +60,7 @@ import io.getstream.chat.android.client.Mother.randomUnreadChannelDto
 import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
 import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
+import io.getstream.chat.android.client.api2.mapping.DomainMappingTest.Companion.toSortDomainArguments
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.models.Answer
@@ -67,6 +68,7 @@ import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.ChannelTransformer
@@ -110,6 +112,9 @@ import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
+import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.ascByName
+import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
+import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
@@ -120,6 +125,9 @@ import io.getstream.chat.android.randomUser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 
 @Suppress("LargeClass")
 internal class DomainMappingTest {
@@ -987,5 +995,74 @@ internal class DomainMappingTest {
                 userTransformer = userTransformer,
             )
         }
+    }
+
+    /**
+     * [toSortDomainArguments]
+     */
+    @ParameterizedTest
+    @MethodSource("toSortDomainArguments")
+    fun `List of sort maps is correctly mapped to QuerySorter`(
+        input: List<Map<String, Any>>?,
+        expected: QuerySorter<Channel>?,
+    ) {
+        val sut = Fixture().get()
+        val result = with(sut) { input.toSortDomain() }
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `defaultPredefinedFilterSort falls back to last_updated DESC when last_message_at is not filtered`() {
+        val sut = Fixture().get()
+        val result = with(sut) { defaultPredefinedFilterSort(setOf("type", "member_count")) }
+        assertEquals(descByName<Channel>("last_updated"), result)
+    }
+
+    @Test
+    fun `defaultPredefinedFilterSort falls back to last_updated DESC for an empty filter field set`() {
+        val sut = Fixture().get()
+        val result = with(sut) { defaultPredefinedFilterSort(emptySet()) }
+        assertEquals(descByName<Channel>("last_updated"), result)
+    }
+
+    @Test
+    fun `defaultPredefinedFilterSort uses last_message_at DESC when last_message_at is filtered`() {
+        val sut = Fixture().get()
+        val result = with(sut) { defaultPredefinedFilterSort(setOf("type", "last_message_at")) }
+        assertEquals(descByName<Channel>("last_message_at"), result)
+    }
+
+    companion object {
+        @JvmStatic
+        fun toSortDomainArguments() = listOf(
+            // null/error → null
+            Arguments.of(null, null),
+            Arguments.of(emptyList<Map<String, Any>>(), null),
+            Arguments.of(listOf(mapOf("direction" to -1)), null),
+            Arguments.of(listOf(mapOf("field" to "created_at")), null),
+            Arguments.of(listOf(mapOf("field" to "created_at", "direction" to 0)), null),
+            // valid parsing
+            Arguments.of(
+                listOf(mapOf("field" to "created_at", "direction" to 1)),
+                ascByName<Channel>("created_at"),
+            ),
+            Arguments.of(
+                listOf(mapOf("field" to "last_message_at", "direction" to -1)),
+                descByName<Channel>("last_message_at"),
+            ),
+            // Double direction (Moshi edge case)
+            Arguments.of(
+                listOf(mapOf("field" to "created_at", "direction" to -1.0)),
+                descByName<Channel>("created_at"),
+            ),
+            // multiple fields
+            Arguments.of(
+                listOf(
+                    mapOf("field" to "created_at", "direction" to -1),
+                    mapOf("field" to "name", "direction" to 1),
+                ),
+                descByName<Channel>("created_at").ascByName("name"),
+            ),
+        )
     }
 }

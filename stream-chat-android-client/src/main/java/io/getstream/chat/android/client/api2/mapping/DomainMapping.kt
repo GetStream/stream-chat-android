@@ -123,6 +123,9 @@ import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.models.querysort.SortDirection
 import java.util.Date
 
 @Suppress("TooManyFunctions")
@@ -894,4 +897,32 @@ internal class DomainMapping(
         level = PushPreferenceLevel.fromValue(chat_level),
         disabledUntil = disabled_until,
     )
+
+    internal fun List<Map<String, Any>>?.toSortDomain(): QuerySorter<Channel>? {
+        if (isNullOrEmpty()) return null
+        return fold(QuerySortByField()) { sort, sortSpecMap ->
+            val fieldName = sortSpecMap[QuerySorter.KEY_FIELD_NAME] as? String ?: return null
+            val direction = (sortSpecMap[QuerySorter.KEY_DIRECTION] as? Number)?.toInt() ?: return null
+            when (direction) {
+                SortDirection.ASC.value -> sort.asc(fieldName)
+                SortDirection.DESC.value -> sort.desc(fieldName)
+                else -> return null
+            }
+        }
+    }
+
+    /**
+     * Computes the default `predefined_filter.sort` the server would apply when no sort was sent.
+     * Mirrors the backend's behaviour: `{ last_updated: -1 }` by default, swapping to
+     * `{ last_message_at: -1 }` when `last_message_at` is referenced as a filter condition.
+     */
+    internal fun defaultPredefinedFilterSort(filterFields: Set<String>): QuerySorter<Channel> {
+        val field = if (FIELD_LAST_MESSAGE_AT in filterFields) FIELD_LAST_MESSAGE_AT else FIELD_LAST_UPDATED
+        return QuerySortByField<Channel>().desc(field)
+    }
+
+    private companion object {
+        private const val FIELD_LAST_MESSAGE_AT = "last_message_at"
+        private const val FIELD_LAST_UPDATED = "last_updated"
+    }
 }

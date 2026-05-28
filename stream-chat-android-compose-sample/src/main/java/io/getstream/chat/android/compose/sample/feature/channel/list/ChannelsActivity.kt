@@ -60,7 +60,6 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
-import io.getstream.chat.android.compose.sample.feature.channel.ChannelConstants.CHANNEL_ARG_DRAFT
 import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.add.group.AddGroupChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
@@ -94,11 +93,9 @@ import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModel
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFactory
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.state.extensions.globalStateFlow
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -110,18 +107,34 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalCoroutinesApi::class)
 class ChannelsActivity : ComponentActivity() {
 
+    /**
+     * The provided predefined filter has the following specs:
+     *
+     * **Filter:**
+     * ```
+     * Filters.and(
+     *     Filters.eq("type", "messaging"),
+     *     Filters.`in`("members", listOf(currentUserId)),
+     *     Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
+     * )
+     * ```
+     *
+     * **Sort:**
+     * ```
+     * QuerySortByField
+     *     .descByName<Channel>("pinned_at")
+     *     .descByName("last_updated")
+     * ```
+     */
     private val channelsViewModelFactory by lazy {
         val chatClient = ChatClient.instance()
         val currentUserId = chatClient.getCurrentUser()?.id ?: ""
         ChannelViewModelFactory(
             chatClient = chatClient,
-            querySort = QuerySortByField
-                .descByName<Channel>("pinned_at") // pinned channels first
-                .desc("last_updated"), // then by last updated
-            filters = Filters.and(
-                Filters.eq("type", "messaging"),
-                Filters.`in`("members", listOf(currentUserId)),
-                Filters.or(Filters.notExists(CHANNEL_ARG_DRAFT), Filters.eq(CHANNEL_ARG_DRAFT, false)),
+            predefinedFilterName = "android_sample_filter_v6",
+            filterValues = mapOf(
+                "channel_type" to "messaging",
+                "user_id" to currentUserId,
             ),
             chatEventHandlerFactory = CustomChatEventHandlerFactory(),
             isDraftMessageEnabled = true,

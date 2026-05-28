@@ -17,22 +17,24 @@
 package io.getstream.chat.android.state.plugin.logic.internal
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.state.event.handler.grouped.internal.GroupAwareChatEventHandlerFactory
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.state.plugin.state.querythreads.internal.QueryThreadsMutableState
 import io.getstream.chat.android.test.TestCoroutineExtension
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestScope
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -40,10 +42,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
-import org.mockito.kotlin.argumentCaptor
-import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.concurrent.ConcurrentHashMap
 
@@ -63,11 +62,10 @@ internal class LogicRegistryTest {
     private lateinit var client: ChatClient
     private lateinit var coroutineScope: TestScope
 
+    private val queryChannelsStateCache:
+        ConcurrentHashMap<QueryChannelsIdentifier, QueryChannelsMutableState> = ConcurrentHashMap()
     private val threadsStateCache:
         ConcurrentHashMap<Pair<FilterObject?, QuerySorter<Thread>>, QueryThreadsMutableState> = ConcurrentHashMap()
-
-    /** One mutable state mock per identifier; used by the grouped-channels tests below. */
-    private val channelsStateByIdentifier = mutableMapOf<QueryChannelsIdentifier, QueryChannelsMutableState>()
 
     @BeforeEach
     fun setUp() {
@@ -78,17 +76,27 @@ internal class LogicRegistryTest {
         client = mock()
         coroutineScope = testCoroutines.scope
 
+        // Stub query channels state. LogicRegistry resolves state via the identifier-based
+        // overload; the MutableState derives its initial filter/sort from the identifier itself.
+        queryChannelsStateCache.clear()
+        whenever(stateRegistry.queryChannels(any<QueryChannelsIdentifier>())).thenAnswer {
+            val identifier = it.getArgument<QueryChannelsIdentifier>(0)
+            queryChannelsStateCache.getOrPut(identifier) {
+                QueryChannelsMutableState(
+                    identifier = identifier,
+                    scope = coroutineScope,
+                    latestUsers = MutableStateFlow(emptyMap()),
+                    activeLiveLocations = MutableStateFlow(emptyList()),
+                )
+            }
+        }
+
         whenever(stateRegistry.mutableQueryThreads(anyOrNull(), any())).thenAnswer {
             val filter = it.getArgument<FilterObject?>(0)
             val sort = it.getArgument<QuerySortByField<Thread>>(1)
             threadsStateCache.getOrPut(filter to sort) {
                 QueryThreadsMutableState(filter, sort)
             }
-        }
-
-        whenever(stateRegistry.queryChannels(any<QueryChannelsIdentifier>())).thenAnswer {
-            val identifier = it.getArgument<QueryChannelsIdentifier>(0)
-            channelsStateByIdentifier.getOrPut(identifier) { mock() }
         }
 
         logicRegistry = LogicRegistry(
@@ -344,15 +352,215 @@ internal class LogicRegistryTest {
     @Test
     fun `queryChannels with Grouped identifier auto-installs a GroupAwareChatEventHandlerFactory`() {
         val identifier = QueryChannelsIdentifier.Grouped("vip")
-        val state = channelsStateByIdentifier.getOrPut(identifier) { mock() }
-        whenever(state.chatEventHandlerFactory) doReturn null
 
         logicRegistry.queryChannels(identifier)
 
-        val captor = argumentCaptor<ChatEventHandlerFactory>()
-        verify(state).chatEventHandlerFactory = captor.capture()
-        Assertions.assertTrue(captor.firstValue is GroupAwareChatEventHandlerFactory)
+        val state = queryChannelsStateCache[identifier]
+        Assertions.assertNotNull(state)
+        Assertions.assertTrue(state!!.chatEventHandlerFactory is GroupAwareChatEventHandlerFactory)
     }
 
     // endregion
+
+    // -- QueryChannels --
+
+    @Test
+    fun `queryChannels should return same instance for same identifier`() {
+        // Given
+        val identifier = QueryChannelsIdentifier.Standard(
+            filter = Filters.eq("type", "messaging"),
+            sort = QuerySortByField.descByName("last_message_at"),
+        )
+
+        // When
+        val logic1 = logicRegistry.queryChannels(identifier)
+        val logic2 = logicRegistry.queryChannels(identifier)
+
+        // Then
+        Assertions.assertSame(logic1, logic2)
+    }
+
+    @Test
+    fun `queryChannels should return different instances for different filters`() {
+        // Given
+        val sort = QuerySortByField.descByName<Channel>("last_message_at")
+        val identifier1 = QueryChannelsIdentifier.Standard(Filters.eq("type", "messaging"), sort)
+        val identifier2 = QueryChannelsIdentifier.Standard(Filters.eq("type", "livestream"), sort)
+
+        // When
+        val logic1 = logicRegistry.queryChannels(identifier1)
+        val logic2 = logicRegistry.queryChannels(identifier2)
+
+        // Then
+        Assertions.assertNotSame(logic1, logic2)
+    }
+
+    @Test
+    fun `queryChannels should return different instances for different sorts`() {
+        // Given
+        val filter = Filters.eq("type", "messaging")
+        val identifier1 = QueryChannelsIdentifier.Standard(filter, QuerySortByField.descByName("last_message_at"))
+        val identifier2 = QueryChannelsIdentifier.Standard(filter, QuerySortByField.descByName("created_at"))
+
+        // When
+        val logic1 = logicRegistry.queryChannels(identifier1)
+        val logic2 = logicRegistry.queryChannels(identifier2)
+
+        // Then
+        Assertions.assertNotSame(logic1, logic2)
+    }
+
+    @Test
+    fun `queryChannels via request should return same instance as direct call with same identifier`() {
+        // Given
+        val filter = Filters.eq("type", "messaging")
+        val sort = QuerySortByField.descByName<Channel>("last_message_at")
+        val request = QueryChannelsRequest(filter = filter, querySort = sort, limit = 30)
+        val identifier = QueryChannelsIdentifier.Standard(filter, sort)
+
+        // When
+        val logic1 = logicRegistry.queryChannels(request)
+        val logic2 = logicRegistry.queryChannels(identifier)
+
+        // Then
+        Assertions.assertSame(logic1, logic2)
+    }
+
+    @Test
+    fun `queryChannels should return different instances for Standard and Predefined identifiers`() {
+        // Given – a Predefined identifier and a Standard identifier are never the same query.
+        val standard = QueryChannelsIdentifier.Standard(
+            filter = Filters.eq("type", "messaging"),
+            sort = QuerySortByField.descByName("last_message_at"),
+        )
+        val predefined = QueryChannelsIdentifier.Predefined(
+            name = "my-filter",
+            filterValues = mapOf("a" to 1),
+            sortValues = null,
+        )
+
+        // When
+        val logic1 = logicRegistry.queryChannels(standard)
+        val logic2 = logicRegistry.queryChannels(predefined)
+
+        // Then
+        Assertions.assertNotSame(logic1, logic2)
+    }
+
+    @Test
+    fun `queryChannels should return different instances for Predefined identifiers with different filterValues`() {
+        // Given
+        val identifier1 = QueryChannelsIdentifier.Predefined("p", mapOf("a" to 1), null)
+        val identifier2 = QueryChannelsIdentifier.Predefined("p", mapOf("a" to 2), null)
+
+        // When
+        val logic1 = logicRegistry.queryChannels(identifier1)
+        val logic2 = logicRegistry.queryChannels(identifier2)
+
+        // Then
+        Assertions.assertNotSame(logic1, logic2)
+    }
+
+    @Test
+    fun `queryChannels should return same instance for same Predefined identifier`() {
+        // Given
+        val identifier = QueryChannelsIdentifier.Predefined(
+            name = "my-filter",
+            filterValues = mapOf("a" to 1),
+            sortValues = mapOf("b" to 2),
+        )
+
+        // When
+        val logic1 = logicRegistry.queryChannels(identifier)
+        val logic2 = logicRegistry.queryChannels(identifier)
+
+        // Then
+        Assertions.assertSame(logic1, logic2)
+    }
+
+    @Test
+    fun `queryChannels should return different instances for Predefined identifiers with different names`() {
+        // Given
+        val identifier1 = QueryChannelsIdentifier.Predefined("filter-a", null, null)
+        val identifier2 = QueryChannelsIdentifier.Predefined("filter-b", null, null)
+
+        // When
+        val logic1 = logicRegistry.queryChannels(identifier1)
+        val logic2 = logicRegistry.queryChannels(identifier2)
+
+        // Then
+        Assertions.assertNotSame(logic1, logic2)
+    }
+
+    @Test
+    fun `queryChannels should return different instances for Predefined identifiers with different sortValues`() {
+        // Given
+        val identifier1 = QueryChannelsIdentifier.Predefined("p", null, mapOf("b" to 1))
+        val identifier2 = QueryChannelsIdentifier.Predefined("p", null, mapOf("b" to 2))
+
+        // When
+        val logic1 = logicRegistry.queryChannels(identifier1)
+        val logic2 = logicRegistry.queryChannels(identifier2)
+
+        // Then
+        Assertions.assertNotSame(logic1, logic2)
+    }
+
+    @Test
+    fun `queryChannels via predefined request should return same instance as direct call with matching identifier`() {
+        // Given
+        val request = QueryChannelsRequest(
+            limit = 30,
+            predefinedFilter = "my-filter",
+            filterValues = mapOf("a" to 1),
+            sortValues = mapOf("b" to 2),
+        )
+        val identifier = QueryChannelsIdentifier.Predefined(
+            name = "my-filter",
+            filterValues = mapOf("a" to 1),
+            sortValues = mapOf("b" to 2),
+        )
+
+        // When
+        val logic1 = logicRegistry.queryChannels(request)
+        val logic2 = logicRegistry.queryChannels(identifier)
+
+        // Then
+        Assertions.assertSame(logic1, logic2)
+    }
+
+    @Test
+    fun `getActiveQueryChannelsLogic should return all created query channels`() {
+        // Given
+        val sort = QuerySortByField.descByName<Channel>("last_message_at")
+        val identifier1 = QueryChannelsIdentifier.Standard(Filters.eq("type", "messaging"), sort)
+        val identifier2 = QueryChannelsIdentifier.Standard(Filters.eq("type", "livestream"), sort)
+        val logic1 = logicRegistry.queryChannels(identifier1)
+        val logic2 = logicRegistry.queryChannels(identifier2)
+
+        // When
+        val activeLogics = logicRegistry.getActiveQueryChannelsLogic()
+
+        // Then
+        Assertions.assertEquals(2, activeLogics.size)
+        Assertions.assertTrue(activeLogics.contains(logic1))
+        Assertions.assertTrue(activeLogics.contains(logic2))
+    }
+
+    @Test
+    fun `clear should remove query channels`() {
+        // Given
+        val identifier = QueryChannelsIdentifier.Standard(
+            filter = Filters.eq("type", "messaging"),
+            sort = QuerySortByField.descByName("last_message_at"),
+        )
+        logicRegistry.queryChannels(identifier)
+        Assertions.assertEquals(1, logicRegistry.getActiveQueryChannelsLogic().size)
+
+        // When
+        logicRegistry.clear()
+
+        // Then
+        Assertions.assertEquals(0, logicRegistry.getActiveQueryChannelsLogic().size)
+    }
 }

@@ -17,8 +17,8 @@
 package io.getstream.chat.android.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
-import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toOfflinePaginationRequest
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.result.Result
@@ -38,7 +38,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
  * @param logic [LogicRegistry] provided by the [StreamStatePluginFactory].
  */
 internal class QueryChannelsListenerState(
-    private val logicProvider: LogicRegistry,
+    private val logic: LogicRegistry,
     private val queryingChannelsFree: MutableStateFlow<Boolean>,
 ) : QueryChannelsListener {
 
@@ -48,14 +48,26 @@ internal class QueryChannelsListenerState(
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
         queryingChannelsFree.value = false
-        logicProvider.queryChannels(request).run {
+        logic.queryChannels(request).run {
             setCurrentRequest(request)
             queryOffline(request.toOfflinePaginationRequest())
         }
     }
 
-    override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
-        logicProvider.queryChannels(request).onQueryChannelsResult(result, request)
+    override suspend fun onQueryChannelsResultWithPredefinedFilter(
+        result: Result<QueryChannelsResult>,
+        request: QueryChannelsRequest,
+    ) {
+        val queryChannelsLogic = logic.queryChannels(request)
+        if (result is Result.Success) {
+            // Push server-resolved filter/sort into state before forwarding channels, so
+            // sortedChannels re-emits with the right comparator. No-op for standard queries.
+            result.value.predefinedFilter?.let { resolved ->
+                queryChannelsLogic.applyResolvedSpec(resolved.filter, resolved.sort)
+            }
+        }
+        val channels = result.map(QueryChannelsResult::channels)
+        queryChannelsLogic.onQueryChannelsResult(channels, request)
         queryingChannelsFree.value = true
     }
 }

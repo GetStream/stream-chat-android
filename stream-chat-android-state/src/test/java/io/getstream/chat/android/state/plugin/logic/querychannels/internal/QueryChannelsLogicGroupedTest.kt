@@ -292,9 +292,9 @@ internal class QueryChannelsLogicGroupedTest {
         whenever(
             queryChannelsDatabaseLogic.fetchChannelsFromCache(
                 any<AnyChannelPaginationRequest>(),
-                any<QueryChannelsSpec>(),
+                any<QueryChannelsIdentifier>(),
             ),
-        ) doReturn cachedChannels
+        ) doReturn CachedQueryChannels(spec = queryChannelsSpec, channels = cachedChannels)
 
         // When
         logic.loadOfflineGroupedChannels()
@@ -314,9 +314,9 @@ internal class QueryChannelsLogicGroupedTest {
         whenever(
             queryChannelsDatabaseLogic.fetchChannelsFromCache(
                 any<AnyChannelPaginationRequest>(),
-                any<QueryChannelsSpec>(),
+                any<QueryChannelsIdentifier>(),
             ),
-        ) doReturn cachedChannels
+        ) doReturn CachedQueryChannels(spec = queryChannelsSpec, channels = cachedChannels)
 
         // When
         logic.loadOfflineGroupedChannels()
@@ -334,7 +334,7 @@ internal class QueryChannelsLogicGroupedTest {
         whenever(
             queryChannelsDatabaseLogic.fetchChannelsFromCache(
                 any<AnyChannelPaginationRequest>(),
-                any<QueryChannelsSpec>(),
+                any<QueryChannelsIdentifier>(),
             ),
         ) doReturn null
 

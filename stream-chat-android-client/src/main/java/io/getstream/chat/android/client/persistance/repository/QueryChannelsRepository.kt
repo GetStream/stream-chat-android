@@ -34,17 +34,33 @@ public interface QueryChannelsRepository {
     public suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec)
 
     /**
-     * Selects the spec stored under [groupKey].
-     */
-    public suspend fun selectBy(groupKey: String): QueryChannelsSpec?
-
-    /**
-     * Selects by a filter and query sort.
+     * Selects a query spec persisted for a classic query identified by [filter] and [querySort].
      *
      * @param filter [FilterObject]
      * @param querySort [QuerySorter]
      */
-    public suspend fun selectBy(filter: FilterObject, querySort: QuerySorter<Channel>): QueryChannelsSpec?
+    public suspend fun selectBy(filter: FilterObject, querySort: QuerySorter<Channel>): QueryChannelsSpec? = null
+
+    /**
+     * Selects a query spec persisted for a server-side predefined-filter query identified by
+     * [predefinedFilterName] and its interpolation values.
+     *
+     * @param predefinedFilterName Name of the predefined filter registered on the backend.
+     * @param filterValues Values interpolated into the predefined filter template. `null` and an
+     *   empty map are treated as equivalent — pass normalized maps for stable identity.
+     * @param sortValues Values interpolated into the predefined sort template. Same normalization
+     *   contract as [filterValues].
+     */
+    public suspend fun selectBy(
+        predefinedFilterName: String,
+        filterValues: Map<String, Any>?,
+        sortValues: Map<String, Any>?,
+    ): QueryChannelsSpec? = null
+
+    /**
+     * Selects the spec stored under [groupKey] for a grouped query.
+     */
+    public suspend fun selectBy(groupKey: String): QueryChannelsSpec? = null
 
     /**
      * Clear QueryChannels of this repository.

@@ -29,7 +29,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.ui.common.utils.Utils
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelFactory
@@ -47,6 +46,25 @@ import io.getstream.chat.ui.sample.feature.home.HomeFragmentDirections
 
 class ChannelListFragment : Fragment() {
 
+    /**
+     * The provided predefined filter has the following specs:
+     *
+     * **Filter:**
+     * ```
+     * Filters.and(
+     *     Filters.eq("type", "messaging"),
+     *     Filters.`in`("members", listOf(currentUserId)),
+     *     Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
+     * )
+     * ```
+     *
+     * **Sort:**
+     * ```
+     * QuerySortByField
+     *     .descByName<Channel>("pinned_at")
+     *     .descByName("last_updated")
+     * ```
+     */
     private val viewModel: ChannelListViewModel by viewModels {
         val user = App.instance.userRepository.getUser()
         val userId = if (user == SampleUser.None) {
@@ -54,12 +72,11 @@ class ChannelListFragment : Fragment() {
         } else {
             user.id
         }
-
         ChannelListViewModelFactory(
-            filter = Filters.and(
-                Filters.eq("type", "messaging"),
-                Filters.`in`("members", listOf(userId)),
-                Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
+            predefinedFilterName = "android_sample_filter_v6",
+            filterValues = mapOf(
+                "channel_type" to "messaging",
+                "user_id" to userId,
             ),
             chatEventHandlerFactory = CustomChatEventHandlerFactory(),
         )

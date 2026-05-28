@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.plugin.listeners
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.models.Channel
 import io.getstream.result.Result
 
@@ -47,9 +48,45 @@ public interface QueryChannelsListener {
 
     /**
      * Runs this function on the [Result] of this [QueryChannelsRequest].
+     *
+     * Kept for backwards compatibility with listeners written before predefined filters existed —
+     * for backwards compatibility, this method is still called internally by the new,
+     * non-deprecated [onQueryChannelsResultWithPredefinedFilter] when that method's default
+     * implementation runs.
      */
+    @Deprecated(
+        message = "This method will be removed in the future. " +
+            "Use QueryChannelsListener#onQueryChannelsResultWithPredefinedFilter(result, request) instead. " +
+            "For backwards compatibility, this method is still called internally by the new, " +
+            "non-deprecated method when its default implementation runs.",
+        replaceWith = ReplaceWith(
+            "onQueryChannelsResultWithPredefinedFilter(result.map { QueryChannelsResult(it, null) }, request)",
+            "io.getstream.chat.android.client.api.models.QueryChannelsResult",
+        ),
+    )
     public suspend fun onQueryChannelsResult(
         result: Result<List<Channel>>,
         request: QueryChannelsRequest,
     ) { /* No-Op */ }
+
+    /**
+     * Runs this function on the [Result] of this [QueryChannelsRequest], exposing the optional
+     * server-resolved [QueryChannelsResult.predefinedFilter] alongside the channel list.
+     *
+     * The default implementation forwards to the deprecated [onQueryChannelsResult] overload, so
+     * listeners written before predefined-filter support keep receiving callbacks. Override this
+     * method (instead of the deprecated overload) when you want to inspect the resolved
+     * predefined filter.
+     *
+     * The Kotlin name differs from the deprecated overload because both signatures erase to the
+     * same JVM signature; this also keeps the deprecated overload's JVM symbol intact for binary
+     * compatibility with already-compiled customer overrides.
+     */
+    public suspend fun onQueryChannelsResultWithPredefinedFilter(
+        result: Result<QueryChannelsResult>,
+        request: QueryChannelsRequest,
+    ) {
+        @Suppress("DEPRECATION")
+        onQueryChannelsResult(result.map { it.channels }, request)
+    }
 }

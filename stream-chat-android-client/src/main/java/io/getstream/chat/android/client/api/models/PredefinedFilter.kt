@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
+package io.getstream.chat.android.client.api.models
 
-import com.squareup.moshi.JsonClass
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.querysort.QuerySorter
 
-@JsonClass(generateAdapter = true)
-internal data class QueryChannelsResponse(
-    val channels: List<ChannelResponse>,
-    val predefined_filter: ParsedPredefinedFilterResponse? = null,
-)
-
-@JsonClass(generateAdapter = true)
-internal data class ParsedPredefinedFilterResponse(
-    val name: String,
-    val filter: Map<String, Any>,
-    val sort: List<Map<String, Any>>? = null,
+/**
+ * Represents a predefined filter parsed by the backend.
+ *
+ * @param filter The parsed filter specification.
+ * @param sort The parsed sort specification, or locally calculated fallback if null.
+ */
+@InternalStreamChatApi
+public data class PredefinedFilter(
+    val filter: FilterObject,
+    val sort: QuerySorter<Channel>,
 )

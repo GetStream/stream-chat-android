@@ -17,6 +17,7 @@
 package io.getstream.chat.android.state.plugin.state.querychannels.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Location
@@ -47,21 +48,22 @@ internal class QueryChannelsMutableStateTest {
 
     private val filter = Filters.eq("type", "messaging")
     private val sort = QuerySortByField.descByName<Channel>("last_message_at")
-    private val identifier = io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
-        .Standard(filter, sort)
+    private val identifier = QueryChannelsIdentifier.Standard(filter, sort)
     private val latestUsers = MutableStateFlow<Map<String, User>>(emptyMap())
     private val activeLiveLocations = MutableStateFlow<List<Location>>(emptyList())
 
     private lateinit var state: QueryChannelsMutableState
 
+    private fun newState(identifier: QueryChannelsIdentifier) = QueryChannelsMutableState(
+        identifier = identifier,
+        scope = testCoroutines.scope,
+        latestUsers = latestUsers,
+        activeLiveLocations = activeLiveLocations,
+    )
+
     @BeforeEach
     fun setUp() {
-        state = QueryChannelsMutableState(
-            identifier = identifier,
-            scope = testCoroutines.scope,
-            latestUsers = latestUsers,
-            activeLiveLocations = activeLiveLocations,
-        )
+        state = newState(identifier)
     }
 
     // region Setters
@@ -251,6 +253,91 @@ internal class QueryChannelsMutableStateTest {
         state.setChannelsOffset(99)
         // rawChannels should be null since _channels was nullified
         assertNull(state.rawChannels)
+    }
+
+    // endregion
+
+    // region applyResolvedSpec (Predefined)
+
+    private val predefinedIdentifier = QueryChannelsIdentifier.Predefined(
+        name = "predefined",
+        filterValues = null,
+        sortValues = null,
+    )
+
+    @Test
+    fun `applyResolvedSpec updates filter and sort accessors`() {
+        val predefinedState = newState(predefinedIdentifier)
+        val newFilter = Filters.eq("type", "team")
+        val newSort = QuerySortByField.ascByName<Channel>("name")
+
+        predefinedState.applyResolvedSpec(newFilter, newSort)
+
+        assertEquals(newFilter, predefinedState.filter)
+        assertEquals(newSort, predefinedState.sort)
+    }
+
+    @Test
+    fun `applyResolvedSpec updates the in-memory queryChannelsSpec`() {
+        val predefinedState = newState(predefinedIdentifier)
+        val newFilter = Filters.eq("type", "team")
+        val newSort = QuerySortByField.ascByName<Channel>("name")
+
+        predefinedState.applyResolvedSpec(newFilter, newSort)
+
+        assertEquals(newFilter, predefinedState.queryChannelsSpec.filter)
+        assertEquals(newSort, predefinedState.queryChannelsSpec.querySort)
+    }
+
+    @Test
+    fun `applyResolvedSpec re-sorts the channels flow with the new comparator`() = runTest {
+        // Given a predefined-identifier state seeded with channels.
+        val predefinedState = newState(predefinedIdentifier)
+        val a = randomChannel(id = "a", type = "messaging", name = "alpha")
+        val b = randomChannel(id = "b", type = "messaging", name = "bravo")
+        val c = randomChannel(id = "c", type = "messaging", name = "charlie")
+        // Apply descending name sort first.
+        predefinedState.applyResolvedSpec(filter, QuerySortByField.descByName("name"))
+        predefinedState.setChannels(mapOf(a.cid to a, b.cid to b, c.cid to c))
+        advanceUntilIdle()
+
+        val sortedDesc = predefinedState.channels.value!!.map { it.name }
+        assertEquals(listOf("charlie", "bravo", "alpha"), sortedDesc)
+
+        // When the resolved sort flips to ascending, channels re-emit in the new order.
+        predefinedState.applyResolvedSpec(filter, QuerySortByField.ascByName("name"))
+        advanceUntilIdle()
+
+        val sortedAsc = predefinedState.channels.value!!.map { it.name }
+        assertEquals(listOf("alpha", "bravo", "charlie"), sortedAsc)
+    }
+
+    @Test
+    fun `applyResolvedSpec is a no-op for Standard identifier`() {
+        val newFilter = Filters.eq("type", "team")
+        val newSort = QuerySortByField.ascByName<Channel>("name")
+
+        state.applyResolvedSpec(newFilter, newSort)
+
+        assertEquals(filter, state.filter)
+        assertEquals(sort, state.sort)
+        assertEquals(filter, state.queryChannelsSpec.filter)
+        assertEquals(sort, state.queryChannelsSpec.querySort)
+    }
+
+    @Test
+    fun `predefined identifier wires predefined fields into the spec`() {
+        val identifier = QueryChannelsIdentifier.Predefined(
+            name = "p",
+            filterValues = mapOf("a" to 1),
+            sortValues = mapOf("b" to 2),
+        )
+
+        val predefinedState = newState(identifier)
+
+        assertEquals("p", predefinedState.queryChannelsSpec.predefinedFilterName)
+        assertEquals(mapOf("a" to 1), predefinedState.queryChannelsSpec.predefinedFilterValues)
+        assertEquals(mapOf("b" to 2), predefinedState.queryChannelsSpec.predefinedSortValues)
     }
 
     // endregion

@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdent
 import io.getstream.chat.android.client.internal.state.plugin.identifier
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
@@ -76,9 +75,7 @@ internal class LogicRegistry internal constructor(
         ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
 
-    internal fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic =
-        queryChannels(QueryChannelsIdentifier.Standard(filter, sort))
-
+    /** Returns [QueryChannelsLogic] for the given [identifier], creating it on first access. */
     internal fun queryChannels(identifier: QueryChannelsIdentifier): QueryChannelsLogic {
         return queryChannels.getOrPut(identifier) {
             val mutableState = stateRegistry.queryChannels(identifier).toMutableState()

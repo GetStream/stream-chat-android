@@ -40,13 +40,21 @@ internal class DatabaseQueryChannelsRepository(
         queryChannelsDao.insert(toEntity(queryChannelsSpec))
     }
 
-    override suspend fun selectBy(groupKey: String): QueryChannelsSpec? {
-        val identifier = QueryChannelsIdentifier.Grouped(groupKey)
+    override suspend fun selectBy(filter: FilterObject, querySort: QuerySorter<Channel>): QueryChannelsSpec? {
+        return queryChannelsDao.select(generateId(QueryChannelsIdentifier.Standard(filter, querySort)))?.let(::toModel)
+    }
+
+    override suspend fun selectBy(
+        predefinedFilterName: String,
+        filterValues: Map<String, Any>?,
+        sortValues: Map<String, Any>?,
+    ): QueryChannelsSpec? {
+        val identifier = QueryChannelsIdentifier.Predefined(predefinedFilterName, filterValues, sortValues)
         return queryChannelsDao.select(generateId(identifier))?.let(::toModel)
     }
 
-    override suspend fun selectBy(filter: FilterObject, querySort: QuerySorter<Channel>): QueryChannelsSpec? {
-        val identifier = QueryChannelsIdentifier.Standard(filter, querySort)
+    override suspend fun selectBy(groupKey: String): QueryChannelsSpec? {
+        val identifier = QueryChannelsIdentifier.Grouped(groupKey)
         return queryChannelsDao.select(generateId(identifier))?.let(::toModel)
     }
 
@@ -55,25 +63,38 @@ internal class DatabaseQueryChannelsRepository(
     }
 
     private companion object {
+        // Standard: hash of (filter, sort). Predefined: name + value-map hashes, since the
+        // resolved filter/sort are unknown until the server replies and we need stable identity
+        // across runs. Grouped: stable groupKey returned by the server.
         private fun generateId(identifier: QueryChannelsIdentifier): String = when (identifier) {
             is QueryChannelsIdentifier.Standard ->
                 "${identifier.filter.hashCode()}-${identifier.sort.toDto().hashCode()}"
+            is QueryChannelsIdentifier.Predefined ->
+                "pd:${identifier.name}:${identifier.filterValues.hashCode()}:${identifier.sortValues.hashCode()}"
             is QueryChannelsIdentifier.Grouped ->
                 "grp:${identifier.groupKey}"
         }
 
-        private fun toEntity(spec: QueryChannelsSpec): QueryChannelsEntity = QueryChannelsEntity(
-            id = generateId(spec.identifier),
-            filter = spec.filter,
-            querySort = spec.querySort,
-            cids = spec.cids.toList(),
-            groupKey = spec.groupKey,
-        )
+        private fun toEntity(spec: QueryChannelsSpec): QueryChannelsEntity =
+            QueryChannelsEntity(
+                id = generateId(spec.identifier),
+                filter = spec.filter,
+                querySort = spec.querySort,
+                cids = spec.cids.toList(),
+                groupKey = spec.groupKey,
+                predefinedFilterName = spec.predefinedFilterName,
+                predefinedFilterValues = spec.predefinedFilterValues,
+                predefinedSortValues = spec.predefinedSortValues,
+            )
 
-        private fun toModel(entity: QueryChannelsEntity): QueryChannelsSpec = QueryChannelsSpec(
-            filter = entity.filter,
-            querySort = entity.querySort,
-            groupKey = entity.groupKey,
-        ).also { it.cids = entity.cids.toSet() }
+        private fun toModel(entity: QueryChannelsEntity): QueryChannelsSpec =
+            QueryChannelsSpec(
+                filter = entity.filter,
+                querySort = entity.querySort,
+                groupKey = entity.groupKey,
+                predefinedFilterName = entity.predefinedFilterName,
+                predefinedFilterValues = entity.predefinedFilterValues,
+                predefinedSortValues = entity.predefinedSortValues,
+            ).also { it.cids = entity.cids.toSet() }
     }
 }

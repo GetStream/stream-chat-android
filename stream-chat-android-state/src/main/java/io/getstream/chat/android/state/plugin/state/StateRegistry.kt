@@ -92,8 +92,12 @@ public class StateRegistry(
         queryChannels(QueryChannelsIdentifier.Standard(filter, sort))
 
     /**
-     * Returns [QueryChannelsState] associated with the given [identifier].
-     * Creates a fresh state if no entry exists for the identifier yet.
+     * Returns [QueryChannelsState] associated with the given [identifier]. Canonical lookup that
+     * works for standard, predefined-filter, and grouped queries. [QueryChannelsMutableState]
+     * derives its initial filter/sort and spec shape from the identifier itself, so this method
+     * is just a registry-cache lookup keyed by identifier identity.
+     *
+     * @param identifier The identifier of the [QueryChannelsState].
      */
     @InternalStreamChatApi
     public fun queryChannels(identifier: QueryChannelsIdentifier): QueryChannelsState {

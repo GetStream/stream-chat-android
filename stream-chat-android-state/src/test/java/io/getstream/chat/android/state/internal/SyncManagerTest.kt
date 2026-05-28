@@ -19,6 +19,7 @@ package io.getstream.chat.android.state.internal
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
@@ -823,7 +824,9 @@ internal class SyncManagerTest {
                     ),
                 ),
             )
-            whenever(chatClient.queryChannelsInternal(any())) doReturn TestCall(Result.Success(emptyList()))
+            whenever(chatClient.queryChannelsInternal(any())) doReturn TestCall(
+                Result.Success(QueryChannelsResult(channels = emptyList(), predefinedFilter = null)),
+            )
             whenever(clientState.isOnline) doReturn true
             whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
 
@@ -841,6 +844,7 @@ internal class SyncManagerTest {
         }
 
     @Test
+    @Suppress("LongMethod")
     fun `dual-mode reconnect should exclude tracked watched cids from updateActiveChannels`() =
         runTest(testDispatcher) {
             val createdAt = localDate()
@@ -892,7 +896,9 @@ internal class SyncManagerTest {
                     presence = any(),
                 ),
             ) doReturn TestCall(Result.Success(GroupedChannels(groups = emptyMap())))
-            whenever(chatClient.queryChannelsInternal(any())) doReturn TestCall(Result.Success(emptyList()))
+            whenever(chatClient.queryChannelsInternal(any())) doReturn TestCall(
+                Result.Success(QueryChannelsResult(channels = emptyList(), predefinedFilter = null)),
+            )
             whenever(clientState.isOnline) doReturn true
             whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
 
@@ -929,7 +935,9 @@ internal class SyncManagerTest {
             whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn emptyList()
             whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
             whenever(stateRegistry.getActiveChannelStates()) doReturn listOf(activeStateA, activeStateB)
-            whenever(chatClient.queryChannelsInternal(any())) doReturn TestCall(Result.Success(emptyList()))
+            whenever(chatClient.queryChannelsInternal(any())) doReturn TestCall(
+                Result.Success(QueryChannelsResult(channels = emptyList(), predefinedFilter = null)),
+            )
             whenever(clientState.isOnline) doReturn true
             whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
 

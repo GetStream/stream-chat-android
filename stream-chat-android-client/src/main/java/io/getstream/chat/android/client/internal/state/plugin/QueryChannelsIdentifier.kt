@@ -24,42 +24,86 @@ import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.querysort.QuerySorter
 
 /**
- * Canonical key for query-channels state held in the `LogicRegistry`, `StateRegistry`, and
- * the offline `QueryChannelsRepository`. Each variant represents a distinct way to identify
- * a logical channel-list query.
+ * Identifies a query channels operation independently of the resolved [FilterObject] and
+ * [QuerySorter]. Used as the cache key in `StateRegistry`, `LogicRegistry`, and the offline DB so
+ * the same query consistently maps to the same logic/state instance and the same persisted row
+ * across runs.
+ *
+ * Three shapes are supported:
+ *  - [Standard] for classic queries where the client knows `filter` + `querySort` upfront.
+ *  - [Predefined] for server-side predefined filters where the actual `filter` and `querySort` are
+ *    only learned from the response. Identity must therefore be the predefined name plus the
+ *    interpolation values, since those are the only stable inputs available before the response.
+ *  - [Grouped] for cursor-paginated grouped channel queries; identity is the stable [Grouped.groupKey]
+ *    returned by the server.
  */
 @InternalStreamChatApi
 public sealed interface QueryChannelsIdentifier {
 
     /**
-     * Standard offset-based queryChannels. Identity is `(filter, sort)`.
+     * Identity for a classic query channels request: [filter] and [sort] are known on the client
+     * and define the query.
      */
     public data class Standard(
-        public val filter: FilterObject,
-        public val sort: QuerySorter<Channel>,
+        val filter: FilterObject,
+        val sort: QuerySorter<Channel>,
     ) : QueryChannelsIdentifier
 
     /**
-     * Grouped queryChannels. Identity is the stable [groupKey] returned by the server.
+     * Identity for a server-side predefined filter: the actual filter and sort are resolved by the
+     * backend; identity is the predefined [name] plus the value maps used to interpolate it.
+     */
+    public data class Predefined(
+        val name: String,
+        val filterValues: Map<String, Any>?,
+        val sortValues: Map<String, Any>?,
+    ) : QueryChannelsIdentifier
+
+    /**
+     * Identity for a grouped query channels request: identity is the stable [groupKey] returned by
+     * the server. Grouped queries use cursor-based pagination and a separate endpoint
+     * ([io.getstream.chat.android.client.ChatClient.queryGroupedChannels]).
      */
     public data class Grouped(
-        public val groupKey: String,
+        val groupKey: String,
     ) : QueryChannelsIdentifier
 }
 
 /**
- * Resolves the identifier for a standard [QueryChannelsRequest]. Grouped identifiers are
- * not derivable from a request — they are constructed directly by callers.
+ * Derives the [QueryChannelsIdentifier] from a [QueryChannelsRequest]. A non-null
+ * [QueryChannelsRequest.predefinedFilter] marks the request as a predefined-filter query and
+ * yields [QueryChannelsIdentifier.Predefined]; otherwise yields [QueryChannelsIdentifier.Standard]
+ * from the explicit `filter`/`querySort`. Grouped identifiers are not derivable from a
+ * [QueryChannelsRequest] — they are constructed directly by callers.
  */
 @InternalStreamChatApi
 public val QueryChannelsRequest.identifier: QueryChannelsIdentifier
-    get() = QueryChannelsIdentifier.Standard(filter, querySort)
+    get() = when (val name = predefinedFilter) {
+        null -> QueryChannelsIdentifier.Standard(filter, querySort)
+        else -> QueryChannelsIdentifier.Predefined(
+            name = name,
+            filterValues = filterValues.normalizedIdentifierValues(),
+            sortValues = sortValues.normalizedIdentifierValues(),
+        )
+    }
 
 /**
- * Resolves the identifier for a stored [QueryChannelsSpec]. A non-null [QueryChannelsSpec.groupKey]
- * means this spec was originally produced by a grouped query.
+ * Derives the [QueryChannelsIdentifier] from a [QueryChannelsSpec]. Resolution order:
+ *  - Non-null [QueryChannelsSpec.predefinedFilterName] → [QueryChannelsIdentifier.Predefined].
+ *  - Non-null [QueryChannelsSpec.groupKey] → [QueryChannelsIdentifier.Grouped].
+ *  - Otherwise → [QueryChannelsIdentifier.Standard] from the resolved `filter`/`querySort`.
  */
 @InternalStreamChatApi
 public val QueryChannelsSpec.identifier: QueryChannelsIdentifier
-    get() = groupKey?.let { QueryChannelsIdentifier.Grouped(it) }
-        ?: QueryChannelsIdentifier.Standard(filter, querySort)
+    get() = when {
+        predefinedFilterName != null -> QueryChannelsIdentifier.Predefined(
+            name = predefinedFilterName!!,
+            filterValues = predefinedFilterValues.normalizedIdentifierValues(),
+            sortValues = predefinedSortValues.normalizedIdentifierValues(),
+        )
+        groupKey != null -> QueryChannelsIdentifier.Grouped(groupKey!!)
+        else -> QueryChannelsIdentifier.Standard(filter, querySort)
+    }
+
+private fun Map<String, Any>?.normalizedIdentifierValues(): Map<String, Any>? =
+    if (isNullOrEmpty()) null else this
