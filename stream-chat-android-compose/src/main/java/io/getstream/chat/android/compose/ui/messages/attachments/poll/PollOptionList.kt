@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -187,7 +186,6 @@ private fun ReorderableScope.PollOptionRow(
                     painter = painterResource(R.drawable.stream_design_ic_minus_circle),
                     contentDescription = stringResource(R.string.stream_compose_poll_option_remove, displayName),
                     tint = colors.inputTextIcon,
-                    modifier = Modifier.size(20.dp),
                 )
             }
         }
@@ -217,7 +215,6 @@ private fun PollOptionErrorRow(pollOptionError: PollOptionError) {
             painter = painterResource(R.drawable.stream_design_ic_exclamation_circle),
             contentDescription = null,
             tint = colors.accentError,
-            modifier = Modifier.size(20.dp),
         )
         Text(
             text = pollOptionError.message,
