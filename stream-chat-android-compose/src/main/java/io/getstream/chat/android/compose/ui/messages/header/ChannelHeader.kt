@@ -33,6 +33,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -197,12 +200,15 @@ internal fun DefaultChannelHeaderCenterContent(
                     onClickLabel = onHeaderTitleClickLabel,
                     role = Role.Button,
                 ) { callback(channel) }
+                    .semantics(mergeDescendants = true) {}
             },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            modifier = Modifier.testTag("Stream_ChannelName"),
+            modifier = Modifier
+                .testTag("Stream_ChannelName")
+                .semantics { heading() },
             text = title,
             style = ChatTheme.typography.headingSmall,
             maxLines = 1,
@@ -279,11 +285,15 @@ internal fun DefaultChannelHeaderTrailingContent(
             modifier = Modifier
                 .size(40.dp)
                 .ifNotNull(onClick) { callback ->
+                    val avatarLabel = ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser)
                     clickable(
                         bounded = false,
                         onClickLabel = onClickLabel,
                         role = Role.Button,
                     ) { callback(channel) }
+                        .semantics(mergeDescendants = true) {
+                            contentDescription = avatarLabel
+                        }
                 },
             channel = channel,
             currentUser = currentUser,

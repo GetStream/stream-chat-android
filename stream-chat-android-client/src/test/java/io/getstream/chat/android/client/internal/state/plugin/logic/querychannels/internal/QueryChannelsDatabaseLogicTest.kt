@@ -16,11 +16,11 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal
 
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
-import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.test.randomQueryChannelsSpec
 import io.getstream.chat.android.models.Channel
@@ -69,41 +69,29 @@ internal class QueryChannelsDatabaseLogicTest {
     }
 
     @Test
-    fun `fetchChannelsFromCache should return null when queryChannelsSpec is null`() = runTest {
-        // Given
-        val pagination = AnyChannelPaginationRequest()
-        val queryChannelsSpec: QueryChannelsSpec? = null
-
-        // When
-        val result = logic.fetchChannelsFromCache(pagination, queryChannelsSpec)
-
-        // Then
-        assertNull(result)
-    }
-
-    @Test
     fun `fetchChannelsFromCache should return null when spec not found in database`() = runTest {
         // Given
         val filter = Filters.eq("type", "messaging")
         val sort = QuerySortByField.descByName<Channel>("last_message_at")
+        val identifier = QueryChannelsIdentifier.Standard(filter, sort)
         val pagination = AnyChannelPaginationRequest()
-        val queryChannelsSpec = randomQueryChannelsSpec(filter = filter, sort = sort)
 
-        whenever(queryChannelsRepository.selectBy(filter, sort)) doReturn null
+        whenever(queryChannelsRepository.selectBy(identifier)) doReturn null
 
         // When
-        val result = logic.fetchChannelsFromCache(pagination, queryChannelsSpec)
+        val result = logic.fetchChannelsFromCache(pagination, identifier)
 
         // Then
         assertNull(result)
-        verify(queryChannelsRepository).selectBy(filter, sort)
+        verify(queryChannelsRepository).selectBy(identifier)
     }
 
     @Test
-    fun `fetchChannelsFromCache should return channels when spec found in database`() = runTest {
+    fun `fetchChannelsFromCache should return cached spec and channels when spec found`() = runTest {
         // Given
         val filter = Filters.eq("type", "messaging")
         val sort = QuerySortByField.descByName<Channel>("last_message_at")
+        val identifier = QueryChannelsIdentifier.Standard(filter, sort)
         val pagination = AnyChannelPaginationRequest().apply {
             channelLimit = 10
             channelOffset = 0
@@ -118,30 +106,31 @@ internal class QueryChannelsDatabaseLogicTest {
             sort = sort,
             cids = setOf(cid1, cid2, cid3),
         )
-        val queryChannelsSpec = randomQueryChannelsSpec(filter = filter, sort = sort)
 
         val channel1 = randomChannel(id = "channel1", type = "messaging")
         val channel2 = randomChannel(id = "channel2", type = "messaging")
         val channel3 = randomChannel(id = "channel3", type = "messaging")
         val expectedChannels = listOf(channel1, channel2, channel3)
 
-        whenever(queryChannelsRepository.selectBy(filter, sort)) doReturn cachedSpec
+        whenever(queryChannelsRepository.selectBy(identifier)) doReturn cachedSpec
         whenever(repositoryFacade.selectChannels(listOf(cid1, cid2, cid3), pagination)) doReturn expectedChannels
 
         // When
-        val result = logic.fetchChannelsFromCache(pagination, queryChannelsSpec)
+        val result = logic.fetchChannelsFromCache(pagination, identifier)
 
         // Then
-        assertEquals(expectedChannels, result)
-        verify(queryChannelsRepository).selectBy(filter, sort)
+        assertEquals(cachedSpec, result?.spec)
+        assertEquals(expectedChannels, result?.channels)
+        verify(queryChannelsRepository).selectBy(identifier)
         verify(repositoryFacade).selectChannels(listOf(cid1, cid2, cid3), pagination)
     }
 
     @Test
-    fun `fetchChannelsFromCache should return empty list when spec found but no channels`() = runTest {
+    fun `fetchChannelsFromCache should return empty channels list when spec found but no cids`() = runTest {
         // Given
         val filter = Filters.eq("type", "messaging")
         val sort = QuerySortByField.descByName<Channel>("last_message_at")
+        val identifier = QueryChannelsIdentifier.Standard(filter, sort)
         val pagination = AnyChannelPaginationRequest()
 
         val cachedSpec = randomQueryChannelsSpec(
@@ -149,17 +138,17 @@ internal class QueryChannelsDatabaseLogicTest {
             sort = sort,
             cids = emptySet(),
         )
-        val queryChannelsSpec = randomQueryChannelsSpec(filter = filter, sort = sort)
 
-        whenever(queryChannelsRepository.selectBy(filter, sort)) doReturn cachedSpec
+        whenever(queryChannelsRepository.selectBy(identifier)) doReturn cachedSpec
         whenever(repositoryFacade.selectChannels(emptyList(), pagination)) doReturn emptyList()
 
         // When
-        val result = logic.fetchChannelsFromCache(pagination, queryChannelsSpec)
+        val result = logic.fetchChannelsFromCache(pagination, identifier)
 
         // Then
-        assertEquals(emptyList<Channel>(), result)
-        verify(queryChannelsRepository).selectBy(filter, sort)
+        assertEquals(cachedSpec, result?.spec)
+        assertEquals(emptyList<Channel>(), result?.channels)
+        verify(queryChannelsRepository).selectBy(identifier)
         verify(repositoryFacade).selectChannels(emptyList(), pagination)
     }
 

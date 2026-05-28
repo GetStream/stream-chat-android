@@ -90,7 +90,10 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param isAttachmentPickerVisible If the attachment picker is visible or not.
  * @param onSendMessage Handler when the user sends a message. By default it delegates this to the
  * ViewModel, but the user can override if they want more custom behavior.
+ * @param sendActionLabel Semantic / accessibility label for [onSendMessage] when sending a new message.
+ * @param saveActionLabel Semantic / accessibility label for [onSendMessage] when saving an edit.
  * @param onAttachmentsClick Handler for the default Attachments integration.
+ * @param attachmentsActionLabel Semantic / accessibility label for [onAttachmentsClick].
  * @param onValueChange Handler when the input field value changes.
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
@@ -112,7 +115,10 @@ public fun MessageComposer(
     modifier: Modifier = Modifier,
     isAttachmentPickerVisible: Boolean = false,
     onSendMessage: (Message) -> Unit = { viewModel.sendMessage(it) },
+    sendActionLabel: String? = null,
+    saveActionLabel: String? = null,
     onAttachmentsClick: () -> Unit = {},
+    attachmentsActionLabel: String? = null,
     onValueChange: (String) -> Unit = { viewModel.setMessageInput(it) },
     onAttachmentRemoved: (Attachment) -> Unit = { viewModel.removeAttachment(it) },
     onCancelAction: () -> Unit = { viewModel.dismissMessageActions() },
@@ -195,6 +201,9 @@ public fun MessageComposer(
                 onAttachmentRemoved = onAttachmentRemoved,
                 onLinkPreviewClick = onLinkPreviewClick,
                 onCancelLinkPreviewClick = onCancelLinkPreviewClick,
+                sendActionLabel = sendActionLabel,
+                saveActionLabel = saveActionLabel,
+                attachmentsActionLabel = attachmentsActionLabel,
             ),
         )
     }
@@ -215,9 +224,12 @@ internal val LocalMessageComposerSnackbarHostState =
  *
  * @param messageComposerState The state of the message input.
  * @param onSendMessage Handler when the user wants to send a message.
+ * @param sendActionLabel Semantic / accessibility label for [onSendMessage] when sending a new message.
+ * @param saveActionLabel Semantic / accessibility label for [onSendMessage] when saving an edit.
  * @param modifier Modifier for styling.
  * @param isAttachmentPickerVisible If the attachment picker is visible or not.
  * @param onAttachmentsClick Handler for the default Attachments integration.
+ * @param attachmentsActionLabel Semantic / accessibility label for [onAttachmentsClick].
  * @param onValueChange Handler when the input field value changes.
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
@@ -236,9 +248,12 @@ internal val LocalMessageComposerSnackbarHostState =
 public fun MessageComposer(
     messageComposerState: MessageComposerState,
     onSendMessage: (String, List<Attachment>) -> Unit,
+    sendActionLabel: String? = null,
+    saveActionLabel: String? = null,
     modifier: Modifier = Modifier,
     isAttachmentPickerVisible: Boolean = false,
     onAttachmentsClick: () -> Unit = {},
+    attachmentsActionLabel: String? = null,
     onValueChange: (String) -> Unit = {},
     onAttachmentRemoved: (Attachment) -> Unit = {},
     onCancelAction: () -> Unit = {},
@@ -263,6 +278,8 @@ public fun MessageComposer(
                 onAlsoSendToChannelChange = onAlsoSendToChannelChange,
                 recordingActions = recordingActions,
                 onActiveCommandDismiss = onActiveCommandDismiss,
+                sendActionLabel = sendActionLabel,
+                saveActionLabel = saveActionLabel,
             ),
         )
     },
@@ -318,6 +335,7 @@ public fun MessageComposer(
                     state = messageComposerState,
                     isAttachmentPickerVisible = isAttachmentPickerVisible,
                     onAttachmentsClick = onAttachmentsClick,
+                    onAttachmentsClickLabel = attachmentsActionLabel,
                 ),
             )
 

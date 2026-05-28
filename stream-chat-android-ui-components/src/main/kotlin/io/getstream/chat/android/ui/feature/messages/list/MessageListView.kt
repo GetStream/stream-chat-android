@@ -93,8 +93,11 @@ import io.getstream.chat.android.ui.feature.messages.list.internal.HiddenMessage
 import io.getstream.chat.android.ui.feature.messages.list.internal.MessageListScrollHelper
 import io.getstream.chat.android.ui.feature.messages.list.internal.SwipeReplyCallback
 import io.getstream.chat.android.ui.feature.messages.list.internal.canReplyToMessage
+import io.getstream.chat.android.ui.feature.messages.list.internal.poll.AddPollCommentDialogFragment
 import io.getstream.chat.android.ui.feature.messages.list.internal.poll.AllPollOptionsDialogFragment
+import io.getstream.chat.android.ui.feature.messages.list.internal.poll.PollCommentsDialogFragment
 import io.getstream.chat.android.ui.feature.messages.list.internal.poll.PollResultsDialogFragment
+import io.getstream.chat.android.ui.feature.messages.list.internal.poll.SuggestPollOptionDialogFragment
 import io.getstream.chat.android.ui.feature.messages.list.options.message.MessageOptionItem
 import io.getstream.chat.android.ui.feature.messages.list.options.message.MessageOptionItemsFactory
 import io.getstream.chat.android.ui.feature.messages.list.options.message.MessageOptionsDialogFragment
@@ -609,6 +612,28 @@ public class MessageListView : ConstraintLayout {
             true
         } ?: false
     }
+    private val defaultOnSuggestPollOptionClickListener = OnSuggestPollOptionClickListener { poll ->
+        context.getFragmentManager()?.let { fragmentManager ->
+            SuggestPollOptionDialogFragment.newInstance(poll.id)
+                .show(fragmentManager, SuggestPollOptionDialogFragment.TAG)
+            true
+        } ?: false
+    }
+    private val defaultOnAddPollCommentClickListener = OnAddPollCommentClickListener { message, poll ->
+        context.getFragmentManager()?.let { fragmentManager ->
+            AddPollCommentDialogFragment.newInstance(messageId = message.id, pollId = poll.id)
+                .show(fragmentManager, AddPollCommentDialogFragment.TAG)
+            true
+        } ?: false
+    }
+    private val defaultOnViewPollCommentsClickListener = OnViewPollCommentsClickListener { message, _ ->
+        context.getFragmentManager()?.let { fragmentManager ->
+            PollCommentsDialogFragment
+                .newInstance(cid = message.cid, messageId = message.id)
+                .show(fragmentManager, PollCommentsDialogFragment.TAG)
+            true
+        } ?: false
+    }
 
     private val listenerContainer = MessageListListenersImpl(
         messageClickListener = defaultMessageClickListener,
@@ -626,6 +651,9 @@ public class MessageListView : ConstraintLayout {
         onShowAllPollOptionClickListener = defaultOnShowAllPollOptionClickListener,
         onPollCloseClickListener = defaultOnPollCloseClickListener,
         onViewPollResultClickListener = defaultOnViewPollResultClickListener,
+        onSuggestPollOptionClickListener = defaultOnSuggestPollOptionClickListener,
+        onAddPollCommentClickListener = defaultOnAddPollCommentClickListener,
+        onViewPollCommentsClickListener = defaultOnViewPollCommentsClickListener,
     )
     private var enterThreadListener = defaultEnterThreadListener
     private var userReactionClickListener = defaultUserReactionClickListener
@@ -656,9 +684,9 @@ public class MessageListView : ConstraintLayout {
         binding = StreamUiMessageListViewBinding.inflate(streamThemeInflater, this)
 
         messageListViewStyle = MessageListViewStyle(context, attr)
-        messageListViewStyle?.messagesStart?.let(::chatMessageStart)
 
         initRecyclerView()
+        messageListViewStyle?.messagesStart?.let(::chatMessageStart)
         initScrollHelper()
         initSwipeToReply()
         initLoadingView()
@@ -704,9 +732,7 @@ public class MessageListView : ConstraintLayout {
 
     private fun initRecyclerView() {
         binding.chatMessagesRV.apply {
-            layoutManager = LinearLayoutManager(context).apply {
-                stackFromEnd = true
-            }
+            layoutManager = LinearLayoutManager(context)
             setHasFixedSize(false)
             setItemViewCacheSize(20)
         }
@@ -1310,15 +1336,16 @@ public class MessageListView : ConstraintLayout {
 
     private fun changeLayoutForMessageStart(messagesStart: MessagesStart) {
         val messagesRV = binding.chatMessagesRV
+        val layoutManager = messagesRV.layoutManager as? LinearLayoutManager ?: return
 
         when (messagesStart) {
             MessagesStart.BOTTOM -> {
-                messagesRV.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+                layoutManager.stackFromEnd = true
                 messagesRV.overScrollMode = View.OVER_SCROLL_NEVER
             }
 
             MessagesStart.TOP -> {
-                messagesRV.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+                layoutManager.stackFromEnd = false
                 messagesRV.overScrollMode = View.OVER_SCROLL_ALWAYS
             }
         }
@@ -1391,6 +1418,48 @@ public class MessageListView : ConstraintLayout {
                 listener.onViewPollResultClick(poll)
             }
         }
+    }
+
+    /**
+     * Set the Suggest Poll Option click listener to be used by MessageListView.
+     *
+     * @param listener The listener to use. If null, the default will be used instead.
+     */
+    public fun setOnSuggestPollOptionClickListener(listener: OnSuggestPollOptionClickListener?) {
+        listenerContainer.onSuggestPollOptionClickListener =
+            if (listener == null) {
+                defaultOnSuggestPollOptionClickListener
+            } else {
+                OnSuggestPollOptionClickListener(listener::onSuggestPollOptionClick)
+            }
+    }
+
+    /**
+     * Set the Add Poll Comment click listener to be used by MessageListView.
+     *
+     * @param listener The listener to use. If null, the default will be used instead.
+     */
+    public fun setOnAddPollCommentClickListener(listener: OnAddPollCommentClickListener?) {
+        listenerContainer.onAddPollCommentClickListener =
+            if (listener == null) {
+                defaultOnAddPollCommentClickListener
+            } else {
+                OnAddPollCommentClickListener(listener::onAddPollCommentClick)
+            }
+    }
+
+    /**
+     * Set the View Poll Comments click listener to be used by MessageListView.
+     *
+     * @param listener The listener to use. If null, the default will be used instead.
+     */
+    public fun setOnViewPollCommentsClickListener(listener: OnViewPollCommentsClickListener?) {
+        listenerContainer.onViewPollCommentsClickListener =
+            if (listener == null) {
+                defaultOnViewPollCommentsClickListener
+            } else {
+                OnViewPollCommentsClickListener(listener::onViewPollCommentsClick)
+            }
     }
 
     /**
@@ -2009,6 +2078,27 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface OnViewPollResultClickListener {
         public fun onViewPollResultClick(poll: Poll): Boolean
+    }
+
+    /**
+     * Listener for clicks on the "Suggest an option" button of a poll that allows user-suggested options.
+     */
+    public fun interface OnSuggestPollOptionClickListener {
+        public fun onSuggestPollOptionClick(poll: Poll): Boolean
+    }
+
+    /**
+     * Listener for clicks on the "Add a comment" button of a poll that allows answers.
+     */
+    public fun interface OnAddPollCommentClickListener {
+        public fun onAddPollCommentClick(message: Message, poll: Poll): Boolean
+    }
+
+    /**
+     * Listener for clicks on the "View comments" button of a poll that has answers.
+     */
+    public fun interface OnViewPollCommentsClickListener {
+        public fun onViewPollCommentsClick(message: Message, poll: Poll): Boolean
     }
 
     public fun interface OnReplyMessageClickListener {

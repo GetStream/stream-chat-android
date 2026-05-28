@@ -23,6 +23,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.compose.R
@@ -38,7 +40,8 @@ import io.getstream.chat.android.models.Thread
  * It can be used without most parameters for default behavior, that can be tweaked if necessary.
  *
  * @param viewModelFactory The factory used to build the [ThreadListViewModel].
- * @param title Header title.
+ * @param title Header title. Also drives the screen's `paneTitle` semantic, announced by TalkBack
+ * when the screen appears as a pane (e.g. an adaptive-layout pane or a Compose Navigation route).
  * @param onHeaderAvatarClick Handle for when the user clicks on the header avatar.
  * @param onThreadClick Handler for Thread item clicks.
  */
@@ -54,7 +57,7 @@ public fun ThreadsScreen(
     val user by listViewModel.user.collectAsState()
     val connectionState by listViewModel.connectionState.collectAsState()
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize().semantics { paneTitle = title }) {
         ChatTheme.componentFactory.ThreadListHeader(
             params = ThreadListHeaderParams(
                 title = title,

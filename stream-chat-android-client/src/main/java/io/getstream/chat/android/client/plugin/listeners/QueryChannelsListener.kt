@@ -19,8 +19,8 @@ package io.getstream.chat.android.client.plugin.listeners
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.models.Channel
 import io.getstream.result.Result
 
 /**
@@ -51,7 +51,7 @@ public interface QueryChannelsListener {
      * Runs this function on the [Result] of this [QueryChannelsRequest].
      */
     public suspend fun onQueryChannelsResult(
-        result: Result<List<Channel>>,
+        result: Result<QueryChannelsResult>,
         request: QueryChannelsRequest,
     ) { /* No-Op */ }
 }

@@ -42,6 +42,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -113,8 +115,9 @@ private fun DirectChannelInfoScaffold(
     onViewAction: (action: ChannelInfoViewAction) -> Unit = {},
 ) {
     val listState = rememberLazyListState()
+    val paneTitleText = stringResource(id = UiCommonR.string.stream_ui_channel_info_contact_title)
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.semantics { paneTitle = paneTitleText },
         topBar = {
             ChatTheme.componentFactory.DirectChannelInfoTopBar(
                 params = DirectChannelInfoTopBarParams(
@@ -358,6 +361,7 @@ internal fun DirectChannelInfoContent() {
                 ChannelInfoViewState.Content.Option.PinnedMessages,
                 ChannelInfoViewState.Content.Option.MediaAttachments,
                 ChannelInfoViewState.Content.Option.FilesAttachments,
+                ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
                 ChannelInfoViewState.Content.Option.MuteUser(isMuted = false),
                 ChannelInfoViewState.Content.Option.BlockUser(isBlocked = false),
                 ChannelInfoViewState.Content.Option.DeleteChannel,

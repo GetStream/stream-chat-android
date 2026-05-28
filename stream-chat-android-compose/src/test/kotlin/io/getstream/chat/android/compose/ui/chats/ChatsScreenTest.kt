@@ -88,4 +88,16 @@ internal class ChatsScreenTest : MockedChatClientTest {
         composeTestRule.onNodeWithTag("Stream_ThreadListLoading")
             .assertExists()
     }
+
+    @Test
+    @UiThread
+    fun `with custom title`() {
+        composeTestRule.setContent {
+            ChatTheme {
+                ChatsScreen(title = "My Chats")
+            }
+        }
+
+        composeTestRule.onNodeWithText("My Chats").assertExists()
+    }
 }

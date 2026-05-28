@@ -1250,6 +1250,9 @@ public interface ChatComponentFactory {
             onAlsoSendToChannelChange = params.onAlsoSendToChannelSelected,
             onActiveCommandDismiss = params.onActiveCommandDismiss,
             recordingActions = params.recordingActions,
+            sendActionLabel = params.sendActionLabel,
+            saveActionLabel = params.saveActionLabel,
+            attachmentsActionLabel = params.attachmentsActionLabel,
             input = params.input,
         )
     }
@@ -1395,6 +1398,7 @@ public interface ChatComponentFactory {
             messageInputState = params.state,
             isAttachmentPickerVisible = params.isAttachmentPickerVisible,
             onAttachmentsClick = params.onAttachmentsClick,
+            onAttachmentsClickLabel = params.onAttachmentsClickLabel,
         )
     }
 
@@ -1417,6 +1421,8 @@ public interface ChatComponentFactory {
             onAlsoSendToChannelChange = params.onAlsoSendToChannelChange,
             recordingActions = params.recordingActions,
             onActiveCommandDismiss = params.onActiveCommandDismiss,
+            sendActionLabel = params.sendActionLabel,
+            saveActionLabel = params.saveActionLabel,
         )
     }
 
@@ -1532,6 +1538,8 @@ public interface ChatComponentFactory {
             state = params.state,
             recordingActions = params.recordingActions,
             onSendClick = params.onSendClick,
+            sendActionLabel = params.sendActionLabel,
+            saveActionLabel = params.saveActionLabel,
         )
     }
 
@@ -1571,6 +1579,7 @@ public interface ChatComponentFactory {
     public fun MessageComposerSendButton(params: MessageComposerSendButtonParams) {
         io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerSendButton(
             onClick = params.onClick,
+            onClickLabel = params.onClickLabel,
         )
     }
 
@@ -1587,6 +1596,7 @@ public interface ChatComponentFactory {
         io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerSaveButton(
             enabled = params.enabled,
             onClick = params.onClick,
+            onClickLabel = params.onClickLabel,
         )
     }
 

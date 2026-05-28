@@ -65,6 +65,7 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
@@ -1714,9 +1715,20 @@ public class MessageListController(
         val itemState = messagesState.messageItems.lastOrNull { messageItem ->
             messageItem is HasMessageListItemState
         } as? HasMessageListItemState
-        val messageId = itemState?.message?.id
-        val messageText = itemState?.message?.text
+        val message = itemState?.message
+        val messageId = message?.id
+        val messageText = message?.text
         logger.d { "[markLastMessageRead] cid: $cid, msgId($isInThread): $messageId, msgText: \"$messageText\"" }
+
+        // Skip when our own message is at the bottom and hasn't been confirmed by the server.
+        // Without this, marking read on an empty channel (only an in-flight optimistic message
+        // exists) causes the server to persist last_read_message_id = "" because its view of
+        // the channel is empty.
+        val currentUserId = clientState.user.value?.id
+        if (message != null && message.user.id == currentUserId && message.syncStatus != SyncStatus.COMPLETED) {
+            logger.v { "[markLastMessageRead] cid: $cid; rejected[$isInThread] (own unsynced): $messageId" }
+            return
+        }
 
         val lastSeenMessageId = this.lastSeenMessageId
         if (lastSeenMessageId == messageId) {
@@ -2421,8 +2433,18 @@ public class MessageListController(
      * @param option The text of the new option to be added.
      */
     public fun addPollOption(poll: Poll, option: String) {
+        addPollOption(pollId = poll.id, option = option)
+    }
+
+    /**
+     * Creates a new poll option for the poll identified by [pollId].
+     *
+     * @param pollId The id of the poll to which the option will be added.
+     * @param option The text of the new option to be added.
+     */
+    public fun addPollOption(pollId: String, option: String) {
         scope.launch {
-            chatClient.createPollOption(poll.id, PollOption(text = option)).await()
+            chatClient.createPollOption(pollId, PollOption(text = option)).await()
         }
     }
 

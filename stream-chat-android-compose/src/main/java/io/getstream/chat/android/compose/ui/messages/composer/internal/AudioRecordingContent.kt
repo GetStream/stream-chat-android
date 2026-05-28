@@ -19,10 +19,13 @@ package io.getstream.chat.android.compose.ui.messages.composer.internal
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,6 +45,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
@@ -58,6 +63,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
+import io.getstream.chat.android.compose.ui.components.audio.rememberSpokenDurationFormatter
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
@@ -70,6 +76,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageComposerAudioRecordingO
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
+import kotlinx.coroutines.delay
 import kotlin.math.abs
 
 @Composable
@@ -150,7 +157,11 @@ internal fun MessageComposerAudioRecordingHoldContent(
                 )
             }
 
+            val durationDescription = rememberSpokenDurationFormatter()?.format(state.durationInMs)
             Text(
+                modifier = Modifier.semantics {
+                    if (durationDescription != null) contentDescription = durationDescription
+                },
                 text = ChatTheme.durationFormatter.format(state.durationInMs),
                 style = ChatTheme.typography.bodyEmphasis,
                 color = ChatTheme.colors.textPrimary,
@@ -174,8 +185,20 @@ internal fun MessageComposerAudioRecordingLockedContent(
     recordingActions: AudioRecordingActions,
     modifier: Modifier = Modifier,
 ) {
+    val rowFocusRequester = remember { FocusRequester() }
+    LaunchedEffect(Unit) {
+        delay(FocusRequestDelayMs)
+        rowFocusRequester.requestFocus()
+    }
+    val rowLabel = stringResource(R.string.stream_compose_audio_recording_locked_label)
     Column(modifier = modifier.fillMaxWidth()) {
-        Row(modifier = RecordingBarModifier, verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = RecordingBarModifier
+                .focusRequester(rowFocusRequester)
+                .focusable()
+                .semantics(mergeDescendants = true) { contentDescription = rowLabel },
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Box(modifier = Modifier.size(48.dp), contentAlignment = Alignment.Center) {
                 Icon(
                     painter = painterResource(id = R.drawable.stream_design_ic_voice),
@@ -184,7 +207,11 @@ internal fun MessageComposerAudioRecordingLockedContent(
                 )
             }
 
+            val durationDescription = rememberSpokenDurationFormatter()?.format(state.durationInMs)
             Text(
+                modifier = Modifier.semantics {
+                    if (durationDescription != null) contentDescription = durationDescription
+                },
                 text = ChatTheme.durationFormatter.format(state.durationInMs),
                 style = ChatTheme.typography.bodyEmphasis,
                 color = ChatTheme.colors.textPrimary,
@@ -222,55 +249,95 @@ internal fun MessageComposerAudioRecordingOverviewContent(
     LaunchedEffect(state.playingProgress, state.durationInMs) {
         currentProgress = state.playingProgress
     }
+    val rowFocusRequester = remember { FocusRequester() }
+    LaunchedEffect(Unit) {
+        delay(FocusRequestDelayMs)
+        rowFocusRequester.requestFocus()
+    }
 
     Column(modifier = modifier.fillMaxWidth()) {
         Row(modifier = RecordingBarModifier, verticalAlignment = Alignment.CenterVertically) {
-            val playbackIcon = if (state.isPlaying) {
-                R.drawable.stream_design_ic_pause_fill
-            } else {
-                R.drawable.stream_design_ic_play_fill
-            }
-            val playbackDescription = stringResource(
-                if (state.isPlaying) {
-                    R.string.stream_compose_audio_recording_pause
-                } else {
-                    R.string.stream_compose_audio_recording_play
-                },
-            )
-            IconButton(onClick = recordingActions.onToggleRecordingPlayback) {
-                Icon(
-                    painter = painterResource(id = playbackIcon),
-                    contentDescription = playbackDescription,
-                    tint = ChatTheme.colors.textPrimary,
-                )
-            }
-
-            val playbackInMs = (currentProgress * state.durationInMs).toInt()
-            Text(
-                text = ChatTheme.durationFormatter.format(playbackInMs),
-                style = ChatTheme.typography.bodyEmphasis,
-                color = ChatTheme.colors.textPrimary,
-            )
-
-            val progressDescription = stringResource(R.string.stream_compose_audio_recording_progress)
-            StaticWaveformSlider(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .semantics { contentDescription = progressDescription }
-                    .padding(start = StreamTokens.spacingMd, top = 8.dp, bottom = 8.dp),
-                waveformData = state.waveform,
-                progress = currentProgress,
-                isPlaying = state.isPlaying,
-                adjustBarWidthToLimit = true,
-                onDragStart = { currentProgress = it.also(recordingActions.onRecordingSliderDragStart) },
-                onDrag = { currentProgress = it },
-                onDragStop = { currentProgress = it.also(recordingActions.onRecordingSliderDragStop) },
+            OverviewPlaybackButton(state, recordingActions)
+            OverviewPlaybackRow(
+                state = state,
+                currentProgress = currentProgress,
+                onCurrentProgressChange = { currentProgress = it },
+                recordingActions = recordingActions,
+                focusRequester = rowFocusRequester,
             )
         }
-
         MessageComposerAudioRecordingControlsContent(
             isStopVisible = false,
             recordingActions = recordingActions,
+        )
+    }
+}
+
+@Composable
+private fun OverviewPlaybackButton(
+    state: RecordingState.Overview,
+    recordingActions: AudioRecordingActions,
+) {
+    val playbackIcon = if (state.isPlaying) {
+        R.drawable.stream_design_ic_pause_fill
+    } else {
+        R.drawable.stream_design_ic_play_fill
+    }
+    val playbackDescription = stringResource(
+        if (state.isPlaying) {
+            R.string.stream_compose_audio_recording_pause
+        } else {
+            R.string.stream_compose_audio_recording_play
+        },
+    )
+    IconButton(onClick = recordingActions.onToggleRecordingPlayback) {
+        Icon(
+            painter = painterResource(id = playbackIcon),
+            contentDescription = playbackDescription,
+            tint = ChatTheme.colors.textPrimary,
+        )
+    }
+}
+
+@Composable
+private fun RowScope.OverviewPlaybackRow(
+    state: RecordingState.Overview,
+    currentProgress: Float,
+    onCurrentProgressChange: (Float) -> Unit,
+    recordingActions: AudioRecordingActions,
+    focusRequester: FocusRequester,
+) {
+    val rowLabel = stringResource(R.string.stream_compose_audio_recording_label)
+    Row(
+        modifier = Modifier
+            .weight(1f)
+            .fillMaxHeight()
+            .focusRequester(focusRequester)
+            .focusable()
+            .semantics(mergeDescendants = true) { contentDescription = rowLabel },
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val playbackInMs = (currentProgress * state.durationInMs).toInt()
+        val durationDescription = rememberSpokenDurationFormatter()?.format(playbackInMs)
+        Text(
+            modifier = Modifier.semantics {
+                if (durationDescription != null) contentDescription = durationDescription
+            },
+            text = ChatTheme.durationFormatter.format(playbackInMs),
+            style = ChatTheme.typography.bodyEmphasis,
+            color = ChatTheme.colors.textPrimary,
+        )
+        StaticWaveformSlider(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = StreamTokens.spacingMd, top = 8.dp, bottom = 8.dp),
+            waveformData = state.waveform,
+            progress = currentProgress,
+            isPlaying = state.isPlaying,
+            adjustBarWidthToLimit = true,
+            onDragStart = { onCurrentProgressChange(it.also(recordingActions.onRecordingSliderDragStart)) },
+            onDrag = onCurrentProgressChange,
+            onDragStop = { onCurrentProgressChange(it.also(recordingActions.onRecordingSliderDragStop)) },
         )
     }
 }
@@ -346,6 +413,13 @@ private fun MessageComposerAudioRecordingControlsContent(
                 )
             }
         }
+        val confirmDescription = stringResource(
+            if (ChatTheme.config.composer.audioRecordingSendOnComplete) {
+                R.string.stream_compose_audio_recording_send
+            } else {
+                R.string.stream_compose_audio_recording_confirm
+            },
+        )
         StreamButton(
             modifier = Modifier
                 .testTag("Stream_ComposerConfirmAudioRecordingButton")
@@ -355,7 +429,7 @@ private fun MessageComposerAudioRecordingControlsContent(
         ) {
             Icon(
                 painter = painterResource(R.drawable.stream_design_ic_checkmark),
-                contentDescription = stringResource(R.string.stream_compose_audio_recording_send),
+                contentDescription = confirmDescription,
             )
         }
     }
@@ -368,6 +442,14 @@ private val RecordingBarModifier = Modifier
 
 private const val HoldContentEnterOffset = 0.3f
 private const val HoldContentEnterDurationMs = 200
+
+/**
+ * Small delay before moving accessibility focus onto a newly-mounted recording row, so Compose
+ * has finished its first layout pass before the focus request fires. Without it the request
+ * races TalkBack's own fallback recovery (the mic button has just dropped to 0dp) and TalkBack
+ * lands on the closest measured neighbour up the tree instead of our intended target.
+ */
+private const val FocusRequestDelayMs = 100L
 
 private const val PreviewDurationInMs = 120_000
 

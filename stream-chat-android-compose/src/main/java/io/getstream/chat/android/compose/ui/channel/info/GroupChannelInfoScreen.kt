@@ -50,6 +50,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -174,8 +176,9 @@ private fun GroupChannelInfoScaffold(
     onViewAction: (action: ChannelInfoViewAction) -> Unit = {},
 ) {
     val listState = rememberLazyListState()
+    val paneTitleText = stringResource(id = UiCommonR.string.stream_ui_channel_info_group_title)
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.semantics { paneTitle = paneTitleText },
         topBar = {
             ChatTheme.componentFactory.GroupChannelInfoTopBar(
                 params = GroupChannelInfoTopBarParams(

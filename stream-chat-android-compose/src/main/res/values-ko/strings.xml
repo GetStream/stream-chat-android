@@ -46,13 +46,18 @@
   <string name="stream_compose_audio_recording_hint_send">"길게 눌러 녹음. 놓으면 전송."</string>
   <string name="stream_compose_audio_recording_lock">"녹음 잠금"</string>
   <string name="stream_compose_audio_recording_locked">"녹음이 잠겼습니다"</string>
+  <string name="stream_compose_audio_recording_label">"음성 녹음"</string>
+  <string name="stream_compose_audio_recording_locked_label">"음성 녹음 중"</string>
   <string name="stream_compose_audio_recording_pause">"일시정지"</string>
   <string name="stream_compose_audio_recording_play">"재생"</string>
   <string name="stream_compose_audio_recording_preview">"음성 메시지"</string>
   <string name="stream_compose_audio_recording_progress">"음성 녹음 진행률"</string>
+  <string name="stream_compose_audio_recording_confirm">"녹음 확인"</string>
   <string name="stream_compose_audio_recording_send">"녹음 전송"</string>
   <string name="stream_compose_audio_recording_slide_to_cancel">"밀어서 취소"</string>
-  <string name="stream_compose_audio_recording_start">"음성 메시지 녹음"</string>
+  <string name="stream_compose_audio_recording_start">"음성 메시지 녹음. 길게 눌러 녹음하세요."</string>
+  <string name="stream_compose_audio_recording_state_started">"녹음 시작됨. 왼쪽으로 밀어 취소, 위로 밀어 잠금."</string>
+  <string name="stream_compose_audio_recording_state_cancelled">"녹음 취소됨"</string>
   <string name="stream_compose_audio_recording_stop">"녹음 중지"</string>
   <string name="stream_compose_avatar_overflow_count">"+%1$d"</string>
   <string name="stream_compose_block_user">"사용자 차단"</string>
@@ -126,13 +131,19 @@
   <string name="stream_compose_message_composer_command_unavailable_in_reply">"답장 중에는 사용할 수 없습니다"</string>
   <string name="stream_compose_message_composer_commands_unavailable_in_edit">"수정 중에는 명령을 사용할 수 없습니다"</string>
   <string name="stream_compose_message_composer_instant_commands">"인스턴트 명령어"</string>
+  <string name="stream_compose_message_composer_cancel_editing">"편집 취소"</string>
+  <string name="stream_compose_message_composer_cancel_reply">"답장 취소"</string>
+  <string name="stream_compose_message_composer_save_action">"변경 사항 저장"</string>
   <string name="stream_compose_message_composer_save_button">"저장"</string>
+  <string name="stream_compose_message_composer_send_action">"메시지 보내기"</string>
   <string name="stream_compose_message_composer_send_button">"보내기"</string>
   <string name="stream_compose_message_composer_show_in_channel">"채널에도 전송"</string>
   <string name="stream_compose_message_composer_unsupported_attachment">"지원되지 않는 첨부파일"</string>
   <string name="stream_compose_message_composer_attachments">"첨부파일"</string>
   <string name="stream_compose_message_composer_attachments_collapsed">"축소됨"</string>
+  <string name="stream_compose_message_composer_attachments_close">"첨부파일 닫기"</string>
   <string name="stream_compose_message_composer_attachments_expanded">"확장됨"</string>
+  <string name="stream_compose_message_composer_attachments_open">"첨부파일 열기"</string>
   <string name="stream_compose_message_deleted">"메시지가 삭제되었습니다"</string>
   <string name="stream_compose_message_deleted_preview">"메시지가 삭제되었습니다"</string>
   <string name="stream_compose_message_item_open_thread">"스레드 열기"</string>
@@ -244,6 +255,7 @@
   </plurals>
   <string name="stream_compose_quoted_message_media">"%d 미디어"</string>
   <string name="stream_compose_quoted_message_reply_to">"%s에게 답장"</string>
+  <string name="stream_compose_quoted_message_reply_to_you">"자신에게 답장"</string>
   <plurals name="stream_compose_quoted_message_videos">
     <item quantity="other">"%d개의 동영상"</item>
   </plurals>

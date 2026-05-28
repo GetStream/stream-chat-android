@@ -41,6 +41,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
@@ -67,7 +69,8 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
  * You can use the default implementation by not passing in an instance yourself, or you
  * can customize the behavior using its parameters.
  * @param viewModelKey Key to differentiate between instances of [ChannelListViewModel].
- * @param title Header title.
+ * @param title Header title. Also drives the screen's `paneTitle` semantic, announced by TalkBack
+ * when the screen appears as a pane (e.g. an adaptive-layout pane or a Compose Navigation route).
  * @param isShowingHeader If we show the header or hide it.
  * @param searchMode The search mode for the screen.
  * @param onHeaderActionClick Handler for the default header action.
@@ -123,7 +126,9 @@ public fun ChannelsScreen(
             .testTag("Stream_ChannelsScreen"),
     ) {
         Scaffold(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .semantics { paneTitle = title },
             topBar = {
                 if (isShowingHeader) {
                     ChatTheme.componentFactory.ChannelListHeader(
