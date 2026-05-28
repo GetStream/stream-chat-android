@@ -20,10 +20,18 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal data class QueryChannelsRequest(
-    val filter_conditions: Map<*, *>,
+    // Standard filter + sort query
+    val filter_conditions: Map<*, *>? = null,
+    val sort: List<Map<String, Any>>? = null,
+
+    // Predefined filters query
+    val predefined_filter: String? = null,
+    val filter_values: Map<String, Any>? = null,
+    val sort_values: Map<String, Any>? = null,
+
+    // Query options
     val offset: Int,
     val limit: Int,
-    val sort: List<Map<String, Any>>,
     val message_limit: Int?,
     val member_limit: Int?,
     val state: Boolean,

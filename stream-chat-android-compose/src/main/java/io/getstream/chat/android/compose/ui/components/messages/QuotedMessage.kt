@@ -43,6 +43,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -125,12 +127,14 @@ internal fun MessageComposerQuotedMessage(
             message = message,
             currentUser = currentUser,
             replyMessage = null,
+            modifier = Modifier.semantics(mergeDescendants = true) {},
         )
 
         ComposerCancelIcon(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .offset(StreamTokens.spacing2xs, -StreamTokens.spacing2xs),
+            contentDescription = stringResource(R.string.stream_compose_message_composer_cancel_reply),
             onClick = onCancelClick,
         )
     }
@@ -143,15 +147,25 @@ private fun QuotedMessageUserName(
     currentUser: User?,
     color: Color,
 ) {
-    val userName = if (message.isMine(currentUser)) {
-        stringResource(R.string.stream_compose_quoted_message_you)
-    } else if (replyMessage == null) {
-        stringResource(R.string.stream_compose_quoted_message_reply_to, message.user.name)
+    val isMine = message.isMine(currentUser)
+    val isComposerBanner = replyMessage == null
+    val userName = when {
+        isMine -> stringResource(R.string.stream_compose_quoted_message_you)
+        isComposerBanner -> stringResource(R.string.stream_compose_quoted_message_reply_to, message.user.name)
+        else -> message.user.name
+    }
+    val accessibilityName = if (isMine && isComposerBanner) {
+        stringResource(R.string.stream_compose_quoted_message_reply_to_you)
     } else {
-        message.user.name
+        null
     }
 
     Text(
+        modifier = if (accessibilityName != null) {
+            Modifier.semantics { contentDescription = accessibilityName }
+        } else {
+            Modifier
+        },
         text = userName,
         style = ChatTheme.typography.metadataEmphasis,
         color = color,
@@ -175,10 +189,12 @@ private fun QuotedMessageText(body: QuotedMessageBody, color: Color) {
             )
         }
 
+        val spokenText = body.spokenText
         Text(
             modifier = Modifier
                 .weight(1f)
-                .testTag("Stream_QuotedMessage"),
+                .testTag("Stream_QuotedMessage")
+                .semantics { if (spokenText != null) contentDescription = spokenText },
             text = body.text,
             style = ChatTheme.typography.metadataDefault,
             color = color,
@@ -227,6 +243,7 @@ private fun QuotedMessageAttachmentPreview(body: QuotedMessageBody) {
 
 internal data class QuotedMessageBody(
     val text: String,
+    val spokenText: String? = null,
     @param:DrawableRes
     val iconId: Int? = null,
     val imagePreviewData: Any? = null,

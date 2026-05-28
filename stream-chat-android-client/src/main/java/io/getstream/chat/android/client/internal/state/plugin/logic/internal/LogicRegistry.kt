@@ -23,6 +23,8 @@ import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
+import io.getstream.chat.android.client.internal.state.plugin.identifier
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogicImpl
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelMessagesUpdateLogicImpl
@@ -41,7 +43,6 @@ import io.getstream.chat.android.client.internal.state.plugin.state.global.inter
 import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.internal.toMutableState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
@@ -70,17 +71,18 @@ internal class LogicRegistry internal constructor(
     private val useLegacyChannelLogic: Boolean,
 ) : ChannelStateLogicProvider {
 
-    private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsLogic> =
+    private val queryChannels: ConcurrentHashMap<QueryChannelsIdentifier, QueryChannelsLogic> =
         ConcurrentHashMap()
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelLogic> = ConcurrentHashMap()
     private val queryThreads: ConcurrentHashMap<Pair<FilterObject?, QuerySorter<Thread>?>, QueryThreadsLogic> =
         ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
 
-    internal fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic {
-        return queryChannels.getOrPut(filter to sort) {
+    /** Returns [QueryChannelsLogic] for the given [identifier], creating it on first access. */
+    internal fun queryChannels(identifier: QueryChannelsIdentifier): QueryChannelsLogic {
+        return queryChannels.getOrPut(identifier) {
             val queryChannelsStateLogic = QueryChannelsStateLogic(
-                mutableState = stateRegistry.queryChannels(filter, sort).toMutableState(),
+                mutableState = stateRegistry.queryChannels(identifier).toMutableState(),
                 stateRegistry = stateRegistry,
                 logicRegistry = this,
                 coroutineScope = coroutineScope,
@@ -94,8 +96,7 @@ internal class LogicRegistry internal constructor(
             )
 
             QueryChannelsLogic(
-                filter,
-                sort,
+                identifier,
                 client,
                 queryChannelsStateLogic,
                 queryChannelsDatabaseLogic,
@@ -105,7 +106,7 @@ internal class LogicRegistry internal constructor(
 
     /** Returns [QueryChannelsLogic] accordingly to [QueryChannelsRequest]. */
     internal fun queryChannels(queryChannelsRequest: QueryChannelsRequest): QueryChannelsLogic =
-        queryChannels(queryChannelsRequest.filter, queryChannelsRequest.querySort)
+        queryChannels(queryChannelsRequest.identifier)
 
     /** Returns [ChannelLogic] by channelType and channelId combination. */
     fun channel(channelType: String, channelId: String): ChannelLogic {

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.feature.messages.list.adapter
 
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnAddPollCommentClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnAttachmentClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnAttachmentDownloadClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnGiphySendListener
@@ -28,13 +29,16 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnPoll
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnPollOptionClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnReactionViewClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnShowAllPollOptionClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnSuggestPollOptionClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnThreadClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnTranslatedLabelClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUnreadLabelReachedListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUserClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnViewPollCommentsClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnViewPollResultClickListener
 import io.getstream.chat.android.ui.utils.ListenerDelegate
 
+@Suppress("LongParameterList")
 internal class MessageListListenersImpl(
     messageClickListener: OnMessageClickListener = OnMessageClickListener(EmptyFunctions.ONE_PARAM),
     messageLongClickListener: OnMessageLongClickListener = OnMessageLongClickListener(EmptyFunctions.ONE_PARAM),
@@ -57,6 +61,9 @@ internal class MessageListListenersImpl(
     onShowAllPollOptionClickListener: OnShowAllPollOptionClickListener,
     onPollCloseClickListener: OnPollCloseClickListener,
     onViewPollResultClickListener: OnViewPollResultClickListener,
+    onSuggestPollOptionClickListener: OnSuggestPollOptionClickListener,
+    onAddPollCommentClickListener: OnAddPollCommentClickListener,
+    onViewPollCommentsClickListener: OnViewPollCommentsClickListener,
 ) : MessageListListeners {
     private object EmptyFunctions {
         val ONE_PARAM: (Any) -> Boolean = { _ -> false }
@@ -196,6 +203,30 @@ internal class MessageListListenersImpl(
     ) { realListener ->
         OnViewPollResultClickListener { poll ->
             realListener().onViewPollResultClick(poll)
+        }
+    }
+
+    override var onSuggestPollOptionClickListener: OnSuggestPollOptionClickListener by ListenerDelegate(
+        onSuggestPollOptionClickListener,
+    ) { realListener ->
+        OnSuggestPollOptionClickListener { poll ->
+            realListener().onSuggestPollOptionClick(poll)
+        }
+    }
+
+    override var onAddPollCommentClickListener: OnAddPollCommentClickListener by ListenerDelegate(
+        onAddPollCommentClickListener,
+    ) { realListener ->
+        OnAddPollCommentClickListener { message, poll ->
+            realListener().onAddPollCommentClick(message, poll)
+        }
+    }
+
+    override var onViewPollCommentsClickListener: OnViewPollCommentsClickListener by ListenerDelegate(
+        onViewPollCommentsClickListener,
+    ) { realListener ->
+        OnViewPollCommentsClickListener { message, poll ->
+            realListener().onViewPollCommentsClick(message, poll)
         }
     }
 }

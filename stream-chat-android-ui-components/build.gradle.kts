@@ -90,6 +90,7 @@ dependencies {
     testImplementation(libs.kluent)
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.turbine)
 
     detektPlugins(libs.detekt.formatting)
 

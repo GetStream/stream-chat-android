@@ -24,6 +24,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
@@ -40,7 +42,11 @@ internal fun PlaybackTimerText(
     val playbackInMs = (progress * totalDurationInMs).toInt()
     val timeToShow = if (countdown) totalDurationInMs - playbackInMs else playbackInMs
     val playbackText = ChatTheme.durationFormatter.format(timeToShow)
+    val spokenDuration = rememberSpokenDurationFormatter()?.format(timeToShow)
     Text(
+        modifier = Modifier.semantics {
+            if (spokenDuration != null) contentDescription = spokenDuration
+        },
         text = playbackText,
         style = ChatTheme.typography.metadataEmphasis.copy(color),
     )

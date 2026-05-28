@@ -117,6 +117,7 @@
     <string name="stream_compose_quoted_message_giphy_tag">Giphy</string>
     <string name="stream_compose_quoted_message_media">%d media</string>
     <string name="stream_compose_quoted_message_reply_to">Reply to %s</string>
+    <string name="stream_compose_quoted_message_reply_to_you">Reply to you</string>
     <string name="stream_compose_quoted_message_you">You</string>
 
     <plurals name="stream_compose_quoted_message_files">
@@ -180,10 +181,16 @@
     <string name="stream_compose_message_composer_file_not_supported">File type is not supported</string>
     <string name="stream_compose_message_composer_unsupported_attachment">Unsupported attachment</string>
     <string name="stream_compose_message_composer_send_button">Send</string>
+    <string name="stream_compose_message_composer_send_action">Send message</string>
     <string name="stream_compose_message_composer_save_button">Save</string>
+    <string name="stream_compose_message_composer_save_action">Save changes</string>
+    <string name="stream_compose_message_composer_cancel_editing">Cancel editing</string>
+    <string name="stream_compose_message_composer_cancel_reply">Cancel reply</string>
     <string name="stream_compose_message_composer_attachments">Attachments</string>
     <string name="stream_compose_message_composer_attachments_collapsed">collapsed</string>
     <string name="stream_compose_message_composer_attachments_expanded">expanded</string>
+    <string name="stream_compose_message_composer_attachments_open">Open attachments</string>
+    <string name="stream_compose_message_composer_attachments_close">Close attachments</string>
 
     <!-- Message Preview -->
     <string name="stream_compose_audio_recording_preview">Voice message</string>
@@ -208,18 +215,23 @@
     </plurals>
 
     <!-- Audio Recording -->
-    <string name="stream_compose_audio_recording_start">Record audio message</string>
+    <string name="stream_compose_audio_recording_start">Record audio message. Press and hold to record.</string>
+    <string name="stream_compose_audio_recording_state_started">Recording started. Slide left to cancel, up to lock.</string>
+    <string name="stream_compose_audio_recording_state_cancelled">Recording cancelled</string>
     <string name="stream_compose_audio_recording_hint_send">Hold to record. Release to send.</string>
     <string name="stream_compose_audio_recording_hint_save">Hold to record. Release to save.</string>
     <string name="stream_compose_audio_recording_slide_to_cancel">Slide to cancel</string>
     <string name="stream_compose_audio_recording_delete">Delete recording</string>
     <string name="stream_compose_audio_recording_stop">Stop recording</string>
     <string name="stream_compose_audio_recording_send">Send recording</string>
+    <string name="stream_compose_audio_recording_confirm">Confirm recording</string>
     <string name="stream_compose_audio_recording_play">Play</string>
     <string name="stream_compose_audio_recording_pause">Pause</string>
     <string name="stream_compose_audio_recording_progress">Audio recording progress</string>
     <string name="stream_compose_audio_recording_lock">Lock recording</string>
     <string name="stream_compose_audio_recording_locked">Recording locked</string>
+    <string name="stream_compose_audio_recording_label">Audio recording</string>
+    <string name="stream_compose_audio_recording_locked_label">Audio recording in progress</string>
 
     <!-- Audio Playback -->
     <string name="stream_compose_audio_playback_pause">Pause</string>
