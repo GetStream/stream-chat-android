@@ -126,7 +126,7 @@ class ChannelsActivity : ComponentActivity() {
      *
      * **Sort:**
      * ```
-     * QuerySortByField.descByName("last_updated")
+     * QuerySortByField<Channel>().desc("pinned_at").desc("last_updated")
      * ```
      */
     private val channelsViewModelFactory by lazy {
