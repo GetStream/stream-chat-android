@@ -3162,7 +3162,7 @@ internal constructor(
     public fun queryGroupedChannels(
         groups: List<String>,
         limit: Int? = null,
-        watch: Boolean = false,
+        watch: Boolean = true,
         presence: Boolean = false,
     ): Call<GroupedChannels> = queryGroupedChannelsInternal(
         limit = limit,
@@ -3192,7 +3192,7 @@ internal constructor(
     public fun queryGroupedChannelsInternal(
         limit: Int? = null,
         groups: Map<String, GroupedChannelsGroupQuery>? = null,
-        watch: Boolean = false,
+        watch: Boolean = true,
         presence: Boolean = false,
     ): Call<GroupedChannels> {
         return api.queryGroupedChannels(limit = limit, groups = groups, watch = watch, presence = presence)
