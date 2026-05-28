@@ -33,6 +33,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChannelOptionsItemParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.dmCounterpartId
 import io.getstream.chat.android.compose.ui.util.isDistinct
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.models.Channel
@@ -94,22 +95,22 @@ public fun ChannelOptions(
  * Each action is self-describing and carries its icon, label, and execution handler.
  *
  * Actions vary by channel type:
- * - **DM:** View Info, Mute/Unmute User, Block/Unblock User, Archive Chat, Delete Chat
- * - **Group (owner):** View Info, Archive Group, Delete Group
- * - **Group (member):** View Info, Archive Group, Leave Group
+ * - **DM:** View Info, Pin/Unpin Chat, Mute/Unmute User, Block/Unblock User, Archive/Unarchive Chat, Delete Chat
+ * - **Group (owner):** View Info, Pin/Unpin Chat, Archive/Unarchive Chat, Leave Group, Delete Group
+ * - **Group (member):** View Info, Pin/Unpin Chat, Archive/Unarchive Chat, Leave Group
+ *
+ * Pin and Archive actions are opt-in via [ChannelOptionsVisibility.isPinChannelVisible] and
+ * [ChannelOptionsVisibility.isArchiveChannelVisible] respectively.
  *
  * @param selectedChannel The currently selected channel.
- * @param isMuted If the channel is muted or not.
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
  * @param viewModel The [ChannelListViewModel] to bind action handlers to.
  * @param onViewInfoAction Handler invoked when the user selects the "View Info" action.
  * @return The list of channel actions to display.
  */
-@Suppress("LongMethod", "LongParameterList")
 @Composable
 public fun buildDefaultChannelActions(
     selectedChannel: Channel,
-    isMuted: Boolean,
     ownCapabilities: Set<String>,
     viewModel: ChannelListViewModel,
     onViewInfoAction: (Channel) -> Unit,
@@ -145,8 +146,41 @@ public fun buildDefaultChannelActions(
 }
 
 /**
+ * Deprecated overload that forwarded an `isMuted` argument never read by the action builders. Use
+ * the overload without `isMuted` instead.
+ *
+ * @param selectedChannel The currently selected channel.
+ * @param isMuted Unused. Kept for source compatibility; the value is ignored.
+ * @param ownCapabilities Set of capabilities the user is given for the current channel.
+ * @param viewModel The [ChannelListViewModel] to bind action handlers to.
+ * @param onViewInfoAction Handler invoked when the user selects the "View Info" action.
+ * @return The list of channel actions to display.
+ */
+@Deprecated(
+    message = "The isMuted parameter is unused and will be removed in a future release.",
+    replaceWith = ReplaceWith(
+        "buildDefaultChannelActions(selectedChannel, ownCapabilities, viewModel, onViewInfoAction)",
+    ),
+    level = DeprecationLevel.WARNING,
+)
+@Suppress("UNUSED_PARAMETER", "LongParameterList")
+@Composable
+public fun buildDefaultChannelActions(
+    selectedChannel: Channel,
+    isMuted: Boolean,
+    ownCapabilities: Set<String>,
+    viewModel: ChannelListViewModel,
+    onViewInfoAction: (Channel) -> Unit,
+): List<ChannelAction> = buildDefaultChannelActions(
+    selectedChannel = selectedChannel,
+    ownCapabilities = ownCapabilities,
+    viewModel = viewModel,
+    onViewInfoAction = onViewInfoAction,
+)
+
+/**
  * Builds channel actions for DM (1-to-1) channels.
- * Shows: View Info, Mute/Unmute User, Block/Unblock User, Archive Chat, Delete Chat.
+ * Shows: View Info, Pin/Unpin Chat, Mute/Unmute User, Block/Unblock User, Archive/Unarchive Chat, Delete Chat.
  */
 @Suppress("LongParameterList")
 @Composable
@@ -159,7 +193,7 @@ private fun buildDmChannelActions(
     viewModel: ChannelListViewModel,
     onViewInfoAction: (Channel) -> Unit,
 ): List<ChannelAction> {
-    val otherUserId = selectedChannel.members.firstOrNull { it.user.id != currentUser?.id }?.user?.id
+    val otherUserId = selectedChannel.dmCounterpartId(currentUser)
     val canDeleteChannel = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
 
     return listOfNotNull(
@@ -167,6 +201,11 @@ private fun buildDmChannelActions(
             isVisible = optionVisibility.isViewInfoVisible,
             selectedChannel = selectedChannel,
             onViewInfoAction = onViewInfoAction,
+        ),
+        buildDmPinAction(
+            canPinChannel = optionVisibility.isPinChannelVisible,
+            selectedChannel = selectedChannel,
+            viewModel = viewModel,
         ),
         buildDmMuteUserAction(
             isVisible = optionVisibility.isMuteUserVisible,
@@ -176,11 +215,6 @@ private fun buildDmChannelActions(
         ),
         buildDmBlockUserAction(
             otherUserId = otherUserId,
-            selectedChannel = selectedChannel,
-            viewModel = viewModel,
-        ),
-        buildDmPinAction(
-            canPinChannel = optionVisibility.isPinChannelVisible,
             selectedChannel = selectedChannel,
             viewModel = viewModel,
         ),
@@ -290,8 +324,8 @@ private fun buildDmDeleteAction(
 
 /**
  * Builds channel actions for group channels.
- * - **Owner (has DELETE_CHANNEL):** View Info, Archive Group, Delete Group
- * - **Member (no DELETE_CHANNEL):** View Info, Archive Group, Leave Group
+ * - **Owner (has DELETE_CHANNEL):** View Info, Pin/Unpin Chat, Archive/Unarchive Chat, Leave Group, Delete Group
+ * - **Member (no DELETE_CHANNEL):** View Info, Pin/Unpin Chat, Archive/Unarchive Chat, Leave Group
  */
 @Suppress("LongMethod", "LongParameterList")
 @Composable

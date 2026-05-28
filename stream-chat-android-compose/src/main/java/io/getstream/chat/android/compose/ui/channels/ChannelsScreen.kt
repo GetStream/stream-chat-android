@@ -207,7 +207,6 @@ public fun ChannelsScreen(
             val channel = lastChannel.value
             val channelActions = buildDefaultChannelActions(
                 selectedChannel = channel,
-                isMuted = listViewModel.isChannelMuted(channel.cid),
                 ownCapabilities = channel.ownCapabilities,
                 viewModel = listViewModel,
                 onViewInfoAction = { ch ->

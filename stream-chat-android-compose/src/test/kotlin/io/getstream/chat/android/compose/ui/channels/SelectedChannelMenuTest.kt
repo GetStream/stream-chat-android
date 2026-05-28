@@ -16,19 +16,12 @@
 
 package io.getstream.chat.android.compose.ui.channels
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
-import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
-import io.getstream.chat.android.compose.util.extensions.toSet
-import io.getstream.chat.android.models.ChannelCapabilities
-import io.getstream.chat.android.previewdata.PreviewChannelData
-import io.getstream.chat.android.previewdata.PreviewUserData
-import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
+import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenuBottomSheetDialog
+import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenuCenteredDialog
+import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenuMutedPinned
 import org.junit.Rule
 import org.junit.Test
 
@@ -38,44 +31,23 @@ internal class SelectedChannelMenuTest : PaparazziComposeTest {
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `selected channel`() {
-        snapshot {
-            val channel = PreviewChannelData.channelWithManyMembers.copy(
-                ownCapabilities = ChannelCapabilities.toSet(),
-            )
-            Box(modifier = Modifier.fillMaxSize()) {
-                SelectedChannelMenu(
-                    modifier = Modifier.align(Alignment.BottomCenter),
-                    selectedChannel = channel,
-                    currentUser = PreviewUserData.user1,
-                    channelActions = listOf(
-                        ViewInfo(channel = channel, label = "Channel Info", onAction = {}),
-                    ),
-                    onChannelOptionConfirm = {},
-                    onDismiss = {},
-                )
-            }
+    fun `selected channel centered dialog`() {
+        snapshotWithDarkMode {
+            SelectedChannelMenuCenteredDialog()
         }
     }
 
     @Test
-    fun `selected channel in dark mode`() {
-        snapshot(isInDarkMode = true) {
-            val channel = PreviewChannelData.channelWithManyMembers.copy(
-                ownCapabilities = ChannelCapabilities.toSet(),
-            )
-            Box(modifier = Modifier.fillMaxSize()) {
-                SelectedChannelMenu(
-                    modifier = Modifier.align(Alignment.BottomCenter),
-                    selectedChannel = channel,
-                    currentUser = PreviewUserData.user1,
-                    channelActions = listOf(
-                        ViewInfo(channel = channel, label = "Channel Info", onAction = {}),
-                    ),
-                    onChannelOptionConfirm = {},
-                    onDismiss = {},
-                )
-            }
+    fun `selected channel`() {
+        snapshotWithDarkMode {
+            SelectedChannelMenuBottomSheetDialog()
+        }
+    }
+
+    @Test
+    fun `selected channel muted and pinned`() {
+        snapshotWithDarkMode {
+            SelectedChannelMenuMutedPinned()
         }
     }
 }

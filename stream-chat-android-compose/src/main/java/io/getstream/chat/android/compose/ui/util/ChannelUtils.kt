@@ -121,6 +121,18 @@ public fun Channel.getMembersStatusText(
 }
 
 /**
+ * Returns the user id of the DM counterpart for this channel — the other member of a one-to-one
+ * conversation with [currentUser]. Returns `null` when the channel is not a one-to-one (see
+ * [isOneToOne]) or when the counterpart can't be resolved.
+ *
+ * @param currentUser The currently logged in user.
+ */
+internal fun Channel.dmCounterpartId(currentUser: User?): String? {
+    if (!isOneToOne(currentUser)) return null
+    return members.firstOrNull { it.user.id != currentUser?.id }?.user?.id
+}
+
+/**
  * Returns a list of users that are members of the channel excluding the currently
  * logged in user.
  *

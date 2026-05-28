@@ -46,7 +46,6 @@ private object SelectedChannelMenuUsageSnippet {
                         if (currentlySelectedChannel != null) {
                             val channelActions = buildDefaultChannelActions(
                                 selectedChannel = currentlySelectedChannel,
-                                isMuted = listViewModel.isChannelMuted(currentlySelectedChannel.cid),
                                 ownCapabilities = currentlySelectedChannel.ownCapabilities,
                                 viewModel = listViewModel,
                                 onViewInfoAction = {},
@@ -94,7 +93,6 @@ private object SelectedChannelMenuHandlingActionsSnippet {
                         if (currentlySelectedChannel != null) {
                             val channelActions = buildDefaultChannelActions(
                                 selectedChannel = currentlySelectedChannel,
-                                isMuted = listViewModel.isChannelMuted(currentlySelectedChannel.cid),
                                 ownCapabilities = currentlySelectedChannel.ownCapabilities,
                                 viewModel = listViewModel,
                                 onViewInfoAction = { channel ->
@@ -146,7 +144,6 @@ private object SelectedChannelMenuCustomizationSnippet {
                         if (currentlySelectedChannel != null) {
                             val channelActions = buildDefaultChannelActions(
                                 selectedChannel = currentlySelectedChannel,
-                                isMuted = listViewModel.isChannelMuted(currentlySelectedChannel.cid),
                                 ownCapabilities = currentlySelectedChannel.ownCapabilities,
                                 viewModel = listViewModel,
                                 onViewInfoAction = {},

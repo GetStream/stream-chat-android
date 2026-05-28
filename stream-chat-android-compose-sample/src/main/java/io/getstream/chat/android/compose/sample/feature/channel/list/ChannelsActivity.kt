@@ -61,6 +61,7 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.add.group.AddGroupChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
@@ -81,12 +82,15 @@ import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SearchInput
+import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionsVisibility
 import io.getstream.chat.android.compose.ui.components.channels.buildDefaultChannelActions
 import io.getstream.chat.android.compose.ui.mentions.MentionList
+import io.getstream.chat.android.compose.ui.theme.ChannelListConfig
 import io.getstream.chat.android.compose.ui.theme.ChannelListDividerItemParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListItemContentParams
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.threads.ThreadsScreen
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
@@ -106,6 +110,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalCoroutinesApi::class)
 class ChannelsActivity : ComponentActivity() {
 
+    private val settings by lazy { customSettings() }
+
     /**
      * The provided predefined filter has the following specs:
      *
@@ -120,7 +126,7 @@ class ChannelsActivity : ComponentActivity() {
      *
      * **Sort:**
      * ```
-     * QuerySortByField.descByName("last_updated")
+     * QuerySortByField<Channel>().desc("pinned_at").desc("last_updated")
      * ```
      */
     private val channelsViewModelFactory by lazy {
@@ -161,7 +167,15 @@ class ChannelsActivity : ComponentActivity() {
             val unreadChannelsCount by unreadChannelsCountFlow.collectAsStateWithLifecycle(0)
             val unreadThreadsCount by unreadThreadsCountFlow.collectAsStateWithLifecycle(0)
 
-            SampleChatTheme {
+            SampleChatTheme(
+                config = ChatUiConfig(
+                    channelList = ChannelListConfig(
+                        optionsVisibility = ChannelOptionsVisibility(
+                            isPinChannelVisible = settings.isChannelPinningEnabled,
+                        ),
+                    ),
+                ),
+            ) {
                 val user by channelsViewModel.user.collectAsStateWithLifecycle()
                 val drawerState = rememberDrawerState(DrawerValue.Closed)
                 val coroutineScope = rememberCoroutineScope()
@@ -348,7 +362,6 @@ class ChannelsActivity : ComponentActivity() {
             if (selectedChannel != null) {
                 val channelActions = buildDefaultChannelActions(
                     selectedChannel = selectedChannel,
-                    isMuted = channelsViewModel.isChannelMuted(selectedChannel.cid),
                     ownCapabilities = selectedChannel.ownCapabilities,
                     viewModel = channelsViewModel,
                     onViewInfoAction = ::viewChannelInfo,
