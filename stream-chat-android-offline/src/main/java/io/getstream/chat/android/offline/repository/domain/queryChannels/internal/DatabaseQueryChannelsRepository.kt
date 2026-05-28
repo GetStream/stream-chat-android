@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.offline.repository.domain.queryChannels.internal
 
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
+import io.getstream.chat.android.client.internal.state.plugin.identifier
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.models.Channel
@@ -38,14 +40,17 @@ internal class DatabaseQueryChannelsRepository(
         queryChannelsDao.insert(toEntity(queryChannelsSpec))
     }
 
-    /**
-     * Selects by a filter and query sort.
-     *
-     * @param filter [FilterObject]
-     * @param querySort [QuerySorter]
-     */
     override suspend fun selectBy(filter: FilterObject, querySort: QuerySorter<Channel>): QueryChannelsSpec? {
-        return queryChannelsDao.select(generateId(filter, querySort))?.let(Companion::toModel)
+        return queryChannelsDao.select(generateId(QueryChannelsIdentifier.Standard(filter, querySort)))?.let(::toModel)
+    }
+
+    override suspend fun selectBy(
+        predefinedFilterName: String,
+        filterValues: Map<String, Any>?,
+        sortValues: Map<String, Any>?,
+    ): QueryChannelsSpec? {
+        val identifier = QueryChannelsIdentifier.Predefined(predefinedFilterName, filterValues, sortValues)
+        return queryChannelsDao.select(generateId(identifier))?.let(::toModel)
     }
 
     override suspend fun clear() {
@@ -53,22 +58,35 @@ internal class DatabaseQueryChannelsRepository(
     }
 
     private companion object {
-        private fun generateId(filter: FilterObject, querySort: QuerySorter<Channel>): String {
-            return "${filter.hashCode()}-${querySort.toDto().hashCode()}"
+        // Standard: hash of (filter, sort). Predefined: name + value-map hashes, since the
+        // resolved filter/sort are unknown until the server replies and we need stable identity
+        // across runs.
+        private fun generateId(identifier: QueryChannelsIdentifier): String = when (identifier) {
+            is QueryChannelsIdentifier.Standard ->
+                "${identifier.filter.hashCode()}-${identifier.sort.toDto().hashCode()}"
+            is QueryChannelsIdentifier.Predefined ->
+                "pd:${identifier.name}:${identifier.filterValues.hashCode()}:${identifier.sortValues.hashCode()}"
         }
 
         private fun toEntity(queryChannelsSpec: QueryChannelsSpec): QueryChannelsEntity =
             QueryChannelsEntity(
-                generateId(queryChannelsSpec.filter, queryChannelsSpec.querySort),
-                queryChannelsSpec.filter,
-                queryChannelsSpec.querySort,
-                queryChannelsSpec.cids.toList(),
+                id = generateId(queryChannelsSpec.identifier),
+                filter = queryChannelsSpec.filter,
+                querySort = queryChannelsSpec.querySort,
+                cids = queryChannelsSpec.cids.toList(),
+                predefinedFilterName = queryChannelsSpec.predefinedFilterName,
+                predefinedFilterValues = queryChannelsSpec.predefinedFilterValues,
+                predefinedSortValues = queryChannelsSpec.predefinedSortValues,
             )
 
         private fun toModel(queryChannelsEntity: QueryChannelsEntity): QueryChannelsSpec =
             QueryChannelsSpec(
-                queryChannelsEntity.filter,
-                queryChannelsEntity.querySort,
-            ).apply { cids = queryChannelsEntity.cids.toSet() }
+                filter = queryChannelsEntity.filter,
+                querySort = queryChannelsEntity.querySort,
+                cids = queryChannelsEntity.cids.toSet(),
+                predefinedFilterName = queryChannelsEntity.predefinedFilterName,
+                predefinedFilterValues = queryChannelsEntity.predefinedFilterValues,
+                predefinedSortValues = queryChannelsEntity.predefinedSortValues,
+            )
     }
 }

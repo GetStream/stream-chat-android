@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
+import io.getstream.chat.android.client.api.models.PredefinedFilter
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
@@ -92,6 +93,7 @@ import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
+import io.getstream.chat.android.client.api2.model.response.ParsedPredefinedFilterResponse
 import io.getstream.chat.android.client.api2.model.response.PollOptionResponse
 import io.getstream.chat.android.client.api2.model.response.PollResponse
 import io.getstream.chat.android.client.api2.model.response.PollVoteResponse
@@ -129,6 +131,7 @@ import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.models.BannedUsersSort
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
@@ -145,6 +148,8 @@ import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.ascByName
+import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
@@ -1890,6 +1895,173 @@ internal class MoshiChatApiTest {
         )
         result `should be instance of` expected
         verify(api, times(1)).queryChannels(connectionId, expectedPayload)
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryChannelsWithPredefinedFilterInput")
+    fun testQueryChannelsWithPredefinedFilter(call: RetrofitCall<QueryChannelsResponse>, expected: KClass<*>) =
+        runTest {
+            // given
+            val api = mock<ChannelApi>()
+            whenever(api.queryChannels(any(), any())).doReturn(call)
+            val sut = Fixture()
+                .withChannelApi(api)
+                .get()
+            // when
+            val userId = randomString()
+            val connectionId = randomString()
+            val predefinedFilter = randomString()
+            val filterValues = mapOf("user_id" to randomString(), "channel_type" to randomString())
+            val sortValues = mapOf("sort_field" to randomString())
+            val query = Mother.randomQueryChannelsRequest(
+                predefinedFilter = predefinedFilter,
+                filterValues = filterValues,
+                sortValues = sortValues,
+            )
+            sut.setConnection(userId = userId, connectionId = connectionId)
+            val result = sut.queryChannels(query).await()
+            // then
+            val expectedPayload = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
+                filter_conditions = null,
+                sort = null,
+                predefined_filter = predefinedFilter,
+                filter_values = filterValues,
+                sort_values = sortValues,
+                offset = query.offset,
+                limit = query.limit,
+                message_limit = query.messageLimit,
+                member_limit = query.memberLimit,
+                state = query.state,
+                watch = query.watch,
+                presence = query.presence,
+            )
+            result `should be instance of` expected
+            verify(api, times(1)).queryChannels(connectionId, expectedPayload)
+        }
+
+    @Test
+    fun `queryChannels resolves predefined filter sort to last_updated DESC when sort missing and last_message_at not filtered`() =
+        runTest {
+            val resolvedFilter = mapOf("type" to "messaging")
+            val result = queryChannelsAndGetPredefinedFilter(
+                predefinedFilter = ParsedPredefinedFilterResponse(
+                    name = "my-filter",
+                    filter = resolvedFilter,
+                    sort = null,
+                ),
+            )
+            assertEquals(
+                PredefinedFilter(
+                    filter = Filters.eq("type", "messaging"),
+                    sort = descByName<Channel>("last_updated"),
+                ),
+                result,
+            )
+        }
+
+    @Test
+    fun `queryChannels resolves predefined filter sort to last_message_at DESC when sort missing and last_message_at filtered`() =
+        runTest {
+            val resolvedFilter = mapOf(
+                "last_message_at" to mapOf("\$gt" to "2024-01-15T10:30:00Z"),
+            )
+            val result = queryChannelsAndGetPredefinedFilter(
+                predefinedFilter = ParsedPredefinedFilterResponse(
+                    name = "my-filter",
+                    filter = resolvedFilter,
+                    sort = null,
+                ),
+            )
+            assertEquals(
+                PredefinedFilter(
+                    filter = Filters.greaterThan("last_message_at", "2024-01-15T10:30:00Z"),
+                    sort = descByName<Channel>("last_message_at"),
+                ),
+                result,
+            )
+        }
+
+    @Test
+    fun `queryChannels detects last_message_at nested inside logical operators for the sort fallback`() = runTest {
+        val resolvedFilter = mapOf(
+            "\$and" to listOf(
+                mapOf("type" to "messaging"),
+                mapOf("last_message_at" to mapOf("\$gt" to "2024-01-15T10:30:00Z")),
+            ),
+        )
+        val result = queryChannelsAndGetPredefinedFilter(
+            predefinedFilter = ParsedPredefinedFilterResponse(
+                name = "my-filter",
+                filter = resolvedFilter,
+                sort = null,
+            ),
+        )
+        assertEquals(
+            PredefinedFilter(
+                filter = Filters.and(
+                    Filters.eq("type", "messaging"),
+                    Filters.greaterThan("last_message_at", "2024-01-15T10:30:00Z"),
+                ),
+                sort = descByName<Channel>("last_message_at"),
+            ),
+            result,
+        )
+    }
+
+    @Test
+    fun `queryChannels treats an empty sort list as missing and applies the default fallback`() = runTest {
+        val result = queryChannelsAndGetPredefinedFilter(
+            predefinedFilter = ParsedPredefinedFilterResponse(
+                name = "my-filter",
+                filter = mapOf("type" to "messaging"),
+                sort = emptyList(),
+            ),
+        )
+        assertEquals(
+            PredefinedFilter(
+                filter = Filters.eq("type", "messaging"),
+                sort = descByName<Channel>("last_updated"),
+            ),
+            result,
+        )
+    }
+
+    @Test
+    fun `queryChannels uses the server-supplied sort when present and skips the fallback`() = runTest {
+        val result = queryChannelsAndGetPredefinedFilter(
+            predefinedFilter = ParsedPredefinedFilterResponse(
+                name = "my-filter",
+                filter = mapOf("type" to "messaging"),
+                sort = listOf(mapOf("field" to "created_at", "direction" to 1)),
+            ),
+        )
+        assertEquals(
+            PredefinedFilter(
+                filter = Filters.eq("type", "messaging"),
+                sort = ascByName<Channel>("created_at"),
+            ),
+            result,
+        )
+    }
+
+    private suspend fun queryChannelsAndGetPredefinedFilter(
+        predefinedFilter: ParsedPredefinedFilterResponse,
+    ): PredefinedFilter? {
+        val api = mock<ChannelApi>()
+        whenever(api.queryChannels(any(), any())).doReturn(
+            RetroSuccess(
+                QueryChannelsResponse(
+                    channels = emptyList(),
+                    predefined_filter = predefinedFilter,
+                ),
+            ).toRetrofitCall(),
+        )
+        val sut = Fixture().withChannelApi(api).get()
+        sut.setConnection(userId = randomString(), connectionId = randomString())
+        val query = Mother.randomQueryChannelsRequest(predefinedFilter = "any")
+        val result = sut.queryChannels(query).await()
+        require(result is Result.Success)
+        return result.value.predefinedFilter
     }
 
     @ParameterizedTest

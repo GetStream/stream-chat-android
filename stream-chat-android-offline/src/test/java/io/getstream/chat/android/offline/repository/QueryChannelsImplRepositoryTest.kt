@@ -32,12 +32,16 @@ import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldBeNull
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.Rule
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -95,5 +99,36 @@ internal class QueryChannelsImplRepositoryTest {
         val result = sut.selectBy(NeutralFilterObject, QuerySortByField())
 
         result.shouldBeNull()
+    }
+
+    @Test
+    fun `Two Predefined identifiers with same name but different filterValues produce different DB ids`() = runTest {
+        sut.selectBy("p", mapOf("a" to 1), null)
+        sut.selectBy("p", mapOf("a" to 2), null)
+
+        val captor = argumentCaptor<String>()
+        verify(dao, times(2)).select(captor.capture())
+        assertEquals(2, captor.allValues.size)
+        assertNotEquals(captor.allValues[0], captor.allValues[1])
+    }
+
+    @Test
+    fun `selectBy with Predefined identifier round-trips predefined fields from the entity`() = runTest {
+        whenever(dao.select(any())) doReturn randomQueryChannelsEntity(
+            id = "id-predefined",
+            filter = NeutralFilterObject,
+            querySort = QuerySortByField(),
+            cids = listOf("cid1"),
+            predefinedFilterName = "p",
+            predefinedFilterValues = mapOf("a" to 1),
+            predefinedSortValues = mapOf("b" to 2),
+        )
+
+        val spec = sut.selectBy("p", mapOf("a" to 1), mapOf("b" to 2))
+
+        spec.shouldNotBeNull()
+        assertEquals("p", spec.predefinedFilterName)
+        assertEquals(mapOf("a" to 1), spec.predefinedFilterValues)
+        assertEquals(mapOf("b" to 2), spec.predefinedSortValues)
     }
 }

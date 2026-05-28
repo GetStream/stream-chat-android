@@ -25,6 +25,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.testing.WorkManagerTestInitHelper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatEventListener
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.events.ChatEvent
@@ -122,6 +123,9 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         }
 
         val queryChannelsResult = Result.Success(listOf(data.channel1))
+        val queryChannelsInternalResult = Result.Success(
+            QueryChannelsResult(channels = listOf(data.channel1), predefinedFilter = null),
+        )
         val queryChannelResult = Result.Success(data.channel1)
         channelClientMock = mock {
             on { query(any()) } doReturn TestCall(
@@ -144,7 +148,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
             }
             on { getSyncHistory(any(), any<Date>()) } doReturn TestCall(eventResults)
             on { queryChannels(any()) } doReturn TestCall(queryChannelsResult)
-            on { queryChannelsInternal(any()) } doReturn TestCall(queryChannelsResult)
+            on { queryChannelsInternal(any()) } doReturn TestCall(queryChannelsInternalResult)
             on { queryChannel(any(), any(), any(), any()) } doReturn TestCall(queryChannelResult)
             on { channel(any(), any()) } doReturn channelClientMock
             on { channel(any()) } doReturn channelClientMock

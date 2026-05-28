@@ -28,5 +28,10 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 internal object NoOpQueryChannelsRepository : QueryChannelsRepository {
     override suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec) { /* No-Op */ }
     override suspend fun selectBy(filter: FilterObject, querySort: QuerySorter<Channel>): QueryChannelsSpec? = null
+    override suspend fun selectBy(
+        predefinedFilterName: String,
+        filterValues: Map<String, Any>?,
+        sortValues: Map<String, Any>?,
+    ): QueryChannelsSpec? = null
     override suspend fun clear() { /* No-Op */ }
 }

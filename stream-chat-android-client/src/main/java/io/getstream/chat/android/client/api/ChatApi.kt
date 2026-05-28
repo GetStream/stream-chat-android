@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
@@ -286,7 +287,7 @@ internal interface ChatApi {
     ): Call<List<Message>>
 
     @CheckResult
-    fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>>
+    fun queryChannels(query: QueryChannelsRequest): Call<QueryChannelsResult>
 
     @CheckResult
     fun updateUsers(users: List<User>): Call<List<User>>

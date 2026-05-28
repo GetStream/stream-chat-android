@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.internal.state.plugin.identifier
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.state.extensions.state
@@ -66,7 +67,7 @@ internal class ChatClientStateCalls(
         chatClient.queryChannels(request).launch(scope)
         return deferredState
             .await()
-            .queryChannels(request.filter, request.querySort)
+            .queryChannels(request.identifier)
             .also { queryChannelsState -> queryChannelsState.chatEventHandlerFactory = chatEventHandlerFactory }
     }
 

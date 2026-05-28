@@ -20,11 +20,15 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.state.plugin.config.MessageLimitConfig
@@ -65,7 +69,7 @@ public class StateRegistry(
 
     private val logger by taggedLogger("Chat:StateRegistry")
 
-    private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsMutableState> =
+    private val queryChannels: ConcurrentHashMap<QueryChannelsIdentifier, QueryChannelsMutableState> =
         ConcurrentHashMap()
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelMutableState> = ConcurrentHashMap()
     private val queryThreads: ConcurrentHashMap<Pair<FilterObject?, QuerySorter<Thread>>, QueryThreadsMutableState> =
@@ -80,9 +84,34 @@ public class StateRegistry(
      *
      * @return [QueryChannelsState] object.
      */
-    public fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsState {
-        return queryChannels.getOrPut(filter to sort) {
-            QueryChannelsMutableState(filter, sort, scope, latestUsers, activeLiveLocations)
+    public fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsState =
+        queryChannels(QueryChannelsIdentifier.Standard(filter, sort))
+
+    /**
+     * Returns [QueryChannelsState] associated with the given [identifier]. Canonical lookup that
+     * works for both standard and predefined-filter queries. For predefined queries the resulting
+     * state starts with placeholder filter/sort that get replaced via `applyResolvedSpec` once
+     * the server response (or a previously persisted DB row) provides the resolved values.
+     *
+     * @param identifier The identifier of the [QueryChannelsState].
+     */
+    @InternalStreamChatApi
+    public fun queryChannels(identifier: QueryChannelsIdentifier): QueryChannelsState {
+        return queryChannels.getOrPut(identifier) {
+            val (initialFilter, initialSort) = when (identifier) {
+                // Use known filter + sort
+                is QueryChannelsIdentifier.Standard -> identifier.filter to identifier.sort
+                // Use temporary neutral filter + sort
+                is QueryChannelsIdentifier.Predefined -> Filters.neutral() to QuerySortByField()
+            }
+            QueryChannelsMutableState(
+                identifier = identifier,
+                initialFilter = initialFilter,
+                initialSort = initialSort,
+                scope = scope,
+                latestUsers = latestUsers,
+                activeLiveLocations = activeLiveLocations,
+            )
         }
     }
 

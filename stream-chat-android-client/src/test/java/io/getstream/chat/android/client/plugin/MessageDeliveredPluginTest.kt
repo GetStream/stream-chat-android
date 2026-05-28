@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.plugin
 
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.receipts.MessageReceiptManager
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.randomChannel
@@ -38,7 +39,10 @@ internal class MessageDeliveredPluginTest {
         val fixture = Fixture()
         val sut = fixture.get()
 
-        sut.onQueryChannelsResult(result = Result.Success(channels), request = mock())
+        sut.onQueryChannelsResultWithPredefinedFilter(
+            result = Result.Success(QueryChannelsResult(channels, null)),
+            request = mock(),
+        )
 
         fixture.verifyMarkChannelsAsDeliveredCalled(channels = channels)
     }
@@ -48,7 +52,7 @@ internal class MessageDeliveredPluginTest {
         val fixture = Fixture()
         val sut = fixture.get()
 
-        sut.onQueryChannelsResult(result = Result.Failure(mock()), request = mock())
+        sut.onQueryChannelsResultWithPredefinedFilter(result = Result.Failure(mock()), request = mock())
 
         fixture.verifyMarkChannelsAsDeliveredCalled(never())
     }

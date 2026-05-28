@@ -17,6 +17,7 @@
 package io.getstream.chat.android.state.plugin.logic.querychannels.internal
 
 import io.getstream.chat.android.client.extensions.internal.applyPagination
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
@@ -25,6 +26,17 @@ import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
+
+/**
+ * Pair of the persisted [QueryChannelsSpec] and the channels associated with it. The spec is
+ * exposed alongside the channels so the caller can read the *resolved* `filter`/`querySort` for
+ * predefined-filter queries before dispatching channels into the mutable state — that way the
+ * sortedChannels flow re-emits with the correct comparator before the cached channels arrive.
+ */
+internal data class CachedQueryChannels(
+    val spec: QueryChannelsSpec,
+    val channels: List<Channel>,
+)
 
 @Suppress("LongParameterList")
 internal class QueryChannelsDatabaseLogic(
@@ -39,27 +51,26 @@ internal class QueryChannelsDatabaseLogic(
     }
 
     /**
-     * Fetch channels from database.
+     * Fetch the cached spec and channels for the given query [identifier].
      *
-     * @param pagination [AnyChannelPaginationRequest]
-     * @param queryChannelsSpec [QueryChannelsSpec]
-     * @return null if the spec is not found in the database, list of channels otherwise (can be empty, if the online
-     * query returned 0 results).
+     * @return null if no spec is found in the database; otherwise a [CachedQueryChannels] wrapping
+     *  the persisted spec and the channels, paginated according to [pagination]. The channels list
+     *  may be empty if a previous online query returned 0 results.
      */
     internal suspend fun fetchChannelsFromCache(
         pagination: AnyChannelPaginationRequest,
-        queryChannelsSpec: QueryChannelsSpec?,
-    ): List<Channel>? {
-        val cachedSpec = queryChannelsSpec?.let {
-            queryChannelsRepository.selectBy(it.filter, it.querySort)
-        }
-        return if (cachedSpec != null) {
-            // Spec is present in DB, fetch channels according to it
-            repositoryFacade.selectChannels(cachedSpec.cids.toList(), pagination).applyPagination(pagination)
-        } else {
-            // Spec is not present in DB, can't fetch channels
-            null
-        }
+        identifier: QueryChannelsIdentifier,
+    ): CachedQueryChannels? {
+        val spec = when (identifier) {
+            is QueryChannelsIdentifier.Standard ->
+                queryChannelsRepository.selectBy(identifier.filter, identifier.sort)
+            is QueryChannelsIdentifier.Predefined ->
+                queryChannelsRepository.selectBy(identifier.name, identifier.filterValues, identifier.sortValues)
+        } ?: return null
+        val channels = repositoryFacade
+            .selectChannels(spec.cids.toList(), pagination)
+            .applyPagination(pagination)
+        return CachedQueryChannels(spec, channels)
     }
 
     /**
