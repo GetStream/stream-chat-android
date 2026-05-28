@@ -582,7 +582,7 @@ internal class DomainMapping(
             authorName = author_name,
             authorLink = author_link,
             fallback = fallback,
-            fileSize = file_size,
+            fileSize = file_size ?: 0,
             image = image,
             imageUrl = image_url,
             mimeType = mime_type,

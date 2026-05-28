@@ -23,6 +23,7 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListView.LinkCl
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageLongClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageRetryListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnAddPollCommentClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnAttachmentClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnAttachmentDownloadClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnGiphySendListener
@@ -35,10 +36,12 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnPoll
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnPollOptionClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnReactionViewClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnShowAllPollOptionClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnSuggestPollOptionClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnThreadClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnTranslatedLabelClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUnreadLabelReachedListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUserClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnViewPollCommentsClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnViewPollResultClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.ReactionViewClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.ThreadClickListener
@@ -80,6 +83,9 @@ public sealed interface MessageListListeners {
     public val onShowAllPollOptionClickListener: OnShowAllPollOptionClickListener
     public val onPollCloseClickListener: OnPollCloseClickListener
     public val onViewPollResultClickListener: OnViewPollResultClickListener
+    public val onSuggestPollOptionClickListener: OnSuggestPollOptionClickListener
+    public val onAddPollCommentClickListener: OnAddPollCommentClickListener
+    public val onViewPollCommentsClickListener: OnViewPollCommentsClickListener
 }
 
 @Deprecated(

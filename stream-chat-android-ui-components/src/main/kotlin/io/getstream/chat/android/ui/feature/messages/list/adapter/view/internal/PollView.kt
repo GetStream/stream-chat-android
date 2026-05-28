@@ -34,11 +34,14 @@ import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.utils.PollsConstants
 import io.getstream.chat.android.ui.common.utils.extensions.getSubtitle
+import io.getstream.chat.android.ui.databinding.StreamUiItemPollAddCommentBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollAnswerBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollCloseBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollHeaderBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollResultsBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollShowAllOptionsBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemPollSuggestOptionBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemPollViewCommentsBinding
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.PollViewStyle
 import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
@@ -56,6 +59,9 @@ internal class PollView : RecyclerView {
     var onClosePollClick: ((Poll) -> Unit) = { _ -> }
     var onViewPollResultsClick: ((Poll) -> Unit) = { _ -> }
     var onShowAllPollOptionClick: (() -> Unit) = { }
+    var onSuggestOptionClick: ((Poll) -> Unit) = { _ -> }
+    var onAddCommentClick: ((Poll) -> Unit) = { _ -> }
+    var onViewCommentsClick: ((Poll) -> Unit) = { _ -> }
 
     constructor(context: Context) : this(context, null, 0)
 
@@ -87,6 +93,9 @@ internal class PollView : RecyclerView {
                 onClosePollClick = { onClosePollClick(poll) },
                 onViewPollResultsClick = { onViewPollResultsClick(poll) },
                 onShowAllOptionsClick = { onShowAllPollOptionClick() },
+                onSuggestOptionClick = { onSuggestOptionClick(poll) },
+                onAddCommentClick = { onAddCommentClick(poll) },
+                onViewCommentsClick = { onViewCommentsClick(poll) },
             )
             adapter = pollAdapter
         }
@@ -121,6 +130,16 @@ internal class PollView : RecyclerView {
             .takeIf { poll.options.size > PollsConstants.MIN_NUMBER_OF_VISIBLE_OPTIONS }
             ?.let(pollItems::add)
 
+        PollItem.SuggestOption.takeIf { poll.allowUserSuggestedOptions && !poll.closed }
+            ?.let(pollItems::add)
+
+        PollItem.AddComment.takeIf { poll.allowAnswers && poll.answers.isEmpty() && !poll.closed }
+            ?.let(pollItems::add)
+
+        PollItem.ViewComments(count = poll.answers.size)
+            .takeIf { poll.allowAnswers && poll.answers.isNotEmpty() }
+            ?.let(pollItems::add)
+
         pollItems.add(PollItem.ViewResults)
 
         PollItem.Close.takeIf { isMine && !poll.closed }
@@ -130,12 +149,16 @@ internal class PollView : RecyclerView {
     }
 }
 
+@Suppress("LongParameterList")
 private class PollAdapter(
     private val pollViewStyle: PollViewStyle,
     private val onOptionClick: (Option) -> Unit,
     private val onClosePollClick: () -> Unit,
     private val onViewPollResultsClick: () -> Unit,
     private val onShowAllOptionsClick: () -> Unit,
+    private val onSuggestOptionClick: () -> Unit,
+    private val onAddCommentClick: () -> Unit,
+    private val onViewCommentsClick: () -> Unit,
 ) : ListAdapter<PollItem, PollItemViewHolder<out PollItem>>(PollItemDiffCallback) {
 
     companion object {
@@ -144,6 +167,9 @@ private class PollAdapter(
         private const val VIEW_TYPE_CLOSE = 3
         private const val VIEW_TYPE_RESULTS = 4
         private const val VIEW_TYPE_SHOW_ALL_OPTIONS = 5
+        private const val VIEW_TYPE_SUGGEST_OPTION = 6
+        private const val VIEW_TYPE_ADD_COMMENT = 7
+        private const val VIEW_TYPE_VIEW_COMMENTS = 8
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PollItemViewHolder<out PollItem> {
@@ -177,6 +203,24 @@ private class PollAdapter(
                 onShowAllOptionsClick,
             )
 
+            VIEW_TYPE_SUGGEST_OPTION -> SuggestOptionViewHolder(
+                StreamUiItemPollSuggestOptionBinding.inflate(parent.streamThemeInflater, parent, false)
+                    .applyStyle(pollViewStyle),
+                onSuggestOptionClick,
+            )
+
+            VIEW_TYPE_ADD_COMMENT -> AddCommentViewHolder(
+                StreamUiItemPollAddCommentBinding.inflate(parent.streamThemeInflater, parent, false)
+                    .applyStyle(pollViewStyle),
+                onAddCommentClick,
+            )
+
+            VIEW_TYPE_VIEW_COMMENTS -> ViewCommentsViewHolder(
+                StreamUiItemPollViewCommentsBinding.inflate(parent.streamThemeInflater, parent, false)
+                    .applyStyle(pollViewStyle),
+                onViewCommentsClick,
+            )
+
             else -> throw IllegalArgumentException("Unknown view type: $viewType")
         }
     }
@@ -187,6 +231,9 @@ private class PollAdapter(
         PollItem.Close -> VIEW_TYPE_CLOSE
         PollItem.ViewResults -> VIEW_TYPE_RESULTS
         is PollItem.ShowAllOptions -> VIEW_TYPE_SHOW_ALL_OPTIONS
+        PollItem.SuggestOption -> VIEW_TYPE_SUGGEST_OPTION
+        PollItem.AddComment -> VIEW_TYPE_ADD_COMMENT
+        is PollItem.ViewComments -> VIEW_TYPE_VIEW_COMMENTS
     }
 
     override fun onBindViewHolder(holder: PollItemViewHolder<out PollItem>, position: Int) {
@@ -224,6 +271,9 @@ private sealed class PollItem {
     data object Close : PollItem()
     data class ShowAllOptions(val count: Int) : PollItem()
     data object ViewResults : PollItem()
+    data object SuggestOption : PollItem()
+    data object AddComment : PollItem()
+    data class ViewComments(val count: Int) : PollItem()
 }
 
 private sealed class PollItemViewHolder<T : PollItem>(binding: ViewBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -334,6 +384,38 @@ private class ViewResultsViewHolder(
     }
 }
 
+private class SuggestOptionViewHolder(
+    private val binding: StreamUiItemPollSuggestOptionBinding,
+    private val onSuggestOptionClick: () -> Unit,
+) : PollItemViewHolder<PollItem.SuggestOption>(binding) {
+    override fun bind(pollItem: PollItem.SuggestOption) {
+        binding.root.setOnClickListener { onSuggestOptionClick() }
+    }
+}
+
+private class AddCommentViewHolder(
+    private val binding: StreamUiItemPollAddCommentBinding,
+    private val onAddCommentClick: () -> Unit,
+) : PollItemViewHolder<PollItem.AddComment>(binding) {
+    override fun bind(pollItem: PollItem.AddComment) {
+        binding.root.setOnClickListener { onAddCommentClick() }
+    }
+}
+
+private class ViewCommentsViewHolder(
+    private val binding: StreamUiItemPollViewCommentsBinding,
+    private val onViewCommentsClick: () -> Unit,
+) : PollItemViewHolder<PollItem.ViewComments>(binding) {
+    override fun bind(pollItem: PollItem.ViewComments) {
+        binding.pollViewComments.text = binding.root.resources.getQuantityString(
+            R.plurals.stream_ui_poll_action_view_comments,
+            pollItem.count,
+            pollItem.count,
+        )
+        binding.root.setOnClickListener { onViewCommentsClick() }
+    }
+}
+
 private fun StreamUiItemPollHeaderBinding.applyStyle(style: PollViewStyle) = this.apply {
     title.setTextStyle(style.pollTitleTextStyle)
     subtitle.setTextStyle(style.pollSubtitleTextStyle)
@@ -355,4 +437,16 @@ private fun StreamUiItemPollResultsBinding.applyStyle(style: PollViewStyle) = th
 
 private fun StreamUiItemPollShowAllOptionsBinding.applyStyle(style: PollViewStyle) = this.apply {
     pollShowAllOptions.setTextStyle(style.pollShowAllOptionsTextStyle)
+}
+
+private fun StreamUiItemPollSuggestOptionBinding.applyStyle(style: PollViewStyle) = this.apply {
+    pollSuggestOption.setTextStyle(style.pollSuggestOptionTextStyle)
+}
+
+private fun StreamUiItemPollAddCommentBinding.applyStyle(style: PollViewStyle) = this.apply {
+    pollAddComment.setTextStyle(style.pollAddCommentTextStyle)
+}
+
+private fun StreamUiItemPollViewCommentsBinding.applyStyle(style: PollViewStyle) = this.apply {
+    pollViewComments.setTextStyle(style.pollViewCommentsTextStyle)
 }
