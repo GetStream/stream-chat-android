@@ -75,6 +75,7 @@ import io.getstream.chat.android.models.UnreadChannelByType
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.UploadedFile
+import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDateOrNull
@@ -457,7 +458,7 @@ internal object MoshiChatApiTestArguments {
                                     draft = randomDownstreamDraftDto(),
                                 ),
                             ),
-                            unread_channels = randomInt(),
+                            unread_channels = positiveRandomInt(),
                             next = null,
                             prev = null,
                         ),
