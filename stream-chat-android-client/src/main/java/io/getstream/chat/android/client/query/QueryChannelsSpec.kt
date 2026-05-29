@@ -60,10 +60,9 @@ public data class QueryChannelsSpec(
     ) : this(filter, querySort, null, null, null, null)
 
     /**
-     * Two-argument [copy] preserved for binary compatibility. Existing bytecode that referenced the
-     * pre-refactor 2-arg `copy(filter, querySort)` continues to resolve through this method.
-     * Variant-specific fields ([groupKey], [predefinedFilterName], [predefinedFilterValues],
-     * [predefinedSortValues]) and [cids] are carried over from the receiver.
+     * Returns a new [QueryChannelsSpec] with [filter] and [querySort] replaced. Variant-specific
+     * fields ([groupKey], [predefinedFilterName], [predefinedFilterValues], [predefinedSortValues])
+     * are carried over from the receiver; [cids] is not.
      */
     public fun copy(
         filter: FilterObject = this.filter,
@@ -75,5 +74,5 @@ public data class QueryChannelsSpec(
         predefinedFilterName = predefinedFilterName,
         predefinedFilterValues = predefinedFilterValues,
         predefinedSortValues = predefinedSortValues,
-    ).also { it.cids = this.cids }
+    )
 }
