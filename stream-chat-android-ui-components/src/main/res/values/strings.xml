@@ -83,6 +83,9 @@
 
     <!-- Mentions Popup -->
     <string name="stream_ui_message_composer_mention_template" translatable="false">\@%1$s</string>
+    <string name="stream_ui_message_composer_mention_suggestion_channel_subtitle">Notify everyone in this channel</string>
+    <string name="stream_ui_message_composer_mention_suggestion_here_subtitle">Notify every online member in this channel</string>
+    <string name="stream_ui_message_composer_mention_suggestion_role_subtitle">Notify all %1$s members</string>
 
     <!-- Commands Popup -->
     <string name="stream_ui_message_composer_instant_commands">Instant Commands</string>

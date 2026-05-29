@@ -74,6 +74,9 @@
   <string name="stream_ui_message_composer_files_allow_audio_access">"ऑडियो फ़ाइलों तक पहुँच की अनुमति दें"</string>
   <string name="stream_ui_message_composer_files_allow_more_visual_media">"अधिक विज़ुअल मीडिया तक पहुँच की अनुमति दें"</string>
   <string name="stream_ui_message_composer_files_allow_visual_media_access">"विज़ुअल मीडिया तक पहुँच की अनुमति दें"</string>
+  <string name="stream_ui_message_composer_mention_suggestion_channel_subtitle">"इस बातचीत में सभी को सूचित करें"</string>
+  <string name="stream_ui_message_composer_mention_suggestion_here_subtitle">"इस बातचीत के सभी ऑनलाइन सदस्यों को सूचित करें"</string>
+  <string name="stream_ui_message_composer_mention_suggestion_role_subtitle">"सभी %1$s सदस्यों को सूचित करें"</string>
   <string name="stream_ui_message_composer_gallery_access">"गैलरी एक्सेस करने की अनुमति दें"</string>
   <string name="stream_ui_message_composer_hint_cannot_send_message">"आप इस चैनल में मैसेज नहीं भेज सकते"</string>
   <string name="stream_ui_message_composer_hint_normal">"यहाँ कुछ लिखें"</string>

@@ -132,7 +132,7 @@ private object MessageComposer : Fragment() {
             messageComposerView.attachmentRemovalListener = { attachment ->
                 // Handle attachment removal
             }
-            messageComposerView.mentionSelectionListener = { user ->
+            messageComposerView.suggestedMentionSelectionListener = { mention ->
                 // Handle mention selection
             }
             messageComposerView.commandSelectionListener = { command ->
@@ -198,8 +198,8 @@ private object MessageComposer : Fragment() {
             messageComposerView.attachmentRemovalListener = { attachment ->
                 messageComposerViewModel.removeAttachment(attachment)
             }
-            messageComposerView.mentionSelectionListener = { user ->
-                messageComposerViewModel.selectMention(user)
+            messageComposerView.suggestedMentionSelectionListener = { mention ->
+                messageComposerViewModel.selectMention(mention)
             }
             messageComposerView.commandSelectionListener = { command ->
                 messageComposerViewModel.selectCommand(command)
@@ -279,7 +279,8 @@ private object MessageComposer : Fragment() {
             )
             messageComposerView.setMentionSuggestionsContent(
                 DefaultMessageComposerMentionSuggestionsContent(context).also {
-                    it.mentionSelectionListener = { user -> messageComposerView.mentionSelectionListener(user) }
+                    it.suggestedMentionSelectionListener =
+                        { mention -> messageComposerView.suggestedMentionSelectionListener(mention) }
                 }
             )
         }
@@ -323,7 +324,7 @@ private object MessageComposer : Fragment() {
             )
             messageComposerView.setMentionSuggestionsContent(
                 DefaultMessageComposerMentionSuggestionsContent(context).also {
-                    it.mentionSelectionListener = { user -> messageComposerViewModel.selectMention(user) }
+                    it.suggestedMentionSelectionListener = { mention -> messageComposerViewModel.selectMention(mention) }
                 }
             )
         }

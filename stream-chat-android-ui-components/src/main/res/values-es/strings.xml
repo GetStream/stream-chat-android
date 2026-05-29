@@ -74,6 +74,9 @@
   <string name="stream_ui_message_composer_files_allow_audio_access">"Permitir acceso a archivos de audio"</string>
   <string name="stream_ui_message_composer_files_allow_more_visual_media">"Permitir acceso a más contenido multimedia"</string>
   <string name="stream_ui_message_composer_files_allow_visual_media_access">"Permitir acceso a contenido multimedia"</string>
+  <string name="stream_ui_message_composer_mention_suggestion_channel_subtitle">"Notificar a todos en esta conversación"</string>
+  <string name="stream_ui_message_composer_mention_suggestion_here_subtitle">"Notificar a todos los miembros conectados en esta conversación"</string>
+  <string name="stream_ui_message_composer_mention_suggestion_role_subtitle">"Notificar a todos los miembros %1$s"</string>
   <string name="stream_ui_message_composer_gallery_access">"Permitir acceso a tu galería"</string>
   <string name="stream_ui_message_composer_hint_cannot_send_message">"No puedes enviar mensajes en este canal"</string>
   <string name="stream_ui_message_composer_hint_normal">"Escribe algo aquí"</string>

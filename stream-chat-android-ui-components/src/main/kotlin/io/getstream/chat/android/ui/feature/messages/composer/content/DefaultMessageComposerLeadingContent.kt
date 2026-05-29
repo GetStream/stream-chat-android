@@ -130,7 +130,7 @@ public open class DefaultMessageComposerLeadingContent : FrameLayout, MessageCom
         val hasAttachments = state.attachments.isNotEmpty()
         val hasCommandInput = state.inputValue.startsWith("/")
         val hasCommandSuggestions = state.commandSuggestions.isNotEmpty()
-        val hasMentionSuggestions = state.mentionSuggestions.isNotEmpty()
+        val hasMentionSuggestions = state.suggestedMentions.isNotEmpty()
         val isInEditMode = state.action is Edit
         val hasCommands = state.hasCommands
         val noRecording = state.recording is RecordingState.Idle

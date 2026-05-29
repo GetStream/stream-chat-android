@@ -21,6 +21,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.alsoSendToChannelSelectionListener
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.attachmentRemovalListener
@@ -41,6 +42,7 @@ import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelD
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.dismissSuggestionsListener
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.mentionSelectionListener
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.sendMessageButtonClickListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.suggestedMentionSelectionListener
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.textInputChangeListener
 
 /**
@@ -70,6 +72,7 @@ public class MessageComposerViewModelBinder private constructor(
     private var attachmentSelectionListener: (List<Attachment>) -> Unit = vm.attachmentSelectionListener
     private var attachmentRemovalListener: (Attachment) -> Unit = vm.attachmentRemovalListener
     private var mentionSelectionListener: (User) -> Unit = vm.mentionSelectionListener
+    private var suggestedMentionSelectionListener: (Mention) -> Unit = vm.suggestedMentionSelectionListener
     private var commandSelectionListener: (Command) -> Unit = vm.commandSelectionListener
     private var alsoSendToChannelSelectionListener: (Boolean) -> Unit = vm.alsoSendToChannelSelectionListener
     private var dismissActionClickListener: () -> Unit = vm.dismissActionClickListener
@@ -141,6 +144,14 @@ public class MessageComposerViewModelBinder private constructor(
      */
     public fun onMentionSelection(listener: (User) -> Unit): MessageComposerViewModelBinder {
         mentionSelectionListener = listener
+        return this
+    }
+
+    /**
+     * Sets the selection listener invoked when any mention suggestion item is selected.
+     */
+    public fun onSuggestedMentionSelection(listener: (Mention) -> Unit): MessageComposerViewModelBinder {
+        suggestedMentionSelectionListener = listener
         return this
     }
 
@@ -322,6 +333,7 @@ public class MessageComposerViewModelBinder private constructor(
                 ?: vm.audioCompleteButtonClickListener(view.composerStyle.audioRecordingSendOnComplete),
             audioSliderDragStartListener = audioSliderDragStartListener,
             audioSliderDragStopListener = audioSliderDragStopListener,
+            suggestedMentionSelectionListener = suggestedMentionSelectionListener,
         )
     }
 }

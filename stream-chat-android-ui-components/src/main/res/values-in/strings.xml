@@ -71,6 +71,9 @@
   <string name="stream_ui_message_composer_files_allow_audio_access">"Izinkan akses ke berkas audio"</string>
   <string name="stream_ui_message_composer_files_allow_more_visual_media">"Izinkan akses ke lebih banyak media visual"</string>
   <string name="stream_ui_message_composer_files_allow_visual_media_access">"Izinkan akses ke media visual"</string>
+  <string name="stream_ui_message_composer_mention_suggestion_channel_subtitle">"Beri tahu semua orang di percakapan ini"</string>
+  <string name="stream_ui_message_composer_mention_suggestion_here_subtitle">"Beri tahu semua anggota online di percakapan ini"</string>
+  <string name="stream_ui_message_composer_mention_suggestion_role_subtitle">"Beri tahu semua anggota %1$s"</string>
   <string name="stream_ui_message_composer_gallery_access">"Izinkan akses ke Galeri"</string>
   <string name="stream_ui_message_composer_hint_cannot_send_message">"Anda tidak dapat mengirim pesan di grup ini"</string>
   <string name="stream_ui_message_composer_hint_normal">"Masukkan pesan"</string>
