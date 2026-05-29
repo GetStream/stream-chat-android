@@ -74,6 +74,7 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -200,15 +201,13 @@ public fun ChatClient.watchChannelAsState(
         requestsAsState(coroutineScope).watchChannel(cid, messageLimit, stateConfig.userPresence)
     }
     val watchedFlow = WatchedChannelStateFlow(flow, cid)
-    // Register the flow as a weak key in a short-lived coroutine that waits for initialization.
-    // IMPORTANT: do NOT capture watchedFlow in the getStateOrNull lambda above — that lambda
-    // is kept alive by the coroutineScope (ChatClient-scoped) and would prevent the flow from
-    // being GC'd when the caller drops the returned reference. This launch completes after
-    // registration, releasing its lambda captures.
+    // Wrap in a WeakReference so the init-waiting coroutine doesn't pin the flow if the caller
+    // has already dropped it before initialization completes.
+    val watchedFlowRef = WeakReference(watchedFlow)
     coroutineScope.launch {
         runCatching {
             clientState.initializationState.first { it == InitializationState.COMPLETE }
-            state.trackWatchedChannel(watchedFlow)
+            watchedFlowRef.get()?.let(state::trackWatchedChannel)
         }
     }
     return watchedFlow
