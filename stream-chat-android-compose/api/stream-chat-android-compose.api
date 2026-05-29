@@ -1442,10 +1442,10 @@ public final class io/getstream/chat/android/compose/ui/components/messageaction
 public final class io/getstream/chat/android/compose/ui/components/messageactions/ComposableSingletons$ReactionsMenuKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/messageactions/ComposableSingletons$ReactionsMenuKt;
 	public fun <init> ()V
-	public final fun getLambda$-943682626$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1324752998$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1339387013$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$1569361386$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
-	public final fun getLambda$2029267930$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$86962370$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messageactions/ComposableSingletons$UserReactionRowKt {

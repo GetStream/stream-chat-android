@@ -14,33 +14,32 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.messages
+package io.getstream.chat.android.compose.ui.components.messageactions
 
-import androidx.compose.ui.Alignment
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
-import io.getstream.chat.android.compose.ui.components.messageactions.ReactionsMenuContentManyReactions
-import io.getstream.chat.android.compose.ui.components.messageactions.ReactionsMenuContentOneReaction
 import org.junit.Rule
 import org.junit.Test
 
-internal class ReactionsMenuContentTest : PaparazziComposeTest {
+internal class ReactionsMenuTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `one reaction`() {
-        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
-            ReactionsMenuContentOneReaction()
-        }
+    fun `reactions menu one reaction`() = snapshot { ReactionsMenuSampleOneReaction() }
+
+    @Test
+    fun `reactions menu one reaction in dark mode`() = snapshot(isInDarkMode = true) {
+        ReactionsMenuSampleOneReaction()
     }
 
     @Test
-    fun `many reactions`() {
-        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
-            ReactionsMenuContentManyReactions()
-        }
+    fun `reactions menu many reactions`() = snapshot { ReactionsMenuSampleManyReactions() }
+
+    @Test
+    fun `reactions menu many reactions in dark mode`() = snapshot(isInDarkMode = true) {
+        ReactionsMenuSampleManyReactions()
     }
 }

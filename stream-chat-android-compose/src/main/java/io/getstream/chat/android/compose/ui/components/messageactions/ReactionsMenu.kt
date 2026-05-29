@@ -18,8 +18,10 @@ package io.getstream.chat.android.compose.ui.components.messageactions
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -323,27 +325,29 @@ private fun buildUserReactionItems(
     }
 }
 
+@Preview
 @Composable
-private fun ReactionsMenuListPreview(message: Message) {
-    ReactionsMenuList(
-        reactionGroups = buildReactionGroups(message),
-        items = buildUserReactionItems(
-            reactions = message.latestReactions,
-            currentUser = PreviewUserData.user1,
-        ),
-        selectedReactionType = null,
-        isLoading = false,
-        isLoadingMore = false,
-        onReactionSelected = {},
-        onReactionOptionSelected = {},
-        onAddReactionClick = {},
-        onLoadMore = {},
-    )
+private fun ReactionsMenuOneReactionPreview() {
+    ChatTheme {
+        Box(modifier = Modifier.fillMaxSize()) {
+            ReactionsMenuSampleOneReaction()
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ReactionsMenuManyReactionsPreview() {
+    ChatTheme {
+        Box(modifier = Modifier.fillMaxSize()) {
+            ReactionsMenuSampleManyReactions()
+        }
+    }
 }
 
 @Composable
-internal fun ReactionsMenuContentOneReaction() {
-    ReactionsMenuListPreview(
+internal fun ReactionsMenuSampleOneReaction() {
+    ReactionsMenuSample(
         message = PreviewMessageData.message1.copy(
             latestReactions = PreviewReactionData.oneReaction,
             reactionGroups = PreviewReactionData.oneReactionGroup,
@@ -352,8 +356,8 @@ internal fun ReactionsMenuContentOneReaction() {
 }
 
 @Composable
-internal fun ReactionsMenuContentManyReactions() {
-    ReactionsMenuListPreview(
+internal fun ReactionsMenuSampleManyReactions() {
+    ReactionsMenuSample(
         message = PreviewMessageData.message1.copy(
             latestReactions = PreviewReactionData.manyReaction,
             reactionGroups = PreviewReactionData.manyReactionGroups,
@@ -361,18 +365,14 @@ internal fun ReactionsMenuContentManyReactions() {
     )
 }
 
-@Preview
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun OneReactionMenuPreview() {
-    ChatTheme {
-        ReactionsMenuContentOneReaction()
-    }
-}
-
-@Preview
-@Composable
-private fun ManyReactionsMenuPreview() {
-    ChatTheme {
-        ReactionsMenuContentManyReactions()
-    }
+private fun ReactionsMenuSample(message: Message) {
+    ReactionsMenu(
+        message = message,
+        currentUser = PreviewUserData.user1,
+        ownCapabilities = setOf(ChannelCapabilities.SEND_REACTION),
+        onMessageAction = {},
+        onShowMoreReactionsSelected = {},
+    )
 }
