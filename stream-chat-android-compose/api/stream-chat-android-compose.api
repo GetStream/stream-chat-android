@@ -883,6 +883,8 @@ public final class io/getstream/chat/android/compose/ui/channels/info/ChannelAct
 public final class io/getstream/chat/android/compose/ui/channels/info/ComposableSingletons$ChannelActionsSheetKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/channels/info/ComposableSingletons$ChannelActionsSheetKt;
 	public fun <init> ()V
+	public final fun getLambda$-1753748109$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1870424128$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$35220375$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 

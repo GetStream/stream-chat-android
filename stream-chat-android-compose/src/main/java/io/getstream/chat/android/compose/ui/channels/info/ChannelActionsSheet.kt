@@ -52,11 +52,14 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.dmCounterpartId
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelMute
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
+import java.util.Date
 
 /**
  * Bottom sheet showing the available actions for a channel.
@@ -238,6 +241,26 @@ private fun ChannelActionsSheetPreview() {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+private fun ChannelActionsSheetWithoutCurrentUserPreview() {
+    ChatTheme {
+        Box(modifier = Modifier.fillMaxSize()) {
+            ChannelActionsSheetSampleWithoutCurrentUser()
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChannelActionsSheetMutedPinnedPreview() {
+    ChatTheme {
+        Box(modifier = Modifier.fillMaxSize()) {
+            ChannelActionsSheetSampleMutedPinned()
+        }
+    }
+}
+
 @Composable
 internal fun ChannelActionsSheetSample() {
     val channel = PreviewChannelData.channelWithManyMembers
@@ -247,5 +270,42 @@ internal fun ChannelActionsSheetSample() {
         onActionClick = {},
         onDismiss = {},
         currentUser = PreviewUserData.user1,
+    )
+}
+
+@Composable
+internal fun ChannelActionsSheetSampleWithoutCurrentUser() {
+    val channel = PreviewChannelData.channelWithManyMembers
+    ChannelActionsSheet(
+        channel = channel,
+        actions = listOf(ViewInfo(channel = channel, label = "Channel Info", onAction = {})),
+        onActionClick = {},
+        onDismiss = {},
+    )
+}
+
+@Composable
+internal fun ChannelActionsSheetSampleMutedPinned() {
+    val baseChannel = PreviewChannelData.channelWithManyMembers
+    val pinnedChannel = baseChannel.copy(
+        membership = Member(user = PreviewUserData.user1, pinnedAt = Date()),
+    )
+    val mutedUser = PreviewUserData.user1.copy(
+        channelMutes = listOf(
+            ChannelMute(
+                user = PreviewUserData.user1,
+                channel = pinnedChannel,
+                createdAt = Date(),
+                updatedAt = Date(),
+                expires = null,
+            ),
+        ),
+    )
+    ChannelActionsSheet(
+        channel = pinnedChannel,
+        actions = listOf(ViewInfo(channel = pinnedChannel, label = "Channel Info", onAction = {})),
+        onActionClick = {},
+        onDismiss = {},
+        currentUser = mutedUser,
     )
 }

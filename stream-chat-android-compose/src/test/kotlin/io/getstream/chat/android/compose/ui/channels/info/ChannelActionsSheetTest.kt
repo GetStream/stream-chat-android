@@ -36,4 +36,24 @@ internal class ChannelActionsSheetTest : PaparazziComposeTest {
     fun `channel actions sheet in dark mode`() = snapshot(isInDarkMode = true) {
         ChannelActionsSheetSample()
     }
+
+    @Test
+    fun `channel actions sheet without current user`() = snapshot {
+        ChannelActionsSheetSampleWithoutCurrentUser()
+    }
+
+    @Test
+    fun `channel actions sheet without current user in dark mode`() = snapshot(isInDarkMode = true) {
+        ChannelActionsSheetSampleWithoutCurrentUser()
+    }
+
+    @Test
+    fun `channel actions sheet muted and pinned`() = snapshot {
+        ChannelActionsSheetSampleMutedPinned()
+    }
+
+    @Test
+    fun `channel actions sheet muted and pinned in dark mode`() = snapshot(isInDarkMode = true) {
+        ChannelActionsSheetSampleMutedPinned()
+    }
 }
