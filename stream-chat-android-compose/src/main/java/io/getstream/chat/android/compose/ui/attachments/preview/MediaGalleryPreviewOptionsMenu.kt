@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberStandardBottomSheetState
@@ -42,6 +41,7 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryP
 import io.getstream.chat.android.compose.state.mediagallerypreview.Reply
 import io.getstream.chat.android.compose.state.mediagallerypreview.SaveMedia
 import io.getstream.chat.android.compose.state.mediagallerypreview.ShowInChat
+import io.getstream.chat.android.compose.ui.components.StreamCardBottomSheet
 import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MediaGalleryOptionsConfig
@@ -74,12 +74,10 @@ internal fun MediaGalleryOptionsMenu(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ModalBottomSheet(
+    StreamCardBottomSheet(
+        onDismissRequest = onDismiss,
         modifier = modifier,
         sheetState = rememberStandardBottomSheetState(initialValue = SheetValue.Expanded, skipHiddenState = false),
-        containerColor = ChatTheme.colors.backgroundCoreElevation1,
-        scrimColor = ChatTheme.colors.backgroundCoreScrim,
-        onDismissRequest = onDismiss,
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             options.forEachIndexed { index, option ->

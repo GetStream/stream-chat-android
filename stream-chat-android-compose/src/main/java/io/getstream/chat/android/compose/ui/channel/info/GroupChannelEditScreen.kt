@@ -23,6 +23,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,13 +33,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,7 +50,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.paneTitle
@@ -65,6 +63,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
+import io.getstream.chat.android.compose.ui.components.StreamCardBottomSheet
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
@@ -146,9 +145,10 @@ internal fun GroupChannelEditScreen(
     )
 }
 
+@VisibleForTesting
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ImagePickerSheet(
+internal fun ImagePickerSheet(
     visible: Boolean,
     showRemoveOption: Boolean,
     onDismiss: () -> Unit = {},
@@ -167,18 +167,8 @@ private fun ImagePickerSheet(
         onResult = onImageSelected,
     )
 
-    val previewMode = LocalInspectionMode.current
-    val sheetState = rememberModalBottomSheetState()
-    LaunchedEffect(previewMode) {
-        if (previewMode) sheetState.show()
-    }
-
     if (visible) {
-        ModalBottomSheet(
-            sheetState = sheetState,
-            onDismissRequest = onDismiss,
-            containerColor = ChatTheme.colors.backgroundCoreApp,
-        ) {
+        StreamCardBottomSheet(onDismissRequest = onDismiss) {
             ImagePickerOptions(
                 showRemoveOption = showRemoveOption,
                 onChooseFromLibraryClick = {
@@ -461,14 +451,14 @@ internal fun GroupChannelEditBusy() {
 
 @Preview
 @Composable
-private fun ImagePickerOptionsPreview() {
+private fun ImagePickerSheetWithRemovePreview() {
     ChatTheme {
-        ImagePickerOptionsWithRemove()
+        ImagePickerSheetWithRemove()
     }
 }
 
 @Composable
-internal fun ImagePickerOptionsWithRemove() {
+internal fun ImagePickerSheetWithRemove() {
     ImagePickerSheet(
         visible = true,
         showRemoveOption = true,
@@ -477,14 +467,14 @@ internal fun ImagePickerOptionsWithRemove() {
 
 @Preview
 @Composable
-private fun ImagePickerOptionsNoRemovePreview() {
+private fun ImagePickerSheetNoRemovePreview() {
     ChatTheme {
-        ImagePickerOptionsNoRemove()
+        ImagePickerSheetNoRemove()
     }
 }
 
 @Composable
-internal fun ImagePickerOptionsNoRemove() {
+internal fun ImagePickerSheetNoRemove() {
     ImagePickerSheet(
         visible = true,
         showRemoveOption = false,

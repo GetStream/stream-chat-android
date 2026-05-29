@@ -23,11 +23,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -42,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.ui.components.ContentBox
+import io.getstream.chat.android.compose.ui.components.StreamCardBottomSheet
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoMemberInfoModalSheetTopBarParams
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoMemberOptionItemParams
@@ -83,13 +80,11 @@ internal fun ChannelInfoMemberInfoModalSheet(
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    ModalBottomSheet(
-        sheetState = sheetState,
-        containerColor = ChatTheme.colors.backgroundCoreElevation1,
+    StreamCardBottomSheet(
         onDismissRequest = onDismiss,
+        sheetState = sheetState,
     ) {
         val state by viewModel.state.collectAsStateWithLifecycle()
-
         ChannelInfoMemberInfoModalSheetContent(
             state = state,
             onViewAction = { action ->
@@ -214,44 +209,23 @@ private fun Member.getBanExpirationText(context: Context): String {
 
 @Preview
 @Composable
-private fun ChannelInfoMemberInfoModalSheetContentBannedPreview() {
+private fun ChannelInfoMemberInfoSheetBannedPreview() {
     ChatTheme {
-        ExpandedSheet {
-            ChannelInfoMemberInfoModalSheetContent(banned = true)
-        }
+        ChannelInfoMemberInfoSheet(banned = true)
     }
 }
 
 @Preview
 @Composable
-private fun ChannelInfoMemberInfoModalSheetContentNotBannedPreview() {
+private fun ChannelInfoMemberInfoSheetNotBannedPreview() {
     ChatTheme {
-        ExpandedSheet {
-            ChannelInfoMemberInfoModalSheetContent(banned = false)
-        }
+        ChannelInfoMemberInfoSheet(banned = false)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ExpandedSheet(content: @Composable () -> Unit) {
-    // Preview doesn't render modal bottom sheet,
-    // so we need to mimic it with a card.
-    Card(
-        shape = BottomSheetDefaults.ExpandedShape,
-        colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundCoreElevation1),
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            BottomSheetDefaults.DragHandle()
-            content()
-        }
-    }
-}
-
-@Composable
-internal fun ChannelInfoMemberInfoModalSheetContent(banned: Boolean) {
+internal fun ChannelInfoMemberInfoSheet(banned: Boolean) {
     val user = PreviewUserData.user1.copy(lastActive = Date())
     val member = if (banned) {
         Member(
@@ -265,16 +239,18 @@ internal fun ChannelInfoMemberInfoModalSheetContent(banned: Boolean) {
         Member(user)
     }
 
-    ChannelInfoMemberInfoModalSheetContent(
-        state = ChannelInfoMemberViewState.Content(
-            member = member,
-            capabilities = setOf(
-                ChannelCapabilities.BAN_CHANNEL_MEMBERS,
-                ChannelCapabilities.UPDATE_CHANNEL_MEMBERS,
+    StreamCardBottomSheet(onDismissRequest = {}) {
+        ChannelInfoMemberInfoModalSheetContent(
+            state = ChannelInfoMemberViewState.Content(
+                member = member,
+                capabilities = setOf(
+                    ChannelCapabilities.BAN_CHANNEL_MEMBERS,
+                    ChannelCapabilities.UPDATE_CHANNEL_MEMBERS,
+                ),
+                isMuted = false,
+                isBlocked = false,
             ),
-            isMuted = false,
-            isBlocked = false,
-        ),
-        onViewAction = {},
-    )
+            onViewAction = {},
+        )
+    }
 }

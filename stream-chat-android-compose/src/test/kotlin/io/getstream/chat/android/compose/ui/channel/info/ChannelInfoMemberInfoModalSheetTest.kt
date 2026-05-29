@@ -16,88 +16,30 @@
 
 package io.getstream.chat.android.compose.ui.channel.info
 
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.LaunchedEffect
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import org.junit.Rule
 import org.junit.Test
 
-@OptIn(ExperimentalMaterial3Api::class)
 internal class ChannelInfoMemberInfoModalSheetTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `banned member`() {
-        snapshot {
-            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-            LaunchedEffect(Unit) {
-                sheetState.show()
-            }
-            ModalBottomSheet(
-                sheetState = sheetState,
-                containerColor = ChatTheme.colors.backgroundCoreElevation1,
-                onDismissRequest = {},
-            ) {
-                ChannelInfoMemberInfoModalSheetContent(banned = true)
-            }
-        }
+    fun `banned member`() = snapshot { ChannelInfoMemberInfoSheet(banned = true) }
+
+    @Test
+    fun `banned member in dark mode`() = snapshot(isInDarkMode = true) {
+        ChannelInfoMemberInfoSheet(banned = true)
     }
 
     @Test
-    fun `banned member in dark mode`() {
-        snapshot(isInDarkMode = true) {
-            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-            LaunchedEffect(Unit) {
-                sheetState.show()
-            }
-            ModalBottomSheet(
-                sheetState = sheetState,
-                containerColor = ChatTheme.colors.backgroundCoreElevation1,
-                onDismissRequest = {},
-            ) {
-                ChannelInfoMemberInfoModalSheetContent(banned = true)
-            }
-        }
-    }
+    fun `not banned member`() = snapshot { ChannelInfoMemberInfoSheet(banned = false) }
 
     @Test
-    fun `not banned member`() {
-        snapshot {
-            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-            LaunchedEffect(Unit) {
-                sheetState.show()
-            }
-            ModalBottomSheet(
-                sheetState = sheetState,
-                containerColor = ChatTheme.colors.backgroundCoreElevation1,
-                onDismissRequest = {},
-            ) {
-                ChannelInfoMemberInfoModalSheetContent(banned = false)
-            }
-        }
-    }
-
-    @Test
-    fun `not banned member in dark mode`() {
-        snapshot(isInDarkMode = true) {
-            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-            LaunchedEffect(Unit) {
-                sheetState.show()
-            }
-            ModalBottomSheet(
-                sheetState = sheetState,
-                containerColor = ChatTheme.colors.backgroundCoreElevation1,
-                onDismissRequest = {},
-            ) {
-                ChannelInfoMemberInfoModalSheetContent(banned = false)
-            }
-        }
+    fun `not banned member in dark mode`() = snapshot(isInDarkMode = true) {
+        ChannelInfoMemberInfoSheet(banned = false)
     }
 }

@@ -29,12 +29,12 @@ internal class ReactionsPickerTest : PaparazziComposeTest {
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `Default reaction picker content`() {
-        snapshotWithDarkMode {
-            ReactionsPickerContent(
-                message = PreviewMessageData.message1,
-                onMessageAction = { },
-            )
-        }
+    fun `reaction picker`() = snapshot {
+        ReactionsPicker(message = PreviewMessageData.message1, onMessageAction = {})
+    }
+
+    @Test
+    fun `reaction picker in dark mode`() = snapshot(isInDarkMode = true) {
+        ReactionsPicker(message = PreviewMessageData.message1, onMessageAction = {})
     }
 }

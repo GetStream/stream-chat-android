@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.attachments.preview
 
+import androidx.compose.runtime.Composable
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
@@ -32,7 +33,27 @@ internal class MediaGalleryPreviewOptionsMenuTest : PaparazziComposeTest {
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `media gallery options menu for own user`() = snapshotWithDarkMode {
+    fun `media gallery options menu for own user`() = snapshot {
+        OwnUserMenu()
+    }
+
+    @Test
+    fun `media gallery options menu for own user in dark mode`() = snapshot(isInDarkMode = true) {
+        OwnUserMenu()
+    }
+
+    @Test
+    fun `media gallery options menu for other user`() = snapshot {
+        OtherUserMenu()
+    }
+
+    @Test
+    fun `media gallery options menu for other user in dark mode`() = snapshot(isInDarkMode = true) {
+        OtherUserMenu()
+    }
+
+    @Composable
+    private fun OwnUserMenu() {
         val message = PreviewMessageData.messageWithUserAndAttachment
         MediaGalleryOptionsMenu(
             attachment = message.attachments[0],
@@ -47,8 +68,8 @@ internal class MediaGalleryPreviewOptionsMenuTest : PaparazziComposeTest {
         )
     }
 
-    @Test
-    fun `media gallery options menu for other user`() = snapshotWithDarkMode {
+    @Composable
+    private fun OtherUserMenu() {
         val message = PreviewMessageData.messageWithUserAndAttachment
         val user = PreviewUserData.user1
         MediaGalleryOptionsMenu(

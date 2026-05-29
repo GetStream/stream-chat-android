@@ -14,22 +14,34 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.components.poll
+package io.getstream.chat.android.compose.ui.channel.attachments
 
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
+import io.getstream.chat.android.models.ConnectionState
+import kotlinx.coroutines.flow.MutableStateFlow
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.whenever
 
-internal class PollViewResultDialogTest : PaparazziComposeTest {
+internal class ChannelMediaAttachmentsPreviewSheetTest : PaparazziComposeTest {
 
     @get:Rule
-    override val paparazzi: Paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
+    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
+
+    @Before
+    fun prepare() {
+        whenever(mockClientState.connectionState) doReturn MutableStateFlow(ConnectionState.Connected)
+    }
 
     @Test
-    fun `poll results`() = snapshot { PollResultsSheet() }
+    fun `preview sheet`() = snapshot { ChannelMediaAttachmentsPreviewSheet() }
 
     @Test
-    fun `poll results in dark mode`() = snapshot(isInDarkMode = true) { PollResultsSheet() }
+    fun `preview sheet in dark mode`() = snapshot(isInDarkMode = true) {
+        ChannelMediaAttachmentsPreviewSheet()
+    }
 }

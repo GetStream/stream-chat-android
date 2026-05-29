@@ -34,9 +34,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -50,7 +48,6 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -59,6 +56,7 @@ import io.getstream.chat.android.compose.R.plurals.stream_compose_poll_vote_coun
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
+import io.getstream.chat.android.compose.ui.components.StreamScreenBottomSheet
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.ViewModelStore
@@ -92,22 +90,11 @@ internal fun PollOptionVotesDialog(
     onBackPressed: () -> Unit,
 ) {
     val context = LocalContext.current
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    ModalBottomSheet(
-        onDismissRequest = onDismissRequest,
-        sheetState = sheetState,
-        sheetMaxWidth = Dp.Unspecified,
-        shape = RoundedCornerShape(0.dp),
-        dragHandle = {},
-        containerColor = ChatTheme.colors.backgroundCoreElevation1,
-    ) {
+    StreamScreenBottomSheet(onDismissRequest = onDismissRequest) {
         ViewModelStore {
             val viewModel = viewModel {
-                PollOptionVotesViewModel(
-                    poll = poll,
-                    option = option,
-                )
+                PollOptionVotesViewModel(poll = poll, option = option)
             }
             val state by viewModel.state.collectAsState()
 
@@ -232,69 +219,78 @@ private fun Content(
 
 @Preview(showBackground = true)
 @Composable
-private fun PollOptionVotesLoadingPreview() {
+private fun PollOptionVotesSheetLoadingPreview() {
     ChatTheme {
-        PollOptionVotesLoading()
+        PollOptionVotesSheetLoading()
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun PollOptionVotesLoading() {
+internal fun PollOptionVotesSheetLoading() {
     val poll = PreviewPollData.poll1
     val option = poll.options.first()
-    Content(
-        state = PollOptionVotesViewState(
-            option = option,
-            voteCount = poll.voteCountsByOption[option.id] ?: 0,
-            isWinner = true,
-            isLoading = true,
-        ),
-    )
+    StreamScreenBottomSheet(onDismissRequest = {}) {
+        Content(
+            state = PollOptionVotesViewState(
+                option = option,
+                voteCount = poll.voteCountsByOption[option.id] ?: 0,
+                isWinner = true,
+                isLoading = true,
+            ),
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun PollOptionVotesContentPreview() {
+private fun PollOptionVotesSheetContentPreview() {
     ChatTheme {
-        PollOptionVotesContent()
+        PollOptionVotesSheetContent()
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun PollOptionVotesContent() {
+internal fun PollOptionVotesSheetContent() {
     val poll = PreviewPollData.poll1
     val option = poll.options.first()
-    Content(
-        state = PollOptionVotesViewState(
-            option = option,
-            voteCount = poll.voteCountsByOption[option.id] ?: 0,
-            isWinner = true,
-            isLoading = false,
-            results = poll.getVotes(option),
-        ),
-    )
+    StreamScreenBottomSheet(onDismissRequest = {}) {
+        Content(
+            state = PollOptionVotesViewState(
+                option = option,
+                voteCount = poll.voteCountsByOption[option.id] ?: 0,
+                isWinner = true,
+                isLoading = false,
+                results = poll.getVotes(option),
+            ),
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun PollOptionVotesLoadingMorePreview() {
+private fun PollOptionVotesSheetLoadingMorePreview() {
     ChatTheme {
-        PollOptionVotesLoadingMore()
+        PollOptionVotesSheetLoadingMore()
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun PollOptionVotesLoadingMore() {
+internal fun PollOptionVotesSheetLoadingMore() {
     val poll = PreviewPollData.poll1
     val option = poll.options.first()
-    Content(
-        state = PollOptionVotesViewState(
-            option = option,
-            voteCount = poll.voteCountsByOption[option.id] ?: 0,
-            isWinner = true,
-            isLoading = false,
-            results = poll.getVotes(option),
-            isLoadingMore = true,
-        ),
-    )
+    StreamScreenBottomSheet(onDismissRequest = {}) {
+        Content(
+            state = PollOptionVotesViewState(
+                option = option,
+                voteCount = poll.voteCountsByOption[option.id] ?: 0,
+                isWinner = true,
+                isLoading = false,
+                results = poll.getVotes(option),
+                isLoadingMore = true,
+            ),
+        )
+    }
 }

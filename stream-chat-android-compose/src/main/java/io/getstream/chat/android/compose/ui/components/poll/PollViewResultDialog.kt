@@ -38,9 +38,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -51,7 +49,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -59,11 +56,11 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.extensions.internal.getVotesUnlessAnonymous
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.StreamScreenBottomSheet
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -95,16 +92,7 @@ public fun PollViewResultDialog(
     onDismissRequest: () -> Unit,
     onBackPressed: () -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-    ModalBottomSheet(
-        onDismissRequest = onDismissRequest,
-        sheetState = sheetState,
-        sheetMaxWidth = Dp.Unspecified,
-        shape = RectangleShape,
-        dragHandle = null,
-        containerColor = ChatTheme.colors.backgroundCoreApp,
-    ) {
+    StreamScreenBottomSheet(onDismissRequest = onDismissRequest) {
         var showAllOptionVotes by rememberSaveable(stateSaver = NullableOptionSaver) { mutableStateOf(null) }
 
         ViewModelStore {
@@ -375,29 +363,31 @@ private val NullableOptionSaver: Saver<Option?, Bundle> = Saver(
 
 @Preview
 @Composable
-private fun PollResultsContentPreview() {
+private fun PollResultsSheetPreview() {
     ChatTheme {
         Box(Modifier.background(ChatTheme.colors.backgroundCoreApp)) {
-            PollResultsContent()
+            PollResultsSheet()
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun PollResultsContent() {
+internal fun PollResultsSheet() {
     val poll = PreviewPollData.poll1
-    Content(
-        state = PollResultsViewState(
-            pollName = poll.name,
-            results = poll.options.mapIndexed { index, option ->
-                ResultItem(
-                    option = option,
-                    isWinner = option == poll.options.first(),
-                    voteCount = poll.voteCountsByOption[option.id] ?: 0,
-                    votes = poll.getVotesUnlessAnonymous(option),
-                    showAllButton = index == 0,
-                )
-            },
-        ),
+    val state = PollResultsViewState(
+        pollName = poll.name,
+        results = poll.options.mapIndexed { index, option ->
+            ResultItem(
+                option = option,
+                isWinner = option == poll.options.first(),
+                voteCount = poll.voteCountsByOption[option.id] ?: 0,
+                votes = poll.getVotesUnlessAnonymous(option),
+                showAllButton = index == 0,
+            )
+        },
     )
+    StreamScreenBottomSheet(onDismissRequest = {}) {
+        Content(state = state)
+    }
 }

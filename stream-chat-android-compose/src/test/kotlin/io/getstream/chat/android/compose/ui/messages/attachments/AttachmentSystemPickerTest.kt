@@ -51,4 +51,12 @@ internal class AttachmentSystemPickerTest : PaparazziComposeTest {
             AttachmentSystemPickerWithCommands()
         }
     }
+
+    @Test
+    fun `command picker sheet`() = snapshot { AttachmentCommandPickerSheet() }
+
+    @Test
+    fun `command picker sheet in dark mode`() = snapshot(isInDarkMode = true) {
+        AttachmentCommandPickerSheet()
+    }
 }
