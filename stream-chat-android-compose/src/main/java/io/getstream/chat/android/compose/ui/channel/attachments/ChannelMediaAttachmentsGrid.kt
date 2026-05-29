@@ -17,7 +17,9 @@
 package io.getstream.chat.android.compose.ui.channel.attachments
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -233,7 +235,9 @@ internal fun ChannelMediaAttachmentsPreviewSheet() {
 @Composable
 private fun ChannelMediaAttachmentsPreviewSheetPreview() {
     ChatTheme {
-        ChannelMediaAttachmentsPreviewSheet()
+        Box(modifier = Modifier.fillMaxSize()) {
+            ChannelMediaAttachmentsPreviewSheet()
+        }
     }
 }
 

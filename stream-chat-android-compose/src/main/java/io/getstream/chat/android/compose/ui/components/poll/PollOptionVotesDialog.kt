@@ -221,7 +221,9 @@ private fun Content(
 @Composable
 private fun PollOptionVotesSheetLoadingPreview() {
     ChatTheme {
-        PollOptionVotesSheetLoading()
+        Box(modifier = Modifier.fillMaxSize()) {
+            PollOptionVotesSheetLoading()
+        }
     }
 }
 
@@ -246,7 +248,9 @@ internal fun PollOptionVotesSheetLoading() {
 @Composable
 private fun PollOptionVotesSheetContentPreview() {
     ChatTheme {
-        PollOptionVotesSheetContent()
+        Box(modifier = Modifier.fillMaxSize()) {
+            PollOptionVotesSheetContent()
+        }
     }
 }
 
@@ -272,7 +276,9 @@ internal fun PollOptionVotesSheetContent() {
 @Composable
 private fun PollOptionVotesSheetLoadingMorePreview() {
     ChatTheme {
-        PollOptionVotesSheetLoadingMore()
+        Box(modifier = Modifier.fillMaxSize()) {
+            PollOptionVotesSheetLoadingMore()
+        }
     }
 }
 

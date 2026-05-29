@@ -28,7 +28,9 @@ internal class ChannelActionsSheetTest : PaparazziComposeTest {
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `channel actions sheet`() = snapshot { ChannelActionsSheetSample() }
+    fun `channel actions sheet`() = snapshot {
+        ChannelActionsSheetSample()
+    }
 
     @Test
     fun `channel actions sheet in dark mode`() = snapshot(isInDarkMode = true) {

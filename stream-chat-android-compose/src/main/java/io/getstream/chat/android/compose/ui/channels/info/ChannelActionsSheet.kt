@@ -19,9 +19,10 @@ package io.getstream.chat.android.compose.ui.channels.info
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -60,6 +61,9 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
 /**
  * Bottom sheet showing the available actions for a channel.
  *
+ * Customize the rendered content by overriding [io.getstream.chat.android.compose.ui.theme.ChatComponentFactory.ChannelMenuHeaderContent]
+ * or [io.getstream.chat.android.compose.ui.theme.ChatComponentFactory.ChannelMenuCenterContent].
+ *
  * @param channel The channel the actions apply to.
  * @param actions The list of actions to show.
  * @param onActionClick Invoked when the user clicks an action. Destructive actions route through
@@ -68,8 +72,6 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
  * @param modifier Modifier applied to the sheet container.
  * @param currentUser The currently logged-in user. Used by the default header to derive inline
  * state icons (muted, pinned).
- * @param header The content shown at the top of the sheet.
- * @param content The content shown below the header.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,7 +82,11 @@ public fun ChannelActionsSheet(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     currentUser: User? = null,
-    header: @Composable ColumnScope.() -> Unit = {
+) {
+    StreamCardBottomSheet(
+        onDismissRequest = onDismiss,
+        modifier = modifier,
+    ) {
         with(ChatTheme.componentFactory) {
             ChannelMenuHeaderContent(
                 params = ChannelMenuHeaderContentParams(
@@ -88,10 +94,6 @@ public fun ChannelActionsSheet(
                     currentUser = currentUser,
                 ),
             )
-        }
-    },
-    content: @Composable ColumnScope.() -> Unit = {
-        with(ChatTheme.componentFactory) {
             ChannelMenuCenterContent(
                 params = ChannelMenuCenterContentParams(
                     onChannelOptionConfirm = onActionClick,
@@ -99,14 +101,6 @@ public fun ChannelActionsSheet(
                 ),
             )
         }
-    },
-) {
-    StreamCardBottomSheet(
-        onDismissRequest = onDismiss,
-        modifier = modifier,
-    ) {
-        header()
-        content()
     }
 }
 
@@ -238,7 +232,9 @@ private fun HeaderStateIcon(
 @Composable
 private fun ChannelActionsSheetPreview() {
     ChatTheme {
-        ChannelActionsSheetSample()
+        Box(modifier = Modifier.fillMaxSize()) {
+            ChannelActionsSheetSample()
+        }
     }
 }
 

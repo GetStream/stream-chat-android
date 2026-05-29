@@ -877,7 +877,7 @@ public final class io/getstream/chat/android/compose/ui/channels/header/Composab
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/info/ChannelActionsSheetKt {
-	public static final fun ChannelActionsSheet (Lio/getstream/chat/android/models/Channel;Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ChannelActionsSheet (Lio/getstream/chat/android/models/Channel;Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/info/ComposableSingletons$ChannelActionsSheetKt {

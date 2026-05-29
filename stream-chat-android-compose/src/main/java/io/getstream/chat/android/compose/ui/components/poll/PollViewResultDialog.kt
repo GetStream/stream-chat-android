@@ -365,7 +365,7 @@ private val NullableOptionSaver: Saver<Option?, Bundle> = Saver(
 @Composable
 private fun PollResultsSheetPreview() {
     ChatTheme {
-        Box(Modifier.background(ChatTheme.colors.backgroundCoreApp)) {
+        Box(modifier = Modifier.fillMaxSize()) {
             PollResultsSheet()
         }
     }

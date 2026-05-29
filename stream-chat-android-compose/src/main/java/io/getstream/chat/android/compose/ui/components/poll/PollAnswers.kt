@@ -319,7 +319,9 @@ private fun AddAnswerDialogInput(newOption: MutableState<String>, modifier: Modi
 @Composable
 private fun PollAnswersContentPreview() {
     ChatTheme {
-        PollAnswersContent()
+        Box(modifier = Modifier.fillMaxSize()) {
+            PollAnswersContent()
+        }
     }
 }
 
@@ -335,7 +337,9 @@ internal fun PollAnswersContent() {
 @Composable
 private fun PollAnswersWithCurrentUserContentPreview() {
     ChatTheme {
-        PollAnswersWithCurrentUserContent()
+        Box(modifier = Modifier.fillMaxSize()) {
+            PollAnswersWithCurrentUserContent()
+        }
     }
 }
 
@@ -353,7 +357,9 @@ internal fun PollAnswersWithCurrentUserContent() {
 @Composable
 private fun PollAnswersClosedAnonymousContentPreview() {
     ChatTheme {
-        PollAnswersClosedAnonymousContent()
+        Box(modifier = Modifier.fillMaxSize()) {
+            PollAnswersClosedAnonymousContent()
+        }
     }
 }
 

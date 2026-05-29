@@ -22,6 +22,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -344,6 +346,8 @@ internal fun AttachmentSystemPickerWithCommands() {
 @Composable
 private fun AttachmentCommandPickerSheetPreview() {
     ChatPreviewTheme {
-        AttachmentCommandPickerSheet()
+        Box(modifier = Modifier.fillMaxSize()) {
+            AttachmentCommandPickerSheet()
+        }
     }
 }

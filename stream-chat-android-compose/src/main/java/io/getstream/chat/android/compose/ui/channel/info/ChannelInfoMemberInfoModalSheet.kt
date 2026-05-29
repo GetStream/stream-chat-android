@@ -18,8 +18,10 @@ package io.getstream.chat.android.compose.ui.channel.info
 
 import android.content.Context
 import android.text.format.DateUtils
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -211,7 +213,9 @@ private fun Member.getBanExpirationText(context: Context): String {
 @Composable
 private fun ChannelInfoMemberInfoSheetBannedPreview() {
     ChatTheme {
-        ChannelInfoMemberInfoSheet(banned = true)
+        Box(modifier = Modifier.fillMaxSize()) {
+            ChannelInfoMemberInfoSheet(banned = true)
+        }
     }
 }
 
@@ -219,7 +223,9 @@ private fun ChannelInfoMemberInfoSheetBannedPreview() {
 @Composable
 private fun ChannelInfoMemberInfoSheetNotBannedPreview() {
     ChatTheme {
-        ChannelInfoMemberInfoSheet(banned = false)
+        Box(modifier = Modifier.fillMaxSize()) {
+            ChannelInfoMemberInfoSheet(banned = false)
+        }
     }
 }
 
