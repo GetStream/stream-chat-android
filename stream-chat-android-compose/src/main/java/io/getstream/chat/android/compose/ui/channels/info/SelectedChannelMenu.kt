@@ -138,7 +138,10 @@ private fun SelectedChannelMenuBottomSheetDialogPreview() {
 
 @Composable
 internal fun SelectedChannelMenuBottomSheetDialog() {
-    SelectedChannelMenuSample(alignment = Alignment.BottomCenter)
+    SelectedChannelMenuSample(
+        alignment = Alignment.BottomCenter,
+        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+    )
 }
 
 @Preview(showBackground = true)
@@ -168,6 +171,7 @@ internal fun SelectedChannelMenuMutedPinned() {
     )
     SelectedChannelMenuSample(
         alignment = Alignment.BottomCenter,
+        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         channel = pinnedChannel,
         currentUser = mutedUser,
     )
@@ -188,8 +192,8 @@ internal fun SelectedChannelMenuMutedPinned() {
 @Composable
 private fun SelectedChannelMenuSample(
     alignment: Alignment,
+    shape: Shape,
     modifier: Modifier = Modifier,
-    shape: Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
     channel: Channel = PreviewChannelData.channelWithManyMembers,
     currentUser: User? = PreviewUserData.user1,
 ) {
