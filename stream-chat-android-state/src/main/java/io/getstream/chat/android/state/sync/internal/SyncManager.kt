@@ -476,8 +476,8 @@ internal class SyncManager(
         val groupsParam = activeGroupedLogics
             .mapNotNull { logic ->
                 val key = logic.groupKey() ?: return@mapNotNull null
-                val cfg = logic.groupedQueryConfig() ?: return@mapNotNull null
-                key to GroupedChannelsGroupQuery(limit = cfg.pageSize)
+                val cfg = logic.groupedQueryConfig()
+                key to GroupedChannelsGroupQuery(limit = cfg?.pageSize)
             }
             .toMap()
             .takeIf { it.isNotEmpty() }

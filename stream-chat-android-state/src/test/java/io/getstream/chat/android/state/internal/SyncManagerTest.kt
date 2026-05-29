@@ -37,6 +37,7 @@ import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GroupedChannelsGroup
+import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.models.InFilterObject
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.SyncStatus
@@ -606,7 +607,7 @@ internal class SyncManagerTest {
 
             verify(chatClient).queryGroupedChannelsInternal(
                 limit = null,
-                groups = mapOf("all" to io.getstream.chat.android.models.GroupedChannelsGroupQuery(limit = 5)),
+                groups = mapOf("all" to GroupedChannelsGroupQuery(limit = 5)),
                 watch = true,
                 presence = false,
             )
@@ -1004,8 +1005,8 @@ internal class SyncManagerTest {
             verify(chatClient).queryGroupedChannelsInternal(
                 limit = null,
                 groups = mapOf(
-                    "a" to io.getstream.chat.android.models.GroupedChannelsGroupQuery(limit = 5),
-                    "b" to io.getstream.chat.android.models.GroupedChannelsGroupQuery(limit = 5),
+                    "a" to GroupedChannelsGroupQuery(limit = 5),
+                    "b" to GroupedChannelsGroupQuery(limit = 5),
                 ),
                 watch = true,
                 presence = false,
@@ -1055,14 +1056,14 @@ internal class SyncManagerTest {
             // as `{}` and signals "include this group in the response".
             verify(chatClient).queryGroupedChannelsInternal(
                 limit = 20,
-                groups = mapOf("all" to io.getstream.chat.android.models.GroupedChannelsGroupQuery(limit = null)),
+                groups = mapOf("all" to GroupedChannelsGroupQuery(limit = null)),
                 watch = true,
                 presence = false,
             )
         }
 
     @Test
-    fun `on reconnect with no captured config should fall back to method defaults`() =
+    fun `on reconnect with no captured config should still include the group key with empty entry`() =
         runTest(testDispatcher) {
             val createdAt = localDate()
             val rawCreatedAt = streamDateFormatter.format(createdAt)
@@ -1095,7 +1096,7 @@ internal class SyncManagerTest {
 
             verify(chatClient).queryGroupedChannelsInternal(
                 limit = null,
-                groups = null,
+                groups = mapOf("all" to GroupedChannelsGroupQuery(limit = null)),
                 watch = true,
                 presence = false,
             )
