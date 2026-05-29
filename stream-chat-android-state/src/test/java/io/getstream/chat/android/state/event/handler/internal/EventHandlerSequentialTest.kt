@@ -35,6 +35,7 @@ import io.getstream.chat.android.client.test.randomNotificationMarkReadEvent
 import io.getstream.chat.android.client.test.randomNotificationMarkUnreadEvent
 import io.getstream.chat.android.client.test.randomNotificationMessageNewEvent
 import io.getstream.chat.android.client.test.randomNotificationMutesUpdatedEvent
+import io.getstream.chat.android.client.test.randomNotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.test.randomPollDeletedEvent
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -48,6 +49,7 @@ import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelMute
 import io.getstream.chat.android.randomLocation
+import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMute
 import io.getstream.chat.android.randomPoll
@@ -208,6 +210,136 @@ internal class EventHandlerSequentialTest {
         handler.handleEvents(randomChannelUpdatedEvent(cid = cid, channel = newChannel))
 
         mutableGlobalState.groupedUnreadChannels.value `should be equal to` mapOf("a" to 0, "b" to 1)
+    }
+
+    @Test
+    fun `Two ChannelUpdatedEvents for same cid in one batch apply the migration only once`() = runTest {
+        val cid = "messaging:channel-id"
+        val mutableGlobalState = MutableGlobalState(currentUser.id).apply {
+            setGroupedUnreadChannels(mapOf("a" to 2, "b" to 0))
+        }
+        val newChannel = randomChannel(
+            id = "channel-id",
+            type = "messaging",
+            extraData = mapOf("group" to "b"),
+        )
+        val handler = Fixture()
+            .withCurrentUser(currentUser)
+            .withMutableGlobalState(mutableGlobalState)
+            .withActiveChannel(
+                channelType = "messaging",
+                channelId = "channel-id",
+                extraData = mapOf("group" to "a"),
+                unreadMessages = 1,
+            )
+            .get(this)
+
+        handler.handleEvents(
+            randomChannelUpdatedEvent(cid = cid, channel = newChannel),
+            randomChannelUpdatedEvent(cid = cid, channel = newChannel),
+        )
+
+        // Without dedup the delta would be applied twice -> {"a" to 0, "b" to 2}.
+        mutableGlobalState.groupedUnreadChannels.value `should be equal to` mapOf("a" to 1, "b" to 1)
+    }
+
+    @Test
+    fun `NotificationRemovedFromChannelEvent before ChannelUpdatedEvent same cid suppresses migration`() = runTest {
+        val cid = "messaging:channel-id"
+        val mutableGlobalState = MutableGlobalState(currentUser.id).apply {
+            setGroupedUnreadChannels(mapOf("a" to 1, "b" to 0))
+        }
+        val newChannel = randomChannel(
+            id = "channel-id",
+            type = "messaging",
+            extraData = mapOf("group" to "b"),
+        )
+        val handler = Fixture()
+            .withCurrentUser(currentUser)
+            .withMutableGlobalState(mutableGlobalState)
+            .withActiveChannel(
+                channelType = "messaging",
+                channelId = "channel-id",
+                extraData = mapOf("group" to "a"),
+                unreadMessages = 1,
+            )
+            .get(this)
+
+        handler.handleEvents(
+            randomNotificationRemovedFromChannelEvent(cid = cid, member = randomMember(user = currentUser)),
+            randomChannelUpdatedEvent(cid = cid, channel = newChannel),
+        )
+
+        // Removed-from-channel marks the cid as destroyed for this batch, so the subsequent
+        // channel.updated delta does not migrate counts.
+        mutableGlobalState.groupedUnreadChannels.value `should be equal to` mapOf("a" to 1, "b" to 0)
+    }
+
+    @Test
+    fun `NotificationMarkReadEvent before ChannelUpdatedEvent same cid does not double-apply delta`() = runTest {
+        val cid = "messaging:channel-id"
+        val mutableGlobalState = MutableGlobalState(currentUser.id).apply {
+            setGroupedUnreadChannels(mapOf("a" to 1, "b" to 0))
+        }
+        val newChannel = randomChannel(
+            id = "channel-id",
+            type = "messaging",
+            extraData = mapOf("group" to "b"),
+        )
+        val handler = Fixture()
+            .withCurrentUser(currentUser)
+            .withMutableGlobalState(mutableGlobalState)
+            .withActiveChannel(
+                channelType = "messaging",
+                channelId = "channel-id",
+                extraData = mapOf("group" to "a"),
+                unreadMessages = 1,
+            )
+            .get(this)
+
+        // HGUC mark_read carries authoritative {a:0, b:0}; channel.updated must NOT then dec a/inc b
+        // on top (the channel is now read).
+        handler.handleEvents(
+            randomNotificationMarkReadEvent(
+                cid = cid,
+                user = currentUser,
+                groupedUnreadChannels = mapOf("a" to 0, "b" to 0),
+            ),
+            randomChannelUpdatedEvent(cid = cid, channel = newChannel),
+        )
+
+        mutableGlobalState.groupedUnreadChannels.value `should be equal to` mapOf("a" to 0, "b" to 0)
+    }
+
+    @Test
+    fun `MarkAllReadEvent before ChannelUpdatedEvent suppresses migration`() = runTest {
+        val cid = "messaging:channel-id"
+        val mutableGlobalState = MutableGlobalState(currentUser.id).apply {
+            setGroupedUnreadChannels(mapOf("a" to 1, "b" to 0))
+        }
+        val newChannel = randomChannel(
+            id = "channel-id",
+            type = "messaging",
+            extraData = mapOf("group" to "b"),
+        )
+        val handler = Fixture()
+            .withCurrentUser(currentUser)
+            .withMutableGlobalState(mutableGlobalState)
+            .withActiveChannel(
+                channelType = "messaging",
+                channelId = "channel-id",
+                extraData = mapOf("group" to "a"),
+                unreadMessages = 1,
+            )
+            .get(this)
+
+        handler.handleEvents(
+            randomMarkAllReadEvent(user = currentUser),
+            randomChannelUpdatedEvent(cid = cid, channel = newChannel),
+        )
+
+        // MarkAllRead conceptually clears unread on all channels; delta no-ops despite stale cache.
+        mutableGlobalState.groupedUnreadChannels.value `should be equal to` mapOf("a" to 1, "b" to 0)
     }
 
     @ParameterizedTest

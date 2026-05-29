@@ -428,34 +428,38 @@ internal class EventHandlerSequential(
             }
         }
 
-        batchEvent
-            .takeUnless { it.isFromHistorySync }
-            ?.sortedEvents
-            ?.forEach { event: ChatEvent ->
-                (event as? DraftMessageUpdatedEvent)?.let { mutableGlobalState.updateDraftMessage(it.draftMessage) }
-                (event as? DraftMessageDeletedEvent)?.let { mutableGlobalState.removeDraftMessage(it.draftMessage) }
-                (event as? HasUnreadCounts)?.let { modifyValuesFromEvent(it) }
-                (event as? HasGroupedUnreadChannels)?.let { e ->
-                    groupedUnreadChannels = groupedUnreadChannelsUpdater
-                        .calculateUpdatedCounts(groupedUnreadChannels, e)
-                }
-                (event as? ChannelUpdatedEvent)?.let { e ->
-                    groupedUnreadChannels = groupedUnreadChannelsUpdater
-                        .calculateUpdatedCounts(groupedUnreadChannels, e)
-                }
-                (event as? ChannelUpdatedByUserEvent)?.let { e ->
-                    groupedUnreadChannels = groupedUnreadChannelsUpdater
-                        .calculateUpdatedCounts(groupedUnreadChannels, e)
-                }
-                (event as? HasOwnUser)?.let { modifyValuesFromUser(it.me) }
-                (event as? HasUnreadThreadCounts)?.let { modifyUnreadThreadsCount(it) }
-                (event as? UserUpdatedEvent)
-                    ?.takeIf { it.user.id == currentUserId }
-                    ?.let { modifyValuesFromUser(me?.mergePartially(it.user) ?: it.user) }
-                (event as? NewMessageEvent)?.message?.sharedLocation?.let(mutableGlobalState::addLiveLocation)
-                (event as? MessageUpdatedEvent)?.message?.sharedLocation?.let(mutableGlobalState::addLiveLocation)
-                (event as? HasChannel)?.channel?.activeLiveLocations?.let(mutableGlobalState::addLiveLocations)
+        val sortedEvents = batchEvent.takeUnless { it.isFromHistorySync }?.sortedEvents.orEmpty()
+
+        sortedEvents.forEach { event: ChatEvent ->
+            (event as? DraftMessageUpdatedEvent)?.let { mutableGlobalState.updateDraftMessage(it.draftMessage) }
+            (event as? DraftMessageDeletedEvent)?.let { mutableGlobalState.removeDraftMessage(it.draftMessage) }
+            (event as? HasUnreadCounts)?.let { modifyValuesFromEvent(it) }
+            (event as? HasGroupedUnreadChannels)?.let { e ->
+                groupedUnreadChannels = groupedUnreadChannelsUpdater
+                    .calculateUpdatedCounts(groupedUnreadChannels, batchEvent.id, e)
             }
+            (event as? NotificationRemovedFromChannelEvent)
+                ?.takeIf { it.member.getUserId() == currentUserId }
+                ?.let { groupedUnreadChannelsUpdater.notifyChannelRemoved(batchEvent.id, it.cid) }
+            (event as? ChannelDeletedEvent)
+                ?.let { groupedUnreadChannelsUpdater.notifyChannelRemoved(batchEvent.id, it.cid) }
+            (event as? ChannelUpdatedEvent)?.let { e ->
+                groupedUnreadChannels = groupedUnreadChannelsUpdater
+                    .calculateUpdatedCounts(groupedUnreadChannels, batchEvent.id, e)
+            }
+            (event as? ChannelUpdatedByUserEvent)?.let { e ->
+                groupedUnreadChannels = groupedUnreadChannelsUpdater
+                    .calculateUpdatedCounts(groupedUnreadChannels, batchEvent.id, e)
+            }
+            (event as? HasOwnUser)?.let { modifyValuesFromUser(it.me) }
+            (event as? HasUnreadThreadCounts)?.let { modifyUnreadThreadsCount(it) }
+            (event as? UserUpdatedEvent)
+                ?.takeIf { it.user.id == currentUserId }
+                ?.let { modifyValuesFromUser(me?.mergePartially(it.user) ?: it.user) }
+            (event as? NewMessageEvent)?.message?.sharedLocation?.let(mutableGlobalState::addLiveLocation)
+            (event as? MessageUpdatedEvent)?.message?.sharedLocation?.let(mutableGlobalState::addLiveLocation)
+            (event as? HasChannel)?.channel?.activeLiveLocations?.let(mutableGlobalState::addLiveLocations)
+        }
 
         me?.let {
             mutableGlobalState.setBanned(it.isBanned)
