@@ -24,8 +24,7 @@ import io.getstream.chat.android.ui.common.feature.messages.composer.query.forma
  */
 public fun interface UserLookupHandler {
     /**
-     * Performs users lookup by given [query] in suspend way.
-     * It's executed on background, so it can perform heavy operations.
+     * Performs users lookup by given [query].
      *
      * @param query String as user input for lookup algorithm.
      * @return List of users as result of lookup.

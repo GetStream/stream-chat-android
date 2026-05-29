@@ -19,60 +19,71 @@ package io.getstream.chat.android.compose.ui.messages.composer.internal.suggesti
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.MessageComposerUserSuggestionItemParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerSuggestionItemParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewUserData
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 
 @Composable
-internal fun UserSuggestionList(
-    users: List<User>,
+internal fun MentionSuggestionList(
+    mentions: List<Mention>,
     currentUser: User? = null,
     onUserSelected: (User) -> Unit = {},
+    onMentionSelected: (Mention) -> Unit = {},
 ) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .testTag("Stream_UserSuggestionList"),
+            .testTag("Stream_MentionSuggestionList"),
         contentPadding = PaddingValues(vertical = StreamTokens.spacingXs),
     ) {
-        items(
-            items = users,
-            key = User::id,
-        ) { user ->
-            ChatTheme.componentFactory.MessageComposerUserSuggestionItem(
-                params = MessageComposerUserSuggestionItemParams(
-                    user = user,
+        itemsIndexed(
+            items = mentions,
+            key = ::mentionKey,
+        ) { _, mention ->
+            ChatTheme.componentFactory.MessageComposerSuggestionItem(
+                params = MessageComposerSuggestionItemParams(
+                    mention = mention,
                     currentUser = currentUser,
-                    onUserSelected = onUserSelected,
+                    onMentionSelected = { selected ->
+                        if (selected is Mention.User) onUserSelected(selected.user)
+                        onMentionSelected(selected)
+                    },
                 ),
             )
         }
     }
 }
 
-@Composable
-@Preview(showBackground = true)
-private fun MemberSuggestionListPreview() {
-    ChatPreviewTheme {
-        UserSuggestionList()
-    }
+private fun mentionKey(index: Int, mention: Mention): String = when (mention) {
+    is Mention.User -> "user:${mention.user.id}"
+    is Mention.Channel -> "channel"
+    is Mention.Here -> "here"
+    is Mention.Role -> "role:${mention.role}"
+    is Mention.Group -> "group:${mention.group.id}"
+    else -> "custom:${mention.type.value}:$index"
 }
 
 @Composable
-internal fun UserSuggestionList() {
-    UserSuggestionList(
-        users = listOf(
-            PreviewUserData.user1,
-            PreviewUserData.user2,
-            PreviewUserData.user3,
-        ),
-    )
+@Preview(showBackground = true)
+private fun MentionSuggestionListPreview() {
+    ChatPreviewTheme {
+        MentionSuggestionList(
+            mentions = listOf(
+                Mention.Channel,
+                Mention.Here,
+                Mention.User(PreviewUserData.user1),
+                Mention.User(PreviewUserData.user2),
+                Mention.Role("admin"),
+            ),
+        )
+    }
 }

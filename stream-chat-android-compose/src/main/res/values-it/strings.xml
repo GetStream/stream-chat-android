@@ -124,6 +124,9 @@
   <string name="stream_compose_cancel">"Annulla"</string>
   <string name="stream_compose_channel_item_muted">"silenziato"</string>
   <string name="stream_compose_channel_item_pinned">"fissato"</string>
+  <string name="stream_compose_message_composer_mention_suggestion_channel_subtitle">"Notifica tutti in questa conversazione"</string>
+  <string name="stream_compose_message_composer_mention_suggestion_here_subtitle">"Notifica tutti i membri online in questa conversazione"</string>
+  <string name="stream_compose_message_composer_mention_suggestion_role_subtitle">"Notifica tutti i membri %1$s"</string>
   <string name="stream_compose_channel_item_open">"Apri conversazione"</string>
   <string name="stream_compose_channel_item_options">"Apri opzioni conversazione"</string>
   <string name="stream_compose_cd_play_button">"Pulsante riproduci"</string>

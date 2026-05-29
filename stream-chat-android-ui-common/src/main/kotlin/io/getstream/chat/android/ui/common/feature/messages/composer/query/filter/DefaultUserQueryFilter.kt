@@ -28,9 +28,11 @@ import io.getstream.log.taggedLogger
 /**
  * Default [QueryFilter] for [User] objects used in mention suggestions.
  *
- * Keeps only users whose normalized name (or id) contains the normalized query as a substring,
- * then sorts results by match position so prefix matches appear first. Normalization applies
- * lowercasing, diacritics removal, and optional transliteration.
+ * Matches by whitespace-tokenizing the query and the user's name (or id when blank): every word
+ * except the last must equal at least one name word, and the last word must be a prefix of at
+ * least one name word. The same name word may satisfy multiple query words. Results are sorted
+ * alphabetically by normalized name. Normalization applies lowercasing, diacritics removal, and
+ * optional transliteration.
  *
  * @param transliterator The transliterator to use for normalizing strings.
  */
@@ -48,15 +50,30 @@ public class DefaultUserQueryFilter(
 
     override fun filter(items: List<User>, query: String): List<User> {
         logger.d { "[filter] query: \"$query\", items.size: ${items.size}" }
-        val formattedQuery = queryFormatter.format(query)
-        if (formattedQuery.isEmpty()) return items
+        val queryTokens = queryFormatter.format(query).tokenize()
         return items
-            .mapNotNull { user ->
-                val formattedName = queryFormatter.format(query = user.name.ifBlank(user::id))
-                val index = formattedName.indexOf(formattedQuery)
-                if (index >= 0) user to index else null
-            }
-            .sortedBy { (_, index) -> index }
+            .map { user -> user to queryFormatter.format(user.name.ifBlank(user::id)) }
+            .filter { (_, formattedName) -> matches(queryTokens, formattedName) }
+            .sortedBy { (_, formattedName) -> formattedName }
             .map { (user, _) -> user }
+    }
+
+    private fun matches(queryTokens: List<String>, formattedName: String): Boolean {
+        if (queryTokens.isEmpty()) return true
+        val nameTokens = formattedName.tokenize()
+        val lastIndex = queryTokens.lastIndex
+        return queryTokens.withIndex().all { (i, token) ->
+            if (i == lastIndex) {
+                nameTokens.any { it.startsWith(token) }
+            } else {
+                nameTokens.any { it == token }
+            }
+        }
+    }
+
+    private fun String.tokenize(): List<String> = split(WHITESPACE).filter(String::isNotEmpty)
+
+    private companion object {
+        private val WHITESPACE = "\\s+".toRegex()
     }
 }

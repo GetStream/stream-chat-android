@@ -128,4 +128,19 @@ public object ChannelCapabilities {
 
     /** Ability to send a poll. */
     public const val SEND_POLL: String = "send-poll"
+
+    /** Ability to mention users by name (e.g. `@Alice`). */
+    public const val CREATE_MENTION: String = "create-mention"
+
+    /** Ability to use `@channel` to notify all channel members. */
+    public const val NOTIFY_CHANNEL: String = "notify-channel"
+
+    /** Ability to use `@here` to notify online channel members. */
+    public const val NOTIFY_HERE: String = "notify-here"
+
+    /** Ability to use role mentions (e.g. `@admin`, `@moderator`). */
+    public const val NOTIFY_ROLE: String = "notify-role"
+
+    /** Ability to use user-group mentions. */
+    public const val NOTIFY_GROUP: String = "notify-group"
 }

@@ -68,7 +68,7 @@ open class MessageListPage {
             val commandsButton get() = By.res("Stream_ComposerCommandsButton")
             val commandSuggestionList get() = By.res("Stream_CommandSuggestionList")
             val commandSuggestionListTitle get() = By.res("Stream_CommandSuggestionListTitle")
-            val userSuggestion get() = By.res("Stream_UserSuggestionItem")
+            val userSuggestion get() = By.res("Stream_SuggestionItem")
             val giphyButton get() = By.res("Stream_SuggestionListGiphyButton")
             val attachmentsButton get() = By.res("Stream_ComposerAttachmentsButton")
             val quotedMessage get() = By.res("Stream_QuotedMessage")

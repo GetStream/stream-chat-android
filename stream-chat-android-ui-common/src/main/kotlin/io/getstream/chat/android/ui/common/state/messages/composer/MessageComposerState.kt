@@ -36,6 +36,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * @param action The currently active [MessageAction].
  * @param validationErrors The list of validation errors.
  * @param mentionSuggestions The list of users that can be used to autocomplete the mention.
+ * Prefer [suggestedMentions] for new code.
  * @param commandSuggestions The list of commands to be displayed in the command suggestion popup.
  * @param linkPreview The link found in [inputValue] to be previewed, or `null` when there is none.
  * @param coolDownTime The amount of time left until the user is allowed to send the next message.
@@ -51,12 +52,19 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * editable unless the user doesn't have proper [ChannelCapabilities] to send messages, otherwise it's disabled.
  * @param selectedMentions The list of selected mentions in the current input.
  * @param activeCommand The command that is currently active (selected from the suggestion popup).
+ * @param suggestedMentions [Mention]s to render in the suggestion popup. Prefer this over
+ * [mentionSuggestions] for new code.
  */
 public data class MessageComposerState @JvmOverloads constructor(
     val inputValue: String = "",
     val attachments: List<Attachment> = emptyList(),
     val action: MessageAction? = null,
     val validationErrors: List<ValidationError> = emptyList(),
+    @Deprecated(
+        message = "Use suggestedMentions, which carries every mention type.",
+        replaceWith = ReplaceWith("suggestedMentions"),
+        level = DeprecationLevel.WARNING,
+    )
     val mentionSuggestions: List<User> = emptyList(),
     val commandSuggestions: List<Command> = emptyList(),
     val linkPreview: LinkPreview? = null,
@@ -71,4 +79,5 @@ public data class MessageComposerState @JvmOverloads constructor(
     val sendEnabled: Boolean = true,
     val selectedMentions: Set<Mention> = emptySet(),
     val activeCommand: Command? = null,
+    val suggestedMentions: List<Mention> = emptyList(),
 )

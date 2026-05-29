@@ -16,79 +16,122 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.composer.query.filter
 
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomUser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 
 internal class DefaultUserQueryFilterTest {
 
     private val filter = DefaultUserQueryFilter()
 
-    @Test
-    fun `empty query returns all users`() {
-        val users = listOf(user("Alice"), user("Bob"))
+    @ParameterizedTest(name = "[{index}] {0}")
+    @MethodSource("matchCases")
+    fun `filter returns the expected matches`(
+        @Suppress("UNUSED_PARAMETER") description: String,
+        userNames: List<String>,
+        query: String,
+        expected: List<String>,
+    ) {
+        val users = userNames.map { randomUser(name = it) }
 
-        assertEquals(listOf("Alice", "Bob"), filter.filter(users, "").names())
-    }
-
-    @Test
-    fun `no match returns empty list`() {
-        val users = listOf(user("Alice"), user("Bob"))
-
-        assertEquals(emptyList<String>(), filter.filter(users, "xyz").names())
-    }
-
-    @Test
-    fun `match is case insensitive`() {
-        val users = listOf(user("Aleksandar Apostolov"), user("Jc Minarro"))
-
-        assertEquals(listOf("Jc Minarro"), filter.filter(users, "JC").names())
-    }
-
-    @Test
-    fun `match ignores diacritics`() {
-        val users = listOf(user("José"), user("Bob"))
-
-        assertEquals(listOf("José"), filter.filter(users, "jose").names())
-    }
-
-    @Test
-    fun `short query only matches users containing that substring`() {
-        val users = listOf(user("Aleksandar Apostolov"), user("Jc Minarro"))
-
-        assertEquals(listOf("Jc Minarro"), filter.filter(users, "jc").names())
-    }
-
-    @Test
-    fun `query does not fuzzy match unrelated names`() {
-        val users = listOf(user("Aleksandar Apostolov"), user("Ara"), user("Abel"))
-
-        assertEquals(listOf("Aleksandar Apostolov"), filter.filter(users, "ale").names())
-    }
-
-    @Test
-    fun `query matches substring in any word`() {
-        val users = listOf(user("Alice Smith"), user("Bob Jones"), user("Charlie Smith"))
-
-        assertEquals(listOf("Alice Smith", "Charlie Smith"), filter.filter(users, "smith").names())
-    }
-
-    @Test
-    fun `results are sorted by match position`() {
-        val users = listOf(user("Johann"), user("Anne"), user("Marianne"))
-
-        assertEquals(listOf("Anne", "Johann", "Marianne"), filter.filter(users, "ann").names())
+        assertEquals(expected, filter.filter(users, query).map(User::name))
     }
 
     @Test
     fun `falls back to id when name is blank`() {
-        val users = listOf(randomUser(name = "", id = "alice123"), user("Bob"))
+        val users = listOf(randomUser(name = "Bob"), randomUser(name = "", id = "alice123"))
 
         assertEquals(listOf("alice123", "Bob"), filter.filter(users, "").map { it.name.ifBlank { it.id } })
         assertEquals(listOf("alice123"), filter.filter(users, "alice").map { it.id })
     }
 
-    private fun user(name: String) = randomUser(name = name)
+    private companion object {
 
-    private fun List<io.getstream.chat.android.models.User>.names() = map { it.name }
+        @Suppress("LongMethod")
+        @JvmStatic
+        fun matchCases(): List<Arguments> = listOf(
+            Arguments.of(
+                "empty query returns all users sorted alphabetically",
+                listOf("Charlie", "Alice", "Bob"),
+                "",
+                listOf("Alice", "Bob", "Charlie"),
+            ),
+            Arguments.of(
+                "no match returns empty list",
+                listOf("Alice", "Bob"),
+                "xyz",
+                emptyList<String>(),
+            ),
+            Arguments.of(
+                "match is case insensitive",
+                listOf("Aleksandar Apostolov", "Jc Minarro"),
+                "JC",
+                listOf("Jc Minarro"),
+            ),
+            Arguments.of(
+                "match ignores diacritics",
+                listOf("José", "Bob"),
+                "jose",
+                listOf("José"),
+            ),
+            Arguments.of(
+                "last query word prefix-matches any name word",
+                listOf("Alice Smith", "Bob Jones", "Charlie Smith"),
+                "smith",
+                listOf("Alice Smith", "Charlie Smith"),
+            ),
+            Arguments.of(
+                "last query word must be a prefix, not a substring",
+                listOf("Hart", "Arnold", "Garrick"),
+                "ar",
+                listOf("Arnold"),
+            ),
+            Arguments.of(
+                "single-word prefix matches the only/last word",
+                listOf("First Last"),
+                "L",
+                listOf("First Last"),
+            ),
+            Arguments.of(
+                "full match plus prefix on the last word matches",
+                listOf("First Last"),
+                "First L",
+                listOf("First Last"),
+            ),
+            Arguments.of(
+                "full-match words may appear in any order",
+                listOf("First Last"),
+                "Last Fi",
+                listOf("First Last"),
+            ),
+            Arguments.of(
+                "non-final words require a full match, not a substring",
+                listOf("First Last"),
+                "t L",
+                emptyList<String>(),
+            ),
+            Arguments.of(
+                "the same name word may satisfy multiple query words",
+                listOf("First Last"),
+                "first first",
+                listOf("First Last"),
+            ),
+            Arguments.of(
+                "the same name word may satisfy a full match and a final prefix",
+                listOf("First Last"),
+                "first f",
+                listOf("First Last"),
+            ),
+            Arguments.of(
+                "results are sorted alphabetically by normalized name",
+                listOf("Charlie Smith", "Alice Smith", "Bob Smith"),
+                "smith",
+                listOf("Alice Smith", "Bob Smith", "Charlie Smith"),
+            ),
+        )
+    }
 }

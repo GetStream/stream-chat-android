@@ -258,6 +258,7 @@ class ChatsActivity : ComponentActivity() {
             ChatListContentMode.Channels,
             ChatListContentMode.Mentions,
             -> AppBottomBarOption.CHATS
+
             ChatListContentMode.Threads -> AppBottomBarOption.THREADS
         }
         AppBottomBar(

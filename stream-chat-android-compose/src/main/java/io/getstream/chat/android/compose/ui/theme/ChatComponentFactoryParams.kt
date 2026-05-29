@@ -993,6 +993,7 @@ public class SwipeToReplyContentParams
  * @param recordingActions The actions to control the audio recording.
  * @param onLinkPreviewClick Action invoked when a link preview is clicked.
  * @param onCancelLinkPreviewClick Action invoked when the cancel link preview button is clicked.
+ * @param onMentionSelected Action invoked when a [Mention] is selected.
  */
 public data class MessageComposerParams(
     val messageComposerState: MessageComposerState,
@@ -1007,6 +1008,11 @@ public data class MessageComposerParams(
     val onValueChange: (String) -> Unit = {},
     val onAttachmentRemoved: (Attachment) -> Unit = {},
     val onCancelAction: () -> Unit = {},
+    @Deprecated(
+        message = "Use onMentionSelected, which receives every mention type.",
+        replaceWith = ReplaceWith("onMentionSelected"),
+        level = DeprecationLevel.WARNING,
+    )
     val onUserSelected: (User) -> Unit = {},
     val onCommandSelected: (Command) -> Unit = {},
     val onAlsoSendToChannelSelected: (Boolean) -> Unit = {},
@@ -1014,6 +1020,7 @@ public data class MessageComposerParams(
     val recordingActions: AudioRecordingActions = AudioRecordingActions.None,
     val onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     val onCancelLinkPreviewClick: (() -> Unit)? = null,
+    val onMentionSelected: (Mention) -> Unit = {},
 )
 
 /**
@@ -1042,6 +1049,52 @@ public data class MessageComposerUserSuggestionItemParams(
     val user: User,
     val currentUser: User?,
     val onUserSelected: (User) -> Unit,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.MessageComposerSuggestionItem].
+ *
+ * @param mention The [Mention] for which the suggestion is rendered.
+ * @param onMentionSelected Action invoked when the mention is selected.
+ * @param currentUser The currently logged in user, used when rendering a [Mention.User].
+ */
+public data class MessageComposerSuggestionItemParams(
+    val mention: Mention,
+    val onMentionSelected: (Mention) -> Unit,
+    val currentUser: User? = null,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.MessageComposerSuggestionItemLeadingContent].
+ *
+ * @param mention The mention for which the leading content is rendered.
+ * @param modifier Modifier for styling.
+ */
+public data class MessageComposerSuggestionItemLeadingContentParams(
+    val mention: Mention,
+    val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.MessageComposerSuggestionItemCenterContent].
+ *
+ * @param mention The mention for which the center content is rendered.
+ * @param modifier Modifier for styling.
+ */
+public data class MessageComposerSuggestionItemCenterContentParams(
+    val mention: Mention,
+    val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.MessageComposerSuggestionItemTrailingContent].
+ *
+ * @param mention The mention for which the trailing content is rendered.
+ * @param modifier Modifier for styling.
+ */
+public data class MessageComposerSuggestionItemTrailingContentParams(
+    val mention: Mention,
+    val modifier: Modifier = Modifier,
 )
 
 /**

@@ -130,8 +130,9 @@ import io.getstream.chat.android.compose.ui.messages.composer.internal.attachmen
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.CommandSuggestionItem
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultCommandSuggestionItemCenterContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultCommandSuggestionItemLeadingContent
-import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultUserSuggestionItemCenterContent
-import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultUserSuggestionItemLeadingContent
+import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultMentionSuggestionItemCenterContent
+import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.DefaultMentionSuggestionItemLeadingContent
+import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.MentionSuggestionItem
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.UserSuggestionItem
 import io.getstream.chat.android.compose.ui.messages.header.DefaultChannelHeaderCenterContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultChannelHeaderLeadingContent
@@ -170,6 +171,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.React
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
@@ -1265,6 +1267,7 @@ public interface ChatComponentFactory {
             onLinkPreviewClick = params.onLinkPreviewClick,
             onCancelLinkPreviewClick = params.onCancelLinkPreviewClick,
             onUserSelected = params.onUserSelected,
+            onMentionSelected = params.onMentionSelected,
             onCommandSelected = params.onCommandSelected,
             onAlsoSendToChannelChange = params.onAlsoSendToChannelSelected,
             onActiveCommandDismiss = params.onActiveCommandDismiss,
@@ -1299,10 +1302,13 @@ public interface ChatComponentFactory {
     /**
      * The default user suggestion item of the message composer.
      *
-     * Used in [io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.UserSuggestionList].
-     *
      * @param params Parameters for this component.
      */
+    @Deprecated(
+        message = "Override MessageComposerSuggestionItem, which handles every Mention type, not only user mentions.",
+        replaceWith = ReplaceWith("MessageComposerSuggestionItem"),
+        level = DeprecationLevel.WARNING,
+    )
     @Composable
     public fun MessageComposerUserSuggestionItem(params: MessageComposerUserSuggestionItemParams) {
         UserSuggestionItem(
@@ -1313,19 +1319,100 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * The default suggestion item of the message composer. Handles every [Mention] type. User
+     * mentions delegate to [MessageComposerUserSuggestionItem] for backward compatibility.
+     *
+     * @param params Parameters for this component.
+     */
+    @Suppress("DEPRECATION")
+    @Composable
+    public fun MessageComposerSuggestionItem(params: MessageComposerSuggestionItemParams) {
+        when (val mention = params.mention) {
+            is Mention.User -> MessageComposerUserSuggestionItem(
+                params = MessageComposerUserSuggestionItemParams(
+                    user = mention.user,
+                    currentUser = params.currentUser,
+                    onUserSelected = { params.onMentionSelected(mention) },
+                ),
+            )
+
+            else -> MentionSuggestionItem(
+                mention = mention,
+                onMentionSelected = params.onMentionSelected,
+            )
+        }
+    }
+
+    /**
+     * The default leading content for a non-user [Mention] suggestion item. Renders a placeholder
+     * icon; override to swap in mention-type-specific drawables.
+     *
+     * Used as part of [MessageComposerSuggestionItem].
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun MessageComposerSuggestionItemLeadingContent(
+        params: MessageComposerSuggestionItemLeadingContentParams,
+    ) {
+        DefaultMentionSuggestionItemLeadingContent(
+            modifier = params.modifier,
+            mention = params.mention,
+        )
+    }
+
+    /**
+     * The default center content for a non-user [Mention] suggestion item. Renders `@<display>`.
+     *
+     * Used as part of [MessageComposerSuggestionItem].
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun MessageComposerSuggestionItemCenterContent(
+        params: MessageComposerSuggestionItemCenterContentParams,
+    ) {
+        DefaultMentionSuggestionItemCenterContent(
+            modifier = params.modifier,
+            mention = params.mention,
+        )
+    }
+
+    /**
+     * The default trailing content for a non-user [Mention] suggestion item. Empty by default;
+     * override to add a trailing element.
+     *
+     * Used as part of [MessageComposerSuggestionItem].
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun MessageComposerSuggestionItemTrailingContent(
+        params: MessageComposerSuggestionItemTrailingContentParams,
+    ) {
+    }
+
+    /**
      * The default leading content of the user suggestion item of the message composer.
      *
      * Used as part of [MessageComposerUserSuggestionItem].
      *
      * @param params Parameters for this component.
      */
+    @Deprecated(
+        message = "Override MessageComposerSuggestionItemLeadingContent, which handles every Mention type.",
+        replaceWith = ReplaceWith("MessageComposerSuggestionItemLeadingContent"),
+        level = DeprecationLevel.WARNING,
+    )
     @Composable
     public fun MessageComposerUserSuggestionItemLeadingContent(
         params: MessageComposerUserSuggestionItemLeadingContentParams,
     ) {
-        DefaultUserSuggestionItemLeadingContent(
-            modifier = params.modifier,
-            user = params.user,
+        MessageComposerSuggestionItemLeadingContent(
+            params = MessageComposerSuggestionItemLeadingContentParams(
+                mention = Mention.User(params.user),
+                modifier = params.modifier,
+            ),
         )
     }
 
@@ -1336,13 +1423,20 @@ public interface ChatComponentFactory {
      *
      * @param params Parameters for this component.
      */
+    @Deprecated(
+        message = "Override MessageComposerSuggestionItemCenterContent, which handles every Mention type.",
+        replaceWith = ReplaceWith("MessageComposerSuggestionItemCenterContent"),
+        level = DeprecationLevel.WARNING,
+    )
     @Composable
     public fun MessageComposerUserSuggestionItemCenterContent(
         params: MessageComposerUserSuggestionItemCenterContentParams,
     ) {
-        DefaultUserSuggestionItemCenterContent(
-            modifier = params.modifier,
-            user = params.user,
+        MessageComposerSuggestionItemCenterContent(
+            params = MessageComposerSuggestionItemCenterContentParams(
+                mention = Mention.User(params.user),
+                modifier = params.modifier,
+            ),
         )
     }
 
@@ -1353,10 +1447,21 @@ public interface ChatComponentFactory {
      *
      * @param params Parameters for this component.
      */
+    @Deprecated(
+        message = "Override MessageComposerSuggestionItemTrailingContent, which handles every Mention type.",
+        replaceWith = ReplaceWith("MessageComposerSuggestionItemTrailingContent"),
+        level = DeprecationLevel.WARNING,
+    )
     @Composable
     public fun MessageComposerUserSuggestionItemTrailingContent(
         params: MessageComposerUserSuggestionItemTrailingContentParams,
     ) {
+        MessageComposerSuggestionItemTrailingContent(
+            params = MessageComposerSuggestionItemTrailingContentParams(
+                mention = Mention.User(params.user),
+                modifier = params.modifier,
+            ),
+        )
     }
 
     /**
