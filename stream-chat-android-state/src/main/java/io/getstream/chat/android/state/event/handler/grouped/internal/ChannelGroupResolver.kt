@@ -22,9 +22,8 @@ import io.getstream.chat.android.models.Channel
  * Resolves the set of group keys a [Channel] belongs to for the purposes of grouped channel
  * lists driven by `queryGroupedChannels`.
  *
- * Used by [GroupAwareChatEventHandler] to decide whether an incoming channel-bearing event
- * should be added to, removed from, or skipped by a query identified by
- * [io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier.Grouped].
+ * Used by [GroupAwareChatEventHandler] to decide whether an incoming channel-bearing event should be handled
+ * by adding the relevant channel to a new group, or removing the channel from its current group.
  * Classification is performed against the channel's own `extraData`.
  */
 internal fun interface ChannelGroupResolver {
