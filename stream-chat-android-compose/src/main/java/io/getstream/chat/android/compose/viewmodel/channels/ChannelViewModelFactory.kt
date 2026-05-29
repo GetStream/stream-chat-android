@@ -34,13 +34,14 @@ import io.getstream.chat.android.state.extensions.globalStateFlow
  * Builds the factory that contains all the dependencies required for the Channels Screen.
  * It currently provides the [ChannelListViewModel] using those dependencies.
  *
- * Three construction modes are supported:
- * - **Standard**: filter + sort drive a classical `queryChannels` request.
- * - **Predefined**: a `predefinedFilterName` resolved server-side, with optional interpolation values.
- * - **Grouped**: a `groupKey` identifies a state populated by `queryGroupedChannels` responses.
- *
- * Pick the constructor that matches the mode you want — the three identity flavors are mutually
- * exclusive.
+ * @param chatClient The prepared [ChatClient] instance required for fetching the data.
+ * @param mode The mode representing the query type used to fetch the channel list.
+ * @param channelLimit The number of channels teo retrieve per page.
+ * @param memberLimit The number of members to fetch per channel. When `null`, the server-side default is used.
+ * @param messageLimit The number of messages to fetch per channel. When `null`, the server-side default is used.
+ * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
+ * @param isDraftMessageEnabled If the draft message feature is enabled.
+ * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
  */
 @Suppress("LongParameterList")
 public class ChannelViewModelFactory internal constructor(
@@ -57,19 +58,16 @@ public class ChannelViewModelFactory internal constructor(
     /**
      * Builds a factory for a [ChannelListViewModel] that queries channels by an explicit filter and sort.
      *
-     * @param chatClient The client used to fetch data.
+     * @param chatClient The prepared [ChatClient] instance required for fetching the data.
      * @param querySort The sorting order for channels.
      * @param filters The base filters used to filter out channels. When `null`, a default filter scoped
      * to "messaging" channels the current user is a member of is used.
-     * @param channelLimit How many channels we fetch per page.
-     * @param memberLimit How many members are fetched for each channel item when loading channels.
-     * When `null`, the server-side default is used.
-     * @param messageLimit How many messages are fetched for each channel item when loading channels.
-     * When `null`, the server-side default is used.
+     * @param channelLimit The number of channels teo retrieve per page.
+     * @param memberLimit The number of members to fetch per channel. When `null`, the server-side default is used.
+     * @param messageLimit The number of messages to fetch per channel. When `null`, the server-side default is used.
      * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
      * @param isDraftMessageEnabled If the draft message feature is enabled.
-     * @param messageSearchSort Optional sorting for message search results.
-     * When `null`, the server-side default is used.
+     * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
      */
     @JvmOverloads
     public constructor(
@@ -97,13 +95,18 @@ public class ChannelViewModelFactory internal constructor(
      * Builds a factory for a [ChannelListViewModel] that queries channels using a predefined filter
      * resolved by the server.
      *
+     * @param chatClient The prepared [ChatClient] instance required for fetching the data.
      * @param predefinedFilterName The name of the predefined filter registered on the backend.
      * @param filterValues Optional values interpolated into the predefined filter template.
      * @param sortValues Optional values interpolated into the predefined sort template.
+     * @param channelLimit The number of channels teo retrieve per page.
+     * @param memberLimit The number of members to fetch per channel. When `null`, the server-side default is used.
+     * @param messageLimit The number of messages to fetch per channel. When `null`, the server-side default is used.
+     * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
+     * @param isDraftMessageEnabled If the draft message feature is enabled.
+     * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
      */
-    // TODO: restore @JvmOverloads once we resolve the JVM signature clash between the
-    //  Predefined `(ChatClient, String)` and Grouped `(ChatClient, String)` overloads — pick a
-    //  disambiguator (marker class, different param order, or named factory methods).
+    @JvmOverloads
     public constructor(
         chatClient: ChatClient = ChatClient.instance(),
         predefinedFilterName: String,
@@ -134,18 +137,17 @@ public class ChannelViewModelFactory internal constructor(
      * Grouped [ChannelListViewModel] factory. Wires the ViewModel to the state identified by
      * [groupKey] without firing a remote call; `queryGroupedChannels` responses populate it.
      *
-     * Internally builds a group-aware [ChatEventHandlerFactory] keyed on [groupKey] so that
-     * `channel.updated` and channel-add events route channels into the correct group.
-     *
-     * @param chatClient The client used to fetch data.
-     * @param groupKey Identifies the group whose state this ViewModel observes.
+     * **IMPORTANT: This is an enterprise feature and is disabled by default. For more info, reach out to our
+     * Contact & Support.**
+
+     * @param groupKey The name of the channels group.
+     * @param chatClient The prepared [ChatClient] instance required for fetching the data.
      * @param isDraftMessageEnabled If the draft message feature is enabled.
      * @param messageSearchSort Optional sorting for message search results.
      */
-    // TODO: see TODO on the Predefined factory ctor — same JVM signature clash story.
     public constructor(
-        chatClient: ChatClient = ChatClient.instance(),
         groupKey: String,
+        chatClient: ChatClient = ChatClient.instance(),
         isDraftMessageEnabled: Boolean = false,
         messageSearchSort: QuerySorter<Message>? = null,
     ) : this(

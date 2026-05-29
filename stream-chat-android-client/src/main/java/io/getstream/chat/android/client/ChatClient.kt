@@ -3153,6 +3153,9 @@ internal constructor(
     /**
      * Queries channels grouped into the specified groups and returns the first page of each.
      *
+     * **IMPORTANT: This is an enterprise feature and is disabled by default. For more info, reach out to our
+     * Contact & Support.**
+     *
      * @param groups The group names to fetch. Required; must contain at least one group name.
      * Duplicate names are silently de-duplicated.
      * @param limit Default max channels per group. `null` uses the server default.
@@ -3180,6 +3183,9 @@ internal constructor(
      * Supports per-group request options (`limit`, `next`/`prev` cursors) and returns per-group
      * pagination cursors. Pagination (`next` or `prev` on any group) is only allowed when
      * exactly one group is requested.
+     *
+     * **IMPORTANT: This is an enterprise feature and is disabled by default. For more info, reach out to our
+     * Contact & Support.**
      *
      * @param limit Default max channels per group when a group does not specify its own limit.
      * `null` uses the server default.

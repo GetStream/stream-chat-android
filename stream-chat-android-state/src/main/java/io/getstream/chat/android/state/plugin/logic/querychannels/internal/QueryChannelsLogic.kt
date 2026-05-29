@@ -256,9 +256,9 @@ internal class QueryChannelsLogic(
                 queryChannelsStateLogic.setChannelsOffset(0)
             }
 
-            queryChannelsStateLogic.addChannelsState(channels)
             queryChannelsStateLogic.setNextCursor(group.next)
             queryChannelsStateLogic.setEndOfChannels(group.next == null)
+            queryChannelsStateLogic.addChannelsState(channels)
             queryChannelsStateLogic.setLoadingFirstPage(false)
             queryChannelsStateLogic.setLoadingMore(false)
             queryChannelsStateLogic.setRecoveryNeeded(false)

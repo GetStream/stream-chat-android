@@ -576,7 +576,7 @@ internal class ChannelListViewModelTest {
                 groups = mapOf(
                     "team-a" to GroupedChannelsGroupQuery(limit = null, next = "cursor-2"),
                 ),
-                watch = false,
+                watch = true,
                 presence = false,
             )
         }
