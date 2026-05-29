@@ -117,7 +117,7 @@ internal class GroupAwareChatEventHandler(
     }
 
     private fun channelBelongsHere(channel: Channel): Boolean =
-        resolver.resolve(channel, groupKey).contains(groupKey)
+        resolver.resolve(channel).contains(groupKey)
 
     /**
      * Returns `true` if the current user is known to be a member of [cachedChannel].

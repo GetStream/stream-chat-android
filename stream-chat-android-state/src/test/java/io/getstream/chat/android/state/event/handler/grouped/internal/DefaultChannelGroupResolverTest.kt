@@ -17,7 +17,6 @@
 package io.getstream.chat.android.state.event.handler.grouped.internal
 
 import io.getstream.chat.android.randomChannel
-import io.getstream.chat.android.randomString
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -28,7 +27,7 @@ internal class DefaultChannelGroupResolverTest {
         val channel = randomChannel(extraData = mapOf("group" to "vip"))
         val resolver = DefaultChannelGroupResolver()
 
-        val result = resolver.resolve(channel, currentGroup = randomString())
+        val result = resolver.resolve(channel)
 
         assertEquals(setOf("vip", "all"), result)
     }
@@ -38,7 +37,7 @@ internal class DefaultChannelGroupResolverTest {
         val channel = randomChannel(extraData = emptyMap())
         val resolver = DefaultChannelGroupResolver()
 
-        val result = resolver.resolve(channel, currentGroup = randomString())
+        val result = resolver.resolve(channel)
 
         assertEquals(setOf("all"), result)
     }
@@ -48,7 +47,7 @@ internal class DefaultChannelGroupResolverTest {
         val channel = randomChannel(extraData = mapOf("tier" to "gold", "group" to "ignored"))
         val resolver = DefaultChannelGroupResolver(groupFieldName = "tier")
 
-        val result = resolver.resolve(channel, currentGroup = randomString())
+        val result = resolver.resolve(channel)
 
         assertEquals(setOf("gold", "all"), result)
     }
@@ -58,7 +57,7 @@ internal class DefaultChannelGroupResolverTest {
         val channel = randomChannel(extraData = mapOf("group" to "vip"))
         val resolver = DefaultChannelGroupResolver(allGroupKey = null)
 
-        val result = resolver.resolve(channel, currentGroup = randomString())
+        val result = resolver.resolve(channel)
 
         assertEquals(setOf("vip"), result)
     }
@@ -68,7 +67,7 @@ internal class DefaultChannelGroupResolverTest {
         val channel = randomChannel(extraData = mapOf("group" to 42))
         val resolver = DefaultChannelGroupResolver()
 
-        val result = resolver.resolve(channel, currentGroup = randomString())
+        val result = resolver.resolve(channel)
 
         assertEquals(setOf("all"), result)
     }

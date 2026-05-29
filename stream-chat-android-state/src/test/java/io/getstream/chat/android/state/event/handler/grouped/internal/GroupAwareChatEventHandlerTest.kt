@@ -273,7 +273,7 @@ internal class GroupAwareChatEventHandlerTest {
         val currentUser = randomUser()
         val channel = randomChannel(extraData = mapOf("tier" to "vip"))
         val cachedChannel = channel.copy(membership = randomMember(user = currentUser))
-        val customResolver = ChannelGroupResolver { ch, _ ->
+        val customResolver = ChannelGroupResolver { ch ->
             setOfNotNull(ch.extraData["tier"] as? String)
         }
         val handler = handlerFor(
@@ -287,26 +287,6 @@ internal class GroupAwareChatEventHandlerTest {
         val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = cachedChannel)
 
         assertEquals(EventHandlingResult.Add(channel), result)
-    }
-
-    @Test
-    fun `Given custom resolver Should receive the handler's groupKey as currentGroup`() {
-        val channel = randomChannel(extraData = mapOf("group" to "vip"))
-        var capturedGroup: String? = null
-        val capturingResolver = ChannelGroupResolver { _, currentGroup ->
-            capturedGroup = currentGroup
-            setOf("vip")
-        }
-        val handler = handlerFor(
-            groupKey = "vip",
-            cachedChannels = emptyMap(),
-            resolver = capturingResolver,
-        )
-        val event = randomChannelUpdatedEvent(cid = channel.cid, channel = channel)
-
-        handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
-
-        assertEquals("vip", capturedGroup)
     }
 
     private fun handlerFor(

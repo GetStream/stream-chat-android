@@ -34,8 +34,7 @@ internal class DefaultChannelGroupResolver(
     private val allGroupKey: String? = DEFAULT_ALL_GROUP_KEY,
 ) : ChannelGroupResolver {
 
-    override fun resolve(channel: Channel, currentGroup: String): Set<String> = buildSet {
-        // currentGroup is intentionally unused — the channel's group membership is asker-independent.
+    override fun resolve(channel: Channel): Set<String> = buildSet {
         (channel.extraData[groupFieldName] as? String)?.let(::add)
         allGroupKey?.let(::add)
     }
