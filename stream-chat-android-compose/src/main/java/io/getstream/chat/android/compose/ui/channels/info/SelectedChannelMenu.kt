@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -57,8 +56,7 @@ import java.util.Date
  * Routes through confirmation dialogs for destructive actions before executing.
  * @param onDismiss Handler called when the dialog is dismissed.
  * @param modifier Modifier for styling.
- * @param shape The shape of the component. Defaults to a 32dp top-corner shape that matches
- * the rest of the SDK's card-style modal sheets.
+ * @param shape The shape of the component.
  * @param overlayColor The color applied to the overlay.
  * @param headerContent The content shown at the top of the dialog.
  * @param centerContent The content shown at the center of the dialog.
@@ -79,12 +77,7 @@ public fun SelectedChannelMenu(
     onChannelOptionConfirm: (ChannelAction) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    shape: Shape = RoundedCornerShape(
-        topStart = StreamTokens.radius4xl,
-        topEnd = StreamTokens.radius4xl,
-        bottomEnd = CornerSize(0),
-        bottomStart = CornerSize(0),
-    ),
+    shape: Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
     overlayColor: Color = ChatTheme.colors.backgroundCoreScrim,
     headerContent: @Composable ColumnScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
@@ -196,12 +189,7 @@ internal fun SelectedChannelMenuMutedPinned() {
 private fun SelectedChannelMenuSample(
     alignment: Alignment,
     modifier: Modifier = Modifier,
-    shape: Shape = RoundedCornerShape(
-        topStart = StreamTokens.radius4xl,
-        topEnd = StreamTokens.radius4xl,
-        bottomEnd = CornerSize(0),
-        bottomStart = CornerSize(0),
-    ),
+    shape: Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
     channel: Channel = PreviewChannelData.channelWithManyMembers,
     currentUser: User? = PreviewUserData.user1,
 ) {
