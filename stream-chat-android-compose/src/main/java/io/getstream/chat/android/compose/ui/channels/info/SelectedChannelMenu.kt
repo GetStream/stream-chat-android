@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -76,11 +77,20 @@ import java.util.Date
  * Routes through confirmation dialogs for destructive actions before executing.
  * @param onDismiss Handler called when the dialog is dismissed.
  * @param modifier Modifier for styling.
- * @param shape The shape of the component.
+ * @param shape The shape of the component. Defaults to a 32dp top-corner shape that matches
+ * the rest of the SDK's card-style modal sheets.
  * @param overlayColor The color applied to the overlay.
  * @param headerContent The content shown at the top of the dialog.
  * @param centerContent The content shown at the center of the dialog.
  */
+@Deprecated(
+    message = "Use ChannelActionsSheet. Will be removed in v8.",
+    replaceWith = ReplaceWith(
+        expression = "ChannelActionsSheet(selectedChannel, channelActions, onChannelOptionConfirm, " +
+            "onDismiss, modifier, currentUser)",
+    ),
+)
+@Suppress("DEPRECATION")
 @Composable
 public fun SelectedChannelMenu(
     selectedChannel: Channel,
@@ -89,7 +99,12 @@ public fun SelectedChannelMenu(
     onChannelOptionConfirm: (ChannelAction) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    shape: Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+    shape: Shape = RoundedCornerShape(
+        topStart = StreamTokens.radius4xl,
+        topEnd = StreamTokens.radius4xl,
+        bottomEnd = CornerSize(0),
+        bottomStart = CornerSize(0),
+    ),
     overlayColor: Color = ChatTheme.colors.backgroundCoreScrim,
     headerContent: @Composable ColumnScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
@@ -97,6 +112,7 @@ public fun SelectedChannelMenu(
                 params = ChannelMenuHeaderContentParams(
                     selectedChannel = selectedChannel,
                     currentUser = currentUser,
+                    modifier = Modifier.padding(top = StreamTokens.spacingMd),
                 ),
             )
         }
@@ -135,16 +151,16 @@ public fun SelectedChannelMenu(
 internal fun DefaultSelectedChannelMenuHeaderContent(
     selectedChannel: Channel,
     currentUser: User?,
+    modifier: Modifier = Modifier,
 ) {
     val showPinnedIcon = selectedChannel.isPinned()
     val showMutedIcon = currentUser != null && isChannelOrCounterpartMuted(selectedChannel, currentUser)
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(
                 start = StreamTokens.spacingMd,
                 end = StreamTokens.spacingMd,
-                top = StreamTokens.spacingMd,
                 bottom = StreamTokens.spacingSm,
             ),
         verticalAlignment = Alignment.CenterVertically,
@@ -268,10 +284,7 @@ private fun SelectedChannelMenuBottomSheetDialogPreview() {
 
 @Composable
 internal fun SelectedChannelMenuBottomSheetDialog() {
-    SelectedChannelMenuSample(
-        alignment = Alignment.BottomCenter,
-        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-    )
+    SelectedChannelMenuSample(alignment = Alignment.BottomCenter)
 }
 
 @Preview(showBackground = true)
@@ -301,7 +314,6 @@ internal fun SelectedChannelMenuMutedPinned() {
     )
     SelectedChannelMenuSample(
         alignment = Alignment.BottomCenter,
-        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         channel = pinnedChannel,
         currentUser = mutedUser,
     )
@@ -318,11 +330,17 @@ internal fun SelectedChannelMenuMutedPinned() {
  * @param currentUser The user used to resolve member status text and to derive the inline state
  * icons (muted, pinned) in the default header.
  */
+@Suppress("DEPRECATION")
 @Composable
 private fun SelectedChannelMenuSample(
     alignment: Alignment,
-    shape: Shape,
     modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(
+        topStart = StreamTokens.radius4xl,
+        topEnd = StreamTokens.radius4xl,
+        bottomEnd = CornerSize(0),
+        bottomStart = CornerSize(0),
+    ),
     channel: Channel = PreviewChannelData.channelWithManyMembers,
     currentUser: User? = PreviewUserData.user1,
 ) {

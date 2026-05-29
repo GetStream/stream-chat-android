@@ -876,6 +876,16 @@ public final class io/getstream/chat/android/compose/ui/channels/header/Composab
 	public final fun getLambda$621281156$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
+public final class io/getstream/chat/android/compose/ui/channels/info/ChannelActionsSheetKt {
+	public static final fun ChannelActionsSheet (Lio/getstream/chat/android/models/Channel;Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/channels/info/ComposableSingletons$ChannelActionsSheetKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/channels/info/ComposableSingletons$ChannelActionsSheetKt;
+	public fun <init> ()V
+	public final fun getLambda$35220375$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class io/getstream/chat/android/compose/ui/channels/info/ComposableSingletons$SelectedChannelMenuKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/channels/info/ComposableSingletons$SelectedChannelMenuKt;
 	public fun <init> ()V
@@ -1629,6 +1639,8 @@ public final class io/getstream/chat/android/compose/ui/components/poll/Composab
 	public final fun getLambda$-1980307438$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$-232122758$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-49181804$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$1341088853$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$585859762$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$705192511$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
@@ -1642,6 +1654,7 @@ public final class io/getstream/chat/android/compose/ui/components/poll/Composab
 public final class io/getstream/chat/android/compose/ui/components/poll/ComposableSingletons$PollMoreOptionsDialogKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/poll/ComposableSingletons$PollMoreOptionsDialogKt;
 	public fun <init> ()V
+	public final fun getLambda$1255763954$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$2062109506$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 

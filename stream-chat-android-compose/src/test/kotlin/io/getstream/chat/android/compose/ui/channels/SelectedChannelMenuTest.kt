@@ -31,23 +31,26 @@ internal class SelectedChannelMenuTest : PaparazziComposeTest {
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `selected channel centered dialog`() {
-        snapshotWithDarkMode {
-            SelectedChannelMenuCenteredDialog()
-        }
+    fun `selected channel centered dialog`() = snapshot { SelectedChannelMenuCenteredDialog() }
+
+    @Test
+    fun `selected channel centered dialog in dark mode`() = snapshot(isInDarkMode = true) {
+        SelectedChannelMenuCenteredDialog()
     }
 
     @Test
-    fun `selected channel`() {
-        snapshotWithDarkMode {
-            SelectedChannelMenuBottomSheetDialog()
-        }
+    fun `selected channel`() = snapshot { SelectedChannelMenuBottomSheetDialog() }
+
+    @Test
+    fun `selected channel in dark mode`() = snapshot(isInDarkMode = true) {
+        SelectedChannelMenuBottomSheetDialog()
     }
 
     @Test
-    fun `selected channel muted and pinned`() {
-        snapshotWithDarkMode {
-            SelectedChannelMenuMutedPinned()
-        }
+    fun `selected channel muted and pinned`() = snapshot { SelectedChannelMenuMutedPinned() }
+
+    @Test
+    fun `selected channel muted and pinned in dark mode`() = snapshot(isInDarkMode = true) {
+        SelectedChannelMenuMutedPinned()
     }
 }

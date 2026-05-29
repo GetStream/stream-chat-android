@@ -14,26 +14,24 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.components.poll
+package io.getstream.chat.android.compose.ui.attachments.preview.internal
 
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
-import com.android.ide.common.rendering.api.SessionParams
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import org.junit.Rule
 import org.junit.Test
 
-internal class PollMoreOptionsDialogTest : PaparazziComposeTest {
+internal class MediaGalleryPhotosMenuTest : PaparazziComposeTest {
 
     @get:Rule
-    override val paparazzi: Paparazzi = Paparazzi(
-        deviceConfig = DeviceConfig.PIXEL_2,
-        renderingMode = SessionParams.RenderingMode.SHRINK,
-    )
+    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `more options`() = snapshot { PollMoreOptionsDialog() }
+    fun `photos menu`() = snapshot { MediaGalleryPhotosMenuSample() }
 
     @Test
-    fun `more options in dark mode`() = snapshot(isInDarkMode = true) { PollMoreOptionsDialog() }
+    fun `photos menu in dark mode`() = snapshot(isInDarkMode = true) {
+        MediaGalleryPhotosMenuSample()
+    }
 }

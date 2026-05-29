@@ -43,6 +43,9 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param headerContent The content shown at the top of the dialog.
  * @param centerContent The content shown in the dialog.
  */
+@Deprecated(
+    message = "Use ChannelActionsSheet or a Material 3 ModalBottomSheet directly. Will be removed in v8.",
+)
 @Composable
 public fun SimpleMenu(
     modifier: Modifier = Modifier,
