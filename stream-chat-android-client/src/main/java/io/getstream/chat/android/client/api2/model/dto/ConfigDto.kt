@@ -47,4 +47,5 @@ internal data class ConfigDto(
     val user_message_reminders: Boolean?,
     val shared_locations: Boolean?,
     val mark_messages_pending: Boolean,
+    val push_level: String? = null,
 )

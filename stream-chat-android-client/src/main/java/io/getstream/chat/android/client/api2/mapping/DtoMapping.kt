@@ -47,6 +47,7 @@ import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
 
 internal class DtoMapping(
@@ -134,6 +135,10 @@ internal class DtoMapping(
                     id = id,
                     type = upstreamType,
                     mentioned_users = mentionedUsersIds,
+                    mentioned_here = mentionedHere,
+                    mentioned_channel = mentionedChannel,
+                    mentioned_group_ids = mentionedGroups.map(UserGroup::id),
+                    mentioned_roles = mentionedRoles,
                     parent_id = parentId,
                     pin_expires = pinExpires,
                     pinned = pinned,

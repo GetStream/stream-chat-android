@@ -50,6 +50,8 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserBlockDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamVoteDto
 import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
@@ -121,6 +123,8 @@ import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
+import io.getstream.chat.android.models.UserGroup
+import io.getstream.chat.android.models.UserGroupMember
 import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.models.Vote
@@ -130,7 +134,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
 import java.util.Date
 
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LargeClass")
 internal class DomainMapping(
     val currentUserIdProvider: () -> UserId?,
     private val channelTransformer: ChannelTransformer,
@@ -225,6 +229,10 @@ internal class DomainMapping(
                     messageId = id,
                 ),
                 mentionedUsers = mentioned_users.map { it.toDomain() },
+                mentionedHere = mentioned_here ?: false,
+                mentionedChannel = mentioned_channel ?: false,
+                mentionedGroups = mentioned_groups.map { it.toDomain() },
+                mentionedRoles = mentioned_roles,
                 ownReactions = own_reactions.toDomain(
                     messageId = id,
                 ),
@@ -672,6 +680,7 @@ internal class DomainMapping(
         messageRemindersEnabled = user_message_reminders ?: false,
         sharedLocationsEnabled = shared_locations ?: false,
         markMessagesPending = mark_messages_pending,
+        pushLevel = push_level,
     )
 
     /**
@@ -929,6 +938,24 @@ internal class DomainMapping(
         val field = if (FIELD_LAST_MESSAGE_AT in filterFields) FIELD_LAST_MESSAGE_AT else FIELD_LAST_UPDATED
         return QuerySortByField<Channel>().desc(field)
     }
+
+    internal fun DownstreamUserGroupDto.toDomain(): UserGroup = UserGroup(
+        id = id,
+        name = name,
+        description = description,
+        team = team_id.orEmpty(),
+        members = members.map { it.toDomain() },
+        createdBy = created_by,
+        createdAt = created_at,
+        updatedAt = updated_at,
+    )
+
+    internal fun DownstreamUserGroupMemberDto.toDomain(): UserGroupMember = UserGroupMember(
+        groupId = group_id,
+        userId = user_id,
+        isAdmin = is_admin,
+        createdAt = created_at,
+    )
 
     private companion object {
         private const val FIELD_LAST_MESSAGE_AT = "last_message_at"

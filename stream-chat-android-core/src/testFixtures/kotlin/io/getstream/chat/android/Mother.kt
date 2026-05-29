@@ -68,6 +68,8 @@ import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
+import io.getstream.chat.android.models.UserGroup
+import io.getstream.chat.android.models.UserGroupMember
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.result.Error
@@ -304,6 +306,38 @@ public fun randomQueryDraftsResult(
     next = next,
 )
 
+public fun randomUserGroup(
+    id: String = randomString(),
+    name: String = randomString(),
+    description: String? = randomString(),
+    team: String = randomString(),
+    members: List<UserGroupMember> = emptyList(),
+    createdBy: String? = randomString(),
+    createdAt: Date? = randomDate(),
+    updatedAt: Date? = randomDate(),
+): UserGroup = UserGroup(
+    id = id,
+    name = name,
+    description = description,
+    team = team,
+    members = members,
+    createdBy = createdBy,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+)
+
+public fun randomUserGroupMember(
+    groupId: String = randomString(),
+    userId: String = randomString(),
+    isAdmin: Boolean = randomBoolean(),
+    createdAt: Date? = randomDate(),
+): UserGroupMember = UserGroupMember(
+    groupId = groupId,
+    userId = userId,
+    isAdmin = isAdmin,
+    createdAt = createdAt,
+)
+
 public fun randomMessage(
     id: String = randomString(),
     cid: String = randomCID(),
@@ -354,6 +388,10 @@ public fun randomMessage(
     reminder: MessageReminderInfo? = randomMessageReminderInfo(),
     channelRole: String? = null,
     deletedForMe: Boolean = randomBoolean(),
+    mentionedHere: Boolean = randomBoolean(),
+    mentionedChannel: Boolean = randomBoolean(),
+    mentionedRoles: List<String> = emptyList(),
+    mentionedGroups: List<UserGroup> = emptyList(),
 ): Message = Message(
     id = id,
     cid = cid,
@@ -401,6 +439,10 @@ public fun randomMessage(
     reminder = reminder,
     channelRole = channelRole,
     deletedForMe = deletedForMe,
+    mentionedHere = mentionedHere,
+    mentionedChannel = mentionedChannel,
+    mentionedRoles = mentionedRoles,
+    mentionedGroups = mentionedGroups,
 )
 
 public fun randomPendingMessage(

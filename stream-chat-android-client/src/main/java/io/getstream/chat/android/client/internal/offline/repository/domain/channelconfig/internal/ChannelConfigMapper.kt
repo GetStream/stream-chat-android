@@ -46,6 +46,7 @@ internal fun ChannelConfig.toEntity(): ChannelConfigEntity = ChannelConfigEntity
             blocklistBehavior = blocklistBehavior,
             messageRemindersEnabled = messageRemindersEnabled,
             markMessagesPending = markMessagesPending,
+            pushLevel = pushLevel,
         )
     },
     commands = config.commands.map { it.toEntity(type) },
@@ -78,6 +79,7 @@ internal fun ChannelConfigEntity.toModel(): ChannelConfig = ChannelConfig(
             commands = commands.map(CommandInnerEntity::toModel),
             messageRemindersEnabled = messageRemindersEnabled,
             markMessagesPending = markMessagesPending,
+            pushLevel = pushLevel,
         )
     },
 )
