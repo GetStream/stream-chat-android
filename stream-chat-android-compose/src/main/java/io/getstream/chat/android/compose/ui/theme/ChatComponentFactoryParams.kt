@@ -73,6 +73,7 @@ import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewEvent
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
@@ -564,7 +565,9 @@ public data class ScrollToFirstUnreadButtonParams(
  * @param onGiphyActionClick Action invoked when a Giphy action is clicked.
  * @param onMediaGalleryPreviewResult Action invoked with the media gallery preview result.
  * @param onQuotedMessageClick Action invoked when a quoted message is clicked.
- * @param onUserMentionClick Action invoked when a user mention is clicked.
+ * @param onUserMentionClick Action invoked when a user mention is clicked. Prefer [onMentionClick]
+ *   for new code: it also fires for other mention types.
+ * @param onMentionClick Action invoked when any mention is clicked.
  * @param onAddAnswer Action invoked when an answer is added to a poll.
  * @param onReply Action invoked when the reply button is clicked.
  * @param onUserAvatarClick Action invoked when a user avatar is clicked.
@@ -584,11 +587,17 @@ public data class MessageItemParams(
     val onGiphyActionClick: (GiphyAction) -> Unit = {},
     val onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     val onQuotedMessageClick: (Message) -> Unit = {},
+    @Deprecated(
+        message = "Use onMentionClick; it also fires for other mention types.",
+        replaceWith = ReplaceWith("onMentionClick"),
+        level = DeprecationLevel.WARNING,
+    )
     val onUserMentionClick: (User) -> Unit = {},
     val onAddAnswer: (Message, Poll, String) -> Unit = { _, _, _ -> },
     val onReply: (Message) -> Unit = {},
     val onUserAvatarClick: ((User) -> Unit)? = null,
     val onMessageLinkClick: ((Message, String) -> Unit)? = null,
+    val onMentionClick: (Mention) -> Unit = {},
 )
 
 /**
@@ -690,7 +699,9 @@ public data class MessageListStartOfTheChannelItemContentParams(
  * @param onGiphyActionClick Action invoked when a Giphy action is clicked.
  * @param onMediaGalleryPreviewResult Action invoked with the media gallery preview result.
  * @param onQuotedMessageClick Action invoked when a quoted message is clicked.
- * @param onUserMentionClick Action invoked when a user mention is clicked.
+ * @param onUserMentionClick Action invoked when a user mention is clicked. Prefer [onMentionClick]
+ *   for new code: it also fires for other mention types.
+ * @param onMentionClick Action invoked when any mention is clicked.
  * @param onAddAnswer Action invoked when an answer is added to a poll.
  * @param onReply Action invoked when the reply button is clicked.
  * @param onUserAvatarClick Action invoked when a user avatar is clicked.
@@ -711,11 +722,17 @@ public data class MessageContainerParams(
     val onGiphyActionClick: (GiphyAction) -> Unit = {},
     val onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     val onQuotedMessageClick: (Message) -> Unit = {},
+    @Deprecated(
+        message = "Use onMentionClick; it also fires for other mention types.",
+        replaceWith = ReplaceWith("onMentionClick"),
+        level = DeprecationLevel.WARNING,
+    )
     val onUserMentionClick: (User) -> Unit = {},
     val onAddAnswer: (Message, Poll, String) -> Unit = { _, _, _ -> },
     val onReply: (Message) -> Unit = {},
     val onUserAvatarClick: ((User) -> Unit)? = null,
     val onMessageLinkClick: ((Message, String) -> Unit)? = null,
+    val onMentionClick: (Mention) -> Unit = {},
 )
 
 /**
@@ -796,6 +813,7 @@ public data class MessageAuthorParams(
  * @param onUserMentionClick Action invoked when a user mention is clicked.
  * @param onMediaGalleryPreviewResult Action invoked with the media gallery preview result.
  * @param onLinkClick Action invoked when a link in a message is clicked.
+ * @param onMentionClick Action invoked when any mention is clicked.
  */
 public data class MessageContentParams(
     val messageItem: MessageItemState,
@@ -809,9 +827,15 @@ public data class MessageContentParams(
     val onAddPollOption: (Poll, String) -> Unit = { _, _ -> },
     val onGiphyActionClick: (GiphyAction) -> Unit = {},
     val onQuotedMessageClick: (Message) -> Unit = {},
+    @Deprecated(
+        message = "Use onMentionClick; it also fires for other mention types.",
+        replaceWith = ReplaceWith("onMentionClick"),
+        level = DeprecationLevel.WARNING,
+    )
     val onUserMentionClick: (User) -> Unit = {},
     val onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     val onLinkClick: ((Message, String) -> Unit)? = null,
+    val onMentionClick: (Mention) -> Unit = {},
 )
 
 /**
@@ -858,8 +882,10 @@ public data class MessageDeletedContentParams(
  * @param onLongItemClick Action invoked when a message is long-clicked.
  * @param onMediaGalleryPreviewResult Action invoked with the media gallery preview result.
  * @param onQuotedMessageClick Action invoked when a quoted message is clicked.
- * @param onUserMentionClick Action invoked when a user mention is clicked.
+ * @param onUserMentionClick Action invoked when a user mention is clicked. Prefer [onMentionClick]
+ *   for new code: it also fires for other mention types.
  * @param onLinkClick Action invoked when a link in a message is clicked.
+ * @param onMentionClick Action invoked when any mention is clicked.
  */
 public data class MessageRegularContentParams(
     val message: Message,
@@ -868,8 +894,14 @@ public data class MessageRegularContentParams(
     val onLongItemClick: (Message) -> Unit,
     val onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
     val onQuotedMessageClick: (Message) -> Unit,
+    @Deprecated(
+        message = "Use onMentionClick; it also fires for other mention types.",
+        replaceWith = ReplaceWith("onMentionClick"),
+        level = DeprecationLevel.WARNING,
+    )
     val onUserMentionClick: (User) -> Unit,
     val onLinkClick: ((Message, String) -> Unit)? = null,
+    val onMentionClick: (Mention) -> Unit = {},
 )
 
 /**
@@ -878,17 +910,25 @@ public data class MessageRegularContentParams(
  * @param message The message containing the text.
  * @param currentUser The currently logged in user.
  * @param onLongItemClick Action invoked when a message is long-clicked.
- * @param onUserMentionClick Action invoked when a user mention is clicked.
+ * @param onUserMentionClick Action invoked when a user mention is clicked. Prefer [onMentionClick]
+ *   for new code: it also fires for other mention types.
  * @param modifier Modifier for styling.
  * @param onLinkClick Action invoked when a link in a message is clicked.
+ * @param onMentionClick Action invoked when any mention is clicked.
  */
 public data class MessageTextContentParams(
     val message: Message,
     val currentUser: User?,
     val onLongItemClick: (Message) -> Unit,
+    @Deprecated(
+        message = "Use onMentionClick; it also fires for other mention types.",
+        replaceWith = ReplaceWith("onMentionClick"),
+        level = DeprecationLevel.WARNING,
+    )
     val onUserMentionClick: (User) -> Unit,
     val modifier: Modifier = Modifier,
     val onLinkClick: ((Message, String) -> Unit)? = null,
+    val onMentionClick: (Mention) -> Unit = {},
 )
 
 /**
@@ -946,13 +986,14 @@ public class SwipeToReplyContentParams
  * @param onValueChange Action invoked when the input value changes.
  * @param onAttachmentRemoved Action invoked when an attachment is removed.
  * @param onCancelAction Action invoked when the cancel button is clicked.
- * @param onUserSelected Action invoked when a user is selected.
+ * @param onUserSelected Action invoked when a user mention is selected.
  * @param onCommandSelected Action invoked when a command is selected.
  * @param onAlsoSendToChannelSelected Action invoked when also-send-to-channel is changed.
  * @param onActiveCommandDismiss Action invoked when the active command is dismissed.
  * @param recordingActions The actions to control the audio recording.
  * @param onLinkPreviewClick Action invoked when a link preview is clicked.
  * @param onCancelLinkPreviewClick Action invoked when the cancel link preview button is clicked.
+ * @param onMentionSelected Action invoked when a [Mention] is selected.
  */
 public data class MessageComposerParams(
     val messageComposerState: MessageComposerState,
@@ -967,6 +1008,11 @@ public data class MessageComposerParams(
     val onValueChange: (String) -> Unit = {},
     val onAttachmentRemoved: (Attachment) -> Unit = {},
     val onCancelAction: () -> Unit = {},
+    @Deprecated(
+        message = "Use onMentionSelected, which receives every mention type.",
+        replaceWith = ReplaceWith("onMentionSelected"),
+        level = DeprecationLevel.WARNING,
+    )
     val onUserSelected: (User) -> Unit = {},
     val onCommandSelected: (Command) -> Unit = {},
     val onAlsoSendToChannelSelected: (Boolean) -> Unit = {},
@@ -974,6 +1020,7 @@ public data class MessageComposerParams(
     val recordingActions: AudioRecordingActions = AudioRecordingActions.None,
     val onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     val onCancelLinkPreviewClick: (() -> Unit)? = null,
+    val onMentionSelected: (Mention) -> Unit = {},
 )
 
 /**
@@ -1002,6 +1049,50 @@ public data class MessageComposerUserSuggestionItemParams(
     val user: User,
     val currentUser: User?,
     val onUserSelected: (User) -> Unit,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.MessageComposerSuggestionItem].
+ *
+ * @param mention The non-user [Mention] for which the suggestion is rendered.
+ * @param onMentionSelected Action invoked when the mention is selected.
+ */
+public data class MessageComposerSuggestionItemParams(
+    val mention: Mention,
+    val onMentionSelected: (Mention) -> Unit,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.MessageComposerSuggestionItemLeadingContent].
+ *
+ * @param mention The mention for which the leading content is rendered.
+ * @param modifier Modifier for styling.
+ */
+public data class MessageComposerSuggestionItemLeadingContentParams(
+    val mention: Mention,
+    val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.MessageComposerSuggestionItemCenterContent].
+ *
+ * @param mention The mention for which the center content is rendered.
+ * @param modifier Modifier for styling.
+ */
+public data class MessageComposerSuggestionItemCenterContentParams(
+    val mention: Mention,
+    val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.MessageComposerSuggestionItemTrailingContent].
+ *
+ * @param mention The mention for which the trailing content is rendered.
+ * @param modifier Modifier for styling.
+ */
+public data class MessageComposerSuggestionItemTrailingContentParams(
+    val mention: Mention,
+    val modifier: Modifier = Modifier,
 )
 
 /**

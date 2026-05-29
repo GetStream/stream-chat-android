@@ -31,6 +31,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AttachmentLongClickListener
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.feature.messages.list.internal.LongClickFriendlyLinkMovementMethod
+import io.getstream.chat.android.ui.feature.messages.list.internal.dispatchMentionClick
 import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
@@ -149,7 +150,7 @@ public class FileAttachmentsViewHolder internal constructor(
                 textView = binding.messageText,
                 longClickTarget = binding.messageContainer,
                 onLinkClicked = listenerContainer.linkClickListener::onLinkClick,
-                onMentionClicked = listenerContainer.mentionClickListener::onMentionClick,
+                onMentionClicked = listenerContainer::dispatchMentionClick,
             )
         }
     }

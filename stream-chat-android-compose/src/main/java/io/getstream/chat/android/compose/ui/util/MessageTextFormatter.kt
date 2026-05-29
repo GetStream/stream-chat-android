@@ -54,6 +54,8 @@ public fun interface MessageTextFormatter {
          * @param typography The typography to use for styling.
          * @param colors The colors to use for styling.
          * @param textStyle The text style to use for styling.
+         * @param mentionColor Return [Color.Unspecified] (the default) to use per-type tokens from
+         * [colors]; return a specified color to apply it to every mention.
          * @param builder The builder to use for customizing the text.
          * @return The default implementation of [MessageTextFormatter].
          *
@@ -71,11 +73,12 @@ public fun interface MessageTextFormatter {
             textStyle: (isMine: Boolean, message: Message) -> TextStyle =
                 { isMine, _ -> MessageStyling.textStyle(outgoing = isMine, typography, colors) },
             linkStyle: (isMine: Boolean) -> TextStyle = { MessageStyling.linkStyle(typography, colors) },
-            mentionColor: (isMine: Boolean) -> Color = { colors.chatTextMention },
+            mentionColor: (isMine: Boolean) -> Color = { Color.Unspecified },
             builder: AnnotatedMessageTextBuilder? = null,
         ): MessageTextFormatter {
             return DefaultMessageTextFormatter(
                 autoTranslationEnabled = autoTranslationEnabled,
+                colors = colors,
                 typography = typography,
                 textStyle = textStyle,
                 linkStyle = linkStyle,
@@ -124,6 +127,7 @@ private class CompositeMessageTextFormatter(
  */
 private class DefaultMessageTextFormatter(
     private val autoTranslationEnabled: Boolean,
+    private val colors: StreamDesign.Colors,
     private val typography: StreamDesign.Typography,
     private val textStyle: (isMine: Boolean, message: Message) -> TextStyle,
     private val linkStyle: (isMine: Boolean) -> TextStyle,
@@ -149,18 +153,15 @@ private class DefaultMessageTextFormatter(
 
             else -> message.text
         }
-        val mentionedUserNames = message.mentionedUsers.map { it.name.ifEmpty { it.id } }
         val isMine = message.isMine(currentUser)
         val textColor = textStyle(isMine, message).color
         val linkStyle = linkStyle(isMine)
-        val mentionColor = mentionColor(isMine)
         return buildAnnotatedMessageText(
             text = displayedText,
             textColor = textColor,
             textFontStyle = typography.bodyDefault.fontStyle,
             linkStyle = linkStyle,
-            mentionsColor = mentionColor,
-            mentionedUserNames = mentionedUserNames,
+            mentions = message.collectTextMentions(colors = colors, textColorOverride = mentionColor(isMine)),
             builder = {
                 builder?.invoke(this, message, currentUser)
             },

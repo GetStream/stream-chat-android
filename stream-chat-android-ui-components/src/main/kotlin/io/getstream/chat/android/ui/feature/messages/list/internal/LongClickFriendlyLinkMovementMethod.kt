@@ -20,7 +20,8 @@ import android.text.method.LinkMovementMethod
 import android.view.View
 import android.widget.TextView
 import androidx.core.widget.doAfterTextChanged
-import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListeners
 import io.getstream.chat.android.ui.feature.messages.list.internal.LongClickFriendlyLinkMovementMethod.Companion.set
 import io.getstream.chat.android.ui.utils.TextViewLinkHandler
 import io.getstream.chat.android.ui.utils.shouldConsumeLongTap
@@ -37,7 +38,7 @@ internal class LongClickFriendlyLinkMovementMethod private constructor(
     private val textView: TextView,
     private val longClickTarget: View,
     private val onLinkClicked: (url: String) -> Unit,
-    private val onUserClicked: (user: User) -> Unit,
+    private val onMentionClicked: (mention: Mention) -> Unit,
 ) : TextViewLinkHandler() {
     private var isLongClick = false
 
@@ -68,9 +69,9 @@ internal class LongClickFriendlyLinkMovementMethod private constructor(
         return false
     }
 
-    override fun onUserClick(user: User) {
+    override fun onMentionClick(mention: Mention) {
         if (checkLongClick()) return
-        onUserClicked(user)
+        onMentionClicked(mention)
     }
 
     companion object {
@@ -78,9 +79,23 @@ internal class LongClickFriendlyLinkMovementMethod private constructor(
             textView: TextView,
             longClickTarget: View,
             onLinkClicked: (url: String) -> Unit,
-            onMentionClicked: (user: User) -> Unit,
+            onMentionClicked: (mention: Mention) -> Unit,
         ) {
             LongClickFriendlyLinkMovementMethod(textView, longClickTarget, onLinkClicked, onMentionClicked)
         }
+    }
+}
+
+/**
+ * Dispatches a mention-text click to the canonical [MessageListListeners.mentionTokenClickListener]
+ * and, for user mentions, additionally to the deprecated user-only
+ * [MessageListListeners.mentionClickListener] for backward compatibility. Mirrors the Compose
+ * counterpart in `MessageText` which always fires both callbacks.
+ */
+internal fun MessageListListeners.dispatchMentionClick(mention: Mention) {
+    mentionTokenClickListener.onMentionClick(mention)
+    if (mention is Mention.User) {
+        @Suppress("DEPRECATION")
+        mentionClickListener.onMentionClick(mention.user)
     }
 }

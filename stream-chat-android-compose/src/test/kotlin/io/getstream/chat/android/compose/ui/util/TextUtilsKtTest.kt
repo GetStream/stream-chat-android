@@ -20,6 +20,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import io.getstream.chat.android.compose.ui.theme.StreamDesign
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.randomUserGroup
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -46,7 +51,14 @@ internal class TextUtilsKtTest {
         val textFontStyle = FontStyle.Normal
         val linkStyle = TextStyle(color = Color.Blue)
         val mentionsColor = Color.Red
-        val mentionedUserNames = listOf("John")
+        val mentions = listOf(
+            TextMention(
+                token = "John",
+                annotationTag = AnnotationTagUserMention,
+                color = mentionsColor,
+                background = Color.Unspecified,
+            ),
+        )
 
         // When
         val result = buildAnnotatedMessageText(
@@ -54,8 +66,7 @@ internal class TextUtilsKtTest {
             textColor = textColor,
             textFontStyle = textFontStyle,
             linkStyle = linkStyle,
-            mentionsColor = mentionsColor,
-            mentionedUserNames = mentionedUserNames,
+            mentions = mentions,
         )
 
         // Then
@@ -76,11 +87,83 @@ internal class TextUtilsKtTest {
         assertEquals(63, emailAnnotations[0].end)
 
         // Verify mention annotation
-        val mentionAnnotations = result.getStringAnnotations(AnnotationTagMention, 0, text.length)
+        val mentionAnnotations = result.getStringAnnotations(AnnotationTagUserMention, 0, text.length)
         assertEquals(1, mentionAnnotations.size)
         assertEquals("John", mentionAnnotations[0].item)
         assertEquals(71, mentionAnnotations[0].start) // Position of "@John" (includes @)
         assertEquals(76, mentionAnnotations[0].end)
+    }
+
+    @Test
+    fun `collectTextMentions emits no entries for a message without mentions`() {
+        val message = randomMessage(
+            mentionedUsers = emptyList(),
+            mentionedChannel = false,
+            mentionedHere = false,
+            mentionedRoles = emptyList(),
+            mentionedGroups = emptyList(),
+        )
+
+        val result = message.collectTextMentions(colors = StreamDesign.Colors.default())
+
+        assertEquals(emptyList<TextMention>(), result)
+    }
+
+    @Test
+    fun `collectTextMentions emits a user mention token from name`() {
+        val message = randomMessage(
+            mentionedUsers = listOf(randomUser(id = "u1", name = "John")),
+            mentionedChannel = false,
+            mentionedHere = false,
+        )
+
+        val result = message.collectTextMentions(colors = StreamDesign.Colors.default())
+
+        assertEquals(1, result.size)
+        assertEquals("John", result[0].token)
+        assertEquals(AnnotationTagUserMention, result[0].annotationTag)
+    }
+
+    @Test
+    fun `collectTextMentions falls back to user id when name is empty`() {
+        val message = randomMessage(
+            mentionedUsers = listOf(randomUser(id = "u1", name = "")),
+            mentionedChannel = false,
+            mentionedHere = false,
+        )
+
+        val result = message.collectTextMentions(colors = StreamDesign.Colors.default())
+
+        assertEquals(1, result.size)
+        assertEquals("u1", result[0].token)
+        assertEquals(AnnotationTagUserMention, result[0].annotationTag)
+    }
+
+    @ParameterizedTest
+    @MethodSource("nonUserMentionCases")
+    fun `collectTextMentions maps each non-user mention kind to its token and tag`(
+        message: Message,
+        expectedToken: String,
+        expectedTag: AnnotationTag,
+    ) {
+        val result = message.collectTextMentions(colors = StreamDesign.Colors.default())
+
+        assertEquals(1, result.size)
+        assertEquals(expectedToken, result[0].token)
+        assertEquals(expectedTag, result[0].annotationTag)
+    }
+
+    @Test
+    fun `collectTextMentions applies textColorOverride when specified`() {
+        val message = randomMessage(mentionedChannel = true, mentionedHere = false, mentionedUsers = emptyList())
+        val override = Color.Red
+
+        val result = message.collectTextMentions(
+            colors = StreamDesign.Colors.default(),
+            textColorOverride = override,
+        )
+
+        assertEquals(override, result[0].color)
     }
 
     @Test
@@ -118,6 +201,27 @@ internal class TextUtilsKtTest {
     }
 
     companion object {
+
+        @JvmStatic
+        fun nonUserMentionCases(): List<Arguments> {
+            val empty = randomMessage(
+                mentionedUsers = emptyList(),
+                mentionedChannel = false,
+                mentionedHere = false,
+                mentionedRoles = emptyList(),
+                mentionedGroups = emptyList(),
+            )
+            return listOf(
+                Arguments.of(empty.copy(mentionedChannel = true), "channel", AnnotationTagChannelMention),
+                Arguments.of(empty.copy(mentionedHere = true), "here", AnnotationTagHereMention),
+                Arguments.of(empty.copy(mentionedRoles = listOf("admin")), "admin", AnnotationTagRoleMention),
+                Arguments.of(
+                    empty.copy(mentionedGroups = listOf(randomUserGroup(name = "backend"))),
+                    "backend",
+                    AnnotationTagGroupMention,
+                ),
+            )
+        }
 
         @JvmStatic
         fun urlArguments() = listOf(

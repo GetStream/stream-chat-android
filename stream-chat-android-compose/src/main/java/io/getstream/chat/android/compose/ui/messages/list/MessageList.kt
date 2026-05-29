@@ -44,6 +44,7 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
@@ -205,6 +206,7 @@ internal fun LazyItemScope.DefaultMessageItem(
     onLinkClick: ((Message, String) -> Unit)? = null,
     onUserMentionClick: (User) -> Unit = {},
     onReply: (Message) -> Unit = {},
+    onMentionClick: (Mention) -> Unit = {},
 ) {
     MessageItem(
         messageListItemState = messageListItemState,
@@ -223,6 +225,7 @@ internal fun LazyItemScope.DefaultMessageItem(
         onUserAvatarClick = onUserAvatarClick,
         onLinkClick = onLinkClick,
         onUserMentionClick = onUserMentionClick,
+        onMentionClick = onMentionClick,
         onAddAnswer = onAddAnswer,
         onReply = onReply,
     )

@@ -18,14 +18,12 @@ package io.getstream.chat.android.ui.utils
 
 import android.text.style.ClickableSpan
 import android.view.View
-import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 
 /**
- * A [ClickableSpan] that represents a [User].
- *
- * This class is used to display a user's name in a [android.widget.TextView] and make it clickable.
- * @property user The user that this span represents.
+ * Marker [ClickableSpan] that annotates a stretch of message text as a [Mention]. Carries no
+ * behaviour: actual click handling is wired by [TextViewLinkHandler].
  */
-internal class UserSpan(val user: User) : ClickableSpan() {
+internal class MentionSpan(val mention: Mention) : ClickableSpan() {
     override fun onClick(widget: View) { /* no-op */ }
 }

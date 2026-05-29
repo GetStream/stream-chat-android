@@ -110,6 +110,7 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
@@ -168,6 +169,7 @@ public fun MessageContainer(
     onUserAvatarClick: (() -> Unit)? = null,
     onLinkClick: ((Message, String) -> Unit)? = null,
     onUserMentionClick: (User) -> Unit = {},
+    onMentionClick: (Mention) -> Unit = {},
     onReply: (Message) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
@@ -301,6 +303,7 @@ public fun MessageContainer(
                                     onQuotedMessageClick = onQuotedMessageClick,
                                     onLinkClick = onLinkClick,
                                     onUserMentionClick = onUserMentionClick,
+                                    onMentionClick = onMentionClick,
                                     onPollUpdated = onPollUpdated,
                                     onCastVote = onCastVote,
                                     onRemoveVote = onRemoveVote,
@@ -633,6 +636,7 @@ public fun DefaultMessageContent(
     onQuotedMessageClick: (Message) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
     onUserMentionClick: (User) -> Unit = {},
+    onMentionClick: (Mention) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onPollUpdated: (Message, Poll) -> Unit,
     onCastVote: (Message, Poll, Option) -> Unit,
@@ -681,6 +685,7 @@ public fun DefaultMessageContent(
             onQuotedMessageClick = onQuotedMessageClick,
             onLinkClick = onLinkClick,
             onUserMentionClick = onUserMentionClick,
+            onMentionClick = onMentionClick,
         )
     }
 }
@@ -758,6 +763,7 @@ public fun RegularMessageContent(
     onQuotedMessageClick: (Message) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
     onUserMentionClick: (User) -> Unit = {},
+    onMentionClick: (Mention) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
     val message = messageItem.message
@@ -778,6 +784,7 @@ public fun RegularMessageContent(
             onQuotedMessageClick = onQuotedMessageClick,
             onLinkClick = onLinkClick,
             onUserMentionClick = onUserMentionClick,
+            onMentionClick = onMentionClick,
         )
     }
     if (!messageItem.isErrorOrFailed()) {

@@ -22,6 +22,7 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnAtta
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnGiphySendListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnLinkClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMentionClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMentionTokenClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageLongClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageRetryListener
@@ -54,6 +55,7 @@ internal class MessageListListenersImpl(
     reactionViewClickListener: OnReactionViewClickListener = OnReactionViewClickListener(EmptyFunctions.ONE_PARAM),
     userClickListener: OnUserClickListener = OnUserClickListener(EmptyFunctions.ONE_PARAM),
     mentionClickListener: OnMentionClickListener = OnMentionClickListener(EmptyFunctions.ONE_PARAM),
+    mentionTokenClickListener: OnMentionTokenClickListener = OnMentionTokenClickListener(EmptyFunctions.ONE_PARAM),
     giphySendListener: OnGiphySendListener = OnGiphySendListener(EmptyFunctions.ONE_PARAM),
     linkClickListener: OnLinkClickListener = OnLinkClickListener(EmptyFunctions.ONE_PARAM),
     onUnreadLabelReachedListener: OnUnreadLabelReachedListener = OnUnreadLabelReachedListener { },
@@ -142,11 +144,24 @@ internal class MessageListListenersImpl(
         }
     }
 
+    @Deprecated(
+        message = "Use mentionTokenClickListener; it also fires for other mention types.",
+        replaceWith = ReplaceWith("mentionTokenClickListener"),
+        level = DeprecationLevel.WARNING,
+    )
     override var mentionClickListener: OnMentionClickListener by ListenerDelegate(
         mentionClickListener,
     ) { realListener ->
         OnMentionClickListener { user ->
             realListener().onMentionClick(user)
+        }
+    }
+
+    override var mentionTokenClickListener: OnMentionTokenClickListener by ListenerDelegate(
+        mentionTokenClickListener,
+    ) { realListener ->
+        OnMentionTokenClickListener { mention ->
+            realListener().onMentionClick(mention)
         }
     }
 

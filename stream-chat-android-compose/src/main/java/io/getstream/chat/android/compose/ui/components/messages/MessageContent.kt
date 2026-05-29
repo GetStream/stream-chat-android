@@ -68,6 +68,7 @@ import io.getstream.chat.android.compose.ui.util.passiveRipple
 import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 
@@ -92,6 +93,7 @@ public fun MessageContent(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onUserMentionClick: (User) -> Unit = {},
+    onMentionClick: (Mention) -> Unit = {},
     messageAlignment: MessageAlignment = MessageAlignment.Start,
     onLinkClick: ((Message, String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
@@ -123,6 +125,7 @@ public fun MessageContent(
                 onQuotedMessageClick = onQuotedMessageClick,
                 onLinkClick = onLinkClick,
                 onUserMentionClick = onUserMentionClick,
+                onMentionClick = onMentionClick,
             ),
         )
     }
@@ -180,6 +183,7 @@ internal fun DefaultMessageRegularContent(
     onQuotedMessageClick: (Message) -> Unit,
     onUserMentionClick: (User) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
+    onMentionClick: (Mention) -> Unit = {},
 ) {
     val componentFactory = ChatTheme.componentFactory
 
@@ -270,6 +274,7 @@ internal fun DefaultMessageRegularContent(
                     onLongItemClick = onLongItemClick,
                     onLinkClick = onLinkClick,
                     onUserMentionClick = onUserMentionClick,
+                    onMentionClick = onMentionClick,
                 ),
             )
         }
