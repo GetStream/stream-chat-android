@@ -142,7 +142,6 @@ internal fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
             .padding(
                 start = StreamTokens.spacingMd,
                 end = StreamTokens.spacingMd,
-                top = StreamTokens.spacingMd,
                 bottom = StreamTokens.spacingSm,
             ),
         verticalAlignment = Alignment.CenterVertically,
