@@ -100,13 +100,15 @@ internal class QueryChannelsLogic(
             channelLimit = CHANNEL_LIMIT
         }
         val cachedChannels = fetchChannelsFromCache(pagination)
-        val existing = queryChannelsStateLogic.getChannels()
-        if (existing.isNullOrEmpty() && !cachedChannels.isNullOrEmpty()) {
-            logger.d { "[loadOfflineGroupedChannels] showing ${cachedChannels.size} cached channels" }
-            queryChannelsStateLogic.addChannelsState(cachedChannels)
+        groupedResultMutex.withLock {
+            val existing = queryChannelsStateLogic.getChannels()
+            if (existing.isNullOrEmpty() && !cachedChannels.isNullOrEmpty()) {
+                logger.d { "[loadOfflineGroupedChannels] showing ${cachedChannels.size} cached channels" }
+                queryChannelsStateLogic.addChannelsState(cachedChannels)
+            }
+            queryChannelsStateLogic.initializeChannelsIfNeeded()
+            queryChannelsStateLogic.setLoadingFirstPage(false)
         }
-        queryChannelsStateLogic.initializeChannelsIfNeeded()
-        queryChannelsStateLogic.setLoadingFirstPage(false)
     }
 
     internal suspend fun queryOffline(pagination: AnyChannelPaginationRequest) {

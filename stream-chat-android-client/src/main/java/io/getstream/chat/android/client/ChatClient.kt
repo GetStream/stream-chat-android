@@ -3158,7 +3158,8 @@ internal constructor(
      *
      * @param groups The group names to fetch. Required; must contain at least one group name.
      * Duplicate names are silently de-duplicated.
-     * @param limit Default max channels per group. `null` uses the server default.
+     * @param limit Default max channels per group. Accepted range is `1..10`. `null` uses the
+     * server default.
      * @param watch Whether to start watching the returned channels for real-time events.
      * @param presence Whether to receive presence events for the members of the returned channels.
      *
@@ -3188,7 +3189,7 @@ internal constructor(
      * Contact & Support.**
      *
      * @param limit Default max channels per group when a group does not specify its own limit.
-     * `null` uses the server default.
+     * Accepted range is `1..10`. `null` uses the server default.
      * @param groups Optional per-group configuration keyed by group name. `null` returns the
      * first pages of the server-defined default set.
      * @param watch Whether to start watching the returned channels for real-time events.
