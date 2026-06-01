@@ -54,6 +54,7 @@ import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewUserData
@@ -261,6 +262,16 @@ private fun ChannelActionsSheetMutedPinnedPreview() {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+private fun ChannelActionsSheetDmUserMutedPreview() {
+    ChatTheme {
+        Box(modifier = Modifier.fillMaxSize()) {
+            ChannelActionsSheetSampleDmUserMuted()
+        }
+    }
+}
+
 @Composable
 internal fun ChannelActionsSheetSample() {
     val channel = PreviewChannelData.channelWithManyMembers
@@ -307,5 +318,44 @@ internal fun ChannelActionsSheetSampleMutedPinned() {
         onActionClick = {},
         onDismiss = {},
         currentUser = mutedUser,
+    )
+}
+
+/**
+ * Exercises the DM user-mute path in [isChannelOrCounterpartMuted] — the case where the channel
+ * itself is not muted but the current user has muted the DM counterpart. Uses a 1-on-1 distinct
+ * channel (`cid` containing `!members`) so [io.getstream.chat.android.compose.ui.util.isOneToOne]
+ * returns `true`, then derives the muted icon from `currentUser.mutes` rather than
+ * `currentUser.channelMutes`.
+ */
+@Composable
+internal fun ChannelActionsSheetSampleDmUserMuted() {
+    val counterpart = PreviewUserData.user2
+    val dmChannel = Channel(
+        type = "messaging",
+        id = "!members-test",
+        members = listOf(
+            Member(user = PreviewUserData.user1),
+            Member(user = counterpart),
+        ),
+        memberCount = 2,
+    )
+    val userWithMutedCounterpart = PreviewUserData.user1.copy(
+        mutes = listOf(
+            Mute(
+                user = PreviewUserData.user1,
+                target = counterpart,
+                createdAt = Date(),
+                updatedAt = Date(),
+                expires = null,
+            ),
+        ),
+    )
+    ChannelActionsSheet(
+        channel = dmChannel,
+        actions = listOf(ViewInfo(channel = dmChannel, label = "Channel Info", onAction = {})),
+        onActionClick = {},
+        onDismiss = {},
+        currentUser = userWithMutedCounterpart,
     )
 }

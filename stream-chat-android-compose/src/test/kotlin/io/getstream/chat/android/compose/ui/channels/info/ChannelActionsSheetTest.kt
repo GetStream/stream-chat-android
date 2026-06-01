@@ -56,4 +56,14 @@ internal class ChannelActionsSheetTest : PaparazziComposeTest {
     fun `channel actions sheet muted and pinned in dark mode`() = snapshot(isInDarkMode = true) {
         ChannelActionsSheetSampleMutedPinned()
     }
+
+    @Test
+    fun `channel actions sheet dm user muted`() = snapshot {
+        ChannelActionsSheetSampleDmUserMuted()
+    }
+
+    @Test
+    fun `channel actions sheet dm user muted in dark mode`() = snapshot(isInDarkMode = true) {
+        ChannelActionsSheetSampleDmUserMuted()
+    }
 }
