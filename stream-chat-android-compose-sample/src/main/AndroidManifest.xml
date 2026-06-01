@@ -56,6 +56,7 @@
             android:name=".ui.StartupActivity"
             android:exported="true"
             android:launchMode="singleInstance"
+            android:theme="@style/Theme.App.Splash"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
