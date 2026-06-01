@@ -300,7 +300,6 @@ internal fun PlaybackToggleButton(
     ) {
         Icon(
             painter = icon,
-            modifier = Modifier.size(20.dp),
             contentDescription = label,
         )
     }

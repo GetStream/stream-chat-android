@@ -705,7 +705,6 @@ public fun EmojiMessageContent(
                 params = MessageFailedIconParams(
                     modifier = Modifier
                         .padding(vertical = StreamTokens.spacingXs)
-                        .size(20.dp)
                         .align(Alignment.TopEnd),
                     message = message,
                 ),
@@ -782,7 +781,6 @@ public fun RegularMessageContent(
                 params = MessageFailedIconParams(
                     modifier = Modifier
                         .padding(vertical = StreamTokens.spacingXs)
-                        .size(20.dp)
                         .align(Alignment.TopEnd)
                         .testTag("Stream_MessageFailedIcon"),
                     message = message,

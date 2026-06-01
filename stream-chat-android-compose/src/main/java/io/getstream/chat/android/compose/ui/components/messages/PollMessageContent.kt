@@ -160,7 +160,6 @@ public fun PollMessageContent(
                 params = MessageFailedIconParams(
                     modifier = Modifier
                         .padding(vertical = StreamTokens.spacingXs)
-                        .size(20.dp)
                         .align(Alignment.TopEnd),
                     message = message,
                 ),

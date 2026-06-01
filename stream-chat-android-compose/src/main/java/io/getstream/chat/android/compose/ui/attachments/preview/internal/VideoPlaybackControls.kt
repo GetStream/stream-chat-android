@@ -114,7 +114,6 @@ internal fun VideoPlaybackControls(
             Icon(
                 painter = painterResource(icon),
                 contentDescription = stringResource(contentDescription),
-                modifier = Modifier.size(20.dp),
             )
         }
 
