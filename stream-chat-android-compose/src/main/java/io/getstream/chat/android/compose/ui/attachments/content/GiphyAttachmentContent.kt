@@ -142,7 +142,7 @@ public fun GiphyAttachmentContent(
         StreamAsyncImage(
             data = giphyInfo?.url,
             modifier = Modifier.fillMaxSize(),
-            contentDescription = null,
+            contentDescription = attachment.title?.takeIf(String::isNotBlank),
             contentScale = contentScale,
         )
 
