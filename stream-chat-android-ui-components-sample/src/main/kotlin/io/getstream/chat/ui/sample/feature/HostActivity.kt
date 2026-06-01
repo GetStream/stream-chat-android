@@ -21,6 +21,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -34,6 +35,7 @@ const val EXTRA_PARENT_MESSAGE_ID = "extra_parent_message_id"
 class HostActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         setupEdgeToEdge()
         if (savedInstanceState != null && lastNonConfigurationInstance == null) {
