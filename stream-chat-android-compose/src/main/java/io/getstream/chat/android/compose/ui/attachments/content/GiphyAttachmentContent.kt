@@ -83,6 +83,8 @@ import io.getstream.chat.android.ui.common.utils.giphyInfo
  * the default Giphy width and height dimensions, however you can still clip maximum dimensions.
  * Setting it to fixed size mode will make it respect all given dimensions.
  * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
+ * @param interactive When `true` (default), the container is clickable and long-clickable. When
+ *  `false`, both handlers are disabled.
  * @param onItemClick Lambda called when an item gets clicked (no-action by default).
  */
 @OptIn(ExperimentalFoundationApi::class)
@@ -94,6 +96,7 @@ public fun GiphyAttachmentContent(
     giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
     giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
     contentScale: ContentScale = ContentScale.Crop,
+    interactive: Boolean = true,
     onItemClick: (GiphyAttachmentClickData) -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -115,6 +118,7 @@ public fun GiphyAttachmentContent(
     val giphyDimensions: DpSize = calculateSize(giphyInfo, giphySizingMode)
 
     val shouldBeFullSize = message.shouldBeDisplayedAsFullSizeAttachment()
+    val interactionSource = remember { MutableInteractionSource() }
     Box(
         modifier = modifier
             .testTag("Stream_GiphyContent")
@@ -123,21 +127,29 @@ public fun GiphyAttachmentContent(
                 padding(MessageStyling.messageSectionPadding)
                     .clip(RoundedCornerShape(StreamTokens.radiusLg))
             }
-            .combinedClickable(
-                indication = ripple(),
-                interactionSource = remember { MutableInteractionSource() },
-                onClick = {
-                    onItemClick(
-                        GiphyAttachmentClickData(
-                            context = context,
-                            url = previewUrl,
-                            attachment = attachment,
-                            message = message,
-                        ),
-                    )
-                },
-                onLongClick = { state.onLongItemClick(message) },
-            ),
+            // Workaround: `interactive` gates `combinedClickable` so the ephemeral preview path
+            // can disable the clickable (its inner click and long-click are no-ops there) and let
+            // the surrounding bubble announce as a single TalkBack focus. The proper fix is to
+            // make `onItemClick` (and `AttachmentState.onLongItemClick`) nullable and gate on
+            // `!= null`, but that is a binary-breaking type change on a published API. Revisit in
+            // v8 and drop `interactive` once the handlers are nullable.
+            .applyIf(interactive) {
+                combinedClickable(
+                    indication = ripple(),
+                    interactionSource = interactionSource,
+                    onClick = {
+                        onItemClick(
+                            GiphyAttachmentClickData(
+                                context = context,
+                                url = previewUrl,
+                                attachment = attachment,
+                                message = message,
+                            ),
+                        )
+                    },
+                    onLongClick = { state.onLongItemClick(message) },
+                )
+            },
     ) {
         StreamAsyncImage(
             data = giphyInfo?.url,

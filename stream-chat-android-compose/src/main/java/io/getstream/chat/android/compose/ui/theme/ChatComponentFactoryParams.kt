@@ -2247,10 +2247,13 @@ public data class FileAttachmentContentParams(
  *
  * @param state State providing context for the attachment.
  * @param modifier Modifier for styling.
+ * @param interactive When `true` (default), the Giphy container is clickable and long-clickable.
+ *  When `false`, both handlers are disabled.
  */
 public data class GiphyAttachmentContentParams(
     val state: AttachmentState,
     val modifier: Modifier = Modifier,
+    val interactive: Boolean = true,
 )
 
 /**

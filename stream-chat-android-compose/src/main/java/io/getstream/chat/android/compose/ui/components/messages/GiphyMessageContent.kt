@@ -16,7 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.components.messages
 
+import android.view.accessibility.AccessibilityManager
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,13 +29,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.getSystemService
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
@@ -42,6 +55,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.GiphyAttachmentContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
@@ -50,6 +64,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.CancelGiphy
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.SendGiphy
 import io.getstream.chat.android.ui.common.state.messages.list.ShuffleGiphy
+import kotlinx.coroutines.delay
 
 /**
  * Represents the content of an ephemeral giphy message.
@@ -69,42 +84,61 @@ public fun GiphyMessageContent(
 ) {
     val colors = ChatTheme.colors
 
+    val isTouchExplorationEnabled = rememberIsTouchExplorationEnabled()
+    val previewFocusRequester = remember { FocusRequester() }
+    LaunchedEffect(message.id) {
+        if (!isTouchExplorationEnabled) return@LaunchedEffect
+        // Let Compose layout + the accessibility tree settle before stealing TalkBack focus,
+        // otherwise our request loses to the composer's post-command focus reshuffling.
+        delay(PreviewFocusRequestDelayMs)
+        previewFocusRequester.requestFocus()
+    }
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(40.dp)
-                .padding(horizontal = StreamTokens.spacingSm, vertical = StreamTokens.spacingXs),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+                .applyIf(isTouchExplorationEnabled) {
+                    focusRequester(previewFocusRequester).focusable()
+                }
+                .semantics(mergeDescendants = true) {},
         ) {
-            Icon(
-                painter = painterResource(R.drawable.stream_design_ic_eye_fill),
-                contentDescription = null,
-                tint = colors.chatTextOutgoing,
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp)
+                    .padding(horizontal = StreamTokens.spacingSm, vertical = StreamTokens.spacingXs),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.stream_design_ic_eye_fill),
+                    contentDescription = null,
+                    tint = colors.chatTextOutgoing,
+                )
+                Text(
+                    text = stringResource(R.string.stream_compose_only_visible_to_you),
+                    style = ChatTheme.typography.captionEmphasis,
+                    color = colors.chatTextOutgoing,
+                )
+            }
+
+            val attachmentState = AttachmentState(
+                message = message,
+                isMine = message.user.id == currentUser?.id,
+                onLongItemClick = {},
+                onMediaGalleryPreviewResult = {},
             )
-            Text(
-                text = stringResource(R.string.stream_compose_only_visible_to_you),
-                style = ChatTheme.typography.captionEmphasis,
-                color = colors.chatTextOutgoing,
+            ChatTheme.componentFactory.GiphyAttachmentContent(
+                params = GiphyAttachmentContentParams(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = attachmentState,
+                    interactive = false,
+                ),
             )
         }
-
-        val attachmentState = AttachmentState(
-            message = message,
-            isMine = message.user.id == currentUser?.id,
-            onLongItemClick = {},
-            onMediaGalleryPreviewResult = {},
-        )
-        ChatTheme.componentFactory.GiphyAttachmentContent(
-            params = GiphyAttachmentContentParams(
-                modifier = Modifier.fillMaxWidth(),
-                state = attachmentState,
-            ),
-        )
 
         Row(
             modifier = Modifier
@@ -140,6 +174,28 @@ public fun GiphyMessageContent(
             )
         }
     }
+}
+
+private const val PreviewFocusRequestDelayMs = 100L
+
+/**
+ * Observes [AccessibilityManager.isTouchExplorationEnabled] and recomposes when it toggles. Used
+ * to gate focus-stealing behaviour so we only request TalkBack focus when an explore-by-touch
+ * service (e.g. TalkBack) is active — otherwise we would yank Compose focus away from the
+ * composer's text field for sighted users and dismiss the IME.
+ */
+@Composable
+private fun rememberIsTouchExplorationEnabled(): Boolean {
+    val context = LocalContext.current
+    val manager = remember(context) { context.getSystemService<AccessibilityManager>() } ?: return false
+    var enabled by remember(manager) { mutableStateOf(manager.isTouchExplorationEnabled) }
+    DisposableEffect(manager) {
+        val listener = AccessibilityManager.TouchExplorationStateChangeListener { enabled = it }
+        manager.addTouchExplorationStateChangeListener(listener)
+        enabled = manager.isTouchExplorationEnabled
+        onDispose { manager.removeTouchExplorationStateChangeListener(listener) }
+    }
+    return enabled
 }
 
 @Preview
