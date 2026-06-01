@@ -51,7 +51,9 @@ public interface Mention {
     public val type: MentionType
 
     /**
-     * The display text of the mention.
+     * The display text of the mention. Implementations must guarantee a non-empty value so
+     * autocomplete and linkification produce a stable `@token` even when the underlying source
+     * lacks a human-readable name.
      */
     public val display: String
 
@@ -62,6 +64,6 @@ public interface Mention {
      */
     public data class User(public val user: io.getstream.chat.android.models.User) : Mention {
         override val type: MentionType = MentionType.user
-        override val display: String = user.name
+        override val display: String = user.name.ifEmpty { user.id }
     }
 }
