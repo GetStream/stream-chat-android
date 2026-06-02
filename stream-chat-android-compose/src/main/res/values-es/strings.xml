@@ -146,8 +146,11 @@
   <string name="stream_compose_message_list_error_cannot_open_link">"No hay ninguna aplicación para ver esta URL:\n%s"</string>
   <string name="stream_compose_message_list_footnote_edited">"Editado"</string>
   <string name="stream_compose_message_list_giphy_cancel">"Cancelar"</string>
+  <string name="stream_compose_message_list_giphy_cancelled">"Vista previa de Giphy cancelada"</string>
   <string name="stream_compose_message_list_giphy_send">"Enviar"</string>
+  <string name="stream_compose_message_list_giphy_sent">"Giphy enviado"</string>
   <string name="stream_compose_message_list_giphy_shuffle">"Aleatorio"</string>
+  <string name="stream_compose_message_list_giphy_shuffled">"Giphy intercambiado"</string>
   <string name="stream_compose_message_list_remind_me">"Recordarme"</string>
   <string name="stream_compose_message_list_saved_for_later">"Guardado para después"</string>
   <string name="stream_compose_message_list_show_translation">"Mostrar traducción"</string>

@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -83,6 +84,10 @@ public fun GiphyMessageContent(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
 ) {
     val colors = ChatTheme.colors
+    val view = LocalView.current
+    val sentAnnouncement = stringResource(R.string.stream_compose_message_list_giphy_sent)
+    val cancelledAnnouncement = stringResource(R.string.stream_compose_message_list_giphy_cancelled)
+    val shuffledAnnouncement = stringResource(R.string.stream_compose_message_list_giphy_shuffled)
 
     val isTouchExplorationEnabled = rememberIsTouchExplorationEnabled()
     val previewFocusRequester = remember { FocusRequester() }
@@ -147,7 +152,10 @@ public fun GiphyMessageContent(
             horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
         ) {
             StreamTextButton(
-                onClick = { onGiphyActionClick(SendGiphy(message)) },
+                onClick = {
+                    view.announceForAccessibility(sentAnnouncement)
+                    onGiphyActionClick(SendGiphy(message))
+                },
                 text = stringResource(R.string.stream_compose_message_list_giphy_send),
                 style = StreamButtonStyleDefaults.primaryGhost,
                 modifier = Modifier
@@ -156,7 +164,10 @@ public fun GiphyMessageContent(
             )
 
             StreamTextButton(
-                onClick = { onGiphyActionClick(ShuffleGiphy(message)) },
+                onClick = {
+                    view.announceForAccessibility(shuffledAnnouncement)
+                    onGiphyActionClick(ShuffleGiphy(message))
+                },
                 text = stringResource(R.string.stream_compose_message_list_giphy_shuffle),
                 style = StreamButtonStyleDefaults.secondaryGhost,
                 modifier = Modifier
@@ -165,7 +176,10 @@ public fun GiphyMessageContent(
             )
 
             StreamTextButton(
-                onClick = { onGiphyActionClick(CancelGiphy(message)) },
+                onClick = {
+                    view.announceForAccessibility(cancelledAnnouncement)
+                    onGiphyActionClick(CancelGiphy(message))
+                },
                 text = stringResource(R.string.stream_compose_message_list_giphy_cancel),
                 style = StreamButtonStyleDefaults.secondaryGhost,
                 modifier = Modifier

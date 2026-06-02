@@ -158,8 +158,11 @@
   <string name="stream_compose_message_list_error_cannot_open_link">"이 URL을 열 수 있는 앱이 없습니다:\n%s"</string>
   <string name="stream_compose_message_list_footnote_edited">"수정됨"</string>
   <string name="stream_compose_message_list_giphy_cancel">"취소"</string>
+  <string name="stream_compose_message_list_giphy_cancelled">"Giphy 미리보기 취소됨"</string>
   <string name="stream_compose_message_list_giphy_send">"보내기"</string>
+  <string name="stream_compose_message_list_giphy_sent">"Giphy 전송됨"</string>
   <string name="stream_compose_message_list_giphy_shuffle">"섞기"</string>
+  <string name="stream_compose_message_list_giphy_shuffled">"Giphy 섞임"</string>
   <string name="stream_compose_message_list_remind_me">"리마인드"</string>
   <string name="stream_compose_message_list_saved_for_later">"나중에 보기"</string>
   <string name="stream_compose_message_list_show_translation">"번역 보기"</string>

@@ -158,8 +158,11 @@
   <string name="stream_compose_message_list_error_cannot_open_link">"このURLを開くアプリがありません:\n%s"</string>
   <string name="stream_compose_message_list_footnote_edited">"編集済み"</string>
   <string name="stream_compose_message_list_giphy_cancel">"キャンセル"</string>
+  <string name="stream_compose_message_list_giphy_cancelled">"Giphyプレビューをキャンセルしました"</string>
   <string name="stream_compose_message_list_giphy_send">"送信"</string>
+  <string name="stream_compose_message_list_giphy_sent">"Giphyを送信しました"</string>
   <string name="stream_compose_message_list_giphy_shuffle">"シャッフル"</string>
+  <string name="stream_compose_message_list_giphy_shuffled">"Giphyをシャッフルしました"</string>
   <string name="stream_compose_message_list_remind_me">"リマインドする"</string>
   <string name="stream_compose_message_list_saved_for_later">"後で確認"</string>
   <string name="stream_compose_message_list_show_translation">"翻訳を表示"</string>

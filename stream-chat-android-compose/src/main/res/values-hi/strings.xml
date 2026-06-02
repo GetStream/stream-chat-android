@@ -206,8 +206,11 @@
   <string name="stream_compose_message_list_error_cannot_open_link">"इस url को देखने के लिए कोई ऐप नहीं है:\n%s"</string>
   <string name="stream_compose_message_list_footnote_edited">"संपादित"</string>
   <string name="stream_compose_message_list_giphy_cancel">"रद्द करें"</string>
+  <string name="stream_compose_message_list_giphy_cancelled">"Giphy पूर्वावलोकन रद्द किया गया"</string>
   <string name="stream_compose_message_list_giphy_send">"भेजें"</string>
+  <string name="stream_compose_message_list_giphy_sent">"Giphy भेजा गया"</string>
   <string name="stream_compose_message_list_giphy_shuffle">"बदलें"</string>
+  <string name="stream_compose_message_list_giphy_shuffled">"Giphy बदला गया"</string>
   <string name="stream_compose_message_list_remind_me">"मुझे याद दिलाएँ"</string>
   <string name="stream_compose_message_list_saved_for_later">"बाद के लिए सेव किया गया"</string>
   <string name="stream_compose_message_list_show_translation">"अनुवाद दिखाएँ"</string>
