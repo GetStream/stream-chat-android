@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.components
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
@@ -53,6 +54,7 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
  * @param onDismissRequest Invoked when the user dismisses the sheet.
  * @param modifier Modifier applied to the sheet container.
  * @param sheetState State controlling the sheet's visibility and target value.
+ * @param dragHandle Composable rendered as the sheet's drag handle. Defaults to the M3 default.
  * @param content Sheet body, laid out vertically in a [ColumnScope].
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,6 +63,7 @@ internal fun StreamCardBottomSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberStreamSheetState(initialValueInInspection = SheetValue.PartiallyExpanded),
+    dragHandle: @Composable () -> Unit = { BottomSheetDefaults.DragHandle() },
     content: @Composable ColumnScope.() -> Unit,
 ) {
     ModalBottomSheet(
@@ -70,6 +73,7 @@ internal fun StreamCardBottomSheet(
         shape = StreamCardSheetShape,
         containerColor = ChatTheme.colors.backgroundCoreElevation1,
         scrimColor = ChatTheme.colors.backgroundCoreScrim,
+        dragHandle = dragHandle,
         content = content,
     )
 }

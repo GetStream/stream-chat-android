@@ -85,6 +85,7 @@
   <string name="stream_compose_dismiss">"Ignorer"</string>
   <string name="stream_compose_edit_answer">"Mettre à jour votre commentaire"</string>
   <string name="stream_compose_edit_message">"Modifier le message"</string>
+  <string name="stream_compose_emoji_picker_title">"Sélecteur d’emojis"</string>
   <string name="stream_compose_file_preview">"Fichier"</string>
   <string name="stream_compose_flag_message">"Signaler le message"</string>
   <string name="stream_compose_flag_message_text">"Voulez-vous envoyer une copie de ce message à un modérateur pour une enquête plus approfondie ?"</string>

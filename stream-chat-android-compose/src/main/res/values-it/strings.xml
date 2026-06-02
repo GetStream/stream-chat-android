@@ -145,6 +145,7 @@
   <string name="stream_compose_dismiss">"Chiudi"</string>
   <string name="stream_compose_edit_answer">"Aggiorna il tuo commento"</string>
   <string name="stream_compose_edit_message">"Modifica messaggio"</string>
+  <string name="stream_compose_emoji_picker_title">"Selettore emoji"</string>
   <string name="stream_compose_file_preview">"File"</string>
   <string name="stream_compose_flag_message">"Segnala messaggio"</string>
   <string name="stream_compose_flag_message_text">"Vuoi mandare una copia di questo messaggio ad un moderatore?"</string>

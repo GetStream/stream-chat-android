@@ -92,6 +92,7 @@
   <string name="stream_compose_dismiss">"閉じる"</string>
   <string name="stream_compose_edit_answer">"コメントを更新"</string>
   <string name="stream_compose_edit_message">"メッセージを編集"</string>
+  <string name="stream_compose_emoji_picker_title">"絵文字ピッカー"</string>
   <string name="stream_compose_file_preview">"ファイル"</string>
   <plurals name="stream_compose_files_preview">
     <item quantity="other">"%dファイル"</item>

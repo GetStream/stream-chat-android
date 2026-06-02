@@ -85,6 +85,7 @@
   <string name="stream_compose_dismiss">"Descartar"</string>
   <string name="stream_compose_edit_answer">"Actualizar tu comentario"</string>
   <string name="stream_compose_edit_message">"Editar mensaje"</string>
+  <string name="stream_compose_emoji_picker_title">"Selector de emojis"</string>
   <string name="stream_compose_file_preview">"Archivo"</string>
   <string name="stream_compose_flag_message">"Marcar mensaje"</string>
   <string name="stream_compose_flag_message_text">"¿Quieres enviar una copia de este mensaje a un moderador para una investigación más detallada?"</string>

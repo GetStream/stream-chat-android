@@ -85,6 +85,7 @@
   <string name="stream_compose_dismiss">"Tutup"</string>
   <string name="stream_compose_edit_answer">"Perbarui Komentar Anda"</string>
   <string name="stream_compose_edit_message">"Edit Pesan"</string>
+  <string name="stream_compose_emoji_picker_title">"Pemilih emoji"</string>
   <string name="stream_compose_file_preview">"File"</string>
   <string name="stream_compose_flag_message">"Tandai Pesan"</string>
   <string name="stream_compose_flag_message_text">"Apakah Anda ingin mengirim salinan pesan ini ke moderator untuk investigasi lebih lanjut?"</string>

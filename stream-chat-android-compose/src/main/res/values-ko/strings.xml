@@ -92,6 +92,7 @@
   <string name="stream_compose_dismiss">"닫기"</string>
   <string name="stream_compose_edit_answer">"댓글 수정"</string>
   <string name="stream_compose_edit_message">"메시지 수정"</string>
+  <string name="stream_compose_emoji_picker_title">"이모지 선택기"</string>
   <string name="stream_compose_file_preview">"파일"</string>
   <plurals name="stream_compose_files_preview">
     <item quantity="other">"%d개의 파일"</item>

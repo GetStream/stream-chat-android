@@ -165,6 +165,7 @@
 
     <!-- Reactions Picker -->
     <string name="stream_compose_show_more_reactions">Show more reactions</string>
+    <string name="stream_compose_emoji_picker_title">Emoji picker</string>
 
     <!-- Message Action Prompts -->
     <string name="stream_compose_delete_message_title">Delete message</string>

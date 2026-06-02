@@ -145,6 +145,7 @@
   <string name="stream_compose_dismiss">"खारिज करें"</string>
   <string name="stream_compose_edit_answer">"अपनी टिप्पणी अपडेट करें"</string>
   <string name="stream_compose_edit_message">"मैसेज एडिट करें"</string>
+  <string name="stream_compose_emoji_picker_title">"इमोजी चयनकर्ता"</string>
   <string name="stream_compose_file_preview">"फ़ाइल"</string>
   <string name="stream_compose_flag_message">"मैसेज चिह्नित करें"</string>
   <string name="stream_compose_flag_message_text">"क्या आप आगे की जांच के लिए इस संदेश की एक कॉपी मॉडरेटर को भेजना चाहते हैं?"</string>
