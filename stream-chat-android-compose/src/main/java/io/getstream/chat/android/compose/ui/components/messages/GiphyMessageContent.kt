@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,6 +40,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
@@ -48,6 +51,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.getSystemService
+import coil3.ColorImage
+import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
@@ -56,6 +61,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.GiphyAttachmentContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
@@ -212,11 +218,17 @@ private fun rememberIsTouchExplorationEnabled(): Boolean {
     return enabled
 }
 
-@Preview
 @Composable
-private fun GiphyMessageContentPreview() {
-    val attachment = Attachment(type = AttachmentType.GIPHY, ogUrl = "")
-    ChatTheme {
+internal fun GiphyMessageContent() {
+    val previewHandler = AsyncImagePreviewHandler {
+        ColorImage(color = Color.Red.toArgb(), width = 200, height = 150)
+    }
+    CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
+        val attachment = Attachment(
+            type = AttachmentType.GIPHY,
+            titleLink = "https://giphy.com/gifs/funny-cat-3oEjI6SIIHBdRxXI40",
+            title = "Hello",
+        )
         Box(Modifier.background(MessageStyling.backgroundColor(true))) {
             GiphyMessageContent(
                 message = Message(attachments = listOf(attachment)),
@@ -224,5 +236,13 @@ private fun GiphyMessageContentPreview() {
                 onGiphyActionClick = {},
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun GiphyMessageContentPreview() {
+    ChatTheme {
+        GiphyMessageContent()
     }
 }

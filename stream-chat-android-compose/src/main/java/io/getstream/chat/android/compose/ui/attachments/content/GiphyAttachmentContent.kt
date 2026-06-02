@@ -300,7 +300,10 @@ private fun GiphyAttachmentContentPreview() {
 }
 
 @Composable
-internal fun GiphyAttachmentContent() {
+internal fun GiphyAttachmentContent(
+    interactive: Boolean = true,
+    title: String? = "Funny cat",
+) {
     val previewHandler = AsyncImagePreviewHandler {
         ColorImage(color = Color.Red.toArgb(), width = 200, height = 150)
     }
@@ -313,10 +316,12 @@ internal fun GiphyAttachmentContent() {
                         Attachment(
                             titleLink = "https://giphy.com/gifs/funny-cat-3oEjI6SIIHBdRxXI40",
                             type = AttachmentType.GIPHY,
+                            title = title,
                         ),
                     ),
                 ),
             ),
+            interactive = interactive,
         )
     }
 }
