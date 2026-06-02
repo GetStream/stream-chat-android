@@ -264,7 +264,9 @@
   <string name="stream_compose_reactions_action_select">"선택"</string>
   <string name="stream_compose_reactions_action_unselect">"선택 해제"</string>
   <string name="stream_compose_reactions_add">"리액션 추가"</string>
+  <string name="stream_compose_reactions_added">"%1$s 리액션 추가됨"</string>
   <string name="stream_compose_reactions_remove">"탭하여 삭제"</string>
+  <string name="stream_compose_reactions_removed">"%1$s 리액션 제거됨"</string>
   <string name="stream_compose_reactions_state_not_selected">"선택되지 않음"</string>
   <string name="stream_compose_reactions_state_selected">"선택됨"</string>
   <string name="stream_compose_reactions_you">"나"</string>

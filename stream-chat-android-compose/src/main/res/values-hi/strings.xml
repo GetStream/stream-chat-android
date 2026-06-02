@@ -288,7 +288,9 @@
   <string name="stream_compose_reactions_action_select">"चुनें"</string>
   <string name="stream_compose_reactions_action_unselect">"अचयन करें"</string>
   <string name="stream_compose_reactions_add">"प्रतिक्रिया जोड़ें"</string>
+  <string name="stream_compose_reactions_added">"%1$s प्रतिक्रिया जोड़ी गई"</string>
   <string name="stream_compose_reactions_remove">"हटाने के लिए टैप करें"</string>
+  <string name="stream_compose_reactions_removed">"%1$s प्रतिक्रिया हटाई गई"</string>
   <string name="stream_compose_reactions_state_not_selected">"चयनित नहीं"</string>
   <string name="stream_compose_reactions_state_selected">"चयनित"</string>
   <string name="stream_compose_reactions_you">"आप"</string>

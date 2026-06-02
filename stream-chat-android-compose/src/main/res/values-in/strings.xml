@@ -228,7 +228,9 @@
   <string name="stream_compose_reactions_action_select">"Pilih"</string>
   <string name="stream_compose_reactions_action_unselect">"Batalkan pilihan"</string>
   <string name="stream_compose_reactions_add">"Tambahkan reaksi"</string>
+  <string name="stream_compose_reactions_added">"Reaksi %1$s ditambahkan"</string>
   <string name="stream_compose_reactions_remove">"Ketuk untuk menghapus"</string>
+  <string name="stream_compose_reactions_removed">"Reaksi %1$s dihapus"</string>
   <string name="stream_compose_reactions_state_not_selected">"Tidak dipilih"</string>
   <string name="stream_compose_reactions_state_selected">"Dipilih"</string>
   <string name="stream_compose_reactions_you">"Anda"</string>

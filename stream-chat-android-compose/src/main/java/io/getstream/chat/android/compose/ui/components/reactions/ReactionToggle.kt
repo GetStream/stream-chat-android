@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.onClick
@@ -69,6 +70,9 @@ internal fun ReactionToggle(
         val notSelectedStateDescription = stringResource(R.string.stream_compose_reactions_state_not_selected)
         val selectActionLabel = stringResource(R.string.stream_compose_reactions_action_select)
         val unselectActionLabel = stringResource(R.string.stream_compose_reactions_action_unselect)
+        val addedAnnouncement = stringResource(R.string.stream_compose_reactions_added, emoji)
+        val removedAnnouncement = stringResource(R.string.stream_compose_reactions_removed, emoji)
+        val view = LocalView.current
         ChatTheme.componentFactory.ReactionIcon(
             params = ReactionIconParams(
                 type = type,
@@ -79,11 +83,17 @@ internal fun ReactionToggle(
                         background(ChatTheme.colors.backgroundUtilitySelected, CircleShape)
                     }
                     .ifNotNull(onCheckedChange) { onChange ->
+                        val toggleAndAnnounce: (Boolean) -> Unit = { newChecked ->
+                            view.announceForAccessibility(
+                                if (newChecked) addedAnnouncement else removedAnnouncement,
+                            )
+                            onChange(newChecked)
+                        }
                         clip(CircleShape)
                             .toggleable(
                                 value = checked,
                                 role = Role.Button,
-                                onValueChange = onChange,
+                                onValueChange = toggleAndAnnounce,
                             )
                             .semantics {
                                 stateDescription = if (checked) {
@@ -94,7 +104,7 @@ internal fun ReactionToggle(
                                 onClick(
                                     label = if (checked) unselectActionLabel else selectActionLabel,
                                 ) {
-                                    onChange(!checked)
+                                    toggleAndAnnounce(!checked)
                                     true
                                 }
                             }
