@@ -195,6 +195,7 @@
   <string name="stream_compose_message_composer_attachments_open">"अटैचमेंट खोलें"</string>
   <string name="stream_compose_message_deleted">"मैसेज मिटाया गया"</string>
   <string name="stream_compose_message_deleted_preview">"मैसेज हटा दिया गया"</string>
+  <string name="stream_compose_message_actions_menu_title">"संदेश की क्रियाएँ"</string>
   <string name="stream_compose_message_item_open_thread">"थ्रेड खोलें"</string>
   <string name="stream_compose_message_item_options">"संदेश के विकल्प दिखाएँ"</string>
   <string name="stream_compose_message_attachment_open">"अटैचमेंट खोलें"</string>

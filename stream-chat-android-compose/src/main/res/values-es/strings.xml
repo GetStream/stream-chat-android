@@ -135,6 +135,7 @@
   <string name="stream_compose_message_composer_attachments_open">"Abrir archivos adjuntos"</string>
   <string name="stream_compose_message_deleted">"Mensaje eliminado"</string>
   <string name="stream_compose_message_deleted_preview">"Mensaje eliminado"</string>
+  <string name="stream_compose_message_actions_menu_title">"Acciones del mensaje"</string>
   <string name="stream_compose_message_item_open_thread">"Abrir hilo"</string>
   <string name="stream_compose_message_item_options">"Mostrar opciones del mensaje"</string>
   <string name="stream_compose_message_attachment_open">"Abrir archivo adjunto"</string>

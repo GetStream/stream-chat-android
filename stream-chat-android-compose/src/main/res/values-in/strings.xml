@@ -135,6 +135,7 @@
   <string name="stream_compose_message_composer_attachments_open">"Buka lampiran"</string>
   <string name="stream_compose_message_deleted">"Pesan dihapus"</string>
   <string name="stream_compose_message_deleted_preview">"Pesan dihapus"</string>
+  <string name="stream_compose_message_actions_menu_title">"Tindakan pesan"</string>
   <string name="stream_compose_message_item_open_thread">"Buka utas"</string>
   <string name="stream_compose_message_item_options">"Tampilkan opsi pesan"</string>
   <string name="stream_compose_message_attachment_open">"Buka lampiran"</string>

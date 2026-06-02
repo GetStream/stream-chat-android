@@ -147,6 +147,7 @@
   <string name="stream_compose_message_composer_attachments_open">"添付ファイルを開く"</string>
   <string name="stream_compose_message_deleted">"メッセージは削除されました"</string>
   <string name="stream_compose_message_deleted_preview">"メッセージは削除されました"</string>
+  <string name="stream_compose_message_actions_menu_title">"メッセージのアクション"</string>
   <string name="stream_compose_message_item_open_thread">"スレッドを開く"</string>
   <string name="stream_compose_message_item_options">"メッセージのオプションを表示"</string>
   <string name="stream_compose_message_attachment_open">"添付ファイルを開く"</string>

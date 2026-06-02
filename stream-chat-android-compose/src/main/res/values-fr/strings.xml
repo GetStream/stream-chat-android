@@ -135,6 +135,7 @@
   <string name="stream_compose_message_composer_attachments_open">"Ouvrir les pièces jointes"</string>
   <string name="stream_compose_message_deleted">"Message supprimé"</string>
   <string name="stream_compose_message_deleted_preview">"Message supprimé"</string>
+  <string name="stream_compose_message_actions_menu_title">"Actions du message"</string>
   <string name="stream_compose_message_item_open_thread">"Ouvrir le fil"</string>
   <string name="stream_compose_message_item_options">"Afficher les options du message"</string>
   <string name="stream_compose_message_attachment_open">"Ouvrir la pièce jointe"</string>
