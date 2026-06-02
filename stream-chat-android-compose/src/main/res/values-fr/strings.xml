@@ -225,8 +225,12 @@
   <string name="stream_compose_quoted_message_reply_to">"Répondre à %s"</string>
   <string name="stream_compose_quoted_message_reply_to_you">"Répondre à vous-même"</string>
   <string name="stream_compose_quoted_message_you">"Vous"</string>
+  <string name="stream_compose_reactions_action_select">"Sélectionner"</string>
+  <string name="stream_compose_reactions_action_unselect">"Désélectionner"</string>
   <string name="stream_compose_reactions_add">"Ajouter une réaction"</string>
   <string name="stream_compose_reactions_remove">"Appuyez pour supprimer"</string>
+  <string name="stream_compose_reactions_state_not_selected">"Non sélectionné"</string>
+  <string name="stream_compose_reactions_state_selected">"Sélectionné"</string>
   <string name="stream_compose_reactions_you">"Vous"</string>
   <string name="stream_compose_recent_files">"Fichiers récents"</string>
   <string name="stream_compose_remaining_media_attachments_count">"+%1$d"</string>

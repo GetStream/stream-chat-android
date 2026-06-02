@@ -261,8 +261,12 @@
     <item quantity="other">"%d개의 동영상"</item>
   </plurals>
   <string name="stream_compose_quoted_message_you">"나"</string>
+  <string name="stream_compose_reactions_action_select">"선택"</string>
+  <string name="stream_compose_reactions_action_unselect">"선택 해제"</string>
   <string name="stream_compose_reactions_add">"리액션 추가"</string>
   <string name="stream_compose_reactions_remove">"탭하여 삭제"</string>
+  <string name="stream_compose_reactions_state_not_selected">"선택되지 않음"</string>
+  <string name="stream_compose_reactions_state_selected">"선택됨"</string>
   <string name="stream_compose_reactions_you">"나"</string>
   <string name="stream_compose_recent_files">"최근 파일"</string>
   <string name="stream_compose_remaining_media_attachments_count">"+%1$d"</string>

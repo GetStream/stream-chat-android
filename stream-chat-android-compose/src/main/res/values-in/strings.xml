@@ -225,8 +225,12 @@
   <string name="stream_compose_quoted_message_reply_to">"Balas ke %s"</string>
   <string name="stream_compose_quoted_message_reply_to_you">"Balas ke diri sendiri"</string>
   <string name="stream_compose_quoted_message_you">"Anda"</string>
+  <string name="stream_compose_reactions_action_select">"Pilih"</string>
+  <string name="stream_compose_reactions_action_unselect">"Batalkan pilihan"</string>
   <string name="stream_compose_reactions_add">"Tambahkan reaksi"</string>
   <string name="stream_compose_reactions_remove">"Ketuk untuk menghapus"</string>
+  <string name="stream_compose_reactions_state_not_selected">"Tidak dipilih"</string>
+  <string name="stream_compose_reactions_state_selected">"Dipilih"</string>
   <string name="stream_compose_reactions_you">"Anda"</string>
   <string name="stream_compose_recent_files">"File Terbaru"</string>
   <string name="stream_compose_remaining_media_attachments_count">"+%1$d"</string>

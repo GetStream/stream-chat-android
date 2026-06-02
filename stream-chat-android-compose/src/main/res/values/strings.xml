@@ -155,6 +155,10 @@
     <string name="stream_compose_reactions_add">Add reaction</string>
     <string name="stream_compose_reactions_you">You</string>
     <string name="stream_compose_reactions_remove">Tap to remove</string>
+    <string name="stream_compose_reactions_state_selected">Selected</string>
+    <string name="stream_compose_reactions_state_not_selected">Not selected</string>
+    <string name="stream_compose_reactions_action_select">Select</string>
+    <string name="stream_compose_reactions_action_unselect">Unselect</string>
 
     <!-- Reactions Picker -->
     <string name="stream_compose_show_more_reactions">Show more reactions</string>
