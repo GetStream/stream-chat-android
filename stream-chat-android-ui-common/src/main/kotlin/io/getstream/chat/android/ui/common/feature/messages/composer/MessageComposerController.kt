@@ -937,7 +937,7 @@ public class MessageComposerController(
         val userMentions = selectedMentions.filterIsInstance<Mention.User>()
         val text = message.lowercase()
         val remainingMentions = userMentions.filter {
-            text.contains("@${it.user.name.lowercase()}")
+            text.contains("@${it.display.lowercase()}")
         }.map { it.user.id }
         this.selectedMentions.clear()
         _state.update { it.copy(selectedMentions = emptySet()) }

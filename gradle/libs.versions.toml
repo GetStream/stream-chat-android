@@ -13,6 +13,7 @@ androidxAnnotations = "1.9.1"
 androidxAppcompat = "1.7.0"
 androidxComposeBom = "2025.08.01"
 androidxComposeConstraintLayout = "1.1.0"
+androidxCoreSplashScreen = "1.2.0"
 androidxCoreTest = "2.2.0"
 androidxFragment = "1.8.5"
 androidxKtx = "1.15.0"
@@ -111,6 +112,7 @@ androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintLayout"}
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidxKtx"}
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "androidxCoreSplashScreen"}
 androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "androidxCoreTest"}
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "androidxFragment"}
 androidx-fragment-testing = { module = "androidx.fragment:fragment-testing", version.ref = "androidxFragment"}

@@ -179,7 +179,6 @@ private fun AddMembersHeader(
             style = StreamButtonStyleDefaults.secondaryGhost,
         ) {
             Icon(
-                modifier = Modifier.size(20.dp),
                 painter = painterResource(id = R.drawable.stream_design_ic_arrow_left),
                 contentDescription = stringResource(id = UiCommonR.string.stream_ui_back_button),
             )

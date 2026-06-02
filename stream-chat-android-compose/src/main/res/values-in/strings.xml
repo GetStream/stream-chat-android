@@ -63,6 +63,7 @@
   <string name="stream_compose_block_user">"Blokir pengguna"</string>
   <string name="stream_compose_cancel">"Batal"</string>
   <string name="stream_compose_channel_item_muted">"dibisukan"</string>
+  <string name="stream_compose_channel_item_pinned">"disematkan"</string>
   <string name="stream_compose_channel_item_open">"Buka percakapan"</string>
   <string name="stream_compose_channel_item_options">"Buka opsi percakapan"</string>
   <string name="stream_compose_cd_play_button">"Tombol putar"</string>

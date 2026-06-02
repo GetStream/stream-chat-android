@@ -51,7 +51,6 @@ import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.data.customSettings
-import io.getstream.chat.android.compose.sample.feature.channel.ChannelConstants.CHANNEL_ARG_DRAFT
 import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.feature.channel.list.CustomChatEventHandlerFactory
@@ -92,9 +91,7 @@ import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewM
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModelFactory
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewEvent
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
@@ -131,16 +128,34 @@ class ChatsActivity : ComponentActivity() {
     private val messageId by lazy { intent.getStringExtra(KEY_MESSAGE_ID) }
     private val parentMessageId by lazy { intent.getStringExtra(KEY_PARENT_MESSAGE_ID) }
 
+    private val settings by lazy { customSettings() }
+
+    /**
+     * The provided predefined filter has the following specs:
+     *
+     * **Filter:**
+     * ```
+     * Filters.and(
+     *     Filters.eq("type", "messaging"),
+     *     Filters.`in`("members", listOf(currentUserId)),
+     *     Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
+     * )
+     * ```
+     *
+     * **Sort:**
+     * ```
+     * QuerySortByField<Channel>().desc("pinned_at").desc("last_updated")
+     * ```
+     */
     private val channelListViewModelFactory by lazy {
         val chatClient = ChatClient.instance()
         val currentUserId = chatClient.getCurrentUser()?.id ?: ""
         ChannelListViewModelFactory(
             chatClient = chatClient,
-            querySort = QuerySortByField.descByName("last_updated"),
-            filters = Filters.and(
-                Filters.eq("type", "messaging"),
-                Filters.`in`("members", listOf(currentUserId)),
-                Filters.or(Filters.notExists(CHANNEL_ARG_DRAFT), Filters.eq(CHANNEL_ARG_DRAFT, false)),
+            predefinedFilterName = "android_sample_filter",
+            filterValues = mapOf(
+                "channel_type" to "messaging",
+                "user_id" to currentUserId,
             ),
             chatEventHandlerFactory = CustomChatEventHandlerFactory(),
         )
@@ -165,6 +180,7 @@ class ChatsActivity : ComponentActivity() {
                     channelList = ChannelListConfig(
                         optionsVisibility = ChannelOptionsVisibility(
                             isViewInfoVisible = AdaptiveLayoutInfo.singlePaneWindow(),
+                            isPinChannelVisible = settings.isChannelPinningEnabled,
                         ),
                     ),
                 ),
@@ -214,7 +230,6 @@ class ChatsActivity : ComponentActivity() {
                     onOptionSelected = { option ->
                         listContentMode = when (option) {
                             AppBottomBarOption.CHATS -> ChatListContentMode.Channels
-                            AppBottomBarOption.MENTIONS -> ChatListContentMode.Mentions
                             AppBottomBarOption.THREADS -> ChatListContentMode.Threads
                         }
                     },
@@ -240,8 +255,9 @@ class ChatsActivity : ComponentActivity() {
         val unreadThreadsCount by remember { globalStateFlow.flatMapLatest { it.unreadThreadsCount } }
             .collectAsStateWithLifecycle(0)
         val selectedOption = when (listContentMode) {
-            ChatListContentMode.Channels -> AppBottomBarOption.CHATS
-            ChatListContentMode.Mentions -> AppBottomBarOption.MENTIONS
+            ChatListContentMode.Channels,
+            ChatListContentMode.Mentions,
+            -> AppBottomBarOption.CHATS
             ChatListContentMode.Threads -> AppBottomBarOption.THREADS
         }
         AppBottomBar(
@@ -608,7 +624,7 @@ class ChatsActivity : ComponentActivity() {
     ) = ChannelViewModelFactory(
         context = applicationContext,
         channelId = channelId,
-        composerOptions = ComposerOptions(linkPreviewEnabled = customSettings().isComposerLinkPreviewEnabled),
+        composerOptions = ComposerOptions(linkPreviewEnabled = settings.isComposerLinkPreviewEnabled),
         messageId = messageId,
         parentMessageId = parentMessageId,
     )

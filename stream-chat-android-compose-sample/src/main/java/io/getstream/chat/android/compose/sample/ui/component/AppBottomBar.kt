@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -60,41 +61,40 @@ fun AppBottomBar(
     selectedOption: AppBottomBarOption,
     onOptionSelected: (AppBottomBarOption) -> Unit,
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(ChatTheme.colors.backgroundCoreElevation1),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceEvenly,
-    ) {
-        AppBottomBarOptionTile(
-            icon = ComposeR.drawable.stream_design_ic_message_bubble_fill,
-            text = R.string.app_bottom_bar_chats,
-            isSelected = selectedOption == AppBottomBarOption.CHATS,
-            onClick = { onOptionSelected(AppBottomBarOption.CHATS) },
-            decorationBadge = {
-                if (unreadChannelsCount > 0) {
-                    UnreadCountIndicator(unreadChannelsCount)
-                }
-            },
-        )
-        AppBottomBarOptionTile(
-            icon = ComposeR.drawable.stream_design_ic_mention,
-            text = R.string.app_bottom_bar_mentions,
-            isSelected = selectedOption == AppBottomBarOption.MENTIONS,
-            onClick = { onOptionSelected(AppBottomBarOption.MENTIONS) },
-        )
-        AppBottomBarOptionTile(
-            icon = ComposeR.drawable.stream_design_ic_thread,
-            text = R.string.app_bottom_bar_threads,
-            isSelected = selectedOption == AppBottomBarOption.THREADS,
-            onClick = { onOptionSelected(AppBottomBarOption.THREADS) },
-            decorationBadge = {
-                if (unreadThreadsCount > 0) {
-                    UnreadCountIndicator(unreadThreadsCount)
-                }
-            },
-        )
+    Column(modifier = Modifier.fillMaxWidth()) {
+        HorizontalDivider(thickness = 1.dp, color = ChatTheme.colors.borderCoreSubtle)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(ChatTheme.colors.backgroundCoreElevation1),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly,
+        ) {
+            AppBottomBarOptionTile(
+                selectedIcon = ComposeR.drawable.stream_design_ic_message_bubble_fill,
+                unselectedIcon = ComposeR.drawable.stream_design_ic_message_bubble,
+                text = R.string.app_bottom_bar_chats,
+                isSelected = selectedOption == AppBottomBarOption.CHATS,
+                onClick = { onOptionSelected(AppBottomBarOption.CHATS) },
+                decorationBadge = {
+                    if (unreadChannelsCount > 0) {
+                        UnreadCountIndicator(unreadChannelsCount)
+                    }
+                },
+            )
+            AppBottomBarOptionTile(
+                selectedIcon = ComposeR.drawable.stream_design_ic_thread_fill,
+                unselectedIcon = ComposeR.drawable.stream_design_ic_thread,
+                text = R.string.app_bottom_bar_threads,
+                isSelected = selectedOption == AppBottomBarOption.THREADS,
+                onClick = { onOptionSelected(AppBottomBarOption.THREADS) },
+                decorationBadge = {
+                    if (unreadThreadsCount > 0) {
+                        UnreadCountIndicator(unreadThreadsCount)
+                    }
+                },
+            )
+        }
     }
 }
 
@@ -103,13 +103,13 @@ fun AppBottomBar(
  */
 enum class AppBottomBarOption {
     CHATS,
-    MENTIONS,
     THREADS,
 }
 
 @Composable
 private fun AppBottomBarOptionTile(
-    @DrawableRes icon: Int,
+    @DrawableRes selectedIcon: Int,
+    @DrawableRes unselectedIcon: Int,
     @StringRes text: Int,
     isSelected: Boolean,
     onClick: () -> Unit,
@@ -133,7 +133,7 @@ private fun AppBottomBarOptionTile(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
-                painter = painterResource(icon),
+                painter = painterResource(if (isSelected) selectedIcon else unselectedIcon),
                 contentDescription = null,
                 tint = contentColor,
             )
