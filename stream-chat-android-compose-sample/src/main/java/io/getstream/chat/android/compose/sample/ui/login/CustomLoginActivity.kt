@@ -126,6 +126,9 @@ class CustomLoginActivity : AppCompatActivity() {
                     var userTokenText by remember { mutableStateOf("") }
                     var userNameText by remember { mutableStateOf("") }
                     var isAdaptiveLayoutEnabled by remember { mutableStateOf(settings.isAdaptiveLayoutEnabled) }
+                    var isChannelPinningEnabled by remember {
+                        mutableStateOf(settings.isChannelPinningEnabled)
+                    }
                     var isComposerLinkPreviewEnabled by remember {
                         mutableStateOf(settings.isComposerLinkPreviewEnabled)
                     }
@@ -148,6 +151,15 @@ class CustomLoginActivity : AppCompatActivity() {
                             onValueChange = {
                                 isAdaptiveLayoutEnabled = it
                                 settings.isAdaptiveLayoutEnabled = it
+                            },
+                        ),
+                        FeatureFlag(
+                            label = stringResource(R.string.custom_login_flag_channel_pinning_label),
+                            description = stringResource(R.string.custom_login_flag_channel_pinning_description),
+                            value = isChannelPinningEnabled,
+                            onValueChange = {
+                                isChannelPinningEnabled = it
+                                settings.isChannelPinningEnabled = it
                             },
                         ),
                         FeatureFlag(

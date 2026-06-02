@@ -25,13 +25,14 @@ import io.getstream.chat.android.compose.ui.channels.list.ChannelItemLastMessage
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemLastMessageSeenStatus
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemLastMessageSentStatus
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemMuted
+import io.getstream.chat.android.compose.ui.channels.list.ChannelItemMutedPinned
+import io.getstream.chat.android.compose.ui.channels.list.ChannelItemMutedPinnedMixed
+import io.getstream.chat.android.compose.ui.channels.list.ChannelItemMutedPinnedTrailingBottom
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemMutedTrailingBottom
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemNoMessages
+import io.getstream.chat.android.compose.ui.channels.list.ChannelItemPinned
+import io.getstream.chat.android.compose.ui.channels.list.ChannelItemPinnedTrailingBottom
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemUnreadMessages
-import io.getstream.chat.android.compose.ui.theme.ChannelListConfig
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
-import io.getstream.chat.android.compose.ui.theme.MuteIndicatorPosition
 import org.junit.Rule
 import org.junit.Test
 
@@ -57,15 +58,42 @@ internal class ChannelItemTest : PaparazziComposeTest {
     @Test
     fun `muted channel trailing bottom`() {
         snapshotWithDarkMode {
-            ChatTheme(
-                config = ChatUiConfig(
-                    channelList = ChannelListConfig(
-                        muteIndicatorPosition = MuteIndicatorPosition.TrailingBottom,
-                    ),
-                ),
-            ) {
-                ChannelItemMutedTrailingBottom()
-            }
+            ChannelItemMutedTrailingBottom()
+        }
+    }
+
+    @Test
+    fun `pinned channel`() {
+        snapshotWithDarkMode {
+            ChannelItemPinned()
+        }
+    }
+
+    @Test
+    fun `pinned channel trailing bottom`() {
+        snapshotWithDarkMode {
+            ChannelItemPinnedTrailingBottom()
+        }
+    }
+
+    @Test
+    fun `muted and pinned channel`() {
+        snapshotWithDarkMode {
+            ChannelItemMutedPinned()
+        }
+    }
+
+    @Test
+    fun `muted and pinned channel trailing bottom`() {
+        snapshotWithDarkMode {
+            ChannelItemMutedPinnedTrailingBottom()
+        }
+    }
+
+    @Test
+    fun `muted and pinned channel mixed positions`() {
+        snapshotWithDarkMode {
+            ChannelItemMutedPinnedMixed()
         }
     }
 

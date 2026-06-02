@@ -34,4 +34,12 @@ internal class MentionTest {
         assertEquals(MentionType.user, mention.type)
         assertEquals("John Doe", mention.display)
     }
+
+    @Test
+    fun `Given User without a name when accessing display then fall back to id`() {
+        val user = io.getstream.chat.android.models.User(id = "user1", name = "")
+        val mention = Mention.User(user)
+
+        assertEquals("user1", mention.display)
+    }
 }

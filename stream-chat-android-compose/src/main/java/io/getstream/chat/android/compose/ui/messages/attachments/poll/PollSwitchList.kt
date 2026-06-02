@@ -339,7 +339,6 @@ private fun StepperButton(
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            modifier = Modifier.size(20.dp),
             painter = painterResource(id = iconRes),
             contentDescription = contentDescription,
             tint = if (enabled) ChatTheme.colors.buttonSecondaryText else ChatTheme.colors.textDisabled,

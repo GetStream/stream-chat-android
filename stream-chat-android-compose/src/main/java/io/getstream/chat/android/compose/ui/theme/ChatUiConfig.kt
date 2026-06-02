@@ -41,14 +41,27 @@ public enum class MuteIndicatorPosition {
 }
 
 /**
+ * Defines where the pin indicator icon is placed in the channel list item.
+ */
+public enum class PinIndicatorPosition {
+    /** Icon appears inline after the channel name in the title row. */
+    InlineTitle,
+
+    /** Icon appears at the trailing end of the message/preview row. */
+    TrailingBottom,
+}
+
+/**
  * Behavioral configuration for the channel list.
  *
  * @param muteIndicatorPosition Where the mute icon is placed in the channel list item.
+ * @param pinIndicatorPosition Where the pin icon is placed in the channel list item.
  * @param swipeActionsEnabled Whether swipe-to-reveal actions are enabled on channel list items.
  * @param optionsVisibility Controls which options are visible in the channel options menu.
  */
 public data class ChannelListConfig(
     val muteIndicatorPosition: MuteIndicatorPosition = MuteIndicatorPosition.InlineTitle,
+    val pinIndicatorPosition: PinIndicatorPosition = PinIndicatorPosition.InlineTitle,
     val swipeActionsEnabled: Boolean = true,
     val optionsVisibility: ChannelOptionsVisibility = ChannelOptionsVisibility(),
 )

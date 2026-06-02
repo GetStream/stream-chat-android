@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.internal.state.event.handler.internal
 
 import io.getstream.chat.android.client.ChatEventListener
+import io.getstream.chat.android.client.api.MessageBufferConfig
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.UserMessagesDeletedEvent
@@ -345,6 +346,7 @@ internal class EventHandlerSequentialUserMessagesDeletedTest {
             repos = repos,
             sideEffect = sideEffect,
             syncedEvents = syncedEvents,
+            bufferConfig = MessageBufferConfig(),
             scope = scope,
         )
     }

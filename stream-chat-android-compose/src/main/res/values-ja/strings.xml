@@ -63,6 +63,7 @@
   <string name="stream_compose_block_user">"ユーザーをブロック"</string>
   <string name="stream_compose_cancel">"キャンセル"</string>
   <string name="stream_compose_channel_item_muted">"ミュート中"</string>
+  <string name="stream_compose_channel_item_pinned">"ピン留め中"</string>
   <string name="stream_compose_channel_item_open">"会話を開く"</string>
   <string name="stream_compose_channel_item_options">"会話のオプションを開く"</string>
   <string name="stream_compose_cd_play_button">"再生ボタン"</string>

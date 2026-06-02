@@ -63,6 +63,7 @@
   <string name="stream_compose_block_user">"Bloquear usuario"</string>
   <string name="stream_compose_cancel">"Cancelar"</string>
   <string name="stream_compose_channel_item_muted">"silenciado"</string>
+  <string name="stream_compose_channel_item_pinned">"fijado"</string>
   <string name="stream_compose_channel_item_open">"Abrir conversación"</string>
   <string name="stream_compose_channel_item_options">"Abrir opciones de conversación"</string>
   <string name="stream_compose_cd_play_button">"Botón de reproducción"</string>
