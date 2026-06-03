@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.events.MessageDeletedEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
+import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
@@ -43,5 +44,6 @@ public fun ChatEvent.enrichIfNeeded(): ChatEvent = when (this) {
     is ChannelTruncatedEvent -> copy(message = message?.enrichWithCid(cid))
     is ChannelUpdatedByUserEvent -> copy(message = message?.enrichWithCid(cid))
     is NotificationMessageNewEvent -> copy(message = message.enrichWithCid(cid))
+    is NotificationThreadMessageNewEvent -> copy(message = message.enrichWithCid(cid))
     else -> this
 }
