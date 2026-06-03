@@ -138,7 +138,7 @@ internal class NewMessageEventAdapter(
 
         return NewMessageEvent(
             type = type,
-            createdAt = createdAt ?: Date(0),
+            createdAt = createdAt,
             rawCreatedAt = rawCreatedAt,
             user = user,
             cid = cid,
