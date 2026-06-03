@@ -180,6 +180,12 @@ public fun MessageContainer(
 
     val openThreadLabel = stringResource(R.string.stream_compose_message_item_open_thread)
     val messageOptionsLabel = stringResource(R.string.stream_compose_message_item_options)
+    // The pointerInput lambda below is keyed on Unit, so it is launched once and survives
+    // recomposition. Read the latest message + handler through rememberUpdatedState so the
+    // long-press fires with the current state (e.g. after a reaction is added) instead of a
+    // stale capture from first composition.
+    val currentMessage by rememberUpdatedState(message)
+    val currentOnLongItemClick by rememberUpdatedState(onLongItemClick)
     val clickModifier = when {
         canOpenThread -> Modifier.combinedClickable(
             interactionSource = remember(::MutableInteractionSource),
@@ -191,12 +197,14 @@ public fun MessageContainer(
         )
         canOpenActions ->
             Modifier
-                .pointerInput(message.id) {
-                    detectTapGestures(onLongPress = { onLongItemClick(message) })
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onLongPress = { currentOnLongItemClick(currentMessage) },
+                    )
                 }
                 .semantics(mergeDescendants = true) {
                     onLongClick(label = messageOptionsLabel) {
-                        onLongItemClick(message)
+                        currentOnLongItemClick(currentMessage)
                         true
                     }
                 }
