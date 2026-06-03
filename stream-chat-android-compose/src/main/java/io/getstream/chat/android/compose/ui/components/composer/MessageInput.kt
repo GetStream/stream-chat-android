@@ -28,8 +28,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -37,6 +40,7 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
@@ -64,6 +68,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
  * @param innerLeadingContent Composable that represents the persistent inner leading content.
  * @param innerTrailingContent Composable that represents the persistent inner trailing content.
  */
+@Suppress("LongMethod")
 @Composable
 public fun MessageInput(
     messageComposerState: MessageComposerState,
@@ -80,6 +85,11 @@ public fun MessageInput(
 ) {
     val (value, attachments, activeAction) = messageComposerState
     val canSendMessage = messageComposerState.canSendMessage()
+
+    val deviceLayoutDirection = LocalLayoutDirection.current
+    val contentLayoutDirection = remember(value, deviceLayoutDirection) {
+        value.contentLayoutDirection(default = deviceLayoutDirection)
+    }
 
     val visualTransformation = MessageInputVisualTransformation(
         inputFieldTheme = ChatTheme.messageComposerTheme.inputField,
@@ -123,21 +133,23 @@ public fun MessageInput(
                     Spacer(modifier = Modifier.size(16.dp))
                 }
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    innerLeadingContent()
+                CompositionLocalProvider(LocalLayoutDirection provides contentLayoutDirection) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        innerLeadingContent()
 
-                    Box(modifier = Modifier.weight(1f)) {
-                        innerTextField()
+                        Box(modifier = Modifier.weight(1f)) {
+                            innerTextField()
 
-                        if (value.isEmpty()) {
-                            label(messageComposerState)
+                            if (value.isEmpty()) {
+                                label(messageComposerState)
+                            }
                         }
-                    }
 
-                    innerTrailingContent()
+                        innerTrailingContent()
+                    }
                 }
             }
         },
@@ -183,3 +195,29 @@ private class MessageInputVisualTransformation(
  * this threshold is exceeded.
  */
 private const val DefaultMessageInputMaxLines = 6
+
+/**
+ * Resolves the [LayoutDirection] that matches the first strong directional character in this string.
+ * Falls back to [default] when the string is empty or contains only neutral characters — this keeps
+ * the empty composer aligned with the device locale instead of forcing LTR.
+ */
+private fun String.contentLayoutDirection(default: LayoutDirection): LayoutDirection {
+    for (char in this) {
+        when (Character.getDirectionality(char)) {
+            Character.DIRECTIONALITY_RIGHT_TO_LEFT,
+            Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC,
+            Character.DIRECTIONALITY_RIGHT_TO_LEFT_EMBEDDING,
+            Character.DIRECTIONALITY_RIGHT_TO_LEFT_OVERRIDE,
+            -> return LayoutDirection.Rtl
+
+            Character.DIRECTIONALITY_LEFT_TO_RIGHT,
+            Character.DIRECTIONALITY_LEFT_TO_RIGHT_EMBEDDING,
+            Character.DIRECTIONALITY_LEFT_TO_RIGHT_OVERRIDE,
+            -> return LayoutDirection.Ltr
+            // Neutral / weak character (punctuation, digits, whitespace, etc.) — skip and keep
+            // scanning for the first strong directional character.
+            else -> Unit
+        }
+    }
+    return default
+}
