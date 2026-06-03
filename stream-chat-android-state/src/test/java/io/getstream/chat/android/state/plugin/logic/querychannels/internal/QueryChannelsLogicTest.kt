@@ -30,6 +30,7 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
+import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.asCall
@@ -537,6 +538,58 @@ internal class QueryChannelsLogicTest {
         verify(queryChannelsStateLogic, never()).addChannelsState(any())
         verify(queryChannelsStateLogic, never()).initializeChannelsIfNeeded()
         verify(queryChannelsStateLogic, never()).setLoadingFirstPage(any())
+    }
+
+    // endregion
+
+    // region Grouped accessors
+
+    @Test
+    fun `groupKey returns null for a Standard identifier`() {
+        val standardLogic = QueryChannelsLogic(
+            identifier = QueryChannelsIdentifier.Standard(filter, sort),
+            client = client,
+            queryChannelsStateLogic = queryChannelsStateLogic,
+            queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
+        )
+        assertEquals(null, standardLogic.groupKey())
+    }
+
+    @Test
+    fun `groupKey returns the identifier's groupKey for a Grouped identifier`() {
+        val groupedLogic = QueryChannelsLogic(
+            identifier = QueryChannelsIdentifier.Grouped(groupKey = "direct"),
+            client = client,
+            queryChannelsStateLogic = queryChannelsStateLogic,
+            queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
+        )
+        assertEquals("direct", groupedLogic.groupKey())
+    }
+
+    @Test
+    fun `groupedQueryConfig forwards to the state logic`() {
+        val config = GroupedQueryConfig(limit = 30, pageSize = 10, watch = true, presence = false)
+        whenever(queryChannelsStateLogic.getGroupedQueryConfig()) doReturn config
+
+        assertEquals(config, logic.groupedQueryConfig())
+        verify(queryChannelsStateLogic).getGroupedQueryConfig()
+    }
+
+    @Test
+    fun `setGroupedQueryConfig forwards to the state logic`() {
+        val config = GroupedQueryConfig(limit = 30, pageSize = 10, watch = false, presence = false)
+
+        logic.setGroupedQueryConfig(config)
+
+        verify(queryChannelsStateLogic).setGroupedQueryConfig(config)
+    }
+
+    @Test
+    fun `currentRequest reads the active request from the state`() {
+        val request = QueryChannelsRequest(filter = filter, limit = 30, querySort = sort)
+        whenever(queryChannelsState.currentRequest) doReturn MutableStateFlow(request)
+
+        assertEquals(request, logic.currentRequest())
     }
 
     // endregion

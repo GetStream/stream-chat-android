@@ -18,14 +18,18 @@ package io.getstream.chat.android.state.plugin.state.querychannels.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
+import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,6 +42,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.mock
 import java.util.Date
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -338,6 +343,55 @@ internal class QueryChannelsMutableStateTest {
         assertEquals("p", predefinedState.queryChannelsSpec.predefinedFilterName)
         assertEquals(mapOf("a" to 1), predefinedState.queryChannelsSpec.predefinedFilterValues)
         assertEquals(mapOf("b" to 2), predefinedState.queryChannelsSpec.predefinedSortValues)
+    }
+
+    // endregion
+
+    // region Grouped setters
+
+    @Test
+    fun `setNextCursor updates nextCursor flow`() = runTest {
+        assertNull(state.nextCursor.value)
+        state.setNextCursor("cursor-123")
+        assertEquals("cursor-123", state.nextCursor.value)
+        state.setNextCursor(null)
+        assertNull(state.nextCursor.value)
+    }
+
+    @Test
+    fun `setGroupedQueryConfig updates groupedQueryConfig flow`() = runTest {
+        assertNull(state.groupedQueryConfig.value)
+        val config = GroupedQueryConfig(limit = 30, pageSize = 10, watch = true, presence = false)
+        state.setGroupedQueryConfig(config)
+        assertEquals(config, state.groupedQueryConfig.value)
+    }
+
+    @Test
+    fun `setCids updates cids on the in-memory spec`() {
+        val cids = setOf(randomCID(), randomCID())
+        state.setCids(cids)
+        assertEquals(cids, state.queryChannelsSpec.cids)
+    }
+
+    @Test
+    fun `grouped identifier wires groupKey and default sort into the spec`() {
+        val groupedState = newState(QueryChannelsIdentifier.Grouped(groupKey = "direct"))
+
+        assertEquals("direct", groupedState.queryChannelsSpec.groupKey)
+        // Default sort for Grouped is descending by "last_updated".
+        assertEquals(QuerySortByField.descByName<Channel>("last_updated"), groupedState.sort)
+    }
+
+    // endregion
+
+    // region chatEventHandlerFactory
+
+    @Test
+    fun `setting chatEventHandlerFactory to null clears the wired handler`() {
+        state.chatEventHandlerFactory = ChatEventHandlerFactory(clientState = mock<ClientState>())
+        state.chatEventHandlerFactory = null
+
+        assertNull(state.chatEventHandlerFactory)
     }
 
     // endregion
