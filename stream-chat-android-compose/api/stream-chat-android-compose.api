@@ -1551,10 +1551,12 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Comp
 public final class io/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$QuotedMessageKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$QuotedMessageKt;
 	public fun <init> ()V
+	public final fun getLambda$-1414494261$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-242957275$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-615170823$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1327756724$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1642749758$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1769024465$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1784593268$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$976393970$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
