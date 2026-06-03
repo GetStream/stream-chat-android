@@ -230,7 +230,6 @@ class ChatsActivity : ComponentActivity() {
                     onOptionSelected = { option ->
                         listContentMode = when (option) {
                             AppBottomBarOption.CHATS -> ChatListContentMode.Channels
-                            AppBottomBarOption.MENTIONS -> ChatListContentMode.Mentions
                             AppBottomBarOption.THREADS -> ChatListContentMode.Threads
                         }
                     },
@@ -256,8 +255,9 @@ class ChatsActivity : ComponentActivity() {
         val unreadThreadsCount by remember { globalStateFlow.flatMapLatest { it.unreadThreadsCount } }
             .collectAsStateWithLifecycle(0)
         val selectedOption = when (listContentMode) {
-            ChatListContentMode.Channels -> AppBottomBarOption.CHATS
-            ChatListContentMode.Mentions -> AppBottomBarOption.MENTIONS
+            ChatListContentMode.Channels,
+            ChatListContentMode.Mentions,
+            -> AppBottomBarOption.CHATS
             ChatListContentMode.Threads -> AppBottomBarOption.THREADS
         }
         AppBottomBar(

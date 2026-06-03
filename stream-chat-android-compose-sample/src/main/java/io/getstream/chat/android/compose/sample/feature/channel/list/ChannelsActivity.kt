@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.sample.feature.channel.list
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -35,7 +34,6 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
@@ -81,7 +79,6 @@ import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionsVisibility
 import io.getstream.chat.android.compose.ui.components.channels.buildDefaultChannelActions
-import io.getstream.chat.android.compose.ui.mentions.MentionList
 import io.getstream.chat.android.compose.ui.theme.ChannelListConfig
 import io.getstream.chat.android.compose.ui.theme.ChannelListDividerItemParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListItemContentParams
@@ -91,8 +88,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.threads.ThreadsScreen
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
-import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModel
-import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
@@ -141,7 +136,6 @@ class ChannelsActivity : ComponentActivity() {
     }
 
     private val channelsViewModel: ChannelListViewModel by viewModels { channelsViewModelFactory }
-    private val mentionListViewModel: MentionListViewModel by viewModels { MentionListViewModelFactory() }
     private val threadsViewModelFactory = ThreadsViewModelFactory(query = QueryThreadsRequest())
 
     @Suppress("LongMethod")
@@ -228,7 +222,6 @@ class ChannelsActivity : ComponentActivity() {
                                         },
                                     )
 
-                                    AppBottomBarOption.MENTIONS -> MentionsContent()
                                     AppBottomBarOption.THREADS -> ThreadsContent(
                                         onHeaderAvatarClick = {
                                             coroutineScope.launch {
@@ -260,17 +253,6 @@ class ChannelsActivity : ComponentActivity() {
         )
         // MyCustomUiSimplified()
         // MyCustomUi()
-    }
-
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    private fun MentionsContent() {
-        MentionList(
-            viewModel = mentionListViewModel,
-            modifier = Modifier.fillMaxSize(),
-            onItemClick = ::openMessages,
-            onEvent = { Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show() },
-        )
     }
 
     @Composable

@@ -1585,6 +1585,50 @@ internal class MessageComposerControllerTest {
     }
 
     @Test
+    fun `Given nameless mention When user id token present Then mention is kept`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val user = User(id = "user1", name = "")
+        controller.setMessageInput("Hello @")
+        controller.selectMention(user)
+        advanceUntilIdle()
+
+        // When
+        val message = controller.buildNewMessage(controller.messageInput.value.text)
+
+        // Then
+        assertEquals(listOf("user1"), message.mentionedUsersIds)
+    }
+
+    @Test
+    fun `Given nameless mention When user id token removed Then mention is dropped`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val user = User(id = "user1", name = "")
+        controller.setMessageInput("Hello @")
+        controller.selectMention(user)
+        advanceUntilIdle()
+
+        // When (user erases the mention text but a stray "@" remains)
+        val message = controller.buildNewMessage("Hello @ world")
+
+        // Then
+        assertEquals(emptyList<String>(), message.mentionedUsersIds)
+    }
+
+    @Test
     fun `Given an active command When clearData called Then activeCommand is null`() = runTest {
         // Given
         val command = randomCommand()

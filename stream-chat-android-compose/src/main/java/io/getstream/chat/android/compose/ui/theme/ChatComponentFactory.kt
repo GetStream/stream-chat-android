@@ -1647,7 +1647,12 @@ public interface ChatComponentFactory {
     public fun MessageComposerAudioRecordingPermissionRationale(
         params: MessageComposerAudioRecordingPermissionRationaleParams,
     ) {
-        StreamSnackbar(snackbarData = params.data)
+        StreamSnackbar(
+            modifier = Modifier.padding(
+                bottom = if (ChatTheme.config.composer.floatingStyleEnabled) 0.dp else StreamTokens.spacingMd,
+            ),
+            snackbarData = params.data,
+        )
     }
 
     /**
@@ -1720,7 +1725,12 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun MessageComposerAudioRecordingHint(params: MessageComposerAudioRecordingHintParams) {
-        StreamSnackbar(snackbarData = params.data)
+        StreamSnackbar(
+            modifier = Modifier.padding(
+                bottom = if (ChatTheme.config.composer.floatingStyleEnabled) 0.dp else StreamTokens.spacingMd,
+            ),
+            snackbarData = params.data,
+        )
     }
 
     /**
