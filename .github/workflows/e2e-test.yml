@@ -38,7 +38,7 @@ jobs:
     outputs:
       launch_id: ${{ env.LAUNCH_ID }}
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - uses: GetStream/android-ci-actions/actions/allure-launch@main
         if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
@@ -62,7 +62,7 @@ jobs:
       ANDROID_API_LEVEL: 34
       LAUNCH_ID: ${{ needs.allure_testops_launch.outputs.launch_id }}
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
       - uses: actions/download-artifact@v8.0.1
         continue-on-error: true
         with:

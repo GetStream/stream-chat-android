@@ -14,7 +14,7 @@ jobs:
     name: Build and Distribute Compose Sample App
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - name: Prepare environment
         run: |
