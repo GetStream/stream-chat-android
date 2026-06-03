@@ -255,6 +255,8 @@
     <item quantity="other">"%d枚の写真"</item>
   </plurals>
   <string name="stream_compose_quoted_message_media">"%dメディア"</string>
+  <string name="stream_compose_quoted_message_replied_to_their_message">"%1$sが%2$sのメッセージに返信しました"</string>
+  <string name="stream_compose_quoted_message_replied_to_your_message">"%1$sがあなたのメッセージに返信しました"</string>
   <string name="stream_compose_quoted_message_reply_to">"%sへの返信"</string>
   <string name="stream_compose_quoted_message_reply_to_you">"自分への返信"</string>
   <plurals name="stream_compose_quoted_message_videos">

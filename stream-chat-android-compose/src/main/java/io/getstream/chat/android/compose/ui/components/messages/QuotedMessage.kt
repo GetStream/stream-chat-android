@@ -154,10 +154,26 @@ private fun QuotedMessageUserName(
         isComposerBanner -> stringResource(R.string.stream_compose_quoted_message_reply_to, message.user.name)
         else -> message.user.name
     }
-    val accessibilityName = if (isMine && isComposerBanner) {
-        stringResource(R.string.stream_compose_quoted_message_reply_to_you)
-    } else {
-        null
+    val accessibilityName = when {
+        replyMessage == null && isMine ->
+            stringResource(R.string.stream_compose_quoted_message_reply_to_you)
+        replyMessage != null -> {
+            val replierName = if (replyMessage.isMine(currentUser)) {
+                stringResource(R.string.stream_compose_quoted_message_you)
+            } else {
+                replyMessage.user.name
+            }
+            if (isMine) {
+                stringResource(R.string.stream_compose_quoted_message_replied_to_your_message, replierName)
+            } else {
+                stringResource(
+                    R.string.stream_compose_quoted_message_replied_to_their_message,
+                    replierName,
+                    message.user.name,
+                )
+            }
+        }
+        else -> null
     }
 
     Text(
