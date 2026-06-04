@@ -106,12 +106,17 @@ internal class DirectEventParser(
 
     /**
      * Attempts to parse [raw] JSON into a [ChatEvent] using a direct adapter.
-     * Returns `null` if the event type is not supported by any direct adapter.
+     * Returns `null` if the event type is not supported by any direct adapter,
+     * or if the matching adapter throws — allowing the caller to fall back to the DTO path.
      */
     fun parse(raw: String): ChatEvent? {
         val type = extractType(raw) ?: return null
         val adapter = adapterMap[type] ?: return null
-        return adapter.fromJson(raw)
+        return runCatching { adapter.fromJson(raw) }
+            .onFailure { e ->
+                logger.v { "Direct parse failed for '$type'; falling back to DTO path: ${e.message}" }
+            }
+            .getOrNull()
     }
 
     companion object {
