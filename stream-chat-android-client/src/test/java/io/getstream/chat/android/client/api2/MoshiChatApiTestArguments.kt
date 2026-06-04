@@ -50,6 +50,8 @@ import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResp
 import io.getstream.chat.android.client.api2.model.response.QueryBlockedUsersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
+import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsGroup
+import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryMembersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
@@ -73,6 +75,7 @@ import io.getstream.chat.android.models.UnreadChannelByType
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.UploadedFile
+import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDateOrNull
@@ -437,6 +440,38 @@ internal object MoshiChatApiTestArguments {
             Result.Success::class,
         ),
         Arguments.of(RetroError<QueryChannelsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    @JvmStatic
+    fun queryGroupedChannelsInput() = listOf(
+        Arguments.of(
+            RetroSuccess(
+                QueryGroupedChannelsResponse(
+                    groups = mapOf(
+                        "all-open" to QueryGroupedChannelsGroup(
+                            channels = listOf(
+                                ChannelResponse(
+                                    channel = Mother.randomDownstreamChannelDto(),
+                                    hidden = randomBoolean(),
+                                    membership = Mother.randomDownstreamMemberDto(),
+                                    hide_messages_before = randomDateOrNull(),
+                                    draft = randomDownstreamDraftDto(),
+                                ),
+                            ),
+                            unread_channels = positiveRandomInt(),
+                            next = null,
+                            prev = null,
+                        ),
+                    ),
+                    duration = "12ms",
+                ),
+            ).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(
+            RetroError<QueryGroupedChannelsResponse>(statusCode = 500).toRetrofitCall(),
+            Result.Failure::class,
+        ),
     )
 
     @JvmStatic

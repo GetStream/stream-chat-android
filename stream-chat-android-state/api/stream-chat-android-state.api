@@ -209,6 +209,7 @@ public abstract interface class io/getstream/chat/android/state/plugin/state/glo
 	public abstract fun getChannelMutes ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getCurrentUserActiveLiveLocations ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getGroupedUnreadChannels ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMuted ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getThreadDraftMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTotalUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
@@ -245,6 +246,23 @@ public final class io/getstream/chat/android/state/plugin/state/querychannels/Ch
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/state/plugin/state/querychannels/GroupedQueryConfig {
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;ZZ)V
+	public final fun component1 ()Ljava/lang/Integer;
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun component3 ()Z
+	public final fun component4 ()Z
+	public final fun copy (Ljava/lang/Integer;Ljava/lang/Integer;ZZ)Lio/getstream/chat/android/state/plugin/state/querychannels/GroupedQueryConfig;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/state/plugin/state/querychannels/GroupedQueryConfig;Ljava/lang/Integer;Ljava/lang/Integer;ZZILjava/lang/Object;)Lio/getstream/chat/android/state/plugin/state/querychannels/GroupedQueryConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLimit ()Ljava/lang/Integer;
+	public final fun getPageSize ()Ljava/lang/Integer;
+	public final fun getPresence ()Z
+	public final fun getWatch ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface class io/getstream/chat/android/state/plugin/state/querychannels/QueryChannelsState {
 	public abstract fun getChannels ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelsStateData ()Lkotlinx/coroutines/flow/StateFlow;
@@ -252,8 +270,10 @@ public abstract interface class io/getstream/chat/android/state/plugin/state/que
 	public abstract fun getCurrentRequest ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getEndOfChannels ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getFilter ()Lio/getstream/chat/android/models/FilterObject;
+	public abstract fun getGroupedQueryConfig ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getLoading ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getLoadingMore ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getNextCursor ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getNextPageRequest ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getRecoveryNeeded ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getSort ()Lio/getstream/chat/android/models/querysort/QuerySorter;

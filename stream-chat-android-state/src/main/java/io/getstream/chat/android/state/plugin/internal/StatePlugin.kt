@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.plugin.listeners.PushPreferencesListener
 import io.getstream.chat.android.client.plugin.listeners.QueryBlockedUsersListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.plugin.listeners.QueryGroupedChannelsListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.plugin.listeners.QueryThreadsListener
 import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
@@ -49,6 +50,7 @@ import io.getstream.chat.android.client.plugin.listeners.UnblockUserListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.event.handler.grouped.internal.GroupedUnreadChannelsUpdater
 import io.getstream.chat.android.state.event.handler.internal.EventHandler
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.listener.internal.BlockUserListenerState
@@ -67,6 +69,7 @@ import io.getstream.chat.android.state.plugin.listener.internal.PushPreferencesL
 import io.getstream.chat.android.state.plugin.listener.internal.QueryBlockedUsersListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryChannelListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryChannelsListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.QueryGroupedChannelsListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryMembersListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryThreadsListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.SendAttachmentListenerState
@@ -109,11 +112,17 @@ public class StatePlugin internal constructor(
     private val syncManager: SyncManager,
     private val eventHandler: EventHandler,
     private val mutableGlobalState: MutableGlobalState,
+    private val groupedUnreadChannelsUpdater: GroupedUnreadChannelsUpdater,
     private val queryingChannelsFree: MutableStateFlow<Boolean>,
     private val statePluginConfig: StatePluginConfig,
 ) : Plugin,
     QueryMembersListener by QueryMembersListenerState(logic),
     QueryChannelsListener by QueryChannelsListenerState(logic, queryingChannelsFree),
+    QueryGroupedChannelsListener by QueryGroupedChannelsListenerState(
+        logic = logic,
+        globalState = mutableGlobalState,
+        groupedUnreadChannelsUpdater = groupedUnreadChannelsUpdater,
+    ),
     QueryChannelListener by QueryChannelListenerState(logic),
     ThreadQueryListener by ThreadQueryListenerState(logic, repositoryFacade),
     ChannelMarkReadListener by ChannelMarkReadListenerState(stateRegistry),

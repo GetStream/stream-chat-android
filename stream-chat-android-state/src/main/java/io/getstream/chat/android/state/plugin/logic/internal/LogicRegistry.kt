@@ -29,6 +29,7 @@ import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.state.event.handler.grouped.internal.GroupAwareChatEventHandlerFactory
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogicImpl
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
@@ -77,8 +78,19 @@ internal class LogicRegistry internal constructor(
     /** Returns [QueryChannelsLogic] for the given [identifier], creating it on first access. */
     internal fun queryChannels(identifier: QueryChannelsIdentifier): QueryChannelsLogic {
         return queryChannels.getOrPut(identifier) {
+            val mutableState = stateRegistry.queryChannels(identifier).toMutableState()
+            // Idempotent default install: if a caller (e.g. ChatClientStateCalls) has already set a
+            // custom factory on the state, do not clobber it here.
+            if (identifier is QueryChannelsIdentifier.Grouped &&
+                mutableState.chatEventHandlerFactory == null
+            ) {
+                mutableState.chatEventHandlerFactory = GroupAwareChatEventHandlerFactory(
+                    groupKey = identifier.groupKey,
+                    clientState = clientState,
+                )
+            }
             val queryChannelsStateLogic = QueryChannelsStateLogic(
-                mutableState = stateRegistry.queryChannels(identifier).toMutableState(),
+                mutableState = mutableState,
                 stateRegistry = stateRegistry,
                 logicRegistry = this,
                 coroutineScope = coroutineScope,

@@ -28,8 +28,26 @@ import org.mockito.kotlin.mock
 internal class ChannelViewModelFactoryTest {
 
     @Test
-    fun `create should return correct instance`() {
-        val sut = Fixture().get()
+    fun `Standard constructor produces a factory that creates a ChannelListViewModel`() {
+        val sut = Fixture().getStandard()
+
+        val viewModel = sut.create(ChannelListViewModel::class.java)
+
+        assertInstanceOf<ChannelListViewModel>(viewModel)
+    }
+
+    @Test
+    fun `Predefined constructor produces a factory that creates a ChannelListViewModel`() {
+        val sut = Fixture().getPredefined(predefinedFilterName = "my-filter")
+
+        val viewModel = sut.create(ChannelListViewModel::class.java)
+
+        assertInstanceOf<ChannelListViewModel>(viewModel)
+    }
+
+    @Test
+    fun `Grouped constructor produces a factory that creates a ChannelListViewModel`() {
+        val sut = Fixture().getGrouped(groupKey = "direct")
 
         val viewModel = sut.create(ChannelListViewModel::class.java)
 
@@ -38,7 +56,7 @@ internal class ChannelViewModelFactoryTest {
 
     @Test
     fun `create should throw IllegalArgumentException for unsupported ViewModel class`() {
-        val sut = Fixture().get()
+        val sut = Fixture().getStandard()
 
         val exception = assertThrows(IllegalArgumentException::class.java) {
             sut.create(ViewModel::class.java)
@@ -55,8 +73,22 @@ internal class ChannelViewModelFactoryTest {
             on { clientState } doReturn mock()
         }
 
-        fun get(): ChannelViewModelFactory {
+        fun getStandard(): ChannelViewModelFactory {
             return ChannelViewModelFactory(
+                chatClient = mockChatClient,
+            )
+        }
+
+        fun getPredefined(predefinedFilterName: String): ChannelViewModelFactory {
+            return ChannelViewModelFactory(
+                chatClient = mockChatClient,
+                predefinedFilterName = predefinedFilterName,
+            )
+        }
+
+        fun getGrouped(groupKey: String): ChannelViewModelFactory {
+            return ChannelViewModelFactory(
+                groupKey = groupKey,
                 chatClient = mockChatClient,
             )
         }

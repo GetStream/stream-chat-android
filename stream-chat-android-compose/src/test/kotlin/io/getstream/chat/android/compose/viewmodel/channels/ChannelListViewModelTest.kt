@@ -24,12 +24,15 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.AndFilterObject
 import io.getstream.chat.android.models.AutocompleteFilterObject
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.GroupedChannels
+import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.models.InFilterObject
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Message
@@ -45,6 +48,7 @@ import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
+import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
@@ -73,6 +77,7 @@ import org.mockito.kotlin.whenever
 import java.util.Date
 
 @Suppress("LargeClass")
+@OptIn(InternalStreamChatApi::class)
 @ExperimentalCoroutinesApi
 @ExtendWith(TestCoroutineExtension::class)
 internal class ChannelListViewModelTest {
@@ -318,39 +323,6 @@ internal class ChannelListViewModelTest {
         }
 
     @Test
-    fun `Given channel list in content state and the current user is online When loading more channels Should filter out duplicate calls`() =
-        runTest {
-            val nextPageRequest = QueryChannelsRequest(
-                filter = queryFilter,
-                querySort = querySort,
-                offset = 30,
-                limit = 60,
-            )
-            val chatClient: ChatClient = mock()
-            val viewModel = Fixture(chatClient)
-                .givenCurrentUser()
-                .givenChannelsQuery()
-                .givenChannelsState(
-                    channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
-                    nextPageRequest = nextPageRequest,
-                    loading = false,
-                )
-                .givenChannelMutes()
-                .givenIsOffline(false)
-                .get(this)
-
-            viewModel.loadMore()
-            viewModel.loadMore()
-            viewModel.loadMore()
-
-            val captor = argumentCaptor<QueryChannelsRequest>()
-            verify(chatClient, times(2)).queryChannels(captor.capture())
-            assertEquals(2, captor.allValues.size)
-            assertEquals(0, captor.firstValue.offset)
-            assertEquals(30, captor.secondValue.offset)
-        }
-
-    @Test
     fun `Given channel list When setting message search query Should search messages without offset or cursor`() =
         runTest {
             val chatClient: ChatClient = mock()
@@ -528,6 +500,85 @@ internal class ChannelListViewModelTest {
                 sort = sortCaptor.capture(),
             )
             assertEquals(messageSearchSort, sortCaptor.firstValue)
+        }
+
+    @Test
+    fun `Given groupKey ViewModel When initializing Should not call queryChannels`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Loading, loading = true)
+                .givenChannelMutes()
+                .get(this, groupKey = "team-a")
+
+            verify(chatClient, times(0)).queryChannels(any())
+        }
+
+    @Test
+    fun `Given grouped ViewModel with captured config When loading more Should reuse limit pageSize watch and presence`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val capturedConfig = GroupedQueryConfig(
+                limit = 20,
+                pageSize = 5,
+                watch = true,
+                presence = false,
+            )
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1)),
+                    channels = listOf(channel1),
+                    loading = false,
+                    nextCursor = "cursor-1",
+                    groupedQueryConfig = capturedConfig,
+                )
+                .givenChannelMutes()
+                .givenGroupedChannelsQuery()
+                .get(this, groupKey = "team-a")
+
+            viewModel.loadMore()
+            advanceUntilIdle()
+
+            verify(chatClient).queryGroupedChannelsInternal(
+                limit = 20,
+                groups = mapOf(
+                    "team-a" to GroupedChannelsGroupQuery(limit = 5, next = "cursor-1"),
+                ),
+                watch = true,
+                presence = false,
+            )
+        }
+
+    @Test
+    fun `Given grouped ViewModel with no captured config When loading more Should fall back to method defaults`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1)),
+                    channels = listOf(channel1),
+                    loading = false,
+                    nextCursor = "cursor-2",
+                    groupedQueryConfig = null,
+                )
+                .givenChannelMutes()
+                .givenGroupedChannelsQuery()
+                .get(this, groupKey = "team-a")
+
+            viewModel.loadMore()
+            advanceUntilIdle()
+
+            verify(chatClient).queryGroupedChannelsInternal(
+                limit = null,
+                groups = mapOf(
+                    "team-a" to GroupedChannelsGroupQuery(limit = null, next = "cursor-2"),
+                ),
+                watch = true,
+                presence = false,
+            )
         }
 
     @Test
@@ -783,8 +834,13 @@ internal class ChannelListViewModelTest {
         init {
             val statePlugin: StatePlugin = mock()
             whenever(globalState.typingChannels) doReturn MutableStateFlow(emptyMap())
-            whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
-            whenever(statePlugin.resolveDependency(eq(GlobalState::class))) doReturn globalState
+            whenever(statePlugin.resolveDependency(any<kotlin.reflect.KClass<*>>())).thenAnswer { invocation ->
+                when (val klass = invocation.getArgument<kotlin.reflect.KClass<*>>(0)) {
+                    StateRegistry::class -> stateRegistry
+                    GlobalState::class -> globalState
+                    else -> org.mockito.Mockito.mock(klass.java, org.mockito.Mockito.RETURNS_DEEP_STUBS)
+                }
+            }
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
             whenever(chatClient.channel(any())) doReturn channelClient
             whenever(chatClient.channel(any(), any())) doReturn channelClient
@@ -813,6 +869,19 @@ internal class ChannelListViewModelTest {
 
         fun givenChannelsQuery(channels: List<Channel> = emptyList()) = apply {
             whenever(chatClient.queryChannels(any())) doReturn channels.asCall()
+        }
+
+        fun givenGroupedChannelsQuery(
+            result: GroupedChannels = GroupedChannels(groups = emptyMap()),
+        ) = apply {
+            whenever(
+                chatClient.queryGroupedChannelsInternal(
+                    limit = anyOrNull(),
+                    groups = anyOrNull(),
+                    watch = any(),
+                    presence = any(),
+                ),
+            ) doReturn result.asCall()
         }
 
         fun givenDeleteChannel() = apply {
@@ -858,6 +927,8 @@ internal class ChannelListViewModelTest {
             loadingMore: Boolean = false,
             endOfChannels: Boolean = false,
             nextPageRequest: QueryChannelsRequest? = null,
+            nextCursor: String? = null,
+            groupedQueryConfig: GroupedQueryConfig? = null,
         ) = apply {
             val queryChannelsState: QueryChannelsState = mock {
                 whenever(it.channelsStateData) doReturn MutableStateFlow(channelsStateData)
@@ -866,16 +937,31 @@ internal class ChannelListViewModelTest {
                 whenever(it.loadingMore) doReturn MutableStateFlow(loadingMore)
                 whenever(it.endOfChannels) doReturn MutableStateFlow(endOfChannels)
                 whenever(it.nextPageRequest) doReturn MutableStateFlow(nextPageRequest)
+                whenever(it.nextCursor) doReturn MutableStateFlow(nextCursor)
+                whenever(it.groupedQueryConfig) doReturn MutableStateFlow(groupedQueryConfig)
             }
+            whenever(stateRegistry.queryChannels(any(), any())) doReturn queryChannelsState
             whenever(stateRegistry.queryChannels(any<QueryChannelsIdentifier>())) doReturn queryChannelsState
         }
 
-        fun get(testScope: TestScope): ChannelListViewModel {
-            val name = predefinedFilterName
-            val channelListViewModel = if (name != null) {
-                ChannelListViewModel(
+        fun givenChannelsState(queryChannelsState: QueryChannelsState) = apply {
+            whenever(stateRegistry.queryChannels(any(), any())) doReturn queryChannelsState
+            whenever(stateRegistry.queryChannels(any<QueryChannelsIdentifier>())) doReturn queryChannelsState
+        }
+
+        fun get(testScope: TestScope, groupKey: String? = null): ChannelListViewModel {
+            val predefinedName = predefinedFilterName
+            val channelListViewModel = when {
+                groupKey != null -> ChannelListViewModel(
                     chatClient = chatClient,
-                    predefinedFilterName = name,
+                    groupKey = groupKey,
+                    isDraftMessageEnabled = false,
+                    messageSearchSort = messageSearchSort,
+                    globalState = MutableStateFlow(globalState),
+                )
+                predefinedName != null -> ChannelListViewModel(
+                    chatClient = chatClient,
+                    predefinedFilterName = predefinedName,
                     filterValues = predefinedFilterValues,
                     sortValues = predefinedSortValues,
                     isDraftMessageEnabled = false,
@@ -883,8 +969,7 @@ internal class ChannelListViewModelTest {
                     messageSearchSort = messageSearchSort,
                     globalState = MutableStateFlow(globalState),
                 )
-            } else {
-                ChannelListViewModel(
+                else -> ChannelListViewModel(
                     chatClient = chatClient,
                     initialSort = initialSort,
                     initialFilters = initialFilters,

@@ -26,12 +26,17 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
+import io.getstream.chat.android.state.model.querychannels.pagination.internal.toOfflinePaginationRequest
+import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 private const val INITIAL_CHANNEL_OFFSET = 0
 private const val CHANNEL_LIMIT = 30
@@ -45,6 +50,66 @@ internal class QueryChannelsLogic(
 ) {
 
     private val logger by taggedLogger("Chat:QueryChannelsLogic")
+
+    /**
+     * Serialises [applyGroupedResult] so concurrent grouped responses (e.g. recovery overlapping
+     * with pagination) cannot interleave their multi-step writes to [queryChannelsStateLogic].
+     */
+    private val groupedResultMutex = Mutex()
+
+    /**
+     * Sets the current request and optimistically loads any cached channels for the given
+     * [request] from the local database. The cached channels are added to the in-memory state.
+     * No remote API call is made.
+     */
+    internal suspend fun loadOfflineChannels(request: QueryChannelsRequest) {
+        setCurrentRequest(request)
+        val offlineChannels = fetchChannelsFromCache(request.toOfflinePaginationRequest())
+        // fetchChannelsFromCache suspends for DB I/O. During that suspension, fresh data may have
+        // landed via another path. Check after the DB read to avoid appending stale offline data on
+        // top of fresh channels.
+        val existing = queryChannelsStateLogic.getChannels()
+        if (!existing.isNullOrEmpty()) {
+            logger.d { "[loadOfflineChannels] skipped (channels already populated: ${existing.size})" }
+            return
+        }
+        if (offlineChannels != null) {
+            queryChannelsStateLogic.addChannelsState(offlineChannels)
+        }
+        // Ensure channels map is non-null (empty if no cache) and loading is reset, so
+        // channelsStateData transitions to OfflineNoResults instead of staying in Loading.
+        queryChannelsStateLogic.initializeChannelsIfNeeded()
+        queryChannelsStateLogic.setLoadingFirstPage(false)
+    }
+
+    /**
+     * Grouped-only offline cache read. Called from the Grouped init flow. Standard's
+     * [loadOfflineChannels] is untouched.
+     *
+     * Reads channels stored under the stable identifier-derived id and seeds in-memory state,
+     * guarding against the case where a concurrent [applyGroupedResult] call has already populated
+     * the state with fresh data.
+     */
+    internal suspend fun loadOfflineGroupedChannels() {
+        if (identifier !is QueryChannelsIdentifier.Grouped) {
+            logger.w { "[loadOfflineGroupedChannels] rejected (non-Grouped identifier: $identifier)" }
+            return
+        }
+        val pagination = AnyChannelPaginationRequest().apply {
+            channelOffset = 0
+            channelLimit = CHANNEL_LIMIT
+        }
+        val cachedChannels = fetchChannelsFromCache(pagination)
+        groupedResultMutex.withLock {
+            val existing = queryChannelsStateLogic.getChannels()
+            if (existing.isNullOrEmpty() && !cachedChannels.isNullOrEmpty()) {
+                logger.d { "[loadOfflineGroupedChannels] showing ${cachedChannels.size} cached channels" }
+                queryChannelsStateLogic.addChannelsState(cachedChannels)
+            }
+            queryChannelsStateLogic.initializeChannelsIfNeeded()
+            queryChannelsStateLogic.setLoadingFirstPage(false)
+        }
+    }
 
     internal suspend fun queryOffline(pagination: AnyChannelPaginationRequest) {
         if (queryChannelsStateLogic.isLoading()) {
@@ -63,7 +128,8 @@ internal class QueryChannelsLogic(
             else -> {
                 // For predefined queries this restores the last persisted resolved filter/sort so
                 // cached channels are sorted correctly before any network response. Not invoked for
-                // standard queries, as we already know the spec beforehand.
+                // standard or grouped queries — Standard's spec is fixed at construction; Grouped
+                // doesn't reach this path in practice (its listener routes via applyGroupedResult).
                 if (cached.spec.predefinedFilterName != null) {
                     applyResolvedSpec(cached.spec.filter, cached.spec.querySort)
                 }
@@ -85,16 +151,44 @@ internal class QueryChannelsLogic(
         queryChannelsStateLogic.setCurrentRequest(request)
     }
 
+    internal fun groupKey(): String? = (identifier as? QueryChannelsIdentifier.Grouped)?.groupKey
+
+    internal fun groupedQueryConfig(): GroupedQueryConfig? = queryChannelsStateLogic.getGroupedQueryConfig()
+
+    internal fun setGroupedQueryConfig(config: GroupedQueryConfig) {
+        queryChannelsStateLogic.setGroupedQueryConfig(config)
+    }
+
+    internal fun currentRequest(): QueryChannelsRequest? = queryChannelsStateLogic.getState().currentRequest.value
+
     internal fun recoveryNeeded(): StateFlow<Boolean> {
         return queryChannelsStateLogic.getState().recoveryNeeded
     }
 
     /**
      * Forwards the resolved filter/sort to the state logic. Called by the listener with values
-     * from `QueryChannelsResult.predefinedFilter`. A no-op for standard queries.
+     * from `QueryChannelsResult.predefinedFilter`. A no-op for standard and grouped queries (the
+     * state-logic guard short-circuits non-Predefined identifiers).
      */
     internal fun applyResolvedSpec(filter: FilterObject, sort: QuerySorter<Channel>) {
         queryChannelsStateLogic.applyResolvedSpec(filter, sort)
+    }
+
+    /**
+     * Reads cached channels for this query's [identifier] from the offline DB and returns them.
+     * Returns `null` when no spec is persisted under the identifier.
+     */
+    private suspend fun fetchChannelsFromCache(pagination: AnyChannelPaginationRequest): List<Channel>? {
+        val channels = queryChannelsDatabaseLogic.fetchChannelsFromCache(pagination, identifier)?.channels
+        logger.i {
+            val message = if (channels == null) {
+                "no channels found in the local storage"
+            } else {
+                "${channels.size} channels found in the local storage"
+            }
+            "[fetchChannelsFromCache] $message"
+        }
+        return channels
     }
 
     /**
@@ -104,6 +198,16 @@ internal class QueryChannelsLogic(
      */
     internal suspend fun addChannel(channel: Channel) {
         addChannels(listOf(channel))
+    }
+
+    /**
+     * Registers [channel] in this query's tracking without updating the shared per-channel
+     * state. Use this during event handling where per-channel state is already authoritative.
+     * A subsequent [refreshChannelState] / [refreshChannelsState] call will reconcile the
+     * query map with the live per-channel state.
+     */
+    internal fun trackChannel(channel: Channel) {
+        queryChannelsStateLogic.trackChannel(channel)
     }
 
     /**
@@ -126,6 +230,49 @@ internal class QueryChannelsLogic(
         }
     }
 
+    /**
+     * Applies a [GroupedChannelsGroup] response payload to this query's state.
+     * Replaces channels on the first page, appends on subsequent pages.
+     * Updates the next-page cursor and persists fresh data to the local database.
+     */
+    internal suspend fun applyGroupedResult(group: GroupedChannelsGroup, isFirstPage: Boolean) {
+        if (identifier !is QueryChannelsIdentifier.Grouped) {
+            logger.w { "[applyGroupedResult] rejected (non-Grouped identifier: $identifier)" }
+            return
+        }
+        val channels = group.channels
+        logger.d {
+            "[applyGroupedResult] channels.size: ${channels.size}, isFirstPage: $isFirstPage, " +
+                "next: ${group.next}"
+        }
+
+        groupedResultMutex.withLock {
+            if (isFirstPage) {
+                val existing = queryChannelsStateLogic.getChannels()
+                if (!existing.isNullOrEmpty()) {
+                    queryChannelsStateLogic.removeChannels(existing.keys)
+                }
+                queryChannelsStateLogic.setCids(emptySet())
+                // Defensive: Grouped uses cursor pagination, not offset. Resetting guards against any
+                // future cross-path leakage from a Standard offset query mistakenly sharing this state.
+                queryChannelsStateLogic.setChannelsOffset(0)
+            }
+
+            queryChannelsStateLogic.setNextCursor(group.next)
+            queryChannelsStateLogic.setEndOfChannels(group.next == null)
+            queryChannelsStateLogic.addChannelsState(channels)
+            queryChannelsStateLogic.setLoadingFirstPage(false)
+            queryChannelsStateLogic.setLoadingMore(false)
+            queryChannelsStateLogic.setRecoveryNeeded(false)
+
+            // Persist
+            queryChannelsDatabaseLogic.insertQueryChannels(queryChannelsStateLogic.getQuerySpecs())
+            val channelConfigs = channels.map { ChannelConfig(it.type, it.config) }
+            queryChannelsDatabaseLogic.insertChannelConfigs(channelConfigs)
+            queryChannelsDatabaseLogic.storeStateForChannels(channels.toSet())
+        }
+    }
+
     suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         logger.d { "[onQueryChannelsResult] result.isSuccess: ${result is Result.Success}, request: $request" }
         onOnlineQueryResult(result, request)
@@ -145,7 +292,8 @@ internal class QueryChannelsLogic(
      *
      * Rebuilds the request from the [identifier] so the request stays consistent with how this
      * logic was registered: standard queries rebuild from filter/sort, predefined queries from
-     * the predefined name + value maps (filter/querySort default; backend ignores them).
+     * the predefined name + value maps (filter/querySort default; backend ignores them). Grouped
+     * identifiers short-circuit — the grouped path uses `queryGroupedChannels` instead.
      */
     internal suspend fun queryFirstPage(): Result<List<Channel>> {
         logger.d { "[queryFirstPage] no args" }
@@ -170,6 +318,10 @@ internal class QueryChannelsLogic(
                 messageLimit = messageLimit,
                 memberLimit = memberLimit,
             )
+            is QueryChannelsIdentifier.Grouped -> {
+                logger.v { "[queryFirstPage] no-op for Grouped identifier" }
+                return Result.Success(emptyList())
+            }
         }
 
         queryChannelsStateLogic.setCurrentRequest(request)
@@ -302,6 +454,8 @@ internal class QueryChannelsLogic(
                 messageLimit = 0,
                 memberLimit = 0,
             )
+            // Grouped queries do not use offset pagination; this path is unreachable in practice.
+            is QueryChannelsIdentifier.Grouped -> return emptyList()
         }
         return when (val result = client.queryChannelsInternal(request).await()) {
             is Result.Success -> result.value.channels

@@ -58,6 +58,11 @@ public interface QueryChannelsRepository {
     ): QueryChannelsSpec? = null
 
     /**
+     * Selects the spec stored under [groupKey] for a grouped query.
+     */
+    public suspend fun selectBy(groupKey: String): QueryChannelsSpec? = null
+
+    /**
      * Clear QueryChannels of this repository.
      */
     public suspend fun clear()

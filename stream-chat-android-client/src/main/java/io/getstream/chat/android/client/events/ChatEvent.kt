@@ -125,6 +125,23 @@ public sealed interface HasUnreadThreadCounts {
 }
 
 /**
+ * Interface that marks a [ChatEvent] as having grouped unread channel counts.
+ * The [groupedUnreadChannels] map contains per-group unread channel counts keyed by the
+ * backend-provided group identifier (e.g. `{"direct": 2, "support": 5}`).
+ *
+ * The list of events which contain grouped unread channels:
+ * - message.new
+ * - notification.message_new
+ * - notification.mark_read
+ * - notification.mark_unread
+ * - notification.channel_deleted
+ * - notification.channel_truncated
+ */
+public sealed interface HasGroupedUnreadChannels {
+    public val groupedUnreadChannels: Map<String, Int>?
+}
+
+/**
  * Triggered when a channel is deleted
  */
 public data class ChannelDeletedEvent(
@@ -355,7 +372,8 @@ public data class NewMessageEvent(
     override val totalUnreadCount: Int = 0,
     override val unreadChannels: Int = 0,
     val channelMessageCount: Int?,
-) : CidEvent(), UserEvent, HasMessage, HasWatcherCount, HasUnreadCounts
+    override val groupedUnreadChannels: Map<String, Int>? = null,
+) : CidEvent(), UserEvent, HasMessage, HasWatcherCount, HasUnreadCounts, HasGroupedUnreadChannels
 
 /**
  * Triggered when the user is added to the list of channel members
@@ -386,7 +404,8 @@ public data class NotificationChannelDeletedEvent(
     override val channel: Channel,
     override val totalUnreadCount: Int = 0,
     override val unreadChannels: Int = 0,
-) : CidEvent(), HasChannel, HasUnreadCounts
+    override val groupedUnreadChannels: Map<String, Int>? = null,
+) : CidEvent(), HasChannel, HasUnreadCounts, HasGroupedUnreadChannels
 
 /**
  * Triggered when a channel is muted
@@ -411,7 +430,8 @@ public data class NotificationChannelTruncatedEvent(
     override val channel: Channel,
     override val totalUnreadCount: Int = 0,
     override val unreadChannels: Int = 0,
-) : CidEvent(), HasChannel, HasUnreadCounts
+    override val groupedUnreadChannels: Map<String, Int>? = null,
+) : CidEvent(), HasChannel, HasUnreadCounts, HasGroupedUnreadChannels
 
 /**
  * Triggered when the user accepts an invite
@@ -475,7 +495,8 @@ public data class NotificationMarkReadEvent(
     val thread: ThreadInfo? = null,
     override val unreadThreads: Int? = null,
     override val unreadThreadMessages: Int? = null,
-) : CidEvent(), UserEvent, HasUnreadCounts, HasUnreadThreadCounts
+    override val groupedUnreadChannels: Map<String, Int>? = null,
+) : CidEvent(), UserEvent, HasUnreadCounts, HasUnreadThreadCounts, HasGroupedUnreadChannels
 
 /**
  * Triggered when the the user mark as unread a conversation from a particular message
@@ -497,7 +518,8 @@ public data class NotificationMarkUnreadEvent(
     val threadId: String? = null,
     override val unreadThreads: Int = 0,
     override val unreadThreadMessages: Int? = null,
-) : CidEvent(), UserEvent, HasUnreadCounts, HasUnreadThreadCounts
+    override val groupedUnreadChannels: Map<String, Int>? = null,
+) : CidEvent(), UserEvent, HasUnreadCounts, HasUnreadThreadCounts, HasGroupedUnreadChannels
 
 /**
  * Triggered when the total count of unread messages (across all channels the user is a member) changes
@@ -509,7 +531,8 @@ public data class MarkAllReadEvent(
     override val user: User,
     override val totalUnreadCount: Int = 0,
     override val unreadChannels: Int = 0,
-) : ChatEvent(), UserEvent, HasUnreadCounts
+    override val groupedUnreadChannels: Map<String, Int>? = null,
+) : ChatEvent(), UserEvent, HasUnreadCounts, HasGroupedUnreadChannels
 
 /**
  * Triggered when a message is added to a channel
@@ -525,7 +548,8 @@ public data class NotificationMessageNewEvent(
     override val message: Message,
     override val totalUnreadCount: Int = 0,
     override val unreadChannels: Int = 0,
-) : CidEvent(), HasChannel, HasMessage, HasUnreadCounts
+    override val groupedUnreadChannels: Map<String, Int>? = null,
+) : CidEvent(), HasChannel, HasMessage, HasUnreadCounts, HasGroupedUnreadChannels
 
 /**
  * Triggered when a message is added to a channel as a thread reply.

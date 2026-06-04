@@ -204,6 +204,7 @@ internal object EventMappingTestArguments {
     private val UNREAD_MESSAGES = positiveRandomInt()
     private val TOTAL_UNREAD_COUNT = positiveRandomInt()
     private val UNREAD_CHANNELS = positiveRandomInt()
+    private val GROUPED_UNREAD_CHANNELS = mapOf("direct" to positiveRandomInt(), "support" to positiveRandomInt())
     private val UNREAD_THREADS = positiveRandomInt()
     private val UNREAD_THREAD_MESSAGES = positiveRandomInt()
     private val REACTION = Mother.randomDownstreamReactionDto()
@@ -230,6 +231,7 @@ internal object EventMappingTestArguments {
             image = CHANNEL_IMAGE,
         ),
         message = MESSAGE_WITHOUT_CHANNEL_INFO,
+        grouped_unread_channels = GROUPED_UNREAD_CHANNELS,
     )
 
     private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
@@ -379,6 +381,7 @@ internal object EventMappingTestArguments {
         type = EventType.NOTIFICATION_MARK_READ,
         created_at = EXACT_DATE,
         user = USER,
+        grouped_unread_channels = GROUPED_UNREAD_CHANNELS,
     )
 
     private val memberAddedDto = MemberAddedEventDto(
@@ -471,6 +474,7 @@ internal object EventMappingTestArguments {
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
         channel = CHANNEL,
+        grouped_unread_channels = GROUPED_UNREAD_CHANNELS,
     )
 
     private val notificationChannelMutesUpdatesDto = NotificationChannelMutesUpdatedEventDto(
@@ -486,6 +490,7 @@ internal object EventMappingTestArguments {
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
         channel = CHANNEL,
+        grouped_unread_channels = GROUPED_UNREAD_CHANNELS,
     )
 
     private val notificationInviteAcceptedDto = NotificationInviteAcceptedEventDto(
@@ -528,6 +533,7 @@ internal object EventMappingTestArguments {
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
         last_read_message_id = LAST_READ_MESSAGE_ID,
+        grouped_unread_channels = GROUPED_UNREAD_CHANNELS,
     )
 
     private val notificationMarkUnreadDto = NotificationMarkUnreadEventDto(
@@ -543,6 +549,7 @@ internal object EventMappingTestArguments {
         unread_messages = UNREAD_MESSAGES,
         total_unread_count = TOTAL_UNREAD_COUNT,
         unread_channels = UNREAD_CHANNELS,
+        grouped_unread_channels = GROUPED_UNREAD_CHANNELS,
     )
 
     private val notificationMessageNewDto = NotificationMessageNewEventDto(
@@ -553,6 +560,7 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         message = MESSAGE,
         channel = CHANNEL,
+        grouped_unread_channels = GROUPED_UNREAD_CHANNELS,
     )
 
     private val notificationThreadMessageNewDto = NotificationThreadMessageNewEventDto(
@@ -838,6 +846,7 @@ internal object EventMappingTestArguments {
         totalUnreadCount = newMessageDto.total_unread_count,
         unreadChannels = newMessageDto.unread_channels,
         channelMessageCount = newMessageDto.channel_message_count,
+        groupedUnreadChannels = newMessageDto.grouped_unread_channels,
     )
 
     private val draftMessageUpdatedEvent = DraftMessageUpdatedEvent(
@@ -1012,6 +1021,7 @@ internal object EventMappingTestArguments {
         createdAt = markAllReadDto.created_at.date,
         rawCreatedAt = markAllReadDto.created_at.rawDate,
         user = with(domainMapping) { markAllReadDto.user.toDomain() },
+        groupedUnreadChannels = markAllReadDto.grouped_unread_channels,
     )
 
     private val memberAdded = MemberAddedEvent(
@@ -1119,6 +1129,7 @@ internal object EventMappingTestArguments {
         channel = with(domainMapping) {
             notificationChannelDeletedDto.channel.toDomain()
         },
+        groupedUnreadChannels = notificationChannelDeletedDto.grouped_unread_channels,
     )
 
     private val notificationChannelMutesUpdates = NotificationChannelMutesUpdatedEvent(
@@ -1138,6 +1149,7 @@ internal object EventMappingTestArguments {
         channel = with(domainMapping) {
             notificationChannelTruncatedDto.channel.toDomain()
         },
+        groupedUnreadChannels = notificationChannelTruncatedDto.grouped_unread_channels,
     )
 
     private val notificationInviteAccepted = NotificationInviteAcceptedEvent(
@@ -1188,6 +1200,7 @@ internal object EventMappingTestArguments {
         channelType = notificationMarkReadDto.channel_type,
         channelId = notificationMarkReadDto.channel_id,
         lastReadMessageId = notificationMarkReadDto.last_read_message_id,
+        groupedUnreadChannels = notificationMarkReadDto.grouped_unread_channels,
     )
 
     private val notificationMarkUnread = NotificationMarkUnreadEvent(
@@ -1202,8 +1215,9 @@ internal object EventMappingTestArguments {
         lastReadMessageId = notificationMarkUnreadDto.last_read_message_id,
         lastReadMessageAt = notificationMarkUnreadDto.last_read_at.date,
         unreadMessages = notificationMarkUnreadDto.unread_messages,
-        totalUnreadCount = notificationMarkUnreadDto.total_unread_count,
-        unreadChannels = notificationMarkUnreadDto.unread_channels,
+        totalUnreadCount = notificationMarkUnreadDto.total_unread_count ?: 0,
+        unreadChannels = notificationMarkUnreadDto.unread_channels ?: 0,
+        groupedUnreadChannels = notificationMarkUnreadDto.grouped_unread_channels,
     )
 
     private val notificationMessageNew = NotificationMessageNewEvent(
@@ -1217,6 +1231,7 @@ internal object EventMappingTestArguments {
         channel = with(domainMapping) {
             notificationMessageNewDto.channel.toDomain()
         },
+        groupedUnreadChannels = notificationMessageNewDto.grouped_unread_channels,
     )
 
     private val notificationThreadMessageNew = NotificationThreadMessageNewEvent(

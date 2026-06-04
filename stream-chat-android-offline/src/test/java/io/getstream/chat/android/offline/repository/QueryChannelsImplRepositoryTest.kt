@@ -131,4 +131,40 @@ internal class QueryChannelsImplRepositoryTest {
         assertEquals(mapOf("a" to 1), spec.predefinedFilterValues)
         assertEquals(mapOf("b" to 2), spec.predefinedSortValues)
     }
+
+    @Test
+    fun `selectBy groupKey looks up the row under the grouped DB id`() = runTest {
+        whenever(dao.select(any())) doReturn randomQueryChannelsEntity(
+            id = "grp:direct",
+            cids = listOf("cid1"),
+            groupKey = "direct",
+        )
+
+        val spec = sut.selectBy(groupKey = "direct")
+
+        spec.shouldNotBeNull()
+        assertEquals("direct", spec.groupKey)
+        assertEquals(setOf("cid1"), spec.cids)
+        verify(dao).select("grp:direct")
+    }
+
+    @Test
+    fun `selectBy groupKey returns null when no row exists`() = runTest {
+        whenever(dao.select(any())) doReturn null
+
+        val spec = sut.selectBy(groupKey = "direct")
+
+        spec.shouldBeNull()
+    }
+
+    @Test
+    fun `Two Grouped identifiers with different groupKeys produce different DB ids`() = runTest {
+        sut.selectBy(groupKey = "direct")
+        sut.selectBy(groupKey = "support")
+
+        val captor = argumentCaptor<String>()
+        verify(dao, times(2)).select(captor.capture())
+        assertEquals("grp:direct", captor.allValues[0])
+        assertEquals("grp:support", captor.allValues[1])
+    }
 }

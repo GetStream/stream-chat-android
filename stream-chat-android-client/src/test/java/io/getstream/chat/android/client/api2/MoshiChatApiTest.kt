@@ -65,6 +65,8 @@ import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRe
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryGroupedChannelsGroupRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryGroupedChannelsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryReactionsRequest
@@ -102,6 +104,8 @@ import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResp
 import io.getstream.chat.android.client.api2.model.response.QueryBlockedUsersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
+import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsGroup
+import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryMembersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
@@ -133,6 +137,7 @@ import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
@@ -1895,6 +1900,109 @@ internal class MoshiChatApiTest {
         )
         result `should be instance of` expected
         verify(api, times(1)).queryChannels(connectionId, expectedPayload)
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryGroupedChannelsInput")
+    fun testQueryGroupedChannels(
+        call: RetrofitCall<QueryGroupedChannelsResponse>,
+        expected: KClass<*>,
+    ) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.queryGroupedChannels(any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val userId = randomString()
+        val connectionId = randomString()
+        val limit = randomInt()
+        sut.setConnection(userId = userId, connectionId = connectionId)
+        val result = sut.queryGroupedChannels(limit = limit, groups = null, watch = false, presence = false).await()
+        // then
+        val expectedPayload = QueryGroupedChannelsRequest(
+            limit = limit,
+            groups = null,
+            watch = false,
+            presence = false,
+        )
+        result `should be instance of` expected
+        verify(api, times(1)).queryGroupedChannels(connectionId, expectedPayload)
+    }
+
+    @Test
+    fun `queryGroupedChannels maps per-group GroupedChannelsGroupQuery into the request body`() = runTest {
+        val response = QueryGroupedChannelsResponse(groups = emptyMap(), duration = "0ms")
+        val api = mock<ChannelApi>()
+        whenever(api.queryGroupedChannels(any(), any())).doReturn(RetroSuccess(response).toRetrofitCall())
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        val connectionId = randomString()
+        sut.setConnection(userId = randomString(), connectionId = connectionId)
+
+        sut.queryGroupedChannels(
+            limit = 30,
+            groups = mapOf(
+                "direct" to GroupedChannelsGroupQuery(limit = 10, next = "cursor-next", prev = null),
+                "support" to GroupedChannelsGroupQuery(limit = null, next = null, prev = "cursor-prev"),
+            ),
+            watch = false,
+            presence = false,
+        ).await()
+
+        val expectedPayload = QueryGroupedChannelsRequest(
+            limit = 30,
+            groups = mapOf(
+                "direct" to QueryGroupedChannelsGroupRequest(limit = 10, next = "cursor-next", prev = null),
+                "support" to QueryGroupedChannelsGroupRequest(limit = null, next = null, prev = "cursor-prev"),
+            ),
+            watch = false,
+            presence = false,
+        )
+        verify(api, times(1)).queryGroupedChannels(connectionId, expectedPayload)
+    }
+
+    @Test
+    fun `queryGroupedChannels maps null unread_channels to 0 in the domain result`() = runTest {
+        val response = QueryGroupedChannelsResponse(
+            groups = mapOf(
+                "direct" to QueryGroupedChannelsGroup(
+                    channels = emptyList(),
+                    unread_channels = null,
+                    next = null,
+                    prev = null,
+                ),
+            ),
+            duration = "0ms",
+        )
+        val api = mock<ChannelApi>()
+        whenever(api.queryGroupedChannels(any(), any())).doReturn(RetroSuccess(response).toRetrofitCall())
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        sut.setConnection(userId = randomString(), connectionId = randomString())
+
+        val result = sut.queryGroupedChannels(limit = null, groups = null, watch = false, presence = false).await()
+
+        result `should be instance of` Result.Success::class
+        val grouped = (result as Result.Success).value
+        assertEquals(0, grouped.groups.getValue("direct").unreadChannels)
+    }
+
+    @Test
+    fun `queryGroupedChannels postpones the call when watch is true and connectionId is blank`() = runTest {
+        val api = mock<ChannelApi>()
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // Intentionally not calling setConnection — connectionId stays blank.
+
+        sut.queryGroupedChannels(limit = null, groups = null, watch = true, presence = false)
+
+        // Postponed calls do not invoke the API eagerly; they wait for a connection.
+        verify(api, never()).queryGroupedChannels(any(), any())
     }
 
     @ParameterizedTest

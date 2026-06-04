@@ -24,15 +24,17 @@ import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdent
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
+import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
-import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -42,30 +44,59 @@ import kotlinx.coroutines.flow.stateIn
 
 /**
  * Mutable backing state for a query channels operation. Each instance corresponds to a unique
- * [QueryChannelsIdentifier] (Standard or Predefined).
+ * [QueryChannelsIdentifier] (Standard, Predefined, or Grouped). Initial spec, filter, and sort
+ * are derived from the identifier — callers only pass the identifier itself.
  *
- * For [QueryChannelsIdentifier.Standard], `initialFilter`/`initialSort` come from the client and
- * are immutable across the lifetime of this state — [applyResolvedSpec] is effectively a no-op.
+ * For [QueryChannelsIdentifier.Standard], `filter`/`sort` come from the identifier and are
+ * immutable across the lifetime of this state — [applyResolvedSpec] is a no-op.
  *
- * For [QueryChannelsIdentifier.Predefined], `initialFilter`/`initialSort` are placeholders
- * (defaults supplied by the registry) until [applyResolvedSpec] is called either with the
- * server-resolved values from `QueryChannelsResult.predefinedFilter` or with values rehydrated
- * from the offline DB. The internal `_sort` flow drives the sorted channel list, so re-sorting
- * happens automatically once the resolved sort is applied.
+ * For [QueryChannelsIdentifier.Predefined], `filter`/`sort` start as neutral placeholders until
+ * [applyResolvedSpec] is called either with the server-resolved values from
+ * `QueryChannelsResult.predefinedFilter` or with values rehydrated from the offline DB. The
+ * internal `_sort` flow drives the sorted channel list, so re-sorting happens automatically once
+ * the resolved sort is applied.
+ *
+ * For [QueryChannelsIdentifier.Grouped], `filter` is neutral and `sort` defaults to
+ * `last_updated` descending. Channels are populated via the listener-driven grouped-channels
+ * endpoint, and the cursor lives on [_nextCursor].
  */
 internal class QueryChannelsMutableState(
     val identifier: QueryChannelsIdentifier,
-    initialFilter: FilterObject,
-    initialSort: QuerySorter<Channel>,
     scope: CoroutineScope,
     latestUsers: StateFlow<Map<String, User>>,
     activeLiveLocations: StateFlow<List<Location>>,
 ) : QueryChannelsState {
 
-    private val logger by taggedLogger("Chat:QueryChannelsState")
+    /**
+     * In-memory cache spec for the active query. Carries variant-specific identity fields
+     * (`groupKey` for Grouped, `predefinedFilter*` for Predefined) so they survive
+     * [QueryChannelsSpec] round-trips and DB persistence.
+     */
+    private var _querySpec: QueryChannelsSpec = when (identifier) {
+        is QueryChannelsIdentifier.Standard -> QueryChannelsSpec(
+            filter = identifier.filter,
+            querySort = identifier.sort,
+        )
+        is QueryChannelsIdentifier.Predefined -> QueryChannelsSpec(
+            filter = Filters.neutral(),
+            querySort = QuerySortByField(),
+            predefinedFilterName = identifier.name,
+            predefinedFilterValues = identifier.filterValues,
+            predefinedSortValues = identifier.sortValues,
+        )
+        is QueryChannelsIdentifier.Grouped -> QueryChannelsSpec(
+            filter = Filters.neutral(),
+            querySort = QuerySortByField.descByName("last_updated"),
+            groupKey = identifier.groupKey,
+        )
+    }
 
-    private val _filter: MutableStateFlow<FilterObject> = MutableStateFlow(initialFilter)
-    private val _sort: MutableStateFlow<QuerySorter<Channel>> = MutableStateFlow(initialSort)
+    /** Spec backing this state. [QueryChannelsSpec.cids] is mutated in place via [setCids]. */
+    internal val queryChannelsSpec: QueryChannelsSpec
+        get() = _querySpec
+
+    private val _filter: MutableStateFlow<FilterObject> = MutableStateFlow(_querySpec.filter)
+    private val _sort: MutableStateFlow<QuerySorter<Channel>> = MutableStateFlow(_querySpec.querySort)
 
     override val filter: FilterObject
         get() = _filter.value
@@ -77,25 +108,6 @@ internal class QueryChannelsMutableState(
         private set(value) {
             _channels?.value = value
         }
-
-    /**
-     * In-memory cache spec for the active query.
-     */
-    private var _querySpec: QueryChannelsSpec = when (identifier) {
-        is QueryChannelsIdentifier.Standard -> QueryChannelsSpec(
-            filter = initialFilter,
-            querySort = initialSort,
-        )
-        is QueryChannelsIdentifier.Predefined -> QueryChannelsSpec(
-            filter = initialFilter,
-            querySort = initialSort,
-            predefinedFilterName = identifier.name,
-            predefinedFilterValues = identifier.filterValues,
-            predefinedSortValues = identifier.sortValues,
-        )
-    }
-    internal val queryChannelsSpec: QueryChannelsSpec
-        get() = _querySpec
 
     /**
      * Property that exposes a map of raw channels.
@@ -127,17 +139,25 @@ internal class QueryChannelsMutableState(
     private var _channelsOffset: MutableStateFlow<Int>? = MutableStateFlow(0)
     internal val channelsOffset: StateFlow<Int> = _channelsOffset!!
 
+    private var _nextCursor: MutableStateFlow<String?>? = MutableStateFlow(null)
+    private var _groupedQueryConfig: MutableStateFlow<GroupedQueryConfig?>? = MutableStateFlow(null)
+
     override var chatEventHandlerFactory: ChatEventHandlerFactory? = null
+        set(value) {
+            field = value
+            _eventHandler = value?.chatEventHandler(mapChannels)
+        }
 
     override val recoveryNeeded: StateFlow<Boolean> = _recoveryNeeded!!
 
     /**
      * Non-nullable property of [ChatEventHandler] to ensure we always have some handler to handle events. Returns
      * handler set by user or default one if there is no.
+     * Re-created when [chatEventHandlerFactory] changes.
      */
-    private val eventHandler: ChatEventHandler by lazy {
-        (chatEventHandlerFactory ?: ChatEventHandlerFactory()).chatEventHandler(mapChannels)
-    }
+    private var _eventHandler: ChatEventHandler? = null
+    private val eventHandler: ChatEventHandler
+        get() = _eventHandler ?: ChatEventHandlerFactory().chatEventHandler(mapChannels)
 
     fun handleChatEvent(event: ChatEvent, cachedChannel: Channel?): EventHandlingResult {
         return eventHandler.handleChatEvent(event, filter, cachedChannel)
@@ -147,6 +167,8 @@ internal class QueryChannelsMutableState(
     override val loading: StateFlow<Boolean> = _loading!!
     override val loadingMore: StateFlow<Boolean> = _loadingMore!!
     override val endOfChannels: StateFlow<Boolean> = _endOfChannels!!
+    override val nextCursor: StateFlow<String?> = _nextCursor!!
+    override val groupedQueryConfig: StateFlow<GroupedQueryConfig?> = _groupedQueryConfig!!
     override val channels: StateFlow<List<Channel>?> = sortedChannels
     override val channelsStateData: StateFlow<ChannelsStateData> =
         loading.combine(sortedChannels) { loading: Boolean, channels: List<Channel>? ->
@@ -188,7 +210,7 @@ internal class QueryChannelsMutableState(
     /**
      * Set the end of channels.
      *
-     * @parami isEnd Boolean
+     * @param isEnd Boolean
      */
     fun setEndOfChannels(isEnd: Boolean) {
         _endOfChannels?.value = isEnd
@@ -222,17 +244,33 @@ internal class QueryChannelsMutableState(
     }
 
     /**
+     * Set the next-page cursor. Used by the grouped-channels path; the standard and predefined
+     * paths don't publish a cursor here.
+     */
+    fun setNextCursor(cursor: String?) {
+        _nextCursor?.value = cursor
+    }
+
+    /**
+     * Store the configuration that produced the current page of grouped results. Read back by
+     * [io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel] for paginated
+     * calls and by [io.getstream.chat.android.state.sync.internal.SyncManager] for recovery.
+     */
+    fun setGroupedQueryConfig(config: GroupedQueryConfig) {
+        _groupedQueryConfig?.value = config
+    }
+
+    /**
      * Applies the resolved filter/sort to the state. Only relevant for predefined-filter queries,
      * where the actual filter/sort are not known until either:
      *  - The server response arrives carrying `QueryChannelsResult.predefinedFilter`, or
      *  - The offline DB rehydrates a previously persisted resolved spec for the same identifier.
      *
-     * No-op for [QueryChannelsIdentifier.Standard] queries — their filter/sort are fixed at
-     * construction time and must not be replaced.
+     * No-op for [QueryChannelsIdentifier.Standard] and [QueryChannelsIdentifier.Grouped] queries —
+     * their filter/sort are fixed at construction time and must not be replaced.
      *
-     * Because [QueryChannelsSpec] keeps `filter` and `querySort` as `val` for binary
-     * compatibility, we replace the held [_querySpec] instance instead of mutating it in place.
-     * `cids` and the predefined identity fields are carried over from the previous instance.
+     * The 2-arg [QueryChannelsSpec.copy] preserves variant-specific identity fields (predefined
+     * name/values, groupKey) and `cids` from the previous spec instance.
      */
     fun applyResolvedSpec(filter: FilterObject, sort: QuerySorter<Channel>) {
         if (identifier !is QueryChannelsIdentifier.Predefined) return
@@ -241,12 +279,9 @@ internal class QueryChannelsMutableState(
         _querySpec = _querySpec.copy(filter = filter, querySort = sort)
     }
 
-    /**
-     * Replaces the held [_querySpec] with a copy whose [QueryChannelsSpec.cids] are updated to
-     * [cids]. Required because [QueryChannelsSpec] is now fully immutable.
-     */
-    fun setCids(cids: Set<String>) {
-        _querySpec = _querySpec.copy(cids = cids)
+    /** Updates [QueryChannelsSpec.cids] on the held spec. */
+    internal fun setCids(cids: Set<String>) {
+        _querySpec.cids = cids
     }
 
     fun destroy() {
@@ -257,6 +292,8 @@ internal class QueryChannelsMutableState(
         _currentRequest = null
         _recoveryNeeded = null
         _channelsOffset = null
+        _nextCursor = null
+        _groupedQueryConfig = null
     }
 }
 

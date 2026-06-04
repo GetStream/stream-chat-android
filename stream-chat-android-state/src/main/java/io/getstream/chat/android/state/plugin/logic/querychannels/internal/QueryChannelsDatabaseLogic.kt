@@ -66,6 +66,8 @@ internal class QueryChannelsDatabaseLogic(
                 queryChannelsRepository.selectBy(identifier.filter, identifier.sort)
             is QueryChannelsIdentifier.Predefined ->
                 queryChannelsRepository.selectBy(identifier.name, identifier.filterValues, identifier.sortValues)
+            is QueryChannelsIdentifier.Grouped ->
+                queryChannelsRepository.selectBy(identifier.groupKey)
         } ?: return null
         val channels = repositoryFacade
             .selectChannels(spec.cids.toList(), pagination)
