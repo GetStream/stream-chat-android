@@ -180,6 +180,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.ConnectionData
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.CreatePollParams
@@ -1716,6 +1717,32 @@ internal constructor(
             .doOnResult(userScope) { result ->
                 plugins.forEach { it.onChannelPushNotificationsSnoozed(cid, until, result) }
             }
+    }
+
+    /**
+     * Sets per-category push toggles for the current user. Use this when
+     * [setUserPushPreference] is too coarse. Setting either clears the other server-side.
+     */
+    @CheckResult
+    public fun setUserChatPreferences(preferences: ChatPreferences): Call<PushPreference> {
+        return api.setUserChatPreferences(preferences)
+            .doOnResult(userScope) { result ->
+                if (result is Result.Success) {
+                    val currentUser = mutableClientState.user.value ?: return@doOnResult
+                    val updatedUser = currentUser.copy(pushPreference = result.value)
+                    mutableClientState.setUser(updatedUser)
+                }
+            }
+    }
+
+    /**
+     * Per-channel version of [setUserChatPreferences].
+     *
+     * @param cid Full channel identifier (e.g. `messaging:123`).
+     */
+    @CheckResult
+    public fun setChannelChatPreferences(cid: String, preferences: ChatPreferences): Call<PushPreference> {
+        return api.setChannelChatPreferences(cid, preferences)
     }
 
     /**

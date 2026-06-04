@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
+import io.getstream.chat.android.client.api2.model.dto.UpstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
@@ -36,6 +37,7 @@ import io.getstream.chat.android.client.api2.model.dto.UpstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Location
@@ -276,5 +278,15 @@ internal class DtoMapping(
         created_at = createdAt,
         me = me.toDto(),
         connection_id = connectionId,
+    )
+
+    internal fun ChatPreferences.toDto(): UpstreamChatPreferencesDto = UpstreamChatPreferencesDto(
+        direct_mentions = directMentions?.value,
+        role_mentions = roleMentions?.value,
+        group_mentions = groupMentions?.value,
+        here_mentions = hereMentions?.value,
+        channel_mentions = channelMentions?.value,
+        thread_replies = threadReplies?.value,
+        default_preference = defaultPreference?.value,
     )
 }

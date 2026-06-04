@@ -125,6 +125,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
@@ -528,6 +529,32 @@ constructor(
         val request = UpsertPushPreferencesRequest(listOf(input))
         return pushPreferencesApi
             .upsertPushPreferences(request)
+            .parseChannelPushPreferencesResponse(cid)
+    }
+
+    override fun setUserChatPreferences(preferences: ChatPreferences): Call<PushPreference> {
+        val input = UpstreamPushPreferenceInputDto(
+            channel_cid = null,
+            chat_level = null,
+            disabled_until = null,
+            remove_disable = null,
+            chat_preferences = with(dtoMapping) { preferences.toDto() },
+        )
+        return pushPreferencesApi
+            .upsertPushPreferences(UpsertPushPreferencesRequest(listOf(input)))
+            .parseUserPushPreferencesResponse()
+    }
+
+    override fun setChannelChatPreferences(cid: String, preferences: ChatPreferences): Call<PushPreference> {
+        val input = UpstreamPushPreferenceInputDto(
+            channel_cid = cid,
+            chat_level = null,
+            disabled_until = null,
+            remove_disable = null,
+            chat_preferences = with(dtoMapping) { preferences.toDto() },
+        )
+        return pushPreferencesApi
+            .upsertPushPreferences(UpsertPushPreferencesRequest(listOf(input)))
             .parseChannelPushPreferencesResponse(cid)
     }
 

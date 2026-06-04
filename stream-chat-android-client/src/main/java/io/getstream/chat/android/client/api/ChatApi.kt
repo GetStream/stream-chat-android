@@ -33,6 +33,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
@@ -145,6 +146,12 @@ internal interface ChatApi {
 
     @CheckResult
     fun snoozeChannelPushNotifications(cid: String, until: Date): Call<PushPreference>
+
+    @CheckResult
+    fun setUserChatPreferences(preferences: ChatPreferences): Call<PushPreference>
+
+    @CheckResult
+    fun setChannelChatPreferences(cid: String, preferences: ChatPreferences): Call<PushPreference>
 
     @CheckResult
     fun createUserGroup(

@@ -39,10 +39,12 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.dto.UnreadDto
+import io.getstream.chat.android.client.api2.model.dto.UpstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
@@ -150,6 +152,8 @@ import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.ChatPreferenceToggle
+import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.UnreadCounts
@@ -2862,6 +2866,91 @@ internal class MoshiChatApiTest {
         verify(api, times(1)).upsertPushPreferences(expectedRequest)
     }
 
+    @Test
+    fun testSetUserChatPreferences() = runTest {
+        val userId = randomString()
+        val prefs = ChatPreferences(
+            directMentions = ChatPreferenceToggle.all,
+            channelMentions = ChatPreferenceToggle.none,
+            defaultPreference = ChatPreferenceToggle.none,
+        )
+        val response = PushPreferencesResponse(
+            user_channel_preferences = emptyMap(),
+            user_preferences = mapOf(
+                userId to DownstreamPushPreferenceDto(
+                    chat_level = null,
+                    disabled_until = null,
+                    chat_preferences = DownstreamChatPreferencesDto(
+                        direct_mentions = "all",
+                        channel_mentions = "none",
+                        default_preference = "none",
+                    ),
+                ),
+            ),
+        )
+        val api = mock<PushPreferencesApi>()
+        whenever(api.upsertPushPreferences(any())).doReturn(RetroSuccess(response).toRetrofitCall())
+        val sut = Fixture().withCurrentUserId(userId).withPushPreferencesApi(api).get()
+
+        val result = sut.setUserChatPreferences(prefs).await()
+
+        val expectedRequest = UpsertPushPreferencesRequest(
+            preferences = listOf(
+                UpstreamPushPreferenceInputDto(
+                    channel_cid = null,
+                    chat_level = null,
+                    disabled_until = null,
+                    remove_disable = null,
+                    chat_preferences = UpstreamChatPreferencesDto(
+                        direct_mentions = "all",
+                        channel_mentions = "none",
+                        default_preference = "none",
+                    ),
+                ),
+            ),
+        )
+        Assertions.assertInstanceOf(Result.Success::class.java, result)
+        verify(api, times(1)).upsertPushPreferences(expectedRequest)
+    }
+
+    @Test
+    fun testSetChannelChatPreferences() = runTest {
+        val userId = randomString()
+        val cid = randomCID()
+        val prefs = ChatPreferences(directMentions = ChatPreferenceToggle.all)
+        val response = PushPreferencesResponse(
+            user_channel_preferences = mapOf(
+                userId to mapOf(
+                    cid to DownstreamPushPreferenceDto(
+                        chat_level = null,
+                        disabled_until = null,
+                        chat_preferences = DownstreamChatPreferencesDto(direct_mentions = "all"),
+                    ),
+                ),
+            ),
+            user_preferences = emptyMap(),
+        )
+        val api = mock<PushPreferencesApi>()
+        whenever(api.upsertPushPreferences(any())).doReturn(RetroSuccess(response).toRetrofitCall())
+        val sut = Fixture().withCurrentUserId(userId).withPushPreferencesApi(api).get()
+
+        val result = sut.setChannelChatPreferences(cid, prefs).await()
+
+        val expectedRequest = UpsertPushPreferencesRequest(
+            preferences = listOf(
+                UpstreamPushPreferenceInputDto(
+                    channel_cid = cid,
+                    chat_level = null,
+                    disabled_until = null,
+                    remove_disable = null,
+                    chat_preferences = UpstreamChatPreferencesDto(direct_mentions = "all"),
+                ),
+            ),
+        )
+        Assertions.assertInstanceOf(Result.Success::class.java, result)
+        verify(api, times(1)).upsertPushPreferences(expectedRequest)
+    }
+
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updateLiveLocation")
     fun testUpdateLiveLocation(
@@ -2967,7 +3056,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#userGroupsResponseInput")
-    fun testQueryUserGroups(call: RetrofitCall<UserGroupsResponse>, expected: KClass<*>) = runTest {
+    fun testListUserGroups(call: RetrofitCall<UserGroupsResponse>, expected: KClass<*>) = runTest {
         val api = mock<UserGroupApi>()
         whenever(
             api.queryUserGroups(
